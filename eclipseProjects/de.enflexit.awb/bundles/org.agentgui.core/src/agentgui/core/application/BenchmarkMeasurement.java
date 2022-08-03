@@ -28,22 +28,16 @@
  */
 package agentgui.core.application;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Vector;
 import javax.swing.SwingUtilities;
 
 import org.agentgui.gui.AwbBenchmarkMonitor;
 import org.agentgui.gui.UiBridge;
 
-import jnt.scimark2.Constants;
-import jnt.scimark2.Random;
-import jnt.scimark2.Kernel;
 import agentgui.simulationService.load.LoadMeasureThread;
+import de.enflexit.oshi.SystemIDGeneration;
+import jnt.scimark2.Constants;
+import jnt.scimark2.Kernel;
+import jnt.scimark2.Random;
 
 /**
  * This thread is doing the actual benchmark measurements, which 
@@ -260,64 +254,12 @@ public class BenchmarkMeasurement extends Thread {
 	 */
 	private String getLocalSystemID() {
 		if (localSystemID==null) {
-			localSystemID = BenchmarkMeasurement.getLocalSystemIdentifier();
+			localSystemID = SystemIDGeneration.getSystemIdentifier();
 		}
 		return localSystemID;
 	}
 	
-	/**
-	 * Returns the MAC-Address local 'CanonicalHostName' to identify
-	 * on which computer this measurement were executed.
-	 * 
-	 * @return an identifier for the local system
-	 */
-	public static String getLocalSystemIdentifier() {
-		
-		// --------------------------------------------------------------------
-		// --- Try to get the MAC address first -------------------------------
-		// --------------------------------------------------------------------
-		String localSystemID = null; 
-		try {
-			Vector<String> macAddresses = new Vector<String>();
-			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()) {
-				NetworkInterface netInterface = interfaces.nextElement();
-				byte[] mac = netInterface.getHardwareAddress();
-				if (mac!=null) {
-			        StringBuilder sb = new StringBuilder();
-			        for (int i=0; i<mac.length; i++) {
-			        	sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-			        }
-			        // --- Add to the list of MAC addresses, if not empty ----- 
-			        String macAddress = sb.toString();
-			        if (macAddress!=null && macAddress.equals("")==false) {
-			        	if (macAddresses.contains(macAddress)==false) {
-			        		macAddresses.add(macAddress);
-			        	}
-			        }
-				}
-			}
-			// --- Found one or more MAC-Addresses ----------------------------
-			if (macAddresses.size()>0) {
-				Collections.sort(macAddresses);
-				localSystemID = macAddresses.get(macAddresses.size()-1);
-			}
-			
-		} catch (SocketException se) {
-			//se.printStackTrace();
-		}
-		
-		// --- In case that no MAC address was found --------------------------
-		if (localSystemID==null) {
-			try {
-				localSystemID = InetAddress.getLocalHost().getCanonicalHostName();
-			} catch (UnknownHostException inetE) {
-				inetE.printStackTrace();
-			}
-		}
-			
-		return localSystemID;
-	}
+	
 	
 	/**
 	 * Checks if the benchmark is required.
@@ -328,7 +270,7 @@ public class BenchmarkMeasurement extends Thread {
 		float benchValueOld = Application.getGlobalInfo().getBenchValue();
 		boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAlwaysSkip();
 		String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
-		String localSystemID = BenchmarkMeasurement.getLocalSystemIdentifier();
+		String localSystemID = SystemIDGeneration.getSystemIdentifier();
 		
 		boolean isRequired = true;
 		if (benchValueOld>0 && localSystemID.equalsIgnoreCase(benchExecOn) && benchAllwaysSkip==true) {

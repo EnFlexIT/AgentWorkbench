@@ -1,5 +1,13 @@
 package de.enflexit.oshi;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.ComputerSystem;
@@ -15,9 +23,7 @@ import oshi.util.Constants;
 public class SystemIDGeneration {
 
 	/**
-	 * <p>
-	 * main.
-	 * </p>
+	 * <p>main. </p>
 	 *
 	 * @param args an array of {@link java.lang.String} objects.
 	 */
@@ -31,6 +37,19 @@ public class SystemIDGeneration {
 	}
 
 	/**
+	 * Returns the system identifier for the local system.
+	 * @return the system identifier
+	 */
+	public static String getSystemIdentifier() {
+		String identifier = getSystemIdentifierOSHI();
+		if (identifier.contains(getUnknownIdentifier())==true) {
+			identifier = getSystemIdentifierNetwork();
+		}
+		return identifier;
+	}
+	
+	
+	/**
 	 * Generates a Computer Identifier, which may be part of a strategy to construct
 	 * a license key. (The identifier may not be unique as in one case hashcode
 	 * could be same for multiple values, and the result may differ based on whether
@@ -42,7 +61,7 @@ public class SystemIDGeneration {
 	 *         processor; the first 3 are 32-bit hexadecimal values and the last one
 	 *         is an integer value.
 	 */
-	public static String getSystemIdentifier() {
+	private static String getSystemIdentifierOSHI() {
 		
 		SystemInfo systemInfo = new SystemInfo();
 		OperatingSystem operatingSystem = systemInfo.getOperatingSystem();
@@ -70,7 +89,56 @@ public class SystemIDGeneration {
 	 * Returns the unknown identifier hash code.
 	 * @return the unknown identifier
 	 */
-	public static String getUnknownIdentifier() {
+	private static String getUnknownIdentifier() {
 		return String.format("%08x", Constants.UNKNOWN.hashCode());
 	}
+	
+	/**
+	 * Returns a system identifier by using the local network interfaces.
+	 * @return the system identifier network
+	 */
+	private static String getSystemIdentifierNetwork() {
+		
+		String localSystemID = null; 
+		try {
+			Vector<String> macAddresses = new Vector<String>();
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface netInterface = interfaces.nextElement();
+				byte[] mac = netInterface.getHardwareAddress();
+				if (mac!=null) {
+			        StringBuilder sb = new StringBuilder();
+			        for (int i=0; i<mac.length; i++) {
+			        	sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+			        }
+			        // --- Add to the list of MAC addresses, if not empty ----- 
+			        String macAddress = sb.toString();
+			        if (macAddress!=null && macAddress.equals("")==false) {
+			        	if (macAddresses.contains(macAddress)==false) {
+			        		macAddresses.add(macAddress);
+			        	}
+			        }
+				}
+			}
+			// --- Found one or more MAC-Addresses ----------------------------
+			if (macAddresses.size()>0) {
+				Collections.sort(macAddresses);
+				localSystemID = macAddresses.get(macAddresses.size()-1);
+			}
+			
+		} catch (SocketException se) {
+			//se.printStackTrace();
+		}
+		
+		// --- In case that no MAC address was found --------------------------
+		if (localSystemID==null) {
+			try {
+				localSystemID = InetAddress.getLocalHost().getCanonicalHostName();
+			} catch (UnknownHostException inetE) {
+				inetE.printStackTrace();
+			}
+		}
+		return localSystemID;
+	}
+	
 }
