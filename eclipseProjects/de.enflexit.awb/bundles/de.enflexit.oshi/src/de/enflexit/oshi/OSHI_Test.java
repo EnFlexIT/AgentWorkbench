@@ -1,4 +1,4 @@
-package agentgui.simulationService.load;
+package de.enflexit.oshi;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -40,9 +40,9 @@ import oshi.util.Util;
 /**
  * A demonstration of access to many of OSHI's capabilities
  */
-public class _OSHI { // NOSONAR squid:S5786
+public class OSHI_Test { // NOSONAR squid:S5786
 
-    private static final Logger logger = LoggerFactory.getLogger(_OSHI.class);
+    private static final Logger logger = LoggerFactory.getLogger(OSHI_Test.class);
 
     static List<String> oshi = new ArrayList<>();
 

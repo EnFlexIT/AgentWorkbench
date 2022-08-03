@@ -21,7 +21,7 @@ Require-Bundle: jakarta.servlet-api,
  com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider;bundle-version="2.12.2",
  de.enflexit.awb.ws.swagger1x;bundle-version="1.6.6",
  org.agentgui.core,
- com.github.oshi.oshi-core
+ de.enflexit.oshi;bundle-version="6.2.2"
 Export-Package: de.enflexit.awb.ws.restapi,
  de.enflexit.awb.ws.restapi.gen,
  de.enflexit.awb.ws.restapi.gen.factories,
