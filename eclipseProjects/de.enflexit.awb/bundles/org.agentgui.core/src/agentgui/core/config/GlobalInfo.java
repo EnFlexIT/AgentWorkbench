@@ -69,6 +69,7 @@ import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.environment.EnvironmentTypeServiceFinder;
 import agentgui.core.environment.EnvironmentTypes;
+import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.network.JadeUrlConfiguration;
@@ -251,7 +252,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public GlobalInfo() {
 
-		boolean debug=false;
+		boolean debug = false;
 		try {
 			// ----------------------------------------------------------------			
 			// --- Get initial base directory by checking this class location -
@@ -271,8 +272,20 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			String pathFound = thisFile.getAbsolutePath();
 			String baseDir = null;
 			if (pathFound.endsWith(".jar") && pathFound.contains(File.separator + "plugins" + File.separator)) {
-				// --- OSGI environment ---------------------------------------
-				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverProduct);
+				// ------------------------------------------------------------
+				// --- Can be product or IDE with Target platform -------------
+				// ------------------------------------------------------------
+				
+				// --- Get the eclipse configuration location -----------------
+				String configurationFile = Platform.getConfigurationLocation().getURL().getFile();
+				if (configurationFile.contains("plugins/org.eclipse.pde.core/")==true) {
+					// --- This is an IDE environment -------------------------
+					this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverIDE);
+				} else {
+					// --- Product OSGI environment ---------------------------
+					this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverProduct);
+				}
+				// --- Set base directory -------------------------------------
 				int cutAt = pathFound.indexOf("plugins" + File.separator);
 				baseDir = pathFound.substring(0, cutAt);
 				
@@ -296,6 +309,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 
 		if (debug==true) {
 			System.err.println(localAppTitle + " execution directory is '" + localBaseDir + "'");
+			GlobalInfo.printPlatformLocations();
 			GlobalInfo.println4SysProps();
 			GlobalInfo.println4EnvProps();
 		}
@@ -342,6 +356,24 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return isUpdatedAwbCoreBundle;
 	}
 	
+	/**
+	 * Prints all locations provided by the {@link Platform} instance.
+	 */
+	public static void printPlatformLocations() {
+		
+		System.out.println();
+		System.out.println("------------------------------------");  
+		System.out.println("------- Platform Locations: --------");  
+		System.out.println("------------------------------------");
+		
+		System.out.println("Location	=> " + Platform.getLocation().toString());
+		System.out.println("Configuration	=> " + Platform.getConfigurationLocation().getURL()); 
+		System.out.println("InstallLocation	=> " + Platform.getInstallLocation().getURL());
+		System.out.println("InstanceLocation	=> " + Platform.getInstanceLocation().getURL());
+		System.out.println("LogFileLocation	=> " + Platform.getLogFileLocation().toString());
+		System.out.println("UserLocation	=> " + Platform.getUserLocation().getURL());
+		System.out.println();
+	}
 	/**
 	 * This method prints out every available value of the system properties
 	 */
@@ -392,6 +424,27 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			if (propertyValue!=null) propertyValue = propertyValue.replace("\n", " ");
 			System.out.println(property + " = \t" + propertyValue);  
 		} 
+	}
+	
+	/**
+	 * Returns the system information that is to be shown in the {@link AboutDialog}.
+	 * @return the system information
+	 */
+	public String getSystemInformation() {
+		
+		StringBuilder sysInfo = new StringBuilder();
+		
+		sysInfo.append(this.getVersionInfo().getFullVersionInfo(true, "") + newLineSeparator);
+		sysInfo.append(this.getVersionInfo().getJavaInfo() + newLineSeparator);
+		sysInfo.append(newLineSeparator);
+
+		sysInfo.append("ExecutionMode: 	" + this.getExecutionModeDescription() + newLineSeparator);
+		sysInfo.append("Executed Over: 	" + this.getExecutionEnvironment() + newLineSeparator);
+		sysInfo.append("AWB Base Directory: 	" + this.getPathBaseDir() + newLineSeparator);
+		sysInfo.append("Property Directory: 	" + this.getPathProperty(true) + newLineSeparator);
+		sysInfo.append("Project Directory: 	" + this.getPathProjects() + newLineSeparator);
+		
+		return sysInfo.toString();
 	}
 	
 	

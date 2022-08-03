@@ -46,7 +46,9 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -93,6 +95,9 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private String teamMember = "";
 	
 	private JButton jButtonOk;
+	private JPanel jPanelSystemInformation;
+	private JScrollPane jScrollPaneSystemInfo;
+	private JTextArea jTextAreaSystemInfo;
 	
 	
 	/**
@@ -148,9 +153,10 @@ public class AboutDialog extends JDialog implements ActionListener{
 		jLabelTitle.setText( Application.getGlobalInfo().getApplicationTitle());
 		jLabelVersion.setText("Version: " +  Application.getGlobalInfo().getVersionInfo().getFullVersionInfo(false, " "));
 		jLabelCopyright3.setText(Language.translate("Alle Rechte vorbehalten."));
+		this.getJTextAreaSystemInfo().setText(Application.getGlobalInfo().getSystemInformation());
 		
 		// --- Set Dialog size and position -------------------------
-		this.setSize(550, 480);
+		this.setSize(650, 500);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
@@ -174,39 +180,46 @@ public class AboutDialog extends JDialog implements ActionListener{
 	 */
 	private JPanel getJContentPane() {
 		if (jContentPane == null) {
-			GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
-			gridBagConstraints31.gridx = 0;
-			gridBagConstraints31.insets = new Insets(20, 40, 5, 5);
-			gridBagConstraints31.gridy = 0;
-			GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
-			gridBagConstraints22.fill = GridBagConstraints.BOTH;
-			gridBagConstraints22.gridy = 2;
-			gridBagConstraints22.weightx = 1.0;
-			gridBagConstraints22.weighty = 1.0;
-			gridBagConstraints22.insets = new Insets(20, 40, 5, 40);
-			gridBagConstraints22.gridwidth = 2;
-			gridBagConstraints22.gridx = 0;
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.anchor = GridBagConstraints.CENTER;
-			gridBagConstraints4.insets = new Insets(20, 0, 30, 0);
-			gridBagConstraints4.gridwidth = 2;
-			gridBagConstraints4.gridy = 3;
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 1;
-			gridBagConstraints2.anchor = GridBagConstraints.WEST;
-			gridBagConstraints2.insets = new Insets(20, 0, 5, 0);
-			gridBagConstraints2.gridy = 0;
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.gridx = 1;
-			gridBagConstraints1.anchor = GridBagConstraints.WEST;
-			gridBagConstraints1.insets = new Insets(0, 0, 5, 0);
-			gridBagConstraints1.gridy = 1;
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.gridwidth = 2;
-			gridBagConstraints.insets = new Insets(20, 20, 0, 10);
-			gridBagConstraints.gridy = 0;
+			
+			GridBagLayout gbl_Content = new GridBagLayout();
+			gbl_Content.columnWidths = new int[]{0, 0, 0};
+			gbl_Content.rowHeights = new int[]{0, 0, 0, 0};
+			gbl_Content.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_Content.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+			
+			GridBagConstraints gbc_JLabelIcon = new GridBagConstraints();
+			gbc_JLabelIcon.insets = new Insets(20, 40, 5, 5);
+			gbc_JLabelIcon.gridx = 0;
+			gbc_JLabelIcon.gridy = 0;
+
+			GridBagConstraints gbc_JLableTitle = new GridBagConstraints();
+			gbc_JLableTitle.anchor = GridBagConstraints.WEST;
+			gbc_JLableTitle.insets = new Insets(20, 0, 5, 0);
+			gbc_JLableTitle.gridx = 1;
+			gbc_JLableTitle.gridy = 0;
+
+			GridBagConstraints gbc_JLabelVersion = new GridBagConstraints();
+			gbc_JLabelVersion.anchor = GridBagConstraints.WEST;
+			gbc_JLabelVersion.insets = new Insets(0, 0, 5, 0);
+			gbc_JLabelVersion.gridx = 1;
+			gbc_JLabelVersion.gridy = 1;
+			
+			GridBagConstraints gbc_JTabbedPane = new GridBagConstraints();
+			gbc_JTabbedPane.fill = GridBagConstraints.BOTH;
+			gbc_JTabbedPane.weightx = 1.0;
+			gbc_JTabbedPane.weighty = 1.0;
+			gbc_JTabbedPane.insets = new Insets(20, 40, 5, 40);
+			gbc_JTabbedPane.gridwidth = 2;
+			gbc_JTabbedPane.gridx = 0;
+			gbc_JTabbedPane.gridy = 2;
+
+			GridBagConstraints gbc_JButtonOk = new GridBagConstraints();
+			gbc_JButtonOk.anchor = GridBagConstraints.CENTER;
+			gbc_JButtonOk.insets = new Insets(20, 0, 30, 0);
+			gbc_JButtonOk.gridwidth = 2;
+			gbc_JButtonOk.gridx = 0;
+			gbc_JButtonOk.gridy = 3;
+
 			
 			jLabelIcon = new JLabel();
 			jLabelIcon.setText(" ");
@@ -222,12 +235,12 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jLabelVersion.setToolTipText("");
 			
 			jContentPane = new JPanel();
-			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.add(jLabelIcon, gridBagConstraints31);
-			jContentPane.add(jLabelTitle, gridBagConstraints2);
-			jContentPane.add(jLabelVersion, gridBagConstraints1);
-			jContentPane.add(getJButtonOk(), gridBagConstraints4);
-			jContentPane.add(getJTabbedPane(), gridBagConstraints22);
+			jContentPane.setLayout(gbl_Content);
+			jContentPane.add(jLabelIcon, gbc_JLabelIcon);
+			jContentPane.add(jLabelTitle, gbc_JLableTitle);
+			jContentPane.add(jLabelVersion, gbc_JLabelVersion);
+			jContentPane.add(getJButtonOk(), gbc_JButtonOk);
+			jContentPane.add(getJTabbedPane(), gbc_JTabbedPane);
 		}
 		return jContentPane;
 	}
@@ -286,7 +299,8 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jTabbedPane.addTab("Copyright", null, getJPanelGeneral(), null);
 			jTabbedPane.addTab("Mitwirkende", null, getJPanelMembers(), null);
 			jTabbedPane.setTitleAt(1, Language.translate("Mitwirkende"));
-			
+			jTabbedPane.addTab("Systeminformationen", null, this.getJPanelSystemInformation(), null);
+			jTabbedPane.setTitleAt(2, Language.translate("Systeminformationen"));
 		}
 		return jTabbedPane;
 	}
@@ -412,6 +426,42 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jPanelMembers.add(jLabelMembership, gridBagConstraints6);
 		}
 		return jPanelMembers;
+	}
+	
+	private JPanel getJPanelSystemInformation() {
+		if (jPanelSystemInformation==null) {
+			jPanelSystemInformation = new JPanel();
+			GridBagLayout gbl_jPanelSystemInformation = new GridBagLayout();
+			gbl_jPanelSystemInformation.columnWidths = new int[]{0, 0};
+			gbl_jPanelSystemInformation.rowHeights = new int[]{0, 0};
+			gbl_jPanelSystemInformation.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gbl_jPanelSystemInformation.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+			jPanelSystemInformation.setLayout(gbl_jPanelSystemInformation);
+			
+			GridBagConstraints gbc_jScrollPaneSystemInfo = new GridBagConstraints();
+			gbc_jScrollPaneSystemInfo.insets = new Insets(5, 5, 5, 5);
+			gbc_jScrollPaneSystemInfo.fill = GridBagConstraints.BOTH;
+			gbc_jScrollPaneSystemInfo.gridx = 0;
+			gbc_jScrollPaneSystemInfo.gridy = 0;
+			jPanelSystemInformation.add(this.getjScrollPaneSystemInfo(), gbc_jScrollPaneSystemInfo);
+			
+		}
+		return jPanelSystemInformation;
+	}
+	private JScrollPane getjScrollPaneSystemInfo() {
+		if (jScrollPaneSystemInfo==null) {
+			jScrollPaneSystemInfo = new JScrollPane();
+			jScrollPaneSystemInfo.setViewportView(this.getJTextAreaSystemInfo());
+		}
+		return jScrollPaneSystemInfo;
+	}
+	private JTextArea getJTextAreaSystemInfo() {
+		if (jTextAreaSystemInfo==null) {
+			jTextAreaSystemInfo = new JTextArea();
+			jTextAreaSystemInfo.setEditable(false);
+			jTextAreaSystemInfo.setFont(new Font("Dialog", Font.PLAIN, 11));
+		}
+		return jTextAreaSystemInfo;
 	}
 	
 	/* (non-Javadoc)

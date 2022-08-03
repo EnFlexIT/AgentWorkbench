@@ -204,7 +204,7 @@ public class DatabaseConnectionManager {
 			}
 			
 		} else {
-			System.err.println("No HibernateDatabaseService could be found for the driver class '" + driverClass + "'");
+			//System.err.println("No HibernateDatabaseService could be found for the driver class '" + driverClass + "'");
 		}
 	}
 	
