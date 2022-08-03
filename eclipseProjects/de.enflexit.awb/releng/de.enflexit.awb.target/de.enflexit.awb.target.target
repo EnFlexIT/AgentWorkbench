@@ -105,13 +105,6 @@
 					<version>1.5.3</version>
 					<type>jar</type>
 				</dependency>
-				<!-- OSHI -->
-				<dependency>
-					<groupId>com.github.oshi</groupId>
-					<artifactId>oshi-core</artifactId>
-					<version>6.1.6</version>
-					<type>jar</type>
-				</dependency>
 			</dependencies>
 		</location>
 
