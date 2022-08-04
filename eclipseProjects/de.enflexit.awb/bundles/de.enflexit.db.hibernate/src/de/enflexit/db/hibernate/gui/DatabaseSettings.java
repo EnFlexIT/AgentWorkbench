@@ -113,6 +113,9 @@ public class DatabaseSettings implements Serializable {
 			// --- Cast the object to a DatabaseSettings instance and compare it --------
 			DatabaseSettings compareSettings = (DatabaseSettings) compareObject;
 			
+			//--- If both instances are empty, they are equal ---------------------------
+			if (this.isEmpty() && compareSettings.isEmpty()) return true;
+			
 			// --- Compare the database system name -------------------------------------
 			String databaseSystemNameComp = compareSettings.getDatabaseSystemName();
 			String databaseSystemNameLocal = this.getDatabaseSystemName();
@@ -157,6 +160,14 @@ public class DatabaseSettings implements Serializable {
 			return false;
 		}
 		return string1.equals(string2);
+	}
+	
+	/**
+	 * Checks if this {@link DatabaseSettings} instance is empty, i.e. both name and setting are null.
+	 * @return true, if is empty
+	 */
+	public boolean isEmpty() {
+		return (this.getDatabaseSystemName()==null && this.getHibernateDatabaseSettings()==null);
 	}
 	
 }
