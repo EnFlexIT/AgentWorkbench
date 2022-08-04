@@ -233,7 +233,7 @@ public class AWBUpdater extends Thread {
 	 */
 	private void checkForAvailableUpdates() {
 		
-		String infoString = "Newer versions of local software components are available, please update your Target Platform!";
+		String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 		boolean updatesAvailable = P2OperationsHandler.getInstance().checkForNewerBundles();
 		
 		if (updatesAvailable==true) {
