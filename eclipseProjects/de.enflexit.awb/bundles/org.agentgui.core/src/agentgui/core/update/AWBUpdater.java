@@ -128,12 +128,13 @@ public class AWBUpdater extends Thread {
 			long time4NextCheck = this.updateDateLastChecked + AWBUpdater.UPDATE_CHECK_PERIOD;
 			if (this.enforceUpdate==false && timeNow < time4NextCheck) {
 				this.doUpdateProcedure = false;
+				return;
 			} else {
 				Application.getGlobalInfo().setUpdateDateLastChecked(timeNow);
 				Application.getGlobalInfo().doSaveConfiguration();
 			}
 		}
-
+		
 		switch (this.executionMode) {
 		case APPLICATION:
 			// --------------------------------------------
@@ -233,10 +234,10 @@ public class AWBUpdater extends Thread {
 	 */
 	private void checkForAvailableUpdates() {
 		
-		String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 		boolean updatesAvailable = P2OperationsHandler.getInstance().checkForNewerBundles();
 		
 		if (updatesAvailable==true) {
+			String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			
 			//TODO Activate when sure everything works
