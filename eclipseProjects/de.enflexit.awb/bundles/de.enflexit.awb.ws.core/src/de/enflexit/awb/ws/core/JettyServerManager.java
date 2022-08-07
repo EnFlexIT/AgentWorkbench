@@ -568,7 +568,7 @@ public class JettyServerManager {
 	 * @param serverName the server name
 	 * @return true, if successful
 	 */
-	private boolean startConfiguredServer(final Server server, String serverName) {
+	private boolean startConfiguredServer(final Server server, final String serverName) {
 		
 		// --- Start the server ---------------------------
 		new Thread(new Runnable() {
@@ -580,6 +580,7 @@ public class JettyServerManager {
 					server.start();
 					
 				} catch (Exception ex) {
+					System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Thread '" + Thread.currentThread().getName() + "' Error while trying to starting server '" + serverName + "':");
 					ex.printStackTrace();
 				}
 			}
