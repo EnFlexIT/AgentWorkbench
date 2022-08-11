@@ -285,7 +285,9 @@ public class ClassSelectionPanel extends JPanel {
 		jLabelCustomize.setText(class2Search4Description + ":");
 		jLabelCustomize.setFont(new Font("Dialog", Font.BOLD, 12));
 		
-		this.setLayout(new GridBagLayout());
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0};
+		this.setLayout(gridBagLayout);
 		this.add(jLabelCustomize, gridBagConstraints42);
 		this.add(this.getJTextFieldCustomizeClass(), gridBagConstraints31);
 		this.add(this.getJButtonDefaultClass(), gridBagConstraints52);
