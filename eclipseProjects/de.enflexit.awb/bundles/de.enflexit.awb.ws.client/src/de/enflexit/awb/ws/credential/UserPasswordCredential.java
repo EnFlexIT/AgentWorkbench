@@ -1,10 +1,19 @@
 package de.enflexit.awb.ws.credential;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * The Class UserPasswordCredential.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "UserPasswordCredential", propOrder = {
+    "userName",
+    "password"
+})
 public class UserPasswordCredential extends AbstractCredential {
 	
 	private static final long serialVersionUID = -4205649257056012094L;

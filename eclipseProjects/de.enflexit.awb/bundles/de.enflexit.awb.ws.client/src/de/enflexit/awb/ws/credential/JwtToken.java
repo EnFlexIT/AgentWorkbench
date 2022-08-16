@@ -3,6 +3,22 @@ package de.enflexit.awb.ws.credential;
 import java.io.Serializable;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
+/**
+ * The Class JwtToken.
+ *
+ * @author Timo Brandhorst - SOFTEC - University Duisburg-Essen
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "JwtToken", propOrder = {
+    "jwtToken",
+    "header",
+    "body",
+    "cryptographicSignature",
+})
 public class JwtToken implements Serializable {
 
 	private static final long serialVersionUID = 5587910146851984549L;

@@ -16,6 +16,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -23,14 +25,12 @@ import javax.xml.bind.annotation.XmlType;
 import agentgui.core.application.Application;
 import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetupNotification;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import de.enflexit.awb.ws.credential.BearerTokenCredential;
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
 import de.enflexit.common.Observable;
-import de.enflexit.common.Observer;
 import de.enflexit.common.ServiceFinder;
 
 /**
@@ -45,8 +45,7 @@ import de.enflexit.common.ServiceFinder;
 	    "serverURLList",
 	    "credentialList"
 	})
-
-public class WsCredentialStore implements Serializable,Observer {
+public class WsCredentialStore implements Serializable {
 	
 	private static final long serialVersionUID = -2711360698936471113L;
 	private static final String FILE_ENCODING = "UTF-8";
@@ -54,20 +53,32 @@ public class WsCredentialStore implements Serializable,Observer {
 	// ---------------------------------------------------
 	// --- From here the singleton definition -------------
 	// ----------------------------------------------------
-	@XmlTransient
 	private static WsCredentialStore instance;
 	private static String WS_CREDENTIAL_STORE_FILE="WsCredentialStore.xml";
+	private static File credentialStoreFile;
 	
 	/**
 	 * Returns the single instance of WsCredentialStore.
 	 * @return single instance of WsCredentialStore
 	 */
 	public static synchronized WsCredentialStore getInstance() {
+		
 		if (instance==null) {
-			WsCredentialStore.load(WsCredentialStore.getWsCredentialStoreFile());
+			credentialStoreFile = WsCredentialStore.getWsCredentialStoreFile();
+			instance = WsCredentialStore.load(credentialStoreFile);
 			if(instance==null) {
-				instance= new WsCredentialStore();
+				instance=new WsCredentialStore();
 			}
+			
+		} else {
+			if (WsCredentialStore.getWsCredentialStoreFile().equals(credentialStoreFile)==false) {
+				WsCredentialStore.save(instance, credentialStoreFile);
+				instance = WsCredentialStore.load(credentialStoreFile);
+				if(instance==null) {
+					instance=new WsCredentialStore();
+				}
+			}
+			
 		}
 		return instance;
 	}
@@ -76,7 +87,11 @@ public class WsCredentialStore implements Serializable,Observer {
 	// --- From here attributes and access methods --------
 	// ----------------------------------------------------
 	private List<ServerURL> serverURLList;
+	
+	@XmlElementWrapper(name="credentials")
+	@XmlElement(name="credential")
 	private List<AbstractCredential> credentialList;
+	
 	private List<CredentialAssignment> credentialAssignmentList;
 	
 	@XmlTransient
@@ -93,8 +108,7 @@ public class WsCredentialStore implements Serializable,Observer {
 		}
 		apiRegistrationServiceList.clear();
 		// --- Fill the list ------------------------------------
-		List<AwbApiRegistrationService> registeredServiceList = ServiceFinder
-				.findServices(AwbApiRegistrationService.class);
+		List<AwbApiRegistrationService> registeredServiceList = ServiceFinder.findServices(AwbApiRegistrationService.class);
 		for (int i = 0; i < registeredServiceList.size(); i++) {
 			apiRegistrationServiceList.add(registeredServiceList.get(i));
 		}
@@ -323,6 +337,26 @@ public class WsCredentialStore implements Serializable,Observer {
         }
 	}
 	
+
+	/**
+	 * Update credential in credential list.
+	 *
+	 * @param abstrCred the abstract credential
+	 */
+	public void updateCredentialInCredentialList(AbstractCredential abstrCred) {
+		    AbstractCredential oldCred=this.getCredential(abstrCred.getName());
+        	if(oldCred!=null) {
+        		credentialList.remove(oldCred);
+        		this.putInCredentialList(abstrCred);
+        	}else {
+        	  oldCred=this.getCredentialWithID(abstrCred.getID());
+        	  if(oldCred!=null) {
+        		credentialList.remove(oldCred);
+          		this.putInCredentialList(abstrCred); 
+        	  }
+        	}
+	}
+	
 	/**
 	 * Checks if credentials with the given {@link CredentialType} are in the
 	 * CredentialList If not the credential will be added to the list
@@ -349,6 +383,41 @@ public class WsCredentialStore implements Serializable,Observer {
 			}
 		}
 		return credListSameType;
+	}
+	
+	/**
+	 * Gets the credential with the specified name.
+	 *
+	 * @param credName the credential name
+	 * @return the credential with name, null if the credential with the specific name could not be found
+	 */
+	public AbstractCredential getCredentialWithName(String credName) {
+		List<AbstractCredential> credList = getCredentialList();
+		System.out.println("Here");
+		for (Iterator<AbstractCredential> iterator = credList.iterator(); iterator.hasNext();) {
+			AbstractCredential abstrCred = (AbstractCredential) iterator.next();
+			if (credName.equals(abstrCred.getName())) {
+				return abstrCred;
+			} 
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the credential with ID.
+	 *
+	 * @param ID the id
+	 * @return the credential with ID
+	 */
+	public AbstractCredential getCredentialWithID(Integer ID) {
+		List<AbstractCredential> credList = getCredentialList();
+		for (Iterator<AbstractCredential> iterator = credList.iterator(); iterator.hasNext();) {
+			AbstractCredential abstrCred = (AbstractCredential) iterator.next();
+			if (ID.equals(abstrCred.getID())) {
+				return abstrCred;
+			} 
+		}
+		return null;
 	}
 	
 	// ------------------------------------------------------------
@@ -413,30 +482,37 @@ public class WsCredentialStore implements Serializable,Observer {
 	public boolean save() {
 		return save(this);
 	}
-
+	
 	/**
 	 * Saves the specified WsCredentialStore to the specified file.
 	 *
-	 * @param file              the file
-	 * @param WsCredentialStore the wsCredentialStore
+	 * @param wsCredentialStore the ws credential store
 	 * @return true, if successful
 	 */
 	public static boolean save(WsCredentialStore wsCredentialStore) {
-
+		return save(wsCredentialStore, getWsCredentialStoreFile());
+	}
+	
+	/**
+	 * Saves the specified WsCredentialStore to the specified file.
+	 *
+	 * @param wsCredentialStore the ws credential store
+	 * @param file              the file
+	 * @return true, if successful
+	 */
+	public static boolean save(WsCredentialStore wsCredentialStore, File file) {
+		
 		boolean success = true;
 
 		// --- Check the JettyConfiguration instance ------
 		if (wsCredentialStore == null) {
-			System.err.println("[" + WsCredentialStore.class.getSimpleName()
-					+ "] No WsCredentialStore instance was specified to be saved!");
+			System.err.println("[" + WsCredentialStore.class.getSimpleName()+ "] No WsCredentialStore instance was specified to be saved!");
 			return false;
 		}
 
 		// --- Where to save? -----------------------------
-		File file = getWsCredentialStoreFile();
 		if (file == null) {
-			System.err.println("[" + WsCredentialStore.class.getSimpleName()
-					+ "] The path for saving a configuration as XML file is not allowed to be null!");
+			System.err.println("[" + WsCredentialStore.class.getSimpleName()+ "] The path for saving a configuration as XML file is not allowed to be null!");
 			return false;
 		}
 
@@ -475,7 +551,7 @@ public class WsCredentialStore implements Serializable,Observer {
 	 * @return the WsCredentialStore configuration
 	 */
 	public static WsCredentialStore load(File file) {
-		
+		System.out.println(file.getAbsolutePath());
 		if (file==null || file.exists()==false) return null;
 		
 		WsCredentialStore wsCredStore = null;
@@ -514,51 +590,12 @@ public class WsCredentialStore implements Serializable,Observer {
 	 * @see de.enflexit.common.Observer#update(de.enflexit.common.Observable,
 	 * java.lang.Object)
 	 */
-	@Override
 	public void update(Observable observable, Object updateObject) {
 
 		if (!(observable instanceof Project)) return;
 		
 		if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
 			save(this);
-		} else if (updateObject instanceof SimulationSetupNotification) {
-
-			SimulationSetupNotification sscn = (SimulationSetupNotification) updateObject;
-			switch (sscn.getUpdateReason()) {
-			case SIMULATION_SETUP_ADD_NEW:
-
-				break;
-			case SIMULATION_SETUP_COPY:
-
-				break;
-			case SIMULATION_SETUP_LOAD:
-
-				break;
-			case SIMULATION_SETUP_PREPARE_SAVING:
-				save(this);
-				break;
-			case SIMULATION_SETUP_REMOVE:
-				File credentialStoreFile = getWsCredentialStoreFile();
-			    boolean deleted=false;
-				deleted=credentialStoreFile.delete();
-				deleted=credentialStoreFile.getParentFile().delete();
-				if(deleted==true) {
-				System.out.println("Delete of credential store file was not successfull");
-				}
-				break;
-			case SIMULATION_SETUP_RENAME:
-				//TODO: Check what to do here
-				break;
-			case SIMULATION_SETUP_SAVED:
-
-				break;
-			case SIMULATION_SETUP_AGENT_ADDED:
-				break;
-			case SIMULATION_SETUP_AGENT_REMOVED:
-				break;
-			case SIMULATION_SETUP_AGENT_RENAMED:
-				break;
-			}
-		}
+		} 
 	}
 }

@@ -7,11 +7,13 @@ import java.awt.Insets;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
-public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCredential> implements WsConfigurationInterface {
+public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCredential> implements WsConfigurationInterface,DocumentListener {
 
 	private static final long serialVersionUID = -4236093133804754420L;
 	private JLabel jLableApiKeyName;
@@ -19,6 +21,11 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 	private JLabel jLableApiKeyValues;
 	private JLabel jLableKey;
 	private JTextField jTextField_KeyValue;
+	private boolean unsavedChanges=false;
+	
+	//----------------------------------------------------
+	//--------From here fields for temporary savings------
+	//----------------------------------------------------
 	
 	public JPanelApiKeyCredentials() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -66,16 +73,18 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 		return jLableApiKeyName;
 	}
 	
-	public JTextField getJTextFieldKeyName() {
+	private JTextField getJTextFieldKeyName() {
 		if (jTextField_KeyName == null) {
 			jTextField_KeyName = new JTextField();
 			jTextField_KeyName.setFont(new Font("Dialog", Font.BOLD, 12));
 			jTextField_KeyName.setColumns(10);
 			jTextField_KeyName.setEditable(true);
+			fillJTextfieldCredentialKeyName();
+			jTextField_KeyName.getDocument().addDocumentListener(this);
 		}
 		return jTextField_KeyName;
 	}
-	public JLabel getJLableApiKeyValues() {
+	private JLabel getJLableApiKeyValues() {
 		if (jLableApiKeyValues == null) {
 			jLableApiKeyValues = new JLabel("API-Key Values");
 			jLableApiKeyValues.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -89,31 +98,113 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 		}
 		return jLableKey;
 	}
-	public JTextField getJTextFieldKeyValue() {
+	private JTextField getJTextFieldKeyValue() {
 		if (jTextField_KeyValue == null) {
 			jTextField_KeyValue = new JTextField();
 			jTextField_KeyValue.setFont(new Font("Dialog", Font.BOLD, 12));
 			jTextField_KeyValue.setColumns(10);
 			jTextField_KeyValue.setEditable(true);
+			fillJTextFieldKeyValue();
+			jTextField_KeyValue.getDocument().addDocumentListener(this);
 		}
 		return jTextField_KeyValue;
 	}
 
+
+	
+	//-------------------------------------------------
+    //----From here methods to fill/access the fields-------
+	//-------------------------------------------------
+	
+	/**
+	 * Fill J textfield credential key name.
+	 */
+	private void fillJTextfieldCredentialKeyName() {
+		if(this.getCredential()!=null) {
+			getJTextFieldKeyName().setText(this.getCredential().getApiKeyName());
+		}
+	}
+	
+	/**
+	 * Fill J text field key value.
+	 */
+	private void fillJTextFieldKeyValue() {
+		if(this.getCredential()!=null) {
+			getJTextFieldKeyValue().setText(this.getCredential().getApiKeyValue());
+		}
+	}
+	
+	/**
+	 * Fills api key textfields. If the credential is create or was set before. This methods fills the API-Key related JTextfields
+	 */
+	public void fillApiKeyTextfields() {
+		fillJTextfieldCredentialKeyName();
+		fillJTextFieldKeyValue(); 
+	}
+	
+	//-------------------------------------------------
+    //----From here overridden methods-------
+	//-------------------------------------------------
+	
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
+	*/
 	@Override
 	public boolean hasUnsavedChanges() {
-		boolean unsavedChanges=true;
-		if(!jTextField_KeyName.getText().isBlank()) {
-			unsavedChanges=true;
-		}
-		
-		if(!jTextField_KeyValue.getText().isBlank()) {
-			unsavedChanges=true;
-		}
 		return unsavedChanges;
 	}
 
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
+	*/
 	@Override
 	public boolean userConfirmedToChangeView() {
 		return hasUnsavedChanges();
+	}
+	
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.ui.client.credentials.AbstractCredentialPanel#getCredential()
+	*/
+	@Override
+	public ApiKeyCredential getCredential() {
+		if (super.credential == null) {
+			if (getJTextFieldKeyName().getText() != null && getJTextFieldKeyValue().getText() != null) {
+				if (!getJTextFieldKeyName().getText().isBlank()) {
+					if (!getJTextFieldKeyValue().getText().isBlank()) {
+						ApiKeyCredential apiKeyCred = new ApiKeyCredential();
+						apiKeyCred.setApiKeyName(getJTextFieldKeyName().getText());
+						apiKeyCred.setApiKeyValue(getJTextFieldKeyValue().getText());
+						super.credential=apiKeyCred;
+					}
+				}
+			}
+		}
+		return super.credential;
+	}
+
+	/* (non-Javadoc)
+	* @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
+	*/
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		this.unsavedChanges=true;
+	}
+
+	/* (non-Javadoc)
+	* @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
+	*/
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		this.unsavedChanges=true;		
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.
+	 * DocumentEvent)
+	 */
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		this.unsavedChanges = true;
 	}
 }

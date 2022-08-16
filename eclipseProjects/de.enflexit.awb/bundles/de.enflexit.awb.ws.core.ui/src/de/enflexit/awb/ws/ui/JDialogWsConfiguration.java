@@ -22,7 +22,7 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import de.enflexit.awb.ws.BundleHelper;
-import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
+import de.enflexit.awb.ws.ui.client.JTabbedPaneWsCredentials;
 import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
@@ -39,7 +39,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 	
 	private JTabbedPane jTabbedPane;
 	private JPanelServerConfiguration jPanelServerConfiguration;
-	private JPanelClientConfiguration jPanelClientConfiguration;
+	private JTabbedPaneWsCredentials jTabbedPaneWsCredentials;
 	private JButton jButtonClose;
 
 	/**
@@ -78,7 +78,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		
 		// --- Size and center dialog -------------------------------
 		Rectangle screenSize = this.getGraphicsConfiguration().getBounds(); 
-		this.setSize((int) (screenSize.getWidth() * 0.6), (int)(screenSize.getHeight()*0.6));
+		this.setSize(768, 534);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -121,7 +121,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab(" WS - Server ",  null, this.getJPanelServerConfiguration(), null);
-			jTabbedPane.addTab(" WS - Clients ", null, this.getJPanelClientConfiguration(), null);
+			jTabbedPane.addTab(" WS - Clients ", null, this.getJTabbedPaneWsCredentials(), null);
 		}
 		return jTabbedPane;
 	}
@@ -131,11 +131,12 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		}
 		return jPanelServerConfiguration;
 	}
-	private JPanelClientConfiguration getJPanelClientConfiguration() {
-		if (jPanelClientConfiguration == null) {
-			jPanelClientConfiguration = new JPanelClientConfiguration();
+	
+	private JTabbedPaneWsCredentials getJTabbedPaneWsCredentials() {
+		if (jTabbedPaneWsCredentials == null) {
+			jTabbedPaneWsCredentials = new JTabbedPaneWsCredentials();
 		}
-		return jPanelClientConfiguration;
+		return jTabbedPaneWsCredentials;
 	}
 	private JButton getJButtonClose() {
 		if (jButtonClose == null) {
@@ -169,9 +170,9 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 			if (this.getJPanelServerConfiguration().userConfirmedToChangeView()==false) return;
 		}
 		// --- Check client configuration ---------------------------
-		if (this.getJPanelClientConfiguration().hasUnsavedChanges()==true) {
+		if (this.getJTabbedPaneWsCredentials().hasUnsavedChanges()==true) {
 			this.getJTabbedPane().setSelectedIndex(0);
-			if (this.getJPanelClientConfiguration().userConfirmedToChangeView()==false) return;
+			if (this.getJTabbedPaneWsCredentials().userConfirmedToChangeView()==false) return;
 		}
 		// --- Done - close dialog ----------------------------------		
 		this.setVisible(false);

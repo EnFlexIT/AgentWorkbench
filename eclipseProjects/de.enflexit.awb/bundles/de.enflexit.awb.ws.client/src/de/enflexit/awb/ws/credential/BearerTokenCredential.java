@@ -1,10 +1,18 @@
 package de.enflexit.awb.ws.credential;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * The Class BearerTokenCredential.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "BearerTokenCredential", propOrder = {
+    "jwtToken"
+})
 public class BearerTokenCredential extends AbstractCredential {
 	
 	private static final long serialVersionUID = 5553518664784944192L;
