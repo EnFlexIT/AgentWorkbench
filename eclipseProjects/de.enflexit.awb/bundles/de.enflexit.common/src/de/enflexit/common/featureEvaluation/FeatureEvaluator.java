@@ -94,6 +94,8 @@ public class FeatureEvaluator {
 		this.getFeatureToPluginListMap().clear();
 		this.getPluginToFeatureListMap().clear();
 		
+		String symbolicBundleNameProduct = this.getProductBundleID();
+		
 		// --- Evaluate the feature directory ---------------------------------
 		List<Feature> featureList = this.getFeatureListFromFeatureDirectory(); 
 		for (Feature feature : featureList) {
@@ -115,7 +117,7 @@ public class FeatureEvaluator {
 				pluginNameList.add(plugin.getId());
 				this.getPluginMap().put(plugin.getId(), plugin);
 				// --- Did we find the product bundle? ------------------------
-				if (plugin.getId().equals(this.getProductBundleID())==true) {
+				if (symbolicBundleNameProduct!=null && plugin.getId().equals(symbolicBundleNameProduct)==true) {
 					this.setProductFeatureID(feature.getId());
 				}
 				
@@ -508,7 +510,9 @@ public class FeatureEvaluator {
 	 */
 	public String getProductBundleID() {
 		if (productBundleID==null) {
-			productBundleID =  Platform.getProduct().getDefiningBundle().getSymbolicName();
+			if (Platform.getProduct()!=null && Platform.getProduct().getDefiningBundle()!=null) {
+				productBundleID =  Platform.getProduct().getDefiningBundle().getSymbolicName();
+			}
 		}
 		return productBundleID;
 	}
