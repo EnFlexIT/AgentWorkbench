@@ -17,3 +17,5 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.osgi
 Export-Package: de.enflexit.awb.ws.ui
 Import-Package: org.apache.commons.lang3
+Bundle-ClassPath: .,
+ miglayout15-swing.jar

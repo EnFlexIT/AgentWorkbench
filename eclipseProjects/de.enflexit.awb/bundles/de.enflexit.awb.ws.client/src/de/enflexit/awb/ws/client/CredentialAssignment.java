@@ -3,10 +3,21 @@ package de.enflexit.awb.ws.client;
 import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * The Class CredentialAssignment.
  * @author Christian Derksen - SOFTEC 
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "CredentialAssignment", propOrder = {
+    "id",
+    "idServerURL",
+    "idApiRegistrationDefaultBundleName",
+    "idCredential"
+})
 public class CredentialAssignment implements Serializable {
 
 	private static final long serialVersionUID = -7854620281999217458L;

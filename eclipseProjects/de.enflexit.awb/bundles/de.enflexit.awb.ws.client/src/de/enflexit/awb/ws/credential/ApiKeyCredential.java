@@ -1,10 +1,19 @@
 package de.enflexit.awb.ws.credential;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * The Class ApiKeyCredential.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ApiKeyCredential", propOrder = {
+    "apiKeyName",
+    "apiKeyValue"
+})
 public class ApiKeyCredential extends AbstractCredential {
 
 	private static final long serialVersionUID = -7248358188757558331L;

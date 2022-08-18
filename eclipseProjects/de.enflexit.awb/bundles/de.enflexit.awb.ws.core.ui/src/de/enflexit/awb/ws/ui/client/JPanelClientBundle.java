@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.ui.client;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,9 +40,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	private DefaultListModel<ApiRegistration> listModelRegisteredApis;
 	
 	private JPanel jPanelInfo;
-		private JLabel jLabelCredentialType;
 		private JLabel jLabelDescription;
-		private JLabel jLabelCredentialTypeDefined;
 		private JScrollPane jScrollPaneDescription;
 		private JTextArea jTextAreaDescription;
 	
@@ -51,8 +50,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	public JPanelClientBundle() {
 		this.initialize();
 	}
-	private void initialize() {
-		
+	private void initialize() {		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 100, 0};
@@ -60,8 +58,8 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelBundleList = new GridBagConstraints();
-		gbc_jLabelBundleList.insets = new Insets(5, 0, 0, 0);
 		gbc_jLabelBundleList.anchor = GridBagConstraints.WEST;
+		gbc_jLabelBundleList.insets = new Insets(5, 0, 0, 0);
 		gbc_jLabelBundleList.gridx = 0;
 		gbc_jLabelBundleList.gridy = 0;
 		add(getJLabelBundleList(), gbc_jLabelBundleList);
@@ -79,13 +77,15 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		add(getJPanelInfo(), gbc_jPanelInfo);
 	}
 	
-	public JLabel getJLabelBundleList() {
+	private JLabel getJLabelBundleList() {
 		if (jLabelBundleList == null) {
 			jLabelBundleList = new JLabel("Server - API / Client Bundle");
 			jLabelBundleList.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelBundleList.setSize(new Dimension(26, 150));
 		}
 		return jLabelBundleList;
 	}
+	
 	private JScrollPane getJScrollPaneBundleList() {
 		if (jScrollPaneBundleList == null) {
 			jScrollPaneBundleList = new JScrollPane();
@@ -94,7 +94,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jScrollPaneBundleList;
 	}
 	
-	public DefaultListModel<ApiRegistration> getListModelRegisteredApis() {
+	private DefaultListModel<ApiRegistration> getListModelRegisteredApis() {
 		if (listModelRegisteredApis==null) {
 			listModelRegisteredApis = new DefaultListModel<ApiRegistration>();
 			List<AwbApiRegistrationService> apiRegServiceList=WsCredentialStore.getInstance().getApiRegistrationServiceList();
@@ -107,7 +107,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return listModelRegisteredApis;
 	}
 	
-	public JList<ApiRegistration> getJListApiRegistration() {
+	private JList<ApiRegistration> getJListApiRegistration() {
 		if (jListApiRegistration == null) {
 			jListApiRegistration = new JList<ApiRegistration>(this.getListModelRegisteredApis());
 			jListApiRegistration.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -117,7 +117,6 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
 					ApiRegistration apiReg=jListApiRegistration.getSelectedValue();
-					getJLabelCredentialTypeDefined().setText(" "+apiReg.getCredentialType().toString());
 				    getJTextAreaDescription().setText(apiReg.getDescription());					
 				}
 			});
@@ -132,28 +131,15 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			
 			GridBagLayout gbl_jPanelInfo = new GridBagLayout();
 			gbl_jPanelInfo.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelInfo.rowHeights = new int[]{0, 0, 0, 0};
+			gbl_jPanelInfo.rowHeights = new int[]{0, 0, 0};
 			gbl_jPanelInfo.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-			gbl_jPanelInfo.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelInfo.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 			jPanelInfo.setLayout(gbl_jPanelInfo);
 			
-			GridBagConstraints gbc_jLabelCredentialType = new GridBagConstraints();
-			gbc_jLabelCredentialType.anchor = GridBagConstraints.WEST;
-			gbc_jLabelCredentialType.gridx = 0;
-			gbc_jLabelCredentialType.gridy = 0;
-			jPanelInfo.add(getJLabelCredentialType(), gbc_jLabelCredentialType);
-			
-			GridBagConstraints gbc_jLabelCredentialTypeDefined = new GridBagConstraints();
-			gbc_jLabelCredentialTypeDefined.anchor = GridBagConstraints.WEST;
-			gbc_jLabelCredentialTypeDefined.gridx = 1;
-			gbc_jLabelCredentialTypeDefined.gridy = 0;
-			jPanelInfo.add(getJLabelCredentialTypeDefined(), gbc_jLabelCredentialTypeDefined);
-			
 			GridBagConstraints gbc_jLabelDescription = new GridBagConstraints();
-			gbc_jLabelDescription.insets = new Insets(5, 0, 0, 0);
 			gbc_jLabelDescription.anchor = GridBagConstraints.WEST;
 			gbc_jLabelDescription.gridx = 0;
-			gbc_jLabelDescription.gridy = 1;
+			gbc_jLabelDescription.gridy = 0;
 			jPanelInfo.add(getJLabelDescription(), gbc_jLabelDescription);
 			
 			GridBagConstraints gbc_jTextAreaDescription = new GridBagConstraints();
@@ -161,17 +147,10 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			gbc_jTextAreaDescription.gridwidth = 2;
 			gbc_jTextAreaDescription.fill = GridBagConstraints.BOTH;
 			gbc_jTextAreaDescription.gridx = 0;
-			gbc_jTextAreaDescription.gridy = 2;
+			gbc_jTextAreaDescription.gridy = 1;
 			jPanelInfo.add(getJScrollPaneDescription(), gbc_jTextAreaDescription);
 		}
 		return jPanelInfo;
-	}
-	private JLabel getJLabelCredentialType() {
-		if (jLabelCredentialType == null) {
-			jLabelCredentialType = new JLabel("Credential Type:");
-			jLabelCredentialType.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelCredentialType;
 	}
 	private JLabel getJLabelDescription() {
 		if (jLabelDescription == null) {
@@ -179,13 +158,6 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			jLabelDescription.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelDescription;
-	}
-	public JLabel getJLabelCredentialTypeDefined() {
-		if (jLabelCredentialTypeDefined == null) {
-			jLabelCredentialTypeDefined = new JLabel("-");
-			jLabelCredentialTypeDefined.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelCredentialTypeDefined;
 	}
 	
 	private JScrollPane getJScrollPaneDescription() {
@@ -195,10 +167,13 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		}
 		return jScrollPaneDescription;
 	}
-	public JTextArea getJTextAreaDescription() {
+	
+	private JTextArea getJTextAreaDescription() {
 		if (jTextAreaDescription == null) {
 			jTextAreaDescription = new JTextArea();
 			jTextAreaDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextAreaDescription.setWrapStyleWord(true);
+			jTextAreaDescription.setLineWrap(true);
 		}
 		return jTextAreaDescription;
 	}

@@ -3,6 +3,20 @@ package de.enflexit.awb.ws.client;
 import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+
+/**
+ * The Class ServerURL saves the URL of a Server.
+ *
+ * @author Timo Brandhorst - SOFTEC - University Duisburg-Essen
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ServerURL", propOrder = {
+    "id",
+    "serverURL"
+})
 public class ServerURL implements Serializable {
 
 	private static final long serialVersionUID = 8200942503674357869L;
@@ -13,13 +27,16 @@ public class ServerURL implements Serializable {
 	/**
 	 * Instantiates a new server URL.
 	 */
-	public ServerURL() {}
+	public ServerURL() {
+		getID();
+	}
 	
 	/**
 	 * Instantiates a new server URL.
 	 * @param serverURL the server URL
 	 */
 	public ServerURL(String serverURL) {
+		getID();
 		this.setServerURL(serverURL);
 	}
 		
