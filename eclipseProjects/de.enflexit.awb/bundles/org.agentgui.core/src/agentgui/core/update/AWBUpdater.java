@@ -183,7 +183,7 @@ public class AWBUpdater extends Thread {
 			this.askBeforeDownload = true;
 			this.doUpdateProcedure = false; // set to 'true' for further developments of the AgentGuiUpdater class
 			this.doUpdateCheckOnly = true;
-			System.out.println("[" + this.getClass().getSimpleName() + "] P2 updates are not possible when starting from the IDE.");
+//			System.out.println("[" + this.getClass().getSimpleName() + "] P2 updates are not possible when starting from the IDE.");
 			
 		}
 
@@ -219,7 +219,7 @@ public class AWBUpdater extends Thread {
 				// --- Wait for the end of the benchmark ------------
 				this.waitForTheEndOfBenchmark();
 				// --- Check the repo for newer versions ------------
-				this.checkForAvailableUpdates();	// Disabled due to strange results
+				this.checkForAvailableUpdates();
 			}
 			
 			// --- Notify waiting threads ---------------------------
@@ -240,10 +240,16 @@ public class AWBUpdater extends Thread {
 			String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			
-			//TODO Activate when sure everything works
-//			if (Application.isOperatingHeadless()==false) {
-//				JOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "Updates available!", JOptionPane.WARNING_MESSAGE);
-//			}
+			if (Application.isOperatingHeadless()==false) {
+				JOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "Updates available", JOptionPane.WARNING_MESSAGE);
+			}
+		} else {
+			String infoString = "Your target platform is up to date!";
+			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
+			
+			if (this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
+				JOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		
 	}

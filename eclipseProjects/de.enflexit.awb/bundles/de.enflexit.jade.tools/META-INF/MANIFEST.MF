@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Phonebook
-Bundle-SymbolicName: de.enflexit.jade.phonebook
+Bundle-SymbolicName: de.enflexit.jade.tools
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.jade.phonebook
 Bundle-RequiredExecutionEnvironment: JavaSE-11
@@ -10,7 +10,8 @@ Require-Bundle: org.agentgui.lib.jade,
  org.agentgui.core
 Import-Package: javax.xml.bind,
  javax.xml.bind.annotation
-Export-Package: de.enflexit.jade.phonebook,
+Export-Package: de.enflexit.jade.behaviour,
+ de.enflexit.jade.phonebook,
  de.enflexit.jade.phonebook.behaviours,
  de.enflexit.jade.phonebook.search
 Bundle-Vendor: EnFlex.IT
