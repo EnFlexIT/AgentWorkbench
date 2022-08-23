@@ -10,12 +10,19 @@ import java.util.Locale;
 
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
 
 /**
  * Abstract superclass for timed behaviours. Unlike JADE's TickerBEhaviour, this implementation considers
- * the duration of the task, i.E. reduces the waiting interval accordingly when rescheduling. 
+ * the duration of the task, i.E. reduces the waiting interval accordingly when rescheduling. The task can
+ * be configured either to start at or to be finished at the specified time.
+ * 
+ * IMPORTANT: TimingBehaviours must not be added like regular behaviours, since they will block the agent
+ * thread then! Use the behaviour's start method again, and call its' stop method from the executing agent's 
+ * takeDown method for proper termination! 
  *
  * @author Alexander Graute - SOFTEC - University of Duisburg-Essen
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public abstract class AbstractTimingBehaviour extends Behaviour {
 
@@ -26,6 +33,8 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 		FinishUntil
 	}
 	
+	private ThreadedBehaviourFactory threadedBehaviourFactory;
+	
 	private boolean debug = false;
 	
 	private Duration tickInterval;
@@ -34,8 +43,8 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	private Instant nextTick;
 	private ArrayList<Integer> durations;
 	private Duration totalDuration;
-	private int tickCount = 0;
-	private int puffer = 15;
+	private int tickCount;
+	private long bufferMillis = 15;
 	private DateTimeFormatter formatter;
 	
 	private boolean done = false;
@@ -43,16 +52,16 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	/**
 	 * Instantiates a new timing behaviour, starting at the specified instant and repeated with the specified interval length.
 	 *
-	 * @param a the agent executing the behaviour
+	 * @param agent the agent executing the behaviour
 	 * @param startAt the instant to start at with interval ticks
 	 * @param interval the interval duration
 	 * @param executionTiming specifies if the should start at or be finished until the interval times.
 	 */
-	public AbstractTimingBehaviour(Agent a, Instant startAt, Duration interval, ExecutionTiming executionTiming) {
+	public AbstractTimingBehaviour(Agent agent, Instant startAt, Duration interval, ExecutionTiming executionTiming) {
+		super(agent);
 		this.setExecutionTiming(executionTiming);
 		this.setTickInterval(interval);
 		this.nextTick = startAt;
-//		this.startedAt = this.getCurrentTime();
 		this.durations = new ArrayList<Integer>();
 	}
 	
@@ -62,13 +71,13 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	 * Attention: Currently only works with real time! Use the constructor above for simulation time support.
 	 * //TODO Modify the calculation of the starting point (Method calcStartAtByInterval()) to support simulation time.
 	 *
-	 * @param a the agent
+	 * @param agent the agent
 	 * @param interval the tick interval
 	 * @param offset the duration offset
 	 * @param executionTiming specifies if the should start at or be finished until the interval times.
 	 */
-	public AbstractTimingBehaviour(Agent a, Duration interval, Duration offset, ExecutionTiming executionTiming) {
-		this(a, calcStartAtByInterval(interval, offset), interval, executionTiming);
+	public AbstractTimingBehaviour(Agent agent, Duration interval, Duration offset, ExecutionTiming executionTiming) {
+		this(agent, calcStartAtByInterval(interval, offset), interval, executionTiming);
 	}
 	
 	/**
@@ -100,14 +109,20 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	* @see jade.core.behaviours.Behaviour#action()
 	*/
 	@Override
-	public void action() {
+	public final void action() {
 		
-		//Wait if finalizeBeforeInterval is true
-		this.nextTick = calcNextTick(getNextTick(), getTickInterval());
-		printDebugMessage("Next tick at "+ getDateFormatter().format(nextTick));
-		printDebugMessage("It is now: " + getDateFormatter().format(this.getCurrentTime()));
-		long waitingTime = calcWaitingTimeDuration(nextTick, getTickInterval(), getTickCount()).toMillis();
-		printDebugMessage("Block before the action is executed for " + waitingTime + " ms or " + waitingTime /1000  + " s");
+		// --- Determine waiting time before the next execution -----
+		this.nextTick = this.calcNextTick(this.getNextTick(), this.getTickInterval());
+		this.printDebugMessage("Next execution scheduled for " + (this.executionTiming==ExecutionTiming.StartFrom ? "start time" : "end time ") + this.getDateFormatter().format(nextTick));
+		this.printDebugMessage("Current time: " + this.getDateFormatter().format(this.getCurrentTime()));
+		long waitingTime = this.calculateWaitingTime(nextTick, this.getTickInterval(), this.getTickCount()).toMillis();
+		this.printDebugMessage("Waiting " + waitingTime + " ms or " + waitingTime /1000  + " s");
+		
+		if (this.debug==true) {
+			// --- Blank line to mark the end of the debug outputs of one execution
+			System.out.println();
+		}
+		
 		try {
 			Thread.sleep(waitingTime);
 		} catch (InterruptedException e) {
@@ -116,28 +131,42 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 			return;
 		}
 		
-		//Perform action
+		// --- Perform action ---------------------------------------
 		Instant startTime = this.getCurrentTime();
-		performAction();
-		Duration durationOfExecution = Duration.between(startTime, this.getCurrentTime());
-		this.durations.add((int) durationOfExecution.toMillis());
-		this.totalDuration = getTotalDuration().plus(durationOfExecution);
-		if(durationOfExecution.toNanos() > this.getTickInterval().toNanos()) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] - duration ("+durationOfExecution.toMillis()+") is longer than tick interval ("+this.getTickInterval().toMillis()+")");
+		this.printDebugMessage("Starting execution...");
+		this.performAction();
+		Instant endTime = this.getCurrentTime();
+		Duration duration = Duration.between(startTime, endTime);
+		this.printDebugMessage("Done at " + this.getDateFormatter().format(endTime) + ", execution took " + duration.toMillis() + " ms");
+		this.durations.add((int) duration.toMillis());
+		this.totalDuration = this.getTotalDuration().plus(duration);
+		if(duration.toNanos() > this.getTickInterval().toNanos()) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] - execution time (" + duration.toMillis() + ") exceeds the specified repetition interval ("+this.getTickInterval().toMillis()+")");
 		}
 
-		//Wait unit tick ends
+		// --- Wait unit tick ends ----------------------------------
 		waitingTime = Duration.between(this.getCurrentTime(),nextTick).toMillis();
 		if(waitingTime < 0) {
 			waitingTime = 0;
 		}
-		printDebugMessage("Block after the action has been performed for" + waitingTime + "ms or " + waitingTime / 1000 + "s");
-		try {
-			Thread.sleep(waitingTime);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if(waitingTime>0) {
+			
+			printDebugMessage("Done before the specified time, waiting another " + waitingTime + " ms or " + waitingTime / 1000 + " s");
+			if (this.debug==true) {
+				// --- Blank line to mark the end of the debug outputs of one execution
+				System.out.println();
+			}
+			
+			try {
+				Thread.sleep(waitingTime);
+			} catch (InterruptedException e) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Thread interrupted, terminating behaviour");
+				this.done = true;
+				return;
+			}
 		}
 		this.tickCount++;
+		
 	}
 
 	
@@ -161,23 +190,22 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	}
 	
 	/**
-	 * Calculate waiting time duration.
+	 * Calculate the waiting time.
 	 *
 	 * @param startAt the start at
 	 * @param interval the interval
 	 * @param tickCount the tick count
 	 * @return the duration
 	 */
-	protected Duration calcWaitingTimeDuration(Instant startAt, Duration interval, int tickCount) {
+	protected Duration calculateWaitingTime(Instant startAt, Duration interval, int tickCount) {
 		Duration waitingTime = Duration.between(this.getCurrentTime(), startAt);
 		if ((this.getExecutionTiming() == ExecutionTiming.FinishUntil && tickCount != 0)) {
-			printDebugMessage("should finalize before interval end and tick count is:"+tickCount);
-			Duration standardDevitation = calcStandardDeviation(durations).multipliedBy(2);
+			Duration standardDevitation = calculateStandardDeviation(durations).multipliedBy(2);
 			Duration averageDuration = getAverageDuration(getTickCount());
-			waitingTime = waitingTime.minus(averageDuration).minus(standardDevitation).minusMillis(puffer);
-			printDebugMessage("average duration is: " + averageDuration.toMillis() + " ms");
-			printDebugMessage("standarddeviation: " + standardDevitation.toMillis() + " ms");
-			printDebugMessage("waiting time is " + waitingTime.toMillis() + " ms");
+			waitingTime = waitingTime.minus(averageDuration).minus(standardDevitation).minusMillis(bufferMillis);
+			printDebugMessage("Average execution time: " + averageDuration.toMillis() + " ms");
+			printDebugMessage("Standard deviation: " + standardDevitation.toMillis() + " ms");
+			printDebugMessage("Calculated waiting time: " + waitingTime.toMillis() + " ms");
 		}
 		if(waitingTime.isNegative()) {
 			return Duration.ofMillis(0);
@@ -186,12 +214,12 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	}
 
 	/**
-	 * Calculate standard deviation of all durations.
+	 * Calculate the standard deviation for all previous execution times.
 	 * 
 	 * @param durations the durations
 	 * @return the duration
 	 */
-	private Duration calcStandardDeviation(ArrayList<Integer> durations) {
+	private Duration calculateStandardDeviation(ArrayList<Integer> durations) {
 		
 		int length = durations.size();
 		if (length == 0) {
@@ -213,7 +241,7 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	 */
 	protected void printDebugMessage(String message) {
 		if(this.debug==true) {
-			System.out.println("[" + this.getClass().getSimpleName() + "] - "+message);
+			System.out.println("[" + this.getClass().getSimpleName() + "] - " + message);
 		}
 	}
 	
@@ -223,7 +251,7 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	 */
 	protected DateTimeFormatter getDateFormatter() {
 		if(this.formatter == null) {
-			formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss.SSS").withLocale( Locale.GERMAN ).withZone( ZoneId.systemDefault() );
+			formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss.SSS").withLocale(Locale.GERMAN).withZone(ZoneId.systemDefault());
 		}
 		return formatter;
 	}
@@ -322,6 +350,22 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	}
 	
 	/**
+	 * Gets the current buffer in milliseconds.
+	 * @return the buffer in milliseconds
+	 */
+	public long getBufferMillis() {
+		return bufferMillis;
+	}
+	
+	/**
+	 * Sets the buffer in milliseconds.
+	 * @param bufferMillis the new buffer in milliseconds
+	 */
+	public void setBufferMillis(long bufferMillis) {
+		this.bufferMillis = bufferMillis;
+	}
+	
+	/**
 	 * Gets the current time. This default implementation returns the current system time.
 	 * Override this method to return for example the current simulation time.
 	 * @return the current time
@@ -336,6 +380,38 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	@Override
 	public boolean done() {
 		return this.done;
+	}
+	
+	/**
+	 * Starts this TimingBehaviour as a threaded behaviour.
+	 */
+	public void start() {
+		if (this.myAgent!=null) {
+			Behaviour threadedBehaviour = this.getThreadedBehaviourFactory().wrap(this);
+			this.myAgent.addBehaviour(threadedBehaviour);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Cannot start, no valid agent was passed to the constructor!");
+		}
+	}
+	
+	/**
+	 * Stops this TimingBehaviour.
+	 */
+	public void stop() {
+		Thread behaviourThread = this.getThreadedBehaviourFactory().getThread(this);
+		behaviourThread.interrupt();
+		this.myAgent.removeBehaviour(this);
+	}
+	
+	/**
+	 * Gets the threaded behaviour factory.
+	 * @return the threaded behaviour factory
+	 */
+	private ThreadedBehaviourFactory getThreadedBehaviourFactory() {
+		if (threadedBehaviourFactory==null) {
+			threadedBehaviourFactory = new ThreadedBehaviourFactory(); 
+		}
+		return threadedBehaviourFactory;
 	}
 	
 }
