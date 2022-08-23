@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Phonebook
+Bundle-Name: JADE Tools
 Bundle-SymbolicName: de.enflexit.jade.tools
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.jade.phonebook
