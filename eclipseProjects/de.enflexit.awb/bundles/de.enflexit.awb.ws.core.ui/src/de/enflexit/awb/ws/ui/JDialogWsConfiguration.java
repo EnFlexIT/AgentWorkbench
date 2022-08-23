@@ -77,10 +77,13 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		});
 		
 		// --- Size and center dialog -------------------------------
-		Rectangle screenSize = this.getGraphicsConfiguration().getBounds(); 
-		this.setSize(768, 534);
+		Rectangle screenSize = this.getGraphicsConfiguration().getBounds();
+		int height = (int)(screenSize.getHeight() * 0.6);
+		int width  = (int) (screenSize.getWidth() * 0.6);
+		this.setSize(width, height);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};

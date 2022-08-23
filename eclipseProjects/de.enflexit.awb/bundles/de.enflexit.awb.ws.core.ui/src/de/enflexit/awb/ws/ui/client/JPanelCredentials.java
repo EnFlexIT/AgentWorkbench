@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.ui.client;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -23,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
@@ -32,6 +32,7 @@ import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 import de.enflexit.awb.ws.ui.client.credentials.JDialogCredentialCreation;
+
 
 public class JPanelCredentials extends JPanel implements ActionListener,MouseListener,WsConfigurationInterface {
 	
@@ -46,6 +47,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	private JButton jButtonEditACredential;
 	private JButton jButtonDeleteACredential;
 	
+	
 	public JPanelCredentials() {
 		initialize();
 	}
@@ -58,7 +60,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jPanelHeader = new GridBagConstraints();
-		gbc_jPanelHeader.insets = new Insets(0, 0, 5, 0);
+		gbc_jPanelHeader.insets = new Insets(5, 0, 0, 0);
 		gbc_jPanelHeader.fill = GridBagConstraints.BOTH;
 		gbc_jPanelHeader.gridx = 0;
 		gbc_jPanelHeader.gridy = 0;
@@ -78,8 +80,9 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	private JLabel getJLabelCredentialList() {
 		if (jLabelCredentialList == null) {
 			jLabelCredentialList = new JLabel("Credentials");
-			jLabelCredentialList.setHorizontalAlignment(SwingConstants.CENTER);
 			jLabelCredentialList.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelCredentialList.setMinimumSize(new Dimension(150, 26));
+			jLabelCredentialList.setPreferredSize(new Dimension(150, 26));
 		}
 		return jLabelCredentialList;
 	}
@@ -110,8 +113,8 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 			gbl_jPanelHeader.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 			jPanelHeader.setLayout(gbl_jPanelHeader);
 			GridBagConstraints gbc_jLabelCredentialList = new GridBagConstraints();
-			gbc_jLabelCredentialList.insets = new Insets(0, 0, 0, 5);
 			gbc_jLabelCredentialList.anchor = GridBagConstraints.WEST;
+			gbc_jLabelCredentialList.insets = new Insets(0, 0, 0, 5);
 			gbc_jLabelCredentialList.gridx = 0;
 			gbc_jLabelCredentialList.gridy = 0;
 			jPanelHeader.add(getJLabelCredentialList(), gbc_jLabelCredentialList);

@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.ui.client;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,26 +32,35 @@ public class JPanelAssignedCredentials extends JPanel {
 	private JButton jButtonDeleteCredentialAssignment;
 	private JPanel jPanelHeader;
 	
+	
 	public JPanelAssignedCredentials() {
+		this.initialize();
+	}
+	
+	private void initialize() {
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{265, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{26, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		this.setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jPanelHeader = new GridBagConstraints();
-		gbc_jPanelHeader.insets = new Insets(0, 0, 5, 0);
+		gbc_jPanelHeader.insets = new Insets(5, 0, 0, 0);
 		gbc_jPanelHeader.fill = GridBagConstraints.BOTH;
 		gbc_jPanelHeader.gridx = 0;
 		gbc_jPanelHeader.gridy = 0;
-		add(getJPanelHeader(), gbc_jPanelHeader);
+		this.add(getJPanelHeader(), gbc_jPanelHeader);
+		
 		GridBagConstraints gbc_jScrollPaneAssigneCredentials = new GridBagConstraints();
 		gbc_jScrollPaneAssigneCredentials.insets = new Insets(5, 0, 0, 0);
 		gbc_jScrollPaneAssigneCredentials.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneAssigneCredentials.gridx = 0;
 		gbc_jScrollPaneAssigneCredentials.gridy = 1;
-		add(getJScrollPaneAssigneCredentials(), gbc_jScrollPaneAssigneCredentials);
+		this.add(getJScrollPaneAssigneCredentials(), gbc_jScrollPaneAssigneCredentials);
 	}
+	
 	private JScrollPane getJScrollPaneAssigneCredentials() {
 		if (jScrollPaneAssigneCredentials == null) {
 			jScrollPaneAssigneCredentials = new JScrollPane();
@@ -82,10 +92,44 @@ public class JPanelAssignedCredentials extends JPanel {
 			}
 		}
 	}
+	
+	private JPanel getJPanelHeader() {
+		if (jPanelHeader == null) {
+			jPanelHeader = new JPanel();
+			
+			GridBagLayout gbl_jPanelHeader = new GridBagLayout();
+			gbl_jPanelHeader.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelHeader.rowHeights = new int[]{0, 0};
+			gbl_jPanelHeader.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelHeader.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelHeader.setLayout(gbl_jPanelHeader);
+			
+			GridBagConstraints gbc_jLableCredAssignment = new GridBagConstraints();
+			gbc_jLableCredAssignment.anchor = GridBagConstraints.WEST;
+			gbc_jLableCredAssignment.gridx = 0;
+			gbc_jLableCredAssignment.gridy = 0;
+			jPanelHeader.add(this.getJLableCredAssignment(), gbc_jLableCredAssignment);
+			
+			GridBagConstraints gbc_jButtonCreateACredentialAssignment = new GridBagConstraints();
+			gbc_jButtonCreateACredentialAssignment.insets = new Insets(0, 0, 0, 5);
+			gbc_jButtonCreateACredentialAssignment.gridx = 1;
+			gbc_jButtonCreateACredentialAssignment.gridy = 0;
+			jPanelHeader.add(this.getJButtonCreateACredentialAssignment(), gbc_jButtonCreateACredentialAssignment);
+			
+			GridBagConstraints gbc_jButtonDeleteCredentialAssignment = new GridBagConstraints();
+			gbc_jButtonDeleteCredentialAssignment.gridx = 2;
+			gbc_jButtonDeleteCredentialAssignment.gridy = 0;
+			jPanelHeader.add(this.getJButtonDeleteCredentialAssignment(), gbc_jButtonDeleteCredentialAssignment);
+		}
+		return jPanelHeader;
+	}
+	
 	private JLabel getJLableCredAssignment() {
 		if (jLableCredAssignment == null) {
 			jLableCredAssignment = new JLabel("Assign Credentials");
 			jLableCredAssignment.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLableCredAssignment.setMinimumSize(new Dimension(150,  26));
+			jLableCredAssignment.setPreferredSize(new Dimension(150,  26));
 		}
 		return jLableCredAssignment;
 	}
@@ -105,30 +149,6 @@ public class JPanelAssignedCredentials extends JPanel {
 		}
 		return jButtonDeleteCredentialAssignment;
 	}
-	private JPanel getJPanelHeader() {
-		if (jPanelHeader == null) {
-			jPanelHeader = new JPanel();
-			GridBagLayout gbl_jPanelHeader = new GridBagLayout();
-			gbl_jPanelHeader.columnWidths = new int[]{0, 0, 0, 0};
-			gbl_jPanelHeader.rowHeights = new int[]{0, 0};
-			gbl_jPanelHeader.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
-			gbl_jPanelHeader.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-			jPanelHeader.setLayout(gbl_jPanelHeader);
-			GridBagConstraints gbc_jLableCredAssignment = new GridBagConstraints();
-			gbc_jLableCredAssignment.insets = new Insets(0, 0, 0, 5);
-			gbc_jLableCredAssignment.gridx = 0;
-			gbc_jLableCredAssignment.gridy = 0;
-			jPanelHeader.add(getJLableCredAssignment(), gbc_jLableCredAssignment);
-			GridBagConstraints gbc_jButtonCreateACredentialAssignment = new GridBagConstraints();
-			gbc_jButtonCreateACredentialAssignment.insets = new Insets(0, 0, 0, 5);
-			gbc_jButtonCreateACredentialAssignment.gridx = 1;
-			gbc_jButtonCreateACredentialAssignment.gridy = 0;
-			jPanelHeader.add(getJButtonCreateACredentialAssignment(), gbc_jButtonCreateACredentialAssignment);
-			GridBagConstraints gbc_jButtonDeleteCredentialAssignment = new GridBagConstraints();
-			gbc_jButtonDeleteCredentialAssignment.gridx = 2;
-			gbc_jButtonDeleteCredentialAssignment.gridy = 0;
-			jPanelHeader.add(getJButtonDeleteCredentialAssignment(), gbc_jButtonDeleteCredentialAssignment);
-		}
-		return jPanelHeader;
-	}
+	
+	
 }

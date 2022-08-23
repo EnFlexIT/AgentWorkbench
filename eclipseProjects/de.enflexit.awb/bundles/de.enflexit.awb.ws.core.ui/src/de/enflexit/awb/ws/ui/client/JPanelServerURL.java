@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.ui.client;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -27,10 +28,15 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 	private JButton jButtonEditAServerUrl;
 	private JPanel jPanelHeader;
 
+	
 	public JPanelServerURL() {
+		this.initialize();
+	}
+
+	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 125, 0 };
+		gridBagLayout.rowHeights = new int[] { 26, 125, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 		setLayout(gridBagLayout);
@@ -47,11 +53,15 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		gbc_jScrollPaneServerUrl.gridy = 1;
 		add(getJScrollPaneServerUrl(), gbc_jScrollPaneServerUrl);
 	}
-
+	
+	
 	private JLabel getJLableServer() {
 		if (jLableServer == null) {
 			jLableServer = new JLabel("Server");
 			jLableServer.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLableServer.setMinimumSize(new Dimension(150, 26));
+			jLableServer.setPreferredSize(new Dimension(150, 26));
+
 		}
 		return jLableServer;
 	}
@@ -115,12 +125,12 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 			jPanelHeader = new JPanel();
 			GridBagLayout gbl_jPanelHeader = new GridBagLayout();
 			gbl_jPanelHeader.columnWidths = new int[]{0, 0, 0, 0, 0};
-			gbl_jPanelHeader.rowHeights = new int[]{0, 0};
+			gbl_jPanelHeader.rowHeights = new int[]{26, 0};
 			gbl_jPanelHeader.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 			gbl_jPanelHeader.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 			jPanelHeader.setLayout(gbl_jPanelHeader);
 			GridBagConstraints gbc_jLableServer = new GridBagConstraints();
-			gbc_jLableServer.anchor = GridBagConstraints.WEST;
+			gbc_jLableServer.anchor = GridBagConstraints.SOUTHWEST;
 			gbc_jLableServer.insets = new Insets(0, 0, 0, 5);
 			gbc_jLableServer.gridx = 0;
 			gbc_jLableServer.gridy = 0;
