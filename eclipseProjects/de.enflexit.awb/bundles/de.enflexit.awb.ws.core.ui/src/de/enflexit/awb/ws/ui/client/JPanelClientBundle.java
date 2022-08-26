@@ -53,12 +53,12 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	private void initialize() {		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 100, 0};
+		gridBagLayout.rowHeights = new int[]{26, 0, 150, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelBundleList = new GridBagConstraints();
-		gbc_jLabelBundleList.anchor = GridBagConstraints.WEST;
+		gbc_jLabelBundleList.anchor = GridBagConstraints.SOUTHWEST;
 		gbc_jLabelBundleList.insets = new Insets(5, 0, 0, 0);
 		gbc_jLabelBundleList.gridx = 0;
 		gbc_jLabelBundleList.gridy = 0;
@@ -81,7 +81,8 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		if (jLabelBundleList == null) {
 			jLabelBundleList = new JLabel("Server - API / Client Bundle");
 			jLabelBundleList.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelBundleList.setSize(new Dimension(26, 150));
+			jLabelBundleList.setMinimumSize(new Dimension(150, 26));
+			jLabelBundleList.setPreferredSize(new Dimension(150, 26));
 		}
 		return jLabelBundleList;
 	}

@@ -5,8 +5,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
@@ -37,19 +39,39 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 	}
 	
 	private void initialize() {
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{230, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		this.setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jSplitPaneLeft = new GridBagConstraints();
 		gbc_jSplitPaneLeft.insets = new Insets(10, 10, 10, 10);
 		gbc_jSplitPaneLeft.fill = GridBagConstraints.BOTH;
 		gbc_jSplitPaneLeft.gridx = 0;
 		gbc_jSplitPaneLeft.gridy = 0;
-		add(getJSplitPaneLeft(), gbc_jSplitPaneLeft);
+		this.add(this.getJSplitPaneLeft(), gbc_jSplitPaneLeft);
 	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setVisible(boolean)
+	 */
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible==true) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					JPanelClientConfiguration.this.getJSplitPaneLeft().setDividerLocation(0.333);
+					JPanelClientConfiguration.this.validate();
+				}
+			});
+		}
+	}
+	
 	
 	public JPanelClientBundle getJPanelClientBundle() {
 		if (jPanelClientBundle == null) {
@@ -84,6 +106,8 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 		if (jSplitPaneLeft == null) {
 			jSplitPaneLeft = new JSplitPane();
 			jSplitPaneLeft.setResizeWeight(0.3);
+			jSplitPaneLeft.setDividerSize(5);
+			jSplitPaneLeft.setBorder(BorderFactory.createEmptyBorder());
 			jSplitPaneLeft.setLeftComponent(this.getJPanelClientBundle());
 			jSplitPaneLeft.setRightComponent(this.getJSplitPaneMiddleRight());
 		}
@@ -94,6 +118,8 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 		if (jSplitPaneMiddleRight == null) {
 			jSplitPaneMiddleRight = new JSplitPane();
 			jSplitPaneMiddleRight.setResizeWeight(0.5);
+			jSplitPaneMiddleRight.setDividerSize(5);
+			jSplitPaneMiddleRight.setBorder(BorderFactory.createEmptyBorder());
 			jSplitPaneMiddleRight.setRightComponent(this.getJPanelCredentials());
 			jSplitPaneMiddleRight.setLeftComponent(this.getJSplitPaneMiddle());
 		}
@@ -103,9 +129,11 @@ public class JPanelClientConfiguration extends JPanel implements WsConfiguration
 	private JSplitPane getJSplitPaneMiddle() {
 		if (jSplitPaneMiddle == null) {
 			jSplitPaneMiddle = new JSplitPane();
+			jSplitPaneMiddle.setDividerSize(8);
 			jSplitPaneMiddle.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			jSplitPaneMiddle.setLeftComponent(getJPanelServerURL());
-			jSplitPaneMiddle.setRightComponent(getJPanelAssignedCredentials());
+			jSplitPaneMiddle.setBorder(BorderFactory.createEmptyBorder());
+			jSplitPaneMiddle.setLeftComponent(this.getJPanelServerURL());
+			jSplitPaneMiddle.setRightComponent(this.getJPanelAssignedCredentials());
 		}
 		return jSplitPaneMiddle;
 	}
