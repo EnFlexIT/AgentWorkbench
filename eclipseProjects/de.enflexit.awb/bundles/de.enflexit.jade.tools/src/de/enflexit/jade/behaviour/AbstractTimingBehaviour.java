@@ -41,6 +41,7 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	private ExecutionTiming executionTiming;	
 	
 	private Instant nextTick;
+	private Instant previousTick;
 	private ArrayList<Integer> durations;
 	private Duration totalDuration;
 	private int tickCount;
@@ -112,7 +113,7 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	public final void action() {
 		
 		// --- Determine waiting time before the next execution -----
-		this.nextTick = this.calcNextTick(this.getNextTick(), this.getTickInterval());
+		this.nextTick = this.calculateNextTick(this.getNextTick(), this.getTickInterval());
 		this.printDebugMessage("Next execution scheduled for " + (this.executionTiming==ExecutionTiming.StartFrom ? "start time" : "end time ") + this.getDateFormatter().format(nextTick));
 		this.printDebugMessage("Current time: " + this.getDateFormatter().format(this.getCurrentTime()));
 		long waitingTime = this.calculateWaitingTime(nextTick, this.getTickInterval(), this.getTickCount()).toMillis();
@@ -165,6 +166,7 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 				return;
 			}
 		}
+		this.previousTick = nextTick;
 		this.tickCount++;
 		
 	}
@@ -182,10 +184,11 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	 * @param interval the interval
 	 * @return the instant
 	 */
-	protected Instant calcNextTick(Instant lastTick, Duration interval) {
-		while(lastTick.isBefore(this.getCurrentTime())) {
+	protected Instant calculateNextTick(Instant lastTick, Duration interval) {
+		while(lastTick.isBefore(this.getCurrentTime()) || lastTick==this.previousTick) {
 			lastTick = lastTick.plusMillis(interval.toMillis());
 		}
+		
 		return lastTick;		
 	}
 	
