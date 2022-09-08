@@ -41,7 +41,7 @@ public class ApiRegistration implements Serializable {
 	 * @return the server URL
 	 */
 	public String getDefaultURL() {
-		return this.apiRegistrationService.getDefaultURL();
+		return this.apiRegistrationService.getDefaultServerURL();
 	}
 	/**
 	 * Gets the credential type.

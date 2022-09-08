@@ -31,7 +31,7 @@ public class ApiRegistrationService implements AwbApiRegistrationService {
 	 * @see de.enflexit.awb.ws.client.AwbApiRegistrationService#getDefaultURL()
 	 */
 	@Override
-	public String getDefaultURL() {
+	public String getDefaultServerURL() {
 		return "https://127.0.0.1/api";
 	}
 	

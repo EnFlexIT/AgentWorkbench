@@ -92,6 +92,8 @@ public class WsCredentialStore implements Serializable {
 	@XmlElement(name="credential")
 	private List<AbstractCredential> credentialList;
 	
+	@XmlElementWrapper(name="credentialAssignments")
+	@XmlElement(name="credentialAssignment")
 	private List<CredentialAssignment> credentialAssignmentList;
 	
 	@XmlTransient
@@ -223,7 +225,7 @@ public class WsCredentialStore implements Serializable {
 			if (serviceInstance.getClass().equals(apiRegistrationClass)) {
 				
 				String clientBundleName = serviceInstance.getClientBundleName();
-				String defaultURL = serviceInstance.getDefaultURL();
+				String defaultURL = serviceInstance.getDefaultServerURL();
 				String defaultCredentialName = serviceInstance.getDefaultCredentialName();
 				
 				AbstractCredential credentiaLFound = this.getCredential(defaultCredentialName);
@@ -437,7 +439,7 @@ public class WsCredentialStore implements Serializable {
 				if (apiReg.getCredentialType().equals(awbApiRegService.getCredentialType())) {
 					if (apiReg.getDefaultCredentialName().equals(awbApiRegService.getDefaultCredentialName())) {
 						if (apiReg.getDescription().equals(awbApiRegService.getDescription())) {
-							if (apiReg.getDefaultURL().equals(awbApiRegService.getDefaultURL())) {
+							if (apiReg.getDefaultURL().equals(awbApiRegService.getDefaultServerURL())) {
 								sameObject = apiReg;
 								break;
 							}
@@ -449,6 +451,51 @@ public class WsCredentialStore implements Serializable {
 		return sameObject;
 	}
 	
+	// ------------------------------------------------------------
+	// --- From here methods for CredentialAssignment --------
+	// ------------------------------------------------------------
+	
+	/**
+	 * Gets one unique credential assignment.
+	 *
+	 * @param apiReg the api reg
+	 * @param cred the cred
+	 * @param serverURL the server URL
+	 * @return the credential assignment
+	 */
+	public CredentialAssignment getCredentialAssignment(ApiRegistration apiReg,AbstractCredential cred, ServerURL serverURL) {
+		CredentialAssignment credAssigned=null;
+		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
+		for (CredentialAssignment credAssgn : credentialAssignments) {
+			if(credAssgn.getIdApiRegistrationDefaultBundleName().equals(apiReg.getClientBundleName())){
+				if(credAssgn.getIdCredential()==cred.getID()) {
+					if(credAssgn.getIdServerURL()==credAssgn.getIdServerURL()) {
+					   credAssigned=credAssgn;
+					}
+				}
+			}
+		}
+		return credAssigned;
+	}
+	
+	/**
+	 * Gets the credential assignments with one credential.
+	 *
+	 * @param apiReg the api reg
+	 * @param cred the cred
+	 * @return the credential assignments with one credential
+	 */
+	public List<CredentialAssignment> getCredentialAssignmentsWithOneCredential(ApiRegistration apiReg,AbstractCredential cred) {
+		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
+		for (CredentialAssignment credAssgn : credentialAssignments) {
+			if(credAssgn.getIdApiRegistrationDefaultBundleName().equals(apiReg.getClientBundleName())){
+				if(credAssgn.getIdCredential()==cred.getID()) {
+					credentialAssignments.add(credAssgn);
+				}
+			}
+		}
+		return credentialAssignments;
+	}
 	// ----------------------------------------------------------------------------------
 	// --- From here methods to save or load a WsCredentialStore -----------------------
 	// ----------------------------------------------------------------------------------

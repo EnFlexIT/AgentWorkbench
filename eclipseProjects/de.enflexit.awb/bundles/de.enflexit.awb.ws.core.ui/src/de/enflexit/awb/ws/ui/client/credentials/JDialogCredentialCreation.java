@@ -54,7 +54,6 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	
 	public JDialogCredentialCreation(Window owner) {
 		super(owner);
-
 		this.initialize();
 	}
 
@@ -362,7 +361,6 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 			try {
 				getCreatedCredential();
 	            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-//				this.dispose();
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(this, e1.getMessage());
 			}

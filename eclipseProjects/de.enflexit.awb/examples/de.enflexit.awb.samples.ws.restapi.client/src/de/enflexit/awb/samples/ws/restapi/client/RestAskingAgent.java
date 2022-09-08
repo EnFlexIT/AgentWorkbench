@@ -32,9 +32,15 @@ public class RestAskingAgent extends Agent {
 			
 			AdminsApi api = new AdminsApi();
 			ApiClient apiClient = api.getApiClient();
-			apiClient.setApiKeyPrefix(apiKeyCredential.getApiKeyName());
-			apiClient.setApiKey(apiKeyCredential.getApiKeyValue());
-			
+			if(apiKeyCredential.getApiKeyName()!=null) {
+				if(apiKeyCredential.getApiKeyValue()!=null) {
+				apiClient.setApiKeyPrefix(apiKeyCredential.getApiKeyName());
+				apiClient.setApiKey(apiKeyCredential.getApiKeyValue());
+				}
+			}
+			else {
+				System.out.println();
+			}
 			
 			ServerConfiguration newServerConfig = new ServerConfiguration("https://schlagmichtod.de/api", null, null);
 			

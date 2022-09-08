@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -32,8 +33,14 @@ public class JPanelAssignedCredentials extends JPanel {
 	private JButton jButtonDeleteCredentialAssignment;
 	private JPanel jPanelHeader;
 	
+	private ApiRegistration apiRegCurr;
 	
 	public JPanelAssignedCredentials() {
+		this.initialize();
+	}
+	
+	public JPanelAssignedCredentials(ApiRegistration apiReg) {
+		setApiRegCurr(apiReg);
 		this.initialize();
 	}
 	
@@ -68,10 +75,13 @@ public class JPanelAssignedCredentials extends JPanel {
 		}
 		return jScrollPaneAssigneCredentials;
 	}
-	private JList<AbstractCredential> getJListAssignedCredentials() {
+	public JList<AbstractCredential> getJListAssignedCredentials() {
 		if (jListAssignedCredentials == null) {
 			jListAssignedCredentials = new JList<AbstractCredential>();
 			jListAssignedCredentials.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			if(getApiRegCurr()!=null) {
+				fillAssignedCredentialJList(getApiRegCurr());
+			}
 		}
 		return jListAssignedCredentials;
 	}
@@ -85,12 +95,17 @@ public class JPanelAssignedCredentials extends JPanel {
 		for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
 			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
 			String apiId = credentialAssignment.getIdApiRegistrationDefaultBundleName();
-			if (awbRegService.getClientBundleName() == apiId) {
+			if (awbRegService.getClientBundleName().equals(apiId)) {
 				credAssgnOfSelectedApi.add(credentialAssignment);
 				AbstractCredential abstractCred = WsCredentialStore.getInstance().getCredential(credentialAssignment.getIdCredential());
 				assgnCredentials.add(abstractCred);
 			}
 		}
+		DefaultListModel<AbstractCredential> defaultListModel= new DefaultListModel<>();
+		defaultListModel.addAll(assgnCredentials);
+		getJListAssignedCredentials().setModel(defaultListModel);
+		this.revalidate();
+		this.repaint();
 	}
 	
 	private JPanel getJPanelHeader() {
@@ -133,7 +148,7 @@ public class JPanelAssignedCredentials extends JPanel {
 		}
 		return jLableCredAssignment;
 	}
-	private JButton getJButtonCreateACredentialAssignment() {
+	public JButton getJButtonCreateACredentialAssignment() {
 		if (jButtonCreateACredentialAssignment == null) {
 			jButtonCreateACredentialAssignment = new JButton(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonCreateACredentialAssignment.setToolTipText("Create a credential assignment");
@@ -141,7 +156,7 @@ public class JPanelAssignedCredentials extends JPanel {
 		}
 		return jButtonCreateACredentialAssignment;
 	}
-	private JButton getJButtonDeleteCredentialAssignment() {
+	public JButton getJButtonDeleteCredentialAssignment() {
 		if (jButtonDeleteCredentialAssignment == null) {
 			jButtonDeleteCredentialAssignment = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonDeleteCredentialAssignment.setToolTipText("Delete a credential assignment");
@@ -150,5 +165,11 @@ public class JPanelAssignedCredentials extends JPanel {
 		return jButtonDeleteCredentialAssignment;
 	}
 	
-	
+	public ApiRegistration getApiRegCurr() {
+		return apiRegCurr;
+	}
+
+	public void setApiRegCurr(ApiRegistration apiRegCurr) {
+		this.apiRegCurr = apiRegCurr;
+	}
 }

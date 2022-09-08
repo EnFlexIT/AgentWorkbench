@@ -87,4 +87,9 @@ public class ServerURL implements Serializable {
 		}
 		return equals;
 	}
+	
+	@Override
+	public String toString() {
+		return getServerURL();
+	}
 }

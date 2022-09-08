@@ -5,17 +5,25 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.ws.client.ServerURL;
+import de.enflexit.awb.ws.client.WsCredentialStore;
 
 public class JPanelServerURL extends JPanel implements ActionListener{
 
@@ -70,16 +78,6 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 	//----- From here overridden methods----
 	//-------------------------------------
 	
-	/* (non-Javadoc)
-    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-    */
-    //-------------------------------------
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource().equals(getJButtonCreateNewServer())) {
-		}
-	}
-
 	private JScrollPane getJScrollPaneServerUrl() {
 		if (jScrollPaneServerUrl == null) {
 			jScrollPaneServerUrl = new JScrollPane();
@@ -87,39 +85,50 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		}
 		return jScrollPaneServerUrl;
 	}
-	private JList getJListServerUrl() {
+	
+	public JList<ServerURL> getJListServerUrl() {
 		if (jListServerUrl == null) {
-			jListServerUrl = new JList();
+			jListServerUrl = new JList<ServerURL>();
+			DefaultListModel<ServerURL> serverURLs = new DefaultListModel<ServerURL>();
+			serverURLs.addAll(WsCredentialStore.getInstance().getServerURLList());
+			jListServerUrl.setModel(serverURLs);
 		}
 		return jListServerUrl;
 	}
+	
 	private JButton getJButtonCreateNewServer() {
 		if (jButtonCreateNewServer == null) {
 			jButtonCreateNewServer = new JButton(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonCreateNewServer.setToolTipText("Create a new ServerUrl");
 			jButtonCreateNewServer.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCreateNewServer.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
+			jButtonCreateNewServer.addActionListener(this);
 		}
 		return jButtonCreateNewServer;
 	}
+	
 	private JButton getJButtonDeleteServerUrl() {
 		if (jButtonDeleteServerUrl == null) {
 			jButtonDeleteServerUrl = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonDeleteServerUrl.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonDeleteServerUrl.setToolTipText("Delete a Server-URL");
 			jButtonDeleteServerUrl.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
+			jButtonDeleteServerUrl.addActionListener(this);
 		}
 		return jButtonDeleteServerUrl;
 	}
+	
 	private JButton getJButtonEditAServerUrl() {
 		if (jButtonEditAServerUrl == null) {
 			jButtonEditAServerUrl = new JButton(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonEditAServerUrl.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonEditAServerUrl.setToolTipText("Edit an existing Server-URL");
 			jButtonEditAServerUrl.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
+			jButtonEditAServerUrl.addActionListener(this);
 		}
 		return jButtonEditAServerUrl;
 	}
+	
 	private JPanel getJPanelHeader() {
 		if (jPanelHeader == null) {
 			jPanelHeader = new JPanel();
@@ -152,4 +161,87 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		}
 		return jPanelHeader;
 	}
+	
+	private void fillJListServerUrlAndRepaint() {
+		DefaultListModel<ServerURL> serverURLs = new DefaultListModel<ServerURL>();
+		List<ServerURL> serverURLsAsList=WsCredentialStore.getInstance().getServerURLList();
+		serverURLs.addAll(serverURLsAsList);
+		jListServerUrl.setModel(serverURLs);
+		this.revalidate();
+		this.repaint();
+	}
+	
+	private void showJDialogServerUrl() {
+		Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+		JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner);
+		createServerDialog.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if (createServerDialog.hasUnsavedChanges()) {
+					WsCredentialStore.save(WsCredentialStore.getInstance());
+					fillJListServerUrlAndRepaint();
+				}
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if (createServerDialog.hasUnsavedChanges()) {
+					WsCredentialStore.save(WsCredentialStore.getInstance());
+					fillJListServerUrlAndRepaint();
+				}
+			}
+		});
+
+	}
+	
+	private void showJDialogForEditingAServerUrl() {
+		if (getJListServerUrl().getSelectedValue() != null) {
+			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner,getJListServerUrl().getSelectedValue());
+			createServerDialog.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					if (createServerDialog.hasUnsavedChanges()) {
+						WsCredentialStore.save(WsCredentialStore.getInstance());
+						fillJListServerUrlAndRepaint();
+					}
+				}
+
+				@Override
+				public void windowClosed(WindowEvent e) {
+					if (createServerDialog.hasUnsavedChanges()) {
+						WsCredentialStore.save(WsCredentialStore.getInstance());
+						fillJListServerUrlAndRepaint();
+					}
+				}
+			});
+		} else {
+			JOptionPane.showMessageDialog(this, "Please selected a Server-URL to edit!");
+		}
+	}
+
+	/* (non-Javadoc)
+	    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	    */
+	    //-------------------------------------
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getSource().equals(getJButtonCreateNewServer())) {
+				showJDialogServerUrl();
+			} else if(e.getSource().equals(getJButtonEditAServerUrl())) {
+			    showJDialogForEditingAServerUrl();
+			} else if(e.getSource().equals(getJButtonDeleteServerUrl())) {
+				ServerURL serverURL = this.getJListServerUrl().getSelectedValue();
+				if (serverURL != null) {
+					int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the Server with the following URL "+ serverURL.getServerURL()+"?","Deletion of a Server-URL", JOptionPane.YES_NO_CANCEL_OPTION);
+					if(option==JOptionPane.YES_OPTION) {
+					   WsCredentialStore.getInstance().getServerURLList().remove(serverURL);
+					   this.fillJListServerUrlAndRepaint();
+					   WsCredentialStore.getInstance().save();
+					}
+				} else {
+					JOptionPane.showConfirmDialog(this, "Please select a Server-URL!","Select a Server-URL", JOptionPane.YES_OPTION);
+				}
+			}
+		}
 }

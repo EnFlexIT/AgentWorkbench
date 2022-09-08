@@ -108,7 +108,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return listModelRegisteredApis;
 	}
 	
-	private JList<ApiRegistration> getJListApiRegistration() {
+	public JList<ApiRegistration> getJListApiRegistration() {
 		if (jListApiRegistration == null) {
 			jListApiRegistration = new JList<ApiRegistration>(this.getListModelRegisteredApis());
 			jListApiRegistration.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -175,6 +175,8 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			jTextAreaDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextAreaDescription.setWrapStyleWord(true);
 			jTextAreaDescription.setLineWrap(true);
+			jTextAreaDescription.setEditable(false);
+			jTextAreaDescription.setBackground(this.getBackground());
 		}
 		return jTextAreaDescription;
 	}
@@ -233,7 +235,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 				if (apiReg.getCredentialType().equals(apiRegService.getCredentialType())) {
 					if (apiReg.getDefaultCredentialName().equals(apiRegService.getDefaultCredentialName())) {
 						if (apiReg.getDescription().equals(apiRegService.getDescription())) {
-							if (apiReg.getDefaultURL().equals(apiRegService.getDefaultURL())) {
+							if (apiReg.getDefaultURL().equals(apiRegService.getDefaultServerURL())) {
 								sameObject = true;
 							}
 						}

@@ -22,10 +22,10 @@ public interface AwbApiRegistrationService {
 	public String getDescription();
 
 	/**
-	 * Returns the default URL for the access.
+	 * Returns the default Server-URL for the service access.
 	 * @return the default URL
 	 */
-	public String getDefaultURL();
+	public String getDefaultServerURL();
 	
 	/**
 	 * Has to return the {@link CredentialType} that enables to authenticate a client user at the web service.
