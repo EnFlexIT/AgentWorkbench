@@ -51,7 +51,9 @@ public class LayeredIcon extends ImageIcon {
 	 * @param icon the icon
 	 */
 	public void add(Icon icon) {
-		iconSet.add(icon);
+		if (icon!=null) {
+			iconSet.add(icon);
+		}
 	}
 	/**
 	 * Removes the specified icon and its layer.
@@ -60,6 +62,7 @@ public class LayeredIcon extends ImageIcon {
 	 * @return true, if successful
 	 */
 	public boolean remove(Icon icon) {
+		if (icon==null) return false;
 		return iconSet.remove(icon);
 	}
 	
