@@ -1,95 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+<class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="agentgui.simulationService.load.threading.ThreadMeasureBehaviour" 
-    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadMeasureBehaviour.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="682" y="-142"/>    
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadMeasureBehaviour.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="682" y="-127"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="agentgui.simulationService.load.threading.ThreadProtocol" project="org.agentgui.core" 
+  <class id="2" language="java" name="agentgui.simulationService.load.threading.ThreadProtocol" 
+    project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadProtocol.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1023" y="49"/>    
+    <position height="-1" width="-1" x="1061" y="-147"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
   <interface id="3" language="java" name="agentgui.simulationService.load.threading.ThreadProtocolReceiver" 
-    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadProtocolReceiver.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1350" y="-212"/>    
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadProtocolReceiver.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1350" y="-201"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="4" language="java" name="agentgui.simulationService.load.threading.ThreadProtocolVector" project="org.agentgui.core" 
+  <class id="4" language="java" name="agentgui.simulationService.load.threading.ThreadProtocolVector" 
+    project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadProtocolVector.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1746" y="-93"/>    
+    <position height="-1" width="-1" x="1618" y="-147"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
   <package id="5" language="java" name="agentgui.simulationService.load.threading" project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/simulationService/load/threading" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="48" width="2191" x="543" y="-403"/>    
+    <position height="48" width="1760" x="543" y="-324"/>    
     <display autosize="false" stereotype="true" sort-features="false" accessors="true"/>  
   </package>  
-  <class id="6" language="java" name="agentgui.simulationService.load.threading.ThreadDetail" project="org.agentgui.core" 
+  <class id="6" language="java" name="agentgui.simulationService.load.threading.ThreadDetail" 
+    project="org.agentgui.core" 
     file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadDetail.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="958" y="713"/>    
+    <position height="-1" width="-1" x="1061" y="95"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="agentgui.simulationService.load.threading.ThreadCalculateMetrics" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadCalculateMetrics.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2085" y="71"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="7" language="java" name="agentgui.simulationService.load.threading.ThreadDetailProperties" 
-    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadDetailProperties.java" 
+  <class id="8" language="java" name="agentgui.simulationService.load.threading.storage.ThreadInfoStorage" 
+    project="org.agentgui.core" 
+    file="/org.agentgui.core/src/agentgui/simulationService/load/threading/storage/ThreadInfoStorage.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="79" width="224" x="847" y="1067"/>    
+    <position height="-1" width="-1" x="1620" y="29"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </interface>  
-  <class id="8" language="java" name="agentgui.simulationService.load.threading.ThreadCalculateMetrics" 
-    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/simulationService/load/threading/ThreadCalculateMetrics.java" 
-    binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="2277" y="114"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <realization id="9">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="7"/>  
-  </realization>  
-  <association id="10">    
+  <association id="9">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="10" name="threadInfoStorage"/>      
+      <multiplicity id="11" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="12">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="11" name="threadDetails">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <attribute id="13" name="threadDetails">        
+        <position height="0" width="0" x="95" y="-618"/>      
       </attribute>      
-      <multiplicity id="12" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="14" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="95" y="-618"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="15">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="16">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="17">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <association id="18">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="19" name="threadCalculateMetrics"/>      
+      <multiplicity id="20" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

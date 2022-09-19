@@ -1,143 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.14" icons="true" automaticImage="PNG" always-add-relationships="false" 
-  generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true" 
-  router="FAN">  
-  <class id="1" language="java" name="de.enflexit.oidc.OIDCAuthorization" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="239" width="395" x="796" y="-455"/>    
+<class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="de.enflexit.oidc.OIDCAuthorization" project="de.enflexit.oidc" 
+    file="/de.enflexit.oidc/src/de/enflexit/oidc/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="993" y="-336"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="de.enflexit.oidc.OIDCPanel" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCPanel.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="167" width="208" x="796" y="-662"/>    
+  <class id="2" language="java" name="de.enflexit.oidc.OIDCPanel" project="de.enflexit.oidc" 
+    file="/de.enflexit.oidc/src/de/enflexit/oidc/OIDCPanel.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="523" y="-489"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="de.enflexit.oidc.Trust" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/config/auth/Trust.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="113" width="240" x="1066" y="-662"/>    
+  <class id="3" language="java" name="de.enflexit.oidc.Trust" project="de.enflexit.oidc" 
+    file="/de.enflexit.oidc/src/de/enflexit/oidc/Trust.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1415" y="-516"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="de.enflexit.oidc.SimpleOIDCClient" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/config/auth/SimpleOIDCClient.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="581" width="312" x="245" y="-166"/>    
+  <class id="4" language="java" name="de.enflexit.oidc.SimpleOIDCClient" project="de.enflexit.oidc" 
+    file="/de.enflexit.oidc/src/de/enflexit/oidc/SimpleOIDCClient.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="471" y="41"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
   <class id="5" language="java" name="de.enflexit.oidc.OIDCAuthorization.OIDCProblemException" 
-    project="org.agentgui.core" file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" 
+    project="de.enflexit.oidc" file="/de.enflexit.oidc/src/de/enflexit/oidc/OIDCAuthorization.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="77" width="159" x="597" y="-166"/>    
+    <position height="-1" width="-1" x="548" y="-337"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="de.enflexit.oidc.OIDCAuthorization.URLProcessor" project="de.enflexit.oidc" 
+    file="/de.enflexit.oidc/src/de/enflexit/oidc/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="993" y="69"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="de.enflexit.oidc.OIDCAuthorization.URLProcessor" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCAuthorization.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="203" width="259" x="796" y="-166"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
-      <operations public="true" package="true" protected="true" private="false" static="true"/>    
-    </display>  
-  </class>  
-  <interface id="7" language="java" name="de.enflexit.oidc.OIDCResourceAvailabilityHandler" project="org.agentgui.core" 
-    file="/org.agentgui.core/src/agentgui/core/config/auth/OIDCResourceAvailabilityHandler.java" binary="false" 
+  <interface id="7" language="java" name="de.enflexit.oidc.OIDCResourceAvailabilityHandler" project="de.enflexit.oidc" 
+    file="/de.enflexit.oidc/src/de/enflexit/oidc/OIDCResourceAvailabilityHandler.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="77" width="233" x="1095" y="-166"/>    
+    <position height="-1" width="-1" x="1443" y="-202"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="false" static="false"/>      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
       <operations public="true" package="true" protected="true" private="false" static="true"/>    
     </display>  
   </interface>  
-  <association id="8">    
+  <nesting id="8">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="5"/>  
+  </nesting>  
+  <nesting id="9">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="6"/>  
+  </nesting>  
+  <association id="10">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="9" name="urlProcessor">        
+      <attribute id="11" name="instance">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="10" minimum="0" maximum="1">        
+      <multiplicity id="12" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="13">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="14" name="urlProcessor">        
+        <position height="0" width="0" x="-7" y="134"/>      
+      </attribute>      
+      <multiplicity id="15" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-7" y="134"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="11">    
+  <association id="16">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="12" name="oidcClient">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <attribute id="17" name="availabilityHandler">        
+        <position height="0" width="0" x="207" y="90"/>      
       </attribute>      
-      <multiplicity id="13" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="4" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="14">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="15" name="instance">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="16" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <nesting id="17">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="6"/>  
-  </nesting>  
-  <association id="18">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="19" name="availabilityHandler">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="20" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
+      <multiplicity id="18" minimum="0" maximum="1">        
+        <position height="0" width="0" x="207" y="90"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="7" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <nesting id="21">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="5"/>  
-  </nesting>  
-  <association id="22">    
+  <association id="19">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="23" name="owner">        
+      <attribute id="20" name="owner">        
         <position height="0" width="0" x="0" y="0"/>      
       </attribute>      
-      <multiplicity id="24" minimum="0" maximum="1">        
+      <multiplicity id="21" minimum="0" maximum="1">        
         <position height="0" width="0" x="0" y="0"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <association id="22">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="23" name="oidcClient">        
+        <position height="0" width="0" x="-13" y="-83"/>      
+      </attribute>      
+      <multiplicity id="24" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-13" y="-83"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
-    <attributes public="true" package="true" protected="true" private="false" static="false"/>    
+    <attributes public="false" package="false" protected="false" private="false" static="false"/>    
     <operations public="true" package="true" protected="true" private="false" static="true"/>  
   </classifier-display>  
   <association-display labels="true" multiplicity="true"/>

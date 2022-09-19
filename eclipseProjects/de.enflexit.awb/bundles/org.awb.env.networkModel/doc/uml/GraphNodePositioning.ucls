@@ -5,7 +5,7 @@
     project="org.awb.env.networkModel" 
     file="/org.awb.env.networkModel/src/org/awb/env/networkModel/positioning/GraphNodePosition.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="232" y="490"/>    
+    <position height="-1" width="-1" x="867" y="490"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
@@ -27,7 +27,7 @@
     project="de.enflexit.geography" 
     file="/de.enflexit.geography/src/de/enflexit/geography/coordinates/WGS84LatLngCoordinate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="489" y="490"/>    
+    <position height="-1" width="-1" x="422" y="642"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
@@ -37,7 +37,7 @@
   <class id="4" language="java" name="de.enflexit.geography.coordinates.UTMCoordinate" project="de.enflexit.geography" 
     file="/de.enflexit.geography/src/de/enflexit/geography/coordinates/UTMCoordinate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="741" y="490"/>    
+    <position height="-1" width="-1" x="601" y="642"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
@@ -47,7 +47,7 @@
   <class id="5" language="java" name="de.enflexit.geography.coordinates.OSGBCoordinate" project="de.enflexit.geography" 
     file="/de.enflexit.geography/src/de/enflexit/geography/coordinates/OSGBCoordinate.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1010" y="490"/>    
+    <position height="-1" width="-1" x="768" y="642"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
@@ -55,7 +55,7 @@
     </display>  
   </class>  
   <class id="6" language="java" name="java.awt.geom.Point2D" project="de.enflexit.geography" 
-    file="C:/Program Files/Java/jdk1.8.0_241/jre/lib/rt.jar" binary="true" corner="BOTTOM_RIGHT">    
+    file="C:/Program Files/Java/jdk-11.0.15.1/lib/jrt-fs.jar" binary="true" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="381" y="161"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -64,7 +64,7 @@
     </display>  
   </class>  
   <class id="7" language="java" name="java.awt.geom.Point2D.Double" project="de.enflexit.geography" 
-    file="C:/Program Files/Java/jdk1.8.0_241/jre/lib/rt.jar" binary="true" corner="BOTTOM_RIGHT">    
+    file="C:/Program Files/Java/jdk-11.0.15.1/lib/jrt-fs.jar" binary="true" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="603" y="161"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -72,18 +72,68 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <nesting id="8">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="7"/>  
-  </nesting>  
-  <generalization id="9">    
+  <class id="8" language="java" name="de.enflexit.geography.coordinates.AbstractCoordinate.CoordinateParseException" 
+    project="de.enflexit.geography" 
+    file="/de.enflexit.geography/src/de/enflexit/geography/coordinates/AbstractCoordinate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="867" y="358"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="de.enflexit.geography.coordinates.AbstractGeoCoordinate" 
+    project="de.enflexit.geography" 
+    file="/de.enflexit.geography/src/de/enflexit/geography/coordinates/AbstractGeoCoordinate.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="602" y="502"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <dependency id="10">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="11">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="12">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <generalization id="13">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="9"/>  
   </generalization>  
-  <generalization id="10">    
+  <generalization id="14">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="15">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="6"/>  
   </generalization>  
+  <generalization id="16">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <nesting id="17">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="8"/>  
+  </nesting>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <nesting id="19">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="7"/>  
+  </nesting>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
