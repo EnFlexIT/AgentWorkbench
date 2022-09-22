@@ -25,7 +25,6 @@
 
    <requires>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="slf4j.api"/>
       <import plugin="mariadb-java-client" version="3.0.4" match="greaterOrEqual"/>
       <import plugin="com.mysql.cj"/>
       <import plugin="org.postgresql.jdbc"/>

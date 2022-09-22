@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.feature"
       label="Agent.Workbench WS-Feature"
-      version="0.9.1.qualifier"
+      version="0.9.2.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.awb.ws.core"
       os="linux,macosx,win32"
@@ -109,28 +109,14 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.jetty.openid"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.jetty.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.jetty.alpn.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.aries.spifly.dynamic.bundle"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.enflexit.awb.ws.jetty"
          download-size="0"
          install-size="0"
          version="0.0.0"
