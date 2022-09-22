@@ -11,4 +11,4 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/dbService.xml
 Export-Package: de.enflexit.db.maria
 Require-Bundle: de.enflexit.db.hibernate,
- mariadb-java-client;bundle-version="3.0.4"
+ mariadb-java-client
