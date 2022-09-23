@@ -241,19 +241,24 @@ public class DatabaseSettingsPanel extends JPanel {
 	 */
 	private void setDatabaseSystem(String newDatabaseSystem, boolean isUpdateComboBox) {
 		if (this.databaseSystem==null || this.databaseSystem.equals(newDatabaseSystem)==false) {
+			// --- Check for newDatabaseSystem == null ------------------------
+			if (newDatabaseSystem==null || newDatabaseSystem.isBlank()) {
+				String newDatabaseSystemFallback = this.getFallbackDatabaseSystemName();
+				if (newDatabaseSystemFallback==null) return;
+				newDatabaseSystem = newDatabaseSystemFallback;
+				System.err.println("The new database system is not allowed to be null. - Instead the DB-System '" + newDatabaseSystemFallback + "' will be used!");
+			}
+			
 			// --- Check if the DB system connector is available --------------
 			HibernateDatabaseService dbService = HibernateUtilities.getDatabaseService(newDatabaseSystem);
 			if (dbService==null) {
 				// --- No corresponding service found -------------------------
-				String newDatabaseSystemFallback = HibernateUtilities.getDatabaseSystemList().get(0);
-				if (newDatabaseSystemFallback==null || newDatabaseSystemFallback.equals(HibernateUtilities.DB_SERVICE_REGISTRATION_ERROR)) {
-					System.err.println("Not a single HibernateDatabaseService could be found. - Please, make sure to load and start the database connection bundles!");
-					return;
-				} else {
-					System.err.println("No HibernateDatabaseService could be found for the database system '" + newDatabaseSystem + "'. Please check, if the corresponding database bundle was loaded.");
-					newDatabaseSystem = newDatabaseSystemFallback;
-				}
+				String newDatabaseSystemFallback = this.getFallbackDatabaseSystemName();
+				if (newDatabaseSystemFallback==null) return;
+				System.err.println("No HibernateDatabaseService could be found for the database system '" + newDatabaseSystem + "'. Please check, if the corresponding database bundle was loaded.");
+				newDatabaseSystem = newDatabaseSystemFallback;
 			}
+			
 			// --- Set the database system selection --------------------------
 			this.databaseSystem = newDatabaseSystem;
 			if (isUpdateComboBox) this.getJComboBoxDbType().setSelectedItem(newDatabaseSystem);
@@ -261,6 +266,19 @@ public class DatabaseSettingsPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Returns the fallback database system name that is the first system in the list of services maintained by the {@link HibernateUtilities}.
+	 * @return the fallback database system name
+	 */
+	private String getFallbackDatabaseSystemName() {
+		String fallbackDbSystem = HibernateUtilities.getDatabaseSystemList().get(0);
+		if (fallbackDbSystem==null || fallbackDbSystem.equals(HibernateUtilities.DB_SERVICE_REGISTRATION_ERROR)) {
+			System.err.println("Not a single HibernateDatabaseService could be found. - Please, make sure to load and start the database connection bundles!");
+			return null;
+		}
+		return fallbackDbSystem;
+	}
+	
 	/**
 	 * Sets the database setting panel according to the specified database system.
 	 * @param dbSystem the database system to use
