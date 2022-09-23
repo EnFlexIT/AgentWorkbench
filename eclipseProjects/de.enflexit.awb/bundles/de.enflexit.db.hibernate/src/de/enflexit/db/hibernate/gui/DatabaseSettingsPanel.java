@@ -246,7 +246,6 @@ public class DatabaseSettingsPanel extends JPanel {
 				String newDatabaseSystemFallback = this.getFallbackDatabaseSystemName();
 				if (newDatabaseSystemFallback==null) return;
 				newDatabaseSystem = newDatabaseSystemFallback;
-				System.err.println("The new database system is not allowed to be null. - Instead the DB-System '" + newDatabaseSystemFallback + "' will be used!");
 			}
 			
 			// --- Check if the DB system connector is available --------------
@@ -291,8 +290,13 @@ public class DatabaseSettingsPanel extends JPanel {
 		AbstractDatabaseSettingsPanel dbConfigPanel = hds.getHibernateSettingsPanel();
 		// --- Get the configuration properties -----------
 		Properties dbConfig = this.getDatabaseSettings().getHibernateDatabaseSettings();
+		Properties dbConfigDefault = hds.getHibernateDefaultPropertySettings();
 		if (dbConfig==null) {
-			dbConfig = hds.getHibernateDefaultPropertySettings();
+			// --- Set configuration to default -----------
+			dbConfig = dbConfigDefault;
+		} else {
+			// --- Exchange the most important props ------ 
+			dbConfig.put(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbConfigDefault.get(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
 		}
 		dbConfigPanel.setHibernateConfigurationProperties(dbConfig);
 		// --- Integrate the configuration panel ----------

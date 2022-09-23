@@ -19,13 +19,6 @@ import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
  */
 public class MariaDbDatabaseService implements HibernateDatabaseService {
 
-	public static final String HIBERNATE_PROPERTY_DriverClass = "hibernate.connection.driver_class";
-	public static final String HIBERNATE_PROPERTY_Catalog = "hibernate.default_catalog";
-	public static final String HIBERNATE_PROPERTY_URL = "hibernate.connection.url";
-	public static final String HIBERNATE_PROPERTY_UserName = "hibernate.connection.username";
-	public static final String HIBERNATE_PROPERTY_Password = "hibernate.connection.password";
-	
-	
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getDatabaseSystemName()
 	 */

@@ -14,6 +14,13 @@ import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
  */
 public interface HibernateDatabaseService {
 
+	public static final String HIBERNATE_PROPERTY_DriverClass = "hibernate.connection.driver_class";
+	public static final String HIBERNATE_PROPERTY_Catalog = "hibernate.default_catalog";
+	public static final String HIBERNATE_PROPERTY_URL = "hibernate.connection.url";
+	public static final String HIBERNATE_PROPERTY_UserName = "hibernate.connection.username";
+	public static final String HIBERNATE_PROPERTY_Password = "hibernate.connection.password";
+	
+	
 	/**
 	 * Has to return the database system name (e.g. MySQl, Oracle or PostgreSQL)
 	 * and will be returned as selection base for a database system to use.
