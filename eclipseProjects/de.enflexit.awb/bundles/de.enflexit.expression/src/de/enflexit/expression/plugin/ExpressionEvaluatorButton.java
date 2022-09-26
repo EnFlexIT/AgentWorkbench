@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.toolbar.AbstractCustomToolbarComponent;
 
-import de.enflexit.expression.gui.ExpressionEvaluatorDialog;
+import de.enflexit.expression.gui.ExpressionEditorDialog;
 
 /**
  * A Toolbar Button that shows the expression evaluator dialog. 
@@ -23,7 +23,7 @@ public class ExpressionEvaluatorButton extends AbstractCustomToolbarComponent im
 	
 	private JButton toolbarButton;
 	
-	private ExpressionEvaluatorDialog evaluatorDialog;
+	private ExpressionEditorDialog evaluatorDialog;
 
 	public ExpressionEvaluatorButton(GraphEnvironmentController graphController) {
 		super(graphController);
@@ -46,9 +46,9 @@ public class ExpressionEvaluatorButton extends AbstractCustomToolbarComponent im
 		this.getEvaluatorDialog().setVisible(true);
 	}
 	
-	private ExpressionEvaluatorDialog getEvaluatorDialog() {
+	private ExpressionEditorDialog getEvaluatorDialog() {
 		if (evaluatorDialog==null) {
-			evaluatorDialog = new ExpressionEvaluatorDialog();
+			evaluatorDialog = new ExpressionEditorDialog();
 		}
 		return evaluatorDialog;
 	}

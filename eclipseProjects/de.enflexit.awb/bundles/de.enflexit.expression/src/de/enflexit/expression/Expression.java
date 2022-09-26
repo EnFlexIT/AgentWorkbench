@@ -3,7 +3,7 @@ package de.enflexit.expression;
 import java.util.Vector;
 
 /**
- * This class represents one expression, that may have sub-expressions.
+ * This class represents one single expression, that may have sub-expressions.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class Expression {
@@ -17,7 +17,7 @@ public class Expression {
 	private String expressionType;
 	
 	private boolean hasErrors;
-	
+	public Expression() {};
 	public Expression(String expressionString) {
 		this.expressionString = expressionString;
 	}

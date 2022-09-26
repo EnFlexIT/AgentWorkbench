@@ -1,7 +1,7 @@
 package de.enflexit.expression;
 
 /**
- * An InvalidExpressionException is thrown if an {@link ExpressionEvaluatorService} receives
+ * An InvalidExpressionException is thrown if an {@link ExpressionService} receives
  * an expression it is not able to understand / interpret.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */

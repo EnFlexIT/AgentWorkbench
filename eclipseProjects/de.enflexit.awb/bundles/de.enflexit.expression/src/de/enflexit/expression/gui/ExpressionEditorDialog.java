@@ -5,13 +5,13 @@ import javax.swing.JDialog;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
-public class ExpressionEvaluatorDialog extends JDialog{
+public class ExpressionEditorDialog extends JDialog{
 	
 	private static final long serialVersionUID = -5820516711953973203L;
 	
-	private ExpressionEvaluatorPanel evaluatorPanel;
+	private ExpressionEditorPanel evaluatorPanel;
 	
-	public ExpressionEvaluatorDialog() {
+	public ExpressionEditorDialog() {
 		this.initialize();
 	}
 
@@ -23,9 +23,9 @@ public class ExpressionEvaluatorDialog extends JDialog{
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
-	public ExpressionEvaluatorPanel getEvaluatorPanel() {
+	public ExpressionEditorPanel getEvaluatorPanel() {
 		if (evaluatorPanel==null) {
-			evaluatorPanel = new ExpressionEvaluatorPanel();
+			evaluatorPanel = new ExpressionEditorPanel();
 		}
 		return evaluatorPanel;
 	}

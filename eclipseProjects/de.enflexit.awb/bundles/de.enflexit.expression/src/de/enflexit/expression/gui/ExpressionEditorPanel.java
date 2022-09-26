@@ -25,7 +25,7 @@ import java.awt.Font;
  * A simple GUI panel for evaluating and visualizing nested expressions.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class ExpressionEvaluatorPanel extends JPanel implements ActionListener, TreeSelectionListener {
+public class ExpressionEditorPanel extends JPanel implements ActionListener, TreeSelectionListener {
 
 	private static final long serialVersionUID = -4476462699829568443L;
 	
@@ -41,7 +41,7 @@ public class ExpressionEvaluatorPanel extends JPanel implements ActionListener, 
 	/**
 	 * Instantiates a new expression evaluator panel.
 	 */
-	public ExpressionEvaluatorPanel() {
+	public ExpressionEditorPanel() {
 		initialize();
 	}
 	
