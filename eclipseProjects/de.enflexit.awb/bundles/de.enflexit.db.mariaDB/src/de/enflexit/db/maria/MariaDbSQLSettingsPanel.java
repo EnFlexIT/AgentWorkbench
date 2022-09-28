@@ -295,7 +295,11 @@ public class MariaDbSQLSettingsPanel extends AbstractDatabaseSettingsPanel {
 	@Override
 	public void setHibernateConfigurationProperties(Properties properties) {
 		
-		if (properties==null) return;
+		if (properties==null) {
+			// --- Get default properties -----------------
+			properties = new MariaDbDatabaseService().getHibernateDefaultPropertySettings();
+		}
+
 		String urlProperty = properties.getProperty(MariaDbDatabaseService.HIBERNATE_PROPERTY_URL, "");
 
 		// --- Remove the prefix of the URL ---------------

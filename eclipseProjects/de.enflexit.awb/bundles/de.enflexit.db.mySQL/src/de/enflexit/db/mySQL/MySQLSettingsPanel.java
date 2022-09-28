@@ -295,7 +295,11 @@ public class MySQLSettingsPanel extends AbstractDatabaseSettingsPanel {
 	@Override
 	public void setHibernateConfigurationProperties(Properties properties) {
 		
-		if (properties==null) return;
+		if (properties==null) {
+			// --- Get default properties -----------------
+			properties = new MySQLDatabaseService().getHibernateDefaultPropertySettings();
+		}
+
 		String urlProperty = properties.getProperty(MySQLDatabaseService.HIBERNATE_PROPERTY_URL, "");
 
 		// --- Remove the prefix of the URL ---------------

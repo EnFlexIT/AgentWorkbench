@@ -93,13 +93,16 @@ public class DatabaseConnectionManager {
 		try {
 			// --- Get the necessary service instances ------------------------ 
 			String factoryID = connectionService.getFactoryID();
-			Configuration connection = connectionService.getConfiguration();
+			Configuration configuration = connectionService.getConfiguration();
+			
+			// --- Load JDBC connection data ----------------------------------
+			this.loadDatabaseConfigurationProperties(factoryID, configuration);
 			
 			// --- Add to the locally known list ------------------------------
 			this.getHibernateDatabaseConnectionServiceHashMap().put(factoryID, connectionService);
 			
 			// --- Try to create a Hibernate SessionFactory -------------------
-			this.startSessionFactoryInThread(factoryID, connection, false);
+			this.startSessionFactoryInThread(factoryID, configuration, false);
 			
 		} catch (Exception ex) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error while starting database connection of service '" + connectionService.getClass().getName() + "':");
