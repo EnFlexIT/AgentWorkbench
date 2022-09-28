@@ -14,25 +14,49 @@ public class Expression {
 	private String expressionString;
 	private Vector<Expression> subExpressions;
 	
-	private String expressionType;
+	private String expressionTypePrefix;
 	
 	private boolean hasErrors;
+	
+	/**
+	 * Instantiates a new, empty expression.
+	 */
 	public Expression() {};
+	
+	/**
+	 * Instantiates a new expression, that is initialized with the provided string.
+	 * @param expressionString the expression string
+	 */
 	public Expression(String expressionString) {
 		this.expressionString = expressionString;
 	}
+	
+	/**
+	 * Gets the expression string.
+	 * @return the expression string
+	 */
 	public String getExpressionString() {
 		return expressionString;
 	}
+	
+	/**
+	 * Sets the expression string.
+	 * @param expressionString the new expression string
+	 */
 	public void setExpressionString(String expressionString) {
 		this.expressionString = expressionString;
 	}
-	public String getExpressionType() {
-		return expressionType;
+	public String getExpressionTypePrefix() {
+		return expressionTypePrefix;
 	}
-	public void setExpressionType(String expressionType) {
-		this.expressionType = expressionType;
+	public void setExpressionTypePrefix(String expressionTypePrefix) {
+		this.expressionTypePrefix = expressionTypePrefix;
 	}
+	
+	/**
+	 * Gets the sub expressions.
+	 * @return the sub expressions
+	 */
 	public Vector<Expression> getSubExpressions() {
 		if (subExpressions==null) {
 			subExpressions = new Vector<Expression>();
@@ -53,7 +77,7 @@ public class Expression {
 			int separatorPos = this.expressionString.indexOf('!');
 			if (separatorPos>0) {
 				String typeIdentifier = expressionString.substring(0, separatorPos);
-				this.setExpressionType(typeIdentifier);
+				this.setExpressionTypePrefix(typeIdentifier);
 			}
 		
 		} else {
