@@ -4,7 +4,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -17,6 +21,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.expression.ExpressionEditorTreeNode;
 import de.enflexit.expression.ExpressionService;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -39,6 +44,11 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private JTree jTreeExpressionTypes;
 	private JList<String> jListCategories;
 	private JList<String> jListExpressions;
+	
+	private TreeMap<String, ArrayList<String>> currentOptions;
+	
+	private DefaultListModel<String> categoriesListModel;
+	private DefaultListModel<String> expressionsListModel;
 	
 	/**
 	 * Instantiates a new expression editor library panel.
@@ -142,25 +152,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 			jTreeExpressionTypes.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTreeExpressionTypes.setRootVisible(false);
 			jTreeExpressionTypes.setVisibleRowCount(8);
-			jTreeExpressionTypes.setModel(new DefaultTreeModel(
-				new DefaultMutableTreeNode("Expressions") {
-					private static final long serialVersionUID = -8848227480569734907L;
-
-					{
-						DefaultMutableTreeNode node_1;
-						node_1 = new DefaultMutableTreeNode("Math");
-							node_1.add(new DefaultMutableTreeNode("Functions"));
-							node_1.add(new DefaultMutableTreeNode("Constants"));
-						add(node_1);
-						node_1 = new DefaultMutableTreeNode("EOM");
-							node_1.add(new DefaultMutableTreeNode("Models\t\t"));
-						add(node_1);
-						node_1 = new DefaultMutableTreeNode("Database");
-							node_1.add(new DefaultMutableTreeNode("Tables\t"));
-						add(node_1);
-					}
-				}
-			));
+			jTreeExpressionTypes.setModel(new DefaultTreeModel(this.buildLibraryTree()));
 			jTreeExpressionTypes.addTreeSelectionListener(this);
 		}
 		return jTreeExpressionTypes;
@@ -184,20 +176,43 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
 	 */
 	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void valueChanged(ListSelectionEvent lse) {
+		if (lse.getSource()==this.getJListCategories()) {
+			String category = this.getJListCategories().getSelectedValue();
+			this.getJListExpressions().setModel(this.createExpressionsListModel(category));
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
 	 */
 	@Override
-	public void valueChanged(TreeSelectionEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void valueChanged(TreeSelectionEvent tse) {
+		if (tse.getSource()==this.getJTreeExpressionTypes()) {
+			if (this.getJTreeExpressionTypes().getLastSelectedPathComponent()!=null) {
+				ExpressionEditorTreeNode selecteNode = (ExpressionEditorTreeNode) this.getJTreeExpressionTypes().getLastSelectedPathComponent();
+				this.currentOptions = selecteNode.getExpressionTemplates();
+				this.getJListCategories().setModel(this.createCategoriesListModel());
+			}
+		}
 	}
 	
+	private DefaultListModel<String> createCategoriesListModel(){
+		this.categoriesListModel = new DefaultListModel<>();
+		if (this.currentOptions!=null) {
+			this.categoriesListModel.addAll(this.currentOptions.keySet());
+		}
+		return this.categoriesListModel;
+	}
+	
+	private DefaultListModel<String> createExpressionsListModel(String category){
+		this.expressionsListModel = new DefaultListModel<>();
+		if (category!=null) {
+			this.expressionsListModel.addAll(this.currentOptions.get(category));
+		}
+		return expressionsListModel;
+	}
+
 	/**
 	 * Builds the library tree.
 	 * @return the default mutable tree node
@@ -206,7 +221,10 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Expression Library");
 		
 		// --- Get available expression services ----------
-		ServiceFinder.findServices(ExpressionService.class);
+		List<ExpressionService> expressionServices = ServiceFinder.findServices(ExpressionService.class);
+		for (int i=0; i<expressionServices.size(); i++) {
+			rootNode.add(expressionServices.get(i).getExpressionEditorRootNode());
+		}
 		
 		return rootNode;
 	}
