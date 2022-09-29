@@ -17,6 +17,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * The Class ExpressionEditorDialog.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	
 	private static final long serialVersionUID = -5820516711953973203L;
@@ -30,10 +34,16 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	private ExpressionEditorMainPanel editorPanel;
 	private JPanel buttonsPanel;
 	
+	/**
+	 * Instantiates a new expression editor dialog.
+	 */
 	public ExpressionEditorDialog() {
 		this.initialize();
 	}
 
+	/**
+	 * Initializes the GUI components.
+	 */
 	private void initialize() {
 		this.setTitle("Expression Editor");
 		this.setSize(1200, 650);

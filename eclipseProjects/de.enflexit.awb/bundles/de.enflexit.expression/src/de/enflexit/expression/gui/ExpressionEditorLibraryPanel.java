@@ -15,6 +15,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+
+import de.enflexit.common.ServiceFinder;
+import de.enflexit.expression.ExpressionService;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -192,6 +196,19 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	public void valueChanged(TreeSelectionEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * Builds the library tree.
+	 * @return the default mutable tree node
+	 */
+	private DefaultMutableTreeNode buildLibraryTree() {
+		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Expression Library");
+		
+		// --- Get available expression services ----------
+		ServiceFinder.findServices(ExpressionService.class);
+		
+		return rootNode;
 	}
 
 }

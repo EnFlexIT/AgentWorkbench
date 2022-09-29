@@ -42,5 +42,5 @@ public interface ExpressionService {
 	 * by this service in the expression editor.
 	 * @return the expression tree root node
 	 */
-	public ExpressionEditorTreeNode getExpressionTreeRootNode();
+	public ExpressionEditorTreeNode getExpressionEditorRootNode();
 }

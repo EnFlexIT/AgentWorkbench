@@ -14,6 +14,7 @@ public class Expression {
 	private String expressionString;
 	private Vector<Expression> subExpressions;
 	
+	private ExpressionType expressionType;
 	private String expressionTypePrefix;
 	
 	private boolean hasErrors;
@@ -46,9 +47,33 @@ public class Expression {
 	public void setExpressionString(String expressionString) {
 		this.expressionString = expressionString;
 	}
+	
+	/**
+	 * Gets the expression type.
+	 * @return the expression type
+	 */
+	public ExpressionType getExpressionType() {
+		return expressionType;
+	}
+	/**
+	 * Sets the expression type.
+	 * @param expressionType the new expression type
+	 */
+	public void setExpressionType(ExpressionType expressionType) {
+		this.expressionType = expressionType;
+	}
+
+	/**
+	 * Gets the expression type prefix.
+	 * @return the expression type prefix
+	 */
 	public String getExpressionTypePrefix() {
 		return expressionTypePrefix;
 	}
+	/**
+	 * Sets the expression type prefix.
+	 * @param expressionTypePrefix the new expression type prefix
+	 */
 	public void setExpressionTypePrefix(String expressionTypePrefix) {
 		this.expressionTypePrefix = expressionTypePrefix;
 	}
