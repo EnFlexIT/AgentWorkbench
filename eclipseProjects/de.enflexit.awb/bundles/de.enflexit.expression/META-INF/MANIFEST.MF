@@ -4,7 +4,9 @@ Bundle-Name: Expression
 Bundle-SymbolicName: de.enflexit.expression
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.expression,
+ de.enflexit.expression.classLoadService,
  de.enflexit.expression.gui,
+ de.enflexit.expression.math,
  de.enflexit.expression.plugin
 Require-Bundle: de.enflexit.common,
  org.agentgui.core,
@@ -13,4 +15,5 @@ Require-Bundle: de.enflexit.common,
 Automatic-Module-Name: de.enflexit.expression
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Service-Component: OSGI-INF/awbClassLoadService.xml
+Service-Component: OSGI-INF/awbClassLoadService.xml,
+ OSGI-INF/mathExpressionService.xml

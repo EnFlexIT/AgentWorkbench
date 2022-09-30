@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionParser;
 
 /**
  * This class implements the upper left part of the expression editor, 
@@ -29,6 +30,7 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	private JButton jButtonParse;
 	
 	private Expression expression;
+	private ExpressionParser parser;
 	
 	/**
 	 * Instantiates a new expression editor text panel.
@@ -96,8 +98,8 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonParse()) {
-			this.expression = new Expression(this.getJTextAreaExpression().getText());
-			this.expression.parse();
+			String expressionString = this.getJTextAreaExpression().getText();
+			this.expression = this.getParser().parse(expressionString);
 			this.firePropertyChange(EXPRESSION_PARSED, null, this.expression);
 		}
 	}
@@ -139,5 +141,11 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 		this.getJTextAreaExpression().requestFocus();
 		this.getJTextAreaExpression().select(selectFrom, selectTo);
 	}
-	
+
+	private ExpressionParser getParser() {
+		if (parser==null) {
+			parser = new ExpressionParser();
+		}
+		return parser;
+	}
 }

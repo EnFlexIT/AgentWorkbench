@@ -24,7 +24,7 @@ public class MathExpressionService implements ExpressionService {
 	@Override
 	public ExpressionType getExpressionType() {
 		if (expressionType==null) {
-			expressionType = new ExpressionTypeMath();
+			expressionType = ExpressionTypeMath.getInstance();
 		}
 		return expressionType;
 	}
@@ -62,6 +62,7 @@ public class MathExpressionService implements ExpressionService {
 	public ExpressionEditorTreeNode getExpressionEditorRootNode() {
 		if (expressionEditorRootNode==null) {
 			expressionEditorRootNode = new ExpressionEditorTreeNode();
+			expressionEditorRootNode.setUserObject("Mathematical");
 			expressionEditorRootNode.setExpressionTemplates(this.buildTemplatesTreeMap());
 		}
 		return expressionEditorRootNode;

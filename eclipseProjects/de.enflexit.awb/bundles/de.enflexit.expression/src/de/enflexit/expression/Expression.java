@@ -8,14 +8,10 @@ import java.util.Vector;
  */
 public class Expression {
 	
-	private static final char openingDelimiter = '[';
-	private static final char closingDelimiter = ']';
-	
 	private String expressionString;
 	private Vector<Expression> subExpressions;
 	
 	private ExpressionType expressionType;
-	private String expressionTypePrefix;
 	
 	private boolean hasErrors;
 	
@@ -30,17 +26,6 @@ public class Expression {
 	 */
 	public Expression(String expressionString) {
 		this.expressionString = expressionString;
-	}
-	
-	/**
-	 * Creates a new expression from the provided String and parses it.
-	 * @param expressionString the expression string
-	 * @return the parsed expression
-	 */
-	public static Expression parse(String expressionString) {
-		Expression expression = new Expression(expressionString);
-		expression.parse();
-		return expression;
 	}
 	
 	/**
@@ -75,21 +60,6 @@ public class Expression {
 	}
 
 	/**
-	 * Gets the expression type prefix.
-	 * @return the expression type prefix
-	 */
-	public String getExpressionTypePrefix() {
-		return expressionTypePrefix;
-	}
-	/**
-	 * Sets the expression type prefix.
-	 * @param expressionTypePrefix the new expression type prefix
-	 */
-	public void setExpressionTypePrefix(String expressionTypePrefix) {
-		this.expressionTypePrefix = expressionTypePrefix;
-	}
-	
-	/**
 	 * Gets the sub expressions.
 	 * @return the sub expressions
 	 */
@@ -101,81 +71,12 @@ public class Expression {
 	}
 	
 	/**
-	 * Parses the expression.
-	 * @return the expression
+	 * Sets the error indicator for this expression
+	 * @param hasErrors the new checks for errors
 	 */
-	public Expression parse() {
-		
-		// --- Check if the expression is atomic (i.e. contains no sub expressions)
-		if (expressionString.indexOf(openingDelimiter)==-1) {
-			
-			// --- Check for type specifiers (can only occur in atomic expressions
-			int separatorPos = this.expressionString.indexOf('!');
-			if (separatorPos>0) {
-				String typeIdentifier = expressionString.substring(0, separatorPos);
-				this.setExpressionTypePrefix(typeIdentifier);
-			}
-		
-		} else {
-			
-			// --- Check for sub-expressions ----------------------------
-			int subStrBegin, subStrLength;
-			for (int currPos = 0; currPos<this.expressionString.length(); currPos++) {
-				if (this.expressionString.charAt(currPos)==openingDelimiter) {
-					subStrBegin = currPos;
-					subStrLength = this.findClosingDelimiter(this.expressionString.substring(currPos));
-					
-					// --- Found a valid sub-expression -----------------
-					if (subStrLength>0) {
-						
-						// --- Extract, parse and add to parent ---------
-						String subString = this.expressionString.substring(subStrBegin+1, subStrBegin+subStrLength);
-						Expression subExpression = new Expression(subString);
-						subExpression.parse();
-						this.getSubExpressions().add(subExpression);
-						
-						// --- Continue after the sub-expression -------- 
-						currPos += subStrLength;
-						
-					} else {
-						System.err.println("Found no matching closing delimiter for the opening delemiter at " + subStrBegin);
-						this.hasErrors = true;
-						return this;
-					}
-				}
-			}
-		}
-		
-		return this;
+	public void setHasErrors(boolean hasErrors) {
+		this.hasErrors = hasErrors;
 	}
-	
-	/**
-	 * Finds the corresponding closing delimiter in a string that starts with an opening delimiter.
-	 * @param string the string
-	 * @return the int
-	 */
-	private int findClosingDelimiter(String string) {
-		int depth = 0;
-		for (int i=0; i<string.length(); i++) {
-			char currentChar = string.charAt(i); 
-			if (currentChar==openingDelimiter) {
-				// --- Nested delimiter opened ------------ 
-				depth++;
-			} else if (currentChar==closingDelimiter) {
-				// --- Nested delimiter closed ------------
-				depth--;
-				// --- Matching closing delimiter -------------
-				if (depth==0) {
-					return i;
-				}
-			}
-			
-		}
-		
-		// --- No matching closing delimiter found --------
-		return -1; 
-	}
-	
 	/**
 	 * Checks for errors.
 	 * @return true, if this expression has errors

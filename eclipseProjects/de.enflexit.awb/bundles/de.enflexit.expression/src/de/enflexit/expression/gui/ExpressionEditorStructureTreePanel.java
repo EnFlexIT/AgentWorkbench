@@ -14,6 +14,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionTypeUnknown;
 
 /**
  * This class implements the right sub-panel of the expression editor, showing the expression structure tree. 
@@ -150,12 +151,16 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) this.getExpressionTree().getLastSelectedPathComponent();
 				selectedExpression = (Expression) selectedNode.getUserObject();
 				
-				if (selectedExpression.getExpressionTypePrefix()!=null) {
-					this.getTypeLabel().setText(selectedExpression.getExpressionTypePrefix());
-				} else {
-					this.getTypeLabel().setText("Math");
+				if (selectedExpression.getExpressionType()!=null) {
+					this.getTypeLabel().setText(selectedExpression.getExpressionType().getTypePrefix());
 				}
-				this.getValidLabel().setText("" + !selectedExpression.hasErrors());
+				
+				if (selectedExpression.getExpressionType() instanceof ExpressionTypeUnknown) {
+					this.getValidLabel().setText("<n.a.>");
+				} else {
+					this.getValidLabel().setText("" + !selectedExpression.hasErrors());
+				}
+				
 			} else {
 				this.getTypeLabel().setText("<n.a.>");
 				this.getValidLabel().setText("<n.a.>");
