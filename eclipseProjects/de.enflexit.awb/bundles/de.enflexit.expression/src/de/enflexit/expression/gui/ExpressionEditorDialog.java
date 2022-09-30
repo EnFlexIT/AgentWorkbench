@@ -46,7 +46,7 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	 */
 	private void initialize() {
 		this.setTitle("Expression Editor");
-		this.setSize(1200, 650);
+		this.setSize(1200, 630);
 		this.setContentPane(this.getMainPanel());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);

@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionParser;
+import javax.swing.JLabel;
 
 /**
  * This class implements the upper left part of the expression editor, 
@@ -31,6 +32,7 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	
 	private Expression expression;
 	private ExpressionParser parser;
+	private JLabel jLabelExpression;
 	
 	/**
 	 * Instantiates a new expression editor text panel.
@@ -46,27 +48,33 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	private void initialize() {
 		GridBagLayout gbl_this = new GridBagLayout();
 		gbl_this.columnWidths = new int[]{0, 0, 0};
-		gbl_this.rowHeights = new int[]{0, 0, 0};
+		gbl_this.rowHeights = new int[]{0, 0, 0, 0};
 		gbl_this.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_this.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_this.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gbl_this);
+		GridBagConstraints gbc_jLabelExpression = new GridBagConstraints();
+		gbc_jLabelExpression.anchor = GridBagConstraints.WEST;
+		gbc_jLabelExpression.insets = new Insets(5, 10, 5, 0);
+		gbc_jLabelExpression.gridx = 0;
+		gbc_jLabelExpression.gridy = 0;
+		add(getJLabelExpression(), gbc_jLabelExpression);
 		GridBagConstraints gbc_jTextAreaExpression = new GridBagConstraints();
 		gbc_jTextAreaExpression.gridwidth = 2;
-		gbc_jTextAreaExpression.insets = new Insets(0, 0, 5, 5);
+		gbc_jTextAreaExpression.insets = new Insets(5, 10, 5, 10);
 		gbc_jTextAreaExpression.fill = GridBagConstraints.BOTH;
 		gbc_jTextAreaExpression.gridx = 0;
-		gbc_jTextAreaExpression.gridy = 0;
+		gbc_jTextAreaExpression.gridy = 1;
 		this.add(getJTextAreaExpression(), gbc_jTextAreaExpression);
 		GridBagConstraints gbc_jButtonParse = new GridBagConstraints();
-		gbc_jButtonParse.insets = new Insets(5, 10, 5, 10);
-		gbc_jButtonParse.anchor = GridBagConstraints.NORTH;
+		gbc_jButtonParse.insets = new Insets(5, 10, 5, 0);
 		gbc_jButtonParse.gridx = 0;
-		gbc_jButtonParse.gridy = 1;
+		gbc_jButtonParse.gridy = 2;
 		this.add(getJButtonParse(), gbc_jButtonParse);
 		GridBagConstraints gbc_jCheckBoxAutoParse = new GridBagConstraints();
+		gbc_jCheckBoxAutoParse.insets = new Insets(5, 10, 5, 0);
 		gbc_jCheckBoxAutoParse.anchor = GridBagConstraints.WEST;
 		gbc_jCheckBoxAutoParse.gridx = 1;
-		gbc_jCheckBoxAutoParse.gridy = 1;
+		gbc_jCheckBoxAutoParse.gridy = 2;
 		this.add(getJCheckBoxAutoParse(), gbc_jCheckBoxAutoParse);
 	}
 	
@@ -147,5 +155,12 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 			parser = new ExpressionParser();
 		}
 		return parser;
+	}
+	private JLabel getJLabelExpression() {
+		if (jLabelExpression == null) {
+			jLabelExpression = new JLabel("Expression");
+			jLabelExpression.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelExpression;
 	}
 }

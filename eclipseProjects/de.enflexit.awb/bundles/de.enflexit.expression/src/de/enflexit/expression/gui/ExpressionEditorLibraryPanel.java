@@ -87,18 +87,21 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		gbc_jLabelExpressions.gridy = 0;
 		this.add(getJLabelExpressions(), gbc_jLabelExpressions);
 		GridBagConstraints gbc_jScrollPaneMainCategories = new GridBagConstraints();
+		gbc_jScrollPaneMainCategories.weighty = 1.0;
 		gbc_jScrollPaneMainCategories.insets = new Insets(0, 0, 0, 5);
 		gbc_jScrollPaneMainCategories.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneMainCategories.gridx = 0;
 		gbc_jScrollPaneMainCategories.gridy = 1;
 		this.add(getJScrollPaneMainCategories(), gbc_jScrollPaneMainCategories);
 		GridBagConstraints gbc_jScrollPaneSubCategories = new GridBagConstraints();
+		gbc_jScrollPaneSubCategories.weighty = 1.0;
 		gbc_jScrollPaneSubCategories.insets = new Insets(0, 0, 0, 5);
 		gbc_jScrollPaneSubCategories.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneSubCategories.gridx = 1;
 		gbc_jScrollPaneSubCategories.gridy = 1;
 		this.add(getJScrollPaneSubCategories(), gbc_jScrollPaneSubCategories);
 		GridBagConstraints gbc_jScrollPaneTemplates = new GridBagConstraints();
+		gbc_jScrollPaneTemplates.weighty = 1.0;
 		gbc_jScrollPaneTemplates.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneTemplates.gridx = 2;
 		gbc_jScrollPaneTemplates.gridy = 1;
@@ -106,7 +109,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	}
 	private JLabel getJLabelExpressionLybrary() {
 		if (jLabelExpressionLybrary == null) {
-			jLabelExpressionLybrary = new JLabel("Expression Library");
+			jLabelExpressionLybrary = new JLabel("Main Categories");
 			jLabelExpressionLybrary.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelExpressionLybrary;
@@ -120,7 +123,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	}
 	private JLabel getJLabelCategories() {
 		if (jLabelCategories == null) {
-			jLabelCategories = new JLabel("Categories");
+			jLabelCategories = new JLabel("Sub Categories");
 			jLabelCategories.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelCategories;
@@ -153,6 +156,9 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 			jTreeExpressionTypes.setRootVisible(false);
 			jTreeExpressionTypes.setVisibleRowCount(8);
 			jTreeExpressionTypes.setModel(new DefaultTreeModel(this.buildLibraryTree()));
+			for (int i=0; i<jTreeExpressionTypes.getRowCount(); i++) {
+				jTreeExpressionTypes.expandRow(i);
+			}
 			jTreeExpressionTypes.addTreeSelectionListener(this);
 		}
 		return jTreeExpressionTypes;

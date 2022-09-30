@@ -15,7 +15,6 @@ import de.enflexit.expression.UnknownExpressionException;
  */
 public class MathExpressionService implements ExpressionService {
 	
-	private ExpressionTypeMath expressionType;
 	private ExpressionEditorTreeNode expressionEditorRootNode;
 
 	/* (non-Javadoc)
@@ -23,10 +22,7 @@ public class MathExpressionService implements ExpressionService {
 	 */
 	@Override
 	public ExpressionType getExpressionType() {
-		if (expressionType==null) {
-			expressionType = ExpressionTypeMath.getInstance();
-		}
-		return expressionType;
+		return ExpressionTypeMath.getInstance();
 	}
 
 	/* (non-Javadoc)
@@ -34,6 +30,7 @@ public class MathExpressionService implements ExpressionService {
 	 */
 	@Override
 	public double evaluate(Expression expression) throws UnknownExpressionException {
+		// TODO implement evaluation
 		return 42.0;
 	}
 
@@ -61,8 +58,7 @@ public class MathExpressionService implements ExpressionService {
 	@Override
 	public ExpressionEditorTreeNode getExpressionEditorRootNode() {
 		if (expressionEditorRootNode==null) {
-			expressionEditorRootNode = new ExpressionEditorTreeNode();
-			expressionEditorRootNode.setUserObject("Mathematical");
+			expressionEditorRootNode = new ExpressionEditorTreeNode("Mathematical");
 			expressionEditorRootNode.setExpressionTemplates(this.buildTemplatesTreeMap());
 		}
 		return expressionEditorRootNode;

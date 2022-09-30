@@ -61,7 +61,7 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 		this.add(getJLabelExpressionStructure(), gbc_jLabelExpressionStructure);
 		GridBagConstraints gbc_jScrollPaneExpressionTree = new GridBagConstraints();
 		gbc_jScrollPaneExpressionTree.gridwidth = 2;
-		gbc_jScrollPaneExpressionTree.insets = new Insets(0, 0, 5, 5);
+		gbc_jScrollPaneExpressionTree.insets = new Insets(10, 5, 5, 5);
 		gbc_jScrollPaneExpressionTree.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneExpressionTree.gridx = 0;
 		gbc_jScrollPaneExpressionTree.gridy = 1;

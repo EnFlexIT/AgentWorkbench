@@ -13,6 +13,14 @@ public class ExpressionEditorTreeNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = -6995251247736826244L;
 	
 	private TreeMap<String, ArrayList<String>> expressionTemplates;
+	
+	/**
+	 * Instantiates a new expression editor tree node.
+	 * @param nodeLabel the node label
+	 */
+	public ExpressionEditorTreeNode(String nodeLabel) {
+		super(nodeLabel);
+	}
 
 	/**
 	 * Gets the expression templates provided by the service this node represents.

@@ -42,12 +42,15 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 		gridBagLayout.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_textPanel = new GridBagConstraints();
+		gbc_textPanel.weighty = 3.0;
+		gbc_textPanel.weightx = 7.0;
 		gbc_textPanel.insets = new Insets(10, 10, 5, 5);
 		gbc_textPanel.fill = GridBagConstraints.BOTH;
 		gbc_textPanel.gridx = 0;
 		gbc_textPanel.gridy = 0;
 		add(getTextPanel(), gbc_textPanel);
 		GridBagConstraints gbc_structureTreePanel = new GridBagConstraints();
+		gbc_structureTreePanel.weightx = 3.0;
 		gbc_structureTreePanel.gridheight = 2;
 		gbc_structureTreePanel.insets = new Insets(10, 5, 10, 10);
 		gbc_structureTreePanel.fill = GridBagConstraints.BOTH;
@@ -55,6 +58,8 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 		gbc_structureTreePanel.gridy = 0;
 		add(getStructureTreePanel(), gbc_structureTreePanel);
 		GridBagConstraints gbc_libraryPanel = new GridBagConstraints();
+		gbc_libraryPanel.weighty = 7.0;
+		gbc_libraryPanel.weightx = 7.0;
 		gbc_libraryPanel.insets = new Insets(5, 10, 10, 5);
 		gbc_libraryPanel.fill = GridBagConstraints.BOTH;
 		gbc_libraryPanel.gridx = 0;
