@@ -33,6 +33,17 @@ public class Expression {
 	}
 	
 	/**
+	 * Creates a new expression from the provided String and parses it.
+	 * @param expressionString the expression string
+	 * @return the parsed expression
+	 */
+	public static Expression parse(String expressionString) {
+		Expression expression = new Expression(expressionString);
+		expression.parse();
+		return expression;
+	}
+	
+	/**
 	 * Gets the expression string.
 	 * @return the expression string
 	 */
