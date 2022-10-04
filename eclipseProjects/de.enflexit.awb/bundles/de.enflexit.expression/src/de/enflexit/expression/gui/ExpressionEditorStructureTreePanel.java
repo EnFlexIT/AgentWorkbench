@@ -55,35 +55,34 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 		GridBagConstraints gbc_jLabelExpressionStructure = new GridBagConstraints();
 		gbc_jLabelExpressionStructure.gridwidth = 2;
 		gbc_jLabelExpressionStructure.anchor = GridBagConstraints.WEST;
-		gbc_jLabelExpressionStructure.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelExpressionStructure.gridx = 0;
 		gbc_jLabelExpressionStructure.gridy = 0;
 		this.add(getJLabelExpressionStructure(), gbc_jLabelExpressionStructure);
 		GridBagConstraints gbc_jScrollPaneExpressionTree = new GridBagConstraints();
 		gbc_jScrollPaneExpressionTree.gridwidth = 2;
-		gbc_jScrollPaneExpressionTree.insets = new Insets(10, 5, 5, 5);
+		gbc_jScrollPaneExpressionTree.insets = new Insets(5, 0, 0, 0);
 		gbc_jScrollPaneExpressionTree.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneExpressionTree.gridx = 0;
 		gbc_jScrollPaneExpressionTree.gridy = 1;
 		this.add(getJScrollPaneExpressionTree(), gbc_jScrollPaneExpressionTree);
 		GridBagConstraints gbc_jLabelType = new GridBagConstraints();
-		gbc_jLabelType.insets = new Insets(5, 5, 5, 0);
+		gbc_jLabelType.insets = new Insets(5, 0, 0, 0);
 		gbc_jLabelType.gridx = 0;
 		gbc_jLabelType.gridy = 2;
 		this.add(getJLabelType(), gbc_jLabelType);
 		GridBagConstraints gbc_typeLabel = new GridBagConstraints();
 		gbc_typeLabel.anchor = GridBagConstraints.WEST;
-		gbc_typeLabel.insets = new Insets(5, 5, 5, 0);
+		gbc_typeLabel.insets = new Insets(5, 5, 0, 0);
 		gbc_typeLabel.gridx = 1;
 		gbc_typeLabel.gridy = 2;
 		this.add(getTypeLabel(), gbc_typeLabel);
 		GridBagConstraints gbc_jLabelValid = new GridBagConstraints();
-		gbc_jLabelValid.insets = new Insets(0, 5, 5, 0);
+		gbc_jLabelValid.insets = new Insets(5, 0, 5, 0);
 		gbc_jLabelValid.gridx = 0;
 		gbc_jLabelValid.gridy = 3;
 		this.add(getJLabelValid(), gbc_jLabelValid);
 		GridBagConstraints gbc_validLabel = new GridBagConstraints();
-		gbc_validLabel.insets = new Insets(0, 5, 5, 0);
+		gbc_validLabel.insets = new Insets(5, 5, 5, 0);
 		gbc_validLabel.anchor = GridBagConstraints.WEST;
 		gbc_validLabel.gridx = 1;
 		gbc_validLabel.gridy = 3;
@@ -106,6 +105,7 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 	private JTree getExpressionTree() {
 		if (expressionTree == null) {
 			expressionTree = new JTree();
+			expressionTree.setFont(new Font("Dialog", Font.PLAIN, 12));
 			expressionTree.setModel(this.getInitialTreeModel());
 			expressionTree.addTreeSelectionListener(this);
 		}

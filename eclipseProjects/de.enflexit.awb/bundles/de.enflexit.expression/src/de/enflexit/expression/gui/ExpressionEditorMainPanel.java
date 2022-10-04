@@ -1,13 +1,17 @@
 package de.enflexit.expression.gui;
 
-import javax.swing.JPanel;
-import de.enflexit.expression.Expression;
-
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
+import de.enflexit.expression.Expression;
+import javax.swing.border.EmptyBorder;
 
 /**
  * This class implements the main panel of the expression editor. It mainly just hosts
@@ -18,11 +22,13 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 	
 	private static final long serialVersionUID = 4901839979331733505L;
 	
-	private ExpressionEditorTextPanel textPanel;
-	private ExpressionEditorLibraryPanel libraryPanel;
-	private ExpressionEditorStructureTreePanel structureTreePanel;
-	
 	private Expression expression;
+
+	private JSplitPane jSplitPaneMain;
+	private JSplitPane jSplitPaneLeft;
+	private ExpressionEditorTextPanel jPanelExpressionTextEditor;
+	private ExpressionEditorLibraryPanel jPanelLibrary;
+	private ExpressionEditorStructureTreePanel jPanelStructureTreeRight;
 
 	/**
 	 * Instantiates a new expression editor main panel.
@@ -35,58 +41,21 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 	 * Initializes the GUI components.
 	 */
 	private void initialize() {
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		GridBagConstraints gbc_textPanel = new GridBagConstraints();
-		gbc_textPanel.weighty = 3.0;
-		gbc_textPanel.weightx = 7.0;
-		gbc_textPanel.insets = new Insets(10, 10, 5, 5);
-		gbc_textPanel.fill = GridBagConstraints.BOTH;
-		gbc_textPanel.gridx = 0;
-		gbc_textPanel.gridy = 0;
-		add(getTextPanel(), gbc_textPanel);
-		GridBagConstraints gbc_structureTreePanel = new GridBagConstraints();
-		gbc_structureTreePanel.weightx = 3.0;
-		gbc_structureTreePanel.gridheight = 2;
-		gbc_structureTreePanel.insets = new Insets(10, 5, 10, 10);
-		gbc_structureTreePanel.fill = GridBagConstraints.BOTH;
-		gbc_structureTreePanel.gridx = 1;
-		gbc_structureTreePanel.gridy = 0;
-		add(getStructureTreePanel(), gbc_structureTreePanel);
-		GridBagConstraints gbc_libraryPanel = new GridBagConstraints();
-		gbc_libraryPanel.weighty = 7.0;
-		gbc_libraryPanel.weightx = 7.0;
-		gbc_libraryPanel.insets = new Insets(5, 10, 10, 5);
-		gbc_libraryPanel.fill = GridBagConstraints.BOTH;
-		gbc_libraryPanel.gridx = 0;
-		gbc_libraryPanel.gridy = 1;
-		add(getLibraryPanel(), gbc_libraryPanel);
+		
+		GridBagConstraints gbc_jSplitPaneMain = new GridBagConstraints();
+		gbc_jSplitPaneMain.insets = new Insets(10, 10, 10, 10);
+		gbc_jSplitPaneMain.fill = GridBagConstraints.BOTH;
+		gbc_jSplitPaneMain.gridx = 0;
+		gbc_jSplitPaneMain.gridy = 0;
+		this.add(this.getJSplitPaneMain(), gbc_jSplitPaneMain);
 	}
-	private ExpressionEditorTextPanel getTextPanel() {
-		if (textPanel==null) {
-			textPanel = new ExpressionEditorTextPanel();
-			textPanel.addPropertyChangeListener(this);
-		}
-		return textPanel;
-	}
-	private ExpressionEditorLibraryPanel getLibraryPanel() {
-		if (libraryPanel==null) {
-			libraryPanel = new ExpressionEditorLibraryPanel();
-		}
-		return libraryPanel;
-	}
-	private ExpressionEditorStructureTreePanel getStructureTreePanel() {
-		if (structureTreePanel==null) {
-			structureTreePanel = new ExpressionEditorStructureTreePanel();
-			structureTreePanel.addPropertyChangeListener(this);
-		}
-		return structureTreePanel;
-	}
-	
 	
 	/**
 	 * Gets the expression.
@@ -95,7 +64,6 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 	public Expression getExpression() {
 		return expression;
 	}
-	
 	/**
 	 * Sets the expression.
 	 * @param expression the new expression
@@ -104,22 +72,77 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 		this.expression = expression;
 	}
 	
+	
+	private JSplitPane getJSplitPaneMain() {
+		if (jSplitPaneMain == null) {
+			jSplitPaneMain = new JSplitPane();
+			jSplitPaneMain.setRightComponent(this.getJPanelStructureTreeRight());
+			jSplitPaneMain.setLeftComponent(this.getJSplitPaneLeft());
+			jSplitPaneMain.setBorder(BorderFactory.createEmptyBorder());
+			jSplitPaneMain.setDividerSize(7);
+			jSplitPaneMain.setDividerLocation(0.66);
+			jSplitPaneMain.setResizeWeight(0.5);
+			jSplitPaneMain.setOneTouchExpandable(true);
+		}
+		return jSplitPaneMain;
+	}
+	private ExpressionEditorStructureTreePanel getJPanelStructureTreeRight() {
+		if (jPanelStructureTreeRight==null) {
+			jPanelStructureTreeRight = new ExpressionEditorStructureTreePanel();
+			jPanelStructureTreeRight.setBorder(new EmptyBorder(0, 5, 0, 0));
+			jPanelStructureTreeRight.addPropertyChangeListener(this);
+		}
+		return jPanelStructureTreeRight;
+	}
+	
+	
+	private JSplitPane getJSplitPaneLeft() {
+		if (jSplitPaneLeft == null) {
+			jSplitPaneLeft = new JSplitPane();
+			jSplitPaneLeft.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitPaneLeft.setTopComponent(this.getJPanelExpressionTextEditor());
+			jSplitPaneLeft.setBottomComponent(this.getJPanelLibrary());
+			jSplitPaneLeft.setBorder(BorderFactory.createEmptyBorder());
+			jSplitPaneLeft.setDividerSize(7);
+			jSplitPaneLeft.setResizeWeight(0.33);
+			jSplitPaneLeft.setDividerLocation(0.33);
+			jSplitPaneLeft.setOneTouchExpandable(true);
+		}
+		return jSplitPaneLeft;
+	}
+	
+	private ExpressionEditorTextPanel getJPanelExpressionTextEditor() {
+		if (jPanelExpressionTextEditor==null) {
+			jPanelExpressionTextEditor = new ExpressionEditorTextPanel();
+			jPanelExpressionTextEditor.setBorder(new EmptyBorder(0, 0, 0, 5));
+			jPanelExpressionTextEditor.addPropertyChangeListener(this);
+		}
+		return jPanelExpressionTextEditor;
+	}
+	private ExpressionEditorLibraryPanel getJPanelLibrary() {
+		if (jPanelLibrary==null) {
+			jPanelLibrary = new ExpressionEditorLibraryPanel();
+			jPanelLibrary.setBorder(new EmptyBorder(5, 0, 0, 5));
+		}
+		return jPanelLibrary;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getSource()==this.getTextPanel()) {
+		if (evt.getSource()==this.getJPanelExpressionTextEditor()) {
 			if (evt.getPropertyName().equals(ExpressionEditorTextPanel.EXPRESSION_PARSED)) {
 				// --- The expression was parsed, show the corresponding structure tree
-				Expression parsedExpression = this.getTextPanel().getExpression();
-				this.getStructureTreePanel().setExpression(parsedExpression);
+				Expression parsedExpression = this.getJPanelExpressionTextEditor().getExpression();
+				this.getJPanelStructureTreeRight().setExpression(parsedExpression);
 			}
-		} else if (evt.getSource()==this.getStructureTreePanel()) {
+		} else if (evt.getSource()==this.getJPanelStructureTreeRight()) {
 			if (evt.getPropertyName().equals(ExpressionEditorStructureTreePanel.SELECTION_CHANGED)) {
 				// --- A sub-expression was selected, highlight it in the editor
 				Expression selectedExpression = (Expression) evt.getNewValue();
-				this.getTextPanel().highlightSubExpression(selectedExpression);
+				this.getJPanelExpressionTextEditor().highlightSubExpression(selectedExpression);
 			}
 		}
 	}

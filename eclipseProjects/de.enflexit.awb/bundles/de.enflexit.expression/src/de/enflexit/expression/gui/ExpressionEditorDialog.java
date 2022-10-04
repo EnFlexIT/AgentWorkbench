@@ -25,87 +25,92 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	
 	private static final long serialVersionUID = -5820516711953973203L;
 	
+	private boolean canceled;
+	
+	private ExpressionEditorMainPanel jPanelExpressionPanel;
+
+	private JPanel jPanelButtons;
 	private JButton jButtonOK;
 	private JButton jButtonCancel;
 	
-	private JPanel mainPanel;
-	
-	private boolean canceled;
-	private ExpressionEditorMainPanel editorPanel;
-	private JPanel buttonsPanel;
 	
 	/**
 	 * Instantiates a new expression editor dialog.
 	 */
 	public ExpressionEditorDialog() {
-		this.initialize();
+		this(null);
 	}
-
+	/**
+	 * Instantiates a new expression editor dialog.
+	 * @param expression the expression to edit
+	 */
+	public ExpressionEditorDialog(Expression expression) {
+		this.initialize();
+		this.setExpression(expression);
+	}
 	/**
 	 * Initializes the GUI components.
 	 */
 	private void initialize() {
+		
 		this.setTitle("Expression Editor");
-		this.setSize(1200, 630);
-		this.setContentPane(this.getMainPanel());
+		this.setSize(900, 600);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		this.setAlwaysOnTop(true);
+		this.setModal(true);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		
 		GridBagLayout gbl_mainPanel = new GridBagLayout();
 		gbl_mainPanel.columnWidths = new int[]{1184, 0};
 		gbl_mainPanel.rowHeights = new int[]{533, 28, 0};
-		gbl_mainPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gbl_mainPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		getMainPanel().setLayout(gbl_mainPanel);
-		GridBagConstraints gbc_editorPanel = new GridBagConstraints();
-		gbc_editorPanel.fill = GridBagConstraints.BOTH;
-		gbc_editorPanel.insets = new Insets(0, 0, 5, 0);
-		gbc_editorPanel.gridx = 0;
-		gbc_editorPanel.gridy = 0;
-		getMainPanel().add(getEditorPanel(), gbc_editorPanel);
-		GridBagConstraints gbc_buttonsPanel = new GridBagConstraints();
-		gbc_buttonsPanel.anchor = GridBagConstraints.NORTH;
-		gbc_buttonsPanel.gridx = 0;
-		gbc_buttonsPanel.gridy = 1;
-		getMainPanel().add(getButtonsPanel(), gbc_buttonsPanel);
-	}
-	
-	private JPanel getMainPanel() {
-		if (mainPanel==null) {
-			mainPanel = new JPanel();
-		}
-		return mainPanel;
+		gbl_mainPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_mainPanel.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		this.getContentPane().setLayout(gbl_mainPanel);
+		
+		GridBagConstraints gbc_jPanelExpressionPanel = new GridBagConstraints();
+		gbc_jPanelExpressionPanel.fill = GridBagConstraints.BOTH;
+		gbc_jPanelExpressionPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_jPanelExpressionPanel.gridx = 0;
+		gbc_jPanelExpressionPanel.gridy = 0;
+		this.getContentPane().add(getJPanelExpressionPanel(), gbc_jPanelExpressionPanel);
+		
+		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
+		gbc_jPanelButtons.insets = new Insets(5, 0, 20, 0);
+		gbc_jPanelButtons.anchor = GridBagConstraints.NORTH;
+		gbc_jPanelButtons.gridx = 0;
+		gbc_jPanelButtons.gridy = 1;
+		this.getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
 	}
 
-	private ExpressionEditorMainPanel getEditorPanel() {
-		if (editorPanel == null) {
-			editorPanel = new ExpressionEditorMainPanel();
+	private ExpressionEditorMainPanel getJPanelExpressionPanel() {
+		if (jPanelExpressionPanel == null) {
+			jPanelExpressionPanel = new ExpressionEditorMainPanel();
 		}
-		return editorPanel;
+		return jPanelExpressionPanel;
 	}
 
-	private JPanel getButtonsPanel() {
-		if (buttonsPanel == null) {
-			buttonsPanel = new JPanel();
-			GridBagLayout gbl_buttonsPanel = new GridBagLayout();
-			gbl_buttonsPanel.columnWidths = new int[]{0, 0, 0};
-			gbl_buttonsPanel.rowHeights = new int[]{0, 0};
-			gbl_buttonsPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-			gbl_buttonsPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-			buttonsPanel.setLayout(gbl_buttonsPanel);
+	private JPanel getJPanelButtons() {
+		if (jPanelButtons == null) {
+			jPanelButtons = new JPanel();
+			GridBagLayout gbl_jPanelButtons = new GridBagLayout();
+			gbl_jPanelButtons.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelButtons.rowHeights = new int[]{0, 0};
+			gbl_jPanelButtons.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelButtons.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelButtons.setLayout(gbl_jPanelButtons);
 			GridBagConstraints gbc_jButtonOK = new GridBagConstraints();
-			gbc_jButtonOK.insets = new Insets(10, 0, 10, 20);
+			gbc_jButtonOK.insets = new Insets(0, 0, 0, 20);
 			gbc_jButtonOK.gridx = 0;
 			gbc_jButtonOK.gridy = 0;
-			buttonsPanel.add(getJButtonOK(), gbc_jButtonOK);
+			jPanelButtons.add(getJButtonOK(), gbc_jButtonOK);
 			GridBagConstraints gbc_jButtonCancel = new GridBagConstraints();
-			gbc_jButtonCancel.insets = new Insets(10, 20, 10, 0);
+			gbc_jButtonCancel.insets = new Insets(0, 20, 0, 0);
 			gbc_jButtonCancel.gridx = 1;
 			gbc_jButtonCancel.gridy = 0;
-			buttonsPanel.add(getJButtonCancel(), gbc_jButtonCancel);
+			jPanelButtons.add(getJButtonCancel(), gbc_jButtonCancel);
 		}
-		return buttonsPanel;
+		return jPanelButtons;
 	}
-
 	/**
 	 * Gets the jButtonOK.
 	 * @return the jButtonOK
@@ -122,7 +127,6 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 		}
 		return jButtonOK;
 	}
-
 	/**
 	 * Gets the jButtonCancel.
 	 * @return the jButtonCancel
@@ -145,15 +149,14 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	 * @return the expression
 	 */
 	public Expression getExpression() {
-		return this.getEditorPanel().getExpression();
+		return this.getJPanelExpressionPanel().getExpression();
 	}
-	
 	/**
 	 * Sets the expression.
 	 * @param expression the new expression
 	 */
 	public void setExpression(Expression expression) {
-		this.getEditorPanel().setExpression(expression);
+		this.getJPanelExpressionPanel().setExpression(expression);
 	}
 	
 	/**
