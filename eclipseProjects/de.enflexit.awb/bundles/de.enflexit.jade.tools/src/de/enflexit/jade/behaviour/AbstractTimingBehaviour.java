@@ -402,7 +402,11 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	 */
 	public void stop() {
 		Thread behaviourThread = this.getThreadedBehaviourFactory().getThread(this);
-		behaviourThread.interrupt();
+		if (behaviourThread!=null) {
+			behaviourThread.interrupt();
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] " + this.myAgent.getLocalName() + " - Error terminating, behaviour thread not found!");
+		}
 		this.myAgent.removeBehaviour(this);
 	}
 	
