@@ -90,5 +90,12 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 		return resultNotification;
 	}
 	
-	
+	/**
+	 * Gets the local phone book.
+	 *
+	 * @return the local phone book
+	 */
+	public PhoneBook<T> getLocalPhoneBook() {
+		return localPhoneBook;
+	}
 }
