@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
 
 import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.agentgui.gui.swt.SWTResourceManager;
@@ -2128,6 +2129,24 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 			currComp = currComp.getParent();
 		}
 		return dialogFound;
+	}
+	/**
+	 * Returns the owner JInternalFrame for a JComponent if possible.
+	 * @param component the JComponent
+	 * @return the owner JInternalFrame for component
+	 */
+	public JInternalFrame getOwnerJInternalFrameForComponent(JComponent component) {
+		
+		JInternalFrame iFrameFound = null;
+		Container currComp = component.getParent();
+		while (currComp!=null) {
+			if (currComp instanceof JInternalFrame) {
+				iFrameFound = (JInternalFrame) currComp;
+				break;
+			}
+			currComp = currComp.getParent();
+		}
+		return iFrameFound;
 	}
 	
 	/**
