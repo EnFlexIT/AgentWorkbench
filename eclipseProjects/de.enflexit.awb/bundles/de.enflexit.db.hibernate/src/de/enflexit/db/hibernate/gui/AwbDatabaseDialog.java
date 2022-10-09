@@ -369,7 +369,7 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 		
 		DatabaseSettings dbSettingsNew = this.getDatabaseSettings();
 		DatabaseSettings dbSettingsOld = this.getDatabaseSettings(factoryID);
-		if (dbSettingsNew.equals(dbSettingsOld)==false) {
+		if (dbSettingsNew!=null && dbSettingsNew.equals(dbSettingsOld)==false) {
 			// --- Save changes? --------------------------
 			String title = "Save Changes?";
 			String message = "Would you like to save the changes for the \ndatabase connection of '" + factoryID + "'?";
