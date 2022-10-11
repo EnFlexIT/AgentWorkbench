@@ -35,7 +35,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,8 +65,8 @@ import org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
-import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
+import org.awb.env.networkModel.settings.LayoutSettings;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
