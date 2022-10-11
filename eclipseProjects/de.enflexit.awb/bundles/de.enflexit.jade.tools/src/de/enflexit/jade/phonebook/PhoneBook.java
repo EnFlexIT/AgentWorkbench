@@ -130,7 +130,14 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	}
 	
 	/**
-	 * Gets the entries.
+	 * Gets all phone book entries.
+	 * @return the entries
+	 */
+	public ArrayList<T> getEntries(){
+		return new ArrayList<>(this.getPhoneBookContent().values());
+	}
+	/**
+	 * Gets all phone book entries that match the specified filter.
 	 * @param searchFilter the search filter
 	 * @return the entries
 	 */
