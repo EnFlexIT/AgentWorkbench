@@ -24,7 +24,7 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	private boolean retryOnFailure;
 	private IncreasingRetryIntervalsHelper intervalsHelper;
 	
-	private boolean debug = false;
+	protected boolean debug = false;
 	
 	/**
 	 * Instantiates a new phone book registration initiator.

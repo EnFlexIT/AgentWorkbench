@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -42,7 +43,9 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	@XmlElementWrapper(name = "phoneBookEntries")
 	TreeMap<String, T> phoneBookContent;
 	
-	private Vector<PhoneBookListener> listeners;
+	private Vector<PhoneBookListener<T>> phoneBookListeners;
+	
+	private boolean enableNotifications = true;
 	
 	/**
 	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
@@ -104,12 +107,25 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 		}
 	}
 	
+	public boolean addEntries(List<T> entries) {
+		// --- Pause notifications --------------
+		this.enableNotifications = false;
+		for (int i=0; i<entries.size(); i++) {
+			this.addEntry(entries.get(i), false);
+		}
+		
+		this.enableNotifications = true;
+		this.notifyAdded(null);
+		
+		return true;
+	}
+	
 	/**
 	 * Gets the entry with the specified identifier.
 	 * @param identifier the identifier
 	 * @return the entry
 	 */
-	public AbstractPhoneBookEntry getEntry(String identifier) {
+	public T getEntry(String identifier) {
 		return this.getPhoneBookContent().get(identifier);
 	}
 	
@@ -133,7 +149,7 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	 * @param identifier the identifier
 	 */
 	public void removeEntry(String identifier) {
-		AbstractPhoneBookEntry entryToRemove = this.getEntry(identifier);
+		T entryToRemove = this.getEntry(identifier);
 		if (entryToRemove!=null) {
 			this.removeEntry(entryToRemove, true);
 		}
@@ -143,7 +159,7 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	 * Removes the specified entry from the phonebook. The phonebook will be stored afterwards.
 	 * @param entry the entry to be removed
 	 */
-	public void removeEntry(AbstractPhoneBookEntry entry) {
+	public void removeEntry(T entry) {
 		this.removeEntry(entry, true);
 	}
 	
@@ -152,7 +168,7 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	 * @param entry the entry to be removed
 	 * @param persist specifies if the phone book will be saved afterwards
 	 */
-	public void removeEntry(AbstractPhoneBookEntry entry, boolean persist) {
+	public void removeEntry(T entry, boolean persist) {
 		this.getPhoneBookContent().remove(entry.getUniqueIdentifier());
 		if (persist==true) {
 			this.save();
@@ -320,20 +336,22 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	 * Gets the listeners.
 	 * @return the listeners
 	 */
-	private Vector<PhoneBookListener> getListeners() {
-		if (listeners==null) {
-			listeners = new Vector<>();
+	private Vector<PhoneBookListener<T>> getPhoneBookListeners() {
+		if (phoneBookListeners==null) {
+			phoneBookListeners = new Vector<>();
 		}
-		return listeners;
+		return phoneBookListeners;
 	}
 	
 	/**
 	 * Notifies the registered listeners about an added phone book entry.
 	 * @param addedEntry the added entry
 	 */
-	private void notifyAdded(AbstractPhoneBookEntry addedEntry) {
-		for (PhoneBookListener listener : this.getListeners()) {
-			listener.phoneBookEntryAdded(addedEntry);
+	private void notifyAdded(T addedEntry) {
+		if (this.enableNotifications==true) {
+			for (PhoneBookListener<T> listener : this.getPhoneBookListeners()) {
+				listener.phoneBookEntryAdded(addedEntry);
+			}
 		}
 	}
 	
@@ -341,9 +359,11 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	 * Notifies the registered listeners about a removed phone book entry.
 	 * @param removedEntry the removed entry
 	 */
-	private void notifyRemoved(AbstractPhoneBookEntry removedEntry) {
-		for (PhoneBookListener listener : this.getListeners()) {
-			listener.phoneBookEntryRemoved(removedEntry);
+	private void notifyRemoved(T removedEntry) {
+		if (this.enableNotifications==true) {
+			for (PhoneBookListener<T> listener : this.getPhoneBookListeners()) {
+				listener.phoneBookEntryRemoved(removedEntry);
+			}
 		}
 	}
 	
@@ -351,9 +371,9 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	 * Adds a phone book listener.
 	 * @param listener the listener
 	 */
-	public void addPhoneBookListener(PhoneBookListener listener) {
-		if (this.getListeners().contains(listener)==false) {
-			this.getListeners().add(listener);
+	public void addPhoneBookListener(PhoneBookListener<T> listener) {
+		if (this.getPhoneBookListeners().contains(listener)==false) {
+			this.getPhoneBookListeners().add(listener);
 		}
 	}
 	
@@ -361,9 +381,24 @@ public class PhoneBook<T extends AbstractPhoneBookEntry>{
 	 * Removes a phone book listener.
 	 * @param listener the listener
 	 */
-	public void removePhoneBookListener(PhoneBookListener listener) {
-		if (this.getListeners().contains(listener)==true) {
-			this.getListeners().remove(listener);
+	public void removePhoneBookListener(PhoneBookListener<T> listener) {
+		if (this.getPhoneBookListeners().contains(listener)==true) {
+			this.getPhoneBookListeners().remove(listener);
 		}
+	}
+	
+	/**
+	 * Gets the aid for the agent with the specified local name. May be null if not found.
+	 * @param localName the local name
+	 * @return the aid for local name
+	 */
+	public AID getAidForLocalName(String localName) {
+		for (T entry : this.getPhoneBookContent().values()) {
+			if (entry.getAgentAID().getLocalName().equals(localName)) {
+				return entry.getAgentAID();
+			}
+		}
+		
+		return null;
 	}
 }
