@@ -18,7 +18,7 @@ import jade.proto.SimpleAchieveREInitiator;
  * This class implements the initiator role of the FIPA Request protocol for the phone book registration.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREInitiator {
+public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 
 	private static final long serialVersionUID = -6099020571543668933L;
 	
@@ -30,7 +30,7 @@ public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends Abstra
 	
 	protected boolean debug = false;
 	
-	private ArrayList<PhoneBookListener<GenericPhoneBookEntry>> listeners;
+	private ArrayList<PhoneBookListener> listeners;
 	
 	/**
 	 * Instantiates a new phone book registration initiator.
@@ -74,8 +74,7 @@ public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends Abstra
 		try {
 			Object contentObject = msg.getContentObject();
 			if (contentObject!=null && contentObject instanceof AbstractPhoneBookEntry) {
-				@SuppressWarnings("unchecked")
-				GenericPhoneBookEntry returnedPhoneBookEntry = (GenericPhoneBookEntry) contentObject;
+				AbstractPhoneBookEntry returnedPhoneBookEntry = (AbstractPhoneBookEntry) contentObject;
 				this.notifyDone(returnedPhoneBookEntry);
 			}
 			if (debug==true) {
@@ -148,7 +147,7 @@ public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends Abstra
 		@Override
 		protected void onWake() {
 			// --- Trigger a new registration attempt -----
-			PhoneBookRegistrationInitiator<GenericPhoneBookEntry> nextTry = new PhoneBookRegistrationInitiator<GenericPhoneBookEntry>(this.myAgent, myPhoneBookEntry, phoneBookMaintainer, retryOnFailure);
+			PhoneBookRegistrationInitiator nextTry = new PhoneBookRegistrationInitiator(this.myAgent, myPhoneBookEntry, phoneBookMaintainer, retryOnFailure);
 			nextTry.setIntervalsHelper(this.intervalsHelper);
 			this.myAgent.addBehaviour(nextTry);
 		}
@@ -159,9 +158,9 @@ public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends Abstra
 	 * Gets the registered listeners.
 	 * @return the listeners
 	 */
-	private ArrayList<PhoneBookListener<GenericPhoneBookEntry>> getListeners() {
+	private ArrayList<PhoneBookListener> getListeners() {
 		if (listeners==null) {
-			listeners = new ArrayList<PhoneBookListener<GenericPhoneBookEntry>>();
+			listeners = new ArrayList<PhoneBookListener>();
 		}
 		return listeners;
 	}
@@ -170,7 +169,7 @@ public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends Abstra
 	 * Adds the phone book listener.
 	 * @param listener the listener
 	 */
-	public void addPhoneBookListener(PhoneBookListener<GenericPhoneBookEntry> listener) {
+	public void addPhoneBookListener(PhoneBookListener listener) {
 		if (this.getListeners().contains(listener)==false) {
 			this.getListeners().add(listener);
 		}
@@ -180,7 +179,7 @@ public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends Abstra
 	 * Removes the phone book listener.
 	 * @param listener the listener
 	 */
-	public void removePhoneBookListener(PhoneBookListener<GenericPhoneBookEntry> listener) {
+	public void removePhoneBookListener(PhoneBookListener listener) {
 		if (this.getListeners().contains(listener)==true) {
 			this.getListeners().remove(listener);
 		}
@@ -190,8 +189,8 @@ public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends Abstra
 	 * Notifies the registered listeners that the registration is done.
 	 * @param returnedEntry the returned entry
 	 */
-	private void notifyDone(GenericPhoneBookEntry returnedEntry) {
-		PhoneBookEvent<GenericPhoneBookEntry> successEvent = new PhoneBookEvent<GenericPhoneBookEntry>(PhoneBookEvent.Type.REGISTRATION_DONE, returnedEntry);
+	private void notifyDone(AbstractPhoneBookEntry returnedEntry) {
+		PhoneBookEvent successEvent = new PhoneBookEvent(PhoneBookEvent.Type.REGISTRATION_DONE, returnedEntry);
 		for (int i=0; i<this.getListeners().size(); i++) {
 			this.getListeners().get(i).notifyEvent(successEvent);
 		}

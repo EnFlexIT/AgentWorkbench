@@ -28,10 +28,9 @@ import jade.core.AID;
 /**
  * Generic implementation of a phone book for agent systems.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
- * @param <GenericPhoneBookEntry> the generic type
  */
 @XmlRootElement
-public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
+public class PhoneBook {
 	
 	private static final String DEFAULT_PHONEBOOK_FILENAME = "Phonebook.xml";
 	
@@ -41,30 +40,60 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	private AID ownerAID;
 	
 	@XmlElementWrapper(name = "phoneBookEntries")
-	TreeMap<String, GenericPhoneBookEntry> phoneBookContent;
+	TreeMap<String, AbstractPhoneBookEntry> phoneBookContent;
 	
-	private Vector<PhoneBookListener<GenericPhoneBookEntry>> phoneBookListeners;
+	private Vector<PhoneBookListener> phoneBookListeners;
+	
+	private boolean doPersist;
 	
 	private boolean enableNotifications = true;
 	
 	/**
 	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
 	 */
-	public PhoneBook() {}
+	public PhoneBook() {
+		this(true);
+	}
 
 	/**
 	 * Instantiates a new phone book, that is persisted in the specified file.
 	 * @param phoneBookFile the phone book file
 	 */
 	public PhoneBook(File phoneBookFile) {
-		this.phoneBookFile = phoneBookFile;
+		this(phoneBookFile, true);
 	}
-
 	/**
 	 * Instantiates a new phone book, that is persisted in the working directory of the specified agent.
 	 * @param ownerAID the agent owning this phone book
 	 */
 	public PhoneBook(AID ownerAID) {
+		this(ownerAID, true);
+	}
+	/**
+	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
+	 * @param doPersist indicates if the phone book should be stored to a file
+	 */
+	public PhoneBook(boolean doPersist) {
+		this.doPersist = doPersist;
+	}
+	
+	/**
+	 * Instantiates a new phone book, that is persisted in the specified file.
+	 * @param phoneBookFile the phone book file
+	 * @param doPersist indicates if the phone book should be stored to a file
+	 */
+	public PhoneBook(File phoneBookFile, boolean doPersist) {
+		this.doPersist = doPersist;
+		this.phoneBookFile = phoneBookFile;
+	}
+	
+	/**
+	 * Instantiates a new phone book, that is persisted in the working directory of the specified agent.
+	 * @param ownerAID the owner AID
+	 * @param doPersist indicates if the phone book should be stored to a file
+	 */
+	public PhoneBook(AID ownerAID, boolean doPersist) {
+		this.doPersist = doPersist;
 		this.ownerAID = ownerAID;
 	}
 
@@ -72,9 +101,9 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Gets the phone book content.
 	 * @return the phone book content
 	 */
-	private TreeMap<String, GenericPhoneBookEntry> getPhoneBookContent() {
+	private TreeMap<String, AbstractPhoneBookEntry> getPhoneBookContent() {
 		if (phoneBookContent==null) {
-			phoneBookContent = new TreeMap<String, GenericPhoneBookEntry>();
+			phoneBookContent = new TreeMap<String, AbstractPhoneBookEntry>();
 		}
 		return phoneBookContent;
 	}
@@ -84,7 +113,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param entry the entry
 	 * @return true, if successful
 	 */
-	public boolean addEntry(GenericPhoneBookEntry entry) {
+	public boolean addEntry(AbstractPhoneBookEntry entry) {
 		return this.addEntry(entry, true);
 	}
 	
@@ -94,7 +123,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param persist specifies if the phonebook will be saved afterwards.
 	 * @return true, if successful
 	 */
-	public boolean addEntry(GenericPhoneBookEntry entry, boolean persist) {
+	public boolean addEntry(AbstractPhoneBookEntry entry, boolean persist) {
 		if (entry.isValid()) {
 			this.getPhoneBookContent().put(entry.getUniqueIdentifier(), entry);
 			if (persist==true) {
@@ -112,7 +141,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param entries the entries
 	 * @return true, if successful
 	 */
-	public boolean addEntries(List<GenericPhoneBookEntry> entries) {
+	public boolean addEntries(List<AbstractPhoneBookEntry> entries) {
 		// --- Pause notifications --------------
 		this.enableNotifications = false;
 		for (int i=0; i<entries.size(); i++) {
@@ -131,7 +160,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param identifier the identifier
 	 * @return the entry
 	 */
-	public GenericPhoneBookEntry getEntry(String identifier) {
+	public AbstractPhoneBookEntry getEntry(String identifier) {
 		return this.getPhoneBookContent().get(identifier);
 	}
 	
@@ -139,7 +168,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Gets all phone book entries.
 	 * @return the entries
 	 */
-	public ArrayList<GenericPhoneBookEntry> getEntries(){
+	public ArrayList<AbstractPhoneBookEntry> getEntries(){
 		return new ArrayList<>(this.getPhoneBookContent().values());
 	}
 	/**
@@ -147,9 +176,9 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param searchFilter the search filter
 	 * @return the entries
 	 */
-	public ArrayList<GenericPhoneBookEntry> getEntries(PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter){
-		ArrayList<GenericPhoneBookEntry> resultList = new ArrayList<GenericPhoneBookEntry>();
-		for (GenericPhoneBookEntry entry : this.getPhoneBookContent().values()) {
+	public ArrayList<AbstractPhoneBookEntry> getEntries(PhoneBookSearchFilter searchFilter){
+		ArrayList<AbstractPhoneBookEntry> resultList = new ArrayList<AbstractPhoneBookEntry>();
+		for (AbstractPhoneBookEntry entry : this.getPhoneBookContent().values()) {
 			if (searchFilter.matches(entry)) {
 				resultList.add(entry);
 			}
@@ -162,7 +191,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param identifier the identifier
 	 */
 	public void removeEntry(String identifier) {
-		GenericPhoneBookEntry entryToRemove = this.getEntry(identifier);
+		AbstractPhoneBookEntry entryToRemove = this.getEntry(identifier);
 		if (entryToRemove!=null) {
 			this.removeEntry(entryToRemove, true);
 		}
@@ -172,7 +201,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Removes the specified entry from the phonebook. The phonebook will be stored afterwards.
 	 * @param entry the entry to be removed
 	 */
-	public void removeEntry(GenericPhoneBookEntry entry) {
+	public void removeEntry(AbstractPhoneBookEntry entry) {
 		this.removeEntry(entry, true);
 	}
 	
@@ -181,7 +210,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param entry the entry to be removed
 	 * @param persist specifies if the phone book will be saved afterwards
 	 */
-	public void removeEntry(GenericPhoneBookEntry entry, boolean persist) {
+	public void removeEntry(AbstractPhoneBookEntry entry, boolean persist) {
 		this.getPhoneBookContent().remove(entry.getUniqueIdentifier());
 		if (persist==true) {
 			this.save();
@@ -195,9 +224,9 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @param searchFilter the search filter
 	 * @return the array list
 	 */
-	public ArrayList<GenericPhoneBookEntry> searchEntries(PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter){
-		ArrayList<GenericPhoneBookEntry> resultList = new ArrayList<GenericPhoneBookEntry>();
-		for (GenericPhoneBookEntry entry : this.getPhoneBookContent().values()) {
+	public ArrayList<AbstractPhoneBookEntry> searchEntries(PhoneBookSearchFilter searchFilter){
+		ArrayList<AbstractPhoneBookEntry> resultList = new ArrayList<AbstractPhoneBookEntry>();
+		for (AbstractPhoneBookEntry entry : this.getPhoneBookContent().values()) {
 			if (searchFilter.matches(entry)) {
 				resultList.add(entry);
 			}
@@ -270,15 +299,37 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	}
 
 	/**
+	 * Checks if is do persist.
+	 * @return true, if is do persist
+	 */
+	public boolean isDoPersist() {
+		return doPersist;
+	}
+	/**
+	 * Sets the do persist.
+	 * @param doPersist the new do persist
+	 */
+	public void setDoPersist(boolean doPersist) {
+		this.doPersist = doPersist;
+	}
+
+	/**
 	 * Saves this phone book instance to an XML file.
 	 */
 	public void save() {
-		if (this.getPhoneBookFile()!=null) {
+		if (this.doPersist == true && this.getPhoneBookFile()!=null) {
 			saveAs(this, this.getPhoneBookFile());
 		}
 	}
 	
-	public static <T extends AbstractPhoneBookEntry> boolean saveAs(PhoneBook<T> phoneBook, File phoneBookFile) {
+	/**
+	 * Saves the provided phone book to the specified file
+	 * @param <T> the generic type
+	 * @param phoneBook the phone book
+	 * @param phoneBookFile the phone book file
+	 * @return true, if successful
+	 */
+	public static boolean saveAs(PhoneBook phoneBook, File phoneBookFile) {
 		
 		boolean successful = false;
 		if (phoneBookFile!=null) {
@@ -287,6 +338,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 			try {
 				// --- Save the PhoneBook to file ---------
 				Class<?> phoneBookClass = phoneBook.getClass();
+				//TODO add method to find all classes of entries
 				Class<?> entryClass = phoneBook.getPhoneBookContent().values().iterator().next().getClass();
 				JAXBContext pbc = JAXBContext.newInstance(phoneBookClass, entryClass);
 				Marshaller pbm = pbc.createMarshaller();
@@ -313,22 +365,23 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	
 	/**
 	 * Load phone book.
+	 *
 	 * @param phoneBookFile the phone book file
+	 * @param phoneBookEntryClassInstance the phone book entry class instance
 	 * @return the phone book
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends AbstractPhoneBookEntry> PhoneBook<T> loadPhoneBook(File phoneBookFile, Class<T> classInstance) {
+	public static PhoneBook loadPhoneBook(File phoneBookFile, Class<?> phoneBookEntryClassInstance) {
 		
-		PhoneBook<T> pb = null;
+		PhoneBook pb = null;
 		if (phoneBookFile.exists()) {
 			// --- Check if the directory is available ----
 			// --- Load the PhoneBook from file -------
 			FileReader fileReader = null;
 			try {
 				fileReader = new FileReader(phoneBookFile);
-				JAXBContext pbc = JAXBContext.newInstance(PhoneBook.class, classInstance);
+				JAXBContext pbc = JAXBContext.newInstance(PhoneBook.class, phoneBookEntryClassInstance);
 				Unmarshaller um = pbc.createUnmarshaller();
-				pb = (PhoneBook<T>) um.unmarshal(fileReader);
+				pb = (PhoneBook) um.unmarshal(fileReader);
 				pb.setPhoneBookFile(phoneBookFile);
 
 			} catch (FileNotFoundException | JAXBException ex) {
@@ -349,7 +402,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Gets the listeners.
 	 * @return the listeners
 	 */
-	private Vector<PhoneBookListener<GenericPhoneBookEntry>> getPhoneBookListeners() {
+	private Vector<PhoneBookListener> getPhoneBookListeners() {
 		if (phoneBookListeners==null) {
 			phoneBookListeners = new Vector<>();
 		}
@@ -360,8 +413,8 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Notifies the registered listeners about an added phone book entry.
 	 * @param addedEntry the added entry
 	 */
-	private void notifyAdded(GenericPhoneBookEntry addedEntry) {
-		ArrayList<GenericPhoneBookEntry> entriesList = new ArrayList<GenericPhoneBookEntry>();
+	private void notifyAdded(AbstractPhoneBookEntry addedEntry) {
+		ArrayList<AbstractPhoneBookEntry> entriesList = new ArrayList<>();
 		entriesList.add(addedEntry);
 		this.notifyAdded(entriesList);
 	}
@@ -370,10 +423,10 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Notifies the registered listeners about added phone book entries.
 	 * @param addedEntries the added entries
 	 */
-	private void notifyAdded(List<GenericPhoneBookEntry> addedEntries) {
+	private void notifyAdded(List<AbstractPhoneBookEntry> addedEntries) {
 		if (this.enableNotifications==true) {
-			PhoneBookEvent<GenericPhoneBookEntry> addedEvent = new PhoneBookEvent<>(PhoneBookEvent.Type.ENTRIES_ADDED, addedEntries);
-			for (PhoneBookListener<GenericPhoneBookEntry> listener : this.getPhoneBookListeners()) {
+			PhoneBookEvent addedEvent = new PhoneBookEvent(PhoneBookEvent.Type.ENTRIES_ADDED, addedEntries);
+			for (PhoneBookListener listener : this.getPhoneBookListeners()) {
 				listener.notifyEvent(addedEvent);
 			}
 		}
@@ -383,8 +436,8 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Notifies the registered listeners about a removed phone book entry.
 	 * @param removedEntry the removed entry
 	 */
-	private void notifyRemoved(GenericPhoneBookEntry removedEntry) {
-		ArrayList<GenericPhoneBookEntry> entriesList = new ArrayList<GenericPhoneBookEntry>();
+	private void notifyRemoved(AbstractPhoneBookEntry removedEntry) {
+		ArrayList<AbstractPhoneBookEntry> entriesList = new ArrayList<>();
 		entriesList.add(removedEntry);
 		this.notifyRemoved(entriesList);
 	}
@@ -393,10 +446,10 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Notifies the registered listeners about removed phone book entries.
 	 * @param removedEntries the removed entries
 	 */
-	private void notifyRemoved(List<GenericPhoneBookEntry> removedEntries) {
+	private void notifyRemoved(List<AbstractPhoneBookEntry> removedEntries) {
 		if (this.enableNotifications==true) {
-			PhoneBookEvent<GenericPhoneBookEntry> removedEvent = new PhoneBookEvent<>(PhoneBookEvent.Type.ENTRIES_REMOVED, removedEntries);
-			for (PhoneBookListener<GenericPhoneBookEntry> listener : this.getPhoneBookListeners()) {
+			PhoneBookEvent removedEvent = new PhoneBookEvent(PhoneBookEvent.Type.ENTRIES_REMOVED, removedEntries);
+			for (PhoneBookListener listener : this.getPhoneBookListeners()) {
 				listener.notifyEvent(removedEvent);
 			}
 		}
@@ -409,7 +462,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Adds a phone book listener.
 	 * @param listener the listener
 	 */
-	public void addPhoneBookListener(PhoneBookListener<GenericPhoneBookEntry> listener) {
+	public void addPhoneBookListener(PhoneBookListener listener) {
 		if (this.getPhoneBookListeners().contains(listener)==false) {
 			this.getPhoneBookListeners().add(listener);
 		}
@@ -419,7 +472,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * Removes a phone book listener.
 	 * @param listener the listener
 	 */
-	public void removePhoneBookListener(PhoneBookListener<GenericPhoneBookEntry> listener) {
+	public void removePhoneBookListener(PhoneBookListener listener) {
 		if (this.getPhoneBookListeners().contains(listener)==true) {
 			this.getPhoneBookListeners().remove(listener);
 		}
@@ -431,7 +484,7 @@ public class PhoneBook<GenericPhoneBookEntry extends AbstractPhoneBookEntry>{
 	 * @return the aid for local name
 	 */
 	public AID getAidForLocalName(String localName) {
-		for (GenericPhoneBookEntry entry : this.getPhoneBookContent().values()) {
+		for (AbstractPhoneBookEntry entry : this.getPhoneBookContent().values()) {
 			if (entry.getAgentAID().getLocalName().equals(localName)) {
 				return entry.getAgentAID();
 			}

@@ -23,19 +23,19 @@ import jade.proto.SimpleAchieveREInitiator;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <GenericPhoneBookEntry> the generic type
  */
-public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREInitiator {
+public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
 
 	private static final long serialVersionUID = 1214570247786648424L;
 	
-	private PhoneBook<GenericPhoneBookEntry> localPhoneBook;
-	private PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter;
+	private PhoneBook localPhoneBook;
+	private PhoneBookSearchFilter searchFilter;
 	
 	private AID phoneBookMaintainer;
 	private boolean retryOnFailure;
 	
 	private IncreasingRetryIntervalsHelper intervalsHelper;
 	
-	private ArrayList<PhoneBookListener<GenericPhoneBookEntry>> listeners;
+	private ArrayList<PhoneBookListener> listeners;
 	
 	/**
 	 * Instantiates a new phone book query initiator.
@@ -45,7 +45,7 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 	 * @param searchFilter the search filter
 	 * @param retryOnFailure specifies if the query should be rescheduled if it fails
 	 */
-	public PhoneBookQueryInitiator(Agent agent, PhoneBook<GenericPhoneBookEntry> localPhoneBook, AID phoneBookMaintainer, PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter, boolean retryOnFailure) {
+	public PhoneBookQueryInitiator(Agent agent, PhoneBook localPhoneBook, AID phoneBookMaintainer, PhoneBookSearchFilter searchFilter, boolean retryOnFailure) {
 		super(agent, createQueryMessage(phoneBookMaintainer));
 		this.localPhoneBook = localPhoneBook;
 		this.searchFilter = searchFilter;
@@ -89,11 +89,10 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 			// --- Extract contents ---------------------------------
 			Object contentObject = msg.getContentObject();
 			if (contentObject!=null && contentObject instanceof PhoneBookSearchResults) {
-				@SuppressWarnings("unchecked")
-				PhoneBookSearchResults<GenericPhoneBookEntry> queryResult = (PhoneBookSearchResults<GenericPhoneBookEntry>) contentObject;
+				PhoneBookSearchResults queryResult = (PhoneBookSearchResults) contentObject;
 				
 				// --- Add entries to the local phone book ----------
-				ArrayList<GenericPhoneBookEntry> results = queryResult.getSearchResults();
+				ArrayList<AbstractPhoneBookEntry> results = queryResult.getSearchResults();
 				for (int i=0; i<results.size(); i++) {
 					this.localPhoneBook.addEntry(results.get(i));
 				}
@@ -166,7 +165,7 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 		 */
 		@Override
 		protected void onWake() {
-			PhoneBookQueryInitiator<GenericPhoneBookEntry> nextTry = new PhoneBookQueryInitiator<>(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure);
+			PhoneBookQueryInitiator nextTry = new PhoneBookQueryInitiator(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure);
 			nextTry.setIntervalsHelper(intervalsHelper);
 			this.myAgent.addBehaviour(nextTry);
 		}
@@ -177,9 +176,9 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 	 * Gets the currently registered listeners.
 	 * @return the listeners
 	 */
-	private ArrayList<PhoneBookListener<GenericPhoneBookEntry>> getListeners() {
+	private ArrayList<PhoneBookListener> getListeners() {
 		if (listeners==null) {
-			listeners = new ArrayList<PhoneBookListener<GenericPhoneBookEntry>>();
+			listeners = new ArrayList<PhoneBookListener>();
 		}
 		return listeners;
 	}
@@ -188,8 +187,8 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 	 * Notify the listeners about the results.
 	 * @param queryResults the query results
 	 */
-	private void notifyResultsAvailable(List<GenericPhoneBookEntry> queryResults) {
-		PhoneBookEvent<GenericPhoneBookEntry> resultsEvent = new PhoneBookEvent<GenericPhoneBookEntry>(PhoneBookEvent.Type.QUERY_RESULT_AVAILABLE, queryResults);
+	private void notifyResultsAvailable(List<AbstractPhoneBookEntry> queryResults) {
+		PhoneBookEvent resultsEvent = new PhoneBookEvent(PhoneBookEvent.Type.QUERY_RESULT_AVAILABLE, queryResults);
 		for (int i=0; i<this.getListeners().size(); i++) {
 			this.getListeners().get(i).notifyEvent(resultsEvent);
 		}

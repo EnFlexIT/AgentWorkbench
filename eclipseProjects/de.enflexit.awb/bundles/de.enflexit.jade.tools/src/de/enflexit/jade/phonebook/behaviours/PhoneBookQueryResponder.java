@@ -25,14 +25,14 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 
 	private static final long serialVersionUID = 1416124382854967230L;
 	
-	private PhoneBook<T> localPhoneBook;
+	private PhoneBook localPhoneBook;
 	
 	/**
 	 * Instantiates a new phone book query responder.
 	 * @param agent the agent
 	 * @param localPhoneBook the local phone book
 	 */
-	public PhoneBookQueryResponder(Agent agent, PhoneBook<T> localPhoneBook) {
+	public PhoneBookQueryResponder(Agent agent, PhoneBook localPhoneBook) {
 		super(agent, getMessageTemplate());
 		this.localPhoneBook = localPhoneBook;
 	}
@@ -59,17 +59,16 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 	/* (non-Javadoc)
 	 * @see jade.proto.SimpleAchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected ACLMessage prepareResultNotification(ACLMessage requestMessage, ACLMessage responseMessage) throws FailureException {
 		String errorMessage = null;
 		ACLMessage resultMessage = requestMessage.createReply();
 		try {
 			// --- Extract and process the query ---------- 
-			PhoneBookSearchFilter<T> searchFilter = (PhoneBookSearchFilter<T>) requestMessage.getContentObject();
-			List<T> searchResults = this.localPhoneBook.searchEntries(searchFilter);
+			PhoneBookSearchFilter searchFilter = (PhoneBookSearchFilter) requestMessage.getContentObject();
+			List<AbstractPhoneBookEntry> searchResults = this.localPhoneBook.searchEntries(searchFilter);
 			
-			PhoneBookSearchResults<T> queryResponse = new PhoneBookSearchResults<>();
+			PhoneBookSearchResults queryResponse = new PhoneBookSearchResults();
 			queryResponse.getSearchResults().addAll(searchResults);
 			
 			resultMessage.setContentObject(queryResponse);

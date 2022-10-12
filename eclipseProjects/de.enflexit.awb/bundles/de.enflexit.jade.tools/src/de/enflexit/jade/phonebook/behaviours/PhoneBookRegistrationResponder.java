@@ -22,14 +22,14 @@ public class PhoneBookRegistrationResponder<GenericPhoneBookEntry extends Abstra
 
 	private static final long serialVersionUID = -9126496583768678087L;
 	
-	private PhoneBook<GenericPhoneBookEntry> localPhoneBook;
+	private PhoneBook localPhoneBook;
 	
 	/**
 	 * Instantiates a new phone book registration responder.
 	 * @param agent the agent
 	 * @param localPhoneBook the local phone book
 	 */
-	public PhoneBookRegistrationResponder(Agent agent, PhoneBook<GenericPhoneBookEntry> localPhoneBook) {
+	public PhoneBookRegistrationResponder(Agent agent, PhoneBook localPhoneBook) {
 		super(agent, createMessageTemplate());
 		this.localPhoneBook = localPhoneBook;
 	}
@@ -111,7 +111,7 @@ public class PhoneBookRegistrationResponder<GenericPhoneBookEntry extends Abstra
 	 *
 	 * @return the local phone book
 	 */
-	public PhoneBook<GenericPhoneBookEntry> getLocalPhoneBook() {
+	public PhoneBook getLocalPhoneBook() {
 		return localPhoneBook;
 	}
 }

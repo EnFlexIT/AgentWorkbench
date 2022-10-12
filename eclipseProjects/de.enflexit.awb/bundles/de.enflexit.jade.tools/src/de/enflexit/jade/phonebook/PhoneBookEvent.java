@@ -8,9 +8,8 @@ import java.util.List;
  * event type, and provides a list of affected entries.
  *
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
- * @param <GenericPhoneBookEntry> the generic type
  */
-public class PhoneBookEvent<GenericPhoneBookEntry extends AbstractPhoneBookEntry> {
+public class PhoneBookEvent {
 	
 	// The possible types of phone book events.
 	public static enum Type{
@@ -21,7 +20,7 @@ public class PhoneBookEvent<GenericPhoneBookEntry extends AbstractPhoneBookEntry
 	}
 	
 	private Type type;
-	private List<GenericPhoneBookEntry> affectedEntries;
+	private List<AbstractPhoneBookEntry> affectedEntries;
 
 	/**
 	 * Instantiates a new empty phone book event.
@@ -34,8 +33,8 @@ public class PhoneBookEvent<GenericPhoneBookEntry extends AbstractPhoneBookEntry
 	 * @param type the type
 	 * @param affectedEntry the affected entry
 	 */
-	public PhoneBookEvent(Type type, GenericPhoneBookEntry affectedEntry) {
-		ArrayList<GenericPhoneBookEntry> affectedEntries = new ArrayList<GenericPhoneBookEntry>();
+	public PhoneBookEvent(Type type, AbstractPhoneBookEntry affectedEntry) {
+		ArrayList<AbstractPhoneBookEntry> affectedEntries = new ArrayList<>();
 		affectedEntries.add(affectedEntry);
 		this.type = type;
 		this.affectedEntries = affectedEntries;
@@ -45,7 +44,7 @@ public class PhoneBookEvent<GenericPhoneBookEntry extends AbstractPhoneBookEntry
 	 * @param type the event type
 	 * @param affectedEntries the affected entries
 	 */
-	public PhoneBookEvent(Type type, List<GenericPhoneBookEntry> affectedEntries) {
+	public PhoneBookEvent(Type type, List<AbstractPhoneBookEntry> affectedEntries) {
 		this.type = type;
 		this.affectedEntries = affectedEntries;
 	}
@@ -67,14 +66,14 @@ public class PhoneBookEvent<GenericPhoneBookEntry extends AbstractPhoneBookEntry
 	 * Gets the affected entries.
 	 * @return the affected entries
 	 */
-	public List<GenericPhoneBookEntry> getAffectedEntries() {
+	public List<AbstractPhoneBookEntry> getAffectedEntries() {
 		return affectedEntries;
 	}
 	/**
 	 * Sets the affected entries.
 	 * @param affectedEntries the new affected entries
 	 */
-	public void setAffectedEntries(List<GenericPhoneBookEntry> affectedEntries) {
+	public void setAffectedEntries(List<AbstractPhoneBookEntry> affectedEntries) {
 		this.affectedEntries = affectedEntries;
 	}
 	
@@ -82,7 +81,7 @@ public class PhoneBookEvent<GenericPhoneBookEntry extends AbstractPhoneBookEntry
 	 * Gets the first affected entry, for easier handling of events that affect only one entry.
 	 * @return the first affected entry
 	 */
-	public GenericPhoneBookEntry getFirstAffectedEntry() {
+	public AbstractPhoneBookEntry getFirstAffectedEntry() {
 		if (this.getAffectedEntries().size()>0) {
 			return affectedEntries.get(0);
 		}

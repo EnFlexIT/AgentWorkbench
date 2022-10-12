@@ -10,19 +10,19 @@ import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <T> the generic type
  */
-public class PhoneBookSearchResults<T extends AbstractPhoneBookEntry> implements Serializable{
+public class PhoneBookSearchResults implements Serializable{
 
 	private static final long serialVersionUID = 1550341761728633000L;
 	
-	private ArrayList<T> searchResults;
+	private ArrayList<AbstractPhoneBookEntry> searchResults;
 	
 	/**
 	 * Gets the query results.
 	 * @return the query results
 	 */
-	public ArrayList<T> getSearchResults() {
+	public ArrayList<AbstractPhoneBookEntry> getSearchResults() {
 		if (searchResults==null) {
-			searchResults = new ArrayList<T>();
+			searchResults = new ArrayList<>();
 		}
 		return searchResults;
 	}
