@@ -61,7 +61,7 @@ public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
 	private static ACLMessage createQueryMessage(AID phoneBookMaintainer) {
 		ACLMessage queryMessage = new ACLMessage(ACLMessage.QUERY_REF);
 		queryMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_QUERY);
-		queryMessage.setConversationId(ConversationID.PHONEBOOK_QUERY.toString());
+		queryMessage.setConversationId(PhoneBookQueryResponder.CONVERSATION_ID);
 		queryMessage.addReceiver(phoneBookMaintainer);
 		return queryMessage;
 	}

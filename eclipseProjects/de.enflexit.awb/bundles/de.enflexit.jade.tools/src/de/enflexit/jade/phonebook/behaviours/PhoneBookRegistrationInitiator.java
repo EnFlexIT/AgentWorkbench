@@ -55,7 +55,7 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 		ACLMessage requestMessage = new ACLMessage(ACLMessage.REQUEST);
 		requestMessage.addReceiver(phoneBookMaintainer);
 		requestMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-		requestMessage.setConversationId(ConversationID.PHONEBOOK_REGISTRATION.toString());
+		requestMessage.setConversationId(PhoneBookRegistrationResponder.CONVERSATION_ID);
 		try {
 			requestMessage.setContentObject(myPhoneBookEntry);
 		} catch (IOException e) {
@@ -75,6 +75,7 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 			Object contentObject = msg.getContentObject();
 			if (contentObject!=null && contentObject instanceof AbstractPhoneBookEntry) {
 				AbstractPhoneBookEntry returnedPhoneBookEntry = (AbstractPhoneBookEntry) contentObject;
+				
 				this.notifyDone(returnedPhoneBookEntry);
 			}
 			if (debug==true) {

@@ -18,9 +18,11 @@ import jade.proto.SimpleAchieveREResponder;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <GenericPhoneBookEntry> the generic type
  */
-public class PhoneBookRegistrationResponder<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder {
+public class PhoneBookRegistrationResponder extends SimpleAchieveREResponder {
 
 	private static final long serialVersionUID = -9126496583768678087L;
+	
+	public static final String CONVERSATION_ID = "PhoneBookRegistration";
 	
 	private PhoneBook localPhoneBook;
 	
@@ -40,7 +42,7 @@ public class PhoneBookRegistrationResponder<GenericPhoneBookEntry extends Abstra
 	 */
 	private static MessageTemplate createMessageTemplate() {
 		MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(FIPA_REQUEST);
-		MessageTemplate matchConversationID = MessageTemplate.MatchConversationId(ConversationID.PHONEBOOK_REGISTRATION.toString());
+		MessageTemplate matchConversationID = MessageTemplate.MatchConversationId(CONVERSATION_ID);
 		return MessageTemplate.and(matchProtocol, matchConversationID);
 	}
 	
@@ -65,8 +67,7 @@ public class PhoneBookRegistrationResponder<GenericPhoneBookEntry extends Abstra
 			// --- Extract message content ----------------
 			Object contentObject = request.getContentObject();
 			if (contentObject!=null && contentObject instanceof AbstractPhoneBookEntry) {
-				@SuppressWarnings("unchecked")
-				GenericPhoneBookEntry phoneBookEntry = (GenericPhoneBookEntry) contentObject;
+				AbstractPhoneBookEntry phoneBookEntry = (AbstractPhoneBookEntry) contentObject;
 				phoneBookEntry = this.processPhoneBookEntry(phoneBookEntry);
 				this.localPhoneBook.addEntry(phoneBookEntry);
 				resultNotification.setPerformative(ACLMessage.CONFIRM);
@@ -102,7 +103,7 @@ public class PhoneBookRegistrationResponder<GenericPhoneBookEntry extends Abstra
 	 * @param entry the entry
 	 * @return the generic phone book entry
 	 */
-	protected GenericPhoneBookEntry processPhoneBookEntry(GenericPhoneBookEntry entry) {
+	protected AbstractPhoneBookEntry processPhoneBookEntry(AbstractPhoneBookEntry entry) {
 		return entry;
 	}
 	

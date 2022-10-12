@@ -21,9 +21,11 @@ import jade.proto.SimpleAchieveREResponder;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <T> the generic type
  */
-public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder{
+public class PhoneBookQueryResponder extends SimpleAchieveREResponder{
 
 	private static final long serialVersionUID = 1416124382854967230L;
+	
+	public static final String CONVERSATION_ID = "PhoneBookQuery";
 	
 	private PhoneBook localPhoneBook;
 	
@@ -43,7 +45,7 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 	 */
 	public static MessageTemplate getMessageTemplate() {
 		MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(FIPA_QUERY);
-		MessageTemplate matchConversationId = MessageTemplate.MatchConversationId(ConversationID.PHONEBOOK_QUERY.toString());
+		MessageTemplate matchConversationId = MessageTemplate.MatchConversationId(CONVERSATION_ID);
 		return MessageTemplate.and(matchProtocol, matchConversationId);
 	}
 	
