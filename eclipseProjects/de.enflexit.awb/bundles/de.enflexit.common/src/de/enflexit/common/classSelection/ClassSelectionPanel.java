@@ -57,7 +57,7 @@ public class ClassSelectionPanel extends JPanel {
 	private JButton jButtonTakeSelected;
 	private JListClassSearcher jListClassesFound;
 	
-	private Class<?> class2Search4 = Object.class;
+	private Class<?> class2Search4; // = Object.class => (NEVER search for Object !!!);
 	private String class2Search4CurrentValue;
 	private String class2Search4DefaultValue;
 	private String class2Search4Description = "Current Environment Classes:"; 
@@ -278,7 +278,7 @@ public class ClassSelectionPanel extends JPanel {
 
 		jLabelSearchCaption = new JLabel();
 		jLabelSearchCaption.setFont(new Font("Dialog", Font.BOLD, 12));
-		jLabelSearchCaption.setText("Search & Select Class extends " + class2Search4.getName() );
+		jLabelSearchCaption.setText("Search & Select Class extends " + (class2Search4==null ? "???" : class2Search4.getName()) );
 		
 		jLabelCustomize = new JLabel();
 		jLabelCustomize.setText("Klasse mit gewünschter Oberklasse:");

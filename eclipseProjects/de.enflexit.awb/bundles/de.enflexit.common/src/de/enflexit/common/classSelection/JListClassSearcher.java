@@ -120,7 +120,7 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	 * @return the bundle class filter
 	 */
 	public AbstractBundleClassFilter getBundleClassFilter() {
-		if (bundleClassFilter==null) {
+		if (bundleClassFilter==null && this.getClass2SearchFor()!=null) {
 			// --- Get bundle evaluator and try to find the corresponding filter --------
 			BundleEvaluator bEvaluator = BundleEvaluator.getInstance();
 			bundleClassFilter = bEvaluator.getBundleClassFilterByClass(this.getClass2SearchFor());
@@ -154,7 +154,10 @@ public class JListClassSearcher extends JListWithProgressBar<ClassElement2Displa
 	public synchronized SortedListModel<ClassElement2Display> getListModel() {
 		if (listModel==null) {
 			listModel = new SortedListModel<>();
-			this.getBundleClassFilter().addBundleClassFilterListener(this);			
+			AbstractBundleClassFilter bcf = this.getBundleClassFilter();
+			if (bcf!=null) {
+				bcf.addBundleClassFilterListener(this);			
+			}
 		}
 		return listModel;
 	}

@@ -28,8 +28,8 @@
  */
 package de.enflexit.common.classSelection;
 
-import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -57,6 +57,7 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 	
 	private ClassSelectionPanel classSelectionPanel;
 
+	
 	/**
 	 * This constructor is only used during developments and the usage of the WindowBuilder. 
 	 */
@@ -65,59 +66,41 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 		this.initialize();
 	}
 	/**
-	 * Default constructor.
-	 * 
-	 * @param owner the owner
+	 * Constructor for an empty ClassSelectionDialog without a ClassSelectionPanel.<br>
+	 * To integrate a ClassSelectionPanel use {@link #setClassSelectionPanel(ClassSelectionPanel)}
+	 * @param owner the owner window 
 	 */
-	public ClassSelectionDialog(Frame owner) {
+	public ClassSelectionDialog(Window owner) {
 		super(owner);
-		this.classSelectionPanel = new ClassSelectionPanel();
 		this.initialize();
 	}
 	/**
 	 * Constructor to configure the type of class, we are looking for.
 	 *
-	 * @param ownerFrame the owner frame
+	 * @param ownerWindow the owner window
 	 * @param clazz2Search4 the clazz2 search4
 	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
 	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
 	 * @param clazz2Search4Description the clazz2 search4 description
 	 * @param allowNull the allow null
 	 */
-	public ClassSelectionDialog(Frame ownerFrame, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
-		super(ownerFrame);
+	public ClassSelectionDialog(Frame ownerWindow, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
+		super(ownerWindow);
 		this.classSelectionPanel = new ClassSelectionPanel(clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
 		this.initialize();
 	}
-
 	/**
 	 * Constructor to configure the type of class, we are looking for.
 	 *
-	 * @param ownerFrame the owner frame
+	 * @param ownerWindow the owner window (a Frame or a Dialog)
 	 * @param jListClassSearcher an actual instance of a {@link JListClassSearcher}
 	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
 	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
 	 * @param clazz2Search4Description the clazz2 search4 description
 	 * @param allowNull the allow null
 	 */
-	public ClassSelectionDialog(Frame ownerFrame, JListClassSearcher jListClassSearcher, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
-		super(ownerFrame);
-		this.classSelectionPanel = new ClassSelectionPanel(jListClassSearcher, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
-		this.initialize();
-	}
-	
-	/**
-	 * Constructor to configure the type of class, we are looking for.
-	 *
-	 * @param ownerDialog the owner dialog
-	 * @param jListClassSearcher an actual instance of a {@link JListClassSearcher}
-	 * @param clazz2Search4CurrentValue the clazz2 search4 current value
-	 * @param clazz2Search4DefaultValue the clazz2 search4 default value
-	 * @param clazz2Search4Description the clazz2 search4 description
-	 * @param allowNull the allow null
-	 */
-	public ClassSelectionDialog(Dialog ownerDialog, JListClassSearcher jListClassSearcher, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
-		super(ownerDialog);
+	public ClassSelectionDialog(Window ownerWindow, JListClassSearcher jListClassSearcher, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
+		super(ownerWindow);
 		this.classSelectionPanel = new ClassSelectionPanel(jListClassSearcher, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
 		this.initialize();
 	}
@@ -140,9 +123,7 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 				setVisible(false);
 			}
 		});
-		
 	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
-	    
 	}
 	/**
      * Registers the escape key stroke in order to close this dialog.
