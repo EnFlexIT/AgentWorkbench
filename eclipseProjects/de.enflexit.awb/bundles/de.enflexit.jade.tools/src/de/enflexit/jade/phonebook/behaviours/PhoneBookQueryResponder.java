@@ -27,35 +27,24 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 	
 	private PhoneBook<T> localPhoneBook;
 	
-	private MessageTemplate messageTemplate;
-
 	/**
 	 * Instantiates a new phone book query responder.
 	 * @param agent the agent
 	 * @param localPhoneBook the local phone book
 	 */
 	public PhoneBookQueryResponder(Agent agent, PhoneBook<T> localPhoneBook) {
-		super(agent, createMessageTemplate());
+		super(agent, getMessageTemplate());
 		this.localPhoneBook = localPhoneBook;
-		this.messageTemplate = messageTemplate;
 	}
 	
 	/**
 	 * Creates the message template.
 	 * @return the message template
 	 */
-	private static MessageTemplate createMessageTemplate() {
+	public static MessageTemplate getMessageTemplate() {
 		MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(FIPA_QUERY);
 		MessageTemplate matchConversationId = MessageTemplate.MatchConversationId(ConversationID.PHONEBOOK_QUERY.toString());
 		return MessageTemplate.and(matchProtocol, matchConversationId);
-	}
-	
-	/**
-	 * Gets the message template.
-	 * @return the message template
-	 */
-	public MessageTemplate getMessageTemplate() {
-		return messageTemplate;
 	}
 	
 	/* (non-Javadoc)

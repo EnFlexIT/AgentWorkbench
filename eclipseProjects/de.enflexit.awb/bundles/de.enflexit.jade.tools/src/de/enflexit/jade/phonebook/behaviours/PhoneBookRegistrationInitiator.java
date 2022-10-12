@@ -1,20 +1,24 @@
 package de.enflexit.jade.phonebook.behaviours;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
+import de.enflexit.jade.phonebook.PhoneBookEvent;
+import de.enflexit.jade.phonebook.PhoneBookListener;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.SimpleAchieveREInitiator;
 
 /**
  * This class implements the initiator role of the FIPA Request protocol for the phone book registration.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
+public class PhoneBookRegistrationInitiator<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREInitiator {
 
 	private static final long serialVersionUID = -6099020571543668933L;
 	
@@ -25,6 +29,8 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	private IncreasingRetryIntervalsHelper intervalsHelper;
 	
 	protected boolean debug = false;
+	
+	private ArrayList<PhoneBookListener<GenericPhoneBookEntry>> listeners;
 	
 	/**
 	 * Instantiates a new phone book registration initiator.
@@ -64,9 +70,22 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	 */
 	@Override
 	protected void handleInform(ACLMessage msg) {
-		if (debug==true) {
-			System.out.println("[" + this.myAgent.getLocalName() + "] Phonebook registration successful");
+		
+		try {
+			Object contentObject = msg.getContentObject();
+			if (contentObject!=null && contentObject instanceof AbstractPhoneBookEntry) {
+				@SuppressWarnings("unchecked")
+				GenericPhoneBookEntry returnedPhoneBookEntry = (GenericPhoneBookEntry) contentObject;
+				this.notifyDone(returnedPhoneBookEntry);
+			}
+			if (debug==true) {
+				System.out.println("[" + this.myAgent.getLocalName() + "] Phonebook registration successful");
+			}
+		} catch (UnreadableException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not extract content from the inform message!");
+			e.printStackTrace();
 		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -129,11 +148,53 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 		@Override
 		protected void onWake() {
 			// --- Trigger a new registration attempt -----
-			PhoneBookRegistrationInitiator nextTry = new PhoneBookRegistrationInitiator(this.myAgent, myPhoneBookEntry, phoneBookMaintainer, retryOnFailure);
+			PhoneBookRegistrationInitiator<GenericPhoneBookEntry> nextTry = new PhoneBookRegistrationInitiator<GenericPhoneBookEntry>(this.myAgent, myPhoneBookEntry, phoneBookMaintainer, retryOnFailure);
 			nextTry.setIntervalsHelper(this.intervalsHelper);
 			this.myAgent.addBehaviour(nextTry);
 		}
 		
+	}
+	
+	/**
+	 * Gets the registered listeners.
+	 * @return the listeners
+	 */
+	private ArrayList<PhoneBookListener<GenericPhoneBookEntry>> getListeners() {
+		if (listeners==null) {
+			listeners = new ArrayList<PhoneBookListener<GenericPhoneBookEntry>>();
+		}
+		return listeners;
+	}
+	
+	/**
+	 * Adds the phone book listener.
+	 * @param listener the listener
+	 */
+	public void addPhoneBookListener(PhoneBookListener<GenericPhoneBookEntry> listener) {
+		if (this.getListeners().contains(listener)==false) {
+			this.getListeners().add(listener);
+		}
+	}
+	
+	/**
+	 * Removes the phone book listener.
+	 * @param listener the listener
+	 */
+	public void removePhoneBookListener(PhoneBookListener<GenericPhoneBookEntry> listener) {
+		if (this.getListeners().contains(listener)==true) {
+			this.getListeners().remove(listener);
+		}
+	}
+	
+	/**
+	 * Notifies the registered listeners that the registration is done.
+	 * @param returnedEntry the returned entry
+	 */
+	private void notifyDone(GenericPhoneBookEntry returnedEntry) {
+		PhoneBookEvent<GenericPhoneBookEntry> successEvent = new PhoneBookEvent<GenericPhoneBookEntry>(PhoneBookEvent.Type.REGISTRATION_DONE, returnedEntry);
+		for (int i=0; i<this.getListeners().size(); i++) {
+			this.getListeners().get(i).notifyEvent(successEvent);
+		}
 	}
 
 }

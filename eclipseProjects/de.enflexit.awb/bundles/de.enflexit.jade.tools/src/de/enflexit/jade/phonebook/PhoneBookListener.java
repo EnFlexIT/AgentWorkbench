@@ -1,7 +1,5 @@
 package de.enflexit.jade.phonebook;
 
-import java.util.List;
-
 /**
  * The listener interface for receiving phoneBook events.
  * The class that is interested in processing a phoneBook
@@ -11,25 +9,14 @@ import java.util.List;
  * the phoneBook event occurs, that object's appropriate
  * method is invoked.
  *
+ * @param <GenericPhoneBookEntry> the generic type
  * @see PhoneBookEvent
  */
 public interface PhoneBookListener<GenericPhoneBookEntry extends AbstractPhoneBookEntry> {
 	
 	/**
-	 * This method is invoked when a single phone book entry was added to the phone book.
-	 * @param addedEntry the added entry
+	 * Override this method to handle phone book related events.
+	 * @param event the event
 	 */
-	public void phoneBookEntryAdded(GenericPhoneBookEntry addedEntry);
-	/**
-	 * This method is invoked when multiple book entries were added to the phone book.
-	 * @param entries the entries
-	 */
-	public void phoneBookEntriesAdded(List<GenericPhoneBookEntry> entries);
-	
-	/**
-	 * This method is invoked when a phone book entry was removed.
-	 * @param removedEntry the removed entry
-	 */
-	public void phoneBookEntryRemoved(GenericPhoneBookEntry removedEntry);
-	
+	public void notifyEvent(PhoneBookEvent<GenericPhoneBookEntry> event);
 }
