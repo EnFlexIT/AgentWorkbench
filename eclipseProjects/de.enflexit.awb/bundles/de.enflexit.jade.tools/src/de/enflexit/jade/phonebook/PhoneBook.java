@@ -125,7 +125,7 @@ public class PhoneBook {
 	 */
 	public boolean addEntry(AbstractPhoneBookEntry entry, boolean persist) {
 		if (entry.isValid()) {
-			this.getPhoneBookContent().put(entry.getUniqueIdentifier(), entry);
+			this.getPhoneBookContent().put(entry.getLocalName(), entry);
 			if (persist==true) {
 				this.save();
 			}
@@ -141,7 +141,7 @@ public class PhoneBook {
 	 * @param entries the entries
 	 * @return true, if successful
 	 */
-	public boolean addEntries(List<AbstractPhoneBookEntry> entries) {
+	public boolean addEntries(List<? extends AbstractPhoneBookEntry> entries) {
 		// --- Pause notifications --------------
 		this.enableNotifications = false;
 		for (int i=0; i<entries.size(); i++) {
@@ -177,7 +177,7 @@ public class PhoneBook {
 	 * @return the entries
 	 */
 	public ArrayList<AbstractPhoneBookEntry> getEntries(PhoneBookSearchFilter searchFilter){
-		ArrayList<AbstractPhoneBookEntry> resultList = new ArrayList<AbstractPhoneBookEntry>();
+		ArrayList<AbstractPhoneBookEntry> resultList = new ArrayList<>();
 		for (AbstractPhoneBookEntry entry : this.getPhoneBookContent().values()) {
 			if (searchFilter.matches(entry)) {
 				resultList.add(entry);
@@ -211,7 +211,7 @@ public class PhoneBook {
 	 * @param persist specifies if the phone book will be saved afterwards
 	 */
 	public void removeEntry(AbstractPhoneBookEntry entry, boolean persist) {
-		this.getPhoneBookContent().remove(entry.getUniqueIdentifier());
+		this.getPhoneBookContent().remove(entry.getLocalName());
 		if (persist==true) {
 			this.save();
 		}
@@ -224,7 +224,7 @@ public class PhoneBook {
 	 * @param searchFilter the search filter
 	 * @return the array list
 	 */
-	public ArrayList<AbstractPhoneBookEntry> searchEntries(PhoneBookSearchFilter searchFilter){
+	public ArrayList<? extends AbstractPhoneBookEntry> searchEntries(PhoneBookSearchFilter searchFilter){
 		ArrayList<AbstractPhoneBookEntry> resultList = new ArrayList<AbstractPhoneBookEntry>();
 		for (AbstractPhoneBookEntry entry : this.getPhoneBookContent().values()) {
 			if (searchFilter.matches(entry)) {
@@ -232,6 +232,24 @@ public class PhoneBook {
 			}
 		}
 		return resultList;
+	}
+	
+	/**
+	 * Gets the phone book entry for the agent with the specified AID.
+	 * @param aid the aid
+	 * @return the phone book entry
+	 */
+	public AbstractPhoneBookEntry getEntryForAID(AID aid) {
+		return this.getPhoneBookContent().get(aid.getLocalName());
+	}
+	
+	/**
+	 * Gets the phone book entry for the agent with the specified local name.
+	 * @param localName the local name
+	 * @return the phone book entry
+	 */
+	public AbstractPhoneBookEntry getEntryForLocalName(String localName) {
+		return this.getPhoneBookContent().get(localName);
 	}
 
 	/**
@@ -423,7 +441,7 @@ public class PhoneBook {
 	 * Notifies the registered listeners about added phone book entries.
 	 * @param addedEntries the added entries
 	 */
-	private void notifyAdded(List<AbstractPhoneBookEntry> addedEntries) {
+	private void notifyAdded(List<? extends AbstractPhoneBookEntry> addedEntries) {
 		if (this.enableNotifications==true) {
 			PhoneBookEvent addedEvent = new PhoneBookEvent(PhoneBookEvent.Type.ENTRIES_ADDED, addedEntries);
 			for (PhoneBookListener listener : this.getPhoneBookListeners()) {

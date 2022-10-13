@@ -68,7 +68,7 @@ public class PhoneBookQueryResponder extends SimpleAchieveREResponder{
 		try {
 			// --- Extract and process the query ---------- 
 			PhoneBookSearchFilter searchFilter = (PhoneBookSearchFilter) requestMessage.getContentObject();
-			List<AbstractPhoneBookEntry> searchResults = this.localPhoneBook.searchEntries(searchFilter);
+			List<? extends AbstractPhoneBookEntry> searchResults = this.localPhoneBook.searchEntries(searchFilter);
 			
 			PhoneBookSearchResults queryResponse = new PhoneBookSearchResults();
 			queryResponse.getSearchResults().addAll(searchResults);

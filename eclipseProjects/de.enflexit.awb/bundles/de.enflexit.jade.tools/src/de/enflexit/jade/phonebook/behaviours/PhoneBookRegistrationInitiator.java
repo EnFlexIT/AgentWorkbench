@@ -59,7 +59,7 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 		try {
 			requestMessage.setContentObject(myPhoneBookEntry);
 		} catch (IOException e) {
-			System.out.println("[" + PhoneBookRegistrationInitiator.class.getSimpleName() + "] Error setting content object for the reqistration request of " + myPhoneBookEntry.getUniqueIdentifier());
+			System.out.println("[" + PhoneBookRegistrationInitiator.class.getSimpleName() + "] Error setting content object for the reqistration request of " + myPhoneBookEntry.getLocalName());
 			e.printStackTrace();
 		}
 		return requestMessage;

@@ -20,7 +20,7 @@ public class PhoneBookEvent {
 	}
 	
 	private Type type;
-	private List<AbstractPhoneBookEntry> affectedEntries;
+	private List<? extends AbstractPhoneBookEntry> affectedEntries;
 
 	/**
 	 * Instantiates a new empty phone book event.
@@ -44,7 +44,7 @@ public class PhoneBookEvent {
 	 * @param type the event type
 	 * @param affectedEntries the affected entries
 	 */
-	public PhoneBookEvent(Type type, List<AbstractPhoneBookEntry> affectedEntries) {
+	public PhoneBookEvent(Type type, List<? extends AbstractPhoneBookEntry> affectedEntries) {
 		this.type = type;
 		this.affectedEntries = affectedEntries;
 	}
@@ -66,7 +66,7 @@ public class PhoneBookEvent {
 	 * Gets the affected entries.
 	 * @return the affected entries
 	 */
-	public List<AbstractPhoneBookEntry> getAffectedEntries() {
+	public List<? extends AbstractPhoneBookEntry> getAffectedEntries() {
 		return affectedEntries;
 	}
 	/**

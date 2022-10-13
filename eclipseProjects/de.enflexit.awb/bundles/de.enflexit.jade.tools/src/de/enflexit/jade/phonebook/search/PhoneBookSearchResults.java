@@ -8,7 +8,6 @@ import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 /**
  * The Class PhoneBookQueryResponse.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
- * @param <T> the generic type
  */
 public class PhoneBookSearchResults implements Serializable{
 
