@@ -21,7 +21,7 @@ import jade.proto.SimpleAchieveREResponder;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <T> the generic type
  */
-public class PhoneBookQueryResponder extends SimpleAchieveREResponder{
+public class PhoneBookQueryResponder<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder{
 
 	private static final long serialVersionUID = 1416124382854967230L;
 	
@@ -61,18 +61,18 @@ public class PhoneBookQueryResponder extends SimpleAchieveREResponder{
 	/* (non-Javadoc)
 	 * @see jade.proto.SimpleAchieveREResponder#prepareResultNotification(jade.lang.acl.ACLMessage, jade.lang.acl.ACLMessage)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected ACLMessage prepareResultNotification(ACLMessage requestMessage, ACLMessage responseMessage) throws FailureException {
 		String errorMessage = null;
 		ACLMessage resultMessage = requestMessage.createReply();
 		try {
 			// --- Extract and process the query ---------- 
-			PhoneBookSearchFilter searchFilter = (PhoneBookSearchFilter) requestMessage.getContentObject();
-			List<? extends AbstractPhoneBookEntry> searchResults = this.localPhoneBook.searchEntries(searchFilter);
+			PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter = (PhoneBookSearchFilter<GenericPhoneBookEntry>) requestMessage.getContentObject();
+			List<GenericPhoneBookEntry> searchResults = (List<GenericPhoneBookEntry>) this.localPhoneBook.searchEntries(searchFilter);
 			
-			PhoneBookSearchResults queryResponse = new PhoneBookSearchResults();
+			PhoneBookSearchResults<GenericPhoneBookEntry> queryResponse = new PhoneBookSearchResults<>();
 			queryResponse.getSearchResults().addAll(searchResults);
-			
 			resultMessage.setContentObject(queryResponse);
 			
 		} catch (UnreadableException e) {

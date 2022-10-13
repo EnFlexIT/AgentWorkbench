@@ -23,12 +23,12 @@ import jade.proto.SimpleAchieveREInitiator;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <GenericPhoneBookEntry> the generic type
  */
-public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
+public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREInitiator {
 
 	private static final long serialVersionUID = 1214570247786648424L;
 	
 	private PhoneBook localPhoneBook;
-	private PhoneBookSearchFilter searchFilter;
+	private PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter;
 	
 	private AID phoneBookMaintainer;
 	private boolean retryOnFailure;
@@ -45,7 +45,7 @@ public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
 	 * @param searchFilter the search filter
 	 * @param retryOnFailure specifies if the query should be rescheduled if it fails
 	 */
-	public PhoneBookQueryInitiator(Agent agent, PhoneBook localPhoneBook, AID phoneBookMaintainer, PhoneBookSearchFilter searchFilter, boolean retryOnFailure) {
+	public PhoneBookQueryInitiator(Agent agent, PhoneBook localPhoneBook, AID phoneBookMaintainer, PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter, boolean retryOnFailure) {
 		super(agent, createQueryMessage(phoneBookMaintainer));
 		this.localPhoneBook = localPhoneBook;
 		this.searchFilter = searchFilter;
@@ -89,10 +89,11 @@ public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
 			// --- Extract contents ---------------------------------
 			Object contentObject = msg.getContentObject();
 			if (contentObject!=null && contentObject instanceof PhoneBookSearchResults) {
-				PhoneBookSearchResults queryResult = (PhoneBookSearchResults) contentObject;
+				@SuppressWarnings("unchecked")
+				PhoneBookSearchResults<GenericPhoneBookEntry> queryResult = (PhoneBookSearchResults<GenericPhoneBookEntry>) contentObject;
 				
 				// --- Add entries to the local phone book ----------
-				ArrayList<AbstractPhoneBookEntry> results = queryResult.getSearchResults();
+				ArrayList<GenericPhoneBookEntry> results = queryResult.getSearchResults();
 				for (int i=0; i<results.size(); i++) {
 					this.localPhoneBook.addEntry(results.get(i));
 				}
@@ -165,7 +166,7 @@ public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
 		 */
 		@Override
 		protected void onWake() {
-			PhoneBookQueryInitiator nextTry = new PhoneBookQueryInitiator(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure);
+			PhoneBookQueryInitiator<GenericPhoneBookEntry> nextTry = new PhoneBookQueryInitiator<>(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure);
 			nextTry.setIntervalsHelper(intervalsHelper);
 			this.myAgent.addBehaviour(nextTry);
 		}
@@ -187,7 +188,7 @@ public class PhoneBookQueryInitiator extends SimpleAchieveREInitiator {
 	 * Notify the listeners about the results.
 	 * @param queryResults the query results
 	 */
-	private void notifyResultsAvailable(List<AbstractPhoneBookEntry> queryResults) {
+	private void notifyResultsAvailable(List<GenericPhoneBookEntry> queryResults) {
 		PhoneBookEvent resultsEvent = new PhoneBookEvent(PhoneBookEvent.Type.QUERY_RESULT_AVAILABLE, queryResults);
 		for (int i=0; i<this.getListeners().size(); i++) {
 			this.getListeners().get(i).notifyEvent(resultsEvent);
