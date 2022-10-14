@@ -56,17 +56,41 @@ public class UserPasswordCredential extends AbstractCredential {
 		boolean equals=super.equals(obj);
 		if(obj instanceof UserPasswordCredential) {
 			UserPasswordCredential cred=(UserPasswordCredential) obj;
-			if(!this.getUserName().equals(cred.getUserName())) {
-				equals=false;
+			if(this.getPassword()==null || this.getPassword()==null) {
+				return equals;
 			}
 			
-			if(!this.getPassword().equals(cred.getPassword())) {
-				equals=false;
+			if(cred.getUserName()==null || cred.getUserName()==null) {
+				return equals;
 			}
+			if(cred.getPassword()==null || cred.getPassword()==null) {
+				return equals;
+			}
+			if(this.getUserName().equals(cred.getUserName())) {
+				if(this.getPassword().equals(cred.getPassword())) {
+					equals=true;
+				}
+			}
+			
+
 		}else {
 			equals=false;
 		}
 		return equals;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		boolean empty=false;
+		if(userName==null|| password==null) {
+			empty = true;
+		}
+		if(userName.isBlank()) {
+			empty=true;
+		}
+		if(password.isBlank()) {
+			empty=true;
+		}
+		return empty;
+	}
 }

@@ -1,7 +1,7 @@
 package de.enflexit.awb.ws.client;
 
 import java.io.Serializable;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +21,7 @@ public class ServerURL implements Serializable {
 
 	private static final long serialVersionUID = 8200942503674357869L;
 
-	private Integer id;
+	private UUID id;
 	private String serverURL;
 	
 	/**
@@ -44,16 +44,12 @@ public class ServerURL implements Serializable {
 	 * Returns the id of a credential.
 	 * @return the credential id
 	 */
-	public Integer getID() {
+	public UUID getID() {
 		if (id==null) {
-			// --- Randomize an ID ------------------
-			int min = 1000000;
-			int max = Integer.MAX_VALUE;
-			id = ThreadLocalRandom.current().nextInt(min, max);
+			id = UUID.randomUUID();
 		}
 		return id;
 	}
-	
 	/**
 	 * Gets the server URL.
 	 * @return the server URL

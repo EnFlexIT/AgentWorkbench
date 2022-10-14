@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
+import de.enflexit.awb.ws.client.ServerURL;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
 public class JPanelServer extends JPanel implements WsConfigurationInterface{
@@ -28,7 +29,7 @@ public class JPanelServer extends JPanel implements WsConfigurationInterface{
 	private static final long serialVersionUID = -1196367166450444830L;
 	private JSplitPane splitPane;
 	private JScrollPane scrollPane;
-	private JList list;
+	private JList<ServerURL> list;
 	
     //-------------------------------------
 	//-----From here overridden methods-----
@@ -64,9 +65,9 @@ public class JPanelServer extends JPanel implements WsConfigurationInterface{
 		}
 		return scrollPane;
 	}
-	private JList getList() {
+	private JList<ServerURL> getList() {
 		if (list == null) {
-			list = new JList();
+			list = new JList<ServerURL>();
 		}
 		return list;
 	}

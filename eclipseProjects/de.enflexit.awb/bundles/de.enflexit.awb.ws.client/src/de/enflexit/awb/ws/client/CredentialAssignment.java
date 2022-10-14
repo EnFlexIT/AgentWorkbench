@@ -1,7 +1,7 @@
 package de.enflexit.awb.ws.client;
 
 import java.io.Serializable;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,24 +19,27 @@ import javax.xml.bind.annotation.XmlType;
     "idCredential"
 })
 public class CredentialAssignment implements Serializable {
+	
+	public CredentialAssignment() {
+		getID();
+	}
+
 
 	private static final long serialVersionUID = -7854620281999217458L;
 	
-	private Integer id;
-	private int idServerURL;
+	private UUID id;
+	private UUID idServerURL;
 	private String idApiRegistrationDefaultBundleName;
-	private int idCredential;
+	private UUID idCredential;
 	
 	/**
 	 * Returns the id of a credential.
 	 * @return the credential id
 	 */
-	public Integer getID() {
+	public UUID getID() {
 		if (id==null) {
 			// --- Randomize an ID ------------------
-			int min = 1000000;
-			int max = Integer.MAX_VALUE;
-			id = ThreadLocalRandom.current().nextInt(min, max);
+			id = UUID.randomUUID();
 		}
 		return id;
 	}
@@ -47,7 +50,7 @@ public class CredentialAssignment implements Serializable {
 	 *
 	 * @return the id of the server URL
 	 */
-	public int getIdServerURL() {
+	public UUID getIdServerURL() {
 		return idServerURL;
 	}
 
@@ -57,7 +60,7 @@ public class CredentialAssignment implements Serializable {
 	 *
 	 * @param idServerURL the new id server URL
 	 */
-	public void setIdServerURL(int idServerURL) {
+	public void setIdServerURL(UUID idServerURL) {
 		this.idServerURL = idServerURL;
 	}
 
@@ -87,7 +90,7 @@ public class CredentialAssignment implements Serializable {
 	 *
 	 * @return the id of the credential
 	 */
-	public int getIdCredential() {
+	public UUID getIdCredential() {
 		return idCredential;
 	}
 
@@ -97,7 +100,7 @@ public class CredentialAssignment implements Serializable {
 	 *
 	 * @param idCredential the new id of the credential
 	 */
-	public void setIdCredential(int idCredential) {
+	public void setIdCredential(UUID idCredential) {
 		this.idCredential = idCredential;
 	}
     //---------------------------------------------------------------
@@ -135,7 +138,7 @@ public class CredentialAssignment implements Serializable {
 			if (this.getIdCredential() != credAssg.getIdCredential()) {
 				equals = false;
 			}
-			
+
 			if (this.getIdServerURL() != credAssg.getIdServerURL()) {
 				equals = false;
 			}

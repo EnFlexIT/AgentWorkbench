@@ -97,7 +97,7 @@ public class JPanelAssignedCredentials extends JPanel {
 			String apiId = credentialAssignment.getIdApiRegistrationDefaultBundleName();
 			if (awbRegService.getClientBundleName().equals(apiId)) {
 				credAssgnOfSelectedApi.add(credentialAssignment);
-				AbstractCredential abstractCred = WsCredentialStore.getInstance().getCredential(credentialAssignment.getIdCredential());
+				AbstractCredential abstractCred = WsCredentialStore.getInstance().getCredentialWithID(credentialAssignment.getIdCredential());
 				assgnCredentials.add(abstractCred);
 			}
 		}
