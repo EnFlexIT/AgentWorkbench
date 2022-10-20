@@ -169,6 +169,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			jPanelAssignedCredentials = new JPanelAssignedCredentials();
 			jPanelAssignedCredentials.getJButtonCreateACredentialAssignment().addActionListener(this);
 			jPanelAssignedCredentials.getJButtonDeleteCredentialAssignment().addActionListener(this);
+			jPanelAssignedCredentials.getJListAssignedCredentials().getSelectionModel().addListSelectionListener(this);
 		}
 		return jPanelAssignedCredentials;
 	}
@@ -190,10 +191,16 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 							credAssgn.setIdApiRegistrationDefaultBundleName(apiReg.getClientBundleName());
 							credAssgn.setIdCredential(credential.getID());
 							credAssgn.setIdServerURL(serverURL.getID());
-							WsCredentialStore.getInstance().getCredentialAssignmentList().add(credAssgn);
-							WsCredentialStore.getInstance().save();
-							getJPanelCredentials().getJListCredentials().revalidate();
-							getJPanelCredentials().getJListCredentials().repaint();
+							if(WsCredentialStore.getInstance().putCredAssgnInCredAssgnList(credAssgn)) {
+								WsCredentialStore.getInstance().save();
+								this.getJPanelAssignedCredentials().fillAssignedCredentialJList(this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue());
+								this.getJPanelAssignedCredentials().getJListAssignedCredentials().revalidate();
+								this.getJPanelAssignedCredentials().getJListAssignedCredentials().repaint();
+								this.revalidate();
+								this.repaint();
+							} else{
+								JOptionPane.showMessageDialog(this,"This credential is already assigned to the selected Server and Client! Please select another credential!");
+							}
 						}else {
 							JOptionPane.showMessageDialog(this,"This credential is already assigned to the selected Server and Client! Please select another credential!");
 						}
@@ -218,6 +225,10 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 								credAssgn.remove(credentialAssignment);
 							}
 							this.getJPanelAssignedCredentials().fillAssignedCredentialJList(apiReg);
+							this.getJPanelAssignedCredentials().getJListAssignedCredentials().revalidate();
+							this.getJPanelAssignedCredentials().getJListAssignedCredentials().repaint();
+							this.revalidate();
+							this.repaint();
 							WsCredentialStore.getInstance().save();
 						}
 					}else {

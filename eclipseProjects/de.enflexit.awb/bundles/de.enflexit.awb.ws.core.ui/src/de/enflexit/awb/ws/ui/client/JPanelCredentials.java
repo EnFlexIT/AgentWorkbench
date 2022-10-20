@@ -27,6 +27,7 @@ import javax.swing.ListSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.awb.ws.client.CredentialAssignment;
 import de.enflexit.awb.ws.client.CredentialType;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.credential.AbstractCredential;
@@ -93,15 +94,23 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		}
 		return jScrollPaneCredentialList;
 	}
+	
+	/**
+	 * Gets the j list credentials.
+	 *
+	 * @return a Jlist of all available credentials
+	 */
 	public JList<AbstractCredential> getJListCredentials() {
 		if (jListCredentials == null) {
 			jListCredentials = new JList<AbstractCredential>();
 			jListCredentials.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jListCredentials.addMouseListener(this);
+			getJListCredentials().setCellRenderer(new ListCellRendererCredentials());
 			fillCredentialJList();
 		}
 		return jListCredentials;
 	}
+
 	
 	private JPanel getJPanelHeader() {
 		if (jPanelHeader == null) {
@@ -179,7 +188,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		List<AbstractCredential> credentials=WsCredentialStore.getInstance().getAllCredentialsOfaType(type);
 		DefaultListModel<AbstractCredential> listModelRegisteredApis=new DefaultListModel<AbstractCredential>();
 		listModelRegisteredApis.addAll(credentials);
-		jListCredentials.setModel(listModelRegisteredApis);
+		getJListCredentials().setModel(listModelRegisteredApis);
 	}
 	
 	/**
@@ -189,7 +198,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		List<AbstractCredential> credentials=WsCredentialStore.getInstance().getCredentialList();
 		DefaultListModel<AbstractCredential> listModelRegisteredApis=new DefaultListModel<AbstractCredential>();
 		listModelRegisteredApis.addAll(credentials);
-		jListCredentials.setModel(listModelRegisteredApis);
+		getJListCredentials().setModel(listModelRegisteredApis);
 	}
 	
 	/**
@@ -199,7 +208,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		List<AbstractCredential> credentials=WsCredentialStore.getInstance().getCredentialList();
 		DefaultListModel<AbstractCredential> listModelRegisteredApis=new DefaultListModel<AbstractCredential>();
 		listModelRegisteredApis.addAll(credentials);
-		jListCredentials.setModel(listModelRegisteredApis);
+		getJListCredentials().setModel(listModelRegisteredApis);
 		this.revalidate();
 		this.repaint();
 	}
@@ -286,14 +295,20 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		}else if (ae.getSource().equals(this.getJButtonDeleteACredential())) {
 			AbstractCredential cred = this.getJListCredentials().getSelectedValue();
 			if (cred != null) {
-				int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the "+ cred.getName()+ " of the type " + cred.getCredentialType()+"?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
+				int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the "+ cred.getName()+ " of the type " + cred.getCredentialType()+" and all is corresponding Assignments?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
 				if(option==JOptionPane.YES_OPTION) {
-				   WsCredentialStore.getInstance().getCredentialList().remove(cred);
-				   this.fillCredentialJListAndRepaint();
-				   WsCredentialStore.getInstance().save();
+				     // Remove all linked CredentialAssignments before deleting the credential
+					 List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getCredentialAssignmentWithCredential(cred);
+					 for (CredentialAssignment credentialAssignment : credAssgns) {
+						  WsCredentialStore.getInstance().getCredentialAssignmentList().remove(credentialAssignment);
+			         }
+				     //Remove the credential afterwards
+					  WsCredentialStore.getInstance().getCredentialList().remove(cred);
+					  this.fillCredentialJListAndRepaint();
+					  WsCredentialStore.getInstance().save();
 				}
 			} else {
-				JOptionPane.showConfirmDialog(this, "Please select a credential!","Selecte a credential", JOptionPane.YES_OPTION);
+				JOptionPane.showConfirmDialog(this, "Please select a credential!","Select a credential", JOptionPane.YES_OPTION);
 			}
 		}
 	}

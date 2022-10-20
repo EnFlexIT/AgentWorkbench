@@ -40,6 +40,9 @@ public class BearerTokenCredential extends AbstractCredential {
 		boolean equals=super.equals(obj);
 		if(obj instanceof BearerTokenCredential) {
 			BearerTokenCredential cred=(BearerTokenCredential) obj;
+			if (cred.getJwtToken() == null || this.getJwtToken()==null) {
+				return equals;
+			}
 			if(!this.getJwtToken().equals(cred.getJwtToken())) {
 				equals=false;
 			}
@@ -47,6 +50,18 @@ public class BearerTokenCredential extends AbstractCredential {
 			equals=false;
 		}
 		return equals;
+	}
+	
+	@Override
+	public boolean isEmpty() {
+		boolean empty=false;
+		if(jwtToken==null) {
+			empty = true;
+		}
+		else if(jwtToken.getJwtToken().isBlank()) {
+			empty=true;
+		}
+		return empty;
 	}
 	
 }

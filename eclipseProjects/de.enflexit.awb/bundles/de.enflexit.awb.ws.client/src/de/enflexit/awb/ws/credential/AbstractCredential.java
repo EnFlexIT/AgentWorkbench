@@ -1,7 +1,7 @@
 package de.enflexit.awb.ws.credential;
 
 import java.io.Serializable;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +24,7 @@ public class AbstractCredential implements Serializable {
 
 	private static final long serialVersionUID = -5179570740645614521L;
 
-	private Integer id;
+	private UUID id;
 	private String name;
 	
 	public AbstractCredential() {
@@ -35,12 +35,9 @@ public class AbstractCredential implements Serializable {
 	 * Returns the id of a credential.
 	 * @return the credential id
 	 */
-	public Integer getID() {
+	public UUID getID() {
 		if (id==null) {
-			// --- Randomize an ID ------------------
-			int min = 1000000;
-			int max = Integer.MAX_VALUE;
-			id = ThreadLocalRandom.current().nextInt(min, max);
+			id = UUID.randomUUID();
 		}
 		return id;
 	}
@@ -99,9 +96,10 @@ public class AbstractCredential implements Serializable {
 			if (abstCred.getID() != this.getID()) {
 				equals = false;
 			}
-
-			if (!abstCred.getName().equals(this.getName())) {
-				equals = false;
+			if (abstCred.getName() != null) {
+				if (!abstCred.getName().equals(this.getName())) {
+					equals = false;
+				}
 			}
 		} else {
 			equals = false;

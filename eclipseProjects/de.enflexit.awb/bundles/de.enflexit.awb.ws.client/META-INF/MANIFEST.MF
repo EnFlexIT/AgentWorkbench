@@ -7,6 +7,7 @@ Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ws.client
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.enflexit.awb.ws.client.BundleActivator
 Require-Bundle: org.eclipse.osgi,
  org.agentgui.core,
  com.google.gson,

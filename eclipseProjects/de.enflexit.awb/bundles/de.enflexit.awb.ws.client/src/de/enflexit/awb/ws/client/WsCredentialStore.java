@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -30,7 +31,6 @@ import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import de.enflexit.awb.ws.credential.BearerTokenCredential;
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
-import de.enflexit.common.Observable;
 import de.enflexit.common.ServiceFinder;
 
 /**
@@ -116,6 +116,66 @@ public class WsCredentialStore implements Serializable {
 		}
 		return apiRegistrationServiceList;
 	}
+	
+	/**
+	 * Adds the api registration service.
+	 *
+	 * @param apiRegService the api reg service
+	 */
+	public void addApiRegistrationService(AwbApiRegistrationService apiRegService) {
+		AwbApiRegistrationService apiReg=this.getApiRegistration(apiRegService.getClientBundleName());
+		if(apiReg==null) {
+			this.getApiRegistrationServiceList().add(apiRegService);
+			setupApiRegistrationService(apiRegService);
+		}else {
+			 setupApiRegistrationService(apiRegService);
+		}
+	}
+
+	/**
+	 * Sets the up api registration service.
+	 *
+	 * @param apiRegService the new up api registration service
+	 */
+	private void setupApiRegistrationService(AwbApiRegistrationService apiRegService) {
+		 AbstractCredential cred=this.getSpecifiedCredFromApiRegService(apiRegService);
+		 ServerURL serverUrl=this.getServerOrCreateIt(apiRegService);	
+		
+		 if(cred==null) { 
+			 cred=createEmptyCredential(apiRegService);
+			 if(cred!=null) {
+				 this.putInCredentialList(cred);
+				 CredentialAssignment ca=new CredentialAssignment();
+				 ca.setIdApiRegistrationDefaultBundleName(apiRegService.getClientBundleName());
+				 ca.setIdCredential(cred.getID());
+				 ca.setIdServerURL(serverUrl.getID());
+				 this.putCredAssgnInCredAssgnList(ca);
+			 }
+		 }else {
+			 this.putInCredentialList(cred);
+			 CredentialAssignment ca=new CredentialAssignment();
+			 ca.setIdApiRegistrationDefaultBundleName(apiRegService.getClientBundleName());
+			 ca.setIdCredential(cred.getID());
+			 ca.setIdServerURL(serverUrl.getID());
+			 this.putCredAssgnInCredAssgnList(ca);
+		 }
+	}
+
+	/**
+	 * Removes the awb api registration service.
+	 *
+	 * @param apiRegService the api reg service
+	 */
+	public void removeAwbApiRegistrationService(AwbApiRegistrationService apiRegService) {
+		if(this.getApiRegistrationServiceList().contains(apiRegService)){
+			this.getApiRegistrationServiceList().remove(apiRegService);
+		}
+		ServerURL server=this.getServerURL(apiRegService.getDefaultServerURL());
+		if(server!=null) {
+			List<CredentialAssignment>credAssgns=this.getCredentialAssignmentWithServer(server);
+			this.getCredentialAssignmentList().removeAll(credAssgns);
+		}
+	}
 
 	/**
 	 * Returns the api registration.
@@ -151,11 +211,50 @@ public class WsCredentialStore implements Serializable {
 	public void setServerURLList(List<ServerURL> serverURLList) {
 		this.serverURLList = serverURLList;
 	}
+	
+
 	/**
-	 * Returns the api registration.
+	 * Checks if a {@link ServerURL} is in the server url list.
 	 *
-	 * @param url the bundle name
-	 * @return the api registration
+	 * @param serverURL the server URL
+	 * @return true, if is in server url list
+	 */
+	public boolean isInServerUrlList(String serverURL) {
+		boolean inServerUrlList= false;
+		List<ServerURL> serverURLs=getServerURLList();
+		for (ServerURL server : serverURLs) {
+		    if(server.getServerURL().equals(serverURL)) {
+		    	inServerUrlList=true;
+		    	break;
+		    }
+		}
+        
+		return inServerUrlList;
+	}
+	
+	/**
+	 * Gets the {@link ServerURL} or create it.
+	 *
+	 * @param apiRegService the {@link AwbApiRegistrationService}
+	 * @return the server or create it
+	 */
+	private ServerURL getServerOrCreateIt(AwbApiRegistrationService apiRegService) {
+		ServerURL apiRegServer;
+		if(!isInServerUrlList(apiRegService.getDefaultServerURL())) {
+			apiRegServer= new ServerURL();
+			apiRegServer.setServerURL(apiRegService.getDefaultServerURL());
+			this.getServerURLList().add(apiRegServer);
+		}else {
+			apiRegServer=this.getServerURL(apiRegService.getDefaultServerURL());
+		}
+		return apiRegServer;
+	}
+	
+	/**
+	 * Gets the server URL.
+	 *
+	 * @param url the url
+	 * @return the server URL
 	 */
 	public ServerURL getServerURL(String url) {
 		if (url==null || url.isBlank()==true) return null;
@@ -261,7 +360,7 @@ public class WsCredentialStore implements Serializable {
 	 * @param credentialId the credential ID
 	 * @return the credential
 	 */
-	public AbstractCredential getCredential(int id) {
+	public AbstractCredential getCredential(UUID id) {
 		for (AbstractCredential credential : this.getCredentialList()) {
 			if (credential.getID().equals(id)) {
 				return credential;
@@ -395,7 +494,6 @@ public class WsCredentialStore implements Serializable {
 	 */
 	public AbstractCredential getCredentialWithName(String credName) {
 		List<AbstractCredential> credList = getCredentialList();
-		System.out.println("Here");
 		for (Iterator<AbstractCredential> iterator = credList.iterator(); iterator.hasNext();) {
 			AbstractCredential abstrCred = (AbstractCredential) iterator.next();
 			if (credName.equals(abstrCred.getName())) {
@@ -411,15 +509,43 @@ public class WsCredentialStore implements Serializable {
 	 * @param ID the id
 	 * @return the credential with ID
 	 */
-	public AbstractCredential getCredentialWithID(Integer ID) {
+	public AbstractCredential getCredentialWithID(UUID Id) {
 		List<AbstractCredential> credList = getCredentialList();
 		for (Iterator<AbstractCredential> iterator = credList.iterator(); iterator.hasNext();) {
 			AbstractCredential abstrCred = (AbstractCredential) iterator.next();
-			if (ID.equals(abstrCred.getID())) {
+			if (Id.equals(abstrCred.getID())) {
 				return abstrCred;
 			} 
 		}
 		return null;
+	}
+	
+	/**
+	 * Creates an empty {@link AbstractCredential} based on information of the {@link AwbApiRegistrationService}.
+	 *
+	 * @param apiRegService the api reg service
+	 * @return the abstract credential
+	 */
+	private AbstractCredential createEmptyCredential(AwbApiRegistrationService apiRegService) {
+		AbstractCredential emptyCred=null;
+		 switch (apiRegService.getCredentialType()) {
+		case API_KEY:
+			emptyCred=new ApiKeyCredential();
+			emptyCred.setName(apiRegService.getDefaultCredentialName());
+			break;
+		case BEARER_TOKEN:
+			emptyCred= new BearerTokenCredential();
+			emptyCred.setName(apiRegService.getDefaultCredentialName());
+			break;
+		case USERNAME_PASSWORD:
+			emptyCred= new UserPasswordCredential();
+			emptyCred.setName(apiRegService.getDefaultCredentialName());
+			break;
+
+		default:
+			break;
+		}
+		 return emptyCred;
 	}
 	
 	// ------------------------------------------------------------
@@ -454,23 +580,27 @@ public class WsCredentialStore implements Serializable {
 	// ------------------------------------------------------------
 	// --- From here methods for CredentialAssignment --------
 	// ------------------------------------------------------------
-	
+
 	/**
 	 * Gets one unique credential assignment.
 	 *
-	 * @param apiReg the api reg
-	 * @param cred the cred
+	 * @param apiReg    the api reg
+	 * @param cred      the credn
 	 * @param serverURL the server URL
 	 * @return the credential assignment
 	 */
-	public CredentialAssignment getCredentialAssignment(ApiRegistration apiReg,AbstractCredential cred, ServerURL serverURL) {
-		CredentialAssignment credAssigned=null;
-		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
+	public CredentialAssignment getCredentialAssignment(ApiRegistration apiReg, AbstractCredential cred,
+			ServerURL serverURL) {
+		CredentialAssignment credAssigned = null;
+		List<CredentialAssignment> credentialAssignments = getCredentialAssignmentList();
 		for (CredentialAssignment credAssgn : credentialAssignments) {
-			if(credAssgn.getIdApiRegistrationDefaultBundleName().equals(apiReg.getClientBundleName())){
-				if(credAssgn.getIdCredential()==cred.getID()) {
-					if(credAssgn.getIdServerURL()==credAssgn.getIdServerURL()) {
-					   credAssigned=credAssgn;
+			if (credAssgn.getIdApiRegistrationDefaultBundleName() != null && credAssgn.getIdCredential() != null
+					&& credAssgn.getIdServerURL() != null) {
+				if (credAssgn.getIdApiRegistrationDefaultBundleName().equals(apiReg.getClientBundleName())) {
+					if (credAssgn.getIdCredential().equals(cred.getID())) {
+						if (credAssgn.getIdServerURL().equals(serverURL.getID())) {
+							credAssigned = credAssgn;
+						}
 					}
 				}
 			}
@@ -496,6 +626,104 @@ public class WsCredentialStore implements Serializable {
 		}
 		return credentialAssignments;
 	}
+	
+	/**
+	 * Gets the credential assignment with credential.
+	 *
+	 * @param apiReg the api reg
+	 * @param cred the cred
+	 * @return the credential assignment with credential
+	 */
+	public List<CredentialAssignment> getCredentialAssignmentWithCredential(AbstractCredential cred) {
+		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
+		for (CredentialAssignment credAssgn : credentialAssignments) {
+			if(credAssgn.getIdCredential().equals(cred.getID())){
+					credentialAssignments.add(credAssgn);
+			}
+		}
+		return credentialAssignments;
+	}
+	
+	/**
+	 * Gets the credential assignment with credential.
+	 *
+	 * @param apiReg the api reg
+	 * @param cred the cred
+	 * @return the credential assignment with credential
+	 */
+	public List<CredentialAssignment> getCredentialAssignmentWithServer(ServerURL server) {
+		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
+		for (CredentialAssignment credAssgn : credentialAssignments) {
+			if(credAssgn.getIdServerURL().equals(server.getID())){
+					credentialAssignments.add(credAssgn);
+			}
+		}
+		return credentialAssignments;
+	}
+	
+	/**
+	 * Put the {@link CredentialAssignment} in the CredentialAssignmentList.
+	 *
+	 * @param credAssgn the cred assgn
+	 * @return true, if successful 
+	 *         false, if {@link CredentialAssignment} is already in the CredentialAssignmentList
+	 */
+	public boolean putCredAssgnInCredAssgnList(CredentialAssignment credAssgn) {
+	 boolean put=false;
+	 if(isCredAssignmentInCredAssgnList(credAssgn)) {
+		WsCredentialStore.getInstance().getCredentialAssignmentList().add(credAssgn);
+		put=true;
+	 }
+	 return put;
+	}
+	
+	/**
+	 * Checks if is cred assignment in cred assgn list.
+	 *
+	 * @param credAssgn the cred assgn
+	 * @return true, if is cred assignment in cred assgn list
+	 */
+	public boolean isCredAssignmentInCredAssgnList(CredentialAssignment credAssgn) {
+		boolean contains =false;
+	    List<CredentialAssignment> credAssignments=WsCredentialStore.getInstance().getCredentialAssignmentList();
+	    for (Iterator<CredentialAssignment> iterator = credAssignments.iterator(); iterator.hasNext();) {
+			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+			if(credentialAssignment.getIdApiRegistrationDefaultBundleName().equals(credAssgn.getIdApiRegistrationDefaultBundleName())) {
+				if(credentialAssignment.getIdCredential().equals(credAssgn.getIdCredential())) {
+					if(credentialAssignment.getIdServerURL().equals(credAssgn.getIdServerURL())) {
+						contains= true;
+						break;
+					}
+				}
+			}
+		}
+		WsCredentialStore.getInstance().save();
+		return contains;
+	}
+	
+	/**
+	 * Gets the specified {@link AbstractCredential} from
+	 * {@link AwbApiRegistrationService}.
+	 *
+	 * @param apiRegService the {@link AwbApiRegistrationService}
+	 * @return the specified {@link AbstractCredential} from the
+	 *         {@link AwbApiRegistrationService}
+	 */
+	private AbstractCredential getSpecifiedCredFromApiRegService(AwbApiRegistrationService apiRegService) {
+		AbstractCredential specifiedCred = null;
+		ServerURL apiRegServer = getServerURL(apiRegService.getDefaultServerURL());
+		if (apiRegServer != null) {
+			List<CredentialAssignment> crdAssgnList = this.getCredentialAssignmentWithServer(apiRegServer);
+			for (CredentialAssignment credentialAssignment : crdAssgnList) {
+				AbstractCredential cred = this.getCredential(credentialAssignment.getIdCredential());
+				if (cred.getCredentialType().equals(apiRegService.getCredentialType())) {
+					specifiedCred = cred;
+				}
+			}
+		}
+		return specifiedCred;
+	}
+	
 	// ----------------------------------------------------------------------------------
 	// --- From here methods to save or load a WsCredentialStore -----------------------
 	// ----------------------------------------------------------------------------------
@@ -598,7 +826,6 @@ public class WsCredentialStore implements Serializable {
 	 * @return the WsCredentialStore configuration
 	 */
 	public static WsCredentialStore load(File file) {
-		System.out.println(file.getAbsolutePath());
 		if (file==null || file.exists()==false) return null;
 		
 		WsCredentialStore wsCredStore = null;
@@ -629,20 +856,5 @@ public class WsCredentialStore implements Serializable {
 			}	
 		}
 		return wsCredStore;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.enflexit.common.Observer#update(de.enflexit.common.Observable,
-	 * java.lang.Object)
-	 */
-	public void update(Observable observable, Object updateObject) {
-
-		if (!(observable instanceof Project)) return;
-		
-		if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
-			save(this);
-		} 
 	}
 }

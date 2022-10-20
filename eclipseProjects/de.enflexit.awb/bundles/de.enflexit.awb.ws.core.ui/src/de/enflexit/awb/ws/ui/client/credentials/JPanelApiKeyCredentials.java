@@ -121,7 +121,7 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 	 */
 	private void fillJTextfieldCredentialKeyName() {
 		if(this.getCredential()!=null) {
-			getJTextFieldKeyName().setText(this.getCredential().getApiKeyName());
+			getJTextFieldKeyName().setText(this.getCredential().getApiKeyPrefix());
 		}
 	}
 	
@@ -172,7 +172,7 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 				if (!getJTextFieldKeyName().getText().isBlank()) {
 					if (!getJTextFieldKeyValue().getText().isBlank()) {
 						ApiKeyCredential apiKeyCred = new ApiKeyCredential();
-						apiKeyCred.setApiKeyName(getJTextFieldKeyName().getText());
+						apiKeyCred.setApiKeyPrefix(getJTextFieldKeyName().getText());
 						apiKeyCred.setApiKeyValue(getJTextFieldKeyValue().getText());
 						super.credential=apiKeyCred;
 					}
