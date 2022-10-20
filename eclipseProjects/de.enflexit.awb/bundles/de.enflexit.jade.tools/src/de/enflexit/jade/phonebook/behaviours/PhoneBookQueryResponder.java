@@ -21,19 +21,21 @@ import jade.proto.SimpleAchieveREResponder;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <T> the generic type
  */
-public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder{
+public class PhoneBookQueryResponder<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder{
 
 	private static final long serialVersionUID = 1416124382854967230L;
 	
-	private PhoneBook<T> localPhoneBook;
-
+	public static final String CONVERSATION_ID = "PhoneBookQuery";
+	
+	private PhoneBook localPhoneBook;
+	
 	/**
 	 * Instantiates a new phone book query responder.
 	 * @param agent the agent
 	 * @param localPhoneBook the local phone book
 	 */
-	public PhoneBookQueryResponder(Agent agent, PhoneBook<T> localPhoneBook) {
-		super(agent, createMessageTemplate());
+	public PhoneBookQueryResponder(Agent agent, PhoneBook localPhoneBook) {
+		super(agent, getMessageTemplate());
 		this.localPhoneBook = localPhoneBook;
 	}
 	
@@ -41,9 +43,9 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 	 * Creates the message template.
 	 * @return the message template
 	 */
-	private static MessageTemplate createMessageTemplate() {
+	public static MessageTemplate getMessageTemplate() {
 		MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(FIPA_QUERY);
-		MessageTemplate matchConversationId = MessageTemplate.MatchConversationId(ConversationID.PHONEBOOK_QUERY.toString());
+		MessageTemplate matchConversationId = MessageTemplate.MatchConversationId(CONVERSATION_ID);
 		return MessageTemplate.and(matchProtocol, matchConversationId);
 	}
 	
@@ -66,12 +68,11 @@ public class PhoneBookQueryResponder<T extends AbstractPhoneBookEntry> extends S
 		ACLMessage resultMessage = requestMessage.createReply();
 		try {
 			// --- Extract and process the query ---------- 
-			PhoneBookSearchFilter<T> searchFilter = (PhoneBookSearchFilter<T>) requestMessage.getContentObject();
-			List<T> searchResults = this.localPhoneBook.searchEntries(searchFilter);
+			PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter = (PhoneBookSearchFilter<GenericPhoneBookEntry>) requestMessage.getContentObject();
+			List<GenericPhoneBookEntry> searchResults = (List<GenericPhoneBookEntry>) this.localPhoneBook.searchEntries(searchFilter);
 			
-			PhoneBookSearchResults<T> queryResponse = new PhoneBookSearchResults<>();
+			PhoneBookSearchResults<GenericPhoneBookEntry> queryResponse = new PhoneBookSearchResults<>();
 			queryResponse.getSearchResults().addAll(searchResults);
-			
 			resultMessage.setContentObject(queryResponse);
 			
 		} catch (UnreadableException e) {

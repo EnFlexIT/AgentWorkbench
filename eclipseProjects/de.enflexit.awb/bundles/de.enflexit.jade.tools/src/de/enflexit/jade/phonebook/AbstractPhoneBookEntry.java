@@ -15,13 +15,7 @@ public abstract class AbstractPhoneBookEntry implements Serializable{
 	private AID agentAID;
 
 	/**
-	 * Gets a unique identifier for this {@link AbstractPhoneBookEntry}
-	 * @return the unique identifier
-	 */
-	public abstract String getUniqueIdentifier();
-	
-	/**
-	 * Gets the agent AID.
+	 * Gets the AID of the agent represented by this {@link AbstractPhoneBookEntry}.
 	 * @return the agent AID
 	 */
 	public AID getAgentAID() {
@@ -33,6 +27,14 @@ public abstract class AbstractPhoneBookEntry implements Serializable{
 	 */
 	public void setAgentAID(AID agentAID) {
 		this.agentAID = agentAID;
+	}
+	
+	/**
+	 * Gets the local name of the agent represented by this {@link AbstractPhoneBookEntry}.
+	 * @return the local name
+	 */
+	public String getLocalName() {
+		return this.getAgentAID().getLocalName();
 	}
 
 

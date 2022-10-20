@@ -2,8 +2,12 @@ package de.enflexit.jade.phonebook.behaviours;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
+import de.enflexit.jade.phonebook.PhoneBookEvent;
+import de.enflexit.jade.phonebook.PhoneBookListener;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchResults;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchFilter;
 import jade.core.AID;
@@ -17,19 +21,21 @@ import jade.proto.SimpleAchieveREInitiator;
 /**
  * This class implements the initiator role of the FIPA query protocol for phone book queries. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
- * @param <T> the generic type
+ * @param <GenericPhoneBookEntry> the generic type
  */
-public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends SimpleAchieveREInitiator {
+public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREInitiator {
 
 	private static final long serialVersionUID = 1214570247786648424L;
 	
-	private PhoneBook<T> localPhoneBook;
-	private PhoneBookSearchFilter<T> searchFilter;
+	private PhoneBook localPhoneBook;
+	private PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter;
 	
 	private AID phoneBookMaintainer;
 	private boolean retryOnFailure;
 	
 	private IncreasingRetryIntervalsHelper intervalsHelper;
+	
+	private ArrayList<PhoneBookListener> listeners;
 	
 	/**
 	 * Instantiates a new phone book query initiator.
@@ -39,7 +45,7 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 	 * @param searchFilter the search filter
 	 * @param retryOnFailure specifies if the query should be rescheduled if it fails
 	 */
-	public PhoneBookQueryInitiator(Agent agent, PhoneBook<T> localPhoneBook, AID phoneBookMaintainer, PhoneBookSearchFilter<T> searchFilter, boolean retryOnFailure) {
+	public PhoneBookQueryInitiator(Agent agent, PhoneBook localPhoneBook, AID phoneBookMaintainer, PhoneBookSearchFilter<GenericPhoneBookEntry> searchFilter, boolean retryOnFailure) {
 		super(agent, createQueryMessage(phoneBookMaintainer));
 		this.localPhoneBook = localPhoneBook;
 		this.searchFilter = searchFilter;
@@ -55,7 +61,7 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 	private static ACLMessage createQueryMessage(AID phoneBookMaintainer) {
 		ACLMessage queryMessage = new ACLMessage(ACLMessage.QUERY_REF);
 		queryMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_QUERY);
-		queryMessage.setConversationId(ConversationID.PHONEBOOK_QUERY.toString());
+		queryMessage.setConversationId(PhoneBookQueryResponder.CONVERSATION_ID);
 		queryMessage.addReceiver(phoneBookMaintainer);
 		return queryMessage;
 	}
@@ -80,17 +86,20 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 	@Override
 	protected void handleInform(ACLMessage msg) {
 		try {
-			// --- Extract contents -----------------------
+			// --- Extract contents ---------------------------------
 			Object contentObject = msg.getContentObject();
 			if (contentObject!=null && contentObject instanceof PhoneBookSearchResults) {
 				@SuppressWarnings("unchecked")
-				PhoneBookSearchResults<T> queryResult = (PhoneBookSearchResults<T>) contentObject;
+				PhoneBookSearchResults<GenericPhoneBookEntry> queryResult = (PhoneBookSearchResults<GenericPhoneBookEntry>) contentObject;
 				
-				// --- Add entries to the phone book ------
-				ArrayList<T> results = queryResult.getSearchResults();
+				// --- Add entries to the local phone book ----------
+				ArrayList<GenericPhoneBookEntry> results = queryResult.getSearchResults();
 				for (int i=0; i<results.size(); i++) {
 					this.localPhoneBook.addEntry(results.get(i));
 				}
+				
+				// --- Notify listeners -----------------------------
+				this.notifyResultsAvailable(results);
 			}
 			
 		} catch (UnreadableException e) {
@@ -157,9 +166,32 @@ public class PhoneBookQueryInitiator<T extends AbstractPhoneBookEntry> extends S
 		 */
 		@Override
 		protected void onWake() {
-			PhoneBookQueryInitiator<T> nextTry = new PhoneBookQueryInitiator<>(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure);
+			PhoneBookQueryInitiator<GenericPhoneBookEntry> nextTry = new PhoneBookQueryInitiator<>(this.myAgent, localPhoneBook, phoneBookMaintainer, searchFilter, retryOnFailure);
 			nextTry.setIntervalsHelper(intervalsHelper);
 			this.myAgent.addBehaviour(nextTry);
+		}
+		
+	}
+	
+	/**
+	 * Gets the currently registered listeners.
+	 * @return the listeners
+	 */
+	private ArrayList<PhoneBookListener> getListeners() {
+		if (listeners==null) {
+			listeners = new ArrayList<PhoneBookListener>();
+		}
+		return listeners;
+	}
+	
+	/**
+	 * Notify the listeners about the results.
+	 * @param queryResults the query results
+	 */
+	private void notifyResultsAvailable(List<GenericPhoneBookEntry> queryResults) {
+		PhoneBookEvent resultsEvent = new PhoneBookEvent(PhoneBookEvent.Type.QUERY_RESULT_AVAILABLE, queryResults);
+		for (int i=0; i<this.getListeners().size(); i++) {
+			this.getListeners().get(i).notifyEvent(resultsEvent);
 		}
 		
 	}

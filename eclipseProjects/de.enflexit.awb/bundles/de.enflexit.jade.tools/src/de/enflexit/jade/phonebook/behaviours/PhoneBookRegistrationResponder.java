@@ -1,5 +1,7 @@
 package de.enflexit.jade.phonebook.behaviours;
 
+import java.io.IOException;
+
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
 import de.enflexit.jade.phonebook.PhoneBook;
 import jade.core.Agent;
@@ -14,20 +16,22 @@ import jade.proto.SimpleAchieveREResponder;
 /**
  * This class implements the Responder role of a FIPA request protocol for phone book registrations. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
- * @param <T> the generic type
+ * @param <GenericPhoneBookEntry> the generic type
  */
-public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder {
+public class PhoneBookRegistrationResponder extends SimpleAchieveREResponder {
 
 	private static final long serialVersionUID = -9126496583768678087L;
 	
-	private PhoneBook<T> localPhoneBook;
+	public static final String CONVERSATION_ID = "PhoneBookRegistration";
+	
+	private PhoneBook localPhoneBook;
 	
 	/**
 	 * Instantiates a new phone book registration responder.
 	 * @param agent the agent
 	 * @param localPhoneBook the local phone book
 	 */
-	public PhoneBookRegistrationResponder(Agent agent, PhoneBook<T> localPhoneBook) {
+	public PhoneBookRegistrationResponder(Agent agent, PhoneBook localPhoneBook) {
 		super(agent, createMessageTemplate());
 		this.localPhoneBook = localPhoneBook;
 	}
@@ -38,7 +42,7 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 	 */
 	private static MessageTemplate createMessageTemplate() {
 		MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(FIPA_REQUEST);
-		MessageTemplate matchConversationID = MessageTemplate.MatchConversationId(ConversationID.PHONEBOOK_REGISTRATION.toString());
+		MessageTemplate matchConversationID = MessageTemplate.MatchConversationId(CONVERSATION_ID);
 		return MessageTemplate.and(matchProtocol, matchConversationID);
 	}
 	
@@ -63,19 +67,21 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 			// --- Extract message content ----------------
 			Object contentObject = request.getContentObject();
 			if (contentObject!=null && contentObject instanceof AbstractPhoneBookEntry) {
-				@SuppressWarnings("unchecked")
-				T phoneBookEntry = (T) contentObject;
+				AbstractPhoneBookEntry phoneBookEntry = (AbstractPhoneBookEntry) contentObject;
+				phoneBookEntry = this.processPhoneBookEntry(phoneBookEntry);
 				this.localPhoneBook.addEntry(phoneBookEntry);
 				resultNotification.setPerformative(ACLMessage.CONFIRM);
+				resultNotification.setContentObject(phoneBookEntry);
 			}
 		} catch (UnreadableException e) {
 			// --- Handle errors --------------------------
 			errorMessage = "Unable to extract message content";
-			System.err.println("[" + this.getClass().getSimpleName() + "] Error processing phone book registration request from " + request.getSender().getLocalName() + ": " + errorMessage);
 			e.printStackTrace();
 		} catch (ClassCastException e) {
 			errorMessage = "Unexpected content object class";
-			System.err.println("[" + this.getClass().getSimpleName() + "] Error processing phone book registration request from " + request.getSender().getLocalName() + ": " + errorMessage);
+			e.printStackTrace();
+		} catch (IOException e) {
+			errorMessage = "Could not set content object for result notification";
 			e.printStackTrace();
 		}
 		
@@ -85,9 +91,20 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 		} else {
 			resultNotification.setPerformative(ACLMessage.FAILURE);
 			resultNotification.setContent(errorMessage);
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error processing phone book registration request from " + request.getSender().getLocalName() + ": " + errorMessage);
 		}
 		
 		return resultNotification;
+	}
+	
+	/**
+	 * This method can be overridden if the received phone book entry should be processed in any way
+	 * before storing and returning it. The default implementation just returns the original entry 
+	 * @param entry the entry
+	 * @return the generic phone book entry
+	 */
+	protected AbstractPhoneBookEntry processPhoneBookEntry(AbstractPhoneBookEntry entry) {
+		return entry;
 	}
 	
 	/**
@@ -95,7 +112,7 @@ public class PhoneBookRegistrationResponder<T extends AbstractPhoneBookEntry> ex
 	 *
 	 * @return the local phone book
 	 */
-	public PhoneBook<T> getLocalPhoneBook() {
+	public PhoneBook getLocalPhoneBook() {
 		return localPhoneBook;
 	}
 }

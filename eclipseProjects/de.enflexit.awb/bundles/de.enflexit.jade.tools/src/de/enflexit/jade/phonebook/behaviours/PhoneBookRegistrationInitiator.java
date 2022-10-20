@@ -1,13 +1,17 @@
 package de.enflexit.jade.phonebook.behaviours;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import de.enflexit.jade.phonebook.AbstractPhoneBookEntry;
+import de.enflexit.jade.phonebook.PhoneBookEvent;
+import de.enflexit.jade.phonebook.PhoneBookListener;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.SimpleAchieveREInitiator;
 
 /**
@@ -24,7 +28,9 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	private boolean retryOnFailure;
 	private IncreasingRetryIntervalsHelper intervalsHelper;
 	
-	private boolean debug = false;
+	protected boolean debug = false;
+	
+	private ArrayList<PhoneBookListener> listeners;
 	
 	/**
 	 * Instantiates a new phone book registration initiator.
@@ -49,11 +55,11 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 		ACLMessage requestMessage = new ACLMessage(ACLMessage.REQUEST);
 		requestMessage.addReceiver(phoneBookMaintainer);
 		requestMessage.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-		requestMessage.setConversationId(ConversationID.PHONEBOOK_REGISTRATION.toString());
+		requestMessage.setConversationId(PhoneBookRegistrationResponder.CONVERSATION_ID);
 		try {
 			requestMessage.setContentObject(myPhoneBookEntry);
 		} catch (IOException e) {
-			System.out.println("[" + PhoneBookRegistrationInitiator.class.getSimpleName() + "] Error setting content object for the reqistration request of " + myPhoneBookEntry.getUniqueIdentifier());
+			System.out.println("[" + PhoneBookRegistrationInitiator.class.getSimpleName() + "] Error setting content object for the reqistration request of " + myPhoneBookEntry.getLocalName());
 			e.printStackTrace();
 		}
 		return requestMessage;
@@ -64,9 +70,22 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	 */
 	@Override
 	protected void handleInform(ACLMessage msg) {
-		if (debug==true) {
-			System.out.println("[" + this.myAgent.getLocalName() + "] Phonebook registration successful");
+		
+		try {
+			Object contentObject = msg.getContentObject();
+			if (contentObject!=null && contentObject instanceof AbstractPhoneBookEntry) {
+				AbstractPhoneBookEntry returnedPhoneBookEntry = (AbstractPhoneBookEntry) contentObject;
+				
+				this.notifyDone(returnedPhoneBookEntry);
+			}
+			if (debug==true) {
+				System.out.println("[" + this.myAgent.getLocalName() + "] Phonebook registration successful");
+			}
+		} catch (UnreadableException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not extract content from the inform message!");
+			e.printStackTrace();
 		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -134,6 +153,48 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 			this.myAgent.addBehaviour(nextTry);
 		}
 		
+	}
+	
+	/**
+	 * Gets the registered listeners.
+	 * @return the listeners
+	 */
+	private ArrayList<PhoneBookListener> getListeners() {
+		if (listeners==null) {
+			listeners = new ArrayList<PhoneBookListener>();
+		}
+		return listeners;
+	}
+	
+	/**
+	 * Adds the phone book listener.
+	 * @param listener the listener
+	 */
+	public void addPhoneBookListener(PhoneBookListener listener) {
+		if (this.getListeners().contains(listener)==false) {
+			this.getListeners().add(listener);
+		}
+	}
+	
+	/**
+	 * Removes the phone book listener.
+	 * @param listener the listener
+	 */
+	public void removePhoneBookListener(PhoneBookListener listener) {
+		if (this.getListeners().contains(listener)==true) {
+			this.getListeners().remove(listener);
+		}
+	}
+	
+	/**
+	 * Notifies the registered listeners that the registration is done.
+	 * @param returnedEntry the returned entry
+	 */
+	private void notifyDone(AbstractPhoneBookEntry returnedEntry) {
+		PhoneBookEvent successEvent = new PhoneBookEvent(PhoneBookEvent.Type.REGISTRATION_DONE, returnedEntry);
+		for (int i=0; i<this.getListeners().size(); i++) {
+			this.getListeners().get(i).notifyEvent(successEvent);
+		}
 	}
 
 }
