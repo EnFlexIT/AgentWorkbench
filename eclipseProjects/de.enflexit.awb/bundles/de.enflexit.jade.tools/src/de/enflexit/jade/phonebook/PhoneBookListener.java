@@ -18,5 +18,5 @@ public interface PhoneBookListener {
 	 * Override this method to handle phone book related events.
 	 * @param event the event
 	 */
-	public void notifyEvent(PhoneBookEvent event);
+	public void handlePhoneBookEvent(PhoneBookEvent event);
 }

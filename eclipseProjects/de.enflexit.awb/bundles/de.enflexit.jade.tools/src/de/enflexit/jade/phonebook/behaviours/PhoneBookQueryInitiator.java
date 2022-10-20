@@ -191,7 +191,7 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 	private void notifyResultsAvailable(List<GenericPhoneBookEntry> queryResults) {
 		PhoneBookEvent resultsEvent = new PhoneBookEvent(PhoneBookEvent.Type.QUERY_RESULT_AVAILABLE, queryResults);
 		for (int i=0; i<this.getListeners().size(); i++) {
-			this.getListeners().get(i).notifyEvent(resultsEvent);
+			this.getListeners().get(i).handlePhoneBookEvent(resultsEvent);
 		}
 		
 	}

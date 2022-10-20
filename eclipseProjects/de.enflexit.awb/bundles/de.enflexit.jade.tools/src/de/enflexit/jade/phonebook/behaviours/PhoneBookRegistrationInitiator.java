@@ -193,7 +193,7 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	private void notifyDone(AbstractPhoneBookEntry returnedEntry) {
 		PhoneBookEvent successEvent = new PhoneBookEvent(PhoneBookEvent.Type.REGISTRATION_DONE, returnedEntry);
 		for (int i=0; i<this.getListeners().size(); i++) {
-			this.getListeners().get(i).notifyEvent(successEvent);
+			this.getListeners().get(i).handlePhoneBookEvent(successEvent);
 		}
 	}
 

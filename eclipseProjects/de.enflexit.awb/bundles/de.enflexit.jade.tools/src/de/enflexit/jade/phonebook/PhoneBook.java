@@ -445,7 +445,7 @@ public class PhoneBook {
 		if (this.enableNotifications==true) {
 			PhoneBookEvent addedEvent = new PhoneBookEvent(PhoneBookEvent.Type.ENTRIES_ADDED, addedEntries);
 			for (PhoneBookListener listener : this.getPhoneBookListeners()) {
-				listener.notifyEvent(addedEvent);
+				listener.handlePhoneBookEvent(addedEvent);
 			}
 		}
 	}
@@ -468,7 +468,7 @@ public class PhoneBook {
 		if (this.enableNotifications==true) {
 			PhoneBookEvent removedEvent = new PhoneBookEvent(PhoneBookEvent.Type.ENTRIES_REMOVED, removedEntries);
 			for (PhoneBookListener listener : this.getPhoneBookListeners()) {
-				listener.notifyEvent(removedEvent);
+				listener.handlePhoneBookEvent(removedEvent);
 			}
 		}
 	}
