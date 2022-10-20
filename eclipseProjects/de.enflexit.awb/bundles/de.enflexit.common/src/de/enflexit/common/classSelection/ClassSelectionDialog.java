@@ -112,7 +112,9 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 	private void initialize() {
 	
 		this.setSize(730, 606);
-		this.setContentPane(this.getClassSelectionPanel());
+		if (this.getClassSelectionPanel()!=null) {
+			this.setContentPane(this.getClassSelectionPanel());
+		}
 		this.setTitle("Class-Selector");
 		this.setModal(true);		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
