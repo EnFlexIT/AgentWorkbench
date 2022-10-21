@@ -196,4 +196,24 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 		
 	}
 	
+	/**
+	 * Adds the phone book listener.
+	 * @param listener the listener
+	 */
+	public void addPhoneBookListener(PhoneBookListener listener) {
+		if (this.getListeners().contains(listener)==false) {
+			this.getListeners().add(listener);
+		}
+	}
+	
+	/**
+	 * Removes the phone book listener.
+	 * @param listener the listener
+	 */
+	public void removePhoneBookListener(PhoneBookListener listener) {
+		if (this.getListeners().contains(listener)==true) {
+			this.getListeners().remove(listener);
+		}
+	}
+	
 }
