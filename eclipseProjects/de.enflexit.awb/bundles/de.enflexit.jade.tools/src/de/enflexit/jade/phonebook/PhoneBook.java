@@ -49,13 +49,6 @@ public class PhoneBook {
 	private boolean enableNotifications = true;
 	
 	/**
-	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
-	 */
-	public PhoneBook() {
-		this(true);
-	}
-
-	/**
 	 * Instantiates a new phone book, that is persisted in the specified file.
 	 * @param phoneBookFile the phone book file
 	 */
@@ -68,13 +61,6 @@ public class PhoneBook {
 	 */
 	public PhoneBook(AID ownerAID) {
 		this(ownerAID, true);
-	}
-	/**
-	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
-	 * @param doPersist indicates if the phone book should be stored to a file
-	 */
-	public PhoneBook(boolean doPersist) {
-		this.doPersist = doPersist;
 	}
 	
 	/**
@@ -176,7 +162,8 @@ public class PhoneBook {
 	 * @param searchFilter the search filter
 	 * @return the entries
 	 */
-	public ArrayList<AbstractPhoneBookEntry> getEntries(PhoneBookSearchFilter searchFilter){
+	@SuppressWarnings("unchecked")
+	public ArrayList<AbstractPhoneBookEntry> getEntries(@SuppressWarnings("rawtypes") PhoneBookSearchFilter searchFilter){
 		ArrayList<AbstractPhoneBookEntry> resultList = new ArrayList<>();
 		for (AbstractPhoneBookEntry entry : this.getPhoneBookContent().values()) {
 			if (searchFilter.matches(entry)) {
@@ -224,7 +211,8 @@ public class PhoneBook {
 	 * @param searchFilter the search filter
 	 * @return the array list
 	 */
-	public ArrayList<? extends AbstractPhoneBookEntry> searchEntries(PhoneBookSearchFilter searchFilter){
+	@SuppressWarnings("unchecked")
+	public ArrayList<? extends AbstractPhoneBookEntry> searchEntries(@SuppressWarnings("rawtypes") PhoneBookSearchFilter searchFilter){
 		ArrayList<AbstractPhoneBookEntry> resultList = new ArrayList<AbstractPhoneBookEntry>();
 		for (AbstractPhoneBookEntry entry : this.getPhoneBookContent().values()) {
 			if (searchFilter.matches(entry)) {
