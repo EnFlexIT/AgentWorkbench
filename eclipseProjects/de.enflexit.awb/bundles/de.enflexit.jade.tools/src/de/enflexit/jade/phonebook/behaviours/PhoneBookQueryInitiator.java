@@ -94,9 +94,7 @@ public class PhoneBookQueryInitiator<GenericPhoneBookEntry extends AbstractPhone
 				
 				// --- Add entries to the local phone book ----------
 				ArrayList<GenericPhoneBookEntry> results = queryResult.getSearchResults();
-				for (int i=0; i<results.size(); i++) {
-					this.localPhoneBook.addEntry(results.get(i));
-				}
+				this.localPhoneBook.addEntries(results);
 				
 				// --- Notify listeners -----------------------------
 				this.notifyResultsAvailable(results);
