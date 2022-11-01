@@ -49,18 +49,26 @@ public class PhoneBook {
 	private boolean enableNotifications = true;
 	
 	/**
+	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
+	 */
+	public PhoneBook() {
+		this(true);
+	}
+	
+	/**
+	 * Instantiates a new phone book. Can't be persisted unless either the phoneBookFile or the ownerAID is set.
+	 * @param doPersist indicates if the phone book should be stored to a file
+	 */
+	public PhoneBook(boolean doPersist) {
+		this.doPersist = doPersist;
+	}
+	
+	/**
 	 * Instantiates a new phone book, that is persisted in the specified file.
 	 * @param phoneBookFile the phone book file
 	 */
 	public PhoneBook(File phoneBookFile) {
 		this(phoneBookFile, true);
-	}
-	/**
-	 * Instantiates a new phone book, that is persisted in the working directory of the specified agent.
-	 * @param ownerAID the agent owning this phone book
-	 */
-	public PhoneBook(AID ownerAID) {
-		this(ownerAID, true);
 	}
 	
 	/**
@@ -73,6 +81,14 @@ public class PhoneBook {
 		this.phoneBookFile = phoneBookFile;
 	}
 	
+	/**
+	 * Instantiates a new phone book, that is persisted in the working directory of the specified agent.
+	 * @param ownerAID the agent owning this phone book
+	 */
+	public PhoneBook(AID ownerAID) {
+		this(ownerAID, true);
+	}
+
 	/**
 	 * Instantiates a new phone book, that is persisted in the working directory of the specified agent.
 	 * @param ownerAID the owner AID
@@ -128,15 +144,20 @@ public class PhoneBook {
 	 * @return true, if successful
 	 */
 	public boolean addEntries(List<? extends AbstractPhoneBookEntry> entries) {
-		// --- Pause notifications --------------
+		// --- Pause notifications ------------------------
 		this.enableNotifications = false;
 		for (int i=0; i<entries.size(); i++) {
+			// --- Don't save after every single entry ----
 			this.addEntry(entries.get(i), false);
 		}
+		
+		// --- Save after adding all entries --------------
+		this.save();
 		
 		// --- Send one notification for all entries
 		this.enableNotifications = true;
 		this.notifyAdded(entries);
+		
 		
 		return true;
 	}
