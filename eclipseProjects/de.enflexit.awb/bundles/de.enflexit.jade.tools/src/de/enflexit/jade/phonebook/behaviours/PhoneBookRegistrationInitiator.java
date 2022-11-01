@@ -32,11 +32,14 @@ public class PhoneBookRegistrationInitiator extends SimpleAchieveREInitiator {
 	
 	private ArrayList<PhoneBookListener> listeners;
 	
+	
 	/**
 	 * Instantiates a new phone book registration initiator.
+	 *
 	 * @param agent the agent
 	 * @param myPhoneBookEntry the registering agent's phone book entry
 	 * @param phoneBookMaintainer the phonebook maintainer's AID
+	 * @param retryOnFailure the indicator to retry registration on failure
 	 */
 	public PhoneBookRegistrationInitiator(Agent agent, AbstractPhoneBookEntry myPhoneBookEntry, AID phoneBookMaintainer, boolean retryOnFailure) {
 		super(agent, createRequestMessage(myPhoneBookEntry, phoneBookMaintainer));
