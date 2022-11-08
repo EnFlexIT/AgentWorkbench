@@ -31,7 +31,6 @@ public class AwbApiRegistrationServiceTracker extends ServiceTracker<AwbApiRegis
 	 */
 	@Override
 	public AwbApiRegistrationService addingService(ServiceReference<AwbApiRegistrationService> reference) {
-		
 		AwbApiRegistrationService apiRegService = super.addingService(reference);
 		if (debug==true) System.out.println("[" + this.getClass().getSimpleName() + "] Adding service " + apiRegService.getClass().getName());
 		WsCredentialStore.getInstance().addApiRegistrationService(apiRegService);
@@ -45,7 +44,6 @@ public class AwbApiRegistrationServiceTracker extends ServiceTracker<AwbApiRegis
 	public void removedService(ServiceReference<AwbApiRegistrationService> reference, AwbApiRegistrationService apiRegService) {
 		
 		if (debug==true) System.out.println("[" + this.getClass().getSimpleName() + "] Stopping service " + apiRegService.getClass().getName());
-		WsCredentialStore.getInstance().removeAwbApiRegistrationService(apiRegService);
 		super.removedService(reference, apiRegService);
 	}
 	

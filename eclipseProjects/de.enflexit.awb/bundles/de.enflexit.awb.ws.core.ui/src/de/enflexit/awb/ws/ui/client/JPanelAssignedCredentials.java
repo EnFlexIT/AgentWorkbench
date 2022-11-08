@@ -19,11 +19,18 @@ import javax.swing.ListSelectionModel;
 
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.ws.client.ApiRegistration;
+import de.enflexit.awb.ws.client.AwbApiRegistrationService;
 import de.enflexit.awb.ws.client.CredentialAssignment;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.credential.AbstractCredential;
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
-public class JPanelAssignedCredentials extends JPanel {
+/**
+ * The Class JPanelAssignedCredential inteface for showing assigned Credentials.
+ *
+ * @author Timo Brandhorst - SOFTEC - University Duisburg-Essen
+ */
+public class JPanelAssignedCredentials extends JPanel implements WsConfigurationInterface{
 
 	private static final long serialVersionUID = 4478895396272005153L;
 	private JScrollPane jScrollPaneAssigneCredentials;
@@ -33,11 +40,10 @@ public class JPanelAssignedCredentials extends JPanel {
 	private JButton jButtonDeleteCredentialAssignment;
 	private JPanel jPanelHeader;
 	
+	//Non GUI-attributes
 	private ApiRegistration apiRegCurr;
-	
-	public JPanelAssignedCredentials() {
-		this.initialize();
-	}
+	private List<CredentialAssignment> listCacheCredAssignment;
+	private List<CredentialAssignment> listCacheDeletedCredAssignment;
 	
 	public JPanelAssignedCredentials(ApiRegistration apiReg) {
 		setApiRegCurr(apiReg);
@@ -68,6 +74,11 @@ public class JPanelAssignedCredentials extends JPanel {
 		this.add(getJScrollPaneAssigneCredentials(), gbc_jScrollPaneAssigneCredentials);
 	}
 	
+	/**
+	 * Gets the j scroll pane assigne credentials.
+	 *
+	 * @return the j scroll pane assigne credentials
+	 */
 	private JScrollPane getJScrollPaneAssigneCredentials() {
 		if (jScrollPaneAssigneCredentials == null) {
 			jScrollPaneAssigneCredentials = new JScrollPane();
@@ -75,6 +86,12 @@ public class JPanelAssignedCredentials extends JPanel {
 		}
 		return jScrollPaneAssigneCredentials;
 	}
+	
+	/**
+	 * Gets the j list assigned credentials, which stores all assigned Credentials of an {@link AwbApiRegistrationService}.
+	 *
+	 * @return the j list assigned credentials
+	 */
 	public JList<AbstractCredential> getJListAssignedCredentials() {
 		if (jListAssignedCredentials == null) {
 			jListAssignedCredentials = new JList<AbstractCredential>();
@@ -84,28 +101,6 @@ public class JPanelAssignedCredentials extends JPanel {
 			}
 		}
 		return jListAssignedCredentials;
-	}
-	
-	public void fillAssignedCredentialJList(ApiRegistration awbRegService) {
-
-		List<CredentialAssignment> credAssgnList = WsCredentialStore.getInstance().getCredentialAssignmentList();
-		List<CredentialAssignment> credAssgnOfSelectedApi = new ArrayList<CredentialAssignment>();
-		List<AbstractCredential> assgnCredentials = new ArrayList<>();
-
-		for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
-			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
-			String apiId = credentialAssignment.getIdApiRegistrationDefaultBundleName();
-			if (awbRegService.getClientBundleName().equals(apiId)) {
-				credAssgnOfSelectedApi.add(credentialAssignment);
-				AbstractCredential abstractCred = WsCredentialStore.getInstance().getCredentialWithID(credentialAssignment.getIdCredential());
-				assgnCredentials.add(abstractCred);
-			}
-		}
-		DefaultListModel<AbstractCredential> defaultListModel= new DefaultListModel<>();
-		defaultListModel.addAll(assgnCredentials);
-		getJListAssignedCredentials().setModel(defaultListModel);
-		this.revalidate();
-		this.repaint();
 	}
 	
 	private JPanel getJPanelHeader() {
@@ -171,5 +166,90 @@ public class JPanelAssignedCredentials extends JPanel {
 
 	public void setApiRegCurr(ApiRegistration apiRegCurr) {
 		this.apiRegCurr = apiRegCurr;
+	}
+	
+	//-------------------------------------------------------------------------------------
+	//--------------Helping methods to initialoie components-----------------------
+	//-------------------------------------------------------------------------------------
+	
+	/**
+	 * Fill assigned credential J list.
+	 *
+	 * @param awbRegService the corresponding {@link ApiRegistration}, which assigned Credentials should be shown
+	 */
+	public void fillAssignedCredentialJList(ApiRegistration awbRegService) {
+
+		List<CredentialAssignment> credAssgnList = WsCredentialStore.getInstance().getCredentialAssignmentList();
+		List<CredentialAssignment> credAssgnOfSelectedApi = new ArrayList<CredentialAssignment>();
+		List<AbstractCredential> assgnCredentials = new ArrayList<>();
+
+		for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
+			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+			String apiId = credentialAssignment.getIdApiRegistrationDefaultBundleName();
+			if (awbRegService.getClientBundleName().equals(apiId)) {
+				credAssgnOfSelectedApi.add(credentialAssignment);
+				AbstractCredential abstractCred = WsCredentialStore.getInstance().getCredentialWithID(credentialAssignment.getIdCredential());
+				assgnCredentials.add(abstractCred);
+			}
+		}
+		DefaultListModel<AbstractCredential> defaultListModel= new DefaultListModel<>();
+		defaultListModel.addAll(assgnCredentials);
+		getJListAssignedCredentials().setModel(defaultListModel);
+		this.revalidate();
+		this.repaint();
+	}
+	
+	//-------------------------------------------------------------------------------------
+	//--------------Overriden Methods and Non GUI Getter and Setters-----------------------
+	//-------------------------------------------------------------------------------------
+	
+	/**
+	 * Gets the list cache cred assignment.
+	 *
+	 * @return the list cache cred assignment
+	 */
+	public List<CredentialAssignment> getListCacheCredAssignment() {
+		if(this.listCacheCredAssignment==null) {
+			this.listCacheCredAssignment=new ArrayList<CredentialAssignment>();
+		}
+		return listCacheCredAssignment;
+	}
+
+
+	public List<CredentialAssignment> getListCacheDeletedCredAssignment() {
+		if(this.listCacheDeletedCredAssignment==null) {
+			this.listCacheDeletedCredAssignment=new ArrayList<CredentialAssignment>();;
+		}
+		return listCacheDeletedCredAssignment;
+	}
+
+	/**
+	 * Instantiates a new j panel assigned credentials.
+	 */
+	public JPanelAssignedCredentials() {
+		this.initialize();
+	}
+
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
+	*/
+	@Override
+	public boolean hasUnsavedChanges() {
+		if(this.getListCacheCredAssignment().size()>0) {
+			return true;
+		}
+		
+	    if(this.getListCacheCredAssignment().size()>0) {
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
+	*/
+	@Override
+	public boolean userConfirmedToChangeView() {
+		return hasUnsavedChanges();
 	}
 }

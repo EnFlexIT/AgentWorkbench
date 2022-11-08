@@ -35,13 +35,16 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 	 *
 	 * @param owner the owner
 	 */
-	public JDialogCreateServerURL(Window owner) {
+	public JDialogCreateServerURL(Window owner, boolean isVisible) {
 		super(owner);
 		getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.setSize(300, 120);
 		this.setModal(true);
-        this.setVisible(true);
+		
+		if(isVisible) {
+	     this.setVisible(true);
+		}
 	}
 	
 	/**
@@ -50,15 +53,19 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 	 * @param owner the owner
 	 * @param serverURL the server URL
 	 */
-	public JDialogCreateServerURL(Window owner, ServerURL serverURL) {
+	public JDialogCreateServerURL(Window owner,boolean isVisible,ServerURL serverURL) {
 		super(owner);
 		getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
-		this.setServerURL(serverURL);
+		if(serverURL!=null) {
+			this.setModifiedServerURL(serverURL);
+		}
 		this.getJButtonCreateServerURL().setText("Save changes");
 		this.setSize(300, 120);
 		this.setModal(true);
-        this.setVisible(true);
+		if(isVisible) {
+		     this.setVisible(true);
+		}
 	}
 
 	private static final long serialVersionUID = -4595711046276221996L;
@@ -69,7 +76,11 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 	private JButton jButtonCreateServerURL;
 	
 	private ServerURL createdServerURL=null;
+	private ServerURL modifiedServerURL=null;
+
 	private boolean unsavedChanges=false;
+	
+	
 
 	private JPanel getJPanelServerURL() {
 		if (jPanelServerURL == null) {
@@ -105,6 +116,10 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 		}
 		return jPanelServerURL;
 	}
+	
+	//----------------------------------------------------------
+	//--------------------Getter and Setter---------------------
+	//----------------------------------------------------------
 	
 	private JLabel getJLableServerURL() {
 		if (jLableServerURL == null) {
@@ -149,6 +164,19 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 		this.repaint();
 	}
 	
+	public ServerURL getModifiedServerURL() {
+		return modifiedServerURL;
+	}
+
+	public void setModifiedServerURL(ServerURL modifiedServerURL) {
+		this.modifiedServerURL = modifiedServerURL;
+	}
+	
+	
+	//----------------------------------------------------------
+	//--------------------Overridden Methods---------------------
+	//----------------------------------------------------------
+	
 	/* (non-Javadoc)
 	* @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	*/
@@ -163,6 +191,7 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 							WsCredentialStore.getInstance().getServerURLList().remove(createdServerURL);
 						}
 						WsCredentialStore.getInstance().getServerURLList().add(newServerURL);
+						this.setModifiedServerURL(newServerURL);
 					}
 				} else {
 					createdServerURL = new ServerURL(getJTextFieldServerUrl().getText());
@@ -176,7 +205,8 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 			}
 		}
 	}
-
+	
+	
 	/* (non-Javadoc)
 	* @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
 	*/
