@@ -47,16 +47,33 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	private JButton jButtonCreateAndSaveCredential;
 	
 	private AbstractCredential createdCredential=null;
+	private AbstractCredential modifiedCredential=null;
 	private boolean hasUnsavedChanges=false;
 	private JPanel jPanelNameOfACredential;
 	private JLabel jLableNameOfTheCredential;
 	private JTextField jTextFieldNameOfTheCredential;
 	
+	/**
+	 * Instantiates a new JDialog to create a credential.
+	 *
+	 * @param owner the owner
+	 */
 	public JDialogCredentialCreation(Window owner) {
 		super(owner);
 		this.initialize();
 	}
 
+	/**
+	 * Instantiates a new JDialog .
+	 *
+	 * @param owner the owner
+	 * @param cred the cred to modify
+	 */
+	public JDialogCredentialCreation(Window owner, AbstractCredential cred) {
+		super(owner);
+		this.setCreatedCredential(cred);
+		this.initialize();
+	}
 	/**
 	 * Initialize the JDialog.
 	 */
@@ -192,15 +209,30 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 		return createdCredential;
 	}
 
-	/**
-	 * Sets the created credential.
-	 *
-	 * @param createdCredential the new created credential
-	 */
-	public void setCreatedCredential(AbstractCredential createdCredential) {
+
+	private void setCreatedCredential(AbstractCredential createdCredential) {
 		this.createdCredential = createdCredential;
-		fillTextfieldsWithCredentialValues(createdCredential);
+		this.fillTextfieldsWithCredentialValues(createdCredential);
         getJComboBox().setEnabled(false);
+ }
+	
+	
+	/**
+	 * Gets the modified credential.
+	 *
+	 * @return the modified credential
+	 */
+	public AbstractCredential getModifiedCredential() {
+		return modifiedCredential;
+	}
+
+	/**
+	 * Sets the modified credential.
+	 *
+	 * @param modifiedCredential the new modified credential
+	 */
+	public void setModifiedCredential(AbstractCredential modifiedCredential) {
+		this.modifiedCredential = modifiedCredential;
 	}
 	
 	/**
@@ -254,7 +286,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 					if (abstrCred == null) {
 						cred.setName("["+type+"]"+getJTextFieldNameOfTheCredential().getText());
 						WsCredentialStore.getInstance().getCredentialList().add(cred);
-						setCreatedCredential(cred);
+						this.setCreatedCredential(cred);
 						success=true;
 					}else {
 						throw new Exception("The credential name was used before, please change it. It must be unique!");
@@ -268,7 +300,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 					if (abstrCred == null) {
 						cred.setName("["+type+"]"+getJTextFieldNameOfTheCredential().getText());
 						WsCredentialStore.getInstance().updateCredentialInCredentialList(abstrCred);
-						setCreatedCredential(cred);
+						this.setModifiedCredential(cred);
 						success=true;
 						
 					}else {
@@ -324,7 +356,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	 *
 	 * @param createdCredential the created credential
 	 */
-	private void fillTextfieldsWithCredentialValues(AbstractCredential createdCredential) {
+	public void fillTextfieldsWithCredentialValues(AbstractCredential createdCredential) {
 		if (createdCredential != null) {
 			String credName=createdCredential.getName();
 			if(credName.contains("]")) {
@@ -407,6 +439,9 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 		AbstractCredential cred=null;
 		try {
 			cred = getCreatedCredential();
+			if(cred==null) {
+				cred = this.getModifiedCredential();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -423,7 +458,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	*/
 	@Override
 	public boolean userConfirmedToChangeView() {
-		return hasUnsavedChanges();
+		return true;
 	}
 
 	/* (non-Javadoc)

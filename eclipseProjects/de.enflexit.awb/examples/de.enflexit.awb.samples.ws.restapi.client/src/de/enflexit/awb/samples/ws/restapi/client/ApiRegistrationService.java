@@ -50,6 +50,4 @@ public class ApiRegistrationService implements AwbApiRegistrationService {
 	public String getDefaultCredentialName() {
 		return this.getClientBundleName() + " Api-Key - Authentification";
 	}
-
-
 }

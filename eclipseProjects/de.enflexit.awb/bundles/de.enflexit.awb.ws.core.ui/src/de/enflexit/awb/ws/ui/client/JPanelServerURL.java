@@ -8,8 +8,9 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -24,8 +25,14 @@ import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.ws.client.ServerURL;
 import de.enflexit.awb.ws.client.WsCredentialStore;
+import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
-public class JPanelServerURL extends JPanel implements ActionListener{
+/**
+ * The Class JPanelServerURL.
+ *
+ * @author Timo Brandhorst - SOFTEC - University Duisburg-Essen
+ */
+public class JPanelServerURL extends JPanel implements ActionListener,WsConfigurationInterface,WindowListener{
 
 	private static final long serialVersionUID = -4683248868011024312L;
 	private JLabel jLableServer;
@@ -34,13 +41,23 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 	private JButton jButtonCreateNewServer;
 	private JButton jButtonDeleteServerUrl;
 	private JButton jButtonEditAServerUrl;
+	private JDialogCreateServerURL jDialogCreateServer;
 	private JPanel jPanelHeader;
-
 	
+	private List<ServerURL> deletedServerURLCache;
+	private List<ServerURL> addedServerURLCache;
+	private List<ServerURL> modifiedServerURLCache;
+
+	/**
+	 * Instantiates a new j panel server URL.
+	 */
 	public JPanelServerURL() {
 		this.initialize();
 	}
 
+	/**
+	 * Initialize.
+	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0 };
@@ -62,8 +79,16 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		add(getJScrollPaneServerUrl(), gbc_jScrollPaneServerUrl);
 	}
 	
+    //----------------------------------------------------------------------
+	//------------------ From here Getter and Setter------------------------
+	//----------------------------------------------------------------------
 	
-	private JLabel getJLableServer() {
+	/**
+     * Gets the j lable server.
+     *
+     * @return the j lable server
+     */
+    private JLabel getJLableServer() {
 		if (jLableServer == null) {
 			jLableServer = new JLabel("Server");
 			jLableServer.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -74,18 +99,24 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		return jLableServer;
 	}
 	
-    //-------------------------------------
-	//----- From here overridden methods----
-	//-------------------------------------
-	
-	private JScrollPane getJScrollPaneServerUrl() {
+	/**
+     * Gets the j scroll pane server url.
+     *
+     * @return the j scroll pane server url
+     */
+    private JScrollPane getJScrollPaneServerUrl() {
 		if (jScrollPaneServerUrl == null) {
 			jScrollPaneServerUrl = new JScrollPane();
 			jScrollPaneServerUrl.setViewportView(getJListServerUrl());
 		}
 		return jScrollPaneServerUrl;
 	}
-	
+    
+	/**
+	 * Gets the j list server url.
+	 *
+	 * @return the j list server url
+	 */
 	public JList<ServerURL> getJListServerUrl() {
 		if (jListServerUrl == null) {
 			jListServerUrl = new JList<ServerURL>();
@@ -96,6 +127,11 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		return jListServerUrl;
 	}
 	
+	/**
+	 * Gets the j button create new server.
+	 *
+	 * @return the j button create new server
+	 */
 	private JButton getJButtonCreateNewServer() {
 		if (jButtonCreateNewServer == null) {
 			jButtonCreateNewServer = new JButton(GlobalInfo.getInternalImageIcon("ListPlus.png"));
@@ -107,6 +143,11 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		return jButtonCreateNewServer;
 	}
 	
+	/**
+	 * Gets the j button delete server url.
+	 *
+	 * @return the j button delete server url
+	 */
 	private JButton getJButtonDeleteServerUrl() {
 		if (jButtonDeleteServerUrl == null) {
 			jButtonDeleteServerUrl = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
@@ -118,6 +159,11 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		return jButtonDeleteServerUrl;
 	}
 	
+	/**
+	 * Gets the j button edit A server url.
+	 *
+	 * @return the j button edit A server url
+	 */
 	private JButton getJButtonEditAServerUrl() {
 		if (jButtonEditAServerUrl == null) {
 			jButtonEditAServerUrl = new JButton(GlobalInfo.getInternalImageIcon("edit.png"));
@@ -129,6 +175,33 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		return jButtonEditAServerUrl;
 	}
 	
+	/**
+	 * Gets the j dialog create server.
+	 *
+	 * @return the j dialog create server
+	 */
+	public JDialogCreateServerURL getJDialogCreateServer() {
+		if(this.jDialogCreateServer==null) {
+			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			jDialogCreateServer=new JDialogCreateServerURL(owner, false);
+		}
+		return jDialogCreateServer;
+	}
+
+	/**
+	 * Sets the j dialog create server.
+	 *
+	 * @param jDialogCreateServer the new j dialog create server
+	 */
+	public void setjDialogCreateServer(JDialogCreateServerURL jDialogCreateServer) {
+		this.jDialogCreateServer = jDialogCreateServer;
+	}
+	
+	/**
+	 * Gets the j panel header.
+	 *
+	 * @return the j panel header
+	 */
 	private JPanel getJPanelHeader() {
 		if (jPanelHeader == null) {
 			jPanelHeader = new JPanel();
@@ -162,64 +235,128 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 		return jPanelHeader;
 	}
 	
+	/**
+	 * Fill J list server url and repaint.
+	 */
 	private void fillJListServerUrlAndRepaint() {
 		DefaultListModel<ServerURL> serverURLs = new DefaultListModel<ServerURL>();
 		List<ServerURL> serverURLsAsList=WsCredentialStore.getInstance().getServerURLList();
 		serverURLs.addAll(serverURLsAsList);
-		jListServerUrl.setModel(serverURLs);
+		this.getJListServerUrl().setModel(serverURLs);
 		this.revalidate();
 		this.repaint();
 	}
 	
+	/**
+	 * Show J dialog server url.
+	 */
 	private void showJDialogServerUrl() {
 		Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-		JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner);
-		createServerDialog.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				if (createServerDialog.hasUnsavedChanges()) {
-					WsCredentialStore.save(WsCredentialStore.getInstance());
-					fillJListServerUrlAndRepaint();
-				}
-			}
-
-			@Override
-			public void windowClosed(WindowEvent e) {
-				if (createServerDialog.hasUnsavedChanges()) {
-					WsCredentialStore.save(WsCredentialStore.getInstance());
-					fillJListServerUrlAndRepaint();
-				}
-			}
-		});
-
+		JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner,false);
+		createServerDialog.addWindowListener(this);
+		this.setjDialogCreateServer(createServerDialog);
+        createServerDialog.setVisible(true);
 	}
 	
+	/**
+	 * Show J dialog for editing A server url.
+	 */
 	private void showJDialogForEditingAServerUrl() {
 		if (getJListServerUrl().getSelectedValue() != null) {
 			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-			JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner,getJListServerUrl().getSelectedValue());
-			createServerDialog.addWindowListener(new WindowAdapter() {
-				@Override
-				public void windowClosing(WindowEvent e) {
-					if (createServerDialog.hasUnsavedChanges()) {
-						WsCredentialStore.save(WsCredentialStore.getInstance());
-						fillJListServerUrlAndRepaint();
-					}
-				}
-
-				@Override
-				public void windowClosed(WindowEvent e) {
-					if (createServerDialog.hasUnsavedChanges()) {
-						WsCredentialStore.save(WsCredentialStore.getInstance());
-						fillJListServerUrlAndRepaint();
-					}
-				}
-			});
+			JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner,false,getJListServerUrl().getSelectedValue());
+			createServerDialog.addWindowListener(this);
+			this.setjDialogCreateServer(createServerDialog);
+            createServerDialog.setVisible(true);
 		} else {
 			JOptionPane.showMessageDialog(this, "Please selected a Server-URL to edit!");
 		}
 	}
+	
+	/**
+	 * Gets the deleted server URL cache.
+	 *
+	 * @return the deleted server URL cache
+	 */
+	public List<ServerURL> getDeletedServerURLCache() {
+		if(this.deletedServerURLCache==null) {
+			deletedServerURLCache= new ArrayList<ServerURL>();
+		}
+		return deletedServerURLCache;
+	}
 
+	/**
+	 * Sets the deleted server URL cache.
+	 *
+	 * @param deletedServerURLCache the new deleted server URL cache
+	 */
+	public void setDeletedServerURLCache(List<ServerURL> deletedServerURLCache) {
+		this.deletedServerURLCache = deletedServerURLCache;
+	}
+
+	/**
+	 * Gets the added server URL cache.
+	 *
+	 * @return the added server URL cache
+	 */
+	public List<ServerURL> getAddedServerURLCache() {
+		if(this.addedServerURLCache==null) {
+			addedServerURLCache= new ArrayList<ServerURL>();
+		}
+		return addedServerURLCache;
+	}
+
+	/**
+	 * Sets the added server URL cache.
+	 *
+	 * @param addedServerURLCache the new added server URL cache
+	 */
+	public void setAddedServerURLCache(List<ServerURL> addedServerURLCache) {
+		this.addedServerURLCache = addedServerURLCache;
+	}
+	
+	/**
+	 * Gets the modified server URL cache.
+	 *
+	 * @return the modified server URL cache
+	 */
+	public List<ServerURL> getModifiedServerURLCache() {
+		if(this.modifiedServerURLCache==null) {
+			this.modifiedServerURLCache=new ArrayList<ServerURL>();
+		}
+		return modifiedServerURLCache;
+	}
+
+	/**
+	 * Sets the modified server URL cache.
+	 *
+	 * @param modifiedServerURLCache the new modified server URL cache
+	 */
+	public void setModifiedServerURLCache(List<ServerURL> modifiedServerURLCache) {
+		this.modifiedServerURLCache = modifiedServerURLCache;
+	}
+	
+	//--------------------------------------------------------------------------------------
+	//-------------------------Methods to fill or manipulated components--------------------
+    //--------------------------------------------------------------------------------------
+
+	private void deleteServerURL(ServerURL serverURL) {
+		if (serverURL != null) {
+			int option = JOptionPane.showConfirmDialog(this, "Do you want to delete the Server with the following URL "+ serverURL.getServerURL()+"?","Deletion of a Server-URL", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(option==JOptionPane.YES_OPTION) {
+			   WsCredentialStore.getInstance().getServerURLList().remove(serverURL);
+			   this.fillJListServerUrlAndRepaint();
+			   this.getDeletedServerURLCache().add(serverURL);
+			}
+		} else {
+			JOptionPane.showConfirmDialog(this, "Please select a Server-URL!","Select a Server-URL", JOptionPane.YES_OPTION);
+		}
+	}
+	
+	//--------------------------------------------------------------------------------------
+	//-------------------------Overidden Methods--------------------------------------------
+    //--------------------------------------------------------------------------------------
+	
 	/* (non-Javadoc)
 	    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	    */
@@ -232,16 +369,101 @@ public class JPanelServerURL extends JPanel implements ActionListener{
 			    showJDialogForEditingAServerUrl();
 			} else if(e.getSource().equals(getJButtonDeleteServerUrl())) {
 				ServerURL serverURL = this.getJListServerUrl().getSelectedValue();
-				if (serverURL != null) {
-					int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the Server with the following URL "+ serverURL.getServerURL()+"?","Deletion of a Server-URL", JOptionPane.YES_NO_CANCEL_OPTION);
-					if(option==JOptionPane.YES_OPTION) {
-					   WsCredentialStore.getInstance().getServerURLList().remove(serverURL);
-					   this.fillJListServerUrlAndRepaint();
-					   WsCredentialStore.getInstance().save();
-					}
-				} else {
-					JOptionPane.showConfirmDialog(this, "Please select a Server-URL!","Select a Server-URL", JOptionPane.YES_OPTION);
-				}
+				deleteServerURL(serverURL);
 			}
 		}
+		
+
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
+	*/
+	@Override
+	public boolean hasUnsavedChanges() {
+		if(this.getAddedServerURLCache().size()>0) {
+			return true;
+		}
+		
+		if(this.getDeletedServerURLCache().size()>0) {
+			return true;
+		}
+		
+		if(this.getModifiedServerURLCache().size()>0) {
+			return true;
+		}		
+		return false;
+	}
+
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
+	*/
+	@Override
+	public boolean userConfirmedToChangeView() {	
+		return false;
+	}
+
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	*/
+	@Override
+	public void windowOpened(WindowEvent e) {
+		
+	}
+
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	*/
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if(e.getSource().equals(this.getJDialogCreateServer())) {
+			fillJListServerUrlAndRepaint();
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	*/
+	@Override
+	public void windowClosed(WindowEvent e) {
+		if(e.getSource().equals(this.getJDialogCreateServer())) {
+			if(this.getJDialogCreateServer().getServerURL()!=null){
+				this.getAddedServerURLCache().add(this.getJDialogCreateServer().getServerURL());
+			}else if(this.getJDialogCreateServer().getModifiedServerURL()!=null) {
+				this.getModifiedServerURLCache().add(this.getJDialogCreateServer().getModifiedServerURL());
+			}
+			fillJListServerUrlAndRepaint();
+		}	
+	}
+
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	*/
+	@Override
+	public void windowIconified(WindowEvent e) {
+		
+	}
+
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent)
+	*/
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		
+	}
+
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	*/
+	@Override
+	public void windowActivated(WindowEvent e) {
+		
+	}
+
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent)
+	*/
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		
+	}
 }

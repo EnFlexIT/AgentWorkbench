@@ -10,8 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
 import agentgui.core.application.Application;
@@ -34,25 +33,47 @@ import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 import de.enflexit.awb.ws.ui.client.credentials.JDialogCredentialCreation;
 
-
-public class JPanelCredentials extends JPanel implements ActionListener,MouseListener,WsConfigurationInterface {
+/**
+ * The Class JPanelCredentials for the listing and creation of credentials .
+ *
+ * @author Timo Brandhorst - SOFTEC - University Duisburg-Essen
+ */
+public class JPanelCredentials extends JPanel implements ActionListener,MouseListener,WindowListener,WsConfigurationInterface {
 	
 	private static final long serialVersionUID = -1252151357398930115L;
 	
 	private JLabel jLabelCredentialList;
+	
 	private JScrollPane jScrollPaneCredentialList;
+	
 	private JList<AbstractCredential> jListCredentials;
+	
 	private GridBagConstraints gbc_jPanelCredentials;
+	
 	private JPanel jPanelHeader;
+	
 	private JButton jButtonCreateNewCredential;
+	
 	private JButton jButtonEditACredential;
+	
 	private JButton jButtonDeleteACredential;
 	
-	
+	private JDialogCredentialCreation jDialogCredCreate;
+
+	private List<AbstractCredential> deletedCredentialsCache;
+	private List<AbstractCredential> addedCredentialCache;
+	private List<AbstractCredential> modifiedCredentialCache;
+
+	/**
+	 * Instantiates a new j panel credentials.
+	 */
 	public JPanelCredentials() {
 		initialize();
 	}
 	
+	/**
+	 * Initialize the panel.
+	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
@@ -76,8 +97,14 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		gbc_jPanelCredentials.fill = GridBagConstraints.BOTH;
 		gbc_jPanelCredentials.gridx = 0;
 		gbc_jPanelCredentials.gridy = 3;
+		this.fillCredentialJListAndRepaint();
 	}
 
+	/**
+	 * Gets the j label credential list.
+	 *
+	 * @return the j label credential list
+	 */
 	private JLabel getJLabelCredentialList() {
 		if (jLabelCredentialList == null) {
 			jLabelCredentialList = new JLabel("Credentials");
@@ -87,6 +114,12 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		}
 		return jLabelCredentialList;
 	}
+	
+	/**
+	 * Gets the j scroll pane credential list.
+	 *
+	 * @return the j scroll pane credential list
+	 */
 	private JScrollPane getJScrollPaneCredentialList() {
 		if (jScrollPaneCredentialList == null) {
 			jScrollPaneCredentialList = new JScrollPane();
@@ -105,13 +138,18 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 			jListCredentials = new JList<AbstractCredential>();
 			jListCredentials.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jListCredentials.addMouseListener(this);
-			getJListCredentials().setCellRenderer(new ListCellRendererCredentials());
-			fillCredentialJList();
+			//getJListCredentials().setCellRenderer(new ListCellRendererCredentials());
+			fillCredentialJListAndRepaint();
 		}
 		return jListCredentials;
 	}
 
 	
+	/**
+	 * Gets the j panel header.
+	 *
+	 * @return the j panel header
+	 */
 	private JPanel getJPanelHeader() {
 		if (jPanelHeader == null) {
 			jPanelHeader = new JPanel();
@@ -145,6 +183,11 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		return jPanelHeader;
 	}
 	
+	/**
+	 * Gets the j button create new credential.
+	 *
+	 * @return the j button create new credential
+	 */
 	private JButton getJButtonCreateNewCredential() {
 		if (jButtonCreateNewCredential == null) {
 			jButtonCreateNewCredential = new JButton(GlobalInfo.getInternalImageIcon("ListPlus.png"));
@@ -156,6 +199,11 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		return jButtonCreateNewCredential;
 	}
 	
+	/**
+	 * Gets the j button edit A credential.
+	 *
+	 * @return the j button edit A credential
+	 */
 	private JButton getJButtonEditACredential() {
 		if (jButtonEditACredential == null) {
 			jButtonEditACredential = new JButton(GlobalInfo.getInternalImageIcon("edit.png"));
@@ -166,6 +214,11 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		return jButtonEditACredential;
 	}
 	
+	/**
+	 * Gets the j button delete A credential.
+	 *
+	 * @return the j button delete A credential
+	 */
 	private JButton getJButtonDeleteACredential() {
 		if (jButtonDeleteACredential == null) {
 			jButtonDeleteACredential = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
@@ -176,14 +229,102 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		}
 		return jButtonDeleteACredential;
 	}
+	
+	
+	/**
+	 * Gets the j dialog cred create.
+	 *
+	 * @return the {@link JDialogCredentialCreation}
+	 */
+	public JDialogCredentialCreation getJDialogCredCreate() {
+		if(this.jDialogCredCreate==null) {
+			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+	         jDialogCredCreate=new JDialogCredentialCreation(owner);
+		}
+		return jDialogCredCreate;
+	}
+
+	/**
+	 * Sets the {@link JDialogCredentialCreation}.
+	 *
+	 * @param jDialogCredCreate the new j dialog cred create
+	 */
+	public void setjDialogCredCreate(JDialogCredentialCreation jDialogCredCreate) {
+		this.jDialogCredCreate = jDialogCredCreate;
+	}
+	
+	/**
+	 * Gets the deleted credentials cache.
+	 *
+	 * @return the deleted credentials cache
+	 */
+	public List<AbstractCredential> getDeletedCredentialsCache() {
+		if(this.deletedCredentialsCache==null) {
+			this.deletedCredentialsCache=new ArrayList<AbstractCredential>();
+		}
+		return deletedCredentialsCache;
+	}
+
+	/**
+	 * Sets the deleted credentials cache.
+	 *
+	 * @param deletedCredentialsCache the new deleted credentials cache
+	 */
+	public void setDeletedCredentialsCache(List<AbstractCredential> deletedCredentialsCache) {
+		this.deletedCredentialsCache = deletedCredentialsCache;
+	}
+
+	/**
+	 * Gets the added credential cache.
+	 *
+	 * @return the added credential cache
+	 */
+	public List<AbstractCredential> getAddedCredentialCache() {
+		if(this.addedCredentialCache==null) {
+			this.addedCredentialCache=new ArrayList<AbstractCredential>();
+		}
+		return addedCredentialCache;
+	}
+
+	/**
+	 * Sets the added credential cache.
+	 *
+	 * @param addedCredentialCache the new added credential cache
+	 */
+	public void setAddedCredentialCache(List<AbstractCredential> addedCredentialCache) {
+		this.addedCredentialCache = addedCredentialCache;
+	}
+
+	/**
+	 * Gets the modified credential cache.
+	 *
+	 * @return the modified credential cache
+	 */
+	public List<AbstractCredential> getModifiedCredentialCache() {
+		if(this.modifiedCredentialCache==null) {
+			this.modifiedCredentialCache=new ArrayList<AbstractCredential>();
+		}
+		return modifiedCredentialCache;
+	}
+
+	/**
+	 * Sets the modified credential cache.
+	 *
+	 * @param modifiedCredentialCache the new modified credential cache
+	 */
+	public void setModifiedCredentialCache(List<AbstractCredential> modifiedCredentialCache) {
+		this.modifiedCredentialCache = modifiedCredentialCache;
+	}
+
     //---------------------------------------------------------------
 	//----------From here Methods to fill/control Components---------
 	//---------------------------------------------------------------
 	
 	/**
-	 * Fill the list with credential of a given type
-	 * @param CredentialType type
-	 */
+     * Fill the list with credential of a given type.
+     *
+     * @param type the type
+     */
 	public void fillCredentialJListWithType(CredentialType type) {
 		List<AbstractCredential> credentials=WsCredentialStore.getInstance().getAllCredentialsOfaType(type);
 		DefaultListModel<AbstractCredential> listModelRegisteredApis=new DefaultListModel<AbstractCredential>();
@@ -192,7 +333,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	}
 	
 	/**
-	 * Fill the list with all possible credentials 
+	 * Fill the list with all possible credentials.
 	 */
 	public void fillCredentialJList() {
 		List<AbstractCredential> credentials=WsCredentialStore.getInstance().getCredentialList();
@@ -202,7 +343,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	}
 	
 	/**
-	 * Fill the list with all possible credentials and repaint the panel
+	 * Fill the list with all possible credentials and repaint the panel.
 	 */
 	public void fillCredentialJListAndRepaint() {
 		List<AbstractCredential> credentials=WsCredentialStore.getInstance().getCredentialList();
@@ -220,28 +361,43 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	 */
 	private void openJDialogCredentialCreation(AbstractCredential cred) {
 		Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-		JDialogCredentialCreation credCreate = new JDialogCredentialCreation(owner);
+		
+		
+		//If dialog ist used to edit a credential
 		if(cred!=null) {
-			credCreate.setCreatedCredential(cred);
+			this.setjDialogCredCreate(new JDialogCredentialCreation(owner, cred));
+		}else {
+			this.setjDialogCredCreate(new JDialogCredentialCreation(owner)); 
 		}
-		credCreate.setVisible(true);
-		credCreate.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				fillCredentialJListAndRepaint();
-				if(credCreate.hasUnsavedChanges()) {
-					WsCredentialStore.save(WsCredentialStore.getInstance());
-				}
+		
+		this.getJDialogCredCreate().setVisible(true);
+		this.getJDialogCredCreate().addWindowListener(this);
+	}
+	
+	/**
+	 * Deletes a credential and removes them from the JListCredentials.
+	 */
+	private void deleteACredential() {
+		AbstractCredential cred = this.getJListCredentials().getSelectedValue();
+		if (cred != null) {
+			int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the "+ cred.getName()+ " of the type " + cred.getCredentialType()+" and all is corresponding Assignments?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(option==JOptionPane.YES_OPTION) {
+								
+			     // Remove all linked CredentialAssignments before deleting the 
+
+				 List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getCredentialAssignmentWithCredential(cred);
+				 for (CredentialAssignment credentialAssignment : credAssgns) {
+					  WsCredentialStore.getInstance().getCredentialAssignmentList().remove(credentialAssignment);
+		         }
+				 
+			     //Remove the credential afterwards
+				 
+				  WsCredentialStore.getInstance().getCredentialList().remove(cred);
+				  this.fillCredentialJListAndRepaint();
 			}
-			
-			@Override
-			public void windowClosed(WindowEvent e) {
-				fillCredentialJListAndRepaint();
-				if(credCreate.hasUnsavedChanges()) {
-					WsCredentialStore.save(WsCredentialStore.getInstance());
-				}
-			}
-		});
+		} else {
+			JOptionPane.showConfirmDialog(this, "Please select a credential!","Select a credential", JOptionPane.YES_OPTION);
+		}
 	}
 	
     //---------------------------------------------------------------
@@ -256,26 +412,28 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	@Override
 	public boolean hasUnsavedChanges() {
 
-		if (this.jListCredentials == null)return false;
-		List<AbstractCredential> credentialList = WsCredentialStore.getInstance().getCredentialList();
-		ArrayList<AbstractCredential> credArrayList = new ArrayList<AbstractCredential>();
-
-		ListModel<AbstractCredential> credModel = jListCredentials.getModel();
-		for (int i = 0; i < credModel.getSize(); i++) {
-			AbstractCredential cred = credModel.getElementAt(i);
-			credArrayList.add(cred);
-		}
-
-		boolean sameList = credArrayList.equals(credentialList);
-		return sameList;
+       if(this.getModifiedCredentialCache().size()>0) {
+    	   return true;
+       }
+       
+       if(this.getAddedCredentialCache().size()>0) {
+    	   return true;
+       }
+       
+       if(this.getModifiedCredentialCache().size()>0) {
+    	   return true;
+       }
+		
+		return false;
 	}
 	
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#userConfirmedToChangeView()
 	 */
 	@Override
 	public boolean userConfirmedToChangeView() {
-		return hasUnsavedChanges();
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -293,26 +451,13 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 				JOptionPane.showConfirmDialog(this, "Please select a credential!",null,JOptionPane.INFORMATION_MESSAGE);
 			}
 		}else if (ae.getSource().equals(this.getJButtonDeleteACredential())) {
-			AbstractCredential cred = this.getJListCredentials().getSelectedValue();
-			if (cred != null) {
-				int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the "+ cred.getName()+ " of the type " + cred.getCredentialType()+" and all is corresponding Assignments?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
-				if(option==JOptionPane.YES_OPTION) {
-				     // Remove all linked CredentialAssignments before deleting the credential
-					 List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getCredentialAssignmentWithCredential(cred);
-					 for (CredentialAssignment credentialAssignment : credAssgns) {
-						  WsCredentialStore.getInstance().getCredentialAssignmentList().remove(credentialAssignment);
-			         }
-				     //Remove the credential afterwards
-					  WsCredentialStore.getInstance().getCredentialList().remove(cred);
-					  this.fillCredentialJListAndRepaint();
-					  WsCredentialStore.getInstance().save();
-				}
-			} else {
-				JOptionPane.showConfirmDialog(this, "Please select a credential!","Select a credential", JOptionPane.YES_OPTION);
-			}
+			deleteACredential();
 		}
 	}
 	
+	/* (non-Javadoc)
+	* @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	*/
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(this.getJListCredentials().equals(e.getSource())) {
@@ -354,6 +499,55 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	*/
 	@Override
 	public void mouseExited(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if(e.getSource()==this.getJDialogCredCreate()) {
+			fillCredentialJListAndRepaint();
+			if(this.getJDialogCredCreate().getModifiedCredential()!=null) {
+				this.getModifiedCredentialCache().add(this.getJDialogCredCreate().getModifiedCredential());
+			}
+			
+			try {
+				if(this.getJDialogCredCreate().getCreatedCredential()!=null) {
+					this.getAddedCredentialCache().add(this.getJDialogCredCreate().getCreatedCredential());
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 		
 	}
 

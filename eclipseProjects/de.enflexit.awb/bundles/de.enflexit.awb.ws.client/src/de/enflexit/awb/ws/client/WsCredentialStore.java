@@ -104,7 +104,7 @@ public class WsCredentialStore implements Serializable {
 	 * 
 	 * @return the api registration service list
 	 */
-	public List<AwbApiRegistrationService> getApiRegistrationServiceList() {
+	public synchronized List<AwbApiRegistrationService> getApiRegistrationServiceList() {
 		if (apiRegistrationServiceList == null) {
 			apiRegistrationServiceList = new ArrayList<>();
 		}
@@ -122,13 +122,13 @@ public class WsCredentialStore implements Serializable {
 	 *
 	 * @param apiRegService the api reg service
 	 */
-	public void addApiRegistrationService(AwbApiRegistrationService apiRegService) {
+	public synchronized void addApiRegistrationService(AwbApiRegistrationService apiRegService) {
 		AwbApiRegistrationService apiReg=this.getApiRegistration(apiRegService.getClientBundleName());
 		if(apiReg==null) {
 			this.getApiRegistrationServiceList().add(apiRegService);
 			setupApiRegistrationService(apiRegService);
 		}else {
-			 setupApiRegistrationService(apiRegService);
+			setupApiRegistrationService(apiRegService);
 		}
 	}
 
@@ -143,8 +143,8 @@ public class WsCredentialStore implements Serializable {
 		
 		 if(cred==null) { 
 			 cred=createEmptyCredential(apiRegService);
+			 this.putInCredentialList(cred);
 			 if(cred!=null) {
-				 this.putInCredentialList(cred);
 				 CredentialAssignment ca=new CredentialAssignment();
 				 ca.setIdApiRegistrationDefaultBundleName(apiRegService.getClientBundleName());
 				 ca.setIdCredential(cred.getID());
@@ -152,13 +152,15 @@ public class WsCredentialStore implements Serializable {
 				 this.putCredAssgnInCredAssgnList(ca);
 			 }
 		 }else {
-			 this.putInCredentialList(cred);
-			 CredentialAssignment ca=new CredentialAssignment();
-			 ca.setIdApiRegistrationDefaultBundleName(apiRegService.getClientBundleName());
-			 ca.setIdCredential(cred.getID());
-			 ca.setIdServerURL(serverUrl.getID());
-			 this.putCredAssgnInCredAssgnList(ca);
-		 }
+				if(this.putInCredentialList(cred)){
+					CredentialAssignment ca = new CredentialAssignment();
+					ca.setIdApiRegistrationDefaultBundleName(apiRegService.getClientBundleName());
+					ca.setIdCredential(cred.getID());
+					ca.setIdServerURL(serverUrl.getID());
+					this.putCredAssgnInCredAssgnList(ca);
+				}
+			}
+		 this.save();
 	}
 
 	/**
@@ -170,10 +172,12 @@ public class WsCredentialStore implements Serializable {
 		if(this.getApiRegistrationServiceList().contains(apiRegService)){
 			this.getApiRegistrationServiceList().remove(apiRegService);
 		}
+		
 		ServerURL server=this.getServerURL(apiRegService.getDefaultServerURL());
 		if(server!=null) {
 			List<CredentialAssignment>credAssgns=this.getCredentialAssignmentWithServer(server);
 			this.getCredentialAssignmentList().removeAll(credAssgns);
+		    this.save();
 		}
 	}
 
@@ -185,7 +189,8 @@ public class WsCredentialStore implements Serializable {
 	 */
 	public AwbApiRegistrationService getApiRegistration(String bundleName) {
 		if (bundleName==null || bundleName.isBlank()==true) return null;
-		for (AwbApiRegistrationService apiReg : this.getApiRegistrationServiceList()) {
+		for (Iterator<AwbApiRegistrationService> iterator = this.getApiRegistrationServiceList().iterator(); iterator.hasNext();) {
+			AwbApiRegistrationService apiReg = (AwbApiRegistrationService) iterator.next();
 			if (apiReg.getClientBundleName().equals(bundleName)) {
 				return apiReg;
 			}
@@ -198,7 +203,7 @@ public class WsCredentialStore implements Serializable {
 	 * Returns the server URL list.
 	 * @return the server URL list
 	 */
-	public List<ServerURL> getServerURLList() {
+	public synchronized List<ServerURL> getServerURLList() {
 		if (serverURLList==null) {
 			serverURLList = new ArrayList<>();
 		}
@@ -208,7 +213,7 @@ public class WsCredentialStore implements Serializable {
 	 * Sets the server URL list.
 	 * @param serverURLList the new server URL list
 	 */
-	public void setServerURLList(List<ServerURL> serverURLList) {
+	public synchronized void setServerURLList(List<ServerURL> serverURLList) {
 		this.serverURLList = serverURLList;
 	}
 	
@@ -238,7 +243,7 @@ public class WsCredentialStore implements Serializable {
 	 * @param apiRegService the {@link AwbApiRegistrationService}
 	 * @return the server or create it
 	 */
-	private ServerURL getServerOrCreateIt(AwbApiRegistrationService apiRegService) {
+	private synchronized ServerURL getServerOrCreateIt(AwbApiRegistrationService apiRegService) {
 		ServerURL apiRegServer;
 		if(!isInServerUrlList(apiRegService.getDefaultServerURL())) {
 			apiRegServer= new ServerURL();
@@ -256,7 +261,7 @@ public class WsCredentialStore implements Serializable {
 	 * @param url the url
 	 * @return the server URL
 	 */
-	public ServerURL getServerURL(String url) {
+	public synchronized ServerURL getServerURL(String url) {
 		if (url==null || url.isBlank()==true) return null;
 		for (ServerURL serverURL : this.getServerURLList()) {
 			if (serverURL.getServerURL().equals(url)) {
@@ -270,7 +275,7 @@ public class WsCredentialStore implements Serializable {
 	 * Returns the credential list.
 	 * @return the credential list
 	 */
-	public List<AbstractCredential> getCredentialList() {
+	public synchronized List<AbstractCredential> getCredentialList() {
 		if (credentialList==null) {
 			credentialList = new ArrayList<>();
 		}
@@ -280,7 +285,7 @@ public class WsCredentialStore implements Serializable {
 	 * Sets the credential list.
 	 * @param credentialList the new credential list
 	 */
-	public void setCredentialList(List<AbstractCredential> credentialList) {
+	public synchronized void setCredentialList(List<AbstractCredential> credentialList) {
 		this.credentialList = credentialList;
 	}
 	
@@ -288,7 +293,7 @@ public class WsCredentialStore implements Serializable {
 	 * Returns the credential assignment list.
 	 * @return the credential assignment list
 	 */
-	public List<CredentialAssignment> getCredentialAssignmentList() {
+	public synchronized List<CredentialAssignment> getCredentialAssignmentList() {
 		if (credentialAssignmentList==null) {
 			credentialAssignmentList = new ArrayList<>();
 		}
@@ -298,7 +303,7 @@ public class WsCredentialStore implements Serializable {
 	 * Sets the credential assignment list.
 	 * @param credentialAssignmentList the new credential assignment list
 	 */
-	public void setCredentialAssignmentList(List<CredentialAssignment> credentialAssignmentList) {
+	public synchronized void setCredentialAssignmentList(List<CredentialAssignment> credentialAssignmentList) {
 		this.credentialAssignmentList = credentialAssignmentList;
 	}
 	
@@ -420,6 +425,7 @@ public class WsCredentialStore implements Serializable {
 				credAssgn.setIdApiRegistrationDefaultBundleName(apiRegistration.getClientBundleName());
 				credAssgn.setIdCredential(credentiaLFound.getID());
 				this.getCredentialAssignmentList().add(credAssgn);
+				this.save();
 			}else {
 				credentiaLFound=null;
 			}
@@ -429,13 +435,17 @@ public class WsCredentialStore implements Serializable {
 	
 	/**
 	 * Checks if the given {@link AbstractCredential} is in the CredentialList
-	 * If not the credential will be added to the list
+	 * If not the credential will be added to the list.
+	 *
 	 * @param abstrCred corresponding {@link AbstractCredential}
+	 * @return true, if successful
 	 */
-	public void putInCredentialList(AbstractCredential abstrCred) {
-        if(!credentialList.contains(abstrCred)) {
-        	credentialList.add(abstrCred);
+	public boolean putInCredentialList(AbstractCredential abstrCred) {
+        if(!this.getCredentialList().contains(abstrCred)) {
+        	this.getCredentialList().add(abstrCred);
+        	return true;
         }
+        return false;
 	}
 	
 
@@ -447,12 +457,12 @@ public class WsCredentialStore implements Serializable {
 	public void updateCredentialInCredentialList(AbstractCredential abstrCred) {
 		    AbstractCredential oldCred=this.getCredential(abstrCred.getName());
         	if(oldCred!=null) {
-        		credentialList.remove(oldCred);
+        		this.getCredentialList().remove(oldCred);
         		this.putInCredentialList(abstrCred);
         	}else {
         	  oldCred=this.getCredentialWithID(abstrCred.getID());
         	  if(oldCred!=null) {
-        		credentialList.remove(oldCred);
+        		  this.getCredentialList().remove(oldCred);
           		this.putInCredentialList(abstrCred); 
         	  }
         	}
@@ -559,8 +569,8 @@ public class WsCredentialStore implements Serializable {
 	 */
 	public ApiRegistration getApiRegistrationFromService(ApiRegistration apiReg) {
 		ApiRegistration sameObject = null;
-		for (int i = 0; i < apiRegistrationServiceList.size(); i++) {
-			AwbApiRegistrationService awbApiRegService = apiRegistrationServiceList.get(i);
+		for (int i = 0; i < this.getApiRegistrationServiceList().size(); i++) {
+			AwbApiRegistrationService awbApiRegService = this.getApiRegistrationServiceList().get(i);
 			if (apiReg.getClientBundleName().equals(awbApiRegService.getClientBundleName())) {
 				if (apiReg.getCredentialType().equals(awbApiRegService.getCredentialType())) {
 					if (apiReg.getDefaultCredentialName().equals(awbApiRegService.getDefaultCredentialName())) {
@@ -616,8 +626,8 @@ public class WsCredentialStore implements Serializable {
 	 * @return the credential assignments with one credential
 	 */
 	public List<CredentialAssignment> getCredentialAssignmentsWithOneCredential(ApiRegistration apiReg,AbstractCredential cred) {
-		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
-		for (CredentialAssignment credAssgn : credentialAssignments) {
+		List<CredentialAssignment> credentialAssignments=new ArrayList<CredentialAssignment>();
+		for (CredentialAssignment credAssgn : this.getCredentialAssignmentList()) {
 			if(credAssgn.getIdApiRegistrationDefaultBundleName().equals(apiReg.getClientBundleName())){
 				if(credAssgn.getIdCredential()==cred.getID()) {
 					credentialAssignments.add(credAssgn);
@@ -635,8 +645,8 @@ public class WsCredentialStore implements Serializable {
 	 * @return the credential assignment with credential
 	 */
 	public List<CredentialAssignment> getCredentialAssignmentWithCredential(AbstractCredential cred) {
-		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
-		for (CredentialAssignment credAssgn : credentialAssignments) {
+		List<CredentialAssignment> credentialAssignments=new ArrayList<CredentialAssignment>();
+		for (CredentialAssignment credAssgn : this.getCredentialAssignmentList()) {
 			if(credAssgn.getIdCredential().equals(cred.getID())){
 					credentialAssignments.add(credAssgn);
 			}
@@ -652,10 +662,11 @@ public class WsCredentialStore implements Serializable {
 	 * @return the credential assignment with credential
 	 */
 	public List<CredentialAssignment> getCredentialAssignmentWithServer(ServerURL server) {
-		List<CredentialAssignment> credentialAssignments=getCredentialAssignmentList();
-		for (CredentialAssignment credAssgn : credentialAssignments) {
-			if(credAssgn.getIdServerURL().equals(server.getID())){
-					credentialAssignments.add(credAssgn);
+		List<CredentialAssignment> credentialAssignments=new ArrayList<CredentialAssignment>();
+		for (Iterator<CredentialAssignment> iterator = this.getCredentialAssignmentList().iterator(); iterator.hasNext();) {
+			CredentialAssignment credentialAssgn = (CredentialAssignment) iterator.next();
+			if(credentialAssgn.getIdServerURL().equals(server.getID())){
+					credentialAssignments.add(credentialAssgn);
 			}
 		}
 		return credentialAssignments;
@@ -670,8 +681,7 @@ public class WsCredentialStore implements Serializable {
 	 */
 	public boolean putCredAssgnInCredAssgnList(CredentialAssignment credAssgn) {
 	 boolean put=false;
-	 if(isCredAssignmentInCredAssgnList(credAssgn)) {
-		WsCredentialStore.getInstance().getCredentialAssignmentList().add(credAssgn);
+	 if(!isCredAssignmentInCredAssgnList(credAssgn)) {
 		put=true;
 	 }
 	 return put;
@@ -685,7 +695,7 @@ public class WsCredentialStore implements Serializable {
 	 */
 	public boolean isCredAssignmentInCredAssgnList(CredentialAssignment credAssgn) {
 		boolean contains =false;
-	    List<CredentialAssignment> credAssignments=WsCredentialStore.getInstance().getCredentialAssignmentList();
+	    List<CredentialAssignment> credAssignments=this.getCredentialAssignmentList();
 	    for (Iterator<CredentialAssignment> iterator = credAssignments.iterator(); iterator.hasNext();) {
 			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
 			if(credentialAssignment.getIdApiRegistrationDefaultBundleName().equals(credAssgn.getIdApiRegistrationDefaultBundleName())) {
@@ -697,7 +707,6 @@ public class WsCredentialStore implements Serializable {
 				}
 			}
 		}
-		WsCredentialStore.getInstance().save();
 		return contains;
 	}
 	
@@ -754,7 +763,7 @@ public class WsCredentialStore implements Serializable {
 	 * 
 	 * @return true, if successful
 	 */
-	public boolean save() {
+	private boolean save() {
 		return save(this);
 	}
 	
@@ -764,7 +773,7 @@ public class WsCredentialStore implements Serializable {
 	 * @param wsCredentialStore the ws credential store
 	 * @return true, if successful
 	 */
-	public static boolean save(WsCredentialStore wsCredentialStore) {
+	private static boolean save(WsCredentialStore wsCredentialStore) {
 		return save(wsCredentialStore, getWsCredentialStoreFile());
 	}
 	
@@ -775,7 +784,7 @@ public class WsCredentialStore implements Serializable {
 	 * @param file              the file
 	 * @return true, if successful
 	 */
-	public static boolean save(WsCredentialStore wsCredentialStore, File file) {
+	private static boolean save(WsCredentialStore wsCredentialStore, File file) {
 		
 		boolean success = true;
 

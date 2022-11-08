@@ -50,6 +50,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	public JPanelClientBundle() {
 		this.initialize();
 	}
+	
 	private void initialize() {		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
@@ -240,7 +241,6 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 							}
 						}
 					}
-
 				}
 			}
 			if(!sameObject) {
