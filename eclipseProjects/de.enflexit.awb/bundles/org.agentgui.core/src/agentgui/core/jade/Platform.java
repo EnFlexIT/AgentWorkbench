@@ -738,7 +738,7 @@ public class Platform {
 		if (currProject==null) {
 			// --- Take the AgentGUI-Default-Profile ----------------
 			jadeContainerProfile = Application.getGlobalInfo().getJadeDefaultProfile();
-			System.out.println("JADE-Profile: Use AgentGUI-defaults");
+			System.out.println("JADE-Profile: Use AWB-defaults");
 			
 		} else {
 			// --- Take the Profile of the current Project ----------
