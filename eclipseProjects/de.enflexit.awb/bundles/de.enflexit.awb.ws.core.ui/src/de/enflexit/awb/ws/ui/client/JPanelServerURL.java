@@ -238,7 +238,7 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	/**
 	 * Fill J list server url and repaint.
 	 */
-	private void fillJListServerUrlAndRepaint() {
+	public void fillJListServerUrlAndRepaint() {
 		DefaultListModel<ServerURL> serverURLs = new DefaultListModel<ServerURL>();
 		List<ServerURL> serverURLsAsList=WsCredentialStore.getInstance().getServerURLList();
 		serverURLs.addAll(serverURLsAsList);

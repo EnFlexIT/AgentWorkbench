@@ -32,31 +32,22 @@ import de.enflexit.awb.ws.ui.WsConfigurationInterface;
  */
 public class JPanelClientConfiguration extends JPanel implements ActionListener,ListSelectionListener,WsConfigurationInterface {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7987858783733542296L;
 	
-	/** The button size. */
 	public static Dimension BUTTON_SIZE = new Dimension(26, 26);
 	
-	/** The j panel client bundle. */
 	private JPanelClientBundle jPanelClientBundle;
 	
-	/** The j panel credentials. */
 	private JPanelCredentials jPanelCredentials;
 	
-	/** The j split pane left. */
 	private JSplitPane jSplitPaneLeft;
 	
-	/** The j split pane middle right. */
 	private JSplitPane jSplitPaneMiddleRight;
 	
-	/** The j split pane middle. */
 	private JSplitPane jSplitPaneMiddle;
 	
-	/** The j panel server URL. */
 	private JPanelServerURL jPanelServerURL;
 	
-	/** The j panel assigned credentials. */
 	private JPanelAssignedCredentials jPanelAssignedCredentials;
 	
 	/**
@@ -265,6 +256,22 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		}
 	}
 	
+	/**
+	 * Resets the whole view to the default of the {@link WsCredentialStore} and reloads view.
+	 *
+	 */
+	public void resetAndReloadView() {
+		WsCredentialStore.getInstance().resetAndReloadWsCredStore();
+		
+		if(this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue()!=null) {
+		this.getJPanelAssignedCredentials().fillAssignedCredentialJList(this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue());
+		}
+	
+		this.getJPanelClientBundle().refillListModelRegisteredApis();
+		this.getJPanelCredentials().fillCredentialJListAndRepaint();
+		this.getJPanelServerURL().fillJListServerUrlAndRepaint();
+	}
+	
 	//-------------------------------------------------------------------------------------
 	//--------------Overriden Methods and Non GUI Getter and Setters-----------------------
 	//-------------------------------------------------------------------------------------
@@ -294,7 +301,24 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	 */
 	@Override
 	public boolean userConfirmedToChangeView() {
-		return false;
+
+		if (this.hasUnsavedChanges()==false) return true;
+		
+		String title = "Save client settings?";
+		String message = "Would you like to save the changes in the client settings ?";
+		int userAnswer = JOptionPane.showConfirmDialog(this.getParent(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+		if (userAnswer==JOptionPane.YES_OPTION) {
+			// --- Save the changes ---------------------------------------
+			WsCredentialStore.getInstance().save();
+			
+		} else if (userAnswer==JOptionPane.NO_OPTION) {
+			// --- Revert to last saved settings --------------------------
+			this.resetAndReloadView();	
+		} else if (userAnswer==JOptionPane.CANCEL_OPTION) {
+			// --- Return to previous selection ---------------------------
+			return false;
+		}
+		return true;
 	}
 	
 	/**

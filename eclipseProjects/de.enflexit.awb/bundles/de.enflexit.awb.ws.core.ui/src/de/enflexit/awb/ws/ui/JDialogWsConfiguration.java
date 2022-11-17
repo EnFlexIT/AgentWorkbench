@@ -22,7 +22,7 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import de.enflexit.awb.ws.BundleHelper;
-import de.enflexit.awb.ws.ui.client.JTabbedPaneWsCredentials;
+import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
 import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
@@ -39,7 +39,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 	
 	private JTabbedPane jTabbedPane;
 	private JPanelServerConfiguration jPanelServerConfiguration;
-	private JTabbedPaneWsCredentials jTabbedPaneWsCredentials;
+	private JPanelClientConfiguration jPanelClientConfiguration;
 	private JButton jButtonClose;
 
 	/**
@@ -124,7 +124,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab(" WS - Server ",  null, this.getJPanelServerConfiguration(), null);
-			jTabbedPane.addTab(" WS - Clients ", null, this.getJTabbedPaneWsCredentials(), null);
+			jTabbedPane.addTab(" WS - Clients ", null, this.getJPanelClientConfiguration(), null);
 		}
 		return jTabbedPane;
 	}
@@ -135,11 +135,11 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		return jPanelServerConfiguration;
 	}
 	
-	private JTabbedPaneWsCredentials getJTabbedPaneWsCredentials() {
-		if (jTabbedPaneWsCredentials == null) {
-			jTabbedPaneWsCredentials = new JTabbedPaneWsCredentials();
+	private JPanelClientConfiguration getJPanelClientConfiguration() {
+		if (this.jPanelClientConfiguration == null) {
+			this.jPanelClientConfiguration = new JPanelClientConfiguration();
 		}
-		return jTabbedPaneWsCredentials;
+		return this.jPanelClientConfiguration;
 	}
 	private JButton getJButtonClose() {
 		if (jButtonClose == null) {
@@ -173,9 +173,9 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 			if (this.getJPanelServerConfiguration().userConfirmedToChangeView()==false) return;
 		}
 		// --- Check client configuration ---------------------------
-		if (this.getJTabbedPaneWsCredentials().hasUnsavedChanges()==true) {
-			this.getJTabbedPane().setSelectedIndex(0);
-			if (this.getJTabbedPaneWsCredentials().userConfirmedToChangeView()==false) return;
+		if (this.getJPanelClientConfiguration().hasUnsavedChanges()==true) {
+			this.getJTabbedPane().setSelectedIndex(1);
+			if (this.getJPanelClientConfiguration().userConfirmedToChangeView()==false) return;
 		}
 		// --- Done - close dialog ----------------------------------		
 		this.setVisible(false);

@@ -88,6 +88,11 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jLabelBundleList;
 	}
 	
+	/**
+	 * Gets the {@link JScrollPane} of the {@link ApiRegistration}-Bundle list.
+	 *
+	 * @return the {@link JScrollPane} bundle list
+	 */
 	private JScrollPane getJScrollPaneBundleList() {
 		if (jScrollPaneBundleList == null) {
 			jScrollPaneBundleList = new JScrollPane();
@@ -96,19 +101,39 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jScrollPaneBundleList;
 	}
 	
+	/**
+	 * Gets the corresponding {@link ListModel} of the JListApiRegistration.
+	 *
+	 * @return the list model registered apis
+	 */
 	private DefaultListModel<ApiRegistration> getListModelRegisteredApis() {
 		if (listModelRegisteredApis==null) {
-			listModelRegisteredApis = new DefaultListModel<ApiRegistration>();
-			List<AwbApiRegistrationService> apiRegServiceList=WsCredentialStore.getInstance().getApiRegistrationServiceList();
-			List<ApiRegistration> apiRegList=new ArrayList<>();
-			for (AwbApiRegistrationService awbApiRegistrationService : apiRegServiceList) {
-				apiRegList.add(new ApiRegistration(awbApiRegistrationService));
-			}
-			listModelRegisteredApis.addAll(apiRegList);
+			refillListModelRegisteredApis();
 		}
 		return listModelRegisteredApis;
 	}
+
+	/**
+	 * Creates and fills a new {@link ListModel} for the JListAPIRegistration.
+	 */
+	public void refillListModelRegisteredApis() {
+		listModelRegisteredApis = new DefaultListModel<ApiRegistration>();
+		List<AwbApiRegistrationService> apiRegServiceList=WsCredentialStore.getInstance().getApiRegistrationServiceList();
+		List<ApiRegistration> apiRegList=new ArrayList<>();
+		for (AwbApiRegistrationService awbApiRegistrationService : apiRegServiceList) {
+			apiRegList.add(new ApiRegistration(awbApiRegistrationService));
+		}
+		listModelRegisteredApis.addAll(apiRegList);
+		this.getJListApiRegistration().setModel(listModelRegisteredApis);
+		this.repaint();
+		this.revalidate();
+	}
 	
+	/**
+	 * Gets the JListAPIRegistration.
+	 *
+	 * @return the j list api registration
+	 */
 	public JList<ApiRegistration> getJListApiRegistration() {
 		if (jListApiRegistration == null) {
 			jListApiRegistration = new JList<ApiRegistration>(this.getListModelRegisteredApis());
@@ -119,7 +144,11 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
 					ApiRegistration apiReg=jListApiRegistration.getSelectedValue();
-				    getJTextAreaDescription().setText(apiReg.getDescription());					
+					if (apiReg != null) {
+						if (apiReg.getDescription() != null && getJTextAreaDescription() != null) {
+							getJTextAreaDescription().setText(apiReg.getDescription());
+						}
+					}
 				}
 			});
 		}
@@ -127,6 +156,11 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	}
 	
 	
+	/**
+	 * Gets the j panel info.
+	 *
+	 * @return the j panel info
+	 */
 	private JPanel getJPanelInfo() {
 		if (jPanelInfo == null) {
 			jPanelInfo = new JPanel();
@@ -154,6 +188,12 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		}
 		return jPanelInfo;
 	}
+	
+	/**
+	 * Gets the j label description.
+	 *
+	 * @return the j label description
+	 */
 	private JLabel getJLabelDescription() {
 		if (jLabelDescription == null) {
 			jLabelDescription = new JLabel("Description:");
@@ -162,6 +202,11 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jLabelDescription;
 	}
 	
+	/**
+	 * Gets the j scroll pane description.
+	 *
+	 * @return the j scroll pane description
+	 */
 	private JScrollPane getJScrollPaneDescription() {
 		if (jScrollPaneDescription==null) {
 			jScrollPaneDescription = new JScrollPane();
@@ -170,6 +215,11 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jScrollPaneDescription;
 	}
 	
+	/**
+	 * Gets the j text area description.
+	 *
+	 * @return the j text area description
+	 */
 	private JTextArea getJTextAreaDescription() {
 		if (jTextAreaDescription == null) {
 			jTextAreaDescription = new JTextArea();

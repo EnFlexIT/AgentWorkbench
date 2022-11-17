@@ -86,6 +86,7 @@ public class WsCredentialStore implements Serializable {
 	// ----------------------------------------------------
 	// --- From here attributes and access methods --------
 	// ----------------------------------------------------
+	
 	private List<ServerURL> serverURLList;
 	
 	@XmlElementWrapper(name="credentials")
@@ -682,6 +683,7 @@ public class WsCredentialStore implements Serializable {
 	public boolean putCredAssgnInCredAssgnList(CredentialAssignment credAssgn) {
 	 boolean put=false;
 	 if(!isCredAssignmentInCredAssgnList(credAssgn)) {
+		 this.getCredentialAssignmentList().add(credAssgn);
 		put=true;
 	 }
 	 return put;
@@ -737,6 +739,23 @@ public class WsCredentialStore implements Serializable {
 	// --- From here methods to save or load a WsCredentialStore -----------------------
 	// ----------------------------------------------------------------------------------
 	
+	/**
+	 * Reset and reload the {@link WsCredentialStore}.
+	 *
+	 * @return the file
+	 */
+	public synchronized void resetAndReloadWsCredStore() {
+		credentialStoreFile = WsCredentialStore.getWsCredentialStoreFile();
+		instance = WsCredentialStore.load(credentialStoreFile);
+		if(instance==null) {
+			instance=new WsCredentialStore();
+		}
+		this.getApiRegistrationServiceList();
+		this.getCredentialAssignmentList();
+		this.getCredentialList();
+		this.getServerURLList();
+		
+	}
 	
 	/**
 	 * Gets the WsCredentialStore-File
@@ -763,7 +782,7 @@ public class WsCredentialStore implements Serializable {
 	 * 
 	 * @return true, if successful
 	 */
-	private boolean save() {
+	public boolean save() {
 		return save(this);
 	}
 	
