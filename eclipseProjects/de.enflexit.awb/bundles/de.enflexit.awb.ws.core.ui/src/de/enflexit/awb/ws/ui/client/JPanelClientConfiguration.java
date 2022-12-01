@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -18,6 +20,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import de.enflexit.awb.ws.client.ApiRegistration;
+import de.enflexit.awb.ws.client.AwbApiRegistrationService;
 import de.enflexit.awb.ws.client.CredentialAssignment;
 import de.enflexit.awb.ws.client.ServerURL;
 import de.enflexit.awb.ws.client.WsCredentialStore;
@@ -49,6 +52,9 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	private JPanelServerURL jPanelServerURL;
 	
 	private JPanelAssignedCredentials jPanelAssignedCredentials;
+	
+	private JPanelCachedClientBundles jPanelCachedClientBundles;
+	private JPanelCachedCredentials jPanelCachedCredentials;
 	
 	/**
 	 * Instantiates a new j panel client configuration.
@@ -105,22 +111,32 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	
 	
 	/**
-	 * Gets the j panel client bundle.
+	 * Gets the {@link JPanelClientBundle}
 	 *
-	 * @return the j panel client bundle
+	 * @return the {@link JPanelClientBundle}
 	 */
 	public JPanelClientBundle getJPanelClientBundle() {
 		if (jPanelClientBundle == null) {
 			jPanelClientBundle = new JPanelClientBundle();
+			this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().addActionListener(this);
 			jPanelClientBundle.getJListApiRegistration().addListSelectionListener(this);
 		}
 		return jPanelClientBundle;
 	}
+	
+	public JPanelCachedClientBundles getJPanelCachedClientBundles() {
+		if (jPanelCachedClientBundles== null) {
+			jPanelCachedClientBundles = new JPanelCachedClientBundles();
+			jPanelCachedClientBundles.getJButtonBackToCredAssgnView().addActionListener(this);
+			jPanelCachedClientBundles.getJButtonDeleteCredentialAssignment().addActionListener(this);
+		}
+		return jPanelCachedClientBundles;
+	}
 
 	/**
-	 * Gets the j panel credentials.
+	 * Gets the {@link JPanelCredentials}
 	 *
-	 * @return the j panel credentials
+	 * @return the {@link JPanelCredentials}
 	 */
 	public JPanelCredentials getJPanelCredentials() {
 		if (jPanelCredentials == null) {
@@ -131,6 +147,19 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		}		
 		return jPanelCredentials;
 	}
+	
+	public JPanelCachedCredentials getJPanelCachedCredentials() {
+		if (jPanelCachedCredentials == null) {
+			jPanelCachedCredentials = new JPanelCachedCredentials(null);
+			jPanelCachedCredentials.getJListAssignedCredentials().addListSelectionListener(this);
+			jPanelCachedCredentials.getJButtonDeleteCredentialAssignment().addActionListener(this);
+			this.repaint();
+			this.revalidate();
+		}		
+		return 	jPanelCachedCredentials;
+	}
+
+	
 
 	/**
 	 * Gets the j split pane middle right.
@@ -272,8 +301,79 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		this.getJPanelServerURL().fillJListServerUrlAndRepaint();
 	}
 	
+	/**
+	 * Fills the {@link JList} of the {@link JPanelAssignedCredentials} with all assigned credentials of the corresponding {@link AwbApiRegistrationService}.
+	 */
+	private void fillJListAssignedCredentials() {
+		this.getJPanelAssignedCredentials().getJListAssignedCredentials().clearSelection();
+		this.getJPanelCredentials().getJListCredentials().clearSelection();
+		this.getJPanelServerURL().getJListServerUrl().clearSelection();
+		this.getJPanelAssignedCredentials().fillAssignedCredentialJList(this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue());
+	}
+	
+	/**
+	 * After the assigned credential is selected the corresponding {@link ServerURL} in JList of the {@link JPanelServerURL} and the corresponding {@link AbstractCredential} in the {@link JList} of the {@link JPanelCredentials}
+	 */
+	private void selectAllElementsOfaCredentialAssignment() {
+		if (this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
+			
+			AbstractCredential cred=this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue();
+			this.getJPanelCredentials().getJListCredentials().setSelectedValue(cred, true);
+			
+			if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
+				
+				//Can not be == null because then the assignment list is empty but still checking
+				ApiRegistration apiReg=this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue();
+				List<CredentialAssignment> credAssgn=WsCredentialStore.getInstance().getCredentialAssignmentsWithOneCredential(apiReg, cred);
+				
+				//Get the corresponding ServerURL
+				if(credAssgn.size()==1) {
+					UUID serverID=credAssgn.get(0).getIdServerURL();
+					for(int i = 0; i< this.getJPanelServerURL().getJListServerUrl().getModel().getSize();i++){
+					    ServerURL server=this.getJPanelServerURL().getJListServerUrl().getModel().getElementAt(i);
+					    if(server.getID().equals(serverID)){
+					    	this.getJPanelServerURL().getJListServerUrl().setSelectedValue(server, true);
+					    	break;
+					    }
+					}
+				}else {
+					String serverID=apiReg.getDefaultURL();
+					for(int i = 0; i< this.getJPanelServerURL().getJListServerUrl().getModel().getSize();i++){
+					    ServerURL server=this.getJPanelServerURL().getJListServerUrl().getModel().getElementAt(i);
+					    if(server.getServerURL().equals(serverID)){
+					    	this.getJPanelServerURL().getJListServerUrl().setSelectedValue(server, true);
+					    	break;
+					    }
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * As a reaction the {@link JButton} Create a CredentialAssignment of the {@link JPanelAssignedCredentials}, this method creates A credential assignment.
+	 */
+	private void createACredAssignment() {
+		if (getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
+			if (getJPanelServerURL().getJListServerUrl().getSelectedValue() != null) {
+				if (getJPanelCredentials().getJListCredentials().getSelectedValue() != null) {
+					ApiRegistration apiReg = getJPanelClientBundle().getJListApiRegistration().getSelectedValue();
+					ServerURL serverURL = getJPanelServerURL().getJListServerUrl().getSelectedValue();
+					AbstractCredential credential = getJPanelCredentials().getJListCredentials().getSelectedValue();
+					createCredAssgn(apiReg, serverURL, credential);
+				} else {
+					JOptionPane.showMessageDialog(this,"Please select a Credential in order to create a Credential Assignment");
+				}
+			} else {
+				JOptionPane.showMessageDialog(this,"Please select a Server-URL in order to create a Credential Assignment");
+			}
+		} else {
+			JOptionPane.showMessageDialog(this,"Please select a Client-Bundle in order to create a Credential Assignment");
+		}
+	}
+	
 	//-------------------------------------------------------------------------------------
-	//--------------Overriden Methods and Non GUI Getter and Setters-----------------------
+	//--------------Overridden Methods and Non GUI Getter and Setters-----------------------
 	//-------------------------------------------------------------------------------------
 	
 	/* (non-Javadoc)
@@ -344,26 +444,21 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(getJPanelAssignedCredentials().getJButtonCreateACredentialAssignment())) {
-			if (getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
-				if (getJPanelServerURL().getJListServerUrl().getSelectedValue() != null) {
-					if (getJPanelCredentials().getJListCredentials().getSelectedValue() != null) {
-						ApiRegistration apiReg = getJPanelClientBundle().getJListApiRegistration().getSelectedValue();
-						ServerURL serverURL = getJPanelServerURL().getJListServerUrl().getSelectedValue();
-						AbstractCredential credential = getJPanelCredentials().getJListCredentials().getSelectedValue();
-						createCredAssgn(apiReg, serverURL, credential);
-					} else {
-						JOptionPane.showMessageDialog(this,"Please select a Credential in order to create a Credential Assignment");
-					}
-				} else {
-					JOptionPane.showMessageDialog(this,"Please select a Server-URL in order to create a Credential Assignment");
-				}
-			} else {
-				JOptionPane.showMessageDialog(this,"Please select a Client-Bundle in order to create a Credential Assignment");
-			}
-		} else if (e.getSource().equals(getJPanelAssignedCredentials().getJButtonDeleteCredentialAssignment())) {
+			createACredAssignment();
+		} else if (e.getSource().equals(this.getJPanelAssignedCredentials().getJButtonDeleteCredentialAssignment())) {
 			deleteCredentialAssignment();
-
+		}else if(e.getSource().equals(this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView())) {
+			this.getJSplitPaneLeft().setLeftComponent(this.getJPanelCachedClientBundles());
+			this.getJSplitPaneMiddle().setLeftComponent(this.getJPanelCachedCredentials());
+			this.revalidate();
+			this.repaint();
+		}else if(e.getSource().equals(this.getJPanelCachedClientBundles().getJButtonBackToCredAssgnView())) {
+			this.getJSplitPaneLeft().setLeftComponent(this.getJPanelClientBundle());
+			this.getJSplitPaneMiddle().setLeftComponent(this.getJPanelAssignedCredentials());
+			this.revalidate();
+			this.repaint();
 		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -371,47 +466,14 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	*/
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (e.getSource().equals(this.getJPanelServerURL().getJListServerUrl())) {
-
-		} else if (e.getSource().equals(getJPanelClientBundle().getJListApiRegistration())) {
+		if (e.getSource().equals(this.getJPanelClientBundle().getJListApiRegistration())) {
 			if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
-				this.getJPanelAssignedCredentials().fillAssignedCredentialJList(this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue());
+				fillJListAssignedCredentials();
 			}
-		} else if (e.getSource().equals(getJPanelCredentials().getJListCredentials())) {
+		}else if(e.getSource().equals(getJPanelCredentials().getJListCredentials())) {
 
 		}else if(e.getSource().equals(getJPanelAssignedCredentials().getJListAssignedCredentials())) {
-			if (this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
-				
-				AbstractCredential cred=this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue();
-				this.getJPanelCredentials().getJListCredentials().setSelectedValue(cred, true);
-				
-				if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
-					
-					//Can not be ==null because then the assignment list is empty but still checking
-					ApiRegistration apiReg=this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue();
-					List<CredentialAssignment> credAssgn=WsCredentialStore.getInstance().getCredentialAssignmentsWithOneCredential(apiReg, cred);
-					
-					if(credAssgn.size()==1) {
-						UUID serverID=credAssgn.get(0).getIdServerURL();
-						for(int i = 0; i< this.getJPanelServerURL().getJListServerUrl().getModel().getSize();i++){
-						    ServerURL server=this.getJPanelServerURL().getJListServerUrl().getModel().getElementAt(i);
-						    if(server.getID().equals(serverID)){
-						    	this.getJPanelServerURL().getJListServerUrl().setSelectedValue(server, true);
-						    	break;
-						    }
-						}
-					}else {
-						String serverID=apiReg.getDefaultURL();
-						for(int i = 0; i< this.getJPanelServerURL().getJListServerUrl().getModel().getSize();i++){
-						    ServerURL server=this.getJPanelServerURL().getJListServerUrl().getModel().getElementAt(i);
-						    if(server.getServerURL().equals(serverID)){
-						    	this.getJPanelServerURL().getJListServerUrl().setSelectedValue(server, true);
-						    	break;
-						    }
-						}
-					}
-				}
-			}	
+			selectAllElementsOfaCredentialAssignment();	
 		}
 	}
 }

@@ -383,7 +383,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 			int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the "+ cred.getName()+ " of the type " + cred.getCredentialType()+" and all is corresponding Assignments?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
 			if(option==JOptionPane.YES_OPTION) {
 								
-			     // Remove all linked CredentialAssignments before deleting the 
+			     // Remove all linked CredentialAssignments before deleting the credential
 
 				 List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getCredentialAssignmentWithCredential(cred);
 				 for (CredentialAssignment credentialAssignment : credAssgns) {

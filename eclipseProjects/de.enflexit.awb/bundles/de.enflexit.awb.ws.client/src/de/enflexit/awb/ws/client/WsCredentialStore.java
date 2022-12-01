@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
@@ -43,7 +45,8 @@ import de.enflexit.common.ServiceFinder;
 @XmlType(name = "JettyConfiguration", propOrder = {
 		"credentialAssignmentList",
 	    "serverURLList",
-	    "credentialList"
+	    "credentialList",
+	    "cacheCredentialAssignmentList"
 	})
 public class WsCredentialStore implements Serializable {
 	
@@ -96,7 +99,11 @@ public class WsCredentialStore implements Serializable {
 	@XmlElementWrapper(name="credentialAssignments")
 	@XmlElement(name="credentialAssignment")
 	private List<CredentialAssignment> credentialAssignmentList;
-	
+	@XmlElement(name="cachedCredentialAssignments")
+	private List<CredentialAssignment> cacheCredentialAssignmentList;
+	@XmlTransient
+	private Map<String,List<CredentialAssignment>> bundleCredAssgns;
+
 	@XmlTransient
 	private List<AwbApiRegistrationService> apiRegistrationServiceList;
 	
@@ -111,13 +118,51 @@ public class WsCredentialStore implements Serializable {
 		}
 		apiRegistrationServiceList.clear();
 		// --- Fill the list ------------------------------------
+		List<String> defaultClientBundleNames= new ArrayList<>();
 		List<AwbApiRegistrationService> registeredServiceList = ServiceFinder.findServices(AwbApiRegistrationService.class);
 		for (int i = 0; i < registeredServiceList.size(); i++) {
 			apiRegistrationServiceList.add(registeredServiceList.get(i));
+			defaultClientBundleNames.add(registeredServiceList.get(i).getClientBundleName());
+		}
+		//Check if a service was deleted
+	    List<CredentialAssignment> credAssgn= this.getCredentialAssignmentList();
+	    for (Iterator<CredentialAssignment> iterator = credAssgn.iterator(); iterator.hasNext();) {
+			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+			if(!defaultClientBundleNames.contains(credentialAssignment.getIdApiRegistrationDefaultBundleName())) {
+				//Cache the changes until they are deleted by the user
+				this.getCacheCredentialAssignmentList().add(credentialAssignment);
+		        this.getCredentialAssignmentList().remove(credentialAssignment);
+		        this.putInBundleCredAssgnList(credentialAssignment);
+			}
 		}
 		return apiRegistrationServiceList;
 	}
 	
+	/**
+	 * Put in bundle cred assgn list.
+	 *
+	 * @param ca the {@link CredentialAssignment}
+	 */
+	public void putInBundleCredAssgnList(CredentialAssignment ca) {
+		Map<String, List<CredentialAssignment>> bundleCredAssgnMap=this.getBundleCredAssgnsMap();
+		if(bundleCredAssgnMap.get(ca.getIdApiRegistrationDefaultBundleName())== null) {
+			List<CredentialAssignment> credAssgn=new ArrayList<CredentialAssignment>();
+			credAssgn.add(ca);
+		    bundleCredAssgnMap.put(ca.getIdApiRegistrationDefaultBundleName(), credAssgn);
+		}else {
+			List<CredentialAssignment> credAssgn=bundleCredAssgnMap.get(ca.getIdApiRegistrationDefaultBundleName());
+			credAssgn.add(ca);
+		    bundleCredAssgnMap.put(ca.getIdApiRegistrationDefaultBundleName(), credAssgn);
+		}
+		
+	}
+	
+	public Map<String, List<CredentialAssignment>> getBundleCredAssgnsMap() {
+		if(this.bundleCredAssgns==null) {
+			bundleCredAssgns=new HashMap<String,List<CredentialAssignment>>();
+		}
+		return bundleCredAssgns;
+	}
 	/**
 	 * Adds the api registration service.
 	 *
@@ -197,6 +242,27 @@ public class WsCredentialStore implements Serializable {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Gets the cache credential assignment list.
+	 *
+	 * @return the cache credential assignment list
+	 */
+	public List<CredentialAssignment> getCacheCredentialAssignmentList() {
+		if(cacheCredentialAssignmentList==null) {
+			cacheCredentialAssignmentList=new ArrayList<CredentialAssignment>();
+		}
+		return cacheCredentialAssignmentList;
+	}
+
+	/**
+	 * Sets the cache credential assignment list.
+	 *
+	 * @param cacheCredentialAssignmentList the new cache credential assignment list
+	 */
+	public void setCacheCredentialAssignmentList(List<CredentialAssignment> cacheCredentialAssignmentList) {
+		this.cacheCredentialAssignmentList = cacheCredentialAssignmentList;
 	}
 	
 	
