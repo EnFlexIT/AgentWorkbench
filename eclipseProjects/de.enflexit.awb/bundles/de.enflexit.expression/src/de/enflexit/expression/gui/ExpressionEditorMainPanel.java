@@ -22,8 +22,6 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 	
 	private static final long serialVersionUID = 4901839979331733505L;
 	
-	private Expression expression;
-
 	private JSplitPane jSplitPaneMain;
 	private JSplitPane jSplitPaneLeft;
 	private ExpressionEditorTextPanel jPanelExpressionTextEditor;
@@ -62,14 +60,15 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 	 * @return the expression
 	 */
 	public Expression getExpression() {
-		return expression;
+		this.getJPanelExpressionTextEditor().parseExpression();
+		return this.getJPanelExpressionTextEditor().getExpression();
 	}
 	/**
 	 * Sets the expression.
 	 * @param expression the new expression
 	 */
 	public void setExpression(Expression expression) {
-		this.expression = expression;
+		this.getJPanelExpressionTextEditor().setExpression(expression);
 	}
 	
 	
@@ -123,6 +122,7 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 		if (jPanelLibrary==null) {
 			jPanelLibrary = new ExpressionEditorLibraryPanel();
 			jPanelLibrary.setBorder(new EmptyBorder(5, 0, 0, 5));
+			jPanelLibrary.addPropertyChangeListener(this);
 		}
 		return jPanelLibrary;
 	}
@@ -143,6 +143,11 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 				// --- A sub-expression was selected, highlight it in the editor
 				Expression selectedExpression = (Expression) evt.getNewValue();
 				this.getJPanelExpressionTextEditor().highlightSubExpression(selectedExpression);
+			}
+		} else if (evt.getSource()==this.getJPanelLibrary()) {
+			if (evt.getPropertyName().equals(ExpressionEditorLibraryPanel.EXPRESSION_INSERTED)) {
+				String stringToInsert = (String) evt.getNewValue();
+				this.getJPanelExpressionTextEditor().insertExpressionString(stringToInsert);
 			}
 		}
 	}

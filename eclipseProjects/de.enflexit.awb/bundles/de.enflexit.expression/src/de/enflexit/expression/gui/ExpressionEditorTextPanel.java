@@ -105,10 +105,14 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonParse()) {
-			String expressionString = this.getJTextAreaExpression().getText();
-			this.expression = this.getParser().parse(expressionString);
-			this.firePropertyChange(EXPRESSION_PARSED, null, this.expression);
+			this.parseExpression();
 		}
+	}
+	
+	protected void parseExpression() {
+		String expressionString = this.getJTextAreaExpression().getText();
+		this.expression = this.getParser().parse(expressionString);
+		this.firePropertyChange(EXPRESSION_PARSED, null, this.expression);
 	}
 	
 	/**
@@ -117,7 +121,9 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	 */
 	public void setExpression(Expression expression) {
 		this.expression = expression;
-		this.getJTextAreaExpression().setText(expression.getExpressionString());
+		if (expression!=null) {
+			this.getJTextAreaExpression().setText(expression.getExpressionString());
+		}
 	}
 	
 	/**
@@ -161,5 +167,15 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 			jLabelExpression.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelExpression;
+	}
+	
+	/**
+	 * Inserts the specified string at the current cursor position.
+	 * @param expressionString the expression string
+	 */
+	public void insertExpressionString(String expressionString) {
+		int cursorPosition = this.getJTextAreaExpression().getCaretPosition();
+		this.getJTextAreaExpression().insert(expressionString, cursorPosition);
+		this.getJTextAreaExpression().requestFocusInWindow();
 	}
 }

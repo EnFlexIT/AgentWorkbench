@@ -5,7 +5,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -28,6 +32,7 @@ import javax.swing.tree.DefaultTreeModel;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.expression.ExpressionEditorTreeNode;
 import de.enflexit.expression.ExpressionService;
+import de.enflexit.expression.ExpressionType;
 
 /**
  * This class implements the lower right part of the expression editor,
@@ -37,6 +42,8 @@ import de.enflexit.expression.ExpressionService;
 public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectionListener, ListSelectionListener{
 
 	private static final long serialVersionUID = -2285298251930084002L;
+	
+	public static final String EXPRESSION_INSERTED = "ExpressionInserted";
 	
 	private JSplitPane jSplitPaneMain;
 	private JSplitPane jSplitPaneRight;
@@ -60,6 +67,8 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	
 
 	private TreeMap<String, ArrayList<String>> currentOptions;
+	
+	private HashMap<ExpressionEditorTreeNode, ExpressionType> expressionTypes; 
 	
 	/**
 	 * Instantiates a new expression editor library panel.
@@ -264,8 +273,31 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		if (jListExpressions == null) {
 			jListExpressions = new JList<String>();
 			jListExpressions.addListSelectionListener(this);
+			jListExpressions.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent me) {
+					if (me.getClickCount()==2) {
+						int index = getJListExpressions().locationToIndex(me.getPoint());
+						String clickedExpression = getJListExpressions().getModel().getElementAt(index);
+						
+						ExpressionEditorLibraryPanel.this.triggerInsert(clickedExpression);
+					}
+				}
+			});
 		}
 		return jListExpressions;
+	}
+	
+	/**
+	 * Triggers a {@link PropertyChangeEvent} to notify that the selected expression should be inserted.
+	 * @param expressionString the expression string
+	 */
+	private void triggerInsert(String expressionString) {
+		ExpressionEditorTreeNode categoryNode = (ExpressionEditorTreeNode) this.getJTreeMainCategories().getLastSelectedPathComponent();
+		ExpressionType expressionType = this.getExpressionTypesForCategories().get(categoryNode);
+		String stringToInsert = "[" + expressionType.getTypePrefix() + ":" + expressionString + "]";
+		
+		this.firePropertyChange(EXPRESSION_INSERTED, null, stringToInsert);
 	}
 	
 	
@@ -279,13 +311,24 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		// --- Get available expression services ----------
 		List<ExpressionService> expressionServices = ServiceFinder.findServices(ExpressionService.class);
 		for (int i=0; i<expressionServices.size(); i++) {
-			rootNode.add(expressionServices.get(i).getExpressionEditorRootNode());
+			ExpressionEditorTreeNode categoryNode = expressionServices.get(i).getExpressionEditorRootNode();
+			rootNode.add(categoryNode);
+			this.getExpressionTypesForCategories().put(categoryNode, expressionServices.get(i).getExpressionType());
 		}
 		
 		return rootNode;
 	}
 	
-	
+	/**
+	 * Gets the expression types for categories.
+	 * @return the expression types for categories
+	 */
+	public HashMap<ExpressionEditorTreeNode, ExpressionType> getExpressionTypesForCategories() {
+		if (expressionTypes==null) {
+			expressionTypes = new HashMap<>();
+		}
+		return expressionTypes;
+	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)

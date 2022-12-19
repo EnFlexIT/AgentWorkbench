@@ -42,5 +42,6 @@ public class ExpressionEditorTreeNode extends DefaultMutableTreeNode {
 	public void setExpressionTemplates(TreeMap<String, ArrayList<String>> expressionTemplates) {
 		this.expressionTemplates = expressionTemplates;
 	}
+	
 }
 
