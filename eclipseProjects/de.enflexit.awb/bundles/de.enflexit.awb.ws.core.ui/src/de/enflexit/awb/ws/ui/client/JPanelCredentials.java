@@ -375,7 +375,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	}
 	
 	/**
-	 * Deletes a credential and removes them from the JListCredentials.
+	 * Deletes a credential and removes them from the JListCredentials and deletes all {@link CredentialAssignment} with the deleted Credential.
 	 */
 	private void deleteACredential() {
 		AbstractCredential cred = this.getJListCredentials().getSelectedValue();

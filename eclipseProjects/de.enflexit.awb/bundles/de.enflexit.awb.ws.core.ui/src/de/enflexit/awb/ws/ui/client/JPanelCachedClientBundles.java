@@ -5,12 +5,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
@@ -19,7 +21,13 @@ import javax.swing.ListSelectionModel;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.client.ApiRegistration;
+import de.enflexit.awb.ws.client.CredentialAssignment;
+import de.enflexit.awb.ws.client.CredentialType;
 import de.enflexit.awb.ws.client.WsCredentialStore;
+import de.enflexit.awb.ws.credential.AbstractCredential;
+import de.enflexit.awb.ws.credential.ApiKeyCredential;
+import de.enflexit.awb.ws.credential.BearerTokenCredential;
+import de.enflexit.awb.ws.credential.UserPasswordCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
 /**
@@ -38,6 +46,7 @@ public class JPanelCachedClientBundles extends JPanel implements WsConfiguration
 	
 	//Variables to track changes
 	private List<String> deletedApiRegistrations;
+	private List<AbstractCredential> deletedCredentials;
 	private JPanel jPanelHeader;
 	private JLabel jLableCachedClientBundles;
 	
@@ -135,6 +144,26 @@ public class JPanelCachedClientBundles extends JPanel implements WsConfiguration
 	}
 	
 	/**
+	 * Gets all deleted api registrations.
+	 *
+	 * @return all deleted api registrations
+	 */
+	public List<AbstractCredential> getDeletedCredentials() {
+		if(deletedCredentials==null) {
+			deletedCredentials=new ArrayList<AbstractCredential>();
+		}
+		return deletedCredentials;
+	}
+
+	/**
+	 * Sets the deleted credential.
+	 * @param deletedCredentials the new deleted credential
+	 */
+	public void setDeletedCredential(List<AbstractCredential> deletedCredentials) {
+		this.deletedCredentials = deletedCredentials;
+	}
+	
+	/**
 	 * Gets the {@link JScrollPane} of the {@link ApiRegistration}-CachedBundle list.
 	 *
 	 * @return the {@link JScrollPane} bundle list
@@ -154,7 +183,7 @@ public class JPanelCachedClientBundles extends JPanel implements WsConfiguration
 	 */
 	private DefaultListModel<String> getListModelCachedRegisteredApis() {
 		if (listModelCachedRegisteredApis==null) {
-			refillListModelCachedRegisteredApis();
+			this.refillListModelCachedRegisteredApis();
 		}
 		return listModelCachedRegisteredApis;
 	}
@@ -185,8 +214,74 @@ public class JPanelCachedClientBundles extends JPanel implements WsConfiguration
 		}
 		return jListCachedApiRegistration;
 	}
-	
 
+	
+	/**
+	 * Delete all cached credential assignments.
+	 *
+	 * @param clientBundleName the client bundle name
+	 * @return the deleted CredentialAssignments as a list
+	 */
+	public List<CredentialAssignment> deleteAllCachedCredentialAssignments() {
+		if(this.getJListCachedApiRegistration().isSelectionEmpty()) {
+		 JOptionPane.showConfirmDialog(this, "Please select a credential assignment!","Select a credential assignment", JOptionPane.YES_OPTION);
+		 return new ArrayList<CredentialAssignment>();
+		}else {
+	    int ret = JOptionPane.showConfirmDialog(this, "You want to delete all selected cached client bundles and their credential assignments?","Delete client bundles and credential assignments", JOptionPane.YES_OPTION);
+		//Delete all credential assignments of the bundle
+	    List<CredentialAssignment> deletedClientBundles= new ArrayList<CredentialAssignment>();
+	    if(ret== JOptionPane.YES_OPTION) {
+		    List<String> clientBundleNames= this.getJListCachedApiRegistration().getSelectedValuesList();
+		    for (Iterator<String> iterator = clientBundleNames.iterator(); iterator.hasNext();) {
+				String clientBundleName = (String) iterator.next();
+				deleteEmptyCredentials(clientBundleName);
+				WsCredentialStore.getInstance().getCacheCredentialAssignmentList().removeAll(WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(clientBundleName));
+				deletedClientBundles.addAll(WsCredentialStore.getInstance().getBundleCredAssgnsMap().remove(clientBundleName));
+				this.getDeletedApiRegistrations().add(clientBundleName);
+			}
+	    }
+
+		this.refillListModelCachedRegisteredApis();
+	    //refresh
+		this.revalidate();
+		this.repaint();
+		return deletedClientBundles;
+		}
+	}
+
+	/**
+	 * Delete empty credentials.
+	 *
+	 * @param clientBundleName the client bundle name
+	 */
+	private void deleteEmptyCredentials(String clientBundleName) {
+		List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(clientBundleName);
+		for (Iterator<CredentialAssignment> credAssignments = credAssgns.iterator(); credAssignments.hasNext();) {
+			CredentialAssignment credentialAssignment = (CredentialAssignment) credAssignments.next();
+			AbstractCredential credential=WsCredentialStore.getInstance().getCredential(credentialAssignment.getIdCredential());
+		    if(credential!=null) {
+			if (credential.getCredentialType() == CredentialType.API_KEY) {
+				ApiKeyCredential apiKey=(ApiKeyCredential) credential;
+				if(apiKey.isEmpty()) {
+				  WsCredentialStore.getInstance().getCredentialList().remove(credential);
+				  this.getDeletedCredentials().add(credential);
+				}
+			} else if (credential.getCredentialType() == CredentialType.BEARER_TOKEN) {
+				BearerTokenCredential bearerToken=(BearerTokenCredential) credential;
+		        if(bearerToken.isEmpty()) {
+		        	WsCredentialStore.getInstance().getCredentialList().remove(credential);
+		        	this.getDeletedCredentials().add(credential);
+				}
+			} else if (credential.getCredentialType() == CredentialType.USERNAME_PASSWORD) {
+				UserPasswordCredential password=(UserPasswordCredential) credential;
+		        if(password.isEmpty()) {
+		        	WsCredentialStore.getInstance().getCredentialList().remove(credential);
+		        	this.getDeletedCredentials().add(credential);
+				}
+			}
+		   }
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -195,9 +290,14 @@ public class JPanelCachedClientBundles extends JPanel implements WsConfiguration
 	 */
 	@Override
 	public boolean hasUnsavedChanges() {
-		if(deletedApiRegistrations.size()>=1) {
+		if(this.getDeletedApiRegistrations().size()>=1) {
 			return true;
 		}
+		
+		if(this.getDeletedCredentials().size()>=1) {
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -216,4 +316,5 @@ public class JPanelCachedClientBundles extends JPanel implements WsConfiguration
 		}
 		return jLableCachedClientBundles;
 	}
+
 }

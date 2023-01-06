@@ -15,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -118,7 +119,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	public JPanelClientBundle getJPanelClientBundle() {
 		if (jPanelClientBundle == null) {
 			jPanelClientBundle = new JPanelClientBundle();
-			this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().addActionListener(this);
+		    jPanelClientBundle.getJButtonCachedCredentialAssignmentsView().addActionListener(this);
 			jPanelClientBundle.getJListApiRegistration().addListSelectionListener(this);
 		}
 		return jPanelClientBundle;
@@ -129,6 +130,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			jPanelCachedClientBundles = new JPanelCachedClientBundles();
 			jPanelCachedClientBundles.getJButtonBackToCredAssgnView().addActionListener(this);
 			jPanelCachedClientBundles.getJButtonDeleteCredentialAssignment().addActionListener(this);
+			jPanelCachedClientBundles.getJListCachedApiRegistration().addListSelectionListener(this);
 		}
 		return jPanelCachedClientBundles;
 	}
@@ -204,6 +206,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		if (jPanelServerURL == null) {
 			jPanelServerURL = new JPanelServerURL();
 			jPanelServerURL.getJListServerUrl().addListSelectionListener(this);
+			jPanelServerURL.getJButtonDeleteServerUrl().addActionListener(this);
 		}
 		return jPanelServerURL;
 	}
@@ -252,6 +255,86 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 				}else {
 					JOptionPane.showMessageDialog(this,"Please select a Credential in order to delete a Credential Assignment");
 				}
+		}else {
+			JOptionPane.showMessageDialog(this,"Please select a Client-Bundle in order to delete a Credential Assignment");
+		}
+	}
+	
+	/**
+	 * Deletes a {@link CredentialAssignment}.
+	 */
+	private void deleteCachedCredentialAssignment() {
+		if (this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue()!=null) {
+				if (this.getJPanelCachedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
+					CredentialAssignment credAssgn = this.getJPanelCachedCredentials().getJListAssignedCredentials().getSelectedValue();
+					AbstractCredential cred =WsCredentialStore.getInstance().getCredential(credAssgn.getIdCredential());
+					int option = JOptionPane.showConfirmDialog(this,"Do you want to delete the Assignment of the credential with the name " + cred.getName()+ " of the type " + cred.getCredentialType() + "?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (option == JOptionPane.YES_OPTION) {
+						
+						//Delete credAssignment
+					    this.getJPanelCachedCredentials().getListCacheCredAssignment().add(credAssgn);
+						WsCredentialStore.getInstance().getCacheCredentialAssignmentList().remove(credAssgn);
+						String bundleName=this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue();
+						WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(bundleName).remove(credAssgn);
+						if(WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(bundleName).size()==0) {
+							WsCredentialStore.getInstance().getBundleCredAssgnsMap().remove(bundleName);
+						}
+						
+						//Refresh panel
+     					this.getJPanelCachedCredentials().fillCachedAssignedCredentialJList(bundleName);
+						this.getJPanelCachedCredentials().getJListAssignedCredentials().revalidate();
+						this.getJPanelCachedCredentials().getJListAssignedCredentials().repaint();
+						//Refresh CredentialPanel because empty credential of an assignment will be deleted
+						this.getJPanelCachedCredentials().fillCachedAssignedCredentialJList(bundleName);
+						this.getJPanelCachedCredentials().getJListAssignedCredentials().revalidate();
+						this.getJPanelCachedCredentials().getJListAssignedCredentials().repaint();
+						//Refresh the client panel
+						this.revalidate();
+						this.repaint();
+					}
+				}else {
+					JOptionPane.showMessageDialog(this,"Please select a assigned Credential in order to delete a Credential Assignment");
+				}
+		}else {
+			JOptionPane.showMessageDialog(this,"Please select a Client-Bundle in order to delete a Credential Assignment");
+		}
+	}
+	
+	/**
+	 * Deletes a {@link CredentialAssignment}.
+	 */
+	private void deleteAllCachedCredentialAssignmentOfaClientBundle() {
+		if (this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValuesList().size()==1) {
+				if (this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
+					String clientBundle = this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue();
+					AbstractCredential cred = this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue();
+					int option = JOptionPane.showConfirmDialog(this,"Do you want to delete all Assignments of the client-bundle with the name " +clientBundle+ " ?","Deletion of all credential assignments", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (option == JOptionPane.YES_OPTION) {
+						this.getJPanelCachedCredentials().deleteAllCachedCredentialAssignments(clientBundle);
+						this.revalidate();
+						this.repaint();
+					}
+				}else {
+					JOptionPane.showMessageDialog(this,"Please select a Credential in order to delete a Credential Assignment");
+				}
+		}else if(getJPanelClientBundle().getJListApiRegistration().getSelectedValuesList().size()>1) {
+			List<String> bundlesToDelete=this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValuesList();
+			
+			//Add all selected bundleNames 
+			String clientBundles="";
+			for (String clientBundleName : bundlesToDelete) {
+				clientBundles+=clientBundleName+" ,";
+			}
+			
+			//Delete all selected clientBundles
+			int option = JOptionPane.showConfirmDialog(this,"Do you want to delete all Assignments of the client-bundles with the names " +clientBundles+ " ?","Deletion of all credential assignments", JOptionPane.YES_NO_CANCEL_OPTION);
+			if (option == JOptionPane.YES_OPTION) {
+				for (String clientBundleName : bundlesToDelete) {
+					this.getJPanelCachedCredentials().deleteAllCachedCredentialAssignments(clientBundleName);
+				}
+				this.revalidate();
+				this.repaint();
+			}
 		}else {
 			JOptionPane.showMessageDialog(this,"Please select a Client-Bundle in order to delete a Credential Assignment");
 		}
@@ -312,6 +395,19 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	}
 	
 	/**
+	 * Fills the {@link JList} of the {@link JPanelCachedClientBundles} with all assigned credentials of the corresponding cached {@link AwbApiRegistrationService}.
+	 */
+	private void fillJListCachedAssignedCredentials() {
+		if(this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue()!=null) {
+		this.getJPanelCachedCredentials().getJListAssignedCredentials().clearSelection();
+		this.getJPanelCredentials().getJListCredentials().clearSelection();
+		this.getJPanelServerURL().getJListServerUrl().clearSelection();
+		this.getJPanelCachedCredentials().fillCachedAssignedCredentialJList(this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue());
+		}
+	}
+	
+	
+	/**
 	 * After the assigned credential is selected the corresponding {@link ServerURL} in JList of the {@link JPanelServerURL} and the corresponding {@link AbstractCredential} in the {@link JList} of the {@link JPanelCredentials}
 	 */
 	private void selectAllElementsOfaCredentialAssignment() {
@@ -349,6 +445,37 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			}
 		}
 	}
+
+	/**
+	 * After the assigned credential is selected the corresponding {@link ServerURL}
+	 * in JList of the {@link JPanelServerURL} and the corresponding
+	 * {@link AbstractCredential} in the {@link JList} of the
+	 * {@link JPanelCredentials}
+	 */
+	private void selectAllElementsOfaCachedCredentialAssignment() {
+		if (this.getJPanelCachedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
+
+			CredentialAssignment credAssignment = this.getJPanelCachedCredentials().getJListAssignedCredentials()
+					.getSelectedValue();
+			AbstractCredential cred =WsCredentialStore.getInstance().getCredential(credAssignment.getIdCredential());
+			this.getJPanelCredentials().getJListCredentials().setSelectedValue(cred, true);
+			
+			// Get the corresponding ServerURL
+			ServerURL server=WsCredentialStore.getInstance().getServerURL(credAssignment.getIdServerURL());
+			this.getJPanelServerURL().getJListServerUrl().setSelectedValue(server, true);
+
+			if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
+				
+				ListModel<String> bundleNames = this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getModel();
+				for (int i = 0; i < bundleNames.getSize(); i++) {
+                    String bundleName=bundleNames.getElementAt(i);
+                    if(bundleName.equals(credAssignment.getIdApiRegistrationDefaultBundleName())) {
+                    	this.getJPanelCachedClientBundles().getJListCachedApiRegistration().setSelectedValue(bundleName, true);
+                    }
+				}
+			}
+		}
+	}
 	
 	/**
 	 * As a reaction the {@link JButton} Create a CredentialAssignment of the {@link JPanelAssignedCredentials}, this method creates A credential assignment.
@@ -382,15 +509,47 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	@Override
 	public boolean hasUnsavedChanges() {
 		if(this.getJPanelAssignedCredentials().hasUnsavedChanges()) {
+			this.getJPanelAssignedCredentials().revalidate();
+			this.getJPanelAssignedCredentials().repaint();
+			this.revalidate();
+			this.repaint();
 			return true;
 		}
 		if(this.getJPanelClientBundle().hasUnsavedChanges()) {
+		   this.getJPanelClientBundle().revalidate();
+		   this.getJPanelClientBundle().repaint();
+		   this.revalidate();
+		   this.repaint();
 			return true;
 		}
 		if(this.getJPanelCredentials().hasUnsavedChanges()) {
+			this.getJPanelCredentials().revalidate();
+			this.getJPanelCredentials().repaint();
+			this.revalidate();
+			this.repaint();
 			return true;
 		}
 		if(this.getJPanelServerURL().hasUnsavedChanges()) {
+			this.getJPanelServerURL().revalidate();
+			this.getJPanelServerURL().repaint();
+			this.revalidate();
+			this.repaint();
+			return true;
+		}
+		if(this.getJPanelCachedClientBundles().hasUnsavedChanges()) {
+			this.getJPanelCachedClientBundles().revalidate();
+			this.getJPanelCachedClientBundles().repaint();
+			this.getJPanelCredentials().revalidate();
+			this.getJPanelCredentials().repaint();
+			this.revalidate();
+			this.repaint();
+			return true;
+		}
+		if(this.getJPanelCachedCredentials().hasUnsavedChanges()) {
+			this.getJPanelCredentials().revalidate();
+			this.getJPanelCredentials().repaint();
+			this.revalidate();
+			this.repaint();
 			return true;
 		}
 		return false;
@@ -457,8 +616,17 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			this.getJSplitPaneMiddle().setLeftComponent(this.getJPanelAssignedCredentials());
 			this.revalidate();
 			this.repaint();
+		}else if(e.getSource().equals(this.getJPanelCachedCredentials().getJButtonDeleteCredentialAssignment())) {
+			this.deleteCachedCredentialAssignment();
+		}else if(e.getSource().equals(this.getJPanelCachedClientBundles().getJButtonDeleteCredentialAssignment())){
+			this.getJPanelCachedClientBundles().deleteAllCachedCredentialAssignments();
+	        this.getJPanelCachedCredentials().refreshPanel();
+			this.revalidate();
+			this.repaint();
+		}else {
+			this.revalidate();
+			this.repaint();
 		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -470,10 +638,14 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
 				fillJListAssignedCredentials();
 			}
-		}else if(e.getSource().equals(getJPanelCredentials().getJListCredentials())) {
-
+		}else if (e.getSource().equals(this.getJPanelCachedClientBundles().getJListCachedApiRegistration())) {
+			if (this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue() != null) {
+				fillJListCachedAssignedCredentials();
+			}
 		}else if(e.getSource().equals(getJPanelAssignedCredentials().getJListAssignedCredentials())) {
 			selectAllElementsOfaCredentialAssignment();	
+		}else if(e.getSource().equals(getJPanelCachedCredentials().getJListAssignedCredentials())) {
+			selectAllElementsOfaCachedCredentialAssignment();
 		}
 	}
 }

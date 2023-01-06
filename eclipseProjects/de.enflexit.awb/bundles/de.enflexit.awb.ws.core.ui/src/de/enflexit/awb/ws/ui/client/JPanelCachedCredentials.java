@@ -8,6 +8,8 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -22,7 +24,6 @@ import de.enflexit.awb.ws.client.ApiRegistration;
 import de.enflexit.awb.ws.client.AwbApiRegistrationService;
 import de.enflexit.awb.ws.client.CredentialAssignment;
 import de.enflexit.awb.ws.client.WsCredentialStore;
-import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
 /**
@@ -34,7 +35,7 @@ public class JPanelCachedCredentials extends JPanel implements WsConfigurationIn
 
 	private static final long serialVersionUID = -8432771480572412286L;
 	private JScrollPane jScrollPanelCacheCredentials;
-	private JList<AbstractCredential> jListCacheCredentials;
+	private JList<CredentialAssignment> jListCacheCredentials;
 	private JLabel jLableCredAssignment;
 	private JButton jButtonDeleteCredentialAssignment;
 	private JPanel jPanelHeader;
@@ -98,12 +99,12 @@ public class JPanelCachedCredentials extends JPanel implements WsConfigurationIn
 	 *
 	 * @return the {@link JList} assigned credentials
 	 */
-	public JList<AbstractCredential> getJListAssignedCredentials() {
+	public JList<CredentialAssignment> getJListAssignedCredentials() {
 		if (jListCacheCredentials == null) {
-			jListCacheCredentials = new JList<AbstractCredential>();
+			jListCacheCredentials = new JList<CredentialAssignment>();
 			jListCacheCredentials.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if(getClientBundleName()!=null) {
-				fillAssignedCredentialJList(getClientBundleName());
+				this.fillCachedAssignedCredentialJList(getClientBundleName());
 			}
 		}
 		return jListCacheCredentials;
@@ -190,29 +191,69 @@ public class JPanelCachedCredentials extends JPanel implements WsConfigurationIn
 	 *
 	 * @param awbRegService the corresponding {@link ApiRegistration}, which assigned Credentials should be shown
 	 */
-	public void fillAssignedCredentialJList(String clientBundleName) {
+	public void fillCachedAssignedCredentialJList(String clientBundleName) {
+		
+		List<CredentialAssignment> assgnCredentials = new ArrayList<>();
+		
+		if(WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(clientBundleName)!=null) {
+			
+			Map<String,List<CredentialAssignment>> mapBundleCredAssgn=WsCredentialStore.getInstance().getBundleCredAssgnsMap();
+			List<CredentialAssignment> credAssignments=mapBundleCredAssgn.get(clientBundleName);
+            assgnCredentials=credAssignments;
+            
+		}else {
+			
+			List<CredentialAssignment> credAssgnList = WsCredentialStore.getInstance().getCacheCredentialAssignmentList();
 
-		List<CredentialAssignment> credAssgnList = WsCredentialStore.getInstance().getCacheCredentialAssignmentList();
-		List<CredentialAssignment> credAssgnOfSelectedApi = new ArrayList<CredentialAssignment>();
-		List<AbstractCredential> assgnCredentials = new ArrayList<>();
-
-		for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
-			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
-			String apiId = credentialAssignment.getIdApiRegistrationDefaultBundleName();
-			if (clientBundleName.equals(apiId)) {
-				credAssgnOfSelectedApi.add(credentialAssignment);
-				AbstractCredential abstractCred = WsCredentialStore.getInstance().getCredentialWithID(credentialAssignment.getIdCredential());
-				assgnCredentials.add(abstractCred);
-			}
+			for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
+				CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+		        assgnCredentials.add(credentialAssignment);
+			}			
 		}
-		DefaultListModel<AbstractCredential> defaultListModel= new DefaultListModel<>();
+		
+		DefaultListModel<CredentialAssignment> defaultListModel= new DefaultListModel<>();
 		defaultListModel.addAll(assgnCredentials);
-		getJListAssignedCredentials().setModel(defaultListModel);
+		this.getJListAssignedCredentials().setModel(defaultListModel);
 		this.revalidate();
 		this.repaint();
 	}
 	
 
+	public void deletedCacheCredentialAssignment(String clientBundleName,UUID credentialID,UUID serverID ) {
+		List<CredentialAssignment> credAssgn=WsCredentialStore.getInstance().getCacheCredentialAssignmentList();
+		List<CredentialAssignment> deleteCredAssgns=new ArrayList<CredentialAssignment>();
+		for (Iterator<CredentialAssignment> iterator = credAssgn.iterator(); iterator.hasNext();) {
+			CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+			if(credentialAssignment.getIdApiRegistrationDefaultBundleName().equals(clientBundleName)) {
+				if(credentialAssignment.getIdCredential().equals(credentialID)) {
+					if(credentialAssignment.getIdServerURL().equals(serverID)) {
+					    deleteCredAssgns.add(credentialAssignment);
+					    break;
+					}
+				}
+			}
+		}	
+		
+		if(deleteCredAssgns.size()>0) {
+			this.getDeletedCachedCredAssignments().addAll(WsCredentialStore.getInstance().getBundleCredAssgnsMap().remove(clientBundleName));
+		}
+	}
+	
+	public void deleteAllCachedCredentialAssignments(String clientBundleName) {
+		this.getDeletedCachedCredAssignments().addAll(WsCredentialStore.getInstance().getBundleCredAssgnsMap().remove(clientBundleName));
+		this.revalidate();
+		this.repaint();
+	}
+	
+	public void refreshPanel() {
+		this.getJListAssignedCredentials().clearSelection();
+		this.getJListAssignedCredentials().removeAll();
+		this.getJListAssignedCredentials().revalidate();;
+		this.getJListAssignedCredentials().repaint();
+		this.revalidate();
+		this.repaint();
+	}
+	
 	//-------------------------------------------------------------------------------------
 	//--------------Overriden Methods and Non GUI Getter and Setters-----------------------
 	//-------------------------------------------------------------------------------------

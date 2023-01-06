@@ -131,10 +131,22 @@ public class WsCredentialStore implements Serializable {
 			if(!defaultClientBundleNames.contains(credentialAssignment.getIdApiRegistrationDefaultBundleName())) {
 				//Cache the changes until they are deleted by the user
 				this.getCacheCredentialAssignmentList().add(credentialAssignment);
-		        this.getCredentialAssignmentList().remove(credentialAssignment);
-		        this.putInBundleCredAssgnList(credentialAssignment);
+		        this.putInBundleCredAssgnMap(credentialAssignment);
 			}
 		}
+	    this.getCredentialAssignmentList().removeAll(this.getCacheCredentialAssignmentList());
+	    //Check if a service was deleted and is now added again
+	    List<CredentialAssignment> credAssgnCache= this.getCacheCredentialAssignmentList();
+	 		    for (Iterator<CredentialAssignment> iteratorCredAssgn = credAssgnCache.iterator(); iteratorCredAssgn.hasNext();) {
+				CredentialAssignment credentialAssignment = (CredentialAssignment) iteratorCredAssgn.next();
+				if(defaultClientBundleNames.contains(credentialAssignment.getIdApiRegistrationDefaultBundleName())) {
+					//Reactivate the cached CredentialAssignment
+					this.getCredentialAssignmentList().add(credentialAssignment);
+			        this.getBundleCredAssgnsMap().remove(credentialAssignment.getIdApiRegistrationDefaultBundleName(), this.getBundleCredAssgnsMap().get(credentialAssignment.getIdApiRegistrationDefaultBundleName()));
+				}
+			}
+	 		this.getCacheCredentialAssignmentList().removeAll(this.getCredentialAssignmentList());
+		
 		return apiRegistrationServiceList;
 	}
 	
@@ -143,7 +155,7 @@ public class WsCredentialStore implements Serializable {
 	 *
 	 * @param ca the {@link CredentialAssignment}
 	 */
-	public void putInBundleCredAssgnList(CredentialAssignment ca) {
+	public void putInBundleCredAssgnMap(CredentialAssignment ca) {
 		Map<String, List<CredentialAssignment>> bundleCredAssgnMap=this.getBundleCredAssgnsMap();
 		if(bundleCredAssgnMap.get(ca.getIdApiRegistrationDefaultBundleName())== null) {
 			List<CredentialAssignment> credAssgn=new ArrayList<CredentialAssignment>();
@@ -151,15 +163,28 @@ public class WsCredentialStore implements Serializable {
 		    bundleCredAssgnMap.put(ca.getIdApiRegistrationDefaultBundleName(), credAssgn);
 		}else {
 			List<CredentialAssignment> credAssgn=bundleCredAssgnMap.get(ca.getIdApiRegistrationDefaultBundleName());
-			credAssgn.add(ca);
+			if(!credAssgn.contains(ca)) {
+				credAssgn.add(ca);
+			}
 		    bundleCredAssgnMap.put(ca.getIdApiRegistrationDefaultBundleName(), credAssgn);
 		}
 		
 	}
 	
+	/**
+	 * Gets the Bundle CredentialAssignment map. Maps clientBundleName with its corresponding CredentialAssignments
+	 *
+	 * @return the Bundle CredentialAssignment map
+	 */
 	public Map<String, List<CredentialAssignment>> getBundleCredAssgnsMap() {
 		if(this.bundleCredAssgns==null) {
 			bundleCredAssgns=new HashMap<String,List<CredentialAssignment>>();
+			if(this.getCacheCredentialAssignmentList().size()>0) {
+				for (Iterator<CredentialAssignment> iterator = this.getCacheCredentialAssignmentList().iterator(); iterator.hasNext();) {
+					CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+					this.putInBundleCredAssgnMap(credentialAssignment);
+				}
+			}
 		}
 		return bundleCredAssgns;
 	}
@@ -172,9 +197,9 @@ public class WsCredentialStore implements Serializable {
 		AwbApiRegistrationService apiReg=this.getApiRegistration(apiRegService.getClientBundleName());
 		if(apiReg==null) {
 			this.getApiRegistrationServiceList().add(apiRegService);
-			setupApiRegistrationService(apiRegService);
+			this.setupApiRegistrationService(apiRegService);
 		}else {
-			setupApiRegistrationService(apiRegService);
+			this.setupApiRegistrationService(apiRegService);
 		}
 	}
 
@@ -339,6 +364,22 @@ public class WsCredentialStore implements Serializable {
 	}
 	
 	/**
+	 * Gets the server URL.
+	 *
+	 * @param url the url
+	 * @return the server URL
+	 */
+	public synchronized ServerURL getServerURL(UUID id) {
+		if (id==null) return null;
+		for (ServerURL serverURL : this.getServerURLList()) {
+			if (serverURL.getID().equals(id)) {
+				return serverURL;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the credential list.
 	 * @return the credential list
 	 */
@@ -387,7 +428,6 @@ public class WsCredentialStore implements Serializable {
 	 * @param apiRegistrationClass the api registration
 	 * @return the credential
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T getCredential(T type, Class<? extends AwbApiRegistrationService> apiRegistrationClass) {
 		
 		List<AwbApiRegistrationService> registeredServiceList = ServiceFinder.findServices(AwbApiRegistrationService.class);
@@ -793,12 +833,37 @@ public class WsCredentialStore implements Serializable {
 			List<CredentialAssignment> crdAssgnList = this.getCredentialAssignmentWithServer(apiRegServer);
 			for (CredentialAssignment credentialAssignment : crdAssgnList) {
 				AbstractCredential cred = this.getCredential(credentialAssignment.getIdCredential());
-				if (cred.getCredentialType().equals(apiRegService.getCredentialType())) {
-					specifiedCred = cred;
+				if (cred != null) {
+					if (cred.getCredentialType().equals(apiRegService.getCredentialType())) {
+						specifiedCred = cred;
+					}
 				}
 			}
 		}
 		return specifiedCred;
+	}
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here methods for cached credentials-------------- -----------------------
+	// ----------------------------------------------------------------------------------
+	
+	/**
+	 * Gets the cached credential assignment with one credential.
+	 *
+	 * @param bundleName the bundle name
+	 * @param cred the cred
+	 * @return the cached credential assignment with one credential
+	 */
+	public List<CredentialAssignment> getCachedCredentialAssignmentWithOneCredential(String bundleName,AbstractCredential cred) {
+		List<CredentialAssignment> credentialAssignments=new ArrayList<CredentialAssignment>();
+		for (CredentialAssignment credAssgn : this.getCredentialAssignmentList()) {
+			if(credAssgn.getIdApiRegistrationDefaultBundleName().equals(bundleName)){
+				if(credAssgn.getIdCredential()==cred.getID()) {
+					credentialAssignments.add(credAssgn);
+				}
+			}
+		}
+		return credentialAssignments;
 	}
 	
 	// ----------------------------------------------------------------------------------
