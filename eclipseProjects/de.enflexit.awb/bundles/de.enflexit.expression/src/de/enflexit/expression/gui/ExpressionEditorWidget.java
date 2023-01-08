@@ -2,6 +2,8 @@ package de.enflexit.expression.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -85,7 +87,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonEditor()) {
-			this.getEditorDialog().setExpression(this.getExpressionFromTextfield());
+			this.getEditorDialog().setExpression(this.getExpression());
 			this.getEditorDialog().setVisible(true);
 			
 			if (this.getEditorDialog().isCanceled()==false) {
@@ -120,6 +122,13 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		if (jTextFieldExpression == null) {
 			jTextFieldExpression = new JTextField();
 			jTextFieldExpression.setColumns(10);
+			jTextFieldExpression.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					// --- Update the expression when leaving the textfield ---
+					ExpressionEditorWidget.this.expression = ExpressionEditorWidget.this.getExpressionFromTextfield();
+				}
+			});
 		}
 		return jTextFieldExpression;
 	}
