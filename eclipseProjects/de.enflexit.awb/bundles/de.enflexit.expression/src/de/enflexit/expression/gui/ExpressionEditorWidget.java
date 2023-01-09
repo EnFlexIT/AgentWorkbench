@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Dimension;
+import java.awt.Font;
+
 import javax.swing.JTextField;
 
 import de.enflexit.expression.Expression;
@@ -118,17 +120,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		}
 		return expression;
 	}
-<<<<<<< HEAD
-=======
 
-	private JLabel getJLabelExpression() {
-		if (jLabelExpression == null) {
-			jLabelExpression = new JLabel("Expression");
-			jLabelExpression.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelExpression;
-	}
->>>>>>> refs/remotes/origin/master
 	private JTextField getJTextFieldExpression() {
 		if (jTextFieldExpression == null) {
 			jTextFieldExpression = new JTextField();
@@ -169,7 +161,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	
 	private ExpressionEditorDialog getEditorDialog() {
 		if (editorDialog==null) {
-			editorDialog = new ExpressionEditorDialog();
+			editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
 		}
 		return editorDialog;
 	}

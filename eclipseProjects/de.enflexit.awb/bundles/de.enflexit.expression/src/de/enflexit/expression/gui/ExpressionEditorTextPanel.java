@@ -100,60 +100,6 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 		}
 		return jTextAreaExpression;
 	}
-<<<<<<< HEAD
-	private JCheckBox getJCheckBoxAutoParse() {
-		if (jCheckBoxAutoParse == null) {
-			jCheckBoxAutoParse = new JCheckBox("Auto parse");
-			jCheckBoxAutoParse.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jCheckBoxAutoParse.addActionListener(this);
-		}
-		return jCheckBoxAutoParse;
-	}
-	private JButton getJButtonParse() {
-		if (jButtonParse == null) {
-			jButtonParse = new JButton("Parse");
-			jButtonParse.addActionListener(this);
-		}
-		return jButtonParse;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource()==this.getJButtonParse()) {
-			this.parseExpression();
-		}
-	}
-	
-	protected void parseExpression() {
-		String expressionString = this.getJTextAreaExpression().getText();
-		this.expression = this.getParser().parse(expressionString);
-		this.firePropertyChange(EXPRESSION_PARSED, null, this.expression);
-	}
-	
-	/**
-	 * Sets the expression.
-	 * @param expression the new expression
-	 */
-	public void setExpression(Expression expression) {
-		this.expression = expression;
-		if (expression!=null) {
-			this.getJTextAreaExpression().setText(expression.getExpressionString());
-		}
-	}
-	
-	/**
-	 * Gets the expression.
-	 * @return the expression
-	 */
-	public Expression getExpression() {
-		return this.expression;
-	}
-	
-=======
->>>>>>> refs/remotes/origin/master
 	/**
 	 * Highlights a sub-expression of the current expression by selecting it in the 
 	 * text area. If the provided expression is null, the selection will be cleared.
@@ -207,13 +153,20 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	public void actionPerformed(ActionEvent ae) {
 		
 		if (ae.getSource()==this.getJButtonParse()) {
-			String expressionString = this.getJTextAreaExpression().getText();
-			this.expression = ExpressionParser.parse(expressionString);
-			this.firePropertyChange(EXPRESSION_PARSED, null, this.expression);
+			this.parseExpression();
 			if (this.expression!=null) {
 				this.getJTextFieldResult().setText(this.expression.getExpressionResult().toString());
 			}
 		}
+	}
+	
+	/**
+	 * Parses the expression from the text area.
+	 */
+	protected void parseExpression() {
+		String expressionString = this.getJTextAreaExpression().getText();
+		this.expression = ExpressionParser.parse(expressionString);
+		this.firePropertyChange(EXPRESSION_PARSED, null, this.expression);
 	}
 
 	/**
@@ -222,7 +175,9 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	 */
 	public void setExpression(Expression expression) {
 		this.expression = expression;
-		this.getJTextAreaExpression().setText(expression.getExpressionString());
+		if (expression!=null) {
+			this.getJTextAreaExpression().setText(expression.getExpressionString());
+		}
 	}
 	/**
 	 * Gets the expression.
@@ -231,7 +186,6 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	public Expression getExpression() {
 		return this.expression;
 	}
-<<<<<<< HEAD
 	
 	/**
 	 * Inserts the specified string at the current cursor position.
@@ -242,8 +196,4 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 		this.getJTextAreaExpression().insert(expressionString, cursorPosition);
 		this.getJTextAreaExpression().requestFocusInWindow();
 	}
-=======
-
-	
->>>>>>> refs/remotes/origin/master
 }

@@ -96,7 +96,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	
 	private ExpressionEditorDialog getEditorDialog() {
 		if (editorDialog==null) {
-			editorDialog = new ExpressionEditorDialog();
+			editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
 		}
 		return editorDialog;
 	}
@@ -127,7 +127,9 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	 */
 	public void setExpression(Expression expression) {
 		this.expression = expression;
-		this.getJTextFieldExpression().setText(expression.getExpressionString());
+		if (expression!=null) {
+			this.getJTextFieldExpression().setText(expression.getExpressionString());
+		}
 	}
 	@Override
 	public void actionPerformed(ActionEvent ae) {

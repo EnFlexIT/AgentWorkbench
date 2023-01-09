@@ -31,11 +31,8 @@ import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.expression.ExpressionEditorTreeNode;
 import de.enflexit.expression.ExpressionService;
-<<<<<<< HEAD
 import de.enflexit.expression.ExpressionType;
-=======
 import de.enflexit.expression.ExpressionServiceHelper;
->>>>>>> refs/remotes/origin/master
 
 /**
  * This class implements the lower right part of the expression editor,
