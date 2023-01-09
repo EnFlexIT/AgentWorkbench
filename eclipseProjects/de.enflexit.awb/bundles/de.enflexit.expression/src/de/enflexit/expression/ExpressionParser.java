@@ -1,55 +1,33 @@
 package de.enflexit.expression;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.expression.math.ExpressionTypeMath;
 
+/**
+ * The Class ExpressionParser parses the specified expression string and converts it
+ * into a an Expression that can be evaluated by the {@link ExpressionEvaluator}.
+ * 
+ * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
+ */
 public class ExpressionParser {
-	
-	private static final char openingDelimiter = '[';
-	private static final char closingDelimiter = ']';
-	
-	private HashMap<ExpressionType, ExpressionService> availableExpressionServices;
-
-	/**
-	 * Provides a dictionary of all available {@link ExpressionService}s, accessible by the corresponding {@link ExpressionType}.
-	 * @return the available expression services
-	 */
-	public HashMap<ExpressionType, ExpressionService> getAvailableExpressionServices() {
-		if (availableExpressionServices==null) {
-			availableExpressionServices = new HashMap<>();
-			List<ExpressionService> expressionServices = ServiceFinder.findServices(ExpressionService.class);
-			for (int i=0; i<expressionServices.size(); i++) {
-				ExpressionService expressionService = expressionServices.get(i);
-				availableExpressionServices.put(expressionService.getExpressionType(), expressionService);
-			}
-		}
-		return availableExpressionServices;
-	}
 	
 	/**
 	 * Parses the provided expression String, recursively processing sub-expressions.
 	 * @param expressionString the expression string
 	 * @return the expression
 	 */
-	public Expression parse (String expressionString) {
+	public static Expression parse(String expressionString) {
 		
 		Expression expression = new Expression(expressionString);
 		ExpressionType expressionType = null;
 		
 		// --- Check if the expression is atomic (i.e. contains no sub expressions)
-		if (expressionString.indexOf(openingDelimiter)==-1) {
-			
+		if (expressionString.indexOf(ExpressionService.EXPRESSION_OPENING_DELIMITER)==-1) {
 			// --- Check for type specifiers (can only occur in atomic expressions
 			int separatorPos = expressionString.indexOf('!');
 			if (separatorPos>0) {
-				
 				// --- Find the corresponding ExpressionType ------------------
 				String typeIdentifier = expressionString.substring(0, separatorPos);
-				expressionType = this.getExpressionType(typeIdentifier);
+				expressionType = ExpressionServiceHelper.getExpressionType(typeIdentifier);
 				
 				if (expressionType==null) {
 					// -- No matching ExpressionType found --------------------
@@ -58,21 +36,18 @@ public class ExpressionParser {
 			}
 			
 		} else {
-			
 			// --- Not atomic, check for sub-expressions ----------------------
 			int subStrBegin, subStrLength;
 			for (int currPos = 0; currPos<expressionString.length(); currPos++) {
-				if (expressionString.charAt(currPos)==openingDelimiter) {
+				if (expressionString.charAt(currPos)==ExpressionService.EXPRESSION_OPENING_DELIMITER) {
+
 					subStrBegin = currPos;
-					subStrLength = this.findClosingDelimiter(expressionString.substring(currPos));
-					
+					subStrLength = ExpressionParser.findClosingDelimiter(expressionString.substring(currPos));
 					// --- Found a valid sub-expression -----------------
 					if (subStrLength>0) {
-						
 						// --- Extract, parse and add to parent ---------
 						String subExpressionString = expressionString.substring(subStrBegin+1, subStrBegin+subStrLength);
-						expression.getSubExpressions().add(this.parse(subExpressionString));
-						
+						expression.getSubExpressions().add(ExpressionParser.parse(subExpressionString));
 						// --- Continue after the sub-expression -------- 
 						currPos += subStrLength;
 						
@@ -85,27 +60,25 @@ public class ExpressionParser {
 		}
 		
 		// --- If no other type was determined, use math as default ----------- 
-		if (expressionType==null) {
-			expressionType = ExpressionTypeMath.getInstance();
-		}
-		expression.setExpressionType(expressionType);
+		expression.setExpressionType(expressionType==null ? ExpressionTypeMath.getInstance() : expressionType);
 		
 		return expression;
 	}
 	
 	/**
 	 * Finds the corresponding closing delimiter in a string that starts with an opening delimiter.
-	 * @param string the string
-	 * @return the int
+	 * 
+	 * @param expressionString the expression string in which to find the closing delimiter
+	 * @return the index position of the closing delimiter, if found or -1 
 	 */
-	private int findClosingDelimiter(String string) {
+	private static int findClosingDelimiter(String expressionString) {
 		int depth = 0;
-		for (int i=0; i<string.length(); i++) {
-			char currentChar = string.charAt(i); 
-			if (currentChar==openingDelimiter) {
+		for (int i=0; i<expressionString.length(); i++) {
+			char currentChar = expressionString.charAt(i); 
+			if (currentChar==ExpressionService.EXPRESSION_OPENING_DELIMITER) {
 				// --- Nested delimiter opened ------------ 
 				depth++;
-			} else if (currentChar==closingDelimiter) {
+			} else if (currentChar==ExpressionService.EXPRESSION_CLOSING_DELIMITER) {
 				// --- Nested delimiter closed ------------
 				depth--;
 				// --- Matching closing delimiter -------------
@@ -113,20 +86,11 @@ public class ExpressionParser {
 					return i;
 				}
 			}
-			
 		}
 		
 		// --- No matching closing delimiter found --------
 		return -1; 
 	}
 	
-	private ExpressionType getExpressionType(String typePrefix) {
-		ArrayList<ExpressionType> availableTypes = new ArrayList<>(this.getAvailableExpressionServices().keySet());
-		for (ExpressionType type : availableTypes){
-			if (type.getTypePrefix().equals(typePrefix)) {
-				return type;
-			}
-		}
-		return null;
-	}
+	
 }

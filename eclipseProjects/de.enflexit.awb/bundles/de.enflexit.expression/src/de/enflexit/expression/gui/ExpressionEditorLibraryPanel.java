@@ -25,9 +25,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.expression.ExpressionEditorTreeNode;
 import de.enflexit.expression.ExpressionService;
+import de.enflexit.expression.ExpressionServiceHelper;
 
 /**
  * This class implements the lower right part of the expression editor,
@@ -240,6 +240,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private JList<String> getJListSubCategories() {
 		if (jListSubCategories == null) {
 			jListSubCategories = new JList<String>();
+			jListSubCategories.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListSubCategories.addListSelectionListener(this);
 		}
 		return jListSubCategories;
@@ -263,6 +264,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private JList<String> getJListExpressions() {
 		if (jListExpressions == null) {
 			jListExpressions = new JList<String>();
+			jListExpressions.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListExpressions.addListSelectionListener(this);
 		}
 		return jListExpressions;
@@ -274,14 +276,14 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	 * @return the default mutable tree node
 	 */
 	private DefaultMutableTreeNode buildLibraryTree() {
+		
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Expression Library");
 		
 		// --- Get available expression services ----------
-		List<ExpressionService> expressionServices = ServiceFinder.findServices(ExpressionService.class);
+		List<ExpressionService<?>> expressionServices = new ArrayList<>(ExpressionServiceHelper.getAvailableExpressionServices().values());
 		for (int i=0; i<expressionServices.size(); i++) {
 			rootNode.add(expressionServices.get(i).getExpressionEditorRootNode());
 		}
-		
 		return rootNode;
 	}
 	

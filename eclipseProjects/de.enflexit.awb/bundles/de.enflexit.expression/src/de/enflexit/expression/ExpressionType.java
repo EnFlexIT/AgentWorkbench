@@ -11,4 +11,13 @@ public abstract class ExpressionType {
 	 * @return the type prefix
 	 */
 	public abstract String getTypePrefix();
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ExpressionType: " + this.getTypePrefix();
+	}
+	
 }
