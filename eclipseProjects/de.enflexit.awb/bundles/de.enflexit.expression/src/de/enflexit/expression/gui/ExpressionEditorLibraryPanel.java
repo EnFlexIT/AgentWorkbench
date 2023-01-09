@@ -29,10 +29,13 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.expression.ExpressionEditorTreeNode;
 import de.enflexit.expression.ExpressionService;
+<<<<<<< HEAD
 import de.enflexit.expression.ExpressionType;
+=======
+import de.enflexit.expression.ExpressionServiceHelper;
+>>>>>>> refs/remotes/origin/master
 
 /**
  * This class implements the lower right part of the expression editor,
@@ -249,6 +252,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private JList<String> getJListSubCategories() {
 		if (jListSubCategories == null) {
 			jListSubCategories = new JList<String>();
+			jListSubCategories.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListSubCategories.addListSelectionListener(this);
 		}
 		return jListSubCategories;
@@ -272,6 +276,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private JList<String> getJListExpressions() {
 		if (jListExpressions == null) {
 			jListExpressions = new JList<String>();
+			jListExpressions.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListExpressions.addListSelectionListener(this);
 			jListExpressions.addMouseListener(new MouseAdapter() {
 				@Override
@@ -306,16 +311,16 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	 * @return the default mutable tree node
 	 */
 	private DefaultMutableTreeNode buildLibraryTree() {
+		
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Expression Library");
 		
 		// --- Get available expression services ----------
-		List<ExpressionService> expressionServices = ServiceFinder.findServices(ExpressionService.class);
+		List<ExpressionService<?>> expressionServices = new ArrayList<>(ExpressionServiceHelper.getAvailableExpressionServices().values());
 		for (int i=0; i<expressionServices.size(); i++) {
 			ExpressionEditorTreeNode categoryNode = expressionServices.get(i).getExpressionEditorRootNode();
 			rootNode.add(categoryNode);
 			this.getExpressionTypesForCategories().put(categoryNode, expressionServices.get(i).getExpressionType());
 		}
-		
 		return rootNode;
 	}
 	

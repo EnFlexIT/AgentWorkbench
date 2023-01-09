@@ -3,17 +3,16 @@ package de.enflexit.expression.math;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionEditorTreeNode;
 import de.enflexit.expression.ExpressionService;
+import de.enflexit.expression.ExpressionServiceEvaluator;
 import de.enflexit.expression.ExpressionType;
-import de.enflexit.expression.UnknownExpressionException;
 
 /**
  * The Class MathExpressionService.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class MathExpressionService implements ExpressionService {
+public class MathExpressionService implements ExpressionService<Double> {
 	
 	private ExpressionEditorTreeNode expressionEditorRootNode;
 
@@ -24,34 +23,15 @@ public class MathExpressionService implements ExpressionService {
 	public ExpressionType getExpressionType() {
 		return ExpressionTypeMath.getInstance();
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see de.enflexit.expression.ExpressionService#evaluate(de.enflexit.expression.Expression)
+	 * @see de.enflexit.expression.ExpressionService#getExpressionServiceEvaluator()
 	 */
 	@Override
-	public double evaluate(Expression expression) throws UnknownExpressionException {
-		// TODO implement evaluation
-		return 42.0;
+	public ExpressionServiceEvaluator<Double> getExpressionServiceEvaluator() {
+		return new MXExpressionEvaluator();
 	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.expression.ExpressionService#isValid(de.enflexit.expression.Expression)
-	 */
-	@Override
-	public boolean isValid(Expression expression) {
-		// TODO implement validation
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.expression.ExpressionService#getErrorMessage()
-	 */
-	@Override
-	public String getErrorMessage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.expression.ExpressionService#getExpressionEditorRootNode()
 	 */
@@ -69,6 +49,7 @@ public class MathExpressionService implements ExpressionService {
 	 * @return the tree map
 	 */
 	private TreeMap<String, ArrayList<String>> buildTemplatesTreeMap(){
+		
 		TreeMap<String, ArrayList<String>> expressionTemplates = new TreeMap<>();
 		
 		ArrayList<String> functionTemplates = new ArrayList<>();

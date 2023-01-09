@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.ui.client;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -23,6 +24,7 @@ import javax.swing.JScrollPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.awb.ws.client.CredentialAssignment;
 import de.enflexit.awb.ws.client.ServerURL;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
@@ -52,6 +54,8 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	 * Instantiates a new j panel server URL.
 	 */
 	public JPanelServerURL() {
+	
+		
 		this.initialize();
 	}
 
@@ -148,7 +152,7 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	 *
 	 * @return the j button delete server url
 	 */
-	private JButton getJButtonDeleteServerUrl() {
+	public JButton getJButtonDeleteServerUrl() {
 		if (jButtonDeleteServerUrl == null) {
 			jButtonDeleteServerUrl = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonDeleteServerUrl.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -342,8 +346,14 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 
 	private void deleteServerURL(ServerURL serverURL) {
 		if (serverURL != null) {
-			int option = JOptionPane.showConfirmDialog(this, "Do you want to delete the Server with the following URL "+ serverURL.getServerURL()+"?","Deletion of a Server-URL", JOptionPane.YES_NO_CANCEL_OPTION);
+			int option = JOptionPane.showConfirmDialog(this, "Do you want to delete the Server with the following URL "+ serverURL.getServerURL()+"and all its corresponding CredentialAssignments?","Deletion of a Server-URL", JOptionPane.YES_NO_CANCEL_OPTION);
 			if(option==JOptionPane.YES_OPTION) {
+			  
+				// Remove all linked CredentialAssignments before deleting the credential
+			   List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getCredentialAssignmentWithServer(serverURL);
+			   WsCredentialStore.getInstance().getCredentialAssignmentList().removeAll(credAssgns);
+		       
+			   // Remove ServerURL
 			   WsCredentialStore.getInstance().getServerURLList().remove(serverURL);
 			   this.fillJListServerUrlAndRepaint();
 			   this.getDeletedServerURLCache().add(serverURL);

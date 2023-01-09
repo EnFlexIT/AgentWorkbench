@@ -118,9 +118,21 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		}
 		return expression;
 	}
+<<<<<<< HEAD
+=======
+
+	private JLabel getJLabelExpression() {
+		if (jLabelExpression == null) {
+			jLabelExpression = new JLabel("Expression");
+			jLabelExpression.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelExpression;
+	}
+>>>>>>> refs/remotes/origin/master
 	private JTextField getJTextFieldExpression() {
 		if (jTextFieldExpression == null) {
 			jTextFieldExpression = new JTextField();
+			jTextFieldExpression.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldExpression.setColumns(10);
 			jTextFieldExpression.addFocusListener(new FocusAdapter() {
 				@Override

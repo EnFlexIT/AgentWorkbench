@@ -10,6 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class ExpressionEditorTreeNode extends DefaultMutableTreeNode {
+	
 	private static final long serialVersionUID = -6995251247736826244L;
 	
 	private TreeMap<String, ArrayList<String>> expressionTemplates;

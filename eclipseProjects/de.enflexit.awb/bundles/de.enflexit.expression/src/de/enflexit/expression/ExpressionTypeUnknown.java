@@ -7,6 +7,7 @@ package de.enflexit.expression;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class ExpressionTypeUnknown extends ExpressionType {
+	
 	private String typePrefix;
 	
 	/**

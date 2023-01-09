@@ -11,7 +11,8 @@ Export-Package: de.enflexit.expression,
 Require-Bundle: de.enflexit.common,
  org.agentgui.core,
  org.awb.env.networkModel,
- org.agentgui.lib.jade;bundle-version="4.5.1"
+ wrapped.org.mariuszgromada.math.MathParser.org-mXparser,
+ org.agentgui.lib.jade
 Automatic-Module-Name: de.enflexit.expression
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11

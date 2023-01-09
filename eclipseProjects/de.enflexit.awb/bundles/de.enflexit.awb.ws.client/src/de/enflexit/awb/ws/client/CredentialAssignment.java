@@ -149,4 +149,16 @@ public class CredentialAssignment implements Serializable {
 		}
 	}
 	
+	@Override
+	public String toString() {
+
+		if (WsCredentialStore.getInstance().getCredential(this.getIdCredential()) != null) {
+			return WsCredentialStore.getInstance().getCredential(this.getIdCredential()).getName();
+		}
+		if (this.getIdApiRegistrationDefaultBundleName() != null) {
+			return this.getIdApiRegistrationDefaultBundleName();
+		}
+		return super.toString();
+	}
+	
 }

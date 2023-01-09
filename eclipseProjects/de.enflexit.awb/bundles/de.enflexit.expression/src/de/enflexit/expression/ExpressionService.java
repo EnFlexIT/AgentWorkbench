@@ -7,8 +7,13 @@ package de.enflexit.expression;
  * node to extend the selection of expression templates provided by the editor.  
  *
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ * @author Christian Derksen - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public interface ExpressionService {
+public interface ExpressionService<ReturnType> {
+	
+	public static final char EXPRESSION_OPENING_DELIMITER = '[';
+	public static final char EXPRESSION_CLOSING_DELIMITER = ']';
+	
 	
 	/**
 	 * Gets the expression type.
@@ -17,25 +22,10 @@ public interface ExpressionService {
 	public ExpressionType getExpressionType();
 	
 	/**
-	 * Evaluates the provided expression.
-	 * @param expression the expression
-	 * @return the expression result
-	 * @throws UnknownExpressionException thrown if the expression cannot be evaluated by this service
+	 * Has to return the expression service evaluator instance that is able to evaluate an expression string.
+	 * @return the expression service evaluator
 	 */
-	public double evaluate(Expression expression) throws UnknownExpressionException;
-	
-	/**
-	 * Checks if the provided expression is valid.
-	 * @param expression the expression
-	 * @return true, if is valid
-	 */
-	public boolean isValid(Expression expression);
-	
-	/**
-	 * This method should provide a meaningful error message if validating or evaluating an expression failed-  
-	 * @return the error message
-	 */
-	public String getErrorMessage();
+	public ExpressionServiceEvaluator<ReturnType> getExpressionServiceEvaluator();
 	
 	/**
 	 * Provides a TreeNode to integrate the expression templates provided
@@ -43,4 +33,5 @@ public interface ExpressionService {
 	 * @return the expression tree root node
 	 */
 	public ExpressionEditorTreeNode getExpressionEditorRootNode();
+	
 }

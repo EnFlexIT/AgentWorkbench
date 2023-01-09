@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -19,6 +20,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.client.ApiRegistration;
 import de.enflexit.awb.ws.client.AwbApiRegistrationService;
 import de.enflexit.awb.ws.client.WsCredentialStore;
@@ -33,8 +35,6 @@ import de.enflexit.common.ServiceFinder;
 public class JPanelClientBundle extends JPanel implements WsConfigurationInterface{
 	
 	private static final long serialVersionUID = 7987858783733542296L;
-	
-	private JLabel jLabelBundleList;
 	private JScrollPane jScrollPaneBundleList;
 	private JList<ApiRegistration> jListApiRegistration;
 	private DefaultListModel<ApiRegistration> listModelRegisteredApis;
@@ -43,6 +43,9 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		private JLabel jLabelDescription;
 		private JScrollPane jScrollPaneDescription;
 		private JTextArea jTextAreaDescription;
+		private JPanel jPanelHeader;
+		private JLabel jLabelBundleList;
+		private JButton jButtonCachedCredentialAssignmentsView;
 	
 	/**
 	 * Instantiates a new j panel client configuration.
@@ -58,14 +61,14 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		GridBagConstraints gbc_jLabelBundleList = new GridBagConstraints();
-		gbc_jLabelBundleList.anchor = GridBagConstraints.SOUTHWEST;
-		gbc_jLabelBundleList.insets = new Insets(5, 0, 0, 0);
-		gbc_jLabelBundleList.gridx = 0;
-		gbc_jLabelBundleList.gridy = 0;
-		add(getJLabelBundleList(), gbc_jLabelBundleList);
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 0);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 0;
+		gbc_panel.gridy = 0;
+		add(getJPanelHeader(), gbc_panel);
 		GridBagConstraints gbc_jScrollPaneBundleList = new GridBagConstraints();
-		gbc_jScrollPaneBundleList.insets = new Insets(5, 0, 0, 0);
+		gbc_jScrollPaneBundleList.insets = new Insets(5, 0, 5, 0);
 		gbc_jScrollPaneBundleList.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneBundleList.gridx = 0;
 		gbc_jScrollPaneBundleList.gridy = 1;
@@ -76,16 +79,6 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		gbc_jPanelInfo.gridx = 0;
 		gbc_jPanelInfo.gridy = 2;
 		add(getJPanelInfo(), gbc_jPanelInfo);
-	}
-	
-	private JLabel getJLabelBundleList() {
-		if (jLabelBundleList == null) {
-			jLabelBundleList = new JLabel("Server - API / Client Bundle");
-			jLabelBundleList.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelBundleList.setMinimumSize(new Dimension(150, 26));
-			jLabelBundleList.setPreferredSize(new Dimension(150, 26));
-		}
-		return jLabelBundleList;
 	}
 	
 	/**
@@ -231,6 +224,55 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		}
 		return jTextAreaDescription;
 	}
+	
+	public JButton getJButtonCachedCredentialAssignmentsView() {
+		if (jButtonCachedCredentialAssignmentsView == null) {
+			jButtonCachedCredentialAssignmentsView = new JButton(BundleHelper.getImageIcon("cache.png"));
+			jButtonCachedCredentialAssignmentsView.setToolTipText("See cached Credential Assignments");
+			jButtonCachedCredentialAssignmentsView.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
+		}
+		if(WsCredentialStore.getInstance().getCacheCredentialAssignmentList().size()>0) {
+		   jButtonCachedCredentialAssignmentsView.setVisible(true);
+		}else {
+		   jButtonCachedCredentialAssignmentsView.setVisible(false);
+		}
+		return jButtonCachedCredentialAssignmentsView;
+	}
+	
+	private JPanel getJPanelHeader() {
+		if (jPanelHeader == null) {
+			jPanelHeader = new JPanel();
+			GridBagLayout gbl_panel = new GridBagLayout();
+			gbl_panel.columnWidths = new int[]{0, 0};
+			gbl_panel.rowHeights = new int[]{0, 0};
+			gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelHeader.setLayout(gbl_panel);
+			GridBagConstraints gbc_jLabelBundleList = new GridBagConstraints();
+			gbc_jLabelBundleList.gridx = 0;
+			gbc_jLabelBundleList.gridy = 0;
+			jPanelHeader.add(getJLabelBundleList_1(), gbc_jLabelBundleList);
+			GridBagConstraints gbc_jButtonDeleteCredentialAssignment = new GridBagConstraints();
+			gbc_jButtonDeleteCredentialAssignment.gridx = 2;
+			gbc_jButtonDeleteCredentialAssignment.gridy = 0;
+			jPanelHeader.add(this.getJButtonCachedCredentialAssignmentsView(), gbc_jButtonDeleteCredentialAssignment);
+		}
+		return jPanelHeader;
+	}
+	
+	private JLabel getJLabelBundleList_1() {
+		if (jLabelBundleList == null) {
+			jLabelBundleList = new JLabel("Server - API / Client Bundle");
+			jLabelBundleList.setPreferredSize(new Dimension(150, 26));
+			jLabelBundleList.setMinimumSize(new Dimension(150, 26));
+			jLabelBundleList.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelBundleList;
+	}
+	
+	//-----------------------------------------------------------
+	//-------------Overridden methods----------------------------
+	//-----------------------------------------------------------
 	
 	/*
 	 * (non-Javadoc)
