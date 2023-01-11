@@ -1,18 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Expression
+Bundle-Name: Expression Base-Structure
 Bundle-SymbolicName: de.enflexit.expression
+Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.expression,
- de.enflexit.expression.classLoadService,
  de.enflexit.expression.gui,
- de.enflexit.expression.math,
- de.enflexit.expression.plugin
-Require-Bundle: de.enflexit.common,
- org.agentgui.core,
- org.awb.env.networkModel,
- wrapped.org.mariuszgromada.math.MathParser.org-mXparser,
- org.agentgui.lib.jade
+ de.enflexit.expression.math
+Import-Package: de.enflexit.common,
+ de.enflexit.common.swing
+Require-Bundle: org.agentgui.core,
+ wrapped.org.mariuszgromada.math.MathParser.org-mXparser
 Automatic-Module-Name: de.enflexit.expression
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11

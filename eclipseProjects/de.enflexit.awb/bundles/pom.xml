@@ -28,6 +28,7 @@
 		<module>de.enflexit.db.mariaDB</module>
 		<module>de.enflexit.db.mySQL</module>
 		<module>de.enflexit.db.postgres</module>
+		<module>de.enflexit.expression</module>
 		<module>de.enflexit.geography</module>
 		<module>de.enflexit.jade.tools</module>
 		<module>de.enflexit.jaxb.impl.binding</module>
