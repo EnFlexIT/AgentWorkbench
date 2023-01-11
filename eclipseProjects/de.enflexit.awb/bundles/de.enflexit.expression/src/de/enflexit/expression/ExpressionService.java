@@ -9,7 +9,7 @@ package de.enflexit.expression;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @author Christian Derksen - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public interface ExpressionService<ReturnType> {
+public interface ExpressionService {
 	
 	public static final char EXPRESSION_OPENING_DELIMITER = '[';
 	public static final char EXPRESSION_CLOSING_DELIMITER = ']';
@@ -25,7 +25,7 @@ public interface ExpressionService<ReturnType> {
 	 * Has to return the expression service evaluator instance that is able to evaluate an expression string.
 	 * @return the expression service evaluator
 	 */
-	public ExpressionServiceEvaluator<ReturnType> getExpressionServiceEvaluator();
+	public ExpressionServiceEvaluator getExpressionServiceEvaluator();
 	
 	/**
 	 * Provides a TreeNode to integrate the expression templates provided

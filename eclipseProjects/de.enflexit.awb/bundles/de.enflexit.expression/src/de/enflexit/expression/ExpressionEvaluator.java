@@ -52,11 +52,11 @@ public class ExpressionEvaluator {
 		
 		// --- Get the service that manages the Expression ----------
 		Object evaluationResult = null;
-		ExpressionService<?> eService = ExpressionServiceHelper.getExpressionService(expression.getExpressionType());
+		ExpressionService eService = ExpressionServiceHelper.getExpressionService(expression.getExpressionType());
 		if (eService!=null) {
 			try {
 				// --- Get the ExpressionServiceEvaluator ---------------
-				ExpressionServiceEvaluator<?> evaluator = eService.getExpressionServiceEvaluator();
+				ExpressionServiceEvaluator evaluator = eService.getExpressionServiceEvaluator();
 				if (evaluator!=null) {
 					evaluationResult = evaluator.evaluate(expression);
 					expression.setExpressionResult(evaluationResult);

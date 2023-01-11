@@ -312,7 +312,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Expression Library");
 		
 		// --- Get available expression services ----------
-		List<ExpressionService<?>> expressionServices = new ArrayList<>(ExpressionServiceHelper.getAvailableExpressionServices().values());
+		List<ExpressionService> expressionServices = new ArrayList<>(ExpressionServiceHelper.getAvailableExpressionServices().values());
 		for (int i=0; i<expressionServices.size(); i++) {
 			ExpressionEditorTreeNode categoryNode = expressionServices.get(i).getExpressionEditorRootNode();
 			rootNode.add(categoryNode);

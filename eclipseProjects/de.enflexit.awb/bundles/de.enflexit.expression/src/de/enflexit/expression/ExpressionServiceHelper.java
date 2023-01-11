@@ -13,19 +13,18 @@ import de.enflexit.common.ServiceFinder;
  */
 public class ExpressionServiceHelper {
 
-	private static HashMap<ExpressionType, ExpressionService<?>> availableExpressionServices;
+	private static HashMap<ExpressionType, ExpressionService> availableExpressionServices;
 	
 	/**
 	 * Provides a dictionary of all available {@link ExpressionService}s, accessible by the corresponding {@link ExpressionType}.
 	 * @return the available expression services
 	 */
-	public static HashMap<ExpressionType, ExpressionService<?>> getAvailableExpressionServices() {
+	public static HashMap<ExpressionType, ExpressionService> getAvailableExpressionServices() {
 		if (availableExpressionServices==null) {
 			availableExpressionServices = new HashMap<>();
-			@SuppressWarnings("rawtypes")
 			List<ExpressionService> expressionServices = ServiceFinder.findServices(ExpressionService.class);
 			for (int i=0; i<expressionServices.size(); i++) {
-				ExpressionService<?> expressionService = expressionServices.get(i);
+				ExpressionService expressionService = expressionServices.get(i);
 				availableExpressionServices.put(expressionService.getExpressionType(), expressionService);
 			}
 		}
@@ -38,7 +37,7 @@ public class ExpressionServiceHelper {
 	 * @param expressionType the expression type
 	 * @return the expression service
 	 */
-	public static ExpressionService<?> getExpressionService(ExpressionType expressionType) {
+	public static ExpressionService getExpressionService(ExpressionType expressionType) {
 		return getAvailableExpressionServices().get(expressionType);
 	}
 	

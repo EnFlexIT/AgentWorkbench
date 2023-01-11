@@ -12,7 +12,7 @@ import de.enflexit.expression.ExpressionType;
  * The Class MathExpressionService.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class MathExpressionService implements ExpressionService<Double> {
+public class MathExpressionService implements ExpressionService {
 	
 	private ExpressionEditorTreeNode expressionEditorRootNode;
 
@@ -28,7 +28,7 @@ public class MathExpressionService implements ExpressionService<Double> {
 	 * @see de.enflexit.expression.ExpressionService#getExpressionServiceEvaluator()
 	 */
 	@Override
-	public ExpressionServiceEvaluator<Double> getExpressionServiceEvaluator() {
+	public ExpressionServiceEvaluator getExpressionServiceEvaluator() {
 		return new MXExpressionEvaluator();
 	}
 	

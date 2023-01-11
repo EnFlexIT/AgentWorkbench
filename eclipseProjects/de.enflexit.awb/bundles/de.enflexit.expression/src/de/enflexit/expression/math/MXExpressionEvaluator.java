@@ -1,6 +1,7 @@
 package de.enflexit.expression.math;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionReturnValue;
 import de.enflexit.expression.ExpressionService;
 import de.enflexit.expression.ExpressionServiceEvaluator;
 import de.enflexit.expression.UnknownExpressionException;
@@ -10,13 +11,13 @@ import de.enflexit.expression.UnknownExpressionException;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class MXExpressionEvaluator implements ExpressionServiceEvaluator<Double> {
+public class MXExpressionEvaluator implements ExpressionServiceEvaluator {
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.expression.ExpressionServiceEvaluator#evaluate(de.enflexit.expression.Expression)
 	 */
 	@Override
-	public Double evaluate(Expression expression) throws UnknownExpressionException {
+	public ExpressionReturnValue evaluate(Expression expression) throws UnknownExpressionException {
 		
 		// --- Exchange sub expressions by sub results -------------- 
 		String expressionString = expression.getExpressionString(); 
@@ -33,7 +34,7 @@ public class MXExpressionEvaluator implements ExpressionServiceEvaluator<Double>
 		// --- Create mX Expression ---------------------------------
 		org.mariuszgromada.math.mxparser.Expression mXExpression = new org.mariuszgromada.math.mxparser.Expression(expressionString);
 		
-		return mXExpression.calculate();
+		return new ExpressionReturnValue(mXExpression.calculate());
 	}
 
 	/* (non-Javadoc)

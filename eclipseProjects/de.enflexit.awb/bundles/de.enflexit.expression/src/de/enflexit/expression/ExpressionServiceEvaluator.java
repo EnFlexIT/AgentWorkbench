@@ -6,7 +6,7 @@ package de.enflexit.expression;
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface ExpressionServiceEvaluator<ReturnType> {
+public interface ExpressionServiceEvaluator {
 
 	/**
 	 * Evaluates the provided expression.
@@ -14,7 +14,7 @@ public interface ExpressionServiceEvaluator<ReturnType> {
 	 * @return the expression result
 	 * @throws UnknownExpressionException thrown if the expression cannot be evaluated by this service
 	 */
-	public ReturnType evaluate(Expression expression) throws UnknownExpressionException;
+	public ExpressionReturnValue evaluate(Expression expression) throws UnknownExpressionException;
 	
 	/**
 	 * Checks if the provided expression is valid.
