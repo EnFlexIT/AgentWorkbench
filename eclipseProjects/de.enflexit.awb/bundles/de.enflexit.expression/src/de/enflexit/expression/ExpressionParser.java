@@ -20,46 +20,48 @@ public class ExpressionParser {
 		Expression expression = new Expression(expressionString);
 		ExpressionType expressionType = null;
 		
-		// --- Check if the expression is atomic (i.e. contains no sub expressions)
+		// --- Check if the expression is atomic (i.e. contains no sub expressions)------
 		if (expressionString.indexOf(ExpressionService.EXPRESSION_OPENING_DELIMITER)==-1) {
 			// --- Check for type specifiers (can only occur in atomic expressions
 			int separatorPos = expressionString.indexOf('!');
 			if (separatorPos>0) {
-				// --- Find the corresponding ExpressionType ------------------
+				// --- Find the corresponding ExpressionType ----------------------------
 				String typeIdentifier = expressionString.substring(0, separatorPos);
 				expressionType = ExpressionServiceHelper.getExpressionType(typeIdentifier);
 				
 				if (expressionType==null) {
-					// -- No matching ExpressionType found --------------------
+					// -- No matching ExpressionType found ------------------------------
 					expressionType = new ExpressionTypeUnknown(typeIdentifier);
 				}
 			}
 			
 		} else {
-			// --- Not atomic, check for sub-expressions ----------------------
+			// --- Not atomic, check for sub-expressions --------------------------------
 			int subStrBegin, subStrLength;
 			for (int currPos = 0; currPos<expressionString.length(); currPos++) {
 				if (expressionString.charAt(currPos)==ExpressionService.EXPRESSION_OPENING_DELIMITER) {
 
 					subStrBegin = currPos;
 					subStrLength = ExpressionParser.findClosingDelimiter(expressionString.substring(currPos));
-					// --- Found a valid sub-expression -----------------
+					// --- Found a valid sub-expression ---------------------------------
 					if (subStrLength>0) {
-						// --- Extract, parse and add to parent ---------
+						// --- Extract, parse and add to parent -------------------------
 						String subExpressionString = expressionString.substring(subStrBegin+1, subStrBegin+subStrLength);
 						expression.getSubExpressions().add(ExpressionParser.parse(subExpressionString));
-						// --- Continue after the sub-expression -------- 
+						// --- Continue after the sub-expression ------------------------
 						currPos += subStrLength;
 						
 					} else {
-						System.err.println("Found no matching closing delimiter for the opening delemiter at " + subStrBegin);
+						String errMsg = "Missing closing delimiter for opening delemiter at " + subStrBegin;
 						expression.setHasErrors(true);
+						expression.setErrorMessage(errMsg);
+						//System.err.println(errMsg);
 					}
 				}
 			}
 		}
 		
-		// --- If no other type was determined, use math as default ----------- 
+		// --- If no other type was determined, use math as default ---------------------
 		expression.setExpressionType(expressionType==null ? ExpressionTypeMath.getInstance() : expressionType);
 		
 		return expression;
@@ -81,13 +83,12 @@ public class ExpressionParser {
 			} else if (currentChar==ExpressionService.EXPRESSION_CLOSING_DELIMITER) {
 				// --- Nested delimiter closed ------------
 				depth--;
-				// --- Matching closing delimiter -------------
+				// --- Matching closing delimiter ---------
 				if (depth==0) {
 					return i;
 				}
 			}
 		}
-		
 		// --- No matching closing delimiter found --------
 		return -1; 
 	}

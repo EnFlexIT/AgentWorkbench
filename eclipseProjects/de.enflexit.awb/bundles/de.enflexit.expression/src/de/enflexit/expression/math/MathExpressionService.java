@@ -10,7 +10,9 @@ import de.enflexit.expression.ExpressionType;
 
 /**
  * The Class MathExpressionService.
+ * 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class MathExpressionService implements ExpressionService {
 	
@@ -29,7 +31,7 @@ public class MathExpressionService implements ExpressionService {
 	 */
 	@Override
 	public ExpressionServiceEvaluator getExpressionServiceEvaluator() {
-		return new MXExpressionEvaluator();
+		return new MathExpressionEvaluator();
 	}
 	
 	/* (non-Javadoc)

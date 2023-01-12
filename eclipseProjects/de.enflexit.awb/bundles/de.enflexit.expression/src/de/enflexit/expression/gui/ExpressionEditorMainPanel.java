@@ -9,9 +9,10 @@ import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.border.EmptyBorder;
 
 import de.enflexit.expression.Expression;
-import javax.swing.border.EmptyBorder;
+import de.enflexit.expression.ExpressionResult;
 
 /**
  * This class implements the main panel of the expression editor. It mainly just hosts
@@ -79,7 +80,7 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 			jSplitPaneMain.setLeftComponent(this.getJSplitPaneLeft());
 			jSplitPaneMain.setBorder(BorderFactory.createEmptyBorder());
 			jSplitPaneMain.setDividerSize(7);
-			jSplitPaneMain.setDividerLocation(0.66);
+			jSplitPaneMain.setDividerLocation(0.75);
 			jSplitPaneMain.setResizeWeight(0.5);
 			jSplitPaneMain.setOneTouchExpandable(true);
 		}
@@ -132,23 +133,30 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		
 		if (evt.getSource()==this.getJPanelExpressionTextEditor()) {
 			if (evt.getPropertyName().equals(ExpressionEditorTextPanel.EXPRESSION_PARSED)) {
 				// --- The expression was parsed, show the corresponding structure tree
-				Expression parsedExpression = this.getJPanelExpressionTextEditor().getExpression();
-				this.getJPanelStructureTreeRight().setExpression(parsedExpression);
+				this.getJPanelStructureTreeRight().setExpression((Expression) evt.getNewValue());
+				
+			} else if (evt.getPropertyName().equals(ExpressionEditorTextPanel.EXPRESSION_EVALUATED)) {
+				ExpressionResult er = (ExpressionResult) evt.getNewValue();
+				System.out.println(er.getValue());
 			}
+			
 		} else if (evt.getSource()==this.getJPanelStructureTreeRight()) {
 			if (evt.getPropertyName().equals(ExpressionEditorStructureTreePanel.SELECTION_CHANGED)) {
 				// --- A sub-expression was selected, highlight it in the editor
 				Expression selectedExpression = (Expression) evt.getNewValue();
 				this.getJPanelExpressionTextEditor().highlightSubExpression(selectedExpression);
 			}
+			
 		} else if (evt.getSource()==this.getJPanelLibrary()) {
 			if (evt.getPropertyName().equals(ExpressionEditorLibraryPanel.EXPRESSION_INSERTED)) {
 				String stringToInsert = (String) evt.getNewValue();
 				this.getJPanelExpressionTextEditor().insertExpressionString(stringToInsert);
 			}
+			
 		}
 	}
 	

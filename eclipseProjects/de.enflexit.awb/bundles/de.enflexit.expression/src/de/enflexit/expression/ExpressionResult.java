@@ -2,26 +2,41 @@ package de.enflexit.expression;
 
 
 /**
- * The Class ExpressionReturnValue.
+ * The Class ExpressionResult.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class ExpressionReturnValue {
+public class ExpressionResult {
 
 	private Object value;
 	
+	private boolean isValid;
+	private String errorMessage;
+	
 	/**
-	 * Instantiates a new expression return value.
+	 * Instantiates a new expression result.
 	 */
-	public ExpressionReturnValue() {
+	public ExpressionResult() {
 		this(null);
 	}
 	/**
-	 * Instantiates a new expression return value.
+	 * Instantiates a new expression result.
 	 * @param value the value to return 
 	 */
-	public ExpressionReturnValue(Object returnValue) {
+	public ExpressionResult(Object returnValue) {
+		this(returnValue, true, null);
+	}
+	/**
+	 * Instantiates a new expression result.
+	 *
+	 * @param returnValue the return value
+	 * @param isValid the validity of the current result
+	 * @param errorMessage the error message corresponding to the validity
+	 */
+	public ExpressionResult(Object returnValue, boolean isValid, String errorMessage) {
 		this.setValue(returnValue);
+		this.setValid(isValid);
+		this.setErrorMessage(errorMessage);
 	}
 	
 	
@@ -38,6 +53,50 @@ public class ExpressionReturnValue {
 	 */
 	public Object getValue() {
 		return value;
+	}
+	
+	/**
+	 * Sets if the base expression was valid or not.
+	 * @param isValid the validity indicator
+	 */
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
+	}
+	/**
+	 * Returns if the base expression was valid.
+	 *
+	 * @param expression the expression
+	 * @return true, if is valid
+	 */
+	public boolean isValid() {
+		return isValid;
+	}
+
+	/**
+	 * Sets the error message corresponding error message to the current validity.
+	 * @param errorMessage the new error message
+	 */
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	/**
+	 * Returns the current error message according to the current validity.
+	 * @return the error message
+	 * @see #isValid
+	 */
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		if (this.isValid()==true) {
+			return this.getExpressionDataType().toString() + ": " + this.getValue().toString();
+		} 
+		return "Invalid: " + this.getErrorMessage();
 	}
 	
 	

@@ -17,11 +17,11 @@ public class Expression {
 	
 	private ExpressionType expressionType;
 	private boolean hasErrors;
+	private String errorMessage;
+	
 	
 	// --- Attributes for the evaluation ------------------
-	private Object expressionResult;
-	private Vector<Object> subExpressionResults;
-	
+	private ExpressionResult expressionResult;
 	
 	/**
 	 * Instantiates a new, empty expression.
@@ -66,17 +66,6 @@ public class Expression {
 	}
 
 	/**
-	 * Gets the sub expressions.
-	 * @return the sub expressions
-	 */
-	public Vector<Expression> getSubExpressions() {
-		if (subExpressions==null) {
-			subExpressions = new Vector<Expression>();
-		}
-		return subExpressions;
-	}
-	
-	/**
 	 * Sets the error indicator for this expression
 	 * @param hasErrors the new checks for errors
 	 */
@@ -91,6 +80,33 @@ public class Expression {
 		return this.hasErrors;
 	}
 	
+	/**
+	 * Sets the error message.
+	 * @param errorMessage the new error message
+	 */
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	/**
+	 * Gets the error message.
+	 * @return the error message
+	 */
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	
+
+	/**
+	 * Gets the sub expressions.
+	 * @return the sub expressions
+	 */
+	public Vector<Expression> getSubExpressions() {
+		if (subExpressions==null) {
+			subExpressions = new Vector<Expression>();
+		}
+		return subExpressions;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- From here, methods for the evaluation ------------------------------
@@ -99,7 +115,7 @@ public class Expression {
 	 * Returns the expression result.
 	 * @return the expression result
 	 */
-	public Object getExpressionResult() {
+	public ExpressionResult getExpressionResult() {
 		if (expressionResult==null) {
 			expressionResult = new ExpressionEvaluator(this).getExpressionResult();
 		}
@@ -109,7 +125,7 @@ public class Expression {
 	 * Sets the expression result.
 	 * @param expressionResult the new expression result
 	 */
-	public void setExpressionResult(Object expressionResult) {
+	public void setExpressionResult(ExpressionResult expressionResult) {
 		this.expressionResult = expressionResult;
 	}
 	

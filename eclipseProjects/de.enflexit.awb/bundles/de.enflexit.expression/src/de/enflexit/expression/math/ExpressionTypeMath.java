@@ -4,6 +4,7 @@ import de.enflexit.expression.ExpressionType;
 
 /**
  * The Class ExpressionTypeMath.
+ * 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class ExpressionTypeMath extends ExpressionType {

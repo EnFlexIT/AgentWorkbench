@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Expression Base-Structure
 Automatic-Module-Name: de.enflexit.expression
-Bundle-SymbolicName: de.enflexit.expression
+Bundle-SymbolicName: de.enflexit.expression;singleton:=true
 Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
@@ -16,8 +16,7 @@ Export-Package: com.expression.parser,
  de.enflexit.expression.math
 Import-Package: de.enflexit.common,
  de.enflexit.common.swing
-Require-Bundle: org.agentgui.core,
- wrapped.org.mariuszgromada.math.MathParser.org-mXparser
+Require-Bundle: org.agentgui.core
 Bundle-ClassPath: .,
  lib/com.expression.parser-3.3.0.jar
 Service-Component: OSGI-INF/mathExpressionService.xml

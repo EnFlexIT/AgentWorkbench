@@ -82,9 +82,8 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 		this.setTitle("Expression Editor");
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		
-		this.setSize(900, 600);
+		this.setSize(1000, 600);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setAlwaysOnTop(true);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.registerEscapeKeyStroke();

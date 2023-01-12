@@ -8,7 +8,7 @@ package de.enflexit.expression;
 public class ExpressionEvaluator {
 
 	private Expression expression;
-	private Object expressionResult;
+	private ExpressionResult expressionResult;
 	
 	
 	/**
@@ -22,7 +22,7 @@ public class ExpressionEvaluator {
 	 * Evaluates the locally specified {@link Expression}.
 	 * @return the result object
 	 */
-	public Object getExpressionResult() {
+	public ExpressionResult getExpressionResult() {
 		if (this.expression==null) throw new IllegalArgumentException("No Expression was specified to be evaluated!");
 		if (this.expressionResult==null) {
 			this.expressionResult = this.evaluate(this.expression);
@@ -36,12 +36,7 @@ public class ExpressionEvaluator {
 	 * @param expression the expression
 	 * @return the object
 	 */
-	private Object evaluate(Expression expression) {
-		
-		// --- Check for errors in the expression -------------------
-		if (expression.hasErrors()==true) {
-			// TODO
-		}
+	private ExpressionResult evaluate(Expression expression) {
 		
 		// --- Evaluate sub expressions first -----------------------
 		if (expression.getSubExpressions().size()>0) {
@@ -51,7 +46,7 @@ public class ExpressionEvaluator {
 		}
 		
 		// --- Get the service that manages the Expression ----------
-		Object evaluationResult = null;
+		ExpressionResult evaluationResult = null;
 		ExpressionService eService = ExpressionServiceHelper.getExpressionService(expression.getExpressionType());
 		if (eService!=null) {
 			try {
