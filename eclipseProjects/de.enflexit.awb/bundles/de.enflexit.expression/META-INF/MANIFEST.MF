@@ -4,7 +4,11 @@ Bundle-Name: Expression Base-Structure
 Bundle-SymbolicName: de.enflexit.expression
 Bundle-Vendor: EnFlex.IT
 Bundle-Version: 1.0.0.qualifier
-Export-Package: de.enflexit.expression,
+Export-Package: com.expression.parser,
+ com.expression.parser.exception,
+ com.expression.parser.function,
+ com.expression.parser.util,
+ de.enflexit.expression,
  de.enflexit.expression.gui,
  de.enflexit.expression.math
 Import-Package: de.enflexit.common,
@@ -13,6 +17,8 @@ Require-Bundle: org.agentgui.core,
  wrapped.org.mariuszgromada.math.MathParser.org-mXparser
 Automatic-Module-Name: de.enflexit.expression
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/com.expression.parser-3.3.0.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/mathExpressionService.xml
