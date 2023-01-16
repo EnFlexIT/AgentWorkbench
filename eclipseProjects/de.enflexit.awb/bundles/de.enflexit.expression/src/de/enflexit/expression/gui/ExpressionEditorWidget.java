@@ -14,6 +14,7 @@ import java.awt.Font;
 import javax.swing.JTextField;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.math.ExpressionTypeMath;
 
 import java.awt.Insets;
 
@@ -28,6 +29,8 @@ import javax.swing.JButton;
 public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = -644272977163977965L;
+	
+	public static final String EXPRESSION_UPDATED = "Expresison Updated";
 	
 	private static final Dimension BUTTON_SIZE = new Dimension(26, 26);
 	private static final String ICON_PATH_EDIT = "/icons/Edit.png";
@@ -117,6 +120,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		String textFieldContent = this.getJTextFieldExpression().getText();
 		if (textFieldContent!=null && textFieldContent.isEmpty()==false) {
 			expression = new Expression(textFieldContent);
+			expression.setExpressionType(ExpressionTypeMath.getInstance());
 		}
 		return expression;
 	}
@@ -130,7 +134,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 				@Override
 				public void focusLost(FocusEvent e) {
 					// --- Update the expression when leaving the textfield ---
-					ExpressionEditorWidget.this.expression = ExpressionEditorWidget.this.getExpressionFromTextfield();
+					ExpressionEditorWidget.this.setExpression(ExpressionEditorWidget.this.getExpressionFromTextfield());
 				}
 			});
 		}
@@ -171,9 +175,14 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	 * @param expression the new expression
 	 */
 	public void setExpression(Expression expression) {
+		Expression oldExpression = this.expression;
 		this.expression = expression;
-		this.getJTextFieldExpression().setText(expression.getExpressionString());
-		this.validateExpression();
+		if (expression!=null) {
+			this.getJTextFieldExpression().setText(expression.getExpressionString());
+			this.validateExpression();
+		}
+		this.firePropertyChange(EXPRESSION_UPDATED, oldExpression, expression);
+		
 	}
 	/**
 	 * Gets the expression.
