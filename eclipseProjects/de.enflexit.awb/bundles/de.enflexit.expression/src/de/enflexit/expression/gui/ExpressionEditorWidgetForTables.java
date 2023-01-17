@@ -31,7 +31,6 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	private JButton jButtonExpressionEditor;
 	
 	private Expression expression;
-	private ExpressionEditorDialog editorDialog;
 	
 	private TableCellEditor parentEditor;
 	
@@ -95,13 +94,6 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		return jButtonExpressionEditor;
 	}
 	
-	private ExpressionEditorDialog getEditorDialog() {
-		if (editorDialog==null) {
-			editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
-		}
-		return editorDialog;
-	}
-	
 	/**
 	 * Sets the current expression according to the text field.
 	 * @return the expression
@@ -133,14 +125,18 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			this.getJTextFieldExpression().setText(expression.getExpressionString());
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonExpressionEditor()) {
-			this.getEditorDialog().setExpression(this.setExpressionAccordingToTextfield());
-			this.getEditorDialog().setVisible(true);
+			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
+			editorDialog.setVisible(true);
 			
-			if (this.getEditorDialog().isCanceled()==false) {
-				this.setExpression(this.getEditorDialog().getExpression());
+			if (editorDialog.isCanceled()==false) {
+				this.setExpression(editorDialog.getExpression());
 			}
 			
 		}

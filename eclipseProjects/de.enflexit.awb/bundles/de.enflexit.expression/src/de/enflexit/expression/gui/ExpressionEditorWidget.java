@@ -43,8 +43,6 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	
 	private Expression expression;
 	
-	private ExpressionEditorDialog editorDialog;
-
 	/**
 	 * Instantiates a new expression editor widget.
 	 */
@@ -92,11 +90,11 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonEditor()) {
-			this.getEditorDialog().setExpression(this.getExpression());
-			this.getEditorDialog().setVisible(true);
+			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
+			editorDialog.setVisible(true);
 			
-			if (this.getEditorDialog().isCanceled()==false) {
-				this.setExpression(this.getEditorDialog().getExpression());
+			if (editorDialog.isCanceled()==false) {
+				this.setExpression(editorDialog.getExpression());
 			}
 			
 		} else if (ae.getSource()==this.getJButtonValidate()) {
@@ -163,13 +161,6 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		return jButtonValidate;
 	}
 	
-	private ExpressionEditorDialog getEditorDialog() {
-		if (editorDialog==null) {
-			editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
-		}
-		return editorDialog;
-	}
-
 	/**
 	 * Sets the expression to be displayed by this widget.
 	 * @param expression the new expression
