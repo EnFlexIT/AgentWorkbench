@@ -242,6 +242,7 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	 * @param expression the new expression
 	 */
 	public void setExpression(Expression expression) {
+		this.expression = expression;
 		if (this.expression!=null) {
 			this.getJTextAreaExpression().setText(this.expression.getExpressionString());
 		} else {
