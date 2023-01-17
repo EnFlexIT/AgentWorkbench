@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.math.ExpressionTypeMath;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -110,6 +111,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		String textFieldContent = this.getJTextFieldExpression().getText();
 		if (textFieldContent!=null && textFieldContent.isEmpty()==false) {
 			expression = new Expression(textFieldContent);
+			expression.setExpressionType(ExpressionTypeMath.getInstance());
 		}
 		return expression;
 	}
