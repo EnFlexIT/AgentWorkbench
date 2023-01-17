@@ -8,15 +8,19 @@ package de.enflexit.expression;
 public class ExpressionEvaluator {
 
 	private Expression expression;
+	private Object context;
+
 	private ExpressionResult expressionResult;
-	
 	
 	/**
 	 * Instantiates a new expression evaluator.
+	 *
 	 * @param expression the expression to evaluate
+	 * @param context one or more context information that needs to be considered, additionally to the global context
 	 */
-	public ExpressionEvaluator(Expression expression) {
+	public ExpressionEvaluator(Expression expression, Object... context) {
 		this.expression = expression;
+		this.context = context;
 	}
 	/**
 	 * Evaluates the locally specified {@link Expression}.
@@ -25,7 +29,7 @@ public class ExpressionEvaluator {
 	public ExpressionResult getExpressionResult() {
 		if (this.expression==null) throw new IllegalArgumentException("No Expression was specified to be evaluated!");
 		if (this.expressionResult==null) {
-			this.expressionResult = this.evaluate(this.expression);
+			this.expressionResult = this.evaluate();
 		}
 		return expressionResult;
 	}
@@ -36,34 +40,34 @@ public class ExpressionEvaluator {
 	 * @param expression the expression
 	 * @return the object
 	 */
-	private ExpressionResult evaluate(Expression expression) {
+	private ExpressionResult evaluate() {
 		
 		// --- Evaluate sub expressions first -----------------------
-		if (expression.getSubExpressions().size()>0) {
-			for (Expression subExp : expression.getSubExpressions()) {
-				subExp.getExpressionResult();
+		if (this.expression.getSubExpressions().size()>0) {
+			for (Expression subExp : this.expression.getSubExpressions()) {
+				subExp.getExpressionResult(this.context);
 			}
 		}
 		
 		// --- Get the service that manages the Expression ----------
 		ExpressionResult evaluationResult = null;
-		ExpressionService eService = ExpressionServiceHelper.getExpressionService(expression.getExpressionType());
+		ExpressionService eService = ExpressionServiceHelper.getExpressionService(this.expression.getExpressionType());
 		if (eService!=null) {
 			try {
 				// --- Get the ExpressionServiceEvaluator ---------------
 				ExpressionServiceEvaluator evaluator = eService.getExpressionServiceEvaluator();
 				if (evaluator!=null) {
-					evaluationResult = evaluator.evaluate(expression);
+					evaluationResult = evaluator.evaluate(this.expression);
 					expression.setExpressionResult(evaluationResult);
 				} else {
-					System.err.println("[" + this.getClass().getSimpleName() + "] Did not get evaluator for ExpressionService " + expression.getExpressionType());
+					System.err.println("[" + this.getClass().getSimpleName() + "] Did not get evaluator for ExpressionService " + this.expression.getExpressionType());
 				}
 				
 			} catch (UnknownExpressionException exex) {
 				exex.printStackTrace();
 			}
 		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find ExpressionService " + expression.getExpressionType());
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find ExpressionService " + this.expression.getExpressionType());
 		}
 		return evaluationResult;
 	}

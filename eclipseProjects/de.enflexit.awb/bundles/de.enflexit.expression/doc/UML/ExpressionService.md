@@ -12,7 +12,7 @@ Der modulare und erweiterungsfähige ExpressionServie ermöglicht die Erweiterun
 - **ExpressionServiceHelper**: Klasse mit statischen Methoden zum Handling von Ausdruck-Services.
 - **ExpressionParser**: Verwandelt eine String in eine Expression.
 - **Expression**: Representiert einen umgewandelten String, der bereits geparst wurde und somit nach ExpressionType und Sub-Expressions aufgelöst wurde.
-- **ExpressionEvaluator**: Bietet eine statische Klasse zur Auswertung von Expressions. Dabei werden 
+- **ExpressionEvaluator**: Bietet eine Klasse zur Auswertung von Expressions. Dabei werden 
 
 
 

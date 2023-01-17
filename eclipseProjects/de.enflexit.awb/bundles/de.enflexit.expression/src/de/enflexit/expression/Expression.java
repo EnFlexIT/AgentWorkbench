@@ -112,12 +112,14 @@ public class Expression {
 	// --- From here, methods for the evaluation ------------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * Returns the expression result.
+	 * Based on the global context and the specified context, returns the expression result.
+	 *
+	 * @param context one or more context information that needs to be considered, additionally to the global context  
 	 * @return the expression result
 	 */
-	public ExpressionResult getExpressionResult() {
+	public ExpressionResult getExpressionResult(Object ... context) {
 		if (expressionResult==null) {
-			expressionResult = new ExpressionEvaluator(this).getExpressionResult();
+			expressionResult = new ExpressionEvaluator(this, context).getExpressionResult();
 		}
 		return expressionResult;
 	}
@@ -139,7 +141,7 @@ public class Expression {
 	
 	
 	// --------------------------------------------------------------
-	// --- From here some static help methods ----------------------- 
+	// --- From here, static methods to work with expressions ------- 
 	// --------------------------------------------------------------	
 	/**
 	 * Parses the specified expression string and returns a corresponding {@link Expression}.
@@ -149,6 +151,29 @@ public class Expression {
 	 */
 	public static Expression parse(String expressionString) {
 		return ExpressionParser.parse(expressionString);
+	}
+	/**
+	 * Evaluates the specified expression string with the help of the global context and the specified context.
+	 *
+	 * @param expressionString the expression string
+	 * @param context the specific context that needs to be considered additionally to the global context.
+	 * @return the expression result
+	 */
+	public static ExpressionResult evaluate(String expressionString, Object context) {
+		return evaluate(Expression.parse(expressionString), context);
+	}
+	/**
+	 * Evaluates the specified expression with the help of the global context and the specified context.
+	 *
+	 * @param expression the expression with the help of the global context and the specified context.
+	 * @param context the specific context that needs to be considered additionally to the global context.
+	 * @return the expression result
+	 */
+	public static ExpressionResult evaluate(Expression expression, Object context) {
+		if (expression.hasErrors()==false) {
+			return expression.getExpressionResult(context);
+		} 
+		return new ExpressionResult(null, false, expression.getErrorMessage());
 	}
 	
 }
