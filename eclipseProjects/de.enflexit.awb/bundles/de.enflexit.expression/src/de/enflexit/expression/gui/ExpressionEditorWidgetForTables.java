@@ -123,6 +123,8 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		this.expression = expression;
 		if (expression!=null) {
 			this.getJTextFieldExpression().setText(expression.getExpressionString());
+		} else {
+			this.getJTextFieldExpression().setText(null);
 		}
 	}
 	

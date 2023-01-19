@@ -171,6 +171,8 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		if (expression!=null) {
 			this.getJTextFieldExpression().setText(expression.getExpressionString());
 			this.validateExpression();
+		} else {
+			this.getJTextFieldExpression().setText(null);
 		}
 		this.firePropertyChange(EXPRESSION_UPDATED, oldExpression, expression);
 		
