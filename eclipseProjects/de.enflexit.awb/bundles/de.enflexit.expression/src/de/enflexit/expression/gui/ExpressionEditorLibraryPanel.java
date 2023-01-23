@@ -29,10 +29,11 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.ExpressionEditorTreeNode;
 import de.enflexit.expression.ExpressionService;
-import de.enflexit.expression.ExpressionType;
 import de.enflexit.expression.ExpressionServiceHelper;
+import de.enflexit.expression.ExpressionType;
 
 /**
  * This class implements the lower right part of the expression editor,
@@ -65,16 +66,14 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private DefaultListModel<String> expressionsListModel;
 	private JList<String> jListExpressions;
 	
-
 	private TreeMap<String, ArrayList<String>> currentOptions;
-	
 	private HashMap<ExpressionEditorTreeNode, ExpressionType> expressionTypes; 
+
 	
 	/**
 	 * Instantiates a new expression editor library panel.
 	 */
 	public ExpressionEditorLibraryPanel() {
-		super();
 		this.initialize();
 	}
 	
@@ -95,6 +94,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		gbc_jSplitPaneMain.gridx = 0;
 		gbc_jSplitPaneMain.gridy = 0;
 		this.add(this.getJSplitPaneMain(), gbc_jSplitPaneMain);
+		
 	}
 	
 	private JSplitPane getJSplitPaneMain() {
@@ -219,13 +219,9 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	}
 	private JTree getJTreeMainCategories() {
 		if (jTreeMainCategories == null) {
-			jTreeMainCategories = new JTree(new DefaultTreeModel(this.buildLibraryTree()));
+			jTreeMainCategories = new JTree();
 			jTreeMainCategories.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTreeMainCategories.setRootVisible(false);
-			jTreeMainCategories.setVisibleRowCount(8);
-			for (int i=0; i<jTreeMainCategories.getRowCount(); i++) {
-				jTreeMainCategories.expandRow(i);
-			}
 			jTreeMainCategories.addTreeSelectionListener(this);
 		}
 		return jTreeMainCategories;
@@ -281,7 +277,6 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 					if (me.getClickCount()==2) {
 						int index = getJListExpressions().locationToIndex(me.getPoint());
 						String clickedExpression = getJListExpressions().getModel().getElementAt(index);
-						
 						ExpressionEditorLibraryPanel.this.triggerInsert(clickedExpression);
 					}
 				}
@@ -289,49 +284,66 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		}
 		return jListExpressions;
 	}
-	
 	/**
 	 * Triggers a {@link PropertyChangeEvent} to notify that the selected expression should be inserted.
-	 * @param expressionString the expression string
+	 * @param libraryExpression the part to insert into the expression string
 	 */
-	private void triggerInsert(String expressionString) {
+	private void triggerInsert(String libraryExpression) {
+		
 		ExpressionEditorTreeNode categoryNode = (ExpressionEditorTreeNode) this.getJTreeMainCategories().getLastSelectedPathComponent();
 		ExpressionType expressionType = this.getExpressionTypesForCategories().get(categoryNode);
-		String stringToInsert = "[" + expressionType.getTypePrefix() + ":" + expressionString + "]";
+		ExpressionService eService = ExpressionServiceHelper.getExpressionService(expressionType);
+
+		
+		String stringToInsert = eService.getInsertString(libraryExpression);
+		if (stringToInsert==null) {
+			stringToInsert = "[" + expressionType.getTypePrefix() + ":" + libraryExpression + "]";
+		}
+		
 		
 		this.firePropertyChange(EXPRESSION_INSERTED, null, stringToInsert);
 	}
-	
-	
+
 	/**
-	 * Builds the library tree.
-	 * @return the default mutable tree node
+	 * Sets the expression context.
+	 * @param context the new expression context
 	 */
-	private DefaultMutableTreeNode buildLibraryTree() {
+	public void setExpressionContext(ExpressionContext context) {
 		
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Expression Library");
+		// --- Re-initiate / reset local instances ------------------ 
+		DefaultMutableTreeNode elRootNode = new DefaultMutableTreeNode("Expression Library");
+		this.getExpressionTypesForCategories().clear();
 		
-		// --- Get available expression services ----------
-		List<ExpressionService> expressionServices = new ArrayList<>(ExpressionServiceHelper.getAvailableExpressionServices().values());
+		// --- Get available expression services as sorted list -----
+		List<ExpressionService> expressionServices = ExpressionServiceHelper.getAvailableExpressionServicesSorted();
 		for (int i=0; i<expressionServices.size(); i++) {
-			ExpressionEditorTreeNode categoryNode = expressionServices.get(i).getExpressionEditorRootNode();
-			rootNode.add(categoryNode);
+			// --- Get sub-node of service --------------------------
+			ExpressionEditorTreeNode categoryNode = expressionServices.get(i).getExpressionEditorNode(context);
+			elRootNode.add(categoryNode);
+			// --- Remind selection categories ----------------------
 			this.getExpressionTypesForCategories().put(categoryNode, expressionServices.get(i).getExpressionType());
 		}
-		return rootNode;
+		this.getJTreeMainCategories().setModel(new DefaultTreeModel(elRootNode));
+		
+		// --- Expand library tree ----------------------------------
+		for (int i=0; i<this.getJTreeMainCategories().getRowCount(); i++) {
+			this.getJTreeMainCategories().expandRow(i);
+		}
+		
 	}
 	
 	/**
 	 * Gets the expression types for categories.
 	 * @return the expression types for categories
 	 */
-	public HashMap<ExpressionEditorTreeNode, ExpressionType> getExpressionTypesForCategories() {
+	private HashMap<ExpressionEditorTreeNode, ExpressionType> getExpressionTypesForCategories() {
 		if (expressionTypes==null) {
 			expressionTypes = new HashMap<>();
 		}
 		return expressionTypes;
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
 	 */

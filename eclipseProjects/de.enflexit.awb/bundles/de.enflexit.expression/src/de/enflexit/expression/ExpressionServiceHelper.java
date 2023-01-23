@@ -1,6 +1,8 @@
 package de.enflexit.expression;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +31,20 @@ public class ExpressionServiceHelper {
 			}
 		}
 		return availableExpressionServices;
+	}
+	/**
+	 * Returns the available ExpressionServices as list in an alphabetic order.
+	 * @return the available expression services sorted
+	 */
+	public static List<ExpressionService> getAvailableExpressionServicesSorted() {
+		List<ExpressionService> eServiceList = new ArrayList<>( getAvailableExpressionServices().values());
+		Collections.sort(eServiceList, new Comparator<ExpressionService>() {
+			@Override
+			public int compare(ExpressionService es1, ExpressionService es2) {
+				return es1.getExpressionType().getTypePrefix().compareTo(es2.getExpressionType().getTypePrefix());
+			}
+		});
+		return eServiceList;
 	}
 	
 	/**

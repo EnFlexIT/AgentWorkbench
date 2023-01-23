@@ -38,6 +38,7 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	
 	public static final String EXPRESSION_PARSED = "ExpressionParsed";
 	public static final String EXPRESSION_EVALUATED = "ExpressionEvaluated";
+	public static final String EXPRESSION_PLACEHOLDER = "<EXP>";
 	
 	private Expression expression;
 	private ExpressionContext expressionContext;
@@ -285,8 +286,14 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	 * @param expressionString the expression string
 	 */
 	public void insertExpressionString(String expressionString) {
+		
+		String stringToInsert = expressionString;
+		if (expressionString.contains("<>")==true) {
+			stringToInsert = expressionString.replaceAll("<>", EXPRESSION_PLACEHOLDER);
+		}
+		
 		int cursorPosition = this.getJTextAreaExpression().getCaretPosition();
-		this.getJTextAreaExpression().insert(expressionString, cursorPosition);
+		this.getJTextAreaExpression().insert(stringToInsert, cursorPosition);
 		this.getJTextAreaExpression().requestFocusInWindow();
 	}
 

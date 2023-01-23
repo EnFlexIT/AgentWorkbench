@@ -30,8 +30,17 @@ public interface ExpressionService {
 	/**
 	 * Provides a TreeNode to integrate the expression templates provided
 	 * by this service in the expression editor.
-	 * @return the expression tree root node
+	 * @return the expression tree node
 	 */
-	public ExpressionEditorTreeNode getExpressionEditorRootNode();
+	public ExpressionEditorTreeNode getExpressionEditorNode(ExpressionContext context);
+
+	/**
+	 * Has to return a string to insert for the specified insertExpression. If the method returns <code>null</code>, by
+	 * default a string like <i>[ expressionTypePrefix : insertExpression ]</i> will be used 
+	 *
+	 * @param libraryExpression the library expression
+	 * @return the insert string
+	 */
+	public String getInsertString(String libraryExpression);
 	
 }

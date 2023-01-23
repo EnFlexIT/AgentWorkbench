@@ -101,7 +101,7 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 	private JScrollPane getJScrollPaneExpressionTree() {
 		if (jScrollPaneExpressionTree == null) {
 			jScrollPaneExpressionTree = new JScrollPane();
-			jScrollPaneExpressionTree.setViewportView(getExpressionTree());
+			jScrollPaneExpressionTree.setViewportView(this.getExpressionTree());
 		}
 		return jScrollPaneExpressionTree;
 	}
