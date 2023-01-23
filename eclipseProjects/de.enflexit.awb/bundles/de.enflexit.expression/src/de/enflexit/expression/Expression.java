@@ -117,7 +117,7 @@ public class Expression {
 	 * @param context one or more context information that needs to be considered, additionally to the global context  
 	 * @return the expression result
 	 */
-	public ExpressionResult getExpressionResult(Object ... context) {
+	public ExpressionResult getExpressionResult(ExpressionContext context) {
 		if (expressionResult==null) {
 			expressionResult = new ExpressionEvaluator(this, context).getExpressionResult();
 		}
@@ -159,7 +159,7 @@ public class Expression {
 	 * @param context the specific context that needs to be considered additionally to the global context.
 	 * @return the expression result
 	 */
-	public static ExpressionResult evaluate(String expressionString, Object context) {
+	public static ExpressionResult evaluate(String expressionString, ExpressionContext context) {
 		return evaluate(Expression.parse(expressionString), context);
 	}
 	/**
@@ -169,7 +169,7 @@ public class Expression {
 	 * @param context the specific context that needs to be considered additionally to the global context.
 	 * @return the expression result
 	 */
-	public static ExpressionResult evaluate(Expression expression, Object context) {
+	public static ExpressionResult evaluate(Expression expression, ExpressionContext context) {
 		if (expression.hasErrors()==false) {
 			return expression.getExpressionResult(context);
 		} 

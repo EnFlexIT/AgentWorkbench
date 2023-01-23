@@ -52,7 +52,7 @@ public class ExpressionMainWindowExtension extends MainWindowExtension implement
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getjButtonExpression()) {
-			ExpressionEditorDialog eed = new ExpressionEditorDialog(Application.getMainWindow(), null, true);
+			ExpressionEditorDialog eed = new ExpressionEditorDialog(Application.getMainWindow(), null, null, true);
 			eed.setVisible(true);
 		}
 	}

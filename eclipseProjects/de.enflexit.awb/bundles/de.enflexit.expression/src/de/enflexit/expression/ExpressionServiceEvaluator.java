@@ -10,10 +10,12 @@ public interface ExpressionServiceEvaluator {
 
 	/**
 	 * Evaluates the provided expression.
+	 *
 	 * @param expression the expression
+	 * @param context the context
 	 * @return the expression result
 	 * @throws UnknownExpressionException thrown if the expression cannot be evaluated by this service
 	 */
-	public ExpressionResult evaluate(Expression expression) throws UnknownExpressionException;
+	public ExpressionResult evaluate(Expression expression, ExpressionContext context) throws UnknownExpressionException;
 	
 }

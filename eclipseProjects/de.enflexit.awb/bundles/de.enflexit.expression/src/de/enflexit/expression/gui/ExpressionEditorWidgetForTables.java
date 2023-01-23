@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.math.ExpressionTypeMath;
 
 import javax.swing.BorderFactory;
@@ -27,13 +28,15 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	
 	private static final long serialVersionUID = 6056053207940611095L;
 	
+	private Expression expression;
+	private ExpressionContext expressionContext;
+
 	private JTextField jTextFieldExpression;
 	private JButton jButtonExpressionEditor;
 	
-	private Expression expression;
-	
 	private TableCellEditor parentEditor;
 	
+
 	public ExpressionEditorWidgetForTables(TableCellEditor parentEditor) {
 		this.parentEditor = parentEditor;
 		this.initialize();
@@ -128,13 +131,29 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		}
 	}
 	
+	/**
+	 * Gets the expression context.
+	 * @return the expression context
+	 */
+	public ExpressionContext getExpressionContext() {
+		return expressionContext;
+	}
+	/**
+	 * Sets the expression context.
+	 * @param expressionContext the new expression context
+	 */
+	public void setExpressionContext(ExpressionContext expressionContext) {
+		this.expressionContext = expressionContext;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonExpressionEditor()) {
-			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
+			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {

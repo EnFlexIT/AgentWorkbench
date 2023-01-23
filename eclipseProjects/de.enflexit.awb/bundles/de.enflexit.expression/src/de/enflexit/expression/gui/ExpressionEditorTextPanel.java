@@ -23,6 +23,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.ExpressionParser;
 import de.enflexit.expression.ExpressionResult;
 
@@ -38,6 +39,9 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	public static final String EXPRESSION_PARSED = "ExpressionParsed";
 	public static final String EXPRESSION_EVALUATED = "ExpressionEvaluated";
 	
+	private Expression expression;
+	private ExpressionContext expressionContext;
+	
 	private JLabel jLabelExpression;
 	private JScrollPane jScrollBarExpression;
 	private JTextArea jTextAreaExpression;
@@ -45,7 +49,6 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	private JButton jButtonParse;
 	private JCheckBox jCheckBoxAutoParse;
 	
-	private Expression expression;
 	private JTextField jTextFieldResult;
 	private JLabel jLabelResultType;
 	
@@ -222,8 +225,8 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	private void parseAndWriteResult() {
 		this.parseExpression();
 		if (this.expression!=null) {
-			ExpressionResult eResult = this.expression.getExpressionResult(); 
-			this.setExpressionResult(this.expression.getExpressionResult());
+			ExpressionResult eResult = this.expression.getExpressionResult(this.getExpressionContext()); 
+			this.setExpressionResult(eResult);
 			this.firePropertyChange(EXPRESSION_EVALUATED, null, eResult);		
 		}
 	}
@@ -257,6 +260,24 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 		return this.expression;
 	}
 	
+	/**
+	 * Sets the current expression context.
+	 * @param context the new expression context
+	 */
+	public void setExpressionContext(ExpressionContext context) {
+		this.expressionContext = context;
+	}
+	/**
+	 * Returns the current ExpressionContext.
+	 * @return the expression context
+	 */
+	public ExpressionContext getExpressionContext() {
+		if (expressionContext==null) {
+			// --- In this case, only a global context is available ----------- 
+			expressionContext = new ExpressionContext();
+		}
+		return expressionContext;
+	}
 	
 	
 	/**

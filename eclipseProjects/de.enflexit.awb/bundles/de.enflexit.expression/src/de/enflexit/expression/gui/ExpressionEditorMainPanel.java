@@ -12,6 +12,7 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.ExpressionResult;
 
 /**
@@ -56,8 +57,9 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 		this.add(this.getJSplitPaneMain(), gbc_jSplitPaneMain);
 	}
 	
+	
 	/**
-	 * Gets the expression.
+	 * Returns the current expression.
 	 * @return the expression
 	 */
 	public Expression getExpression() {
@@ -65,13 +67,28 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 		return this.getJPanelExpressionTextEditor().getExpression();
 	}
 	/**
-	 * Sets the expression.
+	 * Sets the current expression.
 	 * @param expression the new expression
 	 */
 	public void setExpression(Expression expression) {
 		this.getJPanelExpressionTextEditor().setExpression(expression);
 	}
 	
+	/**
+	 * Returns the current expression context.
+	 * @return the expression context
+	 */
+	public ExpressionContext getExpressionContext() {
+		return this.getJPanelExpressionTextEditor().getExpressionContext();
+	}
+	/**
+	 * Sets the current expression context.
+	 * @param context the new expression context
+	 */
+	public void setExpressionContext(ExpressionContext context) {
+		this.getJPanelExpressionTextEditor().setExpressionContext(context);
+	}
+
 	
 	private JSplitPane getJSplitPaneMain() {
 		if (jSplitPaneMain == null) {
@@ -159,5 +176,5 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 			
 		}
 	}
-	
+
 }

@@ -8,8 +8,7 @@ package de.enflexit.expression;
 public class ExpressionEvaluator {
 
 	private Expression expression;
-	private Object context;
-
+	private ExpressionContext context;
 	private ExpressionResult expressionResult;
 	
 	/**
@@ -18,7 +17,7 @@ public class ExpressionEvaluator {
 	 * @param expression the expression to evaluate
 	 * @param context one or more context information that needs to be considered, additionally to the global context
 	 */
-	public ExpressionEvaluator(Expression expression, Object... context) {
+	public ExpressionEvaluator(Expression expression, ExpressionContext context) {
 		this.expression = expression;
 		this.context = context;
 	}
@@ -55,19 +54,19 @@ public class ExpressionEvaluator {
 		if (eService!=null) {
 			try {
 				// --- Get the ExpressionServiceEvaluator ---------------
-				ExpressionServiceEvaluator evaluator = eService.getExpressionServiceEvaluator();
-				if (evaluator!=null) {
-					evaluationResult = evaluator.evaluate(this.expression);
-					expression.setExpressionResult(evaluationResult);
+				ExpressionServiceEvaluator serviceEvaluator = eService.getExpressionServiceEvaluator();
+				if (serviceEvaluator!=null) {
+					evaluationResult = serviceEvaluator.evaluate(this.expression, this.context);
+					this.expression.setExpressionResult(evaluationResult);
 				} else {
-					System.err.println("[" + this.getClass().getSimpleName() + "] Did not get evaluator for ExpressionService " + this.expression.getExpressionType());
+					System.err.println("[" + this.getClass().getSimpleName() + "] Did not get evaluator for " + this.expression.getExpressionType().toString());
 				}
 				
 			} catch (UnknownExpressionException exex) {
 				exex.printStackTrace();
 			}
 		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find ExpressionService " + this.expression.getExpressionType());
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find " + this.expression.getExpressionType().toString());
 		}
 		return evaluationResult;
 	}

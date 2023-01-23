@@ -7,7 +7,7 @@ package de.enflexit.expression;
 public abstract class ExpressionType {
 	
 	/**
-	 * Gets the type prefix, which is used in expression strings to identify expressions of this type. 
+	 * Has to return the type prefix that is used in expression strings to identify expressions of this type. 
 	 * @return the type prefix
 	 */
 	public abstract String getTypePrefix();

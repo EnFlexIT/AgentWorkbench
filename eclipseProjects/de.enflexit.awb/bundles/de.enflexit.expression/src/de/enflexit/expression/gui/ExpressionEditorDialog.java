@@ -11,6 +11,8 @@ import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,35 +45,40 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	 * Instantiates the ExpressionEditorDialog (not modal).
 	 */
 	public ExpressionEditorDialog() {
-		this(null, null, false);
+		this(null, null, null, false);
 	}
 	/**
 	 * Instantiates the ExpressionEditorDialog (not modal).
 	 * @param ownerWindow the owner window
 	 */
 	public ExpressionEditorDialog(Window ownerWindow) {
-		this(ownerWindow, null, false);
+		this(ownerWindow, null, null, false);
 	}
+	
 	/**
 	 * Instantiates the ExpressionEditorDialog with the specified expression (not modal).
 	 *
 	 * @param ownerWindow the owner window
 	 * @param expression the expression to edit
+	 * @param context the expression context
 	 */
-	public ExpressionEditorDialog(Window ownerWindow, Expression expression) {
-		this(ownerWindow, expression, false);
+	public ExpressionEditorDialog(Window ownerWindow, Expression expression, ExpressionContext context) {
+		this(ownerWindow, expression, context, false);
 	}
+	
 	/**
 	 * Instantiates the ExpressionEditorDialog with the specified expression .
 	 *
 	 * @param ownerWindow the owner window (a JFrame or JDialog)
 	 * @param expression the expression to edit
+	 * @param context the expression context
 	 * @param isModal the indicator to open the dialog in a modal manner or not
 	 */
-	public ExpressionEditorDialog(Window ownerWindow, Expression expression, boolean isModal) {
+	public ExpressionEditorDialog(Window ownerWindow, Expression expression, ExpressionContext context ,boolean isModal) {
 		super(ownerWindow);
 		this.initialize();
 		this.setModal(isModal);
+		this.setExpressionContext(context);
 		this.setExpression(expression);
 	}
 	/**
@@ -199,6 +206,22 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	public void setExpression(Expression expression) {
 		this.getJPanelExpressionPanel().setExpression(expression);
 	}
+	
+	/**
+	 * Returns the expression context, used by the UI.
+	 * @return the expression context
+	 */
+	public ExpressionContext getExpressionContext() {
+		return this.getJPanelExpressionPanel().getExpressionContext();
+	}
+	/**
+	 * Sets the expression context to the UI.
+	 * @param context the new expression context
+	 */
+	public void setExpressionContext(ExpressionContext context) {
+		this.getJPanelExpressionPanel().setExpressionContext(context);
+	}
+	
 	
 	/**
 	 * Checks if the dialog was canceled.

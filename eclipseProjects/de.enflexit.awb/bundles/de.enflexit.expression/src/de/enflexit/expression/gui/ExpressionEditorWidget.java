@@ -14,6 +14,7 @@ import java.awt.Font;
 import javax.swing.JTextField;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.math.ExpressionTypeMath;
 
 import java.awt.Insets;
@@ -42,6 +43,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	private JButton jButtonValidate;
 	
 	private Expression expression;
+	private ExpressionContext expressionContext;
 	
 	/**
 	 * Instantiates a new expression editor widget.
@@ -90,7 +92,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonEditor()) {
-			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), true);
+			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
@@ -184,4 +186,20 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	public Expression getExpression() {
 		return expression;
 	}
+	
+	/**
+	 * Sets the current expression context.
+	 * @param expressionContext the new expression context
+	 */
+	public void setExpressionContext(ExpressionContext expressionContext) {
+		this.expressionContext = expressionContext;
+	}
+	/**
+	 * Returns the current expression context.
+	 * @return the expression context
+	 */
+	public ExpressionContext getExpressionContext() {
+		return expressionContext;
+	}
+	
 }

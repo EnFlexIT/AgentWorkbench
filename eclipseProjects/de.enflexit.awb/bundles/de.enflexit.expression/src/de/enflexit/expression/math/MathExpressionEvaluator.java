@@ -4,6 +4,7 @@ import com.expression.parser.exception.CalculatorException;
 import com.expression.parser.function.FunctionX;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.ExpressionResult;
 import de.enflexit.expression.ExpressionService;
 import de.enflexit.expression.ExpressionServiceEvaluator;
@@ -17,10 +18,10 @@ import de.enflexit.expression.UnknownExpressionException;
 public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.expression.ExpressionServiceEvaluator#evaluate(de.enflexit.expression.Expression)
+	 * @see de.enflexit.expression.ExpressionServiceEvaluator#evaluate(de.enflexit.expression.Expression, de.enflexit.expression.ExpressionContext)
 	 */
 	@Override
-	public ExpressionResult evaluate(Expression expression) throws UnknownExpressionException {
+	public ExpressionResult evaluate(Expression expression, ExpressionContext context) throws UnknownExpressionException {
 		
 		// --- Early exit? ------------------------------------------
 		if (expression.hasErrors()==true) {
@@ -35,7 +36,7 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 				Expression subExp = expression.getSubExpressions().get(i);
 				if (subExp.hasErrors()==false) {
 					// --- For an error-free expression -------------  
-					ExpressionResult subResult = subExp.getExpressionResult();
+					ExpressionResult subResult = subExp.getExpressionResult(context);
 					if (subResult.isValid()==true) {
 						String subExpStringSearch = ExpressionService.EXPRESSION_OPENING_DELIMITER + subExp.getExpressionString() + ExpressionService.EXPRESSION_CLOSING_DELIMITER; 
 						// --- VALID sub result ------------------------- 
