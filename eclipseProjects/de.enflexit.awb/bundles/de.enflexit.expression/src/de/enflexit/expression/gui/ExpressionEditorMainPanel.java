@@ -13,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
-import de.enflexit.expression.ExpressionResult;
 
 /**
  * This class implements the main panel of the expression editor. It mainly just hosts
@@ -158,8 +157,8 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 				this.getJPanelStructureTreeRight().setExpression((Expression) evt.getNewValue());
 				
 			} else if (evt.getPropertyName().equals(ExpressionEditorTextPanel.EXPRESSION_EVALUATED)) {
-				ExpressionResult er = (ExpressionResult) evt.getNewValue();
-				System.out.println(er.getValue());
+				//ExpressionResult er = (ExpressionResult) evt.getNewValue();
+				//System.out.println(er.getValue());
 			}
 			
 		} else if (evt.getSource()==this.getJPanelStructureTreeRight()) {

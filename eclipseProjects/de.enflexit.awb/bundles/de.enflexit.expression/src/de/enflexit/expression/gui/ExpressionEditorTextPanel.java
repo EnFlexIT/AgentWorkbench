@@ -335,6 +335,33 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	}
 	
 	/**
+	 * Highlights the specified text according to the specified index position.
+	 *
+	 * @param idxFrom the index from
+	 * @param idxTo the index to
+	 */
+	private void highlightText(final int idxFrom, final int idxTo) {
+		
+		if (idxTo<=idxFrom || (idxTo>this.getJTextAreaExpression().getText().length()-1)) return;
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					ExpressionEditorTextPanel.this.isCheckForExpressionPlaceholder = false;
+					ExpressionEditorTextPanel.this.getJTextAreaExpression().setCaretPosition(idxFrom);
+					ExpressionEditorTextPanel.this.getJTextAreaExpression().moveCaretPosition(idxTo);
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				} finally {
+					ExpressionEditorTextPanel.this.isCheckForExpressionPlaceholder = true;
+				}
+			}
+		});
+	}
+	
+	/**
 	 * Check for expression placeholder.
 	 */
 	private void checkForExpressionPlaceholder() {
@@ -385,33 +412,6 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 		
 		if (debug==true) System.out.println(" => '" + currExpression + "' " + foundOpen + " to " + foundClose);
 		this.highlightText(foundOpen, foundClose);
-		
-	}
-	/**
-	 * Highlights the specified text according to the specified index position.
-	 *
-	 * @param idxFrom the index from
-	 * @param idxTo the index to
-	 */
-	private void highlightText(final int idxFrom, final int idxTo) {
-		
-		if (idxTo<=idxFrom || (idxTo>this.getJTextAreaExpression().getText().length()-1)) return;
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					ExpressionEditorTextPanel.this.isCheckForExpressionPlaceholder = false;
-					ExpressionEditorTextPanel.this.getJTextAreaExpression().setCaretPosition(idxFrom);
-					ExpressionEditorTextPanel.this.getJTextAreaExpression().moveCaretPosition(idxTo);
-					
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				} finally {
-					ExpressionEditorTextPanel.this.isCheckForExpressionPlaceholder = true;
-				}
-			}
-		});
 	}
 	
 }
