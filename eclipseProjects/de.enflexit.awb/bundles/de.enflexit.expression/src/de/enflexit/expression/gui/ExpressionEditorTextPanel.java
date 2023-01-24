@@ -19,6 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -46,7 +49,8 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	private JLabel jLabelExpression;
 	private JScrollPane jScrollBarExpression;
 	private JTextArea jTextAreaExpression;
-
+	private boolean isCheckForExpressionPlaceholder = true;
+	
 	private JButton jButtonParse;
 	private JCheckBox jCheckBoxAutoParse;
 	
@@ -126,6 +130,12 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	private JTextArea getJTextAreaExpression() {
 		if (jTextAreaExpression == null) {
 			jTextAreaExpression = new JTextArea();
+			jTextAreaExpression.addCaretListener(new CaretListener() {
+				@Override
+				public void caretUpdate(CaretEvent ce) {
+					ExpressionEditorTextPanel.this.checkForExpressionPlaceholder();
+				}
+			});
 			jTextAreaExpression.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void removeUpdate(DocumentEvent de) {
@@ -292,8 +302,14 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 			stringToInsert = expressionString.replaceAll("<>", EXPRESSION_PLACEHOLDER);
 		}
 		
-		int cursorPosition = this.getJTextAreaExpression().getCaretPosition();
-		this.getJTextAreaExpression().insert(stringToInsert, cursorPosition);
+		// --- Replace or insert new expression string --------------
+		int selStart = this.getJTextAreaExpression().getSelectionStart();
+		int selEnd  = this.getJTextAreaExpression().getSelectionEnd();
+		if (selStart!=selEnd) {
+			this.getJTextAreaExpression().replaceRange(stringToInsert, selStart, selEnd);
+		} else {
+			this.getJTextAreaExpression().insert(stringToInsert, selStart);
+		}
 		this.getJTextAreaExpression().requestFocusInWindow();
 	}
 
@@ -315,7 +331,87 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 		
 		// --- Set/clear the selection --------------------------
 		this.getJTextAreaExpression().requestFocus();
-		this.getJTextAreaExpression().select(selectFrom, selectTo);
+		this.highlightText(selectFrom, selectTo);
+	}
+	
+	/**
+	 * Check for expression placeholder.
+	 */
+	private void checkForExpressionPlaceholder() {
+		
+		if (this.isCheckForExpressionPlaceholder==false) return;
+		
+		boolean debug = false;
+		
+		int selStart = this.getJTextAreaExpression().getSelectionStart();
+		int selEnd  = this.getJTextAreaExpression().getSelectionEnd();
+		if (debug==true) System.out.println("Cursor-Pos: " + selStart + "/" + selEnd);
+		if (selStart!=selEnd) return;
+
+		// --- Early exit? --------------------------------
+		String currExpression = this.getJTextAreaExpression().getText();
+		if (currExpression==null || currExpression.isBlank()==true) return;
+		if (selStart >= currExpression.length()) return;
+		
+		// --- Search to left for '<' ---------------------
+		int foundOpen  = -1;
+		int foundClose = -1;
+		for (int i = selStart-1; i>= 0; i--) {
+			char currChar = currExpression.charAt(i); 
+			if (currChar=='>') {
+				break;
+			} else if (currExpression.charAt(i)=='<') {
+				foundOpen = i;
+				break;
+			}
+		}
+		if (foundOpen==-1) return;
+		
+		// --- Search to right for '>' --------------------
+		for (int i = selStart; i<currExpression.length(); i++) {
+			char currChar = currExpression.charAt(i); 
+			if (currChar=='<') {
+				break;
+			} else if (currExpression.charAt(i)=='>') {
+				foundClose = i + 1;
+				break;
+			}
+		}
+		if (foundClose==-1) return;
+		
+		// --- Check substring ----------------------------
+		String checkExp = currExpression.substring(foundOpen, foundClose);
+		if (checkExp.equalsIgnoreCase(EXPRESSION_PLACEHOLDER)==false) return;
+		
+		if (debug==true) System.out.println(" => '" + currExpression + "' " + foundOpen + " to " + foundClose);
+		this.highlightText(foundOpen, foundClose);
+		
+	}
+	/**
+	 * Highlights the specified text according to the specified index position.
+	 *
+	 * @param idxFrom the index from
+	 * @param idxTo the index to
+	 */
+	private void highlightText(final int idxFrom, final int idxTo) {
+		
+		if (idxTo<=idxFrom || (idxTo>this.getJTextAreaExpression().getText().length()-1)) return;
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					ExpressionEditorTextPanel.this.isCheckForExpressionPlaceholder = false;
+					ExpressionEditorTextPanel.this.getJTextAreaExpression().setCaretPosition(idxFrom);
+					ExpressionEditorTextPanel.this.getJTextAreaExpression().moveCaretPosition(idxTo);
+					
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				} finally {
+					ExpressionEditorTextPanel.this.isCheckForExpressionPlaceholder = true;
+				}
+			}
+		});
 	}
 	
 }

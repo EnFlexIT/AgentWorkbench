@@ -38,7 +38,7 @@ public interface ExpressionService {
 	 * Has to return a string to insert for the specified insertExpression. If the method returns <code>null</code>, by
 	 * default a string like <i>[ expressionTypePrefix : insertExpression ]</i> will be used 
 	 *
-	 * @param libraryExpression the library expression
+	 * @param libraryExpression the library expression to insert
 	 * @return the insert string
 	 */
 	public String getInsertString(String libraryExpression);

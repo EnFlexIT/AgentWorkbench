@@ -68,12 +68,19 @@ public class ExpressionContext {
 	public List<Object> getContextObjectList() {
 		if (contextObjectList==null) {
 			contextObjectList = new ArrayList<>();
-			// --- TODO Add global context object here !!! ----------
+			// --- TODO Add global context objects here !!! ----------
 		}
 		return contextObjectList;
 	}
 	
-	
+	public <T> T[] getContextObject(Class<T> clazz) {
+		
+		T[] typeArray = null;
+		
+		
+		return typeArray;
+		
+	}
 	
 	
 	

@@ -294,13 +294,11 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		ExpressionType expressionType = this.getExpressionTypesForCategories().get(categoryNode);
 		ExpressionService eService = ExpressionServiceHelper.getExpressionService(expressionType);
 
-		
+		// --- Get insert string from corresponding expression service --------
 		String stringToInsert = eService.getInsertString(libraryExpression);
 		if (stringToInsert==null) {
 			stringToInsert = "[" + expressionType.getTypePrefix() + ":" + libraryExpression + "]";
 		}
-		
-		
 		this.firePropertyChange(EXPRESSION_INSERTED, null, stringToInsert);
 	}
 

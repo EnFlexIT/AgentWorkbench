@@ -17,6 +17,13 @@ import de.enflexit.expression.ExpressionType;
  */
 public class MathExpressionService implements ExpressionService {
 	
+	private final String OPERATOR_PLUS = "+ (plus)";
+	private final String OPERATOR_MINUS = "- (minus)";
+	private final String OPERATOR_MULTIPLY = "* (multiply)";
+	private final String OPERATOR_DIVED = "* (divide)";
+	private final String OPERATOR_POTENTIATE = "^ (potentiate)";
+	
+	
 	private ExpressionEditorTreeNode expressionEditorRootNode;
 
 	/* (non-Javadoc)
@@ -55,11 +62,30 @@ public class MathExpressionService implements ExpressionService {
 		
 		String insertString = null;
 		switch (libraryExpression) {
+		// --- Operator -------------------------
+		case OPERATOR_PLUS:
+			insertString = "+";
+			break;
+		case OPERATOR_MINUS:
+			insertString = "-";
+			break;
+		case OPERATOR_MULTIPLY:
+			insertString = "*";
+			break;
+		case OPERATOR_DIVED:
+			insertString = "/";
+			break;
+		case OPERATOR_POTENTIATE:
+			insertString = "^";
+			break;
+		
+		// --- Constants ------------------------
 		case "pi":
 		case "e":
 			insertString = libraryExpression;			
 			break;
 
+		// --- Everything else ------------------
 		default:
 			insertString = libraryExpression + "(<>)";
 			break;
@@ -75,6 +101,14 @@ public class MathExpressionService implements ExpressionService {
 	private TreeMap<String, ArrayList<String>> buildTemplatesTreeMap(){
 		
 		TreeMap<String, ArrayList<String>> expressionTemplates = new TreeMap<>();
+		
+		ArrayList<String> operatorExpressions = new ArrayList<>();
+		operatorExpressions.add(OPERATOR_PLUS);
+		operatorExpressions.add(OPERATOR_MINUS);
+		operatorExpressions.add(OPERATOR_MULTIPLY);
+		operatorExpressions.add(OPERATOR_DIVED);
+		operatorExpressions.add(OPERATOR_POTENTIATE);
+		expressionTemplates.put("Operators", operatorExpressions);
 		
 		ArrayList<String> constantExpressions = new ArrayList<>();
 		constantExpressions.add("pi");
@@ -102,23 +136,11 @@ public class MathExpressionService implements ExpressionService {
 		
 		// --- Concluding group that displays all functions / constants at once ---------
 		ArrayList<String> allExpressions = new ArrayList<>();
-		allExpressions.add("pi");
-		allExpressions.add("e");
+		allExpressions.addAll(operatorExpressions);
+		allExpressions.addAll(constantExpressions);
+		allExpressions.addAll(functionExpressions);
+		allExpressions.addAll(trigoExpressions);
 		
-		allExpressions.add("ln");
-		allExpressions.add("log");
-		allExpressions.add("sqrt");
-		allExpressions.add("cbrt");
-
-		allExpressions.add("sin");
-		allExpressions.add("asin");
-		allExpressions.add("sinh");
-		allExpressions.add("cos");
-		allExpressions.add("acos");
-		allExpressions.add("cosh");
-		allExpressions.add("tan");
-		allExpressions.add("atan");
-		allExpressions.add("tanh");
 		expressionTemplates.put("All Functions", allExpressions);
 		
 		return expressionTemplates;
