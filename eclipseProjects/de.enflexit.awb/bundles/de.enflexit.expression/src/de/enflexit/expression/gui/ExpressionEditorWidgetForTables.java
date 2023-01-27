@@ -35,12 +35,14 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	private JButton jButtonExpressionEditor;
 	
 	private TableCellEditor parentEditor;
-	
 
-	public ExpressionEditorWidgetForTables(TableCellEditor parentEditor) {
+	public ExpressionEditorWidgetForTables(TableCellEditor parentEditor, Expression expression, ExpressionContext expressionContext) {
 		this.parentEditor = parentEditor;
+		this.expression = expression;
+		this.expressionContext = expressionContext;
 		this.initialize();
 	}
+
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{80, 33, 0};
@@ -130,7 +132,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			this.getJTextFieldExpression().setText(null);
 		}
 	}
-	
+
 	/**
 	 * Gets the expression context.
 	 * @return the expression context
@@ -145,7 +147,6 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	public void setExpressionContext(ExpressionContext expressionContext) {
 		this.expressionContext = expressionContext;
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)

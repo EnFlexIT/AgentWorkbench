@@ -317,7 +317,9 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		for (int i=0; i<expressionServices.size(); i++) {
 			// --- Get sub-node of service --------------------------
 			ExpressionEditorTreeNode categoryNode = expressionServices.get(i).getExpressionEditorNode(context);
-			elRootNode.add(categoryNode);
+			if (categoryNode!=null) {
+				elRootNode.add(categoryNode);
+			}
 			// --- Remind selection categories ----------------------
 			this.getExpressionTypesForCategories().put(categoryNode, expressionServices.get(i).getExpressionType());
 		}

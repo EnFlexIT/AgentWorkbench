@@ -47,13 +47,13 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	
 	/**
 	 * Instantiates a new expression editor widget.
+	 * @param expression the expression to edit
+	 * @param expressionContext the expression context
 	 */
-	public ExpressionEditorWidget() {
-		initialize();
-	}
-	
-	public ExpressionEditorWidget(Expression expression) {
+	public ExpressionEditorWidget(Expression expression, ExpressionContext expressionContext) {
 		this.expression = expression;
+		this.expressionContext = expressionContext;
+		this.initialize();
 	}
 
 	/**
