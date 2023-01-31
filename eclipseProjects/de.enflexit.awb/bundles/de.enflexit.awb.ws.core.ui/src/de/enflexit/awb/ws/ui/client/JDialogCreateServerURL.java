@@ -37,7 +37,7 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 	 */
 	public JDialogCreateServerURL(Window owner, boolean isVisible) {
 		super(owner);
-		getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
+		this.getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
 		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.setSize(300, 120);
 		this.setModal(true);
@@ -55,11 +55,11 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 	 */
 	public JDialogCreateServerURL(Window owner,boolean isVisible,ServerURL serverURL) {
 		super(owner);
-		getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		if(serverURL!=null) {
 			this.setModifiedServerURL(serverURL);
 		}
+		getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.getJButtonCreateServerURL().setText("Save changes");
 		this.setSize(300, 120);
 		this.setModal(true);
@@ -140,6 +140,11 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 			jTextFieldServerUrl = new JTextField();
 			jTextFieldServerUrl.setFont(new Font("Dialog", Font.BOLD, 12));
 			jTextFieldServerUrl.setColumns(10);
+			
+			//Set modifiedServerURl as text
+			if(this.getModifiedServerURL()!=null && !this.getModifiedServerURL().getServerURL().isEmpty()) {
+				jTextFieldServerUrl.setText(this.getModifiedServerURL().getServerURL());
+			}
 			jTextFieldServerUrl.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldServerUrl;
@@ -164,12 +169,25 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 		this.repaint();
 	}
 	
+	/**
+	 * Gets the modified server URL.
+	 *
+	 * @return the modified server URL
+	 */
 	public ServerURL getModifiedServerURL() {
 		return modifiedServerURL;
 	}
 
+	/**
+	 * Sets the modified server URL.
+	 *
+	 * @param modifiedServerURL the new modified server URL
+	 */
 	public void setModifiedServerURL(ServerURL modifiedServerURL) {
 		this.modifiedServerURL = modifiedServerURL;
+		if(modifiedServerURL!=null) {
+		this.getJTextFieldServerUrl().setText(modifiedServerURL.getServerURL());
+		}
 	}
 	
 	
@@ -184,14 +202,20 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(getJButtonCreateServerURL())) {
 			if (!getJTextFieldServerUrl().getText().isBlank()) {
-				if (createdServerURL != null) {
-					if (hasUnsavedChanges()) {
-						ServerURL newServerURL = new ServerURL(getJTextFieldServerUrl().getText());
-						if (WsCredentialStore.getInstance().getServerURLList().contains(newServerURL)) {
-							WsCredentialStore.getInstance().getServerURLList().remove(createdServerURL);
+				//Modified URL
+				if (this.getModifiedServerURL() != null) {
+					if (this.hasUnsavedChanges()) {
+						
+						// Save changes runtime
+						this.getModifiedServerURL().setServerURL(this.getJTextFieldServerUrl().getText());
+						if (WsCredentialStore.getInstance().getServerURLList().contains(this.getModifiedServerURL())) {
+							WsCredentialStore.getInstance().getServerURLList().remove(this.getModifiedServerURL());
+							WsCredentialStore.getInstance().getServerURLList().add(this.getModifiedServerURL());
+						}else {
+						   WsCredentialStore.getInstance().getServerURLList().add(this.getModifiedServerURL());
 						}
-						WsCredentialStore.getInstance().getServerURLList().add(newServerURL);
-						this.setModifiedServerURL(newServerURL);
+						unsavedChanges = true;
+						this.dispose();
 					}
 				} else {
 					createdServerURL = new ServerURL(getJTextFieldServerUrl().getText());

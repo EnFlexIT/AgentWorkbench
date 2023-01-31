@@ -62,7 +62,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
+		gbc_panel.insets = new Insets(5, 0, 0, 0);
 		gbc_panel.fill = GridBagConstraints.BOTH;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 0;
@@ -229,12 +229,15 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		if (jButtonCachedCredentialAssignmentsView == null) {
 			jButtonCachedCredentialAssignmentsView = new JButton(BundleHelper.getImageIcon("cache.png"));
 			jButtonCachedCredentialAssignmentsView.setToolTipText("See cached Credential Assignments");
+			jButtonCachedCredentialAssignmentsView.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCachedCredentialAssignmentsView.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
 		}
 		if(WsCredentialStore.getInstance().getCacheCredentialAssignmentList().size()>0) {
 		   jButtonCachedCredentialAssignmentsView.setVisible(true);
+		   jButtonCachedCredentialAssignmentsView.setEnabled(true);
 		}else {
-		   jButtonCachedCredentialAssignmentsView.setVisible(false);
+		   jButtonCachedCredentialAssignmentsView.setVisible(true);
+		   jButtonCachedCredentialAssignmentsView.setEnabled(false);
 		}
 		return jButtonCachedCredentialAssignmentsView;
 	}
@@ -253,7 +256,8 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			gbc_jLabelBundleList.gridy = 0;
 			jPanelHeader.add(getJLabelBundleList_1(), gbc_jLabelBundleList);
 			GridBagConstraints gbc_jButtonDeleteCredentialAssignment = new GridBagConstraints();
-			gbc_jButtonDeleteCredentialAssignment.gridx = 2;
+			gbc_jButtonDeleteCredentialAssignment.insets= new Insets(0, 0, 0, 5);
+			gbc_jButtonDeleteCredentialAssignment.gridx = 1;
 			gbc_jButtonDeleteCredentialAssignment.gridy = 0;
 			jPanelHeader.add(this.getJButtonCachedCredentialAssignmentsView(), gbc_jButtonDeleteCredentialAssignment);
 		}

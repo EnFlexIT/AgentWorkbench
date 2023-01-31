@@ -73,7 +73,7 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 		return jLableApiKeyName;
 	}
 	
-	private JTextField getJTextFieldKeyName() {
+	public JTextField getJTextFieldKeyName() {
 		if (jTextField_KeyName == null) {
 			jTextField_KeyName = new JTextField();
 			jTextField_KeyName.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -98,7 +98,7 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 		}
 		return jLableKey;
 	}
-	private JTextField getJTextFieldKeyValue() {
+	public JTextField getJTextFieldKeyValue() {
 		if (jTextField_KeyValue == null) {
 			jTextField_KeyValue = new JTextField();
 			jTextField_KeyValue.setFont(new Font("Dialog", Font.BOLD, 12));

@@ -27,6 +27,7 @@ import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import de.enflexit.awb.ws.credential.BearerTokenCredential;
+import de.enflexit.awb.ws.credential.JwtToken;
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
@@ -235,6 +236,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 		this.modifiedCredential = modifiedCredential;
 	}
 	
+
 	/**
 	 * Creates the credentials from JTextfields of the different JPanels for the credential creation.
 	 * @throws Exception 
@@ -262,7 +264,8 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 				cred=passwordCred;
 			}
 		}
-		putCredentialinWsCredentialStore(type, cred);
+		
+		this.putCredentialinWsCredentialStore(type, cred);
 		return cred;
 	}
 
@@ -275,44 +278,70 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	 * @throws Exception the exception
 	 */
 	private boolean putCredentialinWsCredentialStore(CredentialType type, AbstractCredential cred) throws Exception {
-		boolean success=false;
+		boolean success = false;
 		if (cred != null) {
 			if (!getJTextFieldNameOfTheCredential().getText().isBlank()) {
 				if (!WsCredentialStore.getInstance().getCredentialList().contains(cred)) {
-					
+
 					// Case of creating a new credential
-					
-					AbstractCredential abstrCred = WsCredentialStore.getInstance().getCredentialWithName(getJTextFieldNameOfTheCredential().getText()+"["+type+"]");
+					AbstractCredential abstrCred = WsCredentialStore.getInstance().getCredentialWithName(getJTextFieldNameOfTheCredential().getText() + "[" + type + "]");
 					if (abstrCred == null) {
-						cred.setName("["+type+"]"+getJTextFieldNameOfTheCredential().getText());
+						cred.setName("[" + type + "]" + getJTextFieldNameOfTheCredential().getText());
 						WsCredentialStore.getInstance().getCredentialList().add(cred);
 						this.setCreatedCredential(cred);
-						success=true;
-					}else {
-						throw new Exception("The credential name was used before, please change it. It must be unique!");
+						success = true;
 						
+					} else {
+						throw new Exception("The credential name was used before, please change it. It must be unique!");
 					}
 				} else {
+
+					// Case of updating an already created credential
+					AbstractCredential oldCred;
 					
-                  // Case of updating an already created credential
-					
-					AbstractCredential abstrCred = WsCredentialStore.getInstance().getCredentialWithName(getJTextFieldNameOfTheCredential().getText());
-					if (abstrCred == null) {
-						cred.setName("["+type+"]"+getJTextFieldNameOfTheCredential().getText());
-						WsCredentialStore.getInstance().updateCredentialInCredentialList(abstrCred);
+					//Init old cred
+					if (this.getCreatedCredential() != null) {
+						oldCred = this.getCreatedCredential();
+					} else {
+						oldCred = WsCredentialStore.getInstance().getCredentialWithName(this.getJTextFieldNameOfTheCredential().getText());
+					}
+
+					//update old cred
+					if (oldCred != null) {
+						oldCred.setName("[" + type + "]" + getJTextFieldNameOfTheCredential().getText());
+						CredentialType credType=oldCred.getCredentialType();
+						if (credType.equals(CredentialType.API_KEY)) {
+							
+							ApiKeyCredential apiKey=(ApiKeyCredential) oldCred;
+							apiKey.setName(this.getJTextFieldNameOfTheCredential().getText());
+							apiKey.setApiKeyPrefix(this.getJPanelApiKeyCredentials().getJTextFieldKeyName().getText());
+							apiKey.setApiKeyValue(this.getJPanelApiKeyCredentials().getJTextFieldKeyValue().getText());
+							
+						} else if (credType.equals(CredentialType.BEARER_TOKEN)) {
+							
+							BearerTokenCredential token =(BearerTokenCredential) oldCred;
+							token.setName(this.getJTextFieldNameOfTheCredential().getText());
+							token.setJwtToken(new JwtToken(this.getJPanelBearerTokenCredential().getJTextFieldTokenValue().getText()));
+							
+						} else if (credType.equals(CredentialType.USERNAME_PASSWORD)) {
+							
+							UserPasswordCredential password=(UserPasswordCredential)oldCred;
+							password.setUserName(this.getJPanelPasswordAuthenticationCredentials().getJTextFieldUsername().getText());
+							password.setPassword(this.getJPanelPasswordAuthenticationCredentials().getJTextFieldUsername().getText());
+							password.setName(this.getJTextFieldNameOfTheCredential().getText());
+							
+						}
+						WsCredentialStore.getInstance().updateCredentialInCredentialList(oldCred);
 						this.setModifiedCredential(cred);
-						success=true;
-						
-					}else {
-						throw new Exception("The credential name was used before, please change it. It must be unique!");
-						
+						success = true;
+					} else {
+						throw new Exception("The credential name was not used before, please creaete one. It must be unique!");
 					}
 				}
 			} else {
 				throw new Exception("The credential name must be specified");
-				
+
 			}
-			
 		}
 		return success;
 	}
@@ -346,13 +375,13 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	private void fillJComboBox() {
 		CredentialType[] credentialTypes=CredentialType.values();
 		for (CredentialType credentialType : credentialTypes) {
-			comboBox.addItem(credentialType);
+			this.getJComboBox().addItem(credentialType);
 		}
-		comboBox.setSelectedItem(CredentialType.API_KEY);
+		this.getJComboBox().setSelectedItem(CredentialType.API_KEY);
 	}
 	
 	/**
-	 * Fill specific Jtextfields with credential values.
+	 * Fill specific JTextfields with credential values.
 	 *
 	 * @param createdCredential the created credential
 	 */
@@ -368,14 +397,14 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 			CredentialType credType = createdCredential.getCredentialType();
 			this.getJComboBox().setSelectedItem(createdCredential.getCredentialType());
 			if (credType.equals(CredentialType.API_KEY)) {
-				getJPanelApiKeyCredentials().setCredential((ApiKeyCredential) createdCredential);
-				getJPanelApiKeyCredentials().fillApiKeyTextfields();
+				this.getJPanelApiKeyCredentials().setCredential((ApiKeyCredential) createdCredential);
+				this.getJPanelApiKeyCredentials().fillApiKeyTextfields();
 			} else if (credType.equals(CredentialType.BEARER_TOKEN)) {
-				getJPanelBearerTokenCredential().setCredential((BearerTokenCredential) createdCredential);
-				getJPanelBearerTokenCredential().fillJTextfieldTokenValue();
+				this.getJPanelBearerTokenCredential().setCredential((BearerTokenCredential) createdCredential);
+				this.getJPanelBearerTokenCredential().fillJTextfieldTokenValue();
 			} else if (credType.equals(CredentialType.USERNAME_PASSWORD)) {
-				getJPanelPasswordAuthenticationCredentials().setCredential((UserPasswordCredential) createdCredential);
-				getJPanelPasswordAuthenticationCredentials().fillPasswordTextfields();
+				this.getJPanelPasswordAuthenticationCredentials().setCredential((UserPasswordCredential) createdCredential);
+				this.getJPanelPasswordAuthenticationCredentials().fillPasswordTextfields();
 			}
 		}
 	}
@@ -389,10 +418,23 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	*/
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource().equals(getJButtonCreateAndSaveCredential())) {
+		if (e.getSource().equals(getJButtonCreateAndSaveCredential())) {
 			try {
-				getCreatedCredential();
-	            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				//Check which Credential is selected
+				if (this.getJComboBox().getSelectedItem() != null) {
+					
+					CredentialType type = (CredentialType) getJComboBox().getSelectedItem();
+					
+					//Check if modified credential is not empty, then updated it
+					if (this.getModifiedCredential() != null) {
+						this.putCredentialinWsCredentialStore(type, this.getModifiedCredential());
+					} else {
+						this.createCredential();
+						this.putCredentialinWsCredentialStore(type, this.getCreatedCredential());
+					}
+				}
+
+				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(this, e1.getMessage());
 			}
@@ -438,7 +480,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	public boolean hasUnsavedChanges() {
 		AbstractCredential cred=null;
 		try {
-			cred = getCreatedCredential();
+			cred = this.getCreatedCredential();
 			if(cred==null) {
 				cred = this.getModifiedCredential();
 			}
@@ -449,8 +491,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 			return true;
 		}else {
 			return hasUnsavedChanges;
-		}
-		
+		}		
 	}
 
 	/* (non-Javadoc)

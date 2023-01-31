@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.ui.client;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -49,6 +48,7 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	private List<ServerURL> deletedServerURLCache;
 	private List<ServerURL> addedServerURLCache;
 	private List<ServerURL> modifiedServerURLCache;
+	
 
 	/**
 	 * Instantiates a new j panel server URL.
@@ -64,7 +64,7 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 0, 0 };
+		gridBagLayout.columnWidths = new int[] {0, 0};
 		gridBagLayout.rowHeights = new int[] { 26, 125, 0 };
 		gridBagLayout.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
@@ -437,11 +437,17 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	public void windowClosed(WindowEvent e) {
 		if(e.getSource().equals(this.getJDialogCreateServer())) {
 			if(this.getJDialogCreateServer().getServerURL()!=null){
+				//Check if it is in cached Change list
+				if(!this.getAddedServerURLCache().contains(this.getJDialogCreateServer().getServerURL())) {
 				this.getAddedServerURLCache().add(this.getJDialogCreateServer().getServerURL());
+				}
 			}else if(this.getJDialogCreateServer().getModifiedServerURL()!=null) {
-				this.getModifiedServerURLCache().add(this.getJDialogCreateServer().getModifiedServerURL());
+				//Check if it is in cached Change list
+				if(!this.getModifiedServerURLCache().contains(this.getJDialogCreateServer().getModifiedServerURL())) {
+					this.getModifiedServerURLCache().add(this.getJDialogCreateServer().getModifiedServerURL());
+				}
 			}
-			fillJListServerUrlAndRepaint();
+			this.fillJListServerUrlAndRepaint();
 		}	
 	}
 
