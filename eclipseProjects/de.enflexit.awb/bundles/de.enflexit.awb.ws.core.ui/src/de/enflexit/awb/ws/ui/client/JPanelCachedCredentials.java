@@ -247,6 +247,7 @@ public class JPanelCachedCredentials extends JPanel implements WsConfigurationIn
 	
 	public void refreshPanel() {
 		this.getJListAssignedCredentials().clearSelection();
+		this.getListCacheCredAssignment().clear();
 		this.getJListAssignedCredentials().removeAll();
 		this.getJListAssignedCredentials().revalidate();;
 		this.getJListAssignedCredentials().repaint();

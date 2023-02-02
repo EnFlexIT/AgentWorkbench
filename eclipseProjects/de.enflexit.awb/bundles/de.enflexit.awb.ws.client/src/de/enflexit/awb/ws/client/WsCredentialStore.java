@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import agentgui.core.application.Application;
+import agentgui.core.application.ApplicationListener;
 import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
 import de.enflexit.awb.ws.BundleHelper;
@@ -48,7 +49,7 @@ import de.enflexit.common.ServiceFinder;
 	    "credentialList",
 	    "cacheCredentialAssignmentList"
 	})
-public class WsCredentialStore implements Serializable {
+public class WsCredentialStore implements ApplicationListener,Serializable {
 	
 	private static final long serialVersionUID = -2711360698936471113L;
 	private static final String FILE_ENCODING = "UTF-8";
@@ -72,7 +73,7 @@ public class WsCredentialStore implements Serializable {
 			if(instance==null) {
 				instance=new WsCredentialStore();
 			}
-			
+			Application.addApplicationListener(instance);
 		} else {
 			if (WsCredentialStore.getWsCredentialStoreFile().equals(credentialStoreFile)==false) {
 				WsCredentialStore.save(instance, credentialStoreFile);
@@ -81,7 +82,7 @@ public class WsCredentialStore implements Serializable {
 					instance=new WsCredentialStore();
 				}
 			}
-			
+			Application.addApplicationListener(instance);
 		}
 		return instance;
 	}
@@ -106,6 +107,7 @@ public class WsCredentialStore implements Serializable {
 
 	@XmlTransient
 	private List<AwbApiRegistrationService> apiRegistrationServiceList;
+	
 	
 	/**
 	 * Returns the api registration service list.
@@ -557,21 +559,18 @@ public class WsCredentialStore implements Serializable {
 	
 
 	/**
-	 * Update credential in credential list.
+	 * Updates a credential in credential list during runtime. The updatedCred must be initialized, else nothing happens.
 	 *
-	 * @param abstrCred the abstract credential
+	 * @param updatedCred the updated credential
 	 */
-	public void updateCredentialInCredentialList(AbstractCredential abstrCred) {
-		    AbstractCredential oldCred=this.getCredential(abstrCred.getName());
-        	if(oldCred!=null) {
-        		this.getCredentialList().remove(oldCred);
-        		this.putInCredentialList(abstrCred);
-        	}else {
-        	  oldCred=this.getCredentialWithID(abstrCred.getID());
-        	  if(oldCred!=null) {
-        		  this.getCredentialList().remove(oldCred);
-          		this.putInCredentialList(abstrCred); 
-        	  }
+	public void updateCredentialInCredentialList(AbstractCredential updatedCred) {
+        	if(updatedCred!=null) {
+        		if(this.getCredentialList().contains(updatedCred)) {
+        			this.getCredentialList().remove(updatedCred);
+					this.getCredentialList().add(updatedCred);
+        		}else {
+        		    this.putInCredentialList(updatedCred);
+        		}
         	}
 	}
 	
@@ -1015,5 +1014,18 @@ public class WsCredentialStore implements Serializable {
 			}	
 		}
 		return wsCredStore;
+	}
+
+	
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+
+		if (event.getApplicationEvent().equals(ApplicationEvent.PROJECT_CLOSED)) {
+             this.resetAndReloadWsCredStore();
+		} else if (event.getApplicationEvent().equals(ApplicationEvent.PROJECT_LOADED)) {
+             //TODO:Check if something needs to be done here
+		} else if (event.getApplicationEvent().equals(ApplicationEvent.PROJECT_FOCUSED)) {
+			this.resetAndReloadWsCredStore();
+		}
 	}
 }

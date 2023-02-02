@@ -138,7 +138,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 			jListCredentials = new JList<AbstractCredential>();
 			jListCredentials.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jListCredentials.addMouseListener(this);
-			//getJListCredentials().setCellRenderer(new ListCellRendererCredentials());
+			jListCredentials.setCellRenderer(new ListCellRendererCredentials());
 			fillCredentialJListAndRepaint();
 		}
 		return jListCredentials;
@@ -208,6 +208,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		if (jButtonEditACredential == null) {
 			jButtonEditACredential = new JButton(GlobalInfo.getInternalImageIcon("edit.png"));
 			jButtonEditACredential.setToolTipText("Edit a new credential");
+			jButtonEditACredential.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonEditACredential.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
 			jButtonEditACredential.addActionListener(this);
 		}
@@ -240,6 +241,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		if(this.jDialogCredCreate==null) {
 			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
 	         jDialogCredCreate=new JDialogCredentialCreation(owner);
+	         jDialogCredCreate.addWindowListener(this);
 		}
 		return jDialogCredCreate;
 	}
@@ -250,6 +252,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	 * @param jDialogCredCreate the new j dialog cred create
 	 */
 	public void setjDialogCredCreate(JDialogCredentialCreation jDialogCredCreate) {
+		jDialogCredCreate.addWindowListener(this);
 		this.jDialogCredCreate = jDialogCredCreate;
 	}
 	
@@ -361,8 +364,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	 */
 	private void openJDialogCredentialCreation(AbstractCredential cred) {
 		Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-		
-		
+			
 		//If dialog ist used to edit a credential
 		if(cred!=null) {
 			this.setjDialogCredCreate(new JDialogCredentialCreation(owner, cred));
@@ -446,12 +448,12 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		} else if (ae.getSource().equals(this.getJButtonEditACredential())) {
 			AbstractCredential cred = this.getJListCredentials().getSelectedValue();
 			if (cred != null) {
-				openJDialogCredentialCreation(cred);
+				this.openJDialogCredentialCreation(cred);
 			} else {
 				JOptionPane.showConfirmDialog(this, "Please select a credential!",null,JOptionPane.INFORMATION_MESSAGE);
 			}
 		}else if (ae.getSource().equals(this.getJButtonDeleteACredential())) {
-			deleteACredential();
+			this.deleteACredential();
 		}
 	}
 	
@@ -464,7 +466,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 			if(e.getClickCount()==2) {
 				int index = this.getJListCredentials().locationToIndex(e.getPoint());
 				AbstractCredential cred=this.getJListCredentials().getModel().getElementAt(index);
-				openJDialogCredentialCreation(cred);
+				this.openJDialogCredentialCreation(cred);
 			}
 		}
 	}
@@ -507,23 +509,32 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		
 	}
 
+	/* (non-Javadoc)
+	* @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	*/
 	@Override
 	public void windowClosing(WindowEvent e) {
-		if(e.getSource()==this.getJDialogCredCreate()) {
-			fillCredentialJListAndRepaint();
-			if(this.getJDialogCredCreate().getModifiedCredential()!=null) {
+		if (e.getSource() == this.getJDialogCredCreate()) {
+			if (this.getJDialogCredCreate().getModifiedCredential() != null) {
 				this.getModifiedCredentialCache().add(this.getJDialogCredCreate().getModifiedCredential());
+			}else if(this.getJDialogCredCreate().hasUnsavedChanges()) {
+				try {
+					if (this.getJDialogCredCreate().getCreatedCredential() != null) {
+						this.getModifiedCredentialCache().add(this.getJDialogCredCreate().getModifiedCredential());
+					}
+				} catch (Exception e1) {
+					//Do nothing, just check if the cred is there could be also because of created cred
+				}
 			}
-			
+			this.fillCredentialJListAndRepaint();
 			try {
-				if(this.getJDialogCredCreate().getCreatedCredential()!=null) {
+				if (this.getJDialogCredCreate().getCreatedCredential() != null) {
 					this.getAddedCredentialCache().add(this.getJDialogCredCreate().getCreatedCredential());
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
-		
 	}
 
 	@Override

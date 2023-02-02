@@ -54,7 +54,7 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{265, 0};
-		gridBagLayout.rowHeights = new int[]{26, 0, 0};
+		gridBagLayout.rowHeights = new int[] {26, 75, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
@@ -147,6 +147,7 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		if (jButtonCreateACredentialAssignment == null) {
 			jButtonCreateACredentialAssignment = new JButton(GlobalInfo.getInternalImageIcon("ListPlus.png"));
 			jButtonCreateACredentialAssignment.setToolTipText("Create a credential assignment");
+			jButtonCreateACredentialAssignment.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCreateACredentialAssignment.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
 		}
 		return jButtonCreateACredentialAssignment;
@@ -155,6 +156,7 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		if (jButtonDeleteCredentialAssignment == null) {
 			jButtonDeleteCredentialAssignment = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonDeleteCredentialAssignment.setToolTipText("Delete a credential assignment");
+			jButtonDeleteCredentialAssignment.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonDeleteCredentialAssignment.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
 		}
 		return jButtonDeleteCredentialAssignment;
