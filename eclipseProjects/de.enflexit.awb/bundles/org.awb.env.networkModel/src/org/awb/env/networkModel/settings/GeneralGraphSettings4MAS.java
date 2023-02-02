@@ -260,28 +260,6 @@ public class GeneralGraphSettings4MAS implements Serializable, Cloneable {
 		return isEqual;
 	}
 
-	
-	/**
-	 * Checks if is equal string setting.
-	 *
-	 * @param string1 the string 1
-	 * @param string2 the string 2
-	 * @return true, if is equal string
-	 */
-	protected static boolean isEqualString(String string1, String string2) {
-		boolean isEqual = true;
-		if (string1==null & string2==null) {
-			isEqual = true;
-		} else if (string1==null & string2!=null) {
-			isEqual = false;
-		} else if (string1!=null & string2==null) {
-			isEqual = false;
-		} else {
-			isEqual = string1.equals(string2);
-		}
-		return isEqual;
-	}
-	
 	/**
 	 * Loads the specified file .
 	 *

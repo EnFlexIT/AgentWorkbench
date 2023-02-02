@@ -32,6 +32,8 @@ import java.io.Serializable;
 
 import org.awb.env.networkModel.prototypes.AbstractGraphElementPrototype;
 
+import de.enflexit.common.StringHelper;
+
 /**
  * This class stores the component type settings for a network component type 
  * 
@@ -72,13 +74,13 @@ public class ComponentTypeSettings implements Serializable, Cloneable {
 		ComponentTypeSettings cts2 = (ComponentTypeSettings) compareObject;
 		
 		boolean isEqual = true;
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getDomain(), cts2.getDomain());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getAgentClass(), cts2.getAgentClass());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getGraphPrototype(), cts2.getGraphPrototype());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getAdapterClass(), cts2.getAdapterClass());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getDomain(), cts2.getDomain());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getAgentClass(), cts2.getAgentClass());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getGraphPrototype(), cts2.getGraphPrototype());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getAdapterClass(), cts2.getAdapterClass());
 		if (isEqual==true) isEqual = (this.getEdgeWidth()==cts2.getEdgeWidth());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getEdgeImage(), cts2.getEdgeImage());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getColor(), cts2.getColor());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getEdgeImage(), cts2.getEdgeImage());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getColor(), cts2.getColor());
 		if (isEqual==true) isEqual = (this.isShowLabel()==cts2.isShowLabel());
 		return isEqual;
 	}

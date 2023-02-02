@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import org.hibernate.cfg.Configuration;
 
+import de.enflexit.common.StringHelper;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 
@@ -132,7 +133,7 @@ public class DatabaseSettings implements Serializable {
 				String comparePropKey = (String) propKeys.get(i);
 				String comparePropValue = compareSettings.getHibernateDatabaseSettings().getProperty(comparePropKey);
 				String localPropValue = this.getHibernateDatabaseSettings().getProperty(comparePropKey);
-				if (this.isEqualString(comparePropValue, localPropValue)==false) {
+				if (StringHelper.isEqualString(comparePropValue, localPropValue)==false) {
 					return false;
 				}
 			}
@@ -140,24 +141,6 @@ public class DatabaseSettings implements Serializable {
 
 		}
 		return false;
-	}
-	
-	/**
-	 * Checks if is the specified string are equal or equal strings.
-	 *
-	 * @param string1 the string 1
-	 * @param string2 the string 2
-	 * @return true, if is equal string
-	 */
-	private boolean isEqualString(String string1, String string2) {
-		if (string1==null & string2==null) {
-			return true;
-		} else if (string1==null & string2!=null) {
-			return false;
-		} else if (string1!=null & string2==null) {
-			return false;
-		}
-		return string1.equals(string2);
 	}
 	
 }

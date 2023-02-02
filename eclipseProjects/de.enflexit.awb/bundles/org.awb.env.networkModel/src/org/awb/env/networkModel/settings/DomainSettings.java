@@ -32,6 +32,8 @@ import java.io.Serializable;
 
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 
+import de.enflexit.common.StringHelper;
+
 
 /**
  * The Class DomainSettings.
@@ -70,11 +72,11 @@ public class DomainSettings implements Serializable {
 		boolean isEqual = true;
 		if (isEqual==true) isEqual = (this.isShowLabel()==ds2Compare.isShowLabel());
 		if (isEqual==true) isEqual = (this.getVertexSize()==ds2Compare.getVertexSize());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getVertexColor(), ds2Compare.getVertexColor());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getVertexColorPicked(), ds2Compare.getVertexColorPicked());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getAdapterClass(), ds2Compare.getAdapterClass());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getClusterAgent(), ds2Compare.getClusterAgent());
-		if (isEqual==true) isEqual = GeneralGraphSettings4MAS.isEqualString(this.getClusterShape(), ds2Compare.getClusterShape());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getVertexColor(), ds2Compare.getVertexColor());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getVertexColorPicked(), ds2Compare.getVertexColorPicked());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getAdapterClass(), ds2Compare.getAdapterClass());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getClusterAgent(), ds2Compare.getClusterAgent());
+		if (isEqual==true) isEqual = StringHelper.isEqualString(this.getClusterShape(), ds2Compare.getClusterShape());
 		return isEqual;
 	}
 	
