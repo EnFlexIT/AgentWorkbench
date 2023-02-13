@@ -13,8 +13,6 @@ import javax.swing.table.TableCellEditor;
 
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
-import de.enflexit.expression.math.ExpressionTypeMath;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.GridBagLayout;
@@ -66,6 +64,9 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	private JTextField getJTextFieldExpression() {
 		if (jTextFieldExpression == null) {
 			jTextFieldExpression = new JTextField();
+			if (this.expression!=null) {
+				jTextFieldExpression.setText(this.expression.getExpressionString());
+			}
 			jTextFieldExpression.setOpaque(true);
 			jTextFieldExpression.setBorder(BorderFactory.createEmptyBorder());
 			jTextFieldExpression.addFocusListener(new FocusAdapter() {
@@ -107,8 +108,9 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		Expression expression = null;
 		String textFieldContent = this.getJTextFieldExpression().getText();
 		if (textFieldContent!=null && textFieldContent.isEmpty()==false) {
-			expression = new Expression(textFieldContent);
-			expression.setExpressionType(ExpressionTypeMath.getInstance());
+			expression = Expression.parse(textFieldContent);
+		} else {
+			expression = null;
 		}
 		return expression;
 	}

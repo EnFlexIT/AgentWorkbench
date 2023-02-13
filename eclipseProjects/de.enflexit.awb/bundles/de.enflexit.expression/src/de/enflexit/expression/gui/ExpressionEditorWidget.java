@@ -15,8 +15,6 @@ import javax.swing.JTextField;
 
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
-import de.enflexit.expression.math.ExpressionTypeMath;
-
 import java.awt.Insets;
 
 import javax.swing.ImageIcon;
@@ -115,12 +113,17 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Gets the expression from the text field by parsing the content.
+	 * @return the expression from the text field
+	 */
 	private Expression getExpressionFromTextfield() {
 		Expression expression = null;
 		String textFieldContent = this.getJTextFieldExpression().getText();
 		if (textFieldContent!=null && textFieldContent.isEmpty()==false) {
-			expression = new Expression(textFieldContent);
-			expression.setExpressionType(ExpressionTypeMath.getInstance());
+			expression = Expression.parse(textFieldContent);
+		} else {
+			expression = null;
 		}
 		return expression;
 	}
