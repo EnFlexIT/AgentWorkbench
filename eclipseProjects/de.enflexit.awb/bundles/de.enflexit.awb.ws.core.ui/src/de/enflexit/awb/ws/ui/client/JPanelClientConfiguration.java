@@ -19,9 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.client.ApiRegistration;
 import de.enflexit.awb.ws.client.AwbApiRegistrationService;
 import de.enflexit.awb.ws.client.CredentialAssignment;
@@ -39,7 +42,7 @@ import de.enflexit.awb.ws.ui.WsConfigurationInterface;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelClientConfiguration extends JPanel implements ActionListener,ListSelectionListener,WsConfigurationInterface {
+public class JPanelClientConfiguration extends JPanel implements ActionListener,ListSelectionListener,ChangeListener,WsConfigurationInterface {
 	
 	private static final long serialVersionUID = 7987858783733542296L;
 	
@@ -59,16 +62,14 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	
 	private JPanelAssignedCredentials jPanelAssignedCredentials;
 	
-	private JPanelCachedClientBundles jPanelCachedClientBundles;
-	private JPanelCachedCredentials jPanelCachedCredentials;
-	
+
 	/**
 	 * Instantiates a new j panel client configuration.
 	 */
 	public JPanelClientConfiguration() {
 		this.initialize();
 	}
-	
+
 	/**
 	 * Instantiates a new j panel client configuration.
 	 *
@@ -126,18 +127,10 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			jPanelClientBundle = new JPanelClientBundle();
 		    jPanelClientBundle.getJButtonCachedCredentialAssignmentsView().addActionListener(this);
 			jPanelClientBundle.getJListApiRegistration().addListSelectionListener(this);
+			jPanelClientBundle.getJListCachedApiRegistration().addListSelectionListener(this);
+			jPanelClientBundle.getJListCachedApiRegistration().getComponentPopupMenu().getSelectionModel().addChangeListener(this);
 		}
 		return jPanelClientBundle;
-	}
-	
-	public JPanelCachedClientBundles getJPanelCachedClientBundles() {
-		if (jPanelCachedClientBundles== null) {
-			jPanelCachedClientBundles = new JPanelCachedClientBundles();
-			jPanelCachedClientBundles.getJButtonBackToCredAssgnView().addActionListener(this);
-			jPanelCachedClientBundles.getJButtonDeleteCredentialAssignment().addActionListener(this);
-			jPanelCachedClientBundles.getJListCachedApiRegistration().addListSelectionListener(this);
-		}
-		return jPanelCachedClientBundles;
 	}
 
 	/**
@@ -154,18 +147,6 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		}		
 		return jPanelCredentials;
 	}
-	
-	public JPanelCachedCredentials getJPanelCachedCredentials() {
-		if (jPanelCachedCredentials == null) {
-			jPanelCachedCredentials = new JPanelCachedCredentials(null);
-			jPanelCachedCredentials.getJListAssignedCredentials().addListSelectionListener(this);
-			jPanelCachedCredentials.getJButtonDeleteCredentialAssignment().addActionListener(this);
-			this.repaint();
-			this.revalidate();
-		}		
-		return 	jPanelCachedCredentials;
-	}
-
 	
 
 	/**
@@ -227,6 +208,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			jPanelAssignedCredentials.getJButtonCreateACredentialAssignment().addActionListener(this);
 			jPanelAssignedCredentials.getJButtonDeleteCredentialAssignment().addActionListener(this);
 			jPanelAssignedCredentials.getJListAssignedCredentials().addListSelectionListener(this);
+			jPanelAssignedCredentials.getJListAssignedCachedCredentials().addListSelectionListener(this);
 		}
 		return jPanelAssignedCredentials;
 	}
@@ -248,6 +230,8 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		return jSplitPaneLeft;
 	}
 	
+
+	
 	
 	//-------------------------------------------------------------------------------------
 	//--------------Helper Methods to configure and handle all events and components-----------------------
@@ -257,7 +241,15 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	 * Deletes a {@link CredentialAssignment}.
 	 */
 	private void deleteCredentialAssignment() {
-		if (getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
+		if(this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue()!=null) {
+		   this.deleteActiveCredAssignment();
+		}else if(this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials().getSelectedValue()!=null){
+		   this.deleteCachedCredentialAssignment();
+		}
+	}
+
+	private void deleteActiveCredAssignment() {
+		if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
 				if (getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
 					ApiRegistration apiReg = getJPanelClientBundle().getJListApiRegistration().getSelectedValue();
 					AbstractCredential cred = this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue();
@@ -265,8 +257,10 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 					if (option == JOptionPane.YES_OPTION) {
 						List<CredentialAssignment> credAssgn = WsCredentialStore.getInstance().getCredentialAssignmentsWithOneCredential(apiReg, cred);
 		                for (CredentialAssignment credentialAssignment : credAssgn) {
-							credAssgn.remove(credentialAssignment);
+						
 							this.getJPanelAssignedCredentials().getListCacheDeletedCredAssignment().add(credentialAssignment);
+							//Delete credAssignment
+							WsCredentialStore.getInstance().getCredentialAssignmentList().remove(credentialAssignment);
 						}
 						this.getJPanelAssignedCredentials().fillAssignedCredentialJList(apiReg);
 						this.getJPanelAssignedCredentials().getJListAssignedCredentials().revalidate();
@@ -286,30 +280,26 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	 * Deletes a {@link CredentialAssignment}.
 	 */
 	private void deleteCachedCredentialAssignment() {
-		if (this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue()!=null) {
-				if (this.getJPanelCachedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
-					CredentialAssignment credAssgn = this.getJPanelCachedCredentials().getJListAssignedCredentials().getSelectedValue();
+		if (this.getJPanelClientBundle().getJListCachedApiRegistration().getSelectedValue()!=null) {
+				if (this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials().getSelectedValue() != null) {
+					CredentialAssignment credAssgn = this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials().getSelectedValue();
 					AbstractCredential cred =WsCredentialStore.getInstance().getCredential(credAssgn.getIdCredential());
 					int option = JOptionPane.showConfirmDialog(this,"Do you want to delete the Assignment of the credential with the name " + cred.getName()+ " of the type " + cred.getCredentialType() + "?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
 					if (option == JOptionPane.YES_OPTION) {
 						
 						//Delete credAssignment
-					    this.getJPanelCachedCredentials().getListCacheCredAssignment().add(credAssgn);
+					    this.getJPanelAssignedCredentials().getListCacheCredAssignment().add(credAssgn);
 						WsCredentialStore.getInstance().getCacheCredentialAssignmentList().remove(credAssgn);
-						String bundleName=this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue();
+						String bundleName=this.getJPanelClientBundle().getJListCachedApiRegistration().getSelectedValue();
 						WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(bundleName).remove(credAssgn);
 						if(WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(bundleName).size()==0) {
 							WsCredentialStore.getInstance().getBundleCredAssgnsMap().remove(bundleName);
 						}
 						
 						//Refresh panel
-     					this.getJPanelCachedCredentials().fillCachedAssignedCredentialJList(bundleName);
-						this.getJPanelCachedCredentials().getJListAssignedCredentials().revalidate();
-						this.getJPanelCachedCredentials().getJListAssignedCredentials().repaint();
-						//Refresh CredentialPanel because empty credential of an assignment will be deleted
-						this.getJPanelCachedCredentials().fillCachedAssignedCredentialJList(bundleName);
-						this.getJPanelCachedCredentials().getJListAssignedCredentials().revalidate();
-						this.getJPanelCachedCredentials().getJListAssignedCredentials().repaint();
+     					this.getJPanelAssignedCredentials().fillCachedAssignedCredentialJList(bundleName);
+						this.getJPanelAssignedCredentials().getJListAssignedCredentials().revalidate();
+						this.getJPanelAssignedCredentials().getJListAssignedCredentials().repaint();
 						//Refresh the client panel
 						this.revalidate();
 						this.repaint();
@@ -329,8 +319,8 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	 * @param clientBundleName the client bundle name
 	 * @return the deleted CredentialAssignments as a list
 	 */
-	public List<CredentialAssignment> deleteAllCachedCredentialAssignments() {
-		if (this.getJPanelCachedClientBundles().getJListCachedApiRegistration().isSelectionEmpty()) {
+	private List<CredentialAssignment> deleteAllCachedCredentialAssignments() {
+		if (this.getJPanelClientBundle().getJListCachedApiRegistration().isSelectionEmpty()) {
 			
 			JOptionPane.showConfirmDialog(this, "Please select a credential assignment!","Select a credential assignment", JOptionPane.YES_OPTION);
 			return new ArrayList<CredentialAssignment>();
@@ -343,7 +333,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			List<CredentialAssignment> deletedClientBundles = new ArrayList<CredentialAssignment>();
 			if (ret == JOptionPane.YES_OPTION) {
 				
-				List<String> clientBundleNames = this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValuesList();
+				List<String> clientBundleNames = this.getJPanelClientBundle().getJListCachedApiRegistration().getSelectedValuesList();
 				
 				for (Iterator<String> iterator = clientBundleNames.iterator(); iterator.hasNext();) {
 					String clientBundleName = (String) iterator.next();
@@ -356,25 +346,26 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 					deletedClientBundles.addAll(WsCredentialStore.getInstance().getBundleCredAssgnsMap().remove(clientBundleName));
 	               
 					//Cache changes
-					this.getJPanelCachedClientBundles().getDeletedApiRegistrations().add(clientBundleName);
+					this.getJPanelClientBundle().getDeletedCachedClientBundles().add(clientBundleName);
 				}
 			}
 			
 			// Refill lists
-			this.getJPanelCachedCredentials().refreshPanel();
-			this.getJPanelCachedClientBundles().refillListModelCachedRegisteredApis();
+			this.getJPanelAssignedCredentials().refreshPanel();
+			this.getJPanelClientBundle().refillListModelCachedRegisteredApis();
 			this.getJPanelCredentials().fillCredentialJListAndRepaint();
 			
 			// Refresh this panel
 			this.revalidate();
 			this.repaint();
-			if (this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getModel().getSize() == 0) {
+			if (this.getJPanelClientBundle().getJListCachedApiRegistration().getModel().getSize() == 0) {
 				int opt = JOptionPane.showConfirmDialog(this,"You want to switch back to the non-cached Credential Assignments, because all cached Credential Assignments are deleted?","Switch to Credential Assignment View", JOptionPane.YES_OPTION);
 				
 			    //Switch back
 				if (opt == JOptionPane.YES_OPTION) {
-				this.getJSplitPaneLeft().setLeftComponent(this.getJPanelClientBundle());
-				this.getJSplitPaneMiddle().setLeftComponent(this.getJPanelAssignedCredentials());
+				this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListApiRegistration());
+				this.getJPanelClientBundle().revalidate();
+				this.getJPanelClientBundle().repaint();
 				this.revalidate();
 				this.repaint();
 				}
@@ -400,19 +391,19 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 					ApiKeyCredential apiKey = (ApiKeyCredential) credential;
 					if (apiKey.isEmpty()) {
 						WsCredentialStore.getInstance().getCredentialList().remove(credential);
-						this.getJPanelCachedClientBundles().getDeletedCredentials().add(credential);
+						this.getJPanelClientBundle().getDeletedCredentials().add(credential);
 					}
 				} else if (credential.getCredentialType() == CredentialType.BEARER_TOKEN) {
 					BearerTokenCredential bearerToken = (BearerTokenCredential) credential;
 					if (bearerToken.isEmpty()) {
 						WsCredentialStore.getInstance().getCredentialList().remove(credential);
-						this.getJPanelCachedClientBundles().getDeletedCredentials().add(credential);
+						this.getJPanelClientBundle().getDeletedCredentials().add(credential);
 					}
 				} else if (credential.getCredentialType() == CredentialType.USERNAME_PASSWORD) {
 					UserPasswordCredential password = (UserPasswordCredential) credential;
 					if (password.isEmpty()) {
 						WsCredentialStore.getInstance().getCredentialList().remove(credential);
-						this.getJPanelCachedClientBundles().getDeletedCredentials().add(credential);
+						this.getJPanelClientBundle().getDeletedCredentials().add(credential);
 					}
 				}
 			}
@@ -466,21 +457,24 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	 * Fills the {@link JList} of the {@link JPanelAssignedCredentials} with all assigned credentials of the corresponding {@link AwbApiRegistrationService}.
 	 */
 	private void fillJListAssignedCredentials() {
+		if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
 		this.getJPanelAssignedCredentials().getJListAssignedCredentials().clearSelection();
 		this.getJPanelCredentials().getJListCredentials().clearSelection();
 		this.getJPanelServerURL().getJListServerUrl().clearSelection();
 		this.getJPanelAssignedCredentials().fillAssignedCredentialJList(this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue());
+		}
 	}
+	
 	
 	/**
 	 * Fills the {@link JList} of the {@link JPanelCachedClientBundles} with all assigned credentials of the corresponding cached {@link AwbApiRegistrationService}.
 	 */
 	private void fillJListCachedAssignedCredentials() {
-		if(this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue()!=null) {
-		this.getJPanelCachedCredentials().getJListAssignedCredentials().clearSelection();
+		if(this.getJPanelClientBundle().getJListCachedApiRegistration().getSelectedValue()!=null) {
+		this.getJPanelAssignedCredentials().getJListAssignedCredentials().clearSelection();
 		this.getJPanelCredentials().getJListCredentials().clearSelection();
 		this.getJPanelServerURL().getJListServerUrl().clearSelection();
-		this.getJPanelCachedCredentials().fillCachedAssignedCredentialJList(this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue());
+		this.getJPanelAssignedCredentials().fillCachedAssignedCredentialJList(this.getJPanelClientBundle().getJListCachedApiRegistration().getSelectedValue());
 		}
 	}
 	
@@ -488,7 +482,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	/**
 	 * After the assigned credential is selected the corresponding {@link ServerURL} in JList of the {@link JPanelServerURL} and the corresponding {@link AbstractCredential} in the {@link JList} of the {@link JPanelCredentials}
 	 */
-	private void selectAllElementsOfaCredentialAssignment() {
+	private void selectAllElementsOfaCredentialAssignmentStartingFromACredential() {
 		if (this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
 			
 			AbstractCredential cred=this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue();
@@ -523,33 +517,44 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			}
 		}
 	}
-
+	
 	/**
 	 * After the assigned credential is selected the corresponding {@link ServerURL}
 	 * in JList of the {@link JPanelServerURL} and the corresponding
 	 * {@link AbstractCredential} in the {@link JList} of the
 	 * {@link JPanelCredentials}
 	 */
-	private void selectAllElementsOfaCachedCredentialAssignment() {
-		if (this.getJPanelCachedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
+	private void selectAllElementsOfaCredentialAssignment() {
+		if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null || this.getJPanelClientBundle().getJListCachedApiRegistration().getSelectedValue()!=null) {		
+			if (this.getJPanelAssignedCredentials().getJListAssignedCredentials().getSelectedValue() != null) {
+				this.selectAllElementsOfaCredentialAssignmentStartingFromACredential();			
+			} else if(this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials().getSelectedValue() != null) {
+				this.selectAllElementsOfaCachedCredential();
+			}
+		}
+	}
 
-			CredentialAssignment credAssignment = this.getJPanelCachedCredentials().getJListAssignedCredentials()
-					.getSelectedValue();
-			AbstractCredential cred =WsCredentialStore.getInstance().getCredential(credAssignment.getIdCredential());
+	private void selectAllElementsOfaCachedCredential() {
+		CredentialAssignment credAssignment = this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials().getSelectedValue();
+		
+		if (credAssignment != null) {
+			AbstractCredential cred = WsCredentialStore.getInstance().getCredential(credAssignment.getIdCredential());
+
 			this.getJPanelCredentials().getJListCredentials().setSelectedValue(cred, true);
-			
+
 			// Get the corresponding ServerURL
-			ServerURL server=WsCredentialStore.getInstance().getServerURL(credAssignment.getIdServerURL());
+			ServerURL server = WsCredentialStore.getInstance().getServerURL(credAssignment.getIdServerURL());
 			this.getJPanelServerURL().getJListServerUrl().setSelectedValue(server, true);
 
 			if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
-				
-				ListModel<String> bundleNames = this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getModel();
+				ListModel<String> bundleNames = this.getJPanelClientBundle().getJListCachedApiRegistration()
+						.getModel();
+
 				for (int i = 0; i < bundleNames.getSize(); i++) {
-                    String bundleName=bundleNames.getElementAt(i);
-                    if(bundleName.equals(credAssignment.getIdApiRegistrationDefaultBundleName())) {
-                    	this.getJPanelCachedClientBundles().getJListCachedApiRegistration().setSelectedValue(bundleName, true);
-                    }
+					String bundleName = bundleNames.getElementAt(i);
+					if (bundleName.equals(credAssignment.getIdApiRegistrationDefaultBundleName())) {
+						this.getJPanelClientBundle().getJListCachedApiRegistration().setSelectedValue(bundleName,true);
+					}
 				}
 			}
 		}
@@ -577,6 +582,19 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		}
 	}
 	
+	
+	public void clearSelectionsOfAllJLists() {
+		this.getJPanelClientBundle().getJListApiRegistration().clearSelection();
+		this.getJPanelClientBundle().getJListCachedApiRegistration().clearSelection();
+		this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials().clearSelection();
+		this.getJPanelAssignedCredentials().getJListAssignedCredentials().clearSelection();
+		this.getJPanelAssignedCredentials().removeAllElementsOfTheJLists();
+		this.getJPanelCredentials().getJListCredentials().clearSelection();
+        this.getJPanelServerURL().getJListServerUrl().clearSelection();
+	}
+
+
+	
 	//-------------------------------------------------------------------------------------
 	//--------------Overridden Methods and Non GUI Getter and Setters-----------------------
 	//-------------------------------------------------------------------------------------
@@ -594,10 +612,14 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			return true;
 		}
 		if(this.getJPanelClientBundle().hasUnsavedChanges()) {
-		   this.getJPanelClientBundle().revalidate();
-		   this.getJPanelClientBundle().repaint();
-		   this.revalidate();
-		   this.repaint();
+			this.getJPanelAssignedCredentials().revalidate();
+			this.getJPanelAssignedCredentials().repaint();
+			this.getJPanelCredentials().revalidate();
+			this.getJPanelCredentials().repaint();
+			this.getJPanelClientBundle().revalidate();
+			this.getJPanelClientBundle().repaint();
+			this.revalidate();
+			this.repaint();
 			return true;
 		}
 		if(this.getJPanelCredentials().hasUnsavedChanges()) {
@@ -610,23 +632,6 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		if(this.getJPanelServerURL().hasUnsavedChanges()) {
 			this.getJPanelServerURL().revalidate();
 			this.getJPanelServerURL().repaint();
-			this.revalidate();
-			this.repaint();
-			return true;
-		}
-		if(this.getJPanelCachedClientBundles().hasUnsavedChanges()) {
-			//Refresh
-			this.getJPanelCachedClientBundles().revalidate();
-			this.getJPanelCachedClientBundles().repaint();
-			this.getJPanelCredentials().revalidate();
-			this.getJPanelCredentials().repaint();
-			this.revalidate();
-			this.repaint();
-			return true;
-		}
-		if(this.getJPanelCachedCredentials().hasUnsavedChanges()) {
-			this.getJPanelCredentials().revalidate();
-			this.getJPanelCredentials().repaint();
 			this.revalidate();
 			this.repaint();
 			return true;
@@ -665,24 +670,33 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(getJPanelAssignedCredentials().getJButtonCreateACredentialAssignment())) {
-			createACredAssignment();
+			this.createACredAssignment();
 		} else if (e.getSource().equals(this.getJPanelAssignedCredentials().getJButtonDeleteCredentialAssignment())) {
-			deleteCredentialAssignment();
+			this.deleteCredentialAssignment();
 		}else if(e.getSource().equals(this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView())) {
-			this.getJSplitPaneLeft().setLeftComponent(this.getJPanelCachedClientBundles());
-			this.getJSplitPaneMiddle().setLeftComponent(this.getJPanelCachedCredentials());
-			this.revalidate();
-			this.repaint();
-		}else if(e.getSource().equals(this.getJPanelCachedClientBundles().getJButtonBackToCredAssgnView())) {
-			this.getJSplitPaneLeft().setLeftComponent(this.getJPanelClientBundle());
-			this.getJSplitPaneMiddle().setLeftComponent(this.getJPanelAssignedCredentials());
-			this.revalidate();
-			this.repaint();
-		}else if(e.getSource().equals(this.getJPanelCachedCredentials().getJButtonDeleteCredentialAssignment())) {
-			this.deleteCachedCredentialAssignment();
-		}else if(e.getSource().equals(this.getJPanelCachedClientBundles().getJButtonDeleteCredentialAssignment())){
-			this.deleteAllCachedCredentialAssignments();
-	        this.getJPanelCachedCredentials().refreshPanel();
+			if (this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().getViewport().getView().equals(this.getJPanelAssignedCredentials().getJListAssignedCredentials())) {
+				
+				this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().setViewportView(this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials());
+				
+				//Change Viewport and change Icon of JButtonCachedView
+				this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListCachedApiRegistration());
+			    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("MBreset.png"));
+			    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("Back to active Credential-Assignments");
+			    //Make Description non visible
+			    this.getJPanelClientBundle().getJTextAreaDescription().setText("");
+			    this.getJPanelClientBundle().getJTextAreaDescription().setVisible(false);
+			    this.clearSelectionsOfAllJLists();
+			} else {
+				
+				this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().setViewportView(this.getJPanelAssignedCredentials().getJListAssignedCredentials());
+				
+				//Change Viewport and change Icon of JButtonCachedView
+				this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListApiRegistration());
+				this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("cache.png"));
+				this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("See cached Credential Assignments");
+				this.getJPanelClientBundle().getJTextAreaDescription().setVisible(true);
+				this.clearSelectionsOfAllJLists();
+			}
 			this.revalidate();
 			this.repaint();
 		}else {
@@ -697,17 +711,24 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if (e.getSource().equals(this.getJPanelClientBundle().getJListApiRegistration())) {
-			if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
-				this.fillJListAssignedCredentials();
-			}
-		}else if (e.getSource().equals(this.getJPanelCachedClientBundles().getJListCachedApiRegistration())) {
-			if (this.getJPanelCachedClientBundles().getJListCachedApiRegistration().getSelectedValue() != null) {
-				this.fillJListCachedAssignedCredentials();
-			}
-		}else if(e.getSource().equals(getJPanelAssignedCredentials().getJListAssignedCredentials())) {
-			this.selectAllElementsOfaCredentialAssignment();	
-		}else if(e.getSource().equals(getJPanelCachedCredentials().getJListAssignedCredentials())) {
-			this.selectAllElementsOfaCachedCredentialAssignment();
+			this.fillJListAssignedCredentials();
+		} else if (e.getSource().equals(this.getJPanelClientBundle().getJListCachedApiRegistration())) {
+			this.fillJListCachedAssignedCredentials();
+		} else if (e.getSource().equals(this.getJPanelAssignedCredentials().getJListAssignedCredentials())) {
+			this.selectAllElementsOfaCredentialAssignment();
+		} else if (e.getSource().equals(this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials())) {
+			this.selectAllElementsOfaCredentialAssignment();
+		}
+	}
+
+	/* (non-Javadoc)
+	* @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
+	*/
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		Object o=e.getSource();
+		if (e.getSource().equals(this.getJPanelClientBundle().getJListCachedApiRegistration().getComponentPopupMenu())) {
+		    this.deleteAllCachedCredentialAssignments();
 		}
 	}
 }

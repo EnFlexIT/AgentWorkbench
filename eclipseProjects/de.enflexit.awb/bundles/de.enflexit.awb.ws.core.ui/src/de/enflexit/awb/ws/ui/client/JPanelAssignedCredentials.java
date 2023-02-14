@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -35,6 +36,8 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 	private static final long serialVersionUID = 4478895396272005153L;
 	private JScrollPane jScrollPaneAssignedCredentials;
 	private JList<AbstractCredential> jListAssignedCredentials;
+	private JList<CredentialAssignment> jListAssignedCachedCredentialAssgns;
+	
 	private JLabel jLableCredAssignment;
 	private JButton jButtonCreateACredentialAssignment;
 	private JButton jButtonDeleteCredentialAssignment;
@@ -42,11 +45,30 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 	
 	//Non GUI-attributes
 	private ApiRegistration apiRegCurr;
+	private String bundleName;
+
 	private List<CredentialAssignment> listCacheCredAssignment;
 	private List<CredentialAssignment> listCacheDeletedCredAssignment;
 	
+	/**
+	 * Instantiates a new j panel assigned credentials.
+	 *
+	 * @param apiReg the api reg
+	 */
 	public JPanelAssignedCredentials(ApiRegistration apiReg) {
 		setApiRegCurr(apiReg);
+		this.initialize();
+	}
+	
+	/**
+	 * Instantiates a new j panel cached credentials.
+	 *
+	 * @param nameOfClientBundle the name of client bundle, can be <code>null</code>
+	 */
+	public JPanelAssignedCredentials(String nameOfClientBundle) {
+		if(nameOfClientBundle!=null) {
+		  this.setClientBundleName(nameOfClientBundle);
+		}
 		this.initialize();
 	}
 	
@@ -79,14 +101,28 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 	 *
 	 * @return the j scroll pane assigne credentials
 	 */
-	private JScrollPane getJScrollPaneAssigneCredentials() {
+	public JScrollPane getJScrollPaneAssigneCredentials() {
 		if (jScrollPaneAssignedCredentials == null) {
 			jScrollPaneAssignedCredentials = new JScrollPane();
-			jScrollPaneAssignedCredentials.setViewportView(getJListAssignedCredentials());
+			if(this.getClientBundleName()!=null) {
+				if(!this.getClientBundleName().isBlank()) {
+					jScrollPaneAssignedCredentials.setViewportView(getJListAssignedCachedCredentials());
+				}else {
+					jScrollPaneAssignedCredentials.setViewportView(getJListAssignedCredentials());
+				}
+			}else {
+				jScrollPaneAssignedCredentials.setViewportView(getJListAssignedCredentials());
+			}
 		}
 		return jScrollPaneAssignedCredentials;
 	}
 	
+	
+	
+	public void setJScrollPaneAssignedCredentials(JScrollPane jScrollPaneAssignedCredentials) {
+		this.jScrollPaneAssignedCredentials = jScrollPaneAssignedCredentials;
+	}
+
 	/**
 	 * Gets the j list assigned credentials, which stores all assigned Credentials of an {@link AwbApiRegistrationService}.
 	 *
@@ -101,6 +137,53 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 			}
 		}
 		return jListAssignedCredentials;
+	}
+	
+	/**
+	 * Gets the j list assigned credentials, which stores all assigned Credentials of an {@link AwbApiRegistrationService}.
+	 *
+	 * @return the j list assigned credentials
+	 */
+	public JList<CredentialAssignment> getJListAssignedCachedCredentials() {
+		if (jListAssignedCachedCredentialAssgns == null) {
+			jListAssignedCachedCredentialAssgns = new JList<CredentialAssignment>();
+			jListAssignedCachedCredentialAssgns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			if(this.getClientBundleName()!=null) {
+				fillCachedAssignedCredentialJList(this.getClientBundleName());
+			}
+		}
+		return jListAssignedCachedCredentialAssgns;
+	}
+	
+	/**
+	 * Fill assigned credential J list.
+	 *
+	 * @param awbRegService the corresponding {@link ApiRegistration}, which assigned Credentials should be shown
+	 */
+	public void fillCachedAssignedCredentialJList(String clientBundleName) {
+		
+		List<CredentialAssignment> assgnCredentials = new ArrayList<>();
+		
+		if(WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(clientBundleName)!=null) {
+			
+			Map<String,List<CredentialAssignment>> mapBundleCredAssgn=WsCredentialStore.getInstance().getBundleCredAssgnsMap();
+			List<CredentialAssignment> credAssignments=mapBundleCredAssgn.get(clientBundleName);
+            assgnCredentials=credAssignments;
+            
+		}else {			
+			List<CredentialAssignment> credAssgnList = WsCredentialStore.getInstance().getCacheCredentialAssignmentList();
+
+			for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
+				CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+		        assgnCredentials.add(credentialAssignment);
+			}			
+		}
+		
+		DefaultListModel<CredentialAssignment> defaultListModel= new DefaultListModel<>();
+		defaultListModel.addAll(assgnCredentials);
+		this.getJListAssignedCachedCredentials().setModel(defaultListModel);
+		this.revalidate();
+		this.repaint();
 	}
 	
 	private JPanel getJPanelHeader() {
@@ -143,6 +226,7 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		}
 		return jLableCredAssignment;
 	}
+
 	public JButton getJButtonCreateACredentialAssignment() {
 		if (jButtonCreateACredentialAssignment == null) {
 			jButtonCreateACredentialAssignment = new JButton(GlobalInfo.getInternalImageIcon("ListPlus.png"));
@@ -152,6 +236,7 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		}
 		return jButtonCreateACredentialAssignment;
 	}
+	
 	public JButton getJButtonDeleteCredentialAssignment() {
 		if (jButtonDeleteCredentialAssignment == null) {
 			jButtonDeleteCredentialAssignment = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
@@ -162,13 +247,32 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		return jButtonDeleteCredentialAssignment;
 	}
 	
+	/**
+	 * Gets the selected {@link ApiRegistration} of the Table of the {@link JPanelClientBundle}.
+	 *
+	 * @return the selected {@link ApiRegistration}
+	 */
 	public ApiRegistration getApiRegCurr() {
 		return apiRegCurr;
 	}
 
+	/**
+	 * Sets the api reg curr.
+	 *
+	 * @param apiRegCurr the new api reg curr
+	 */
 	public void setApiRegCurr(ApiRegistration apiRegCurr) {
 		this.apiRegCurr = apiRegCurr;
 	}
+	
+	public String getClientBundleName() {
+		return bundleName;
+	}
+
+	public void setClientBundleName(String bundleName) {
+		this.bundleName = bundleName;
+	}
+	
 	
 	//-------------------------------------------------------------------------------------
 	//--------------Helping methods to initialoie components-----------------------
@@ -199,6 +303,26 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		getJListAssignedCredentials().setModel(defaultListModel);
 		this.revalidate();
 		this.repaint();
+	}
+	
+	public void refreshPanel() {
+		this.getJListAssignedCredentials().clearSelection();
+		this.getListCacheCredAssignment().clear();
+		this.getJListAssignedCredentials().removeAll();
+		this.getJListAssignedCredentials().revalidate();;
+		this.getJListAssignedCredentials().repaint();
+		this.revalidate();
+		this.repaint();
+	}
+	
+	/**
+	 * Removes the all elements of the J lists of this {@link JPanelAssignedCredentials}.
+	 */
+	public void removeAllElementsOfTheJLists() {
+		DefaultListModel<AbstractCredential> listModel = new DefaultListModel<AbstractCredential>();
+        this.getJListAssignedCredentials().setModel(listModel);
+        DefaultListModel<CredentialAssignment> credModel = new DefaultListModel<CredentialAssignment>();;
+        this.getJListAssignedCachedCredentials().setModel(credModel);
 	}
 	
 	//-------------------------------------------------------------------------------------
@@ -241,7 +365,7 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 			return true;
 		}
 		
-	    if(this.getListCacheCredAssignment().size()>0) {
+	    if(this.getListCacheDeletedCredAssignment().size()>0) {
 			return true;
 		}
 		return false;

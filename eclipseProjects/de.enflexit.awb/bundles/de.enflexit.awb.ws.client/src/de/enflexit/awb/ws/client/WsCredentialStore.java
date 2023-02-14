@@ -735,7 +735,7 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 		List<CredentialAssignment> credentialAssignments=new ArrayList<CredentialAssignment>();
 		for (CredentialAssignment credAssgn : this.getCredentialAssignmentList()) {
 			if(credAssgn.getIdApiRegistrationDefaultBundleName().equals(apiReg.getClientBundleName())){
-				if(credAssgn.getIdCredential()==cred.getID()) {
+				if(credAssgn.getIdCredential().equals(cred.getID())) {
 					credentialAssignments.add(credAssgn);
 				}
 			}

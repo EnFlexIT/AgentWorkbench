@@ -331,7 +331,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 							password.setName(this.getJTextFieldNameOfTheCredential().getText());
 							
 						}
-						WsCredentialStore.getInstance().updateCredentialInCredentialList(oldCred);
+ 
 						this.setModifiedCredential(cred);
 						success = true;
 					} else {

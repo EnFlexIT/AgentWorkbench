@@ -12,7 +12,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
@@ -24,6 +26,7 @@ import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.client.ApiRegistration;
 import de.enflexit.awb.ws.client.AwbApiRegistrationService;
 import de.enflexit.awb.ws.client.WsCredentialStore;
+import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 import de.enflexit.common.ServiceFinder;
 
@@ -38,15 +41,20 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	private JScrollPane jScrollPaneBundleList;
 	private JList<ApiRegistration> jListApiRegistration;
 	private DefaultListModel<ApiRegistration> listModelRegisteredApis;
+	private JList<String> jListCachedApiRegistration;
+	private DefaultListModel<String> listModelCachedRegisteredApis;
 	
 	private JPanel jPanelInfo;
-		private JLabel jLabelDescription;
-		private JScrollPane jScrollPaneDescription;
-		private JTextArea jTextAreaDescription;
-		private JPanel jPanelHeader;
-		private JLabel jLabelBundleList;
-		private JButton jButtonCachedCredentialAssignmentsView;
-	
+	private JLabel jLabelDescription;
+	private JScrollPane jScrollPaneDescription;
+	private JTextArea jTextAreaDescription;
+	private JPanel jPanelHeader;
+	private JLabel jLabelBundleList;
+	private JButton jButtonCachedCredentialAssignmentsView;
+		
+	private List<String> deletedCachedApiRegistration;
+	private List<AbstractCredential> deletedCredentials;
+		
 	/**
 	 * Instantiates a new j panel client configuration.
 	 */
@@ -86,7 +94,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	 *
 	 * @return the {@link JScrollPane} bundle list
 	 */
-	private JScrollPane getJScrollPaneBundleList() {
+	public JScrollPane getJScrollPaneBundleList() {
 		if (jScrollPaneBundleList == null) {
 			jScrollPaneBundleList = new JScrollPane();
 			jScrollPaneBundleList.setViewportView(getJListApiRegistration());
@@ -105,6 +113,18 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		}
 		return listModelRegisteredApis;
 	}
+	
+	/**
+	 * Gets the corresponding {@link ListModel} of the JListApiRegistration.
+	 *
+	 * @return the list model registered apis
+	 */
+	private DefaultListModel<String> getListModelCachedApis(){
+		if (listModelCachedRegisteredApis==null) {
+			refillListModelCachedRegisteredApis();;
+		}
+		return listModelCachedRegisteredApis;
+	}
 
 	/**
 	 * Creates and fills a new {@link ListModel} for the JListAPIRegistration.
@@ -118,6 +138,21 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		}
 		listModelRegisteredApis.addAll(apiRegList);
 		this.getJListApiRegistration().setModel(listModelRegisteredApis);
+		this.repaint();
+		this.revalidate();
+	}
+	
+	/**
+	 * Refill list model cached registered apis.
+	 */
+	public void refillListModelCachedRegisteredApis() {
+		listModelCachedRegisteredApis = new DefaultListModel<String>();
+		if (WsCredentialStore.getInstance().getBundleCredAssgnsMap().keySet() != null) {
+			List<String> apiRegServiceList = new ArrayList<String>(
+			WsCredentialStore.getInstance().getBundleCredAssgnsMap().keySet());
+			listModelCachedRegisteredApis.addAll(apiRegServiceList);
+			this.getJListCachedApiRegistration().setModel(this.getListModelCachedApis());
+		}
 		this.repaint();
 		this.revalidate();
 	}
@@ -146,6 +181,29 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			});
 		}
 		return jListApiRegistration;
+	}
+	
+
+	/**
+	 * Gets the j list cached api registration.
+	 *
+	 * @return the j list cached api registration
+	 */
+	public JList<String> getJListCachedApiRegistration() {
+		if (jListCachedApiRegistration == null) {
+			jListCachedApiRegistration = new JList<String>();
+			jListCachedApiRegistration.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			jListCachedApiRegistration.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jListCachedApiRegistration.setModel(this.getListModelCachedApis());
+			jListCachedApiRegistration.setComponentPopupMenu(getJPopMenuCachedApiRegistration());
+		}
+		return jListCachedApiRegistration;
+	}
+	
+	public JPopupMenu getJPopMenuCachedApiRegistration(){
+		JPopupMenu popup = new JPopupMenu();
+		popup.add(new JMenuItem("Delete all Credential Assignments"));
+		return popup;
 	}
 	
 	
@@ -213,7 +271,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	 *
 	 * @return the j text area description
 	 */
-	private JTextArea getJTextAreaDescription() {
+	public JTextArea getJTextAreaDescription() {
 		if (jTextAreaDescription == null) {
 			jTextAreaDescription = new JTextArea();
 			jTextAreaDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -232,12 +290,13 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			jButtonCachedCredentialAssignmentsView.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCachedCredentialAssignmentsView.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
 		}
-		if(WsCredentialStore.getInstance().getCacheCredentialAssignmentList().size()>0) {
-		   jButtonCachedCredentialAssignmentsView.setVisible(true);
-		   jButtonCachedCredentialAssignmentsView.setEnabled(true);
-		}else {
-		   jButtonCachedCredentialAssignmentsView.setVisible(true);
-		   jButtonCachedCredentialAssignmentsView.setEnabled(false);
+
+		if (WsCredentialStore.getInstance().getCacheCredentialAssignmentList().size() > 0) {
+			jButtonCachedCredentialAssignmentsView.setVisible(true);
+			jButtonCachedCredentialAssignmentsView.setEnabled(true);
+		} else {
+			jButtonCachedCredentialAssignmentsView.setVisible(true);
+			jButtonCachedCredentialAssignmentsView.setEnabled(false);
 		}
 		return jButtonCachedCredentialAssignmentsView;
 	}
@@ -274,6 +333,27 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jLabelBundleList;
 	}
 	
+	public List<String> getDeletedCachedClientBundles() {
+		if(this.deletedCachedApiRegistration==null) {
+			deletedCachedApiRegistration=new ArrayList<String>();
+		}
+		return deletedCachedApiRegistration;
+	}
+
+	public void setDeletedCachedClientBundles(List<String> deletedCachedClientBundles) {
+		this.deletedCachedApiRegistration = deletedCachedClientBundles;
+	}
+	
+	public List<AbstractCredential> getDeletedCredentials() {
+		if(deletedCredentials==null) {
+			deletedCredentials=new ArrayList<AbstractCredential>();
+		}
+		return deletedCredentials;
+	}
+
+	public void setDeletedCredentials(List<String> deletedCredentials) {
+		this.deletedCachedApiRegistration = deletedCredentials;
+	}
 	//-----------------------------------------------------------
 	//-------------Overridden methods----------------------------
 	//-----------------------------------------------------------
@@ -285,6 +365,17 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	 */
 	@Override
 	public boolean hasUnsavedChanges() {
+		
+		//Check if cached ClientBundles were deleted
+		if(this.getDeletedCachedClientBundles().size()>0) {
+			return true;
+		}
+		
+		//Check if assigned Credentials of a Bundle were deleted
+		if(this.getDeletedCredentials().size()>0) {
+			return true;
+		}
+		
 		if (this.getJListApiRegistration() == null)
 			return false;
 		
@@ -298,6 +389,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			ApiRegistration cred = credModel.getElementAt(i);
 			credArrayList.add(cred);
 		}
+		
 		if (credArrayList.size() != apiRegList.size()) {
 			return true;
 		} else {
