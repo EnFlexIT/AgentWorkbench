@@ -65,7 +65,7 @@ public final class GraphGlobals {
 	public static final String PREF_SHOW_LAYOUT_TOOLBAR = "ShowLayoutToolBar";
 	public static final String MISSING_ICON = "MissingIcon";
 	
-	private static String pathImages = "/org/awb/env/networkModel/img/";
+	private static String pathImages = "/icons/";
 
 	private static Bundle localBundle;
 	private static IEclipsePreferences eclipsePreferences;

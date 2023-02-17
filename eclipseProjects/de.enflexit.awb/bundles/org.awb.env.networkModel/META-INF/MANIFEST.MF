@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AWB - Graph and Network Environment
 Bundle-SymbolicName: org.awb.env.networkModel;singleton:=true
-Bundle-Version: 2.1.22.qualifier
+Bundle-Version: 2.3.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: org.awb.env.networkModel
 Bundle-RequiredExecutionEnvironment: JavaSE-11
@@ -23,7 +23,6 @@ Export-Package: org.awb.env.networkModel,
  org.awb.env.networkModel.controller.ui.timeModel,
  org.awb.env.networkModel.controller.ui.toolbar,
  org.awb.env.networkModel.helper,
- org.awb.env.networkModel.img,
  org.awb.env.networkModel.maps,
  org.awb.env.networkModel.persistence,
  org.awb.env.networkModel.positioning,
