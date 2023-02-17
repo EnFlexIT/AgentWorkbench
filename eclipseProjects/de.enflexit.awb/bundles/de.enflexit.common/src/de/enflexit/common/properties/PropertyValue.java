@@ -1,5 +1,7 @@
 package de.enflexit.common.properties;
 
+import java.util.Comparator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -37,7 +39,6 @@ public class PropertyValue {
 		this.setValueClass(value);
 		this.setValueString(value.toString());
 	}
-
 	
 	/**
 	 * Returns the property type of the current value.
@@ -259,4 +260,49 @@ public class PropertyValue {
 		
 		return true;
 	}
+	
+
+	/**
+	 * Produces and returns a comparator for a {@link PropertyValue}.
+	 *
+	 * @param attributeIndex the attribute index (0=value class, 1=value string)
+	 * @return the comparator
+	 */
+	public static Comparator<PropertyValue> getComparator(final int attributeIndex) {
+		
+		Comparator<PropertyValue> comparator = new Comparator<PropertyValue>() {
+			@Override
+			public int compare(PropertyValue pv1, PropertyValue pv2) {
+				
+				// --- Catch null cases -------------------
+				if (pv1==null && pv2==null) {
+					return 0;
+				} else if (pv1!=null && pv2==null) {
+					return 1;
+				} else if (pv1==null && pv2!=null) {
+					return -1;
+				} 
+				
+				// --- Catch regular cases ----------------
+				String compStr1 = null;
+				String compStr2 = null;
+				switch (attributeIndex) {
+				case 0:
+					compStr1 = pv1.getValueClass();
+					compStr2 = pv2.getValueClass();
+					break;
+				case 1:
+					compStr1 = pv1.getValueString();
+					compStr2 = pv2.getValueString();
+					break;
+				default:
+					return 0;
+				}
+				return compStr1.compareTo(compStr2);
+			}
+		};
+		return comparator;
+		
+	}
+	
 }

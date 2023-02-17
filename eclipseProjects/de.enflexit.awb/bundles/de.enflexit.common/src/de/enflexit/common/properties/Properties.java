@@ -160,25 +160,25 @@ public class Properties implements Serializable {
 	public void fillWithTestData() {
 		
 		this.setStringValue(null, null);
-		this.setStringValue("String 1", null);
-		this.setStringValue("String 2", "");
-		this.setStringValue("String 3", "Test-String");
+		this.setStringValue("Dev.Test 1.String 1", null);
+		this.setStringValue("Dev.Test 1.String 2", "");
+		this.setStringValue("Dev.Test 1.String 3", "Test-String");
 		
-		this.setBooleanValue("Boolean 1", true);
-		this.setBooleanValue("Boolean 2", false);
+		this.setBooleanValue("Dev.Test 1.Boolean 1", true);
+		this.setBooleanValue("Dev.Test 1.Boolean 2", false);
 		
-		this.setIntegerValue("Integer 1", 0);
-		this.setIntegerValue("Integer 2", 4711);
+		this.setIntegerValue("Dev.Test 2.Integer 1", 0);
+		this.setIntegerValue("Dev.Test 2.Integer 2", 4711);
 		
-		this.setLongValue("Long 1", 0);
-		this.setLongValue("Long 2", -100);
-		this.setLongValue("Long 2", 987654321);
+		this.setLongValue("Dev.Test 2.Long 1", 0);
+		this.setLongValue("Dev.Test 2.Long 2", -100);
+		this.setLongValue("Dev.Test 2.Long 2", 987654321);
 		
-		this.setFloatValue("Float 1", 0.0f);
-		this.setFloatValue("Flaot 2", 1.6f);
+		this.setFloatValue("Dev.Test 3.Float 1", 0.0f);
+		this.setFloatValue("Dev.Test 3.Float 2", 1.6f);
 		
-		this.setDoubleValue("Double 1", 0.0);
-		this.setDoubleValue("Double 2", -3.6);
+		this.setDoubleValue("Dev.Test 3.Double 1", 0.0);
+		this.setDoubleValue("Dev.Test 3.Double 2", -3.6);
 	}
 
 }
