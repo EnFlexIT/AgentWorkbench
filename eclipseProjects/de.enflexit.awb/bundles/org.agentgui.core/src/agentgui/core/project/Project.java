@@ -100,6 +100,7 @@ import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.p2.P2OperationsHandler;
+import de.enflexit.common.properties.Properties;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br>
@@ -264,6 +265,9 @@ import de.enflexit.common.p2.P2OperationsHandler;
 	@XmlElement(name = "remoteContainerConfiguration")
 	private RemoteContainerConfiguration remoteContainerConfiguration = new RemoteContainerConfiguration();
 
+	@XmlElement(name = "projectProperties")
+	private Properties properties;
+	
 	/**
 	 * This field can be used in order to provide customized objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
@@ -2120,6 +2124,26 @@ import de.enflexit.common.p2.P2OperationsHandler;
 		this.setChangedAndNotify(AGENT_METRIC_Reset);
 	}
 
+	
+	/**
+	 * Returns the further project properties.
+	 * @return the properties
+	 */
+	@XmlTransient
+	public Properties getProperties() {
+		if (properties==null) {
+			properties = new Properties();
+		}
+		return properties;
+	}
+	/**
+	 * Sets the project properties.
+	 * @param properties the new properties
+	 */
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
 	
 	/**
 	 * Returns the user runtime object.

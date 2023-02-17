@@ -43,6 +43,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
+import de.enflexit.common.properties.PropertiesPanel;
+
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -125,9 +127,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private MaximizedTab maxTab;
 	private ProjectWindowTab maxProjectWindowTab;
 
+	
 	/**
 	 * This is the default constructor for a new project window.
-	 * 
 	 * @param project the current {@link Project}
 	 */
 	public ProjectWindow(Project project) {
@@ -206,7 +208,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		// --- Agent Load Metrics ---------------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
-
+		// --- Project Properties ---------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Projekt-Eigenschaften"), null, null, new ProjectPropertiesPanel(this.currProject, Language.translate("Projekt-Eigenschaften")), Language.translate("Konfiguration"));
+		pwt.add();
+		
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this.currProject), null);
@@ -219,9 +224,13 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		// --- simulation environment -----------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
-
+		// --- Setup Properties -----------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Setup-Eigenschaften"), null, null, new PropertiesPanel(null, Language.translate("Setup-Eigenschaften")), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+		pwt.add();
+		
+		
 		// ------------------------------------------------
-		// --- Visualisation ------------------------------
+		// --- Visualization ------------------------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION), null, null, this.currProject.getVisualizationTab4SetupExecution(), null);
 		pwt.add();
 
