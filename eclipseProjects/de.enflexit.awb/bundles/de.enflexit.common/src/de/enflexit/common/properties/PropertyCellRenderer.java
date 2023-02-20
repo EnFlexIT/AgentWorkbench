@@ -3,6 +3,7 @@ package de.enflexit.common.properties;
 import java.awt.Component;
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -25,6 +26,9 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row, int column) {
 		
 		String displayText = "";
+		
+		String displayInstruction = (String) table.getValueAt(row, 0);
+		
 		String propertyName = "";
 		String propertyType = "";
 		String propertyValue = "";
@@ -40,10 +44,23 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 			propertyValue = pv.getValueString();
 		}
 		
+		// --- Get the JLabel to set the text with ------------------
+		JLabel jLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		
 		// --- Set text for JLabel ----------------------------------
 		switch (column) {
+		case PropertiesPanel.COLUMN_DisplayInstruction:
+			displayText = propertyName;
+			break;
+			
 		case PropertiesPanel.COLUMN_PropertyName:
 			displayText = propertyName;
+			if (displayInstruction!=null) {
+				String[] diArray = displayInstruction.split(";");
+				displayText = diArray[0];
+				int treeLevel = Integer.parseInt(diArray[1]);
+				jLabel.setBorder(BorderFactory.createEmptyBorder(0, treeLevel*20, 0, 0));
+			}
 			break;
 			
 		case PropertiesPanel.COLUMN_PropertyType:
@@ -54,8 +71,6 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 			displayText = propertyValue;
 			break;
 		}
-	
-		JLabel jLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		jLabel.setText(displayText);
 		
 		// --- Set font style to BOLD -------------------------------

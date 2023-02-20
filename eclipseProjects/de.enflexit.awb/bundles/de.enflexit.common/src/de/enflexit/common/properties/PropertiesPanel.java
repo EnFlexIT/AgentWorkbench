@@ -22,14 +22,19 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.JTree;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.common.BundleHelper;
+import de.enflexit.common.properties.PropertiesTree.PropertyNodeUserObject;
+import de.enflexit.common.swing.JTreeUtil;
+
 
 /**
  * The Class PropertiesPanel provides an panel to edit {@link Properties}.
@@ -38,10 +43,12 @@ import de.enflexit.common.BundleHelper;
 public class PropertiesPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 8199025287240543269L;
+
+	public static final int COLUMN_DisplayInstruction = 0;
+	public static final int COLUMN_PropertyName = 1;
+	public static final int COLUMN_PropertyType = 2;
+	public static final int COLUMN_PropertyValue = 3;
 	
-	public static final int COLUMN_PropertyName = 0;
-	public static final int COLUMN_PropertyType = 1;
-	public static final int COLUMN_PropertyValue = 2;
 	
 	private Properties properties;
 	
@@ -65,6 +72,15 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	private JTable jTableProperties;
 	private TableRowSorter<DefaultTableModel> jTableRowSorter;
 	private RowFilter<DefaultTableModel, Integer> jTableRowFilter;
+	
+	
+	private boolean debugDisplayInstruction = false;
+	private boolean debugDisplayPropertiesTree = false;
+	
+	private PropertiesTree propertiesTree;
+	private JScrollPane jScrollPaneTree;
+	private JTree jTreeProperties;
+	
 	
 	/**
 	 * Instantiates a new properties panel.
@@ -101,6 +117,7 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	 */
 	public void setProperties(Properties properties) {
 		this.properties = properties;
+		this.resetPropertiesTree();
 		this.refillTable();
 	}
 	
@@ -115,9 +132,9 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 		
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{300, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{300, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
@@ -180,6 +197,17 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 		gbc_jScrollPaneProperties.gridx = 0;
 		gbc_jScrollPaneProperties.gridy = 1;
 		this.add(getJScrollPaneProperties(), gbc_jScrollPaneProperties);
+		
+		if (this.debugDisplayPropertiesTree==true) {
+			GridBagConstraints gbc_jScrollPaneTree = new GridBagConstraints();
+			gbc_jScrollPaneTree.insets = new Insets(5, 0, 10, 10);
+			gbc_jScrollPaneTree.fill = GridBagConstraints.BOTH;
+			gbc_jScrollPaneTree.gridx = 8;
+			gbc_jScrollPaneTree.gridy = 1;
+			this.add(getJScrollPaneTree(), gbc_jScrollPaneTree);
+			gridBagLayout.columnWeights[gridBagLayout.columnWeights.length-2] = 1.0;
+		}
+		
 	}
 
 	private JLabel getJLabelHeader() {
@@ -317,9 +345,10 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	public DefaultTableModel getTableModelProperties() {
 		if (tableModelProperties==null) {
 			Vector<String> colName = new Vector<>();
-			colName.add("Property Name");
-			colName.add("Property Type");
-			colName.add("Property Value");
+			colName.add("Display Instruction");
+			colName.add("Name");
+			colName.add("Type");
+			colName.add("Value");
 			tableModelProperties = new DefaultTableModel(null, colName) {
 				private static final long serialVersionUID = 7841309046550089999L;
 				/* (non-Javadoc)
@@ -329,6 +358,7 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 				public Class<?> getColumnClass(int columnIndex) {
 					Class<?> columnClass = null;
 					switch (columnIndex) {
+					case COLUMN_DisplayInstruction:
 					case COLUMN_PropertyName:
 						columnClass = String.class;
 						break;
@@ -365,6 +395,10 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			
 			// --- Define PropertyCellRenderer --------------------------------
 			PropertyCellRenderer propRenderer = new PropertyCellRenderer();
+			
+			tc = tcm.getColumn(COLUMN_DisplayInstruction);
+			tc.setMinWidth(this.debugDisplayInstruction==true ? 150 : 0);
+			tc.setMaxWidth(this.debugDisplayInstruction==true ? 150 : 0);
 			
 			tc = tcm.getColumn(COLUMN_PropertyName);
 			tc.setCellRenderer(propRenderer);
@@ -413,7 +447,13 @@ public class PropertiesPanel extends JPanel implements ActionListener {
    	 */
    	private void filterPropertiesTableModel() {
    		try {
-   			this.getJTableRowSorter().sort();
+   			this.resetPropertiesTree();
+   			if (this.getJToggleButtonTreeView().isSelected()==true) {
+   				this.refillTable();
+   			} else {
+   				this.getJTableRowSorter().sort();
+   			}
+   			
    		} catch (Exception ex) {
    			ex.printStackTrace();
    		}
@@ -429,10 +469,13 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			    @Override
     			public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
     				
-    				// --- Return true if the search phrase is empty ----------
-    				String searchPhrase = PropertiesPanel.this.getJTextFieldSearch().getText().trim();
-    				if ((searchPhrase==null || searchPhrase.isBlank() || searchPhrase.isEmpty())==true) return true;
+			    	// --- Deactivate filter in tree view ---------------------
+			    	if (PropertiesPanel.this.getJToggleButtonTreeView().isSelected()==true) return true;
 
+			    	// --- Return true if the search phrase is empty ----------
+    				String searchPhrase = PropertiesPanel.this.getJTextFieldSearch().getText().trim();
+    				if ((searchPhrase==null || searchPhrase.isEmpty() || searchPhrase.isBlank())) return true;
+    				
     				// --------------------------------------------------------
     				// --- Do the column value filtering ----------------------
 					boolean rowMatch = false;
@@ -465,8 +508,6 @@ public class PropertiesPanel extends JPanel implements ActionListener {
     	}
     	return jTableRowFilter;
     }
-    
-   
 	
 	/**
 	 * Refills the properties table (clear & fill).
@@ -479,10 +520,24 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	 * Fill the properties table.
 	 */
 	private void fillTable() {
-		List<String> idList = this.getProperties().getIdentifierList();
-		for (String identifyer : idList) {
-			PropertyValue pValue = this.getProperties().getPropertyValue(identifyer);
-			this.addPropertyRow(identifyer, pValue);
+		
+		if (this.getJToggleButtonListView().isSelected()==true) {
+			// --- Fill as simple list -------------------------------------------------- 
+			List<String> idList = this.getProperties().getIdentifierList();
+			for (String identifyer : idList) {
+				// --- Get PropertyValue ------------------------------------------------
+				PropertyValue pValue = this.getProperties().getPropertyValue(identifyer);
+				this.addPropertyRow(null, identifyer, pValue);
+			}
+			
+		} else {
+			// --- Fill from tree model -------------------------------------------------
+			List<DefaultMutableTreeNode> treeNodeList = this.getPropertiesTree().asList();
+			for (DefaultMutableTreeNode treeNode : treeNodeList) {
+				PropertyNodeUserObject pnuo = (PropertyNodeUserObject) treeNode.getUserObject();
+				this.addPropertyRow(pnuo.getDisplayInstruction(), pnuo.getIdentifier(), pnuo.getPropertyValue());
+			}
+			
 		}
 	}
 	/**
@@ -491,15 +546,43 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	 * @param identifier the identifier of the property
 	 * @param propertyValue the property value
 	 */
-	private void addPropertyRow(String identifier, PropertyValue propertyValue) {
+	private void addPropertyRow(String displayInstruction, String identifier, PropertyValue propertyValue) {
 		Vector<Object> row = new Vector<>();
+		row.add(displayInstruction);
 		row.add(identifier);
 		row.add(propertyValue);
 		row.add(propertyValue);
 		this.getTableModelProperties().addRow(row);
-		
 	}
 	
+	
+	
+	private JScrollPane getJScrollPaneTree() {
+		if (jScrollPaneTree == null) {
+			jScrollPaneTree = new JScrollPane();
+			jScrollPaneTree.setViewportView(getJTreeProperties());
+		}
+		return jScrollPaneTree;
+	}
+	private PropertiesTree getPropertiesTree() {
+		if (propertiesTree==null) {
+			propertiesTree = new PropertiesTree(this.getProperties());
+		}
+		return propertiesTree;
+	}
+	public void resetPropertiesTree() {
+		this.propertiesTree = new PropertiesTree(this.getProperties(), this.getJTextFieldSearch().getText());
+		this.getJTreeProperties().setModel(this.propertiesTree);
+		JTreeUtil.setTreeExpandedState(this.getJTreeProperties(), true);
+	}
+	private JTree getJTreeProperties() {
+		if (jTreeProperties == null) {
+			jTreeProperties = new JTree(this.getPropertiesTree());
+			jTreeProperties.setRootVisible(false);
+			JTreeUtil.setTreeExpandedState(jTreeProperties, true);
+		}
+		return jTreeProperties;
+	}
 	
 	
 	/* (non-Javadoc)
@@ -523,10 +606,11 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource()==this.getJToggleButtonTreeView()) {
 			// --- Switch to list view --------------------
+			this.refillTable();
 			
 		} else if (ae.getSource()==this.getJToggleButtonListView()) {
 			// --- Switch to tree view --------------------
-			
+			this.refillTable();
 		}
 		
 	}

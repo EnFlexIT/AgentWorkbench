@@ -160,9 +160,9 @@ public class Properties implements Serializable {
 	public void fillWithTestData() {
 		
 		this.setStringValue(null, null);
-		this.setStringValue("Dev.Test 1.String 1", null);
-		this.setStringValue("Dev.Test 1.String 2", "");
-		this.setStringValue("Dev.Test 1.String 3", "Test-String");
+		this.setStringValue("Dev.Test 1.String 1", "Test-String");
+		this.setStringValue("Dev.Test 1.String 2", null);
+		this.setStringValue("Dev.Test 1.String 3", "");
 		
 		this.setBooleanValue("Dev.Test 1.Boolean 1", true);
 		this.setBooleanValue("Dev.Test 1.Boolean 2", false);
@@ -179,6 +179,17 @@ public class Properties implements Serializable {
 		
 		this.setDoubleValue("Dev.Test 3.Double 1", 0.0);
 		this.setDoubleValue("Dev.Test 3.Double 2", -3.6);
+		
+		
+		this.setStringValue("Prod.Test 1.String 1", "Test-String");
+		this.setStringValue("Prod.Test 2.String 2", null);
+		this.setStringValue("Prod.Test 3.String 3", "");
+		
+		this.setBooleanValue("Prod.Test 1.Boolean 2", false);
+		
+		this.setIntegerValue("Prod.Test 3.Integer 1", 0);
+		this.setIntegerValue("Prod.Test 3.Integer 2", 4711);
+		
 	}
 
 }
