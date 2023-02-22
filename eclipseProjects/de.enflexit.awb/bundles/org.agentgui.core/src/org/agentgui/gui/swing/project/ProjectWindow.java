@@ -43,7 +43,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
-import de.enflexit.common.properties.PropertiesPanel;
 
 import java.util.Vector;
 
@@ -81,6 +80,7 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
+import agentgui.core.gui.projectwindow.simsetup.SetupPropertiesPanel;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
@@ -225,7 +225,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
 		// --- Setup Properties -----------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Setup-Eigenschaften"), null, null, new PropertiesPanel(null, Language.translate("Setup-Eigenschaften")), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Setup-Eigenschaften"), null, null, new SetupPropertiesPanel(this.currProject, Language.translate("Setup-Eigenschaften")), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
 		
 		

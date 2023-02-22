@@ -1,7 +1,6 @@
 package de.enflexit.common.properties;
 
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -56,9 +55,9 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 		case PropertiesPanel.COLUMN_PropertyName:
 			displayText = propertyName;
 			if (displayInstruction!=null) {
-				String[] diArray = displayInstruction.split(";");
-				displayText = diArray[0];
-				int treeLevel = Integer.parseInt(diArray[1]);
+				String[] diArray = displayInstruction.split("\\.");
+				int treeLevel = diArray.length-1;
+				displayText = diArray[treeLevel];
 				jLabel.setBorder(BorderFactory.createEmptyBorder(0, treeLevel*20, 0, 0));
 			}
 			break;
@@ -97,14 +96,6 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 			}
 		}
 		return propTypeString;
-	}
-	
-	/**
-	 * Sets the specified JLabels font to bold.
-	 * @param jLabel the new j label font bold
-	 */
-	private void setJLabelFontBold(JLabel jLabel) {
-		jLabel.setFont(jLabel.getFont().deriveFont(Font.BOLD));
 	}
 	
 }

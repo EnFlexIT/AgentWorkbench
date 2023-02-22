@@ -79,7 +79,7 @@ public class PropertyValue {
 					case String:
 						value = valueString;
 						break;
-					case Booelan:
+					case Boolean:
 						value = Boolean.parseBoolean(valueString);
 						break;
 					case Integer:
@@ -191,7 +191,7 @@ public class PropertyValue {
 		if (value instanceof String) {
 			this.valueClass = PropertyType.String.name();
 		} else if (value instanceof Boolean) {
-			this.valueClass = PropertyType.Booelan.name();
+			this.valueClass = PropertyType.Boolean.name();
 		} else if (value instanceof Integer) {
 			this.valueClass = PropertyType.Integer.name();
 		} else if (value instanceof Long) {

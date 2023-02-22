@@ -64,6 +64,7 @@ import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
+import de.enflexit.common.properties.Properties;
 
 /**
  * This is the model class for a simulation setup.
@@ -118,6 +119,10 @@ public class SimulationSetup {
 	@XmlElementWrapper(name = "timeModelSettings")
 	private HashMap<String, String> timeModelSettings;
 
+	@XmlElement(name = "setupProperties")
+	private Properties properties;
+	
+	
 	/**
 	 * This field can be used in order to provide customized objects during the
 	 * runtime of a project. This will be not stored within the file 'agentgui.xml'
@@ -195,6 +200,27 @@ public class SimulationSetup {
 		return this.timeModelSettings;
 	}
 
+	
+	/**
+	 * Returns the further project properties.
+	 * @return the properties
+	 */
+	@XmlTransient
+	public Properties getProperties() {
+		if (properties==null) {
+			properties = new Properties();
+		}
+		return properties;
+	}
+	/**
+	 * Sets the project properties.
+	 * @param properties the new properties
+	 */
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
+	
 	// ------------------------------------------------------------------------
 	// --- From here, handling of the user runtime object ---------------------
 	// ------------------------------------------------------------------------

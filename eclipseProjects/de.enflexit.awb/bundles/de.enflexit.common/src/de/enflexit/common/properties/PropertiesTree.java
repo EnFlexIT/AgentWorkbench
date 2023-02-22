@@ -67,27 +67,25 @@ public class PropertiesTree extends DefaultTreeModel {
 			String idPath[] = identifier.split("\\.");
 			if (idPath.length==1) {
 				// --- Simple element -----------------------------------------
-				this.addPropertyNode(this.getRootNode(), identifier, identifier, pValue, null);
+				this.addPropertyNode(this.getRootNode(), identifier, identifier, pValue);
 				
 			} else {
 				// --- Tree element -------------------------------------------
 				String pathID = "";
 				for (int i = 0; i < idPath.length; i++) {
 
-					String displayInstruction = idPath[i] + ";" + i;
-
 					String parentPathID = pathID;
-					DefaultMutableTreeNode parentNode = this.getParentNode(parentPathID);
+					DefaultMutableTreeNode parentNode = this.getNode(parentPathID);
 					
 					pathID += idPath[i] + "."; 
-					DefaultMutableTreeNode checkNode = this.getParentNode(pathID);
+					DefaultMutableTreeNode checkNode = this.getNode(pathID);
 					if (checkNode!=this.getRootNode()) continue;
 					
 					boolean isLeaf = i==idPath.length-1; 
 					if (isLeaf==true) {
-						this.addPropertyNode(parentNode, pathID, identifier, pValue, displayInstruction);
+						this.addPropertyNode(parentNode, pathID, identifier, pValue);
 					} else {
-						this.addPropertyNode(parentNode, pathID, null, null, displayInstruction);
+						this.addPropertyNode(parentNode, pathID, null, null);
 					}
 				}
 			}
@@ -136,9 +134,9 @@ public class PropertiesTree extends DefaultTreeModel {
 	 * @param displayInstruction the display instruction
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode addPropertyNode(DefaultMutableTreeNode parentNode, String pathID, String identifier, PropertyValue propertyValue, String displayInstruction) {
+	private DefaultMutableTreeNode addPropertyNode(DefaultMutableTreeNode parentNode, String pathID, String identifier, PropertyValue propertyValue) {
 		
-		PropertyNodeUserObject pnuo = new PropertyNodeUserObject(identifier, propertyValue, displayInstruction);
+		PropertyNodeUserObject pnuo = new PropertyNodeUserObject(identifier, propertyValue, pathID);
 		DefaultMutableTreeNode nodeAdded = new DefaultMutableTreeNode(pnuo);
 		parentNode.add(nodeAdded);
 		this.getTreeNodeHash().put(pathID, nodeAdded);
@@ -161,13 +159,58 @@ public class PropertiesTree extends DefaultTreeModel {
 	 * @param path the path
 	 * @return the parent node
 	 */
-	private DefaultMutableTreeNode getParentNode(String path) {
+	private DefaultMutableTreeNode getNode(String path) {
 		
 		DefaultMutableTreeNode parentNode = this.getTreeNodeHash().get(path); 
 		if (parentNode==null) {
 			parentNode = this.getRootNode();
 		}
 		return parentNode;
+	}
+	
+	/**
+	 * Returns the list of property identifier based on the specified node.
+	 *
+	 * @param pNode the property node
+	 * @return the identifier from node
+	 */
+	private List<String> getIdentifierFromNode(DefaultMutableTreeNode pNode) {
+		
+		List<String> idList = new ArrayList<>();
+		
+		PropertyNodeUserObject pnuo = (PropertyNodeUserObject) pNode.getUserObject();
+		if (pnuo.getIdentifier()!=null) {
+			// --- Found property entry ---------------
+			idList.add(pnuo.getIdentifier());
+			
+		} else {
+			// --- Found parent node ------------------
+			for (int i = 0; i < pNode.getChildCount(); i++) {
+				idList.addAll(this.getIdentifierFromNode((DefaultMutableTreeNode) pNode.getChildAt(i)));
+			}
+		}
+		return idList;
+	}
+	
+	/**
+	 * Returns the list of affected identifier based on the specified display instruction.
+	 *
+	 * @param displayInstruction the display instruction
+	 * @return the identifier from display instruction
+	 */
+	public List<String> getIdentifierFromDisplayInstruction(String displayInstruction) {
+
+		if (displayInstruction==null) return null;
+		
+		List<String> idList = new ArrayList<>();
+		DefaultMutableTreeNode pNode = this.getNode(displayInstruction);
+		if (pNode!=null) {
+			List<String> idListNode = this.getIdentifierFromNode(pNode);
+			if (idListNode!=null && idListNode.size()>0) {
+				idList.addAll(idListNode);
+			}
+		}
+		return idList;
 	}
 	
 	

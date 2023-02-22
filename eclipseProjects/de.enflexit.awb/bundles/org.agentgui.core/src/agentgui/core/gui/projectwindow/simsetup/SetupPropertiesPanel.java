@@ -1,4 +1,4 @@
-package org.agentgui.gui.swing.project;
+package agentgui.core.gui.projectwindow.simsetup;
 
 import agentgui.core.project.Project;
 import de.enflexit.common.Observable;
@@ -11,7 +11,7 @@ import de.enflexit.common.properties.PropertiesPanel;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class ProjectPropertiesPanel extends PropertiesPanel implements Observer {
+public class SetupPropertiesPanel extends PropertiesPanel implements Observer {
 
 	private static final long serialVersionUID = 4372968290090987468L;
 
@@ -23,8 +23,8 @@ public class ProjectPropertiesPanel extends PropertiesPanel implements Observer 
 	 * @param currProject the current project
 	 * @param header the header
 	 */
-	public ProjectPropertiesPanel(Project currProject, String header) {
-		super(currProject.getProperties(), header);
+	public SetupPropertiesPanel(Project currProject, String header) {
+		super(currProject.getSimulationSetups().getCurrSimSetup().getProperties(), header);
 		this.currProject = currProject;
 		this.currProject.addObserver(this);
 	}

@@ -2133,6 +2133,7 @@ import de.enflexit.common.properties.Properties;
 	public Properties getProperties() {
 		if (properties==null) {
 			properties = new Properties();
+			properties.fillWithTestData();
 		}
 		return properties;
 	}

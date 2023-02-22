@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import de.enflexit.common.properties.PropertiesEvent.Action;
+
 /**
  * The Class Properties serves as base class to store individual properties 
  * within superior classes. For this, it also provides the required XML tags.
@@ -27,15 +29,17 @@ public class Properties implements Serializable {
 
 	public enum PropertyType {
 		String,
-		Booelan,
+		Boolean,
 		Integer,
 		Long,
 		Float,
 		Double
 	}
-	
+
 	@XmlElement(name="Properties")
 	private TreeMap<String, PropertyValue> propertyMap;
+	
+	private transient List<PropertiesListener> listener;
 	
 	
 	/**
@@ -63,14 +67,23 @@ public class Properties implements Serializable {
 	 *
 	 * @param identifier the identifier
 	 * @param newValue the new value
-	 * @return the previous PropertyValue instance
+	 * @return the previous PropertyValue instance or <code>null</code>
 	 */
 	public PropertyValue setValue(String identifier, Object newValue) {
+		
 		if (identifier==null) return null;
-		if (newValue==null) {
-			return this.getPropertyMap().put(identifier, null);
-		}
-		return this.getPropertyMap().put(identifier, new PropertyValue(newValue));
+
+		// --- Determine the current action --------------- 
+		boolean isKnownIdentifier = this.contains(identifier);
+		Action action = isKnownIdentifier==true ?  Action.PropertyUpdate : Action.PropertyAdded;
+		
+		// --- Create and put new property ----------------
+		PropertyValue newPropValue  = newValue==null ? null : new PropertyValue(newValue); 
+		PropertyValue prevPropValue = this.getPropertyMap().put(identifier, newPropValue);
+		
+		// --- Notify listener ----------------------------
+		this.notifyListener(new PropertiesEvent(action, identifier, newPropValue));
+		return prevPropValue;
 	}
 	/**
 	 * Removes the specified property.
@@ -79,7 +92,14 @@ public class Properties implements Serializable {
 	 * @return the property value
 	 */
 	public PropertyValue remove(String identifier) {
-		return this.getPropertyMap().remove(identifier);
+		
+		if (identifier==null) return null;
+		
+		PropertyValue removedPropValue = this.getPropertyMap().remove(identifier);  
+		if (removedPropValue!=null) {
+			this.notifyListener(new PropertiesEvent(Action.PropertyRemoved, identifier, removedPropValue));
+		}
+		return removedPropValue;
 	}
 	/**
 	 * Return the specified property value.
@@ -88,7 +108,17 @@ public class Properties implements Serializable {
 	 * @return the property value or <code>null</code>
 	 */
 	public PropertyValue getPropertyValue(String identifier) {
+		if (identifier==null) return null;
 		return this.getPropertyMap().get(identifier);
+	}
+	/**
+	 * Checks if the current properties contains the specified identifier.
+	 *
+	 * @param identifier the identifier
+	 * @return true, if successful
+	 */
+	public boolean contains(String identifier) {
+		return this.getPropertyMap().keySet().contains(identifier);
 	}
 	
 	
@@ -154,6 +184,54 @@ public class Properties implements Serializable {
 		return true;
 	}
 
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From methods for the Properties listener ---------------------------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Return the listener.
+	 * @return the listener
+	 */
+	private List<PropertiesListener> getPropertiesListener() {
+		if (listener==null) {
+			listener = new ArrayList<>();
+		}
+		return listener;
+	}
+	/**
+	 * Adds a {@link PropertiesListener} to the current Properties.
+	 * @param listener the listener to add
+	 */
+	public void addPropertiesListener(PropertiesListener listener) {
+		if (listener!=null && this.getPropertiesListener().contains(listener)==false) {
+			this.getPropertiesListener().add(listener);
+		}
+	}
+	/**
+	 * Removes a {@link PropertiesListener} from the current Properties.
+	 * @param listener the listener to remove
+	 */
+	public void removePropertiesListener(PropertiesListener listener) {
+		if (listener!=null && this.getPropertiesListener().contains(listener)==true) {
+			this.getPropertiesListener().remove(listener);
+		}
+	}
+	/**
+	 * Notify listener about events.
+	 * @param propertiesEvent the properties event
+	 */
+	private void notifyListener(PropertiesEvent propertiesEvent) {
+		for (PropertiesListener listener : this.getPropertiesListener()) {
+			try {
+				listener.onPropertiesEvent(propertiesEvent);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	
+	
 	/**
 	 * Fill the current property instance with some test data.
 	 */

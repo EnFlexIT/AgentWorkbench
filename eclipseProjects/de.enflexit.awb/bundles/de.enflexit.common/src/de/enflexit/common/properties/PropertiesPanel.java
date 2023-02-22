@@ -7,8 +7,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
@@ -16,15 +19,23 @@ import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -40,7 +51,7 @@ import de.enflexit.common.swing.JTreeUtil;
  * The Class PropertiesPanel provides an panel to edit {@link Properties}.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class PropertiesPanel extends JPanel implements ActionListener {
+public class PropertiesPanel extends JPanel implements ActionListener, PropertiesListener {
 	
 	private static final long serialVersionUID = 8199025287240543269L;
 
@@ -67,12 +78,16 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	private JButton jButtonAddProperty;
 	private JButton jButtonRemoveProperty;
 
+	private JSplitPane jSplitPaneProperties;
+	
 	private JScrollPane jScrollPaneProperties;
 	private DefaultTableModel tableModelProperties;
 	private JTable jTableProperties;
 	private TableRowSorter<DefaultTableModel> jTableRowSorter;
 	private RowFilter<DefaultTableModel, Integer> jTableRowFilter;
+	private TableColumnModelListener tableColumnModelListener;
 	
+	private PropertiesEditPanel propertiesEditPanel;
 	
 	private boolean debugDisplayInstruction = false;
 	private boolean debugDisplayPropertiesTree = false;
@@ -80,6 +95,7 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	private PropertiesTree propertiesTree;
 	private JScrollPane jScrollPaneTree;
 	private JTree jTreeProperties;
+	private JSeparator jSeparatorTop;
 	
 	
 	/**
@@ -88,7 +104,6 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	public PropertiesPanel() {
 		this(null, "Properties");
 	}
-	
 	/**
 	 * Instantiates a new properties panel.
 	 *
@@ -117,6 +132,8 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	 */
 	public void setProperties(Properties properties) {
 		this.properties = properties;
+		this.getJPanelPropertiesEdit().setProperties(this.properties);
+		this.getJPanelPropertiesEdit().setIdentifier(null);
 		this.resetPropertiesTree();
 		this.refillTable();
 	}
@@ -133,9 +150,9 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{300, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
@@ -143,71 +160,95 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 		gbc_jLabelHeader.insets = new Insets(10, 13, 0, 0);
 		gbc_jLabelHeader.gridx = 0;
 		gbc_jLabelHeader.gridy = 0;
-		this.add(getJLabelHeader(), gbc_jLabelHeader);
+		this.add(this.getJLabelHeader(), gbc_jLabelHeader);
 		
 		GridBagConstraints gbc_jPanelSearch = new GridBagConstraints();
 		gbc_jPanelSearch.insets = new Insets(10, 10, 0, 5);
 		gbc_jPanelSearch.fill = GridBagConstraints.BOTH;
 		gbc_jPanelSearch.gridx = 1;
 		gbc_jPanelSearch.gridy = 0;
-		this.add(getJPanelSearch(), gbc_jPanelSearch);
+		this.add(this.getJPanelSearch(), gbc_jPanelSearch);
 		
 		GridBagConstraints gbc_jSeparatorHeaderLeft = new GridBagConstraints();
 		gbc_jSeparatorHeaderLeft.fill = GridBagConstraints.VERTICAL;
 		gbc_jSeparatorHeaderLeft.insets = new Insets(10, 5, 0, 5);
 		gbc_jSeparatorHeaderLeft.gridx = 2;
 		gbc_jSeparatorHeaderLeft.gridy = 0;
-		this.add(getJSeparatorHeaderLeft(), gbc_jSeparatorHeaderLeft);
+		this.add(this.getJSeparatorHeaderLeft(), gbc_jSeparatorHeaderLeft);
 		
 		GridBagConstraints gbc_jToggleButtonTreeView = new GridBagConstraints();
 		gbc_jToggleButtonTreeView.insets = new Insets(10, 5, 0, 0);
 		gbc_jToggleButtonTreeView.gridx = 3;
 		gbc_jToggleButtonTreeView.gridy = 0;
-		this.add(getJToggleButtonTreeView(), gbc_jToggleButtonTreeView);
+		this.add(this.getJToggleButtonTreeView(), gbc_jToggleButtonTreeView);
 		
 		GridBagConstraints gbc_jToggleButtonListView = new GridBagConstraints();
 		gbc_jToggleButtonListView.insets = new Insets(10, 5, 0, 5);
 		gbc_jToggleButtonListView.gridx = 4;
 		gbc_jToggleButtonListView.gridy = 0;
-		this.add(getJToggleButtonListView(), gbc_jToggleButtonListView);
+		this.add(this.getJToggleButtonListView(), gbc_jToggleButtonListView);
 		
 		GridBagConstraints gbc_jSeparatorHeaderRight = new GridBagConstraints();
 		gbc_jSeparatorHeaderRight.insets = new Insets(10, 5, 0, 5);
 		gbc_jSeparatorHeaderRight.fill = GridBagConstraints.VERTICAL;
 		gbc_jSeparatorHeaderRight.gridx = 5;
 		gbc_jSeparatorHeaderRight.gridy = 0;
-		this.add(getJSeparatorHeaderRight(), gbc_jSeparatorHeaderRight);
+		this.add(this.getJSeparatorHeaderRight(), gbc_jSeparatorHeaderRight);
 		
 		GridBagConstraints gbc_jButtonAddProperty = new GridBagConstraints();
 		gbc_jButtonAddProperty.insets = new Insets(10, 5, 0, 0);
 		gbc_jButtonAddProperty.gridx = 6;
 		gbc_jButtonAddProperty.gridy = 0;
-		this.add(getJButtonAddProperty(), gbc_jButtonAddProperty);
+		this.add(this.getJButtonAddProperty(), gbc_jButtonAddProperty);
 		
 		GridBagConstraints gbc_jButtonRemoveProperty = new GridBagConstraints();
 		gbc_jButtonRemoveProperty.insets = new Insets(10, 5, 0, 10);
 		gbc_jButtonRemoveProperty.gridx = 7;
 		gbc_jButtonRemoveProperty.gridy = 0;
-		this.add(getJButtonRemoveProperty(), gbc_jButtonRemoveProperty);
+		this.add(this.getJButtonRemoveProperty(), gbc_jButtonRemoveProperty);
+		
+		GridBagConstraints gbc_jSeparatorTop = new GridBagConstraints();
+		gbc_jSeparatorTop.insets = new Insets(5, 10, 5, 10);
+		gbc_jSeparatorTop.gridwidth = 8;
+		gbc_jSeparatorTop.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jSeparatorTop.gridx = 0;
+		gbc_jSeparatorTop.gridy = 1;
+		add(getJSeparatorTop(), gbc_jSeparatorTop);
 		
 		GridBagConstraints gbc_jScrollPaneProperties = new GridBagConstraints();
 		gbc_jScrollPaneProperties.gridwidth = 8;
 		gbc_jScrollPaneProperties.insets = new Insets(5, 10, 10, 10);
 		gbc_jScrollPaneProperties.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneProperties.gridx = 0;
-		gbc_jScrollPaneProperties.gridy = 1;
-		this.add(getJScrollPaneProperties(), gbc_jScrollPaneProperties);
+		gbc_jScrollPaneProperties.gridy = 2;
+		this.add(this.getJSplitPaneProperties(), gbc_jScrollPaneProperties);
 		
 		if (this.debugDisplayPropertiesTree==true) {
 			GridBagConstraints gbc_jScrollPaneTree = new GridBagConstraints();
 			gbc_jScrollPaneTree.insets = new Insets(5, 0, 10, 10);
 			gbc_jScrollPaneTree.fill = GridBagConstraints.BOTH;
 			gbc_jScrollPaneTree.gridx = 8;
-			gbc_jScrollPaneTree.gridy = 1;
-			this.add(getJScrollPaneTree(), gbc_jScrollPaneTree);
+			gbc_jScrollPaneTree.gridy = 2;
+			this.add(this.getJScrollPaneTree(), gbc_jScrollPaneTree);
 			gridBagLayout.columnWeights[gridBagLayout.columnWeights.length-2] = 1.0;
 		}
 		
+		// --- Update the column width information in the PropertiesEditPanel ----
+		this.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent ce) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						PropertiesPanel.this.updateColumnWidthInEditor();
+					}
+				});
+			}
+			@Override
+			public void componentResized(ComponentEvent ce) {
+				PropertiesPanel.this.updateColumnWidthInEditor();
+			}
+		});
 	}
 
 	private JLabel getJLabelHeader() {
@@ -306,7 +347,9 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 		}
 		return jToggleButtonListView;
 	}
-
+	private boolean isTreeView() {
+		return (this.getJToggleButtonTreeView().isSelected()==true);
+	}
 	
 	
 	private JSeparator getJSeparatorHeaderRight() {
@@ -322,6 +365,7 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			jButtonAddProperty.setIcon(BundleHelper.getImageIcon("ListPlus.png"));
 			jButtonAddProperty.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonAddProperty.setPreferredSize(new Dimension(26, 26));
+			jButtonAddProperty.addActionListener(this);
 		}
 		return jButtonAddProperty;
 	}
@@ -331,9 +375,30 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			jButtonRemoveProperty.setIcon(BundleHelper.getImageIcon("ListMinus.png"));
 			jButtonRemoveProperty.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonRemoveProperty.setPreferredSize(new Dimension(26, 26));
+			jButtonRemoveProperty.addActionListener(this);
 		}
 		return jButtonRemoveProperty;
 	}
+	
+	private JSeparator getJSeparatorTop() {
+		if (jSeparatorTop == null) {
+			jSeparatorTop = new JSeparator();
+		}
+		return jSeparatorTop;
+	}
+	
+	private JSplitPane getJSplitPaneProperties() {
+		if (jSplitPaneProperties==null) {
+			jSplitPaneProperties = new JSplitPane();
+			jSplitPaneProperties.setDividerSize(5);
+			jSplitPaneProperties.setDividerLocation(0.3);
+			jSplitPaneProperties.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitPaneProperties.setTopComponent(this.getJPanelPropertiesEdit());
+			jSplitPaneProperties.setBottomComponent(this.getJScrollPaneProperties());
+		}
+		return jSplitPaneProperties;
+	}
+	
 	private JScrollPane getJScrollPaneProperties() {
 		if (jScrollPaneProperties == null) {
 			jScrollPaneProperties = new JScrollPane();
@@ -341,8 +406,7 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 		}
 		return jScrollPaneProperties;
 	}
-	
-	public DefaultTableModel getTableModelProperties() {
+	private DefaultTableModel getTableModelProperties() {
 		if (tableModelProperties==null) {
 			Vector<String> colName = new Vector<>();
 			colName.add("Display Instruction");
@@ -351,9 +415,6 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			colName.add("Value");
 			tableModelProperties = new DefaultTableModel(null, colName) {
 				private static final long serialVersionUID = 7841309046550089999L;
-				/* (non-Javadoc)
-				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
-				 */
 				@Override
 				public Class<?> getColumnClass(int columnIndex) {
 					Class<?> columnClass = null;
@@ -373,11 +434,18 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 					}
 					return columnClass;
 				}
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
 			};
 		}
 		return tableModelProperties;
 	}
-	
+	/**
+	 * Returns the JTable for the properties.
+	 * @return the properties table 
+	 */
 	private JTable getJTableProperties() {
 		if (jTableProperties == null) {
 			jTableProperties = new JTable(this.getTableModelProperties());
@@ -385,9 +453,6 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			jTableProperties.setFillsViewportHeight(true);
 			jTableProperties.setAutoCreateRowSorter(true);
 			jTableProperties.getTableHeader().setReorderingAllowed(false);
-			
-			// --- Define the row sorter and filter --------------------------- 
-			jTableProperties.setRowSorter(this.getJTableRowSorter());
 			
 			// --- Configure the editor and the renderer of the cells ---------
 			TableColumnModel tcm = jTableProperties.getColumnModel();
@@ -415,11 +480,37 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			tc.setPreferredWidth(600);
 			tc.setMinWidth(100);
 			
-			jTableProperties.doLayout();
+			tcm.addColumnModelListener(this.getTableColumnModelListener());
+			
+			// --- Add selection listener -------------------------------------
+			jTableProperties.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+				private int lastSelectedRow = -1;
+        		public void valueChanged(ListSelectionEvent event) {
+        			
+        			if (event.getValueIsAdjusting()==true) return;
+        			
+		        	String identifier = null;
+		        	JTable tbProperies = PropertiesPanel.this.getJTableProperties();
+		        	int selectedRow = tbProperies.getSelectedRow();
+		        	if (tbProperies.getSelectedRowCount()==1 && selectedRow!=this.lastSelectedRow) {
+		        		// --- Got new single selection -----------------------
+		        		identifier = (String) tbProperies.getValueAt(selectedRow, COLUMN_PropertyName);
+		        		if (identifier==null) {
+		        			identifier = (String) tbProperies.getValueAt(selectedRow, COLUMN_DisplayInstruction);
+		        		}
+		        		this.lastSelectedRow = selectedRow;
+		        	}
+		        	// --- Update view of properties editor -------------------
+		        	PropertiesPanel.this.getJPanelPropertiesEdit().setIdentifier(identifier);
+		        }
+		    });
+			
+			// --- Define the row sorter and filter --------------------------- 
+			jTableProperties.setRowSorter(this.getJTableRowSorter());
 		}
 		return jTableProperties;
 	}
-	
+
 	/**
      * Returns the table row sorter.
      * @return the table row sorter
@@ -448,7 +539,7 @@ public class PropertiesPanel extends JPanel implements ActionListener {
    	private void filterPropertiesTableModel() {
    		try {
    			this.resetPropertiesTree();
-   			if (this.getJToggleButtonTreeView().isSelected()==true) {
+   			if (this.isTreeView()==true) {
    				this.refillTable();
    			} else {
    				this.getJTableRowSorter().sort();
@@ -470,7 +561,7 @@ public class PropertiesPanel extends JPanel implements ActionListener {
     			public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
     				
 			    	// --- Deactivate filter in tree view ---------------------
-			    	if (PropertiesPanel.this.getJToggleButtonTreeView().isSelected()==true) return true;
+			    	if (PropertiesPanel.this.isTreeView()==true) return true;
 
 			    	// --- Return true if the search phrase is empty ----------
     				String searchPhrase = PropertiesPanel.this.getJTextFieldSearch().getText().trim();
@@ -508,7 +599,34 @@ public class PropertiesPanel extends JPanel implements ActionListener {
     	}
     	return jTableRowFilter;
     }
-	
+    /**
+     * Gets the table column model listener.
+     * @return the table column model listener
+     */
+    private TableColumnModelListener getTableColumnModelListener() {
+    	if (tableColumnModelListener==null) {
+    		tableColumnModelListener = new TableColumnModelListener() {
+    			@Override
+    			public void columnMarginChanged(ChangeEvent e) {
+    				PropertiesPanel.this.updateColumnWidthInEditor();
+    			}
+				@Override
+				public void columnSelectionChanged(ListSelectionEvent e) {
+				}
+				@Override
+				public void columnRemoved(TableColumnModelEvent e) {
+				}
+				@Override
+				public void columnMoved(TableColumnModelEvent e) {
+				}
+				@Override
+				public void columnAdded(TableColumnModelEvent e) {
+				}
+    		};
+    	}
+    	return tableColumnModelListener;
+    }
+    
 	/**
 	 * Refills the properties table (clear & fill).
 	 */
@@ -555,6 +673,115 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 		this.getTableModelProperties().addRow(row);
 	}
 	
+	/**
+	 * Returns the selected identifier from the current selection.
+	 * @return the selected identifier from selection, if only one row is selected
+	 */
+	private String getSelectedIdentifier() {
+		
+		String selectedID = null;
+		List<String> idList = this.getSelectedIdentifiers();
+		if (idList!=null && idList.size()==1) {
+			return idList.get(0);
+		}
+		return null;
+	}
+	/**
+	 * Returns the list of selected identifier from the current selection.
+	 * @return the selected identifier from selection
+	 */
+	private List<String> getSelectedIdentifiers() {
+		
+		List<String> idList = null;
+		int[] selRows = this.getJTableProperties().getSelectedRows();
+		if (selRows!=null && selRows.length>0) {
+			// --- Get the corresponding identifier of the ----------
+			idList = this.getIdentifierFromRows(selRows);
+		}
+		return idList;
+	}
+	/**
+	 * Returns the list of identifier from row selection.
+	 *
+	 * @param rowsSelected the rows selected
+	 * @return the list of identifier from the row selection, or <code>null</code> if nothing is selected
+	 */
+	private List<String> getIdentifierFromRows(int[] rowsSelected) {
+		
+		if (rowsSelected==null || rowsSelected.length==0) return null;
+		
+		List<String> idList = new ArrayList<>();
+		for (int i = 0; i < rowsSelected.length; i++) {
+			// --- Get the identifier ---------------------
+			String displayInstruction  = (String) this.getJTableProperties().getValueAt(rowsSelected[i], COLUMN_DisplayInstruction);
+			String identifier = (String) this.getJTableProperties().getValueAt(rowsSelected[i], COLUMN_PropertyName);
+			if (identifier==null && displayInstruction!=null) {
+				// --- Get node of this row ---------------
+				List<String> subIdList = this.getPropertiesTree().getIdentifierFromDisplayInstruction(displayInstruction);
+				if (subIdList!=null) {
+					idList.addAll(subIdList);
+				}
+			} else {
+				idList.add(identifier);
+			}
+			
+		}
+		return idList;
+	}
+	
+	
+	/**
+	 * Sets the table selection to the property specified by its identifier.
+	 * @param identifier the new table selection
+	 */
+	private void setSelection(String identifier) {
+		List<String> idList = new ArrayList<>();
+		idList.add(identifier);
+		this.setSelection(idList);
+	}
+	/**
+	 * Sets the table selection to the properties specified by the identifier list.
+	 * @param idList the new table selection
+	 */
+	private void setSelection(List<String> idList) {
+		
+		if (idList==null || idList.size()==0) return;
+
+		this.getJTableProperties().getSelectionModel().clearSelection();
+		
+		for (int i = 0; i < this.getJTableProperties().getRowCount(); i++) {
+			String identifier = (String) this.getJTableProperties().getValueAt(i, COLUMN_PropertyName);
+			if (idList.contains(identifier)==true) {
+				this.getJTableProperties().getSelectionModel().addSelectionInterval(i, i);
+			}
+		}
+	}
+
+	
+	/**
+	 * Returns the PropertiesEditPanel.
+	 * @return the j panel properties edit
+	 */
+	private PropertiesEditPanel getJPanelPropertiesEdit() {
+		if (propertiesEditPanel==null) {
+			propertiesEditPanel = new PropertiesEditPanel(this.getProperties());
+		}
+		return propertiesEditPanel;
+	}
+	/**
+	 * Updates the column width information in the edit panel.
+	 */
+	private void updateColumnWidthInEditor() {
+		
+		int[] tbColumWidth = new int[3];
+		TableColumnModel tcm = this.getJTableProperties().getColumnModel();
+		tbColumWidth[0] = tcm.getColumn(COLUMN_DisplayInstruction).getWidth() + tcm.getColumn(COLUMN_PropertyName).getWidth();
+		tbColumWidth[1] = tcm.getColumn(COLUMN_PropertyType).getWidth();
+		tbColumWidth[2] = tcm.getColumn(COLUMN_PropertyValue).getWidth();
+		this.getJPanelPropertiesEdit().updateColumnWidth(tbColumWidth);
+	}
+	
+	
 	
 	
 	private JScrollPane getJScrollPaneTree() {
@@ -585,6 +812,8 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 	}
 	
 	
+	
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -596,13 +825,12 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource()==this.getJButtonRemoveProperty()) {
 			// --- Remove current property ----------------
-			
+			this.removeSelectedProperties();
 			
 		} else if (ae.getSource()==this.getJButtonClearSearch()) {
 			// --- Clear search ---------------------------
 			this.getJTextFieldSearch().setText(null);
 			this.filterPropertiesTableModel();
-
 			
 		} else if (ae.getSource()==this.getJToggleButtonTreeView()) {
 			// --- Switch to list view --------------------
@@ -612,8 +840,56 @@ public class PropertiesPanel extends JPanel implements ActionListener {
 			// --- Switch to tree view --------------------
 			this.refillTable();
 		}
-		
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.properties.PropertiesListener#onPropertiesEvent(de.enflexit.common.properties.PropertiesEvent)
+	 */
+	@Override
+	public void onPropertiesEvent(PropertiesEvent propertiesEvent) {
+
+		switch (propertiesEvent.getAction()) {
+		case PropertyAdded:
+			this.setSelection(propertiesEvent.getIdentifier());
+			break;
+		case PropertyUpdate:
+			String identifier = propertiesEvent.getIdentifier();
+			this.filterPropertiesTableModel();
+			this.setSelection(identifier);
+			break;
+			
+		case PropertyRemoved:
+			// --- Nothing to do here ---
+			break;
+		}
+	}
+
 	
+	/**
+	 * Removes the selected properties.
+	 */
+	private void removeSelectedProperties() {
+		
+		List<String> idListToRemove = this.getSelectedIdentifiers(); 
+		if (idListToRemove!=null && idListToRemove.size()>0) {
+			// --- Explicitly (re-)select identifier ---------------- 
+			this.setSelection(idListToRemove);
+			
+			// --- Prepare message ----------------------------------
+			String title = "Delete selected property?";
+			String msg = "Are you sure to delete the currently selected property?";
+			if (idListToRemove.size()>1) {
+				title = "Delete selected properties?";
+				msg = "Are you sure to delete the selected " + idListToRemove.size() + " properties?";
+			}
+			// --- Ask user -----------------------------------------
+			if (JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+				for (String identifier : idListToRemove) {
+					this.getProperties().remove(identifier);
+				}
+				this.filterPropertiesTableModel();
+			}
+		}
+	}
 	
 }
