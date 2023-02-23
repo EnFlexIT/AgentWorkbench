@@ -122,7 +122,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	 */
 	public Properties getProperties() {
 		if (properties==null) {
-			properties = new Properties();
+			this.setProperties(new Properties());
 		}
 		return properties;
 	}
@@ -131,7 +131,12 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	 * @param properties the new properties
 	 */
 	public void setProperties(Properties properties) {
+		
+		if (this.properties!=null) this.properties.removePropertiesListener(this);
+		
 		this.properties = properties;
+		if (this.properties!=null) this.properties.addPropertiesListener(this);
+		
 		this.getJPanelPropertiesEdit().setProperties(this.properties);
 		this.getJPanelPropertiesEdit().setIdentifier(null);
 		this.resetPropertiesTree();
@@ -208,7 +213,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		this.add(this.getJButtonRemoveProperty(), gbc_jButtonRemoveProperty);
 		
 		GridBagConstraints gbc_jSeparatorTop = new GridBagConstraints();
-		gbc_jSeparatorTop.insets = new Insets(5, 10, 5, 10);
+		gbc_jSeparatorTop.insets = new Insets(5, 10, 0, 10);
 		gbc_jSeparatorTop.gridwidth = 8;
 		gbc_jSeparatorTop.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jSeparatorTop.gridx = 0;
@@ -499,6 +504,11 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		        			identifier = (String) tbProperies.getValueAt(selectedRow, COLUMN_DisplayInstruction);
 		        		}
 		        		this.lastSelectedRow = selectedRow;
+		        	
+		        	} else if (tbProperies.getSelectedRowCount()==0) {
+		        		// --- Select was cleared -----------------------------
+		        		this.lastSelectedRow = selectedRow;
+		        		
 		        	}
 		        	// --- Update view of properties editor -------------------
 		        	PropertiesPanel.this.getJPanelPropertiesEdit().setIdentifier(identifier);
@@ -510,7 +520,30 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		}
 		return jTableProperties;
 	}
-
+	/**
+     * Gets the table column model listener.
+     * @return the table column model listener
+     */
+    private TableColumnModelListener getTableColumnModelListener() {
+    	if (tableColumnModelListener==null) {
+    		tableColumnModelListener = new TableColumnModelListener() {
+    			@Override
+    			public void columnMarginChanged(ChangeEvent e) {
+    				PropertiesPanel.this.updateColumnWidthInEditor();
+    			}
+				@Override
+				public void columnSelectionChanged(ListSelectionEvent e) { }
+				@Override
+				public void columnRemoved(TableColumnModelEvent e) { }
+				@Override
+				public void columnMoved(TableColumnModelEvent e) { }
+				@Override
+				public void columnAdded(TableColumnModelEvent e) { }
+    		};
+    	}
+    	return tableColumnModelListener;
+    }
+    
 	/**
      * Returns the table row sorter.
      * @return the table row sorter
@@ -533,23 +566,6 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
     	return jTableRowSorter;
     }
 
-    /**
-   	 * Filters the properties table model according to the search string.
-   	 */
-   	private void filterPropertiesTableModel() {
-   		try {
-   			this.resetPropertiesTree();
-   			if (this.isTreeView()==true) {
-   				this.refillTable();
-   			} else {
-   				this.getJTableRowSorter().sort();
-   			}
-   			
-   		} catch (Exception ex) {
-   			ex.printStackTrace();
-   		}
-   	}
-   	
     /**
      * Return the row filter.
      * @return the row filter
@@ -599,39 +615,28 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
     	}
     	return jTableRowFilter;
     }
+    
     /**
-     * Gets the table column model listener.
-     * @return the table column model listener
-     */
-    private TableColumnModelListener getTableColumnModelListener() {
-    	if (tableColumnModelListener==null) {
-    		tableColumnModelListener = new TableColumnModelListener() {
-    			@Override
-    			public void columnMarginChanged(ChangeEvent e) {
-    				PropertiesPanel.this.updateColumnWidthInEditor();
-    			}
-				@Override
-				public void columnSelectionChanged(ListSelectionEvent e) {
-				}
-				@Override
-				public void columnRemoved(TableColumnModelEvent e) {
-				}
-				@Override
-				public void columnMoved(TableColumnModelEvent e) {
-				}
-				@Override
-				public void columnAdded(TableColumnModelEvent e) {
-				}
-    		};
-    	}
-    	return tableColumnModelListener;
-    }
+   	 * Filters the properties table model according to the search string.
+   	 */
+   	private void filterPropertiesTableModel() {
+   		try {
+   			this.refillTable();
+   			if (this.isTreeView()==false) {
+   				this.getJTableRowSorter().sort();
+   			}
+   			
+   		} catch (Exception ex) {
+   			ex.printStackTrace();
+   		}
+   	}
     
 	/**
 	 * Refills the properties table (clear & fill).
 	 */
 	private void refillTable() {
 		this.getTableModelProperties().setRowCount(0);
+		this.resetPropertiesTree();
 		this.fillTable();
 	}
 	/**
@@ -643,7 +648,6 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 			// --- Fill as simple list -------------------------------------------------- 
 			List<String> idList = this.getProperties().getIdentifierList();
 			for (String identifyer : idList) {
-				// --- Get PropertyValue ------------------------------------------------
 				PropertyValue pValue = this.getProperties().getPropertyValue(identifyer);
 				this.addPropertyRow(null, identifyer, pValue);
 			}
@@ -677,9 +681,9 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	 * Returns the selected identifier from the current selection.
 	 * @return the selected identifier from selection, if only one row is selected
 	 */
+	@SuppressWarnings("unused")
 	private String getSelectedIdentifier() {
 		
-		String selectedID = null;
 		List<String> idList = this.getSelectedIdentifiers();
 		if (idList!=null && idList.size()==1) {
 			return idList.get(0);
@@ -783,7 +787,6 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	
 	
 	
-	
 	private JScrollPane getJScrollPaneTree() {
 		if (jScrollPaneTree == null) {
 			jScrollPaneTree = new JScrollPane();
@@ -812,8 +815,6 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	}
 	
 	
-	
-	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -822,6 +823,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		
 		if (ae.getSource()==this.getJButtonAddProperty()) {
 			// --- Add a new property ---------------------
+			this.getJTableProperties().getSelectionModel().clearSelection();
 			
 		} else if (ae.getSource()==this.getJButtonRemoveProperty()) {
 			// --- Remove current property ----------------
@@ -850,16 +852,19 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 
 		switch (propertiesEvent.getAction()) {
 		case PropertyAdded:
-			this.setSelection(propertiesEvent.getIdentifier());
-			break;
 		case PropertyUpdate:
-			String identifier = propertiesEvent.getIdentifier();
 			this.filterPropertiesTableModel();
-			this.setSelection(identifier);
+			this.setSelection(propertiesEvent.getIdentifier());
+			this.getJTableProperties().requestFocus();
 			break;
 			
 		case PropertyRemoved:
-			// --- Nothing to do here ---
+			// --- Handled above already ---
+			break;
+			
+		case PropertiesCleared:
+			this.filterPropertiesTableModel();
+			this.getJPanelPropertiesEdit().setIdentifier(null);
 			break;
 		}
 	}

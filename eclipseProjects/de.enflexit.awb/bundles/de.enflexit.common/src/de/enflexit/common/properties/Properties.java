@@ -62,6 +62,15 @@ public class Properties implements Serializable {
 		}
 		return propertyMap;
 	}
+	
+	/**
+	 * Clears (removes) all properties.
+	 */
+	public void clear() {
+		this.getPropertyMap().clear();
+		this.notifyListener(new PropertiesEvent(Action.PropertiesCleared, null, null));
+	}
+	
 	/**
 	 * Puts the specified value.
 	 *
@@ -74,11 +83,15 @@ public class Properties implements Serializable {
 		if (identifier==null) return null;
 
 		// --- Determine the current action --------------- 
-		boolean isKnownIdentifier = this.contains(identifier);
-		Action action = isKnownIdentifier==true ?  Action.PropertyUpdate : Action.PropertyAdded;
+		Action action = this.contains(identifier)==true ?  Action.PropertyUpdate : Action.PropertyAdded;
 		
-		// --- Create and put new property ----------------
-		PropertyValue newPropValue  = newValue==null ? null : new PropertyValue(newValue); 
+		// --- Create and put new PropertyValue -----------
+		PropertyValue newPropValue  = null;
+		if (newValue instanceof PropertyValue) {
+			newPropValue = (PropertyValue) newValue;
+		} else {
+			newPropValue = newValue==null ? null : new PropertyValue(newValue); 
+		}
 		PropertyValue prevPropValue = this.getPropertyMap().put(identifier, newPropValue);
 		
 		// --- Notify listener ----------------------------
@@ -102,6 +115,16 @@ public class Properties implements Serializable {
 		return removedPropValue;
 	}
 	/**
+	 * Checks if the current properties contains the specified identifier.
+	 *
+	 * @param identifier the identifier
+	 * @return true, if successful
+	 */
+	public boolean contains(String identifier) {
+		if (identifier==null) return false;
+		return this.getPropertyMap().keySet().contains(identifier);
+	}
+	/**
 	 * Return the specified property value.
 	 *
 	 * @param identifier the identifier
@@ -111,15 +134,7 @@ public class Properties implements Serializable {
 		if (identifier==null) return null;
 		return this.getPropertyMap().get(identifier);
 	}
-	/**
-	 * Checks if the current properties contains the specified identifier.
-	 *
-	 * @param identifier the identifier
-	 * @return true, if successful
-	 */
-	public boolean contains(String identifier) {
-		return this.getPropertyMap().keySet().contains(identifier);
-	}
+	
 	
 	
 	

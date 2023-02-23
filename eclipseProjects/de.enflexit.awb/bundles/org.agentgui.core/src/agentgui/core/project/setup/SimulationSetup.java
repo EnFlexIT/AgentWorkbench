@@ -65,6 +65,8 @@ import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.properties.Properties;
+import de.enflexit.common.properties.PropertiesEvent;
+import de.enflexit.common.properties.PropertiesListener;
 
 /**
  * This is the model class for a simulation setup.
@@ -72,7 +74,7 @@ import de.enflexit.common.properties.Properties;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 @XmlRootElement
-public class SimulationSetup {
+public class SimulationSetup implements PropertiesListener {
 
 	public static final String XML_FileSuffix = ".xml";
 	public static final String USER_MODEL_BIN_FileSuffix = ".bin";
@@ -90,7 +92,7 @@ public class SimulationSetup {
 	 * Lists the possible reasons why a SimulationSetup can be changed and unsaved
 	 */
 	public enum SetupChangeEvent {
-		TimeModelSettings, AgentConfiguration, UserRuntimeObject
+		TimeModelSettings, AgentConfiguration, SetupProperties, UserRuntimeObject
 	}
 
 	private transient Project currProject = null;
@@ -210,14 +212,15 @@ public class SimulationSetup {
 		if (properties==null) {
 			properties = new Properties();
 		}
+		properties.addPropertiesListener(this);
 		return properties;
 	}
-	/**
-	 * Sets the project properties.
-	 * @param properties the new properties
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.properties.PropertiesListener#onPropertiesEvent(de.enflexit.common.properties.PropertiesEvent)
 	 */
-	public void setProperties(Properties properties) {
-		this.properties = properties;
+	@Override
+	public void onPropertiesEvent(PropertiesEvent propertiesEvent) {
+		this.setProjectUnsaved(SetupChangeEvent.SetupProperties);
 	}
 	
 	

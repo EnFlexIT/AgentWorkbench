@@ -15,10 +15,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import de.enflexit.common.properties.Properties.PropertyType;
+import de.enflexit.common.properties.PropertiesEvent.Action;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
@@ -29,13 +31,9 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 2631495936975175409L;
 
-	public enum Action {
-		Edit,
-		Add
-	}
-	
 	private Properties properties;
 	private String identifier;
+	private Action currAction;
 	
 	private JLabel jLabelProperty;
 
@@ -70,21 +68,19 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 		this.initialize();
 	}
 	
+	/**
+	 * Sets the current Properties instance to this panel.
+	 * @param properties the new properties
+	 */
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}
+	/**
+	 * Return the current properties.
+	 * @return the properties
+	 */
 	public Properties getProperties() {
 		return properties;
-	}
-	
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-		
-		// --- Set to UI ----------------------------------
-		PropertyValue pValue = this.getProperties().getPropertyValue(this.identifier); 
-		this.getJTextFieldName().setText(this.identifier);
-		this.setPropertyValue(pValue);
-		this.getJButtonOk().setText(pValue==null ? "Add" : "Update");
 	}
 	
 	private void initialize() {
@@ -98,7 +94,7 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 		
 		GridBagConstraints gbc_jLabelProperty = new GridBagConstraints();
 		gbc_jLabelProperty.anchor = GridBagConstraints.WEST;
-		gbc_jLabelProperty.insets = new Insets(5, 5, 5, 0);
+		gbc_jLabelProperty.insets = new Insets(5, 0, 5, 0);
 		gbc_jLabelProperty.gridx = 0;
 		gbc_jLabelProperty.gridy = 0;
 		this.add(this.getJLabelProperty(), gbc_jLabelProperty);
@@ -146,7 +142,7 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 		this.tbColumnWidth = tbColumnWidth;
 		
 		// --- Column property name -------------
-		int newWidth = tbColumnWidth[0] - this.getJLabelProperty().getWidth() - 10;
+		int newWidth = tbColumnWidth[0] - this.getJLabelProperty().getWidth() - 5;
 		if (newWidth>=100) {
 			int currHeight = this.getJTextFieldName().getHeight();
 			this.setComponentSize(this.getJTextFieldName(), new Dimension(newWidth, currHeight));
@@ -210,6 +206,23 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 
 	
 	/**
+	 * Sets the current identifier to edit.
+	 * @param identifier the new identifier
+	 */
+	public void setIdentifier(String identifier) {
+
+		this.identifier = identifier;
+		
+		boolean isKnownIdentifier = this.getProperties().contains(this.identifier);
+		this.currAction = isKnownIdentifier ? Action.PropertyUpdate : Action.PropertyAdded;
+		this.getJButtonOk().setText(isKnownIdentifier==true ? "Update" : "Add");
+		
+		// --- Set to UI ----------------------------------
+		this.getJTextFieldName().setText(this.identifier);
+		PropertyValue pValue = this.getProperties().getPropertyValue(this.identifier); 
+		this.setPropertyValue(pValue);
+	}
+	/**
 	 * Sets the current property value to the UI.
 	 * @param propertyValue the new property value
 	 */
@@ -248,11 +261,13 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 		case Integer:
 		case Long:
 			this.getJTextFieldValue().addKeyListener(this.getKeyAdapter4NumbersInteger());
+			if (value==null) value=0;
 			break;
 
 		case Float:
 		case Double:
 			this.getJTextFieldValue().addKeyListener(this.getKeyAdapter4NumbersDecimal());
+			if (value==null) value=0.0;
 			break;
 		}
  
@@ -333,10 +348,95 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource()==this.getJButtonOk()) {
 			// --- Update or add action -----------------------------
-			
-			
+			this.doAddOrUpdateAction();
+		}
+	}
+	
+	/**
+	 * Do add or update action.
+	 */
+	private void doAddOrUpdateAction() {
+		
+		// --- Collect and check settings -----------------
+		String identifier = this.getJTextFieldName().getText().trim();
+		PropertyType propertyType = (PropertyType) this.getJComboBoxType().getSelectedItem();
+		String propertyValueString = this.getJTextFieldValue().getText();
+		if (propertyType==PropertyType.Boolean) {
+			propertyValueString = Boolean.toString(this.getJCheckBoxValue().isSelected());
 		}
 		
+		// --- Check for proper current settings ----------
+		PropertyValue pValue = this.hasErrors(identifier, propertyType, propertyValueString); 
+		if (pValue==null) return;
+		
+		// --- Check type of action -----------------------
+		if (this.currAction==Action.PropertyAdded) {
+			// --- Add Action -----------------------------
+			boolean knownProperty = this.getProperties().contains(identifier);
+			if (knownProperty==true) {
+				String title = "Overwrite exiting property?";
+				String msg   = "The property '" + identifier + "' already exists. Overwrite this property?";
+				boolean addOrOverwrite = (JOptionPane.showConfirmDialog(this.getParent(), msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION);
+				if (addOrOverwrite==true) {
+					this.getProperties().setValue(identifier, pValue);
+				}
+			} else {
+				this.getProperties().setValue(identifier, pValue);
+			}
+			
+		} else if (this.currAction==Action.PropertyUpdate) {
+			// --- Update Action --------------------------
+			boolean renamedProperty  = identifier.equals(this.identifier)==false;
+			if (renamedProperty==true) {
+				String title = "Rename property '" + this.identifier + "'?";
+				String msg   = "Should the property '" + this.identifier + "' be renamed to '" + identifier + "'?";
+				boolean isUserConfirmed = (JOptionPane.showConfirmDialog(this.getParent(), msg, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION);
+				if (isUserConfirmed) {
+					this.getProperties().remove(this.identifier);
+					this.getProperties().setValue(identifier, pValue);
+				}
+			} else {
+				this.getProperties().setValue(identifier, pValue);
+			}
+			
+		}
+
+	}
+	/**
+	 * Checks for errors in the current settings.
+	 *
+	 * @param identifier the identifier
+	 * @param propertyType the property type
+	 * @param propertyValueString the property value string
+	 * @return true, if successful
+	 */
+	private PropertyValue hasErrors(String identifier, PropertyType propertyType, String propertyValueString) {
+		
+		String title = null; 
+		String msg = null;
+
+		// --- Check identifier ---------------------------
+		if (identifier==null || identifier.isBlank()==true) {
+			title = "Missing Identifier!";
+			msg = "The identfier of a property is not allowed to be null!";
+			JOptionPane.showMessageDialog(this.getParent(), msg, title, JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		// --- Check value according to type -------------- 
+		PropertyValue pValue = new PropertyValue();
+		pValue.setValueClass(propertyType.name());
+		pValue.setValueString(propertyValueString);
+		
+		// --- Try to get value instance ------------------
+		pValue.getValue(false);
+		if (pValue.getErrorMessage()!=null) {
+			title = "Error proceeding value!";
+			msg = pValue.getErrorMessage();
+			JOptionPane.showMessageDialog(this.getParent(), msg, title, JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		return pValue;
 	}
 	
 }

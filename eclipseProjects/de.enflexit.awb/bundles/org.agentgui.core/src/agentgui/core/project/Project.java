@@ -101,6 +101,8 @@ import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.p2.P2OperationsHandler;
 import de.enflexit.common.properties.Properties;
+import de.enflexit.common.properties.PropertiesEvent;
+import de.enflexit.common.properties.PropertiesListener;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br>
@@ -109,7 +111,7 @@ import de.enflexit.common.properties.Properties;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-@XmlRootElement public class Project extends Observable {
+@XmlRootElement public class Project extends Observable implements PropertiesListener {
 
 	// --- public statics --------------------------------------
 	@XmlTransient public static final String PREPARE_FOR_SAVING = "ProjectPrepare4Saving";
@@ -138,6 +140,7 @@ import de.enflexit.common.properties.Properties;
 	@XmlTransient public static final String CHANGED_JadeConfiguration = "JadeConfiguration";
 	@XmlTransient public static final String CHANGED_DistributionSetup = "DistributionSetup";
 	@XmlTransient public static final String CHANGED_RemoteContainerConfiguration = "RemoteContainerConfiguration";
+	@XmlTransient public static final String CHANGED_ProjectProperties = "ProjectProperties";
 	@XmlTransient public static final String CHANGED_UserRuntimeObject = "UserRuntimeObject";
 
 	// --- Constant value in order to set the project view ----------
@@ -2133,18 +2136,18 @@ import de.enflexit.common.properties.Properties;
 	public Properties getProperties() {
 		if (properties==null) {
 			properties = new Properties();
-			properties.fillWithTestData();
 		}
+		properties.addPropertiesListener(this);
 		return properties;
 	}
-	/**
-	 * Sets the project properties.
-	 * @param properties the new properties
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.properties.PropertiesListener#onPropertiesEvent(de.enflexit.common.properties.PropertiesEvent)
 	 */
-	public void setProperties(Properties properties) {
-		this.properties = properties;
+	@Override
+	public void onPropertiesEvent(PropertiesEvent propertiesEvent) {
+		this.setChangedAndNotify(CHANGED_ProjectProperties);
 	}
-	
+
 	
 	/**
 	 * Returns the user runtime object.

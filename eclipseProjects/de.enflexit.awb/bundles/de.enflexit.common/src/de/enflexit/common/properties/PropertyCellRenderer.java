@@ -3,11 +3,14 @@ package de.enflexit.common.properties;
 import java.awt.Component;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import de.enflexit.common.properties.Properties.PropertyType;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * The Class PropertyCellRenderer.
@@ -24,29 +27,37 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row, int column) {
 		
-		String displayText = "";
-		
 		String displayInstruction = (String) table.getValueAt(row, 0);
-		
 		String propertyName = "";
+		
+		PropertyValue pv = null;
 		String propertyType = "";
 		String propertyValue = "";
 		
+		// ----------------------------------------------------------
+		// --- Work on possible cell values -------------------------
+		// ----------------------------------------------------------
 		if (value instanceof String) {
 			// --- Work on the property name ------------------------ 
 			propertyName = (String) value;
 			
 		} else if (value instanceof PropertyValue) {
 			// --- Work on the provided PropertyValue ---------------
-			PropertyValue pv = (PropertyValue) value;
+			pv = (PropertyValue) value;
 			propertyType = this.getPropertyTypeAsString(pv);
 			propertyValue = pv.getValueString();
 		}
 		
-		// --- Get the JLabel to set the text with ------------------
+		// ----------------------------------------------------------
+		// --- Get the JLabel to set the text in --------------------
+		// ----------------------------------------------------------
 		JLabel jLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		JCheckBox jCheckBox = null;
 		
+		// ----------------------------------------------------------
 		// --- Set text for JLabel ----------------------------------
+		// ----------------------------------------------------------
+		String displayText = "";
 		switch (column) {
 		case PropertiesPanel.COLUMN_DisplayInstruction:
 			displayText = propertyName;
@@ -68,14 +79,23 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 
 		case PropertiesPanel.COLUMN_PropertyValue:
 			displayText = propertyValue;
+			// ------------------------------------------------------
+			// --- Exchange display component by a JCheckbox? -------
+			// ------------------------------------------------------
+			if (pv!=null && pv.getPropertyType()==PropertyType.Boolean) {
+				jCheckBox = this.getJCheckBox(pv.getBooleanValue());
+			}
 			break;
 		}
 		jLabel.setText(displayText);
 		
-		// --- Set font style to BOLD -------------------------------
-		//this.setJLabelFontBold(jLabel);
+		// ----------------------------------------------------------
+		// --- Configure display component --------------------------
+		// ----------------------------------------------------------
+		JComponent displayComponent = jCheckBox==null ? jLabel : jCheckBox;
+		TableCellColorHelper.setTableCellRendererColors(displayComponent, row, isSelected);
 		
-		return jLabel; 
+		return displayComponent; 
 	}
 	
 	/**
@@ -97,5 +117,18 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 		}
 		return propTypeString;
 	}
+
+	/**
+	 * Returns a JCheckbox for boolean values.
+	 *
+	 * @param isSelected the is selected
+	 * @return the JCheckBox
+	 */
+	private JCheckBox getJCheckBox(boolean isSelected) {
+		JCheckBox cBox = new JCheckBox();
+		cBox.setSelected(isSelected);
+		return cBox; 
+	}
+	
 	
 }

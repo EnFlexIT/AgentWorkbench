@@ -9,7 +9,8 @@ public class PropertiesEvent {
 	public enum Action {
 		PropertyAdded,
 		PropertyRemoved,
-		PropertyUpdate
+		PropertyUpdate,
+		PropertiesCleared
 	}
 	
 	private Action action;

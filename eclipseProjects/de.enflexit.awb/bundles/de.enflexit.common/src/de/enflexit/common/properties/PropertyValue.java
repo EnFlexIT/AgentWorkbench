@@ -24,6 +24,7 @@ public class PropertyValue {
 	private String valueClass;
 	private String valueString;
 	
+	private transient String errorMessage;
 	
 	/**
 	 * Instantiates a new property value.
@@ -63,17 +64,31 @@ public class PropertyValue {
 	public void setValue(Object value) {
 		this.value = value;
 	}
+	
 	/**
 	 * Returns the current value.
 	 * @return the value
 	 */
 	public Object getValue() {
+		return this.getValue(true);
+	}
+	/**
+	 * Returns the current value.
+	 *
+	 * @param isPrintError the indicator to print errors to console or not
+	 * @return the value
+	 */
+	public Object getValue(boolean isPrintError) {
+		
 		if (value==null && this.getValueString()!=null && this.getValueClass()!=null) {
-			
-			try {
-				String valueString = this.getValueString();
-				PropertyType propertyType = this.getPropertyType();
-				if (propertyType!=null) {
+
+			String valueString = this.getValueString();
+			PropertyType propertyType = this.getPropertyType();
+			if (propertyType== null) {
+				this.setErrorMessage("Unknown property type '" + this.getValueClass() + "'!", isPrintError);
+			} else {
+				
+				try {
 					// --- Parse according to property type -
 					switch (propertyType) {
 					case String:
@@ -95,16 +110,14 @@ public class PropertyValue {
 						value = Double.parseDouble(valueString);
 						break;
 					}
-					
-				} else {
-					System.err.println("[" + this.getClass().getSimpleName() + "] Unknown property type '" + this.getValueClass() + "'!");
+
+				} catch (Exception ex) {
+					this.setErrorMessage("Error while trying to convert value string '" + valueString + "' to actual value instance of type '" + propertyType + "'", isPrintError);
+					if (isPrintError == true) {
+						ex.printStackTrace();
+					}
 				}
-				
-			} catch (Exception ex) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Error converting value string to actual value instance:");
-				ex.printStackTrace();
 			}
-		
 		}
 		return value;
 	}
@@ -117,7 +130,7 @@ public class PropertyValue {
 		if (value instanceof String) {
 			return (String) value;
 		}
-		System.err.println("[" + this.getClass().getSimpleName() + "] Value is not of type String!");
+		this.setErrorMessage("Value is not of type String!", true);
 		return null;
 	}
 	/**
@@ -129,7 +142,7 @@ public class PropertyValue {
 		if (value instanceof Boolean) {
 			return (Boolean) value;
 		}
-		System.err.println("[" + this.getClass().getSimpleName() + "] Value is not of type Boolean!");
+		this.setErrorMessage("Value is not of type Boolean!", true);
 		return null;
 	}
 	/**
@@ -141,7 +154,7 @@ public class PropertyValue {
 		if (value instanceof Integer) {
 			return (Integer) value;
 		}
-		System.err.println("[" + this.getClass().getSimpleName() + "] Value is not of type Integer!");
+		this.setErrorMessage("Value is not of type Integer!", true);
 		return null;
 	}
 	/**
@@ -153,7 +166,7 @@ public class PropertyValue {
 		if (value instanceof Long) {
 			return (Long) value;
 		}
-		System.err.println("[" + this.getClass().getSimpleName() + "] Value is not of type Long!");
+		this.setErrorMessage("Value is not of type Long!", true);
 		return null;
 	}
 	/**
@@ -165,7 +178,7 @@ public class PropertyValue {
 		if (value instanceof Float) {
 			return (Float) value;
 		}
-		System.err.println("[" + this.getClass().getSimpleName() + "] Value is not of type Float!");
+		this.setErrorMessage("Value is not of type Float!", true);
 		return null;
 	}
 	/**
@@ -177,7 +190,7 @@ public class PropertyValue {
 		if (value instanceof Double) {
 			return (Double) value;
 		}
-		System.err.println("[" + this.getClass().getSimpleName() + "] Value is not of type Double!");
+		this.setErrorMessage("Value is not of type Double!", true);
 		return null;
 	}
 	
@@ -234,6 +247,35 @@ public class PropertyValue {
 	public String getValueString() {
 		return valueString;
 	}
+	
+	/**
+	 * Internally sets the error message.
+	 *
+	 * @param errorMessage the new error message
+	 * @param doPrint the indicator to print the error to the console
+	 */
+	private void setErrorMessage(String errorMessage, boolean doPrint) {
+		this.errorMessage = errorMessage;
+		if (doPrint==true) {
+			this.printErrMessage();
+		}
+	}
+	/**
+	 * Returns the current error message for this instance.
+	 * @return the error message
+	 */
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	/**
+	 * Prints the current error message.
+	 */
+	public void printErrMessage() {
+		if (this.getErrorMessage()!=null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] " + this.getErrorMessage());
+		}
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

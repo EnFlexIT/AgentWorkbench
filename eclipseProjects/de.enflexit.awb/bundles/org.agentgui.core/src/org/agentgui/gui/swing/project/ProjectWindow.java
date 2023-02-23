@@ -181,6 +181,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this.currProject), null);
 		pwt.add();
 
+		
 		// ------------------------------------------------
 		// --- Configuration ------------------------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this.currProject), null);
@@ -212,6 +213,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Projekt-Eigenschaften"), null, null, new ProjectPropertiesPanel(this.currProject, Language.translate("Projekt-Eigenschaften")), Language.translate("Konfiguration"));
 		pwt.add();
 		
+		
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this.currProject), null);
@@ -234,6 +236,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION), null, null, this.currProject.getVisualizationTab4SetupExecution(), null);
 		pwt.add();
 
+		
 		// ------------------------------------------------
 		// --- Project Desktop ----------------------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this.currProject), null);

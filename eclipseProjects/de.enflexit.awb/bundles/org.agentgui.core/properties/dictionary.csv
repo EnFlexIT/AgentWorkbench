@@ -573,7 +573,7 @@ de;Projekt-Agenten;Project-Agents
 de;Projekt-Basisverzeichnis auswählen;Selection of the projects root directory;;;
 de;Projekt-Basisverzeichnis nicht gefunden!;Project base directory not found!;;;
 de;Projekt-Desktop;Project Desktop
-de;Projekt-Eigenschaften;Project Properties;;;
+de;Projekt-Eigenschaften;Project-Properties;;;
 de;Projekt-Export;Project Export;;;
 de;Projekt-Info;Project info
 de;Projekt-Ladefehler!;Error while loading project!;;;
@@ -625,7 +625,7 @@ de;Setup löschen?;Delete Setup?
 de;Setup umbenennen ...;Rename Setup ...
 de;Setup umbenennen;Rename Setup
 de;Setup-Datei nicht gefunden!;Could not find setup file!
-de;Setup-Eigenschaften;Setup Properties;;;
+de;Setup-Eigenschaften;Setup-Properties;;;
 de;Setup-Name wird bereits verwendet!;Setup name is already used!
 de;Setup-Name zu kurz!;Setup name too short!
 de;Setup;Setup;;;
