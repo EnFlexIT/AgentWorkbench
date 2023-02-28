@@ -173,7 +173,10 @@ public class Expression {
 		if (expression.hasErrors()==false) {
 			return expression.getExpressionResult(context);
 		} 
-		return new ExpressionResult(null, false, expression.getErrorMessage());
+		// --- Prepare return value -------------
+		ExpressionResult er = new ExpressionResult();
+		er.addErrorMessage(expression.getErrorMessage());
+		return er;
 	}
 	
 }

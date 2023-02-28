@@ -11,7 +11,8 @@ import de.enflexit.expression.ExpressionServiceEvaluator;
 import de.enflexit.expression.UnknownExpressionException;
 
 /**
- * The Class MXExpressionEvaluator evaluates .
+ * The Class MathExpressionEvaluator evaluates mathematical expressions 
+ * and returns its result value as {@link ExpressionResult}.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -22,10 +23,14 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 	 */
 	@Override
 	public ExpressionResult evaluate(Expression expression, ExpressionContext context) throws UnknownExpressionException {
+
+		// --- Define an ExpressionResult ---------------------------
+		ExpressionResult er = new ExpressionResult();
 		
 		// --- Early exit? ------------------------------------------
 		if (expression.hasErrors()==true) {
-			return new ExpressionResult(null, false, expression.getErrorMessage());
+			er.addErrorMessage(expression.getErrorMessage());
+			return er;
 		}
 		
 		// --- Exchange sub expressions by sub results -------------- 
@@ -37,15 +42,19 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 				if (subExp.hasErrors()==false) {
 					// --- For an error-free expression -------------  
 					ExpressionResult subResult = subExp.getExpressionResult(context);
-					if (subResult.isValid()==true) {
+					if (subResult.hasErrors()==false) {
 						String subExpStringSearch = ExpressionService.EXPRESSION_OPENING_DELIMITER + subExp.getExpressionString() + ExpressionService.EXPRESSION_CLOSING_DELIMITER; 
-						// --- VALID sub result ------------------------- 
-						expressionString = expressionString.replace(subExpStringSearch, subResult.getValue().toString());
+						// --- VALID sub result --------------------- 
+						expressionString = expressionString.replace(subExpStringSearch, subResult.getDoubleValue().toString());
+						
 					} else {
-						return new ExpressionResult(null, false, "Invalid sub-expression");
+						er.addErrorMessage("Invalid sub-expression:");
+						er.getMessageList().addAll(subResult.getMessageList());
+						return er;
 					}
 				} else {
-					return new ExpressionResult(null, false, subExp.getErrorMessage());
+					er.addErrorMessage(subExp.getErrorMessage());
+					return er;
 				}
 			}
 		}
@@ -79,10 +88,12 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 				er = new ExpressionResult(f_x.getF_xo(0));
 				
 			} catch (final CalculatorException cEx) {
-				er = new ExpressionResult(null, false, cEx.getMessage());
+				er = new ExpressionResult();
+				er.addErrorMessage(cEx.getMessage());
 			}
 		} else {
-			er = new ExpressionResult(null, false, "No expression string to evaluate!");
+			er = new ExpressionResult();
+			er.addErrorMessage("No expression string to evaluate!");
 		}
 		return er;
 	}

@@ -207,12 +207,12 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 			this.getJLabelResultType().setText(null);
 			this.getJTextFieldResult().setText(null);
 		} else {
-			if (expressionResult.isValid()==false || expressionResult.getValue()==null) {
+			if (expressionResult.hasErrors()==true || expressionResult.getExpressionData()==null) {
 				this.getJLabelResultType().setText("Error");
-				this.getJTextFieldResult().setText(expressionResult.getErrorMessage());
+				this.getJTextFieldResult().setText(expressionResult.getMessageList() + "");
 			} else {
-				this.getJLabelResultType().setText("Result Type: " + expressionResult.getExpressionDataType().name());
-				this.getJTextFieldResult().setText(expressionResult.getValue().toString());
+				this.getJLabelResultType().setText("Result Type: " + expressionResult.getExpressionData().getClass().getSimpleName());
+				this.getJTextFieldResult().setText(expressionResult.getDoubleValue() + "");
 			}
 		}
 	}

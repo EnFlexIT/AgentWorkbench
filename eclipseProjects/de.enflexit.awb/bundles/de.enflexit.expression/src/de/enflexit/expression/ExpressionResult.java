@@ -1,5 +1,7 @@
 package de.enflexit.expression;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class ExpressionResult.
@@ -8,170 +10,213 @@ package de.enflexit.expression;
  */
 public class ExpressionResult {
 
-	private Object value;
+	public enum MessageType {
+		Information,
+		Warning,
+		Error
+	}
 	
-	private boolean isValid;
-	private String errorMessage;
-	
+	private ExpressionData expressionData;
+	private List<Message> messageList;
+
 	/**
 	 * Instantiates a new expression result.
 	 */
 	public ExpressionResult() {
-		this(null);
 	}
 	/**
 	 * Instantiates a new expression result.
-	 * @param value the value to return 
+	 * @param expressionData the expression data
 	 */
-	public ExpressionResult(Object returnValue) {
-		this(returnValue, true, null);
+	public ExpressionResult(ExpressionData expressionData) {
+		this.setExpressionData(expressionData);
+	}
+
+	/**
+	 * Instantiates a new expression result.
+	 * @param expressionData the expression data
+	 */
+	public ExpressionResult(boolean boolValue) {
+		this.setExpressionData(new ExpressionData(boolValue));
 	}
 	/**
 	 * Instantiates a new expression result.
-	 *
-	 * @param returnValue the return value
-	 * @param isValid the validity of the current result
-	 * @param errorMessage the error message corresponding to the validity
+	 * @param expressionData the expression data
 	 */
-	public ExpressionResult(Object returnValue, boolean isValid, String errorMessage) {
-		this.setValue(returnValue);
-		this.setValid(isValid);
-		this.setErrorMessage(errorMessage);
+	public ExpressionResult(int intValue) {
+		this.setExpressionData(new ExpressionData(intValue));
+	}
+	/**
+	 * Instantiates a new expression result.
+	 * @param expressionData the expression data
+	 */
+	public ExpressionResult(double doubleValue) {
+		this.setExpressionData(new ExpressionData(doubleValue));
 	}
 	
 	
 	/**
-	 * Sets the return value.
-	 * @param value the new return value
+	 * Gets the expression data.
+	 * @return the expression data
 	 */
-	public void setValue(Object returnValue) {
-		this.value = returnValue;
+	public ExpressionData getExpressionData() {
+		return expressionData;
 	}
 	/**
-	 * Gets the return value.
-	 * @return the return value
+	 * Sets the expression data.
+	 * @param expressionData the new expression data
 	 */
-	public Object getValue() {
-		return value;
+	public void setExpressionData(ExpressionData expressionData) {
+		this.expressionData = expressionData;
 	}
 	
-	/**
-	 * Sets if the base expression was valid or not.
-	 * @param isValid the validity indicator
-	 */
-	public void setValid(boolean isValid) {
-		this.isValid = isValid;
-	}
-	/**
-	 * Returns if the base expression was valid.
-	 *
-	 * @param expression the expression
-	 * @return true, if is valid
-	 */
-	public boolean isValid() {
-		return isValid;
-	}
 
 	/**
-	 * Sets the error message corresponding error message to the current validity.
-	 * @param errorMessage the new error message
+	 * Returns the single boolean value if the class was initiated with as single boolean value.
+	 * @return the boolean value or <code>null</code>
 	 */
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
+	public Boolean getBooleanValue() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getBooleanValue() : null;
 	}
 	/**
-	 * Returns the current error message according to the current validity.
-	 * @return the error message
-	 * @see #isValid
+	 * Returns the single integer value if the class was initiated with as single integer value.
+	 * @return the boolean value or <code>null</code>
 	 */
-	public String getErrorMessage() {
-		return errorMessage;
+	public Integer getIntegerValue() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getIntegerValue() : null;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 * Returns the single Double value if the class was initiated with as single double or as single integer value.
+	 * @return the boolean value or <code>null</code>
 	 */
-	@Override
-	public String toString() {
-		if (this.isValid()==true) {
-			return this.getExpressionDataType().toString() + ": " + this.getValue().toString();
-		} 
-		return "Invalid: " + this.getErrorMessage();
+	public Double getDoubleValue() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getDoubleValue() : null;
 	}
 	
 	
+	
 	/**
-	 * Returns the expression data type of the current value.
-	 * @return the expression data type
+	 * Returns the current message list.
+	 * @return the message list
 	 */
-	public ExpressionDataType getExpressionDataType() {
-		
-		if (this.value!=null) {
-			
-			if (this.value instanceof Boolean) {
-				return ExpressionDataType.Boolean;
-			} else if (this.value instanceof Integer) {
-				return ExpressionDataType.Integer;
-			} else if (this.value instanceof Double) {
-				return ExpressionDataType.Double;
-				
-			} else if (this.value.getClass().isArray()==true) {
-				// TODO
-				
-				
-			}	
+	public List<Message> getMessageList() {
+		if (messageList==null) {
+			messageList = new ArrayList<>();
 		}
-		return null;
+		return messageList;
 	}
 	/**
-	 * Checks if the current value is of the specified expression data type.
-	 *
-	 * @param dataType the expression data type to validate for
-	 * @return true, if the current value is of the specified {@link ExpressionDataType}
+	 * Adds the specified message instance to the local list of messages.
+	 * @param message the type message
 	 */
-	public boolean isExpressionDataType(ExpressionDataType dataType) {
-		if (dataType==this.getExpressionDataType()) {
-			return true;
+	public void addMessage(Message message) {
+		this.getMessageList().add(message);
+	}
+	/**
+	 * Adds an information message to the local list of messages.
+	 * @param message the string message
+	 */
+	public void addInformationMessage(String message) {
+		if (message==null || message.isBlank()==true) return;
+		this.getMessageList().add(new Message(MessageType.Information, message));
+	}
+	/**
+	 * Adds a warning message to the local list of messages.
+	 * @param message the string message
+	 */
+	public void addWarningMessage(String message) {
+		if (message==null || message.isBlank()==true) return;
+		this.getMessageList().add(new Message(MessageType.Warning, message));
+	}
+	/**
+	 * Adds a error message to the local list of messages.
+	 * @param message the string message
+	 */
+	public void addErrorMessage(String message) {
+		if (message==null || message.isBlank()==true) return;
+		this.getMessageList().add(new Message(MessageType.Error, message));
+	}
+	
+	/**
+	 * Checks for messages.
+	 * @return true, if successful
+	 */
+	public boolean hasMessages() {
+		return this.getMessageList().size()>0;
+	}
+	/**
+	 * Checks if the current ExpressionResults contains warning messages.
+	 * @return true, if a warning message could be found 
+	 */
+	public boolean hasWarnings() {
+		for (Message message : this.getMessageList()) {
+			if (message.getMessageType()==MessageType.Warning) return true;
+		}
+		return false;
+	}
+	/**
+	 * Checks if the current ExpressionResults contains error messages.
+	 * @return true, if an error message could be found 
+	 */
+	public boolean hasErrors() {
+		for (Message message : this.getMessageList()) {
+			if (message.getMessageType()==MessageType.Error) return true;
 		}
 		return false;
 	}
 	
-	// ----------------------------------------------------------------------------------
-	// --- From here methods to convert to the requested data type ----------------------
-	// ----------------------------------------------------------------------------------
+	
 	/**
-	 * Return the current boolean value or <code>null</code> if not of type boolean.
-	 * @return the current boolean value
+	 * The Class Message describes a corpus for a message that can 
+	 * be provided with a {@link ExpressionResult}.
+	 *
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
 	 */
-	public Boolean getBooleanValue() {
-		if (this.getExpressionDataType()==ExpressionDataType.Boolean) {
-			return (Boolean) value;
+	public class Message {
+		
+		private MessageType messageType;
+		private String message;
+		
+		/**
+		 * Instantiates a new message that can be used within a {@link ExpressionResult}.
+		 *
+		 * @param messageType the message type
+		 * @param message the message
+		 */
+		public Message(MessageType messageType, String message) {
+			this.setMessageType(messageType);
+			this.setMessage(message);
 		}
-		return null;
-	}
-	/**
-	 * Return the current integer value or <code>null</code> if not of type integer.
-	 * @return the current integer value
-	 */
-	public Integer getIntegerValue() {
-		if (this.getExpressionDataType()==ExpressionDataType.Integer) {
-			return (Integer) value;
+
+		/**
+		 * Gets the message type.
+		 * @return the message type
+		 */
+		public MessageType getMessageType() {
+			return messageType;
 		}
-		return null;
-	}
-	/**
-	 * Return the current double value or <code>null</code> if not of type double.
-	 * @return the current double value
-	 */
-	public Double getDoubleValue() {
-		if (this.getExpressionDataType()==ExpressionDataType.Double) {
-			return (Double) value;
+		/**
+		 * Sets the message type.
+		 * @param messageType the new message type
+		 */
+		public void setMessageType(MessageType messageType) {
+			this.messageType = messageType;
 		}
-		return null;
-	}
-	
-	
-	
-	
-	
+
+		/**
+		 * Gets the message.
+		 * @return the message
+		 */
+		public String getMessage() {
+			return message;
+		}
+		/**
+		 * Sets the message.
+		 * @param message the new message
+		 */
+		public void setMessage(String message) {
+			this.message = message;
+		}
+	} // end sub class
+
 }
