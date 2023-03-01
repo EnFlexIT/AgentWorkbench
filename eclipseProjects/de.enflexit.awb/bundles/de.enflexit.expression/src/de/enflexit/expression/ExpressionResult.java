@@ -3,6 +3,9 @@ package de.enflexit.expression;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.expression.ExpressionData.DataColumn;
+import de.enflexit.expression.ExpressionData.DataType;
+
 /**
  * The Class ExpressionResult.
  *
@@ -22,8 +25,7 @@ public class ExpressionResult {
 	/**
 	 * Instantiates a new expression result.
 	 */
-	public ExpressionResult() {
-	}
+	public ExpressionResult() { }
 	/**
 	 * Instantiates a new expression result.
 	 * @param expressionData the expression data
@@ -34,24 +36,47 @@ public class ExpressionResult {
 
 	/**
 	 * Instantiates a new expression result.
-	 * @param expressionData the expression data
+	 * @param boolValue the single boolean value
 	 */
 	public ExpressionResult(boolean boolValue) {
 		this.setExpressionData(new ExpressionData(boolValue));
 	}
 	/**
 	 * Instantiates a new expression result.
-	 * @param expressionData the expression data
+	 * @param intValue the single integer value
 	 */
 	public ExpressionResult(int intValue) {
 		this.setExpressionData(new ExpressionData(intValue));
 	}
 	/**
 	 * Instantiates a new expression result.
-	 * @param expressionData the expression data
+	 * @param doubleValue the single double value
 	 */
 	public ExpressionResult(double doubleValue) {
 		this.setExpressionData(new ExpressionData(doubleValue));
+	}
+	
+	/**
+	 * Instantiates a new expression result.
+	 * @param booleanArray the boolean array
+	 */
+	public ExpressionResult(boolean[] booleanArray) {
+		this.setExpressionData(new ExpressionData(booleanArray));
+	}
+	
+	/**
+	 * Instantiates a new expression result.
+	 * @param intArray the integer array
+	 */
+	public ExpressionResult(int[] intArray) {
+		this.setExpressionData(new ExpressionData(intArray));
+	}
+	/**
+	 * Instantiates a new expression result.
+	 * @param doubleArray the double array
+	 */
+	public ExpressionResult(double[] doubleArray) {
+		this.setExpressionData(new ExpressionData(doubleArray));
 	}
 	
 	
@@ -70,7 +95,37 @@ public class ExpressionResult {
 		this.expressionData = expressionData;
 	}
 	
-
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, simplifying access methods for simple ExpressionData instances ----
+	// ----------------------------------------------------------------------------------
+	// --- General requests -----------
+	/**
+	 * Returns if the current ExpressionData instance consist of a single data column result.
+	 * @return true, if is single data column result
+	 */
+	public boolean isSingleDataColumnResult() {
+		return this.getExpressionData()!=null ? this.getExpressionData().isSingleDataColumnResult() : false;
+	}
+	/**
+	 * If this ExpressionData instance was specified with as single {@link DataColumn}, this
+	 * method returns, if the current value represents an array or not.
+	 * @return true, if the value is an array or <code>null</code> if the current instance contains less or more that one data column
+	 */
+	public Boolean isArray() {
+		return this.getExpressionData()!=null ? this.getExpressionData().isArray() : null; 
+	}
+	/**
+	 * If this ExpressionData instance was specified with as single {@link DataColumn}, this
+	 * method returns the specified {@link DataType}.
+	 *
+	 * @return the data type  or <code>null</code> if the current instance contains less or more that one data column
+	 */
+	public DataType getDataType() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getDataType() : null;
+	}
+	
+	// --- Single Value handling ------
 	/**
 	 * Returns the single boolean value if the class was initiated with as single boolean value.
 	 * @return the boolean value or <code>null</code>
@@ -93,8 +148,33 @@ public class ExpressionResult {
 		return this.getExpressionData()!=null ? this.getExpressionData().getDoubleValue() : null;
 	}
 	
+	// --- Array Value handling -------
+	/**
+	 * Returns the boolean array if the class only contains as single boolean array.
+	 * @return the boolean array or <code>null</code>
+	 */
+	public Boolean[] getBooleanArray() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getBooleanArray() : null;
+	}
+	/**
+	 * Returns the integer array if the class only contains as single integer array.
+	 * @return the boolean array or <code>null</code>
+	 */
+	public Integer[] getIntegerArray() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getIntegerArray() : null;
+	}
+	/**
+	 * Returns the Double array if the class only contains as single double array.
+	 * @return the boolean array or <code>null</code>
+	 */
+	public Double[] getDoubleArray() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getDoubleArray() : null;
+	}
+
 	
-	
+	// ----------------------------------------------------------------------------------
+	// --- From here, message handling for ExpressionResult -----------------------------
+	// ----------------------------------------------------------------------------------	
 	/**
 	 * Returns the current message list.
 	 * @return the message list
