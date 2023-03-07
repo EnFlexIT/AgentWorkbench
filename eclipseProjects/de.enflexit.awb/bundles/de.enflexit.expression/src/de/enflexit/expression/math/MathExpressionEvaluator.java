@@ -40,18 +40,54 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 			for (int i = 0; i < expression.getSubExpressions().size(); i++) {
 				Expression subExp = expression.getSubExpressions().get(i);
 				if (subExp.hasErrors()==false) {
-					// --- For an error-free expression -------------  
+					// --- For an error-free expression -------------
 					ExpressionResult subResult = subExp.getExpressionResult(context);
-					if (subResult.hasErrors()==false) {
-						String subExpStringSearch = ExpressionService.EXPRESSION_OPENING_DELIMITER + subExp.getExpressionString() + ExpressionService.EXPRESSION_CLOSING_DELIMITER; 
-						// --- VALID sub result --------------------- 
-						expressionString = expressionString.replace(subExpStringSearch, subResult.getDoubleValue().toString());
+					if (subResult==null) {
+						er.addErrorMessage("ExpressionResult of sub-expression '" + subExp.getExpressionString() + "' is null!");
+						return er;
 						
-					} else {
+					} else if (subResult.hasErrors()==true) {
 						er.addErrorMessage("Invalid sub-expression:");
 						er.getMessageList().addAll(subResult.getMessageList());
 						return er;
+						
+					} else {
+						// --- Found a VALID sub result ------------- 
+						String subExpStringSearch = ExpressionService.EXPRESSION_OPENING_DELIMITER + subExp.getExpressionString() + ExpressionService.EXPRESSION_CLOSING_DELIMITER;
+						if (subExpStringSearch.equals(expressionString)==true) return subResult;
+						
+						String subResultString = null;
+						if (subResult.isArray()==false) {
+							switch (subResult.getDataType()) {
+							case Boolean:
+								subResultString = subResult.getBooleanValue().toString();
+								break;
+							case Integer:
+								subResultString = subResult.getIntegerValue().toString();
+								break;
+							case Double:
+								subResultString = subResult.getDoubleValue().toString();
+								break;
+							} 
+							
+						} else {
+							switch (subResult.getDataType()) {
+							case Boolean:
+								subResultString = subResult.getBooleanArray().toString();
+								break;
+							case Integer:
+								subResultString = subResult.getIntegerArray().toString();
+								break;
+							case Double:
+								subResultString = subResult.getDoubleArray().toString();
+								break;
+							} 
+						}
+						if (subResultString!=null) {
+							expressionString = expressionString.replace(subExpStringSearch, subResultString);
+						}
 					}
+					
 				} else {
 					er.addErrorMessage(subExp.getErrorMessage());
 					return er;

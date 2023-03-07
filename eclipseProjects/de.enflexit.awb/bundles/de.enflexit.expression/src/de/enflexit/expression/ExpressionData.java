@@ -59,7 +59,7 @@ public class ExpressionData {
 	 * @param boolValue the int value
 	 */
 	public ExpressionData(String name, int intValue) { 
-		this.addDataColumn(name, DataType.Boolean, 1).setColumnData(intValue);
+		this.addDataColumn(name, DataType.Integer, 1).setColumnData(intValue);
 	}
 	/**
 	 * Instantiates a new expression data instance with a single double value.
@@ -74,7 +74,7 @@ public class ExpressionData {
 	 * @param boolValue the double value
 	 */
 	public ExpressionData(String name, double doubleValue) { 
-		this.addDataColumn(name, DataType.Boolean, 1).setColumnData(doubleValue);
+		this.addDataColumn(name, DataType.Double, 1).setColumnData(doubleValue);
 	}
 
 	// --------------------------------------------------------------
@@ -110,7 +110,7 @@ public class ExpressionData {
 	 * @param intArray the int array
 	 */
 	public ExpressionData(String name, int intArray[]) { 
-		this.addDataColumn(name, DataType.Boolean, 1).setColumnData(intArray);
+		this.addDataColumn(name, DataType.Integer, 1).setColumnData(intArray);
 	}
 	/**
 	 * Instantiates a new expression data instance with a single double array.
@@ -125,7 +125,7 @@ public class ExpressionData {
 	 * @param doubleArray the double array
 	 */
 	public ExpressionData(String name, double doubleArray[]) { 
-		this.addDataColumn(name, DataType.Boolean, 1).setColumnData(doubleArray);
+		this.addDataColumn(name, DataType.Double, 1).setColumnData(doubleArray);
 	}
 	
 	
@@ -337,6 +337,101 @@ public class ExpressionData {
 	}
 	
 	
+	/**
+	 * Returns the data type description.
+	 * @return the data type description
+	 */
+	public String getDataTypeDescription() {
+		
+		String dtDesc = "";
+		if (this.getDataColumnCount()==0) {
+			// --- No result defined yet ------------------
+			dtDesc = "No result type defined";
+			
+		} else if (this.getDataColumnCount()==1) {
+			// --- For single column result ---------------
+			dtDesc += this.getDataType().name();
+			if (this.isArray()==true) dtDesc += " (Array)";
+			
+		} else {
+			// --- For multi column results ---------------
+			dtDesc = "Multi-Column result";
+			String dtList = " ("; 
+			for (DataColumn dc : this.getDataColumnList()) {
+				String dt = dc.getDataType().name();
+				dtList += dtList.isEmpty()==true ? dt : ", " + dt;
+			}
+			dtList += ")";
+			dtDesc += " " + dtList;
+		}
+		return dtDesc;
+	}
+	
+	/**
+	 * Returns the data value description.
+	 * @return the data value description
+	 */
+	public String getDataValueDescription() {
+		
+		String dvDesc = "";
+		if (this.getDataColumnCount()==0) {
+			// --- No result defined yet ------------------
+			dvDesc = "No result defined";
+			
+		} else if (this.getDataColumnCount()==1) {
+			// --- For single column result ---------------
+			if (this.isArray()==false) {
+				// --- Single value result ----------------
+				switch (this.getDataType()) {
+				case Boolean:
+					dvDesc = this.getBooleanValue().toString();
+					break;
+				case Integer:
+					dvDesc = this.getIntegerValue().toString();
+					break;
+				case Double:
+					dvDesc = this.getDoubleValue().toString();
+					break;
+				}
+				
+			} else {
+				// --- Multiple value Result --------------
+				switch (this.getDataType()) {
+				case Boolean:
+					dvDesc = this.getBooleanArray().toString();
+					break;
+				case Integer:
+					dvDesc = this.getIntegerArray().toString();
+					break;
+				case Double:
+					dvDesc = this.getDoubleArray().toString();
+					break;
+				}				
+			}
+			
+		} else {
+			// --- For multi column results ---------------
+			dvDesc = "Multi-Column result";
+			String dtList = " ("; 
+			for (DataColumn dc : this.getDataColumnList()) {
+				String dt = dc.getDataType().name();
+				dtList += dtList.isEmpty()==true ? dt : ", " + dt;
+			}
+			dtList += ")";
+			dvDesc += " " + dtList;
+		}
+		return dvDesc;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getDataTypeDescription() + ", " + this.getDataValueDescription();
+	}
+	
+	
 	// --------------------------------------------------------------
 	// --- From here, class definition of DataCoumn -----------------
 	// --------------------------------------------------------------	
@@ -495,5 +590,5 @@ public class ExpressionData {
 			this.dataType = dataType;
 		}
 	}
-	
+
 }

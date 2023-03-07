@@ -2185,7 +2185,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		if (imageURL!=null) {
 			return new javax.swing.ImageIcon(imageURL);
 		} else {
-			System.err.println(GlobalInfo.class.getSimpleName() + ": Could not find ImageIcon '" + imageURL + "'");
+			System.err.println(GlobalInfo.class.getSimpleName() + ": Could not find ImageIcon '" + imagePath + "'");
 		}
 		return null;
 	}

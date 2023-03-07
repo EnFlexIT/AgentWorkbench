@@ -172,6 +172,30 @@ public class ExpressionResult {
 	}
 
 	
+	/**
+	 * Returns the data type description of the current expression result.
+	 * @return the data type description
+	 */
+	public String getDataTypeDescription() {
+		return this.getExpressionData()==null ? "Result Type Undefined" : this.getExpressionData().getDataTypeDescription();
+	}
+	/**
+	 * Returns the data value description.
+	 * @return the data value description
+	 */
+	public String getDataValueDescription() {
+		return this.getExpressionData()==null ? "Result Value Undefined" : this.getExpressionData().getDataValueDescription();
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getDataTypeDescription() + ", " + this.getDataValueDescription();
+	}
+	
+	
+	
 	// ----------------------------------------------------------------------------------
 	// --- From here, message handling for ExpressionResult -----------------------------
 	// ----------------------------------------------------------------------------------	
@@ -298,5 +322,6 @@ public class ExpressionResult {
 			this.message = message;
 		}
 	} // end sub class
+
 
 }

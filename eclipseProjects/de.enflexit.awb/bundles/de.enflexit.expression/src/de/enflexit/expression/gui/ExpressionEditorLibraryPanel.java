@@ -67,7 +67,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private JList<String> jListExpressions;
 	
 	private TreeMap<String, ArrayList<String>> currentOptions;
-	private HashMap<ExpressionEditorTreeNode, ExpressionType> expressionTypes; 
+	private HashMap<ExpressionEditorTreeNode, ExpressionType> nodeToExpressionTypeHashMap; 
 
 	
 	/**
@@ -284,24 +284,17 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		}
 		return jListExpressions;
 	}
+	
 	/**
-	 * Triggers a {@link PropertyChangeEvent} to notify that the selected expression should be inserted.
-	 * @param libraryExpression the part to insert into the expression string
+	 * Gets the expression types for categories.
+	 * @return the expression types for categories
 	 */
-	private void triggerInsert(String libraryExpression) {
-		
-		ExpressionEditorTreeNode categoryNode = (ExpressionEditorTreeNode) this.getJTreeMainCategories().getLastSelectedPathComponent();
-		ExpressionType expressionType = this.getExpressionTypesForCategories().get(categoryNode);
-		ExpressionService eService = ExpressionServiceHelper.getExpressionService(expressionType);
-
-		// --- Get insert string from corresponding expression service --------
-		String stringToInsert = eService.getInsertString(libraryExpression);
-		if (stringToInsert==null) {
-			stringToInsert = "[" + expressionType.getTypePrefix() + ":" + libraryExpression + "]";
+	private HashMap<ExpressionEditorTreeNode, ExpressionType> getNodeToExpressionTypeHashMap() {
+		if (nodeToExpressionTypeHashMap==null) {
+			nodeToExpressionTypeHashMap = new HashMap<>();
 		}
-		this.firePropertyChange(EXPRESSION_INSERTED, null, stringToInsert);
+		return nodeToExpressionTypeHashMap;
 	}
-
 	/**
 	 * Sets the expression context.
 	 * @param context the new expression context
@@ -310,18 +303,18 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		
 		// --- Re-initiate / reset local instances ------------------ 
 		DefaultMutableTreeNode elRootNode = new DefaultMutableTreeNode("Expression Library");
-		this.getExpressionTypesForCategories().clear();
+		this.getNodeToExpressionTypeHashMap().clear();
 		
 		// --- Get available expression services as sorted list -----
 		List<ExpressionService> expressionServices = ExpressionServiceHelper.getAvailableExpressionServicesSorted();
 		for (int i=0; i<expressionServices.size(); i++) {
 			// --- Get sub-node of service --------------------------
-			ExpressionEditorTreeNode categoryNode = expressionServices.get(i).getExpressionEditorNode(context);
+			ExpressionService expressionService = expressionServices.get(i);
+			ExpressionEditorTreeNode categoryNode = expressionService.getExpressionEditorNode(context);
 			if (categoryNode!=null) {
 				elRootNode.add(categoryNode);
+				this.addAllNodesToNodeToExpressionTypeHashMap(categoryNode, expressionService.getExpressionType());
 			}
-			// --- Remind selection categories ----------------------
-			this.getExpressionTypesForCategories().put(categoryNode, expressionServices.get(i).getExpressionType());
 		}
 		this.getJTreeMainCategories().setModel(new DefaultTreeModel(elRootNode));
 		
@@ -329,20 +322,23 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		for (int i=0; i<this.getJTreeMainCategories().getRowCount(); i++) {
 			this.getJTreeMainCategories().expandRow(i);
 		}
+	}
+	/**
+	 *
+	 * @param parentNode the parent node
+	 * @param expressionType the expression type
+	 */
+	private void addAllNodesToNodeToExpressionTypeHashMap(ExpressionEditorTreeNode parentNode, ExpressionType expressionType) {
 		
+		// --- Remind node and its expression type ----------------------------
+		this.getNodeToExpressionTypeHashMap().put(parentNode, expressionType);
+		// --- Check for sub nodes of the current parent node -----------------
+		for (int i = 0; i < parentNode.getChildCount(); i++) {
+			ExpressionEditorTreeNode subNode = (ExpressionEditorTreeNode) parentNode.getChildAt(i);
+			this.addAllNodesToNodeToExpressionTypeHashMap(subNode, expressionType);
+		}
 	}
 	
-	/**
-	 * Gets the expression types for categories.
-	 * @return the expression types for categories
-	 */
-	private HashMap<ExpressionEditorTreeNode, ExpressionType> getExpressionTypesForCategories() {
-		if (expressionTypes==null) {
-			expressionTypes = new HashMap<>();
-		}
-		return expressionTypes;
-	}
-
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
@@ -354,7 +350,20 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 			this.getJListExpressions().setModel(this.createExpressionsListModel(category));
 		}
 	}
-
+	/**
+	 * Creates the expressions list model.
+	 *
+	 * @param category the category
+	 * @return the default list model
+	 */
+	private DefaultListModel<String> createExpressionsListModel(String category){
+		this.expressionsListModel = new DefaultListModel<>();
+		if (category!=null) {
+			this.expressionsListModel.addAll(this.currentOptions.get(category));
+		}
+		return expressionsListModel;
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
 	 */
@@ -368,7 +377,10 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 			}
 		}
 	}
-	
+	/**
+	 * Creates the categories list model.
+	 * @return the default list model
+	 */
 	private DefaultListModel<String> createCategoriesListModel(){
 		this.categoriesListModel = new DefaultListModel<>();
 		if (this.currentOptions!=null) {
@@ -376,13 +388,24 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		}
 		return this.categoriesListModel;
 	}
-	private DefaultListModel<String> createExpressionsListModel(String category){
-		this.expressionsListModel = new DefaultListModel<>();
-		if (category!=null) {
-			this.expressionsListModel.addAll(this.currentOptions.get(category));
-		}
-		return expressionsListModel;
-	}
+	
 
+	/**
+	 * Triggers a {@link PropertyChangeEvent} to notify that the selected expression should be inserted.
+	 * @param libraryExpression the part to insert into the expression string
+	 */
+	private void triggerInsert(String libraryExpression) {
+		
+		ExpressionEditorTreeNode categoryNode = (ExpressionEditorTreeNode) this.getJTreeMainCategories().getLastSelectedPathComponent();
+		ExpressionType expressionType = this.getNodeToExpressionTypeHashMap().get(categoryNode);
+		ExpressionService eService = ExpressionServiceHelper.getExpressionService(expressionType);
+
+		// --- Get insert string from corresponding expression service --------
+		String stringToInsert = eService.getInsertString(libraryExpression);
+		if (stringToInsert==null) {
+			stringToInsert = "[" + expressionType.getTypePrefix() + "!" + libraryExpression + "]";
+		}
+		this.firePropertyChange(EXPRESSION_INSERTED, null, stringToInsert);
+	}
 	
 }

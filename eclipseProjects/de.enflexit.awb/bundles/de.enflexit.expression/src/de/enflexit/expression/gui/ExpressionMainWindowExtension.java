@@ -28,7 +28,7 @@ public class ExpressionMainWindowExtension extends MainWindowExtension implement
 	@Override
 	public void initialize() {
 		if (DevelopmentSwitch.isDebug()==true) {
-			this.addToolbarComponent(this.getjButtonExpression(), null, null);
+			this.addToolbarComponent(this.getJButtonExpression(), null, null);
 		}
 	}
 	
@@ -36,7 +36,7 @@ public class ExpressionMainWindowExtension extends MainWindowExtension implement
 	 * Returns the JButton to open the expression editor.
 	 * @return the JButton to open the expression editor
 	 */
-	private JButton getjButtonExpression() {
+	private JButton getJButtonExpression() {
 		if (jButtonExpression==null) {
 			jButtonExpression = new JButton();
 			jButtonExpression.setIcon(GlobalInfo.getInternalImageIcon(ICON_PATH_CHART));
@@ -51,7 +51,7 @@ public class ExpressionMainWindowExtension extends MainWindowExtension implement
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource()==this.getjButtonExpression()) {
+		if (ae.getSource()==this.getJButtonExpression()) {
 			ExpressionEditorDialog eed = new ExpressionEditorDialog(Application.getMainWindow(), null, null, true);
 			eed.setVisible(true);
 		}
