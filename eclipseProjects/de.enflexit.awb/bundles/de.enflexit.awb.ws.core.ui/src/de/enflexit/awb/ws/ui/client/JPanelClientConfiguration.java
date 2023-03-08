@@ -16,11 +16,10 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -42,7 +41,7 @@ import de.enflexit.awb.ws.ui.WsConfigurationInterface;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelClientConfiguration extends JPanel implements ActionListener,ListSelectionListener,ChangeListener,WsConfigurationInterface {
+public class JPanelClientConfiguration extends JPanel implements ActionListener,ListSelectionListener,WsConfigurationInterface {
 	
 	private static final long serialVersionUID = 7987858783733542296L;
 	
@@ -126,9 +125,9 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		if (jPanelClientBundle == null) {
 			jPanelClientBundle = new JPanelClientBundle();
 		    jPanelClientBundle.getJButtonCachedCredentialAssignmentsView().addActionListener(this);
+		    jPanelClientBundle.getJMenuItemDeleteAll().addActionListener(this);
 			jPanelClientBundle.getJListApiRegistration().addListSelectionListener(this);
 			jPanelClientBundle.getJListCachedApiRegistration().addListSelectionListener(this);
-			jPanelClientBundle.getJListCachedApiRegistration().getComponentPopupMenu().getSelectionModel().addChangeListener(this);
 		}
 		return jPanelClientBundle;
 	}
@@ -363,11 +362,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 				
 			    //Switch back
 				if (opt == JOptionPane.YES_OPTION) {
-				this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListApiRegistration());
-				this.getJPanelClientBundle().revalidate();
-				this.getJPanelClientBundle().repaint();
-				this.revalidate();
-				this.repaint();
+				this.changeViewportofJScrollPane();
 				}
 			}
 			return deletedClientBundles;
@@ -583,6 +578,9 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	}
 	
 	
+	/**
+	 * Clear selections of all J lists.
+	 */
 	public void clearSelectionsOfAllJLists() {
 		this.getJPanelClientBundle().getJListApiRegistration().clearSelection();
 		this.getJPanelClientBundle().getJListCachedApiRegistration().clearSelection();
@@ -593,6 +591,37 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
         this.getJPanelServerURL().getJListServerUrl().clearSelection();
 	}
 
+	/**
+	 * Changes the Viewport of the {@link JScrollPane} of the {@link JPanelAssignedCredentials} to JListAssignedCachedCredentials or JListAssignedCredentials. Depending on which JList is the current Viewport.
+	 * For instance if the JListAssignedCredential is the current Viewport, it changes the Viewport of the {@link JScrollPane} to the JListAssignedCachedCredentials and vice versa. All symbols are changes accordingly.
+	 */
+	private void changeViewportofJScrollPane() {
+		if (this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().getViewport().getView().equals(this.getJPanelAssignedCredentials().getJListAssignedCredentials())) {
+			
+			this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().setViewportView(this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials());
+			
+			//Change Viewport and change Icon of JButtonCachedView
+			this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListCachedApiRegistration());
+		    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("MBreset.png"));
+		    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("Back to active Credential-Assignments");
+		    //Make Description non visible
+		    this.getJPanelClientBundle().getJTextAreaDescription().setText("");
+		    this.getJPanelClientBundle().getJTextAreaDescription().setVisible(false);
+		    this.clearSelectionsOfAllJLists();
+		} else {
+			
+			this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().setViewportView(this.getJPanelAssignedCredentials().getJListAssignedCredentials());
+			
+			//Change Viewport and change Icon of JButtonCachedView
+			this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListApiRegistration());
+			this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("cache.png"));
+			this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("See cached Credential Assignments");
+			this.getJPanelClientBundle().getJTextAreaDescription().setVisible(true);
+			this.clearSelectionsOfAllJLists();
+		}
+		this.revalidate();
+		this.repaint();
+	}
 
 	
 	//-------------------------------------------------------------------------------------
@@ -674,32 +703,11 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		} else if (e.getSource().equals(this.getJPanelAssignedCredentials().getJButtonDeleteCredentialAssignment())) {
 			this.deleteCredentialAssignment();
 		}else if(e.getSource().equals(this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView())) {
-			if (this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().getViewport().getView().equals(this.getJPanelAssignedCredentials().getJListAssignedCredentials())) {
-				
-				this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().setViewportView(this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials());
-				
-				//Change Viewport and change Icon of JButtonCachedView
-				this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListCachedApiRegistration());
-			    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("MBreset.png"));
-			    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("Back to active Credential-Assignments");
-			    //Make Description non visible
-			    this.getJPanelClientBundle().getJTextAreaDescription().setText("");
-			    this.getJPanelClientBundle().getJTextAreaDescription().setVisible(false);
-			    this.clearSelectionsOfAllJLists();
-			} else {
-				
-				this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().setViewportView(this.getJPanelAssignedCredentials().getJListAssignedCredentials());
-				
-				//Change Viewport and change Icon of JButtonCachedView
-				this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListApiRegistration());
-				this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("cache.png"));
-				this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("See cached Credential Assignments");
-				this.getJPanelClientBundle().getJTextAreaDescription().setVisible(true);
-				this.clearSelectionsOfAllJLists();
-			}
-			this.revalidate();
-			this.repaint();
+			changeViewportofJScrollPane();
+		}else if(e.getSource().equals(this.getJPanelClientBundle().getJMenuItemDeleteAll())) {
+			this.deleteAllCachedCredentialAssignments();
 		}else {
+			System.out.println(e.getSource().toString());
 			this.revalidate();
 			this.repaint();
 		}
@@ -718,17 +726,6 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			this.selectAllElementsOfaCredentialAssignment();
 		} else if (e.getSource().equals(this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials())) {
 			this.selectAllElementsOfaCredentialAssignment();
-		}
-	}
-
-	/* (non-Javadoc)
-	* @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
-	*/
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		Object o=e.getSource();
-		if (e.getSource().equals(this.getJPanelClientBundle().getJListCachedApiRegistration().getComponentPopupMenu())) {
-		    this.deleteAllCachedCredentialAssignments();
 		}
 	}
 }

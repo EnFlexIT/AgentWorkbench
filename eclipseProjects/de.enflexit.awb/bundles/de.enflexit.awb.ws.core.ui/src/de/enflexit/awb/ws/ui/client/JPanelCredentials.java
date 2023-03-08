@@ -393,7 +393,7 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		         }
 				 
 			     //Remove the credential afterwards
-				 
+				  this.getDeletedCredentialsCache().add(cred);
 				  WsCredentialStore.getInstance().getCredentialList().remove(cred);
 				  this.fillCredentialJListAndRepaint();
 			}
@@ -422,10 +422,9 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
     	   return true;
        }
        
-       if(this.getModifiedCredentialCache().size()>0) {
+       if(this.getDeletedCredentialsCache().size()>0) {
     	   return true;
        }
-		
 		return false;
 	}
 	

@@ -214,16 +214,34 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 		 AbstractCredential cred=this.getSpecifiedCredFromApiRegService(apiRegService);
 		 ServerURL serverUrl=this.getServerOrCreateIt(apiRegService);	
 		
-		 if(cred==null) { 
-			 cred=createEmptyCredential(apiRegService);
-			 this.putInCredentialList(cred);
-			 if(cred!=null) {
-				 CredentialAssignment ca=new CredentialAssignment();
-				 ca.setIdApiRegistrationDefaultBundleName(apiRegService.getClientBundleName());
-				 ca.setIdCredential(cred.getID());
-				 ca.setIdServerURL(serverUrl.getID());
-				 this.putCredAssgnInCredAssgnList(ca);
-			 }
+			if (cred == null) {
+
+				// Check if a former credential of the bundle is still stored in the WsCredentialStore
+				
+				List<AbstractCredential> allCredOfTypeOfService = this.getAllCredentialsOfaType(apiRegService.getCredentialType());
+				for (Iterator<AbstractCredential> iterator = allCredOfTypeOfService.iterator(); iterator.hasNext();) {
+					AbstractCredential abstractCredential = (AbstractCredential) iterator.next();
+					if (abstractCredential.getName().contains(apiRegService.getClientBundleName())) {
+						cred = abstractCredential;
+						break;
+					}
+				}
+				
+				// Create empty credential if no former credential could be found
+				if (cred == null) {
+					cred = createEmptyCredential(apiRegService);
+					this.putInCredentialList(cred);
+				}
+				
+				//Init the default CredentialAssignment
+				if (cred != null) {
+					CredentialAssignment ca = new CredentialAssignment();
+					ca.setIdApiRegistrationDefaultBundleName(apiRegService.getClientBundleName());
+					ca.setIdCredential(cred.getID());
+					ca.setIdServerURL(serverUrl.getID());
+					this.putCredAssgnInCredAssgnList(ca);
+				}
+			
 		 }else {
 				if(this.putInCredentialList(cred)){
 					CredentialAssignment ca = new CredentialAssignment();
@@ -647,21 +665,54 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 		 switch (apiRegService.getCredentialType()) {
 		case API_KEY:
 			emptyCred=new ApiKeyCredential();
-			emptyCred.setName(apiRegService.getDefaultCredentialName());
+			this.giveCredentialUniqueName(emptyCred,apiRegService.getDefaultCredentialName());
 			break;
 		case BEARER_TOKEN:
 			emptyCred= new BearerTokenCredential();
-			emptyCred.setName(apiRegService.getDefaultCredentialName());
+			this.giveCredentialUniqueName(emptyCred,apiRegService.getDefaultCredentialName());
 			break;
 		case USERNAME_PASSWORD:
 			emptyCred= new UserPasswordCredential();
-			emptyCred.setName(apiRegService.getDefaultCredentialName());
+			this.giveCredentialUniqueName(emptyCred,apiRegService.getDefaultCredentialName());
 			break;
 
 		default:
 			break;
 		}
 		 return emptyCred;
+	}
+	
+	/**
+	 * Give a {@link AbstractCredential} unique name on basis of the string name.
+	 *
+	 * @param cred the cred
+	 * @param name the name should not be empty. Should be the basis for refactoring of the name, if it is already in use.
+	 * @return the abstract credential
+	 */
+	public AbstractCredential giveCredentialUniqueName(AbstractCredential cred,String name) {
+		int cnt=1;
+		while(this.isCredentialnameAlreadyUsed(name)){
+		   name="["+cnt+"]"+ name; 
+		}
+		cred.setName(name);
+		return cred;
+	}
+	
+	/**
+	 * Check if a name of a {@link AbstractCredential} is already used.
+	 *
+	 * @param name the name of a {@link AbstractCredential}
+	 * @return true, if it is already in use
+	 */
+	public boolean isCredentialnameAlreadyUsed(String name) {
+		List<AbstractCredential> allCreds=WsCredentialStore.getInstance().getCredentialList();
+		for (Iterator<AbstractCredential> iterator = allCreds.iterator(); iterator.hasNext();) {
+			AbstractCredential abstractCredential = (AbstractCredential) iterator.next();
+			if(abstractCredential.getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// ------------------------------------------------------------

@@ -284,13 +284,13 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 				if (!WsCredentialStore.getInstance().getCredentialList().contains(cred)) {
 
 					// Case of creating a new credential
-					AbstractCredential abstrCred = WsCredentialStore.getInstance().getCredentialWithName(getJTextFieldNameOfTheCredential().getText() + "[" + type + "]");
-					if (abstrCred == null) {
-						cred.setName("[" + type + "]" + getJTextFieldNameOfTheCredential().getText());
+					String name = "[" + type + "]" + getJTextFieldNameOfTheCredential().getText();
+					if (!WsCredentialStore.getInstance().isCredentialnameAlreadyUsed(name)) {
+						cred.setName(name);
 						WsCredentialStore.getInstance().getCredentialList().add(cred);
 						this.setCreatedCredential(cred);
 						success = true;
-						
+
 					} else {
 						throw new Exception("The credential name was used before, please change it. It must be unique!");
 					}
@@ -298,44 +298,53 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 
 					// Case of updating an already created credential
 					AbstractCredential oldCred;
-					
-					//Init old cred
+
+					// Init old cred
 					if (this.getCreatedCredential() != null) {
 						oldCred = this.getCreatedCredential();
 					} else {
 						oldCred = WsCredentialStore.getInstance().getCredentialWithName(this.getJTextFieldNameOfTheCredential().getText());
 					}
 
-					//update old cred
+					// update old cred
 					if (oldCred != null) {
-						oldCred.setName("[" + type + "]" + getJTextFieldNameOfTheCredential().getText());
-						CredentialType credType=oldCred.getCredentialType();
-						if (credType.equals(CredentialType.API_KEY)) {
-							
-							ApiKeyCredential apiKey=(ApiKeyCredential) oldCred;
-							apiKey.setName(this.getJTextFieldNameOfTheCredential().getText());
-							apiKey.setApiKeyPrefix(this.getJPanelApiKeyCredentials().getJTextFieldKeyName().getText());
-							apiKey.setApiKeyValue(this.getJPanelApiKeyCredentials().getJTextFieldKeyValue().getText());
-							
-						} else if (credType.equals(CredentialType.BEARER_TOKEN)) {
-							
-							BearerTokenCredential token =(BearerTokenCredential) oldCred;
-							token.setName(this.getJTextFieldNameOfTheCredential().getText());
-							token.setJwtToken(new JwtToken(this.getJPanelBearerTokenCredential().getJTextFieldTokenValue().getText()));
-							
-						} else if (credType.equals(CredentialType.USERNAME_PASSWORD)) {
-							
-							UserPasswordCredential password=(UserPasswordCredential)oldCred;
-							password.setUserName(this.getJPanelPasswordAuthenticationCredentials().getJTextFieldUsername().getText());
-							password.setPassword(this.getJPanelPasswordAuthenticationCredentials().getJTextFieldUsername().getText());
-							password.setName(this.getJTextFieldNameOfTheCredential().getText());
-							
+						oldCred.setName("[" + type + "]" + this.getJTextFieldNameOfTheCredential().getText());
+						CredentialType credType = oldCred.getCredentialType();
+						String newName = "[" + type + "]" + this.getJTextFieldNameOfTheCredential().getText();
+						if (WsCredentialStore.getInstance().isCredentialnameAlreadyUsed(newName)) {
+							if (credType.equals(CredentialType.API_KEY)) {
+
+								ApiKeyCredential apiKey = (ApiKeyCredential) oldCred;
+								apiKey.setName(newName);
+								apiKey.setApiKeyPrefix(
+										this.getJPanelApiKeyCredentials().getJTextFieldKeyName().getText());
+								apiKey.setApiKeyValue(
+										this.getJPanelApiKeyCredentials().getJTextFieldKeyValue().getText());
+							} else if (credType.equals(CredentialType.BEARER_TOKEN)) {
+
+								BearerTokenCredential token = (BearerTokenCredential) oldCred;
+								token.setName(newName);
+								token.setJwtToken(new JwtToken(
+										this.getJPanelBearerTokenCredential().getJTextFieldTokenValue().getText()));
+							} else if (credType.equals(CredentialType.USERNAME_PASSWORD)) {
+
+								UserPasswordCredential password = (UserPasswordCredential) oldCred;
+								password.setUserName(this.getJPanelPasswordAuthenticationCredentials().getJTextFieldUsername().getText());
+								password.setPassword(this.getJPanelPasswordAuthenticationCredentials().getJTextFieldUsername().getText());
+								password.setName(newName);
+							}
+							this.setModifiedCredential(cred);
+							success = true;
+						}else {
+							if(newName.equals(oldCred.getName())) {
+								//Case nothing has changed
+								return success;
+							}else {
+								throw new Exception("The credential name is already used, please create another one. It must be unique!");
+							}
 						}
- 
-						this.setModifiedCredential(cred);
-						success = true;
 					} else {
-						throw new Exception("The credential name was not used before, please creaete one. It must be unique!");
+						throw new Exception("The credential name was not used before, please create another one. It must be unique!");
 					}
 				}
 			} else {

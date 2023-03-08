@@ -51,6 +51,8 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	private JPanel jPanelHeader;
 	private JLabel jLabelBundleList;
 	private JButton jButtonCachedCredentialAssignmentsView;
+	private JPopupMenu jPopupMenu;
+	private JMenuItem jMenuItemDeleteAll;
 		
 	private List<String> deletedCachedApiRegistration;
 	private List<AbstractCredential> deletedCredentials;
@@ -201,9 +203,19 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	}
 	
 	public JPopupMenu getJPopMenuCachedApiRegistration(){
-		JPopupMenu popup = new JPopupMenu();
-		popup.add(new JMenuItem("Delete all Credential Assignments"));
-		return popup;
+		if(this.jPopupMenu==null) {
+			jPopupMenu = new JPopupMenu();
+			jPopupMenu.add(this.getJMenuItemDeleteAll());
+		}
+
+		return jPopupMenu;
+	}
+
+	public JMenuItem getJMenuItemDeleteAll(){
+		if(this.jMenuItemDeleteAll==null) {
+			jMenuItemDeleteAll= new JMenuItem("Delete all Credential Assignments");
+		}	
+		return jMenuItemDeleteAll;
 	}
 	
 	
@@ -283,6 +295,11 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jTextAreaDescription;
 	}
 	
+	/**
+	 * Gets the j button cached credential assignments view.
+	 *
+	 * @return the j button cached credential assignments view
+	 */
 	public JButton getJButtonCachedCredentialAssignmentsView() {
 		if (jButtonCachedCredentialAssignmentsView == null) {
 			jButtonCachedCredentialAssignmentsView = new JButton(BundleHelper.getImageIcon("cache.png"));
