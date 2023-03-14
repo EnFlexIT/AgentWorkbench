@@ -328,6 +328,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 			jPanelHeader.setLayout(gbl_panel);
 			GridBagConstraints gbc_jLabelBundleList = new GridBagConstraints();
+			gbc_jLabelBundleList.anchor = GridBagConstraints.WEST;
 			gbc_jLabelBundleList.gridx = 0;
 			gbc_jLabelBundleList.gridy = 0;
 			jPanelHeader.add(getJLabelBundleList_1(), gbc_jLabelBundleList);
@@ -343,6 +344,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	private JLabel getJLabelBundleList_1() {
 		if (jLabelBundleList == null) {
 			jLabelBundleList = new JLabel("Server - API / Client Bundle");
+			jLabelBundleList.setToolTipText("Server - API / Client Bundle");
 			jLabelBundleList.setPreferredSize(new Dimension(150, 26));
 			jLabelBundleList.setMinimumSize(new Dimension(150, 26));
 			jLabelBundleList.setFont(new Font("Dialog", Font.BOLD, 12));

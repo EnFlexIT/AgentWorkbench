@@ -26,7 +26,6 @@ import javax.swing.ListSelectionModel;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
-import de.enflexit.awb.ws.client.CredentialAssignment;
 import de.enflexit.awb.ws.client.CredentialType;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.credential.AbstractCredential;
@@ -220,13 +219,12 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	 *
 	 * @return the j button delete A credential
 	 */
-	private JButton getJButtonDeleteACredential() {
+	protected JButton getJButtonDeleteACredential() {
 		if (jButtonDeleteACredential == null) {
 			jButtonDeleteACredential = new JButton(GlobalInfo.getInternalImageIcon("Delete.png"));
 			jButtonDeleteACredential.setToolTipText("Delete a credential");
 			jButtonDeleteACredential.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonDeleteACredential.setPreferredSize(JPanelClientConfiguration.BUTTON_SIZE);
-			jButtonDeleteACredential.addActionListener(this);
 		}
 		return jButtonDeleteACredential;
 	}
@@ -376,31 +374,6 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 		this.getJDialogCredCreate().addWindowListener(this);
 	}
 	
-	/**
-	 * Deletes a credential and removes them from the JListCredentials and deletes all {@link CredentialAssignment} with the deleted Credential.
-	 */
-	private void deleteACredential() {
-		AbstractCredential cred = this.getJListCredentials().getSelectedValue();
-		if (cred != null) {
-			int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the "+ cred.getName()+ " of the type " + cred.getCredentialType()+" and all is corresponding Assignments?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
-			if(option==JOptionPane.YES_OPTION) {
-								
-			     // Remove all linked CredentialAssignments before deleting the credential
-
-				 List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getCredentialAssignmentWithCredential(cred);
-				 for (CredentialAssignment credentialAssignment : credAssgns) {
-					  WsCredentialStore.getInstance().getCredentialAssignmentList().remove(credentialAssignment);
-		         }
-				 
-			     //Remove the credential afterwards
-				  this.getDeletedCredentialsCache().add(cred);
-				  WsCredentialStore.getInstance().getCredentialList().remove(cred);
-				  this.fillCredentialJListAndRepaint();
-			}
-		} else {
-			JOptionPane.showConfirmDialog(this, "Please select a credential!","Select a credential", JOptionPane.YES_OPTION);
-		}
-	}
 	
     //---------------------------------------------------------------
 	//----------From here overridden Methods---------
@@ -451,8 +424,6 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 			} else {
 				JOptionPane.showConfirmDialog(this, "Please select a credential!",null,JOptionPane.INFORMATION_MESSAGE);
 			}
-		}else if (ae.getSource().equals(this.getJButtonDeleteACredential())) {
-			this.deleteACredential();
 		}
 	}
 	

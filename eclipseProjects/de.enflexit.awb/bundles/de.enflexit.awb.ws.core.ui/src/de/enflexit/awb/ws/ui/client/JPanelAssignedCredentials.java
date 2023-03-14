@@ -158,10 +158,25 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 	/**
 	 * Fill assigned credential J list.
 	 *
-	 * @param awbRegService the corresponding {@link ApiRegistration}, which assigned Credentials should be shown
+	 * @param clientBundleName the client bundle name
+	 * @return the default list model
 	 */
-	public void fillCachedAssignedCredentialJList(String clientBundleName) {
+	public DefaultListModel<CredentialAssignment> fillCachedAssignedCredentialJList(String clientBundleName) {
 		
+		DefaultListModel<CredentialAssignment> defaultListModel = fillDefaultListModelOfCacheJList(clientBundleName);
+		this.getJListAssignedCachedCredentials().setModel(defaultListModel);
+		this.revalidate();
+		this.repaint();
+		return defaultListModel;
+	}
+
+	/**
+	 * Fill default list model of cache J list.
+	 *
+	 * @param clientBundleName the client bundle name
+	 * @return the default list model
+	 */
+	public DefaultListModel<CredentialAssignment> fillDefaultListModelOfCacheJList(String clientBundleName) {
 		List<CredentialAssignment> assgnCredentials = new ArrayList<>();
 		
 		if(WsCredentialStore.getInstance().getBundleCredAssgnsMap().get(clientBundleName)!=null) {
@@ -172,18 +187,17 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
             
 		}else {			
 			List<CredentialAssignment> credAssgnList = WsCredentialStore.getInstance().getCacheCredentialAssignmentList();
-
 			for (Iterator<CredentialAssignment> iterator = credAssgnList.iterator(); iterator.hasNext();) {
 				CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+				if(credentialAssignment.getIdApiRegistrationDefaultBundleName().equals(clientBundleName)) {
 		        assgnCredentials.add(credentialAssignment);
+				}
 			}			
 		}
 		
 		DefaultListModel<CredentialAssignment> defaultListModel= new DefaultListModel<>();
 		defaultListModel.addAll(assgnCredentials);
-		this.getJListAssignedCachedCredentials().setModel(defaultListModel);
-		this.revalidate();
-		this.repaint();
+		return defaultListModel;
 	}
 	
 	private JPanel getJPanelHeader() {
@@ -308,9 +322,14 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 	public void refreshPanel() {
 		this.getJListAssignedCredentials().clearSelection();
 		this.getListCacheCredAssignment().clear();
+		this.getJListAssignedCachedCredentials().clearSelection();
 		this.getJListAssignedCredentials().removeAll();
 		this.getJListAssignedCredentials().revalidate();;
 		this.getJListAssignedCredentials().repaint();
+		this.getJListAssignedCachedCredentials().removeAll();
+		this.getJListAssignedCachedCredentials().revalidate();;
+		this.getJListAssignedCachedCredentials().repaint();
+		this.getJScrollPaneAssigneCredentials().repaint();
 		this.revalidate();
 		this.repaint();
 	}

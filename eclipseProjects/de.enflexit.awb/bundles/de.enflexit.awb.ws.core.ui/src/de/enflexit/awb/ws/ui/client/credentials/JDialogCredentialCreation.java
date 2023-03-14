@@ -427,7 +427,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 	*/
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(getJButtonCreateAndSaveCredential())) {
+		if (e.getSource().equals(this.getJButtonCreateAndSaveCredential())) {
 			try {
 				//Check which Credential is selected
 				if (this.getJComboBox().getSelectedItem() != null) {

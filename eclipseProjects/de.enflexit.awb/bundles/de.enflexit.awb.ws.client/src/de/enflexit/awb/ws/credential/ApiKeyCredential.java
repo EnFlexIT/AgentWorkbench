@@ -87,16 +87,19 @@ public class ApiKeyCredential extends AbstractCredential {
 	*/
 	@Override
 	public boolean isEmpty() {
-		boolean empty=false;
-		if(apiKeyPrefix==null || apiKeyValue==null) {
+		boolean empty = false;
+		if (apiKeyPrefix == null || apiKeyValue == null) {
 			empty = true;
-		}
-		else if(apiKeyPrefix.isBlank()) {
-			empty=true;
-		}else if(apiKeyValue.isBlank()) {
-			empty=true;
+			
+		} else if (apiKeyPrefix.isBlank()) {
+			
+			if (apiKeyValue.isBlank()) {
+				empty = true;
+			}
+		} else if (apiKeyValue.isBlank()) {
+			empty = true;
 		}
 		return empty;
 	}
-	
+
 }

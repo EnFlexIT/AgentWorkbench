@@ -6,9 +6,7 @@ import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
-import de.enflexit.awb.ws.credential.ApiKeyCredential;
-import de.enflexit.awb.ws.credential.BearerTokenCredential;
-import de.enflexit.awb.ws.credential.UserPasswordCredential;
+import de.enflexit.awb.ws.credential.AbstractCredential;
 
 /**
  * The Class ListCellRendererCredentials renders the cells of the {@link JList} of the {@link JPanelCredentials} bundle.
@@ -27,22 +25,8 @@ public class ListCellRendererCredentials extends DefaultListCellRenderer{
 			boolean cellHasFocus) {
 		Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		if (!isSelected) {
-			if (value instanceof ApiKeyCredential) {
-				ApiKeyCredential cred = (ApiKeyCredential) value;
-				if (cred.isEmpty()) {
-					c.setBackground(Color.ORANGE);
-				}else {
-					c.setBackground(Color.WHITE);
-				}
-			} else if (value instanceof BearerTokenCredential) {
-				BearerTokenCredential cred = (BearerTokenCredential) value;
-				if (cred.isEmpty()) {
-					c.setBackground(Color.ORANGE);
-				}else {
-					c.setBackground(Color.WHITE);
-				}
-			} else if (value instanceof UserPasswordCredential) {
-				UserPasswordCredential cred = (UserPasswordCredential) value;
+			if(value instanceof AbstractCredential) {
+			AbstractCredential cred=(AbstractCredential) value;
 				if (cred.isEmpty()) {
 					c.setBackground(Color.ORANGE);
 				}else {

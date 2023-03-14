@@ -442,13 +442,17 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 
 	/**
 	 * Returns the credential for the specified and registered {@link AwbApiRegistrationService}.
+	 * Search first for the Credential with the default name defined in the {@link AwbApiRegistrationService}. 
+	 * If this credential is not suitable (for instance empty, other type needed or null), it searches for other assigned credential, which is suitable.
 	 *
 	 * @param <T> the generic type
 	 * @param type the type
 	 * @param apiRegistrationClass the api registration
 	 * @return the credential
+	 * @throws IllegalArgumentException the illegal argument exception if the credential is empty
 	 */
-	public <T> T getCredential(T type, Class<? extends AwbApiRegistrationService> apiRegistrationClass) {
+	@SuppressWarnings("unchecked")
+	public <T> T getCredential(T type, Class<? extends AwbApiRegistrationService> apiRegistrationClass) throws IllegalArgumentException{
 		
 		List<AwbApiRegistrationService> registeredServiceList = ServiceFinder.findServices(AwbApiRegistrationService.class);
 		for (int i = 0; i < registeredServiceList.size(); i++) {
@@ -462,6 +466,9 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 				AbstractCredential credentiaLFound = this.getCredential(defaultCredentialName);
 				if (credentiaLFound==null) {
 			     credentiaLFound=this.getCredential(type, clientBundleName, defaultURL, defaultCredentialName);
+				}
+				if(credentiaLFound.isEmpty()) {
+					throw new IllegalArgumentException("The "+ credentiaLFound.getName()+" is empty, it needs to be filled!");
 				}
                 return (T) credentiaLFound;
 			}
@@ -517,44 +524,67 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 	}
 		
 	/**
-	 * Returns the credential.
+	 * Tries to get the Credential by the defaultCredentialName. If this is not possible creates an empty credential and assigns it to the clientBundle-.
 	 *
 	 * @param clientBundle          the client bundle
 	 * @param serverURL             the server URL
 	 * @param defaultCredentialName the default credential name
 	 * @return the credential
 	 */
-	public <T> AbstractCredential getCredential(T type, String clientBundleName, String defaultURL,String defaultCredentialName) {
+	public <T> AbstractCredential getCredential(T type, String clientBundleName, String defaultURL,
+			String defaultCredentialName) {
 
 		AbstractCredential credentiaLFound = this.getCredential(defaultCredentialName);
 		if (credentiaLFound == null) {
-			AwbApiRegistrationService apiRegistration = this.getApiRegistration(clientBundleName);
-			ServerURL serverURL = this.getServerURL(defaultURL);
-
-			// --- Define the server URL
-			if (serverURL == null) {
-				serverURL = new ServerURL(defaultURL);
-				if (this.getServerURLList().contains(serverURL) == false) {
-					this.getServerURLList().add(serverURL);
+				AwbApiRegistrationService apiRegistration = this.getApiRegistration(clientBundleName);
+				ServerURL serverURL = this.getServerURL(defaultURL);
+			
+					  if(apiRegistration!=null) {
+						   if(serverURL!=null) {
+							   //Checks if credential which is suitable already exists and is already assigned to the clientBundle
+							    List<CredentialAssignment> credAssgns=this.getCredentialAssignmentWithServer(serverURL);
+							    
+							    for (Iterator<CredentialAssignment> iterator = credAssgns.iterator(); iterator.hasNext();) {
+									CredentialAssignment credentialAssignment = (CredentialAssignment) iterator.next();
+									if(credentialAssignment.getIdApiRegistrationDefaultBundleName().equals(apiRegistration.getClientBundleName())) {
+										AbstractCredential credAssgn=this.getCredential(credentialAssignment.getIdCredential());
+										if(credAssgn.getCredentialType().equals(apiRegistration.getCredentialType())){
+											credentiaLFound=credAssgn;
+											break;
+										}
+									}
+								}		   
+					   }else {
+						    // --- Case serverUrl is null
+						   
+						    // --- Define the server URL
+							serverURL = new ServerURL(defaultURL);
+							if (this.getServerURLList().contains(serverURL) == false) {
+								this.getServerURLList().add(serverURL);
+							}
+					    }
+					 }	
+		
+		// Case: No suitable credential could be found, create an empty one and assign it to the clientBundle
+		if (credentiaLFound == null) {	
+			
+				// --- Define a empty credential of the same type, which can be filled by the user
+				credentiaLFound = createCredential(type, clientBundleName, defaultURL);
+				if (this.getCredentialList().contains(credentiaLFound) == false) {
+					this.getCredentialList().add(credentiaLFound);
 				}
-			}
 
-			// --- Define a empty credential of the same type, which can be filled by the user
-			credentiaLFound = createCredential(type, clientBundleName, defaultURL);
-			if (this.getCredentialList().contains(credentiaLFound) == false) {
-				this.getCredentialList().add(credentiaLFound);
-			}
-
-			// --- Define the credential assignment for a clear hierarchy
-			if(apiRegistration!=null && serverURL!=null && credentiaLFound!=null) {
-				CredentialAssignment credAssgn = new CredentialAssignment();
-				credAssgn.setIdServerURL(serverURL.getID());
-				credAssgn.setIdApiRegistrationDefaultBundleName(apiRegistration.getClientBundleName());
-				credAssgn.setIdCredential(credentiaLFound.getID());
-				this.getCredentialAssignmentList().add(credAssgn);
-				this.save();
-			}else {
-				credentiaLFound=null;
+				// --- Define the credential assignment for a clear hierarchy
+				if (apiRegistration != null && serverURL != null && credentiaLFound != null) {
+					CredentialAssignment credAssgn = new CredentialAssignment();
+					credAssgn.setIdServerURL(serverURL.getID());
+					credAssgn.setIdApiRegistrationDefaultBundleName(apiRegistration.getClientBundleName());
+					credAssgn.setIdCredential(credentiaLFound.getID());
+					this.getCredentialAssignmentList().add(credAssgn);
+					this.save();
+				} else {
+					credentiaLFound = null;
+				}
 			}
 		}
 		return credentiaLFound;
@@ -898,13 +928,13 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 	// ----------------------------------------------------------------------------------
 	
 	/**
-	 * Gets the cached credential assignment with one credential.
+	 * Gets the cached credential assignment of a bundle with one credential.
 	 *
 	 * @param bundleName the bundle name
 	 * @param cred the cred
 	 * @return the cached credential assignment with one credential
 	 */
-	public List<CredentialAssignment> getCachedCredentialAssignmentWithOneCredential(String bundleName,AbstractCredential cred) {
+	public List<CredentialAssignment> getCachedCredentialAssignmentOfABundleWithOneCredential(String bundleName,AbstractCredential cred) {
 		List<CredentialAssignment> credentialAssignments=new ArrayList<CredentialAssignment>();
 		for (CredentialAssignment credAssgn : this.getCredentialAssignmentList()) {
 			if(credAssgn.getIdApiRegistrationDefaultBundleName().equals(bundleName)){
@@ -912,6 +942,22 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 					credentialAssignments.add(credAssgn);
 				}
 			}
+		}
+		return credentialAssignments;
+	}
+	
+	/**
+	 * Gets the cached credential assignments with one credential.
+	 *
+	 * @param cred the cred
+	 * @return the cached credential assignments with one credential
+	 */
+	public List<CredentialAssignment> getCachedCredentialAssignmentsWithOneCredential(AbstractCredential cred) {
+		List<CredentialAssignment> credentialAssignments=new ArrayList<CredentialAssignment>();
+		for (CredentialAssignment credAssgn : this.getCacheCredentialAssignmentList()) {
+				if(credAssgn.getIdCredential().equals(cred.getID())) {
+					credentialAssignments.add(credAssgn);
+				}
 		}
 		return credentialAssignments;
 	}

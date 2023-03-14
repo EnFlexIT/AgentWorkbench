@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.swing.BorderFactory;
@@ -141,6 +142,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		if (jPanelCredentials == null) {
 			jPanelCredentials = new JPanelCredentials();
 			jPanelCredentials.getJListCredentials().addListSelectionListener(this);
+			jPanelCredentials.getJButtonDeleteACredential().addActionListener(this);
 			this.repaint();
 			this.revalidate();
 		}		
@@ -529,9 +531,9 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		}
 	}
 
-	private void selectAllElementsOfaCachedCredential() {
+	private ListModel<String> selectAllElementsOfaCachedCredential() {
 		CredentialAssignment credAssignment = this.getJPanelAssignedCredentials().getJListAssignedCachedCredentials().getSelectedValue();
-		
+		ListModel<String> bundleNames=null;
 		if (credAssignment != null) {
 			AbstractCredential cred = WsCredentialStore.getInstance().getCredential(credAssignment.getIdCredential());
 
@@ -542,7 +544,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			this.getJPanelServerURL().getJListServerUrl().setSelectedValue(server, true);
 
 			if (this.getJPanelClientBundle().getJListApiRegistration().getSelectedValue() != null) {
-				ListModel<String> bundleNames = this.getJPanelClientBundle().getJListCachedApiRegistration()
+				 bundleNames = this.getJPanelClientBundle().getJListCachedApiRegistration()
 						.getModel();
 
 				for (int i = 0; i < bundleNames.getSize(); i++) {
@@ -553,6 +555,7 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 				}
 			}
 		}
+		return bundleNames;
 	}
 	
 	/**
@@ -589,6 +592,57 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 		this.getJPanelAssignedCredentials().removeAllElementsOfTheJLists();
 		this.getJPanelCredentials().getJListCredentials().clearSelection();
         this.getJPanelServerURL().getJListServerUrl().clearSelection();
+	}
+	
+	/**
+	 * Deletes a credential and removes them from the JListCredentials and deletes all {@link CredentialAssignment} with the deleted Credential.
+	 */
+	private void deleteACredential() {
+		AbstractCredential cred = this.getJPanelCredentials().getJListCredentials().getSelectedValue();
+		if (cred != null) {
+			int option =JOptionPane.showConfirmDialog(this, "Do you want to delete the "+ cred.getName()+ " of the type " + cred.getCredentialType()+" and all is corresponding Assignments?","Deletion of a credential", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(option==JOptionPane.YES_OPTION) {
+								
+			     // Remove all linked CredentialAssignments before deleting the credential
+				 List<CredentialAssignment> credAssgns=WsCredentialStore.getInstance().getCredentialAssignmentWithCredential(cred);
+				 for (CredentialAssignment credentialAssignment : credAssgns) {
+					  WsCredentialStore.getInstance().getCredentialAssignmentList().remove(credentialAssignment);
+		         }
+				 
+				 //Remove all cached CredentialAssignments before deleting the credential
+				 List<CredentialAssignment> credAssgnsCached=WsCredentialStore.getInstance().getCachedCredentialAssignmentsWithOneCredential(cred);
+				 for (CredentialAssignment credentialAssignment : credAssgnsCached) {
+					  Set<String> bundleNames=WsCredentialStore.getInstance().getBundleCredAssgnsMap().keySet();
+					  for (String bundleName : bundleNames) {
+						if(bundleName.equals(credentialAssignment.getIdApiRegistrationDefaultBundleName())) {
+						 WsCredentialStore.getInstance().getBundleCredAssgnsMap().remove(bundleName);
+						}
+					}
+					 WsCredentialStore.getInstance().getCacheCredentialAssignmentList().remove(credentialAssignment);
+		         }
+			     //Remove the credential afterwards
+				  this.getJPanelCredentials().getDeletedCredentialsCache().add(cred);
+				  WsCredentialStore.getInstance().getCredentialList().remove(cred);
+				  this.getJPanelCredentials().fillCredentialJListAndRepaint();
+				  
+				  // Refresh lists
+				  this.getJPanelAssignedCredentials().refreshPanel();
+				  this.getJPanelCredentials().fillCredentialJListAndRepaint();
+				  this.getJPanelClientBundle().refillListModelCachedRegisteredApis();
+					
+				  // Refresh this panel
+				  this.revalidate();
+				  this.repaint();
+				  
+				  ListModel<String> cachedServices=this.getJPanelClientBundle().getJListCachedApiRegistration().getModel();
+					if (cachedServices.getSize() <= 0) {
+						JOptionPane.showMessageDialog(this,"Switch back to non-cached Credential-View, because all cached client-bundles are deleted");					 
+						this.changeViewportofJScrollPane();						
+					}
+			}
+		} else {
+			JOptionPane.showConfirmDialog(this, "Please select a credential!","Select a credential", JOptionPane.YES_OPTION);
+		}
 	}
 
 	/**
@@ -706,6 +760,8 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			changeViewportofJScrollPane();
 		}else if(e.getSource().equals(this.getJPanelClientBundle().getJMenuItemDeleteAll())) {
 			this.deleteAllCachedCredentialAssignments();
+		}else if(e.getSource().equals(this.getJPanelCredentials().getJButtonDeleteACredential())) {
+			this.deleteACredential();
 		}else {
 			System.out.println(e.getSource().toString());
 			this.revalidate();

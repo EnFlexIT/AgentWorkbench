@@ -2,7 +2,7 @@ package de.enflexit.awb.samples.ws.restapi.client;
 
 import de.enflexit.awb.samples.ws.restapi.client.gen.AdminsApi;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.ApiClient;
-import de.enflexit.awb.samples.ws.restapi.client.gen.handler.ServerConfiguration;
+import de.enflexit.awb.samples.ws.restapi.client.gen.handler.ApiException;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.ExecutionState;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemInformation;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemLoad;
@@ -25,39 +25,39 @@ public class RestAskingAgent extends Agent {
 	@Override
 	protected void setup() {
 
-		try {
-
-			ApiKeyCredential apiKeyCredential = WsCredentialStore.getInstance().getCredential(new ApiKeyCredential(), ApiRegistrationService.class);
-//			apiKeyCredential = WsCredentialStore.getInstance().getCredential(new ApiKeyCredential(), "de.enflexit.awb.samples.ws.restapi.client", );
-			
-			AdminsApi api = new AdminsApi();
-			ApiClient apiClient = api.getApiClient();
-			if(apiKeyCredential.getApiKeyPrefix()!=null) {
-				if(apiKeyCredential.getApiKeyValue()!=null) {
-				apiClient.setApiKeyPrefix(apiKeyCredential.getApiKeyPrefix());
-				apiClient.setApiKey(apiKeyCredential.getApiKeyValue());
-				}
+		AdminsApi api = new AdminsApi();
+			try {
+	
+				ApiKeyCredential apiKeyCredential = WsCredentialStore.getInstance().getCredential(new ApiKeyCredential(),ApiRegistrationService.class);
+	
+				ApiClient apiClient = api.getApiClient();
+				apiClient.setApiKeyPrefix(apiKeyCredential.getApiKeyPrefix());	
+			    apiClient.setApiKey(apiKeyCredential.getApiKeyValue());
+			    
+			} catch (IllegalArgumentException e) {
+				System.err.println(e.getMessage());
 			}
 			
-			ServerConfiguration newServerConfig = new ServerConfiguration("https://schlagmichtod.de/api", null, null);
+			SystemInformation sysInfo;
+			SystemLoad sysLoad;
+			ExecutionState execState;
+			try {
+				sysInfo = api.infoGet();
+				sysLoad = api.loadGet();
+				execState = api.stateGet();
+				
+				System.out.println("Info from agent " + this.getLocalName() + ": Nice ;-):");
+				System.out.println(sysInfo);
+				System.out.println(sysLoad);
+				System.out.println(execState);
+			} catch (ApiException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
-			int serversSize = apiClient.getServers().size(); 
-			apiClient.getServers().add(newServerConfig);
-			apiClient.setServerIndex(serversSize);
+
 			
-			
-			SystemInformation sysInfo = api.infoGet();
-			SystemLoad sysLoad = api.loadGet();
-			ExecutionState execState =  api.stateGet();
-			
-			System.out.println("Info from agent " + this.getLocalName() + ": Nice ;-):");
-			System.out.println(sysInfo);
-			System.out.println(sysLoad);
-			System.out.println(execState);
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+
 	
 	}
 	
