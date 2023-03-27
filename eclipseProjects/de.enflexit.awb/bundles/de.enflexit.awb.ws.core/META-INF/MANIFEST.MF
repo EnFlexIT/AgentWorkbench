@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AWB WS-Core Bundle
-Bundle-SymbolicName: de.enflexit.awb.ws.core
+Bundle-SymbolicName: de.enflexit.awb.ws.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ws.core
@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.osgi,
  org.eclipse.jetty.io,
  org.eclipse.jetty.util.ajax,
  org.apache.aries.spifly.dynamic.bundle,
- de.enflexit.awb.ws.jetty
+ de.enflexit.awb.ws.jetty,
+ org.eclipse.equinox.app
 Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core,
  de.enflexit.awb.ws.core.model,

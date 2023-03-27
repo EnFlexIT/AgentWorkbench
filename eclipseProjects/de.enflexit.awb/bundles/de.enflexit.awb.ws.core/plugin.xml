@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="product"
+         name="Agent.Workbench-WS Product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.enflexit.awb.ws.core.application"
+            description="The headless runtime environment of Agent.Workbench"
+            name="Agent.Workbench-WS">
+         <property
+               name="appName"
+               value="Agent.Workbench-WS">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="5,275,445,15">
+         </property>
+         <property
+               name="aboutImage"
+               value="platform:/plugin/org.agentgui.core/icons/awb128.png">
+         </property>
+         <property
+               name="aboutText"
+               value="Agent Workbench - WS (AWB-WS) is an Eclipse based RCP application that enables to configure and execute Agents and Multi-Agent systems in various ways.">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/awb16.png,icons/awb32.png,icons/awb48.png,icons/awb64.png,icons/awb128.png,icons/awb256.png">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="de.enflexit.awb.ws.core.WSApplication">
+         </run>
+      </application>
+   </extension>
+
+</plugin>
