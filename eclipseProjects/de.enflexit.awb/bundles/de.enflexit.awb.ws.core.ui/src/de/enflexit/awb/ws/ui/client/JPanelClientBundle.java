@@ -341,7 +341,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 		return jPanelHeader;
 	}
 	
-	private JLabel getJLabelBundleList_1() {
+	protected JLabel getJLabelBundleList_1() {
 		if (jLabelBundleList == null) {
 			jLabelBundleList = new JLabel("Server - API / Client Bundle");
 			jLabelBundleList.setToolTipText("Server - API / Client Bundle");

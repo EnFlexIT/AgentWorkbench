@@ -231,7 +231,7 @@ public class JPanelAssignedCredentials extends JPanel implements WsConfiguration
 		return jPanelHeader;
 	}
 	
-	private JLabel getJLableCredAssignment() {
+	protected JLabel getJLableCredAssignment() {
 		if (jLableCredAssignment == null) {
 			jLableCredAssignment = new JLabel("Assign Credentials");
 			jLableCredAssignment.setFont(new Font("Dialog", Font.BOLD, 12));

@@ -67,7 +67,7 @@ public class JPanelApiKeyCredentials extends AbstractCredentialPanel<ApiKeyCrede
 	
 	private JLabel getJLableApiKeyName() {
 		if (jLableApiKeyName == null) {
-			jLableApiKeyName = new JLabel("Name :");
+			jLableApiKeyName = new JLabel("Prefix :");
 			jLableApiKeyName.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLableApiKeyName;

@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.ui.client;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -636,8 +637,11 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 				  
 				  ListModel<String> cachedServices=this.getJPanelClientBundle().getJListCachedApiRegistration().getModel();
 					if (cachedServices.getSize() <= 0) {
+						Component jList=this.getJPanelClientBundle().getJScrollPaneBundleList().getViewport().getView();
+						if(this.getJPanelClientBundle().getJListCachedApiRegistration().equals(jList)) {
 						JOptionPane.showMessageDialog(this,"Switch back to non-cached Credential-View, because all cached client-bundles are deleted");					 
-						this.changeViewportofJScrollPane();						
+						this.changeViewportofJScrollPane();		
+						}
 					}
 			}
 		} else {
@@ -658,6 +662,10 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListCachedApiRegistration());
 		    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("MBreset.png"));
 		    this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("Back to active Credential-Assignments");
+			this.getJPanelClientBundle().getJLabelBundleList_1().setText("Cached Server - APIs / Client Bundles");
+			this.getJPanelClientBundle().getJLabelBundleList_1().setToolTipText("Cached Server - APIs / Client Bundles");
+			this.getJPanelAssignedCredentials().getJLableCredAssignment().setText("Cached assigned credentials");
+			this.getJPanelAssignedCredentials().getJButtonCreateACredentialAssignment().setVisible(false);
 		    //Make Description non visible
 		    this.getJPanelClientBundle().getJTextAreaDescription().setText("");
 		    this.getJPanelClientBundle().getJTextAreaDescription().setVisible(false);
@@ -666,7 +674,11 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 			
 			this.getJPanelAssignedCredentials().getJScrollPaneAssigneCredentials().setViewportView(this.getJPanelAssignedCredentials().getJListAssignedCredentials());
 			
-			//Change Viewport and change Icon of JButtonCachedView
+			//Change Viewport and change Icon of JButtonCachedView and name of the JLable for the client bundle list
+			this.getJPanelAssignedCredentials().getJLableCredAssignment().setText("Assign Credentials");
+			this.getJPanelClientBundle().getJLabelBundleList_1().setText("Server - API / Client Bundle");
+			this.getJPanelClientBundle().getJLabelBundleList_1().setToolTipText("Server - API / Client Bundle");
+			this.getJPanelAssignedCredentials().getJButtonCreateACredentialAssignment().setVisible(true);
 			this.getJPanelClientBundle().getJScrollPaneBundleList().setViewportView(this.getJPanelClientBundle().getJListApiRegistration());
 			this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setIcon(BundleHelper.getImageIcon("cache.png"));
 			this.getJPanelClientBundle().getJButtonCachedCredentialAssignmentsView().setToolTipText("See cached Credential Assignments");
