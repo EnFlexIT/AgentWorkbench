@@ -510,6 +510,7 @@ public class JettyServerManager {
 	 */
 	private void secureHandler(HandlerCollection hCollection, JettySecuritySettings securitySettings) {
 		Handler[] handlerArray = hCollection.getHandlers();
+		if (handlerArray==null) return;
 		for (int i = 0; i < handlerArray.length; i++) {
 			this.secureHandler(handlerArray[i], securitySettings);
 		}

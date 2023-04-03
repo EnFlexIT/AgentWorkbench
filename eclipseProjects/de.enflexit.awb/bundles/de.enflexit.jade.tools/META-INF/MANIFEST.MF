@@ -8,8 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.agentgui.lib.jade,
  de.enflexit.common,
  org.agentgui.core
-Import-Package: javax.xml.bind,
- javax.xml.bind.annotation
+Import-Package: jakarta.xml.bind,
+ jakarta.xml.bind.annotation
 Export-Package: de.enflexit.jade.behaviour,
  de.enflexit.jade.phonebook,
  de.enflexit.jade.phonebook.behaviours,

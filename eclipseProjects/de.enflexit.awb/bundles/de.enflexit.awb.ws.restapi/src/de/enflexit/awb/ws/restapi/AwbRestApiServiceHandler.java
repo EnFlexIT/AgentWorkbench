@@ -1,15 +1,10 @@
 package de.enflexit.awb.ws.restapi;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import de.enflexit.awb.ws.AwbWebHandlerService;
-import de.enflexit.awb.ws.restapi.gen.ApiOriginFilter;
 import de.enflexit.awb.ws.server.AwbServer;
 
 /**

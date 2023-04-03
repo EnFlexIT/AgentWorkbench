@@ -1,0 +1,176 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: admin@enflex.it
+    name: EnFlex.IT
+    url: https://www.enflex.it
+  description: This is the REST-API for Agent.Workbench in an embbedded system mode.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Agent.Workbench REST - API
+  version: 1.0.0
+servers:
+- description: AWB-Embedded System
+  url: https://localhost:8080/api
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/EnFlex.IT/AWB-Rest/1.0.0
+security:
+- AwbApiKey: []
+tags:
+- description: Secured Admin-only calls
+  name: admins
+paths:
+  /info:
+    get:
+      description: |
+        Returns Hardware and system  inforamtion.
+      externalDocs:
+        description: See description on GitBook
+        url: https://www.gitbook.io
+      responses:
+        "200":
+          content:
+            applicaion/json:
+              schema:
+                $ref: '#/components/schemas/SystemInformation'
+          description: AWB-State
+      summary: Returns system information
+      tags:
+      - admins
+      x-accepts: applicaion/json
+  /state:
+    get:
+      description: |
+        Returns the current state of Agent.Workbench consisiting information  about the execution mode, the currently open project and other.
+      externalDocs:
+        description: See description on GitBook
+        url: https://www.gitbook.io
+      responses:
+        "200":
+          content:
+            applicaion/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionState'
+          description: AWB-State
+      summary: Returns the current AWB state
+      tags:
+      - admins
+      x-accepts: applicaion/json
+  /load:
+    get:
+      description: |
+        Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes
+      responses:
+        "200":
+          content:
+            applicaion/json:
+              schema:
+                $ref: '#/components/schemas/SystemLoad'
+          description: System Load
+      summary: Returns the current System load
+      tags:
+      - admins
+      x-accepts: applicaion/json
+components:
+  schemas:
+    SystemInformation:
+      description: The system information consisting of Hardware and OS information
+      properties:
+        osDescription:
+          type: string
+        osManufacturer:
+          type: string
+        osFamilly:
+          type: string
+        osVersion:
+          type: string
+        processorName:
+          type: string
+        processorFrequenceInMhz:
+          format: double
+          type: number
+        processorNoPhysical:
+          format: int32
+          type: integer
+        processorNoLogical:
+          format: int32
+          type: integer
+        memoryTotalInGB:
+          format: double
+          type: number
+        swapMemoryTotalInGB:
+          format: double
+          type: number
+        heapMemoryMaxInGB:
+          format: double
+          type: number
+        networkConnections:
+          items:
+            $ref: '#/components/schemas/NetworkConnection'
+          type: array
+      type: object
+    NetworkConnection:
+      description: Describes a single network connection.
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        macAddress:
+          type: string
+        ip4Addresses:
+          type: string
+        ip6Addresses:
+          type: string
+        trafficSendInMB:
+          format: double
+          type: number
+        trafficReceivedInMB:
+          format: double
+          type: number
+      type: object
+    ExecutionState:
+      description: The Agent.Workbench execution state
+      properties:
+        executionMode:
+          description: |
+            * 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects
+          enum:
+          - APPLICATION
+          - SERVER
+          - SERVER_MASTER
+          - SERVER_SLAVE
+          - DEVICE_SYSTEM
+          type: string
+        deviceSystemExecutionMode:
+          description: |
+            * 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project
+          enum:
+          - SETUP
+          - AGENT
+          type: string
+      type: object
+    SystemLoad:
+      description: "The systems current load, includung CPU, memoryand HEAP  usage.\
+        \ Further, the number of Java threads are returned."
+      properties:
+        cpuUsage:
+          description: The CPU usage in percent
+          format: float
+          type: number
+        memUsage:
+          description: The memory usage in percent
+          format: float
+          type: number
+        heapUsage:
+          description: The Heap usage in percen
+          format: float
+          type: number
+      type: object
+  securitySchemes:
+    AwbApiKey:
+      in: header
+      name: X-API-KEY
+      type: apiKey
+

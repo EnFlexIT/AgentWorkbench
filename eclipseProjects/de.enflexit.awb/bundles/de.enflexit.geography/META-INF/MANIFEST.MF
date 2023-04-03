@@ -17,5 +17,5 @@ Export-Package: de.enflexit.geography,
 Require-Bundle: de.enflexit.common
 Bundle-ClassPath: .,
  lib/ww-geo-coords-1.0-2013-08.jar
-Import-Package: javax.xml.bind,
- javax.xml.bind.annotation
+Import-Package: jakarta.xml.bind,
+ jakarta.xml.bind.annotation

@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.restapi.gen;
 
-import de.enflexit.awb.ws.restapi.gen.model.*;
 import de.enflexit.awb.ws.restapi.gen.InfoApiService;
 import de.enflexit.awb.ws.restapi.gen.factories.InfoApiServiceFactory;
 
@@ -18,19 +17,19 @@ import java.io.InputStream;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.servlet.ServletConfig;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 @Path("/info")
 
 
 @io.swagger.annotations.Api(description = "the info API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T14:42:04.744880100+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
 public class InfoApi  {
    private final InfoApiService delegate;
 
@@ -55,7 +54,7 @@ public class InfoApi  {
       this.delegate = delegate;
    }
 
-    @GET
+    @jakarta.ws.rs.GET
     
     
     @Produces({ "applicaion/json" })

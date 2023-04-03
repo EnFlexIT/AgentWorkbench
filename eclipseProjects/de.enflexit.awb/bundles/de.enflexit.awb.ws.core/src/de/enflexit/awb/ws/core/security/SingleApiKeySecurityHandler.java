@@ -2,7 +2,7 @@ package de.enflexit.awb.ws.core.security;
 
 import java.io.IOException;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;

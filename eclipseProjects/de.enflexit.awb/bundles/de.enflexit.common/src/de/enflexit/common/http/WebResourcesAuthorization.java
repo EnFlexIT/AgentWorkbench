@@ -4,8 +4,8 @@ package de.enflexit.common.http;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * The Class WebResourcesAuthorization is used as an entity for details required by authentication.

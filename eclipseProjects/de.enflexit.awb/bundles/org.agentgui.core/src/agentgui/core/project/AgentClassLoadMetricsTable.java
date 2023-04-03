@@ -32,9 +32,9 @@ import java.io.Serializable;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * The Class AgentClassLoadMetricsTable describes the predictive or real measured metrics of the.

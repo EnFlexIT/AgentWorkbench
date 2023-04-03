@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.
@@ -31,7 +31,7 @@ import javax.validation.Valid;
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T14:42:04.744880100+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
 public class SystemLoad   {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
@@ -124,7 +124,6 @@ public class SystemLoad   {
   public int hashCode() {
     return Objects.hash(cpuUsage, memUsage, heapUsage);
   }
-
 
   @Override
   public String toString() {

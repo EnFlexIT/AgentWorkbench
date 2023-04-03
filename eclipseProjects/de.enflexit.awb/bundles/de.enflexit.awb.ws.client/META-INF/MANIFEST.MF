@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.osgi,
  com.google.gson,
  de.enflexit.common,
  de.enflexit.awb.ws.core
-Import-Package: javax.xml.bind,
- javax.xml.bind.annotation
+Import-Package: jakarta.xml.bind,
+ jakarta.xml.bind.annotation
 Export-Package: de.enflexit.awb.ws.client,
  de.enflexit.awb.ws.credential

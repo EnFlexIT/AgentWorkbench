@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT feature (install-handler? | description? | copyright? | license? | url? | includes* | requires? | plugin* | data*)>
+<!ATTLIST feature
+    id            CDATA #REQUIRED
+    version       CDATA #REQUIRED
+    label         CDATA #IMPLIED
+    provider-name CDATA #IMPLIED
+    os            CDATA #IMPLIED
+    arch          CDATA #IMPLIED
+    ws            CDATA #IMPLIED
+    nl            CDATA #IMPLIED
+    plugin        CDATA #IMPLIED
+>
+
+<!ELEMENT description (#PCDATA)>
+<!ATTLIST description
+    url           CDATA #IMPLIED
+>
+
+<!ELEMENT copyright (#PCDATA)>
+<!ATTLIST copyright
+    url           CDATA #IMPLIED
+>
+
+<!ELEMENT license (#PCDATA)>
+<!ATTLIST license
+    url           CDATA #IMPLIED
+>
+
+<!ELEMENT url (update?, discovery*)>
+
+<!ELEMENT update EMPTY>
+<!ATTLIST update
+    url           CDATA #REQUIRED
+    label         CDATA #IMPLIED
+>
+
+<!ELEMENT discovery EMPTY>
+<!ATTLIST discovery
+
+    url           CDATA #REQUIRED
+    label         CDATA #IMPLIED
+>
+
+<!ELEMENT includes EMPTY>
+<!ATTLIST includes
+    id                CDATA #REQUIRED
+    version           CDATA #REQUIRED
+    name              CDATA #IMPLIED
+    optional          (true | false) "false"
+    os                CDATA #IMPLIED
+    arch              CDATA #IMPLIED
+    ws                CDATA #IMPLIED
+    nl                CDATA #IMPLIED
+>
+
+<!ELEMENT requires (import+)>
+
+<!ELEMENT import EMPTY>
+<!ATTLIST import
+    plugin        CDATA #IMPLIED
+    feature       CDATA #IMPLIED
+    version       CDATA #IMPLIED
+    match         (perfect | equivalent | compatible | greaterOrEqual) "compatible"
+    patch         (true | false) "false"
+>
+
+<!ELEMENT plugin EMPTY>
+<!ATTLIST plugin
+    id            CDATA #REQUIRED
+    version       CDATA #REQUIRED
+    fragment      (true | false) "false"
+    os            CDATA #IMPLIED
+    arch          CDATA #IMPLIED
+    ws            CDATA #IMPLIED
+    nl            CDATA #IMPLIED
+    download-size CDATA #IMPLIED
+    install-size  CDATA #IMPLIED
+    unpack        (true | false) "true"
+>

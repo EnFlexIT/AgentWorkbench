@@ -31,8 +31,8 @@ package agentgui.core.update.repositoryModel;
 import java.io.Serializable;
 import java.util.TreeMap;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * The Class ProjectRepositoryEntries is used to describe different 

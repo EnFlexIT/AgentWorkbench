@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings 
+	jaxb:version="3.0"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"	
+	xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb" 
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+
+	<jaxb:bindings schemaLocation="01_FeatureXML.dtd" node="/xs:schema">
+		<jaxb:globalBindings>
+			<jaxb:serializable uid="201702221200"/>
+		</jaxb:globalBindings>
+
+		<jaxb:schemaBindings>
+			<jaxb:package name="de.enflexit.common.featureEvaluation.featureXML" />
+		</jaxb:schemaBindings>
+		
+	</jaxb:bindings>
+
+</jaxb:bindings>

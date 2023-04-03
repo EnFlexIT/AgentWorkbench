@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;

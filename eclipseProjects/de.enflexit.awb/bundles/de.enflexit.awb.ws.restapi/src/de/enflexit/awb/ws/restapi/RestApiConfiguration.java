@@ -2,10 +2,10 @@ package de.enflexit.awb.ws.restapi;
 
 import java.util.Locale;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Variant;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Variant;
 
 import org.glassfish.jersey.server.ResourceConfig;
 

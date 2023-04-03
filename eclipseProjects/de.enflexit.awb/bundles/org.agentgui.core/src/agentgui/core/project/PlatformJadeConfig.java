@@ -36,9 +36,9 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;

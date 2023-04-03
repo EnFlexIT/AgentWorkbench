@@ -30,8 +30,8 @@ package de.enflexit.common.ontology;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * The Class AgentStartArgument is used in AWB Projects as attribute for the 

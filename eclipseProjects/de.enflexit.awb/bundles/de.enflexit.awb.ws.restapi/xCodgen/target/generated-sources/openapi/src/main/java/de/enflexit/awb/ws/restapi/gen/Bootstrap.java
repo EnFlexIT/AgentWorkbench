@@ -5,10 +5,10 @@ import io.swagger.models.*;
 
 import io.swagger.models.auth.*;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 
 public class Bootstrap extends HttpServlet {
   @Override
@@ -26,6 +26,6 @@ public class Bootstrap extends HttpServlet {
     ServletContext context = config.getServletContext();
     Swagger swagger = new Swagger().info(info);
 
-    new SwaggerContextService().withServletConfig(config).updateSwagger(swagger);
+//    new SwaggerContextService().withServletConfig(config).updateSwagger(swagger);
   }
 }

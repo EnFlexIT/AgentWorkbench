@@ -3,7 +3,7 @@ package de.enflexit.awb.ws.restapi.gen.factories;
 import de.enflexit.awb.ws.restapi.gen.StateApiService;
 import de.enflexit.awb.ws.restapi.gen.impl.StateApiServiceImpl;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T14:42:04.744880100+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
 public class StateApiServiceFactory {
     private static final StateApiService service = new StateApiServiceImpl();
 

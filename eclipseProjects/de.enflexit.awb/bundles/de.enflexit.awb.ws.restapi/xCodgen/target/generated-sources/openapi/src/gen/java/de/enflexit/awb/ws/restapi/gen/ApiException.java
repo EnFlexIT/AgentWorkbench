@@ -3,9 +3,8 @@ package de.enflexit.awb.ws.restapi.gen;
 /**
  * The exception that can be used to store the HTTP status code returned by an API response.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T14:42:04.744880100+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
 public class ApiException extends Exception {
-
     /** The HTTP status code. */
     private int code;
 
@@ -29,4 +28,10 @@ public class ApiException extends Exception {
         return code;
     }
 
+    @Override
+    public String toString() {
+        return "ApiException{" +
+               "code=" + code +
+               '}';
+    }
 }

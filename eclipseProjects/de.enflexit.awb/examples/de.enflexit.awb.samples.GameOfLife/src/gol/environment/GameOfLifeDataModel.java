@@ -2,7 +2,7 @@ package gol.environment;
 
 import java.util.HashMap;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 

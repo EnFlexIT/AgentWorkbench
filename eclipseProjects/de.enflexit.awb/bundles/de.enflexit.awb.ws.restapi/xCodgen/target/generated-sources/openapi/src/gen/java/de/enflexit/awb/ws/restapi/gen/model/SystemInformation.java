@@ -22,8 +22,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * The system information consisting of Hardware and OS information
@@ -43,7 +43,7 @@ import javax.validation.Valid;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T14:42:04.744880100+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
 public class SystemInformation   {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
@@ -91,7 +91,7 @@ public class SystemInformation   {
 
   public static final String JSON_PROPERTY_NETWORK_CONNECTIONS = "networkConnections";
   @JsonProperty(JSON_PROPERTY_NETWORK_CONNECTIONS)
-  private List<NetworkConnection> networkConnections = null;
+  private List<NetworkConnection> networkConnections;
 
   public SystemInformation osDescription(String osDescription) {
     this.osDescription = osDescription;
@@ -369,7 +369,6 @@ public class SystemInformation   {
   public int hashCode() {
     return Objects.hash(osDescription, osManufacturer, osFamilly, osVersion, processorName, processorFrequenceInMhz, processorNoPhysical, processorNoLogical, memoryTotalInGB, swapMemoryTotalInGB, heapMemoryMaxInGB, networkConnections);
   }
-
 
   @Override
   public String toString() {

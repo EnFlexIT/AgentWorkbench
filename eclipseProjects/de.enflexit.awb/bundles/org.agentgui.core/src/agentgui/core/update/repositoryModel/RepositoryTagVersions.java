@@ -33,8 +33,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * The Class TagVersions is used to store different versions of an AWB project file

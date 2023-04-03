@@ -30,8 +30,8 @@ package agentgui.core.update.repositoryModel;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.osgi.framework.Version;
 

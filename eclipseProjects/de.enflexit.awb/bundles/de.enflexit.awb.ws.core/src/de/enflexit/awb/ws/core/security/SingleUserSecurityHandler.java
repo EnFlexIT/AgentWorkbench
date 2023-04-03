@@ -5,7 +5,7 @@ import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
 
 import javax.security.auth.Subject;
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;

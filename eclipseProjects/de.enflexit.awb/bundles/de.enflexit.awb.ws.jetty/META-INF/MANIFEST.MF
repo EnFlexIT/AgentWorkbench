@@ -26,8 +26,8 @@ Require-Bundle: org.eclipse.jetty.http,
  org.eclipse.jetty.util.ajax
 Automatic-Module-Name: de.enflexit.awb.ws.core.openid
 Bundle-ClassPath: .,
- lib/jetty-alpn-client-10.0.12.jar,
- lib/jetty-client-10.0.12.jar,
- lib/jetty-openid-10.0.12.jar,
- lib/slf4j-api-2.0.0.jar
+ lib/jetty-alpn-client-10.0.13.jar,
+ lib/jetty-client-10.0.13.jar,
+ lib/jetty-openid-10.0.13.jar,
+ lib/slf4j-api-2.0.5.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-11
