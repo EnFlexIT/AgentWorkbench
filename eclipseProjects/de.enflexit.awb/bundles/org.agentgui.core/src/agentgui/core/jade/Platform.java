@@ -227,7 +227,10 @@ public class Platform {
 				// --- Notify plugins for agent Start --------------- 
 				this.notifyPluginsForStartMAS();
 				// --- Check for valid plugin preconditions --------- 
-				if (this.hasValidPreconditionsInPlugins()==false) return false;
+				if (this.hasValidPreconditionsInPlugins()==false) {
+					this.resetLocalRuntimeVariables();
+					return false;
+				}
 				// --- Notify about JADE start ----------------------
 				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.JADE_START));
 				

@@ -159,7 +159,7 @@ public class PGSettingsPanel extends AbstractDatabaseSettingsPanel {
 	}
 	private JLabel getJLabelPort() {
 		if (jLabelPort == null) {
-			jLabelPort = new JLabel("Port (default: 3306)");
+			jLabelPort = new JLabel("Port (default: 5432)");
 			jLabelPort.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelPort;

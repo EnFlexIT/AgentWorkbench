@@ -73,6 +73,15 @@ public class DatabaseConnectionManager {
 		}
 		return dbConnectionServiceHashMap;
 	}
+	/**
+	 * Returns the HibernateDatabaseConnectionService with the specified factoryID
+	 *
+	 * @param factoryID the factory ID
+	 * @return the hibernate database connection service found or <code>null</code> if the service is not available
+	 */
+	public HibernateDatabaseConnectionService getHibernateDatabaseConnectionService(String factoryID) {
+		return this.getHibernateDatabaseConnectionServiceHashMap().get(factoryID);
+	}
 	
 	/**
 	 * Starts all registered database connection services.
@@ -102,7 +111,7 @@ public class DatabaseConnectionManager {
 			this.getHibernateDatabaseConnectionServiceHashMap().put(factoryID, connectionService);
 			
 			// --- Try to create a Hibernate SessionFactory -------------------
-			this.startSessionFactoryInThread(factoryID, configuration, false);
+			HibernateUtilities.startSessionFactoryInThread(factoryID, configuration, false, true);
 			
 		} catch (Exception ex) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error while starting database connection of service '" + connectionService.getClass().getName() + "':");
@@ -126,22 +135,7 @@ public class DatabaseConnectionManager {
 		
 	}
 	
-	/**
-	 * Start the EOM SessionFactory within an extra thread.
-	 *
-	 * @param factoryID the factory ID
-	 * @param configuration the configuration
-	 * @param isResetSessionFactory the is reset session factory
-	 */
-	private void startSessionFactoryInThread(final String factoryID, final Configuration configuration, final boolean isResetSessionFactory) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-				HibernateUtilities.getSessionFactory(factoryID, configuration, isResetSessionFactory, true);
-			}
-		}, "Start of SessionFactory " + factoryID).start();
-	}
+	
 
 	
 	// ------------------------------------------------------------------------
@@ -155,7 +149,7 @@ public class DatabaseConnectionManager {
 	 */
 	public DatabaseSettings getDatabaseSettings(String factoryID) {
 
-		HibernateDatabaseConnectionService dbConnectionService = this.getHibernateDatabaseConnectionServiceHashMap().get(factoryID);
+		HibernateDatabaseConnectionService dbConnectionService = this.getHibernateDatabaseConnectionService(factoryID);
 		if (dbConnectionService!=null) {
 			// --- Get configuration and derive database system name ----------
 			Configuration hiberanteConfig = dbConnectionService.getConfiguration();
@@ -275,10 +269,10 @@ public class DatabaseConnectionManager {
 		// --- Restart the database connection ----------------------
 		if (hibernateConfig!=null) {
 			if (hasChangedSettings==true) {
-				this.startSessionFactoryInThread(factoryID, hibernateConfig, true);
+				HibernateUtilities.startSessionFactoryInThread(factoryID, hibernateConfig, true, false);
 			} else {
 				if (this.isAllowSessionFactoryStart(HibernateUtilities.getSessionFactoryMonitor(factoryID).getSessionFactoryState())==true) {
-					this.startSessionFactoryInThread(factoryID, hibernateConfig, true);
+					HibernateUtilities.startSessionFactoryInThread(factoryID, hibernateConfig, true, false);
 				}
 			}
 		}
