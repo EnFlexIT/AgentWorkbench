@@ -18,10 +18,13 @@ import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
@@ -29,11 +32,8 @@ import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
-
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JSeparator;
 
 /**
  * The Class DatabaseSettingsDialog can be used to configure the 
@@ -41,7 +41,7 @@ import javax.swing.JSeparator;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AwbDatabaseDialog extends JDialog implements ActionListener {
+public class AwbDatabaseDialog extends JDialog implements ActionListener, HibernateStateVisualizationService {
 
 	private static final long serialVersionUID = -5778880894988052682L;
 	
@@ -62,6 +62,7 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 	private JButton jButtonClose;
 
 	private Vector<String> userMessages;
+	private JLabel jLabelFactroyState;
 	
 	
 	/**
@@ -97,6 +98,7 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 				if (AwbDatabaseDialog.this.isDoClose()==false) return;
+				HibernateStateVisualizer.unregisterStateVisualizationService(AwbDatabaseDialog.this);
 				AwbDatabaseDialog.this.setVisible(false);
 			}
 		});
@@ -104,16 +106,19 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 		// --- Set Dialog position ----------------------------------
 	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
-	    
+	    // --- Register as state visualizer -------------------------
+		HibernateStateVisualizer.registerStateVisualizationService(this);
+		
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
-		gbc_jLabelHeader.gridwidth = 2;
+		gbc_jLabelHeader.gridwidth = 3;
 		gbc_jLabelHeader.insets = new Insets(10, 10, 0, 10);
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
 		gbc_jLabelHeader.gridx = 0;
@@ -126,24 +131,30 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 		gbc_jLabelFactoryID.gridx = 0;
 		gbc_jLabelFactoryID.gridy = 1;
 		this.getContentPane().add(getJLabelFactoryID(), gbc_jLabelFactoryID);
+	
+		GridBagConstraints gbc_jLabelFactroyState = new GridBagConstraints();
+		gbc_jLabelFactroyState.insets = new Insets(10, 0, 0, 0);
+		gbc_jLabelFactroyState.gridx = 1;
+		gbc_jLabelFactroyState.gridy = 1;
+		getContentPane().add(getJLabelFactroyState(), gbc_jLabelFactroyState);
 		
 		GridBagConstraints gbc_jComboBoxFactoryID = new GridBagConstraints();
 		gbc_jComboBoxFactoryID.anchor = GridBagConstraints.WEST;
 		gbc_jComboBoxFactoryID.insets = new Insets(10, 10, 0, 10);
-		gbc_jComboBoxFactoryID.gridx = 1;
+		gbc_jComboBoxFactoryID.gridx = 2;
 		gbc_jComboBoxFactoryID.gridy = 1;
 		this.getContentPane().add(getJComboBoxFactoryID(), gbc_jComboBoxFactoryID);
 		
 		GridBagConstraints gbc_separator = new GridBagConstraints();
 		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
 		gbc_separator.insets = new Insets(10, 10, 0, 10);
-		gbc_separator.gridwidth = 2;
+		gbc_separator.gridwidth = 3;
 		gbc_separator.gridx = 0;
 		gbc_separator.gridy = 2;
 		this.getContentPane().add(getSeparator(), gbc_separator);
 		
 		GridBagConstraints gbc_jPanelDbSettings = new GridBagConstraints();
-		gbc_jPanelDbSettings.gridwidth = 2;
+		gbc_jPanelDbSettings.gridwidth = 3;
 		gbc_jPanelDbSettings.insets = new Insets(0, 0, 5, 0);
 		gbc_jPanelDbSettings.fill = GridBagConstraints.BOTH;
 		gbc_jPanelDbSettings.gridx = 0;
@@ -156,7 +167,7 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 		
 		if (this.getComboBoxModelFactoryID().getSize()>0) {
 			GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
-			gbc_jPanelButtons.gridwidth = 2;
+			gbc_jPanelButtons.gridwidth = 3;
 			gbc_jPanelButtons.fill = GridBagConstraints.VERTICAL;
 			gbc_jPanelButtons.insets = new Insets(10, 10, 20, 10);
 			gbc_jPanelButtons.gridx = 0;
@@ -188,9 +199,18 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 		if (jLabelFactoryID == null) {
 			jLabelFactoryID = new JLabel("Factory-ID:");
 			jLabelFactoryID.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelFactoryID.setPreferredSize(new Dimension(125, 26));
+			jLabelFactoryID.setPreferredSize(new Dimension(99, 26));
 		}
 		return jLabelFactoryID;
+	}
+	private JLabel getJLabelFactroyState() {
+		if (jLabelFactroyState == null) {
+			jLabelFactroyState = new JLabel("");
+			jLabelFactroyState.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelFactroyState.setPreferredSize(new Dimension(26, 26));
+			jLabelFactroyState.setBackground(Color.YELLOW);
+		}
+		return jLabelFactroyState;
 	}
 	
 	private DefaultComboBoxModel<String> getComboBoxModelFactoryID() {
@@ -348,6 +368,7 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 		this.setDatabaseSettings(this.getDatabaseSettings(factoryID));
 		this.setHeaderInJPanelDbSettings("Database Settings for connection '" + factoryID + "'");
 		this.currentFactoryID = factoryID;
+		this.updateFactoryStatus();
 	}
 	/**
 	 * Save the database settings for the current database connection / factoryID.
@@ -393,6 +414,26 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener {
 			return true;
 		}
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.gui.HibernateStateVisualizationService#setSessionFactoryState(java.lang.String, de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState)
+	 */
+	@Override
+	public void setSessionFactoryState(String factoryID, SessionFactoryState sessionFactoryState) {
+		if (factoryID.equals(this.currentFactoryID)==true) {
+			this.getJLabelFactroyState().setIcon(sessionFactoryState.getIconImage());
+			this.getJLabelFactroyState().setToolTipText(sessionFactoryState.getDescription());
+		}
+	}
+	
+	/**
+	 * Updates the factory status.
+	 */
+	private void updateFactoryStatus() {
+		SessionFactoryState sfm = HibernateUtilities.getSessionFactoryMonitor(this.currentFactoryID).getSessionFactoryState();
+		this.getJLabelFactroyState().setIcon(sfm.getIconImage());
+		this.getJLabelFactroyState().setToolTipText(sfm.getDescription());
 	}
 	
 	/* (non-Javadoc)

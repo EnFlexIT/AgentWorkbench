@@ -19,8 +19,16 @@ import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
 
 /**
- * The Class DatabaseRelocator manages to switch the database for storing 
- * the experimental data of a single AWB setup during MAS runtime.
+ * The Class DatabaseRelocator allows to dynamically switch database connections, e.g. for storing experimental data of a single 
+ * AWB setup and the corresponding MAS execution.<br><br>
+ * 
+ * To do so, <b>first</b>, the method {@link #applyTemporaryHibernateProperties(HashMap, boolean, boolean)} needs to be called.
+ * 
+ * <b>Second</b>, since switching a database connection takes time, the method {@link #isAppliedTemporaryHibernateProperties(long)}
+ * allows to check if the connection(s) could successfully be switch to the temporary settings.
+ * 
+ * To <b>finally</b> switch back to the original database connections, the method {@link #restoreTemporaryHibernateProperties()} 
+ * needs be called (e.g. after an experiment execution and the agent platform termination).
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -50,9 +58,13 @@ public class DatabaseRelocator {
 	/**
 	 * Applies the specified temporary hibernate properties within the current session factory settings.
 	 *
-	 * @param tmpPropertiesHashMap the temporary properties hash map to apply
+	 * @param tmpPropertiesHashMap the temporary connection properties to be applied as HashMap. Here, the key 
+	 * specifies the session factory ID, defined with a {@link HibernateDatabaseConnectionService}, while the value 
+	 * of the HashMap represent the connection properties to be applied for a database connection service
+	 * (as for example the database name, user name, password and others).
+	 * 
 	 * @param isCreateNonExistingDatabases the indicator to create not existing databases
-	 * @param isDropExistingDatabase the indicator to drop and recreate existing databases
+	 * @param isDropExistingDatabase the indicator to drop and recreate existing databases if necessary
 	 */
 	public void applyTemporaryHibernateProperties(HashMap<String, Properties> tmpPropertiesHashMap, boolean isCreateNonExistingDatabases, boolean isDropExistingDatabase) {
 		
