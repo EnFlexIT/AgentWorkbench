@@ -3,7 +3,7 @@ Automatic-Module-Name: de.enflexit.db.hibernate
 Bundle-ManifestVersion: 2
 Bundle-Name: Hibernate
 Bundle-SymbolicName: de.enflexit.db.hibernate
-Bundle-Version: 5.6.7.qualifier
+Bundle-Version: 5.6.15.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
@@ -11,14 +11,10 @@ Bundle-Activator: org.hibernate.osgi.HibernateBundleActivator
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: .,
  lib/antlr-2.7.7.jar,
- lib/byte-buddy-1.12.8.jar,
  lib/c3p0-0.9.5.5.jar,
  lib/classmate-1.5.1.jar,
  lib/FastInfoset-1.2.15.jar,
- lib/hibernate-c3p0-5.6.7.Final.jar,
  lib/hibernate-commons-annotations-5.1.2.Final.jar,
- lib/hibernate-core-5.6.7.Final.jar,
- lib/hibernate-osgi-5.6.7.Final.jar,
  lib/istack-commons-runtime-3.0.7.jar,
  lib/jandex-2.4.2.Final.jar,
  lib/javax.activation-api-1.2.0.jar,
@@ -32,7 +28,11 @@ Bundle-ClassPath: .,
  lib/org.osgi.compendium-5.0.0.jar,
  lib/org.osgi.core-6.0.0.jar,
  lib/stax-ex-1.8.jar,
- lib/txw2-2.3.1.jar
+ lib/txw2-2.3.1.jar,
+ lib/byte-buddy-1.12.18.jar,
+ lib/hibernate-c3p0-5.6.15.Final.jar,
+ lib/hibernate-core-5.6.15.Final.jar,
+ lib/hibernate-osgi-5.6.15.Final.jar
 Import-Package: de.enflexit.common,
  de.enflexit.common.swing,
  org.eclipse.core.runtime.preferences;version="3.5.0",
