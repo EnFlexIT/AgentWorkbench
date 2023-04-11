@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.db.feature"
       label="Agent.Workbench Database-Feature"
-      version="5.6.7.qualifier"
+      version="5.6.15.qualifier"
       provider-name="EnFlex.IT"
       os="linux,macosx,win32"
       arch="x86,x86_64">
