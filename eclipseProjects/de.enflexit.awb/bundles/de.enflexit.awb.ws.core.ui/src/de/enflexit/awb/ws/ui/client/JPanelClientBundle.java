@@ -408,7 +408,8 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 			ApiRegistration cred = credModel.getElementAt(i);
 			credArrayList.add(cred);
 		}
-		
+		//  Checkm fi both lists are greater than 0
+		if(apiRegList.size()<=0 || credArrayList.size()<=0) return false;
 		if (credArrayList.size() != apiRegList.size()) {
 			return true;
 		} else {
@@ -436,6 +437,7 @@ public class JPanelClientBundle extends JPanel implements WsConfigurationInterfa
 	 */
 	private boolean compareTwoLists(List<ApiRegistration> apiRegList, List<AwbApiRegistrationService> credArrayList) {
 		boolean sameObject = false;
+		if(apiRegList.size()<=0 || credArrayList.size()<=0) return sameObject;
 		for (int i = 0; i < credArrayList.size(); i++) {
 			ApiRegistration apiReg = apiRegList.get(i);
 			AwbApiRegistrationService apiRegService = credArrayList.get(i);
