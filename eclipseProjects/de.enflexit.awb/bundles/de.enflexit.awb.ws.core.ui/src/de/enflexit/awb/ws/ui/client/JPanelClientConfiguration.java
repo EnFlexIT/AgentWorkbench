@@ -699,37 +699,39 @@ public class JPanelClientConfiguration extends JPanel implements ActionListener,
 	 */
 	@Override
 	public boolean hasUnsavedChanges() {
-		if(this.getJPanelAssignedCredentials().hasUnsavedChanges()) {
-			this.getJPanelAssignedCredentials().revalidate();
-			this.getJPanelAssignedCredentials().repaint();
-			this.revalidate();
-			this.repaint();
-			return true;
-		}
-		if(this.getJPanelClientBundle().hasUnsavedChanges()) {
-			this.getJPanelAssignedCredentials().revalidate();
-			this.getJPanelAssignedCredentials().repaint();
-			this.getJPanelCredentials().revalidate();
-			this.getJPanelCredentials().repaint();
-			this.getJPanelClientBundle().revalidate();
-			this.getJPanelClientBundle().repaint();
-			this.revalidate();
-			this.repaint();
-			return true;
-		}
-		if(this.getJPanelCredentials().hasUnsavedChanges()) {
-			this.getJPanelCredentials().revalidate();
-			this.getJPanelCredentials().repaint();
-			this.revalidate();
-			this.repaint();
-			return true;
-		}
-		if(this.getJPanelServerURL().hasUnsavedChanges()) {
-			this.getJPanelServerURL().revalidate();
-			this.getJPanelServerURL().repaint();
-			this.revalidate();
-			this.repaint();
-			return true;
+		if (WsCredentialStore.load(WsCredentialStore.getWsCredentialStoreFile()) != null) {
+			if (this.getJPanelAssignedCredentials().hasUnsavedChanges()) {
+				this.getJPanelAssignedCredentials().revalidate();
+				this.getJPanelAssignedCredentials().repaint();
+				this.revalidate();
+				this.repaint();
+				return true;
+			}
+			if (this.getJPanelClientBundle().hasUnsavedChanges()) {
+				this.getJPanelAssignedCredentials().revalidate();
+				this.getJPanelAssignedCredentials().repaint();
+				this.getJPanelCredentials().revalidate();
+				this.getJPanelCredentials().repaint();
+				this.getJPanelClientBundle().revalidate();
+				this.getJPanelClientBundle().repaint();
+				this.revalidate();
+				this.repaint();
+				return true;
+			}
+			if (this.getJPanelCredentials().hasUnsavedChanges()) {
+				this.getJPanelCredentials().revalidate();
+				this.getJPanelCredentials().repaint();
+				this.revalidate();
+				this.repaint();
+				return true;
+			}
+			if (this.getJPanelServerURL().hasUnsavedChanges()) {
+				this.getJPanelServerURL().revalidate();
+				this.getJPanelServerURL().repaint();
+				this.revalidate();
+				this.repaint();
+				return true;
+			}
 		}
 		return false;
 	}
