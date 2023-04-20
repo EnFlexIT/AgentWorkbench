@@ -49,7 +49,8 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	private DateTimeFormatter formatter;
 	
 	private boolean done = false;
-
+	private boolean isDoStop;
+	
 	/**
 	 * Instantiates a new timing behaviour, starting at the specified instant and repeated with the specified interval length.
 	 *
@@ -126,8 +127,8 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 		
 		try {
 			Thread.sleep(waitingTime);
-		} catch (InterruptedException e) {
-			System.out.println("[" + this.getClass().getSimpleName() + "] Thread interrupted, terminating behaviour");
+		} catch (InterruptedException intEx) {
+			if (this.isDoStop==false) System.out.println("[" + this.getClass().getSimpleName() + "] Unexpected interrupt in Thread '"  + Thread.currentThread().getName() +  "' - terminating behaviour");
 			this.done = true;
 			return;
 		}
@@ -141,27 +142,25 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 		this.printDebugMessage("Done at " + this.getDateFormatter().format(endTime) + ", execution took " + duration.toMillis() + " ms");
 		this.durations.add((int) duration.toMillis());
 		this.totalDuration = this.getTotalDuration().plus(duration);
-		if(duration.toNanos() > this.getTickInterval().toNanos()) {
+		if (duration.toNanos() > this.getTickInterval().toNanos()) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] - execution time (" + duration.toMillis() + ") exceeds the specified repetition interval ("+this.getTickInterval().toMillis()+")");
 		}
 
 		// --- Wait unit tick ends ----------------------------------
 		waitingTime = Duration.between(this.getCurrentTime(),nextTick).toMillis();
-		if(waitingTime < 0) {
+		if (waitingTime<0) {
 			waitingTime = 0;
 		}
-		if(waitingTime>0) {
+		if (waitingTime>0) {
 			
-			printDebugMessage("Done before the specified time, waiting another " + waitingTime + " ms or " + waitingTime / 1000 + " s");
-			if (this.debug==true) {
-				// --- Blank line to mark the end of the debug outputs of one execution
-				System.out.println();
-			}
+			this.printDebugMessage("Done before the specified time, waiting another " + waitingTime + " ms or " + waitingTime / 1000 + " s");
+			// --- Blank line to mark the end of the debug outputs of one execution
+			if (this.debug==true) System.out.println();
 			
 			try {
 				Thread.sleep(waitingTime);
-			} catch (InterruptedException e) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Thread interrupted, terminating behaviour");
+			} catch (InterruptedException intEx) {
+				if (this.isDoStop==false) System.out.println("[" + this.getClass().getSimpleName() + "] Unexpected interrupt in Thread '"  + Thread.currentThread().getName() +  "' - terminating behaviour");
 				this.done = true;
 				return;
 			}
@@ -390,6 +389,7 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	 */
 	public void start() {
 		if (this.myAgent!=null) {
+			this.isDoStop = false;
 			Behaviour threadedBehaviour = this.getThreadedBehaviourFactory().wrap(this);
 			this.myAgent.addBehaviour(threadedBehaviour);
 		} else {
@@ -403,6 +403,7 @@ public abstract class AbstractTimingBehaviour extends Behaviour {
 	public void stop() {
 		Thread behaviourThread = this.getThreadedBehaviourFactory().getThread(this);
 		if (behaviourThread!=null) {
+			this.isDoStop = true;
 			behaviourThread.interrupt();
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + this.myAgent.getLocalName() + " - Error terminating, behaviour thread not found!");
