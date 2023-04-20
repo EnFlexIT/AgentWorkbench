@@ -33,7 +33,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	private JButton jButtonExpressionEditor;
 	
 	private TableCellEditor parentEditor;
-
+	
 	public ExpressionEditorWidgetForTables(TableCellEditor parentEditor, Expression expression, ExpressionContext expressionContext) {
 		this.parentEditor = parentEditor;
 		this.expression = expression;
@@ -71,9 +71,13 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			jTextFieldExpression.setBorder(BorderFactory.createEmptyBorder());
 			jTextFieldExpression.addFocusListener(new FocusAdapter() {
 				@Override
-				public void focusLost(FocusEvent e) {
+				public void focusLost(FocusEvent fe) {
 					// --- Update the expression when leaving the textfield ---
 					ExpressionEditorWidgetForTables.this.expression = ExpressionEditorWidgetForTables.this.setExpressionAccordingToTextfield();
+					
+					if (fe.getOppositeComponent()!=ExpressionEditorWidgetForTables.this.getJButtonExpressionEditor()) {
+						ExpressionEditorWidgetForTables.this.parentEditor.stopCellEditing();
+					}
 				}
 			});
 			
@@ -156,12 +160,15 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonExpressionEditor()) {
+			
 			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
 				this.setExpression(editorDialog.getExpression());
 			}
+			
+			this.jTextFieldExpression.requestFocus();
 			
 		}
 	}
