@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.enflexit.awb.ws</groupId>
+	<artifactId>de.enflexit.awb.samples.ws.restapi.server.codegen</artifactId>
+	<version>0.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<openApiGeneratorVersion>6.5.0</openApiGeneratorVersion>
+		<yamlFile>RestApi.yaml</yamlFile>
+		<srcBasePackage>de.enflexit.awb.samples.ws.restapi.server.gen</srcBasePackage>
+	</properties>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>${openApiGeneratorVersion}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/${yamlFile}</inputSpec>
+							<!-- For client code -->
+							<!-- <language>java</language> --> 
+
+							<!-- For server code -->	
+							<generatorName>jaxrs-jersey</generatorName>
+							<library>jersey2</library>
+							
+							<apiPackage>${srcBasePackage}</apiPackage>
+							<modelPackage>${srcBasePackage}.model</modelPackage>
+							<invokerPackage>${srcBasePackage}.handler</invokerPackage>
+							
+							<generateApiTests>false</generateApiTests>
+							<generateApiDocumentation>true</generateApiDocumentation>
+							<generateModelTests>false</generateModelTests>
+							<generateModelDocumentation>false</generateModelDocumentation>
+							<generateSupportingFiles>true</generateSupportingFiles>
+							<configOptions>
+								<interfaceOnly>false</interfaceOnly>
+								<dateLibrary>java8</dateLibrary>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
