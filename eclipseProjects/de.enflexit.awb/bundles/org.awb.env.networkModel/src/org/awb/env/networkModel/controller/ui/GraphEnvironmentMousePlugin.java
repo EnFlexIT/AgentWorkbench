@@ -346,12 +346,13 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			if (pickedNode!=null) {
 				this.moveNodeWithLeftAction = true;	
 				this.remindOldPositions();
-			} else {
-				GraphElement gePicked = this.getPickedGraphElement(me);
-				if (gePicked!=null && me.getClickCount()!=2) {
-					this.basicGraphGUI.handleObjectLeftClick(gePicked, me.isShiftDown());
-				}	
 			}
+			if (me.getClickCount()!=2) {
+				GraphElement gePicked = this.getPickedGraphElement(me);
+				if (gePicked!=null) {
+					this.basicGraphGUI.handleObjectLeftClick(gePicked, me.isShiftDown());
+				}
+			}	
 			
 		}
 	}
