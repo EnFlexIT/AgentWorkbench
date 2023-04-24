@@ -15,6 +15,8 @@ import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
@@ -84,9 +86,11 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			jTextFieldExpression.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode()==KeyEvent.VK_ENTER) {
+					if (ke.getKeyCode()==KeyEvent.VK_ENTER || ke.getKeyCode()==KeyEvent.VK_TAB) {
 						ExpressionEditorWidgetForTables.this.setExpression(ExpressionEditorWidgetForTables.this.setExpressionAccordingToTextfield());
-						ExpressionEditorWidgetForTables.this.parentEditor.stopCellEditing();
+						// --- Pass to the parent -----------------------------
+						JComponent sourceComponent = (JComponent) ke.getSource();
+						sourceComponent.getParent().dispatchEvent(ke);
 					}
 				}
 			});
