@@ -1,24 +1,21 @@
 package de.enflexit.expression.gui;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Dimension;
-import java.awt.Font;
-
 import javax.swing.JTextField;
 
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
-import java.awt.Insets;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 /**
  * The ExpressionEditorWidget can be used to edit and validate an expression directly,
@@ -32,9 +29,6 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	public static final String EXPRESSION_UPDATED = "Expresison Updated";
 	
 	private static final Dimension BUTTON_SIZE = new Dimension(26, 26);
-	private static final String ICON_PATH_EDIT = "/icons/Edit.png";
-	private static final String ICON_PATH_CHECK_FAILED = "/icons/CheckRed.png";
-	private static final String ICON_PATH_CHECK_PASSED = "/icons/CheckGreen.png";
 	
 	private JTextField jTextFieldExpression;
 	private JButton jButtonEditor;
@@ -72,13 +66,12 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		add(getJTextFieldExpression(), gbc_jTextFieldExpression);
 		GridBagConstraints gbc_jButtonEditor = new GridBagConstraints();
 		gbc_jButtonEditor.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jButtonEditor.insets = new Insets(0, 2, 0, 5);
+		gbc_jButtonEditor.insets = new Insets(0, 0, 0, 5);
 		gbc_jButtonEditor.gridx = 1;
 		gbc_jButtonEditor.gridy = 0;
 		add(getJButtonEditor(), gbc_jButtonEditor);
 		GridBagConstraints gbc_jButtonValidate = new GridBagConstraints();
 		gbc_jButtonValidate.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jButtonValidate.insets = new Insets(0, 2, 0, 0);
 		gbc_jButtonValidate.gridx = 2;
 		gbc_jButtonValidate.gridy = 0;
 		add(getJButtonValidate(), gbc_jButtonValidate);
@@ -107,9 +100,9 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	 */
 	private void validateExpression() {
 		if (this.expression!=null && this.expression.hasErrors()==false) {
-			this.getJButtonValidate().setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_CHECK_PASSED)));
+			this.getJButtonValidate().setIcon(ImageHelper.getImageIcon("CheckGreen.png"));
 		} else {
-			this.getJButtonValidate().setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_CHECK_FAILED)));
+			this.getJButtonValidate().setIcon(ImageHelper.getImageIcon("CheckRed.png"));
 		}
 	}
 	
@@ -146,7 +139,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	private JButton getJButtonEditor() {
 		if (jButtonEditor == null) {
 			jButtonEditor = new JButton();
-			jButtonEditor.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_EDIT)));
+			jButtonEditor.setIcon(ImageHelper.getImageIcon("Edit.png"));
 			jButtonEditor.setToolTipText("Show expression editor...");
 			jButtonEditor.setSize(BUTTON_SIZE);
 			jButtonEditor.setPreferredSize(BUTTON_SIZE);
@@ -157,7 +150,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	private JButton getJButtonValidate() {
 		if (jButtonValidate == null) {
 			jButtonValidate = new JButton();
-			jButtonValidate.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_CHECK_FAILED)));
+			jButtonValidate.setIcon(ImageHelper.getImageIcon("CheckRed.png"));
 			jButtonValidate.setToolTipText("Validate Expression");
 			jButtonValidate.setSize(BUTTON_SIZE);
 			jButtonValidate.setPreferredSize(BUTTON_SIZE);
