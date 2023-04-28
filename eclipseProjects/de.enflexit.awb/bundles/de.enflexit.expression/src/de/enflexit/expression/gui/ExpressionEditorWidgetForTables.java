@@ -15,6 +15,8 @@ import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
@@ -33,7 +35,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	private JButton jButtonExpressionEditor;
 	
 	private TableCellEditor parentEditor;
-
+	
 	public ExpressionEditorWidgetForTables(TableCellEditor parentEditor, Expression expression, ExpressionContext expressionContext) {
 		this.parentEditor = parentEditor;
 		this.expression = expression;
@@ -71,18 +73,24 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			jTextFieldExpression.setBorder(BorderFactory.createEmptyBorder());
 			jTextFieldExpression.addFocusListener(new FocusAdapter() {
 				@Override
-				public void focusLost(FocusEvent e) {
+				public void focusLost(FocusEvent fe) {
 					// --- Update the expression when leaving the textfield ---
 					ExpressionEditorWidgetForTables.this.expression = ExpressionEditorWidgetForTables.this.setExpressionAccordingToTextfield();
+					
+					if (fe.getOppositeComponent()!=ExpressionEditorWidgetForTables.this.getJButtonExpressionEditor()) {
+						ExpressionEditorWidgetForTables.this.parentEditor.stopCellEditing();
+					}
 				}
 			});
 			
 			jTextFieldExpression.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent ke) {
-					if (ke.getKeyCode()==KeyEvent.VK_ENTER) {
+					if (ke.getKeyCode()==KeyEvent.VK_ENTER || ke.getKeyCode()==KeyEvent.VK_TAB) {
 						ExpressionEditorWidgetForTables.this.setExpression(ExpressionEditorWidgetForTables.this.setExpressionAccordingToTextfield());
-						ExpressionEditorWidgetForTables.this.parentEditor.stopCellEditing();
+						// --- Pass to the parent -----------------------------
+						JComponent sourceComponent = (JComponent) ke.getSource();
+						sourceComponent.getParent().dispatchEvent(ke);
 					}
 				}
 			});
@@ -156,12 +164,15 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonExpressionEditor()) {
+			
 			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
 				this.setExpression(editorDialog.getExpression());
 			}
+			
+			this.jTextFieldExpression.requestFocus();
 			
 		}
 	}

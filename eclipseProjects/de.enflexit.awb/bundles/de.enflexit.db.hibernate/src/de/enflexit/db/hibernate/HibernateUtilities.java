@@ -1,5 +1,6 @@
 package de.enflexit.db.hibernate;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -252,7 +253,7 @@ public class HibernateUtilities {
 	 * @param factoryID the factory ID (<code>null</code> will use the default factory)
 	 * @param configuration the hibernate configuration object
 	 * @param isResetSessionFactory the is reset session factory
-	 * @param doSilentConnectionCheck set true, the do a silent connection check
+	 * @param doSilentConnectionCheck set true, to do a silent connection check
 	 * @return the session factory
 	 * @see #DEFAULT_SESSION_FACTORY_ID
 	 */
@@ -346,6 +347,23 @@ public class HibernateUtilities {
 		}
 	}
 	
+	/**
+	 * Start the specified SessionFactory within an extra thread.
+	 *
+	 * @param factoryID the factory ID
+	 * @param configuration the configuration
+	 * @param isResetSessionFactory the is reset session factory
+	 * @param doSilentConnectionCheck set true, to do a silent connection check
+	 */
+	public static void startSessionFactoryInThread(final String factoryID, final Configuration configuration, final boolean isResetSessionFactory, final boolean doSilentConnectionCheck) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+				HibernateUtilities.getSessionFactory(factoryID, configuration, isResetSessionFactory, doSilentConnectionCheck);
+			}
+		}, "Start of SessionFactory " + factoryID).start();
+	}
 	
 	/**
 	 * Sets the statistics for the specified SessionFactory enabled (or not).
@@ -417,6 +435,47 @@ public class HibernateUtilities {
 	// --- From here, methods for the handling of database services ----------- 
 	// ------------------------------------------------------------------------
 	/**
+	 * Based on the specified configuration, tries to return a JDBC database connection.
+	 *
+	 * @param configuration the configuration
+	 * @param doSilentConnectionCheck the do silent connection check
+	 * @return the database connection
+	 */
+	public static Connection getDatabaseConnection(Configuration configuration, boolean doSilentConnectionCheck) {
+		
+		Connection conn = null;
+		String errMessage = null;
+		
+		String driverClassName = configuration.getProperty("hibernate.connection.driver_class");
+		if (driverClassName==null) {
+			// --- Write driver class error -------------------------
+			errMessage = "No JDBC driver class was specified";
+			
+		} else {
+			// --- Get the corresponding database service -----------
+			HibernateDatabaseService dbService = getDatabaseServiceByDriverClassName(driverClassName);
+			if (dbService==null) {
+				// --- Set error message ----------------------------
+				errMessage = "Could not find the corresponding hibernate database service for the JDBC connection test!";
+			} else {
+				// --- Extract settings for connection test --------- 
+				Properties jdbcCheckProperties = getPropertiesForConnectionCheckOnJDBC(configuration, dbService.getHibernateConfigurationPropertyNamesForDbCheckOnJDBC());
+				// --- Try getting a JDBC connection ----------------
+				Vector<String> userMessages = new Vector<>(); 
+				conn = dbService.getDatabaseConnection(jdbcCheckProperties, userMessages, !doSilentConnectionCheck);
+				if (conn==null) {
+					errMessage = "The creation of a JDBC connection failed!";
+				}
+			}
+		}
+		
+		if (errMessage!=null && doSilentConnectionCheck==false) {
+			System.err.println(errMessage);
+		}
+		return conn;
+	}
+	
+	/**
 	 * Checks if the configured database connection is available.
 	 *
 	 * @param configuration the current hibernate configuration
@@ -429,7 +488,7 @@ public class HibernateUtilities {
 		String driverClassName = configuration.getProperty("hibernate.connection.driver_class");
 		if (driverClassName==null) {
 			// --- Write driver class error -------------------------
-			errMessage = "No JDBC driver class wass specified";
+			errMessage = "No JDBC driver class was specified";
 			
 		} else {
 			// --- Get the corresponding database service -----------

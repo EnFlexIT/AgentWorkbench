@@ -1,14 +1,17 @@
 package de.enflexit.db.maria;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
 import org.mariadb.jdbc.Driver;
 
+import de.enflexit.db.hibernate.AbstractDatabaseService;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
 
@@ -17,7 +20,7 @@ import de.enflexit.db.hibernate.gui.AbstractDatabaseSettingsPanel;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen 
  */
-public class MariaDbDatabaseService implements HibernateDatabaseService {
+public class MariaDbDatabaseService extends AbstractDatabaseService {
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getDatabaseSystemName()
@@ -33,6 +36,14 @@ public class MariaDbDatabaseService implements HibernateDatabaseService {
 	@Override
 	public String getDriverClassName() {
 		return Driver.class.getName();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.AbstractDatabaseService#getMessagePrefix()
+	 */
+	@Override
+	protected String getMessagePrefix() {
+		return "MariaDB connection check";
 	}
 	
 	/* (non-Javadoc)
@@ -64,96 +75,73 @@ public class MariaDbDatabaseService implements HibernateDatabaseService {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#isDatabaseAccessible(java.util.Properties, java.util.Vector, boolean)
+	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#createDatabase(java.sql.Connection, java.lang.String)
 	 */
 	@Override
-	public boolean isDatabaseAccessible(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole) {
-
-		String message = null;
-		if (hibernateProperties==null) {
-			message = "[MariaDB connection check] no properties were specified for the connection test!";
-			userMessageVector.addElement(message);
-			if (isPrintToConole) System.err.println(message);
-			return false;
-		}
+	public boolean createDatabase(Connection connection, String dbToCreate) {
 		
-		String driverClass = hibernateProperties.getProperty(HIBERNATE_PROPERTY_DriverClass); 
-		String url = hibernateProperties.getProperty(HIBERNATE_PROPERTY_URL);
-		String db = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Catalog);
-		String user = hibernateProperties.getProperty(HIBERNATE_PROPERTY_UserName);
-		String pswd = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Password);
-
-		Connection conn = null;
+		Statement statement = null;
 		try {
-			// --- Try to establish the MySQL connection ------------
-			Class.forName(driverClass);
-			conn = DriverManager.getConnection(url, user, pswd);
-			if (db!=null && db.isEmpty()==false) {
-				conn.setCatalog(db);
-			}
-			
-			// --- Check if the database exists ---------------------
-			if (this.databaseExists(conn, db)==false) {
-				message = "[MariaDB connection check] Database '" + db + "' does not exists (yet)!";
-				userMessageVector.addElement(message);
-				if (isPrintToConole) System.err.println(message);
-			}
-			
-		} catch (NullPointerException npEx) {
-			String configString = "Driver: " + driverClass + ", URL: " + url + ", DB: " + db + ", User: " + user + ", PSWD: " + pswd + "";
-			message = "[MariaDB connection check] Failed throw NullPointerException with config: " + configString;
-			userMessageVector.addElement(message);
-			if (isPrintToConole) System.err.println(message);
-			return false;
+			statement = connection.createStatement();
+			statement.executeUpdate("CREATE DATABASE " + dbToCreate + "");
+			return true;
 			
 		} catch (SQLException sqlEx) {
-			String mySQLErr = "[MariaDB connection check] Err. Code:" + sqlEx.getErrorCode() + " | State: " + sqlEx.getSQLState() + ": " + sqlEx.getMessage();
-			mySQLErr = mySQLErr.replaceAll("(?m)^[ \t]*\r?\n", ""); // replace empty lines
-			userMessageVector.addElement(mySQLErr);
-			if (isPrintToConole) System.err.println(mySQLErr);
-			return false;
-			
-		} catch (ClassNotFoundException cnfEx) {
-			message = "[MariaDB connection check] Failed throw: " + cnfEx.getMessage();
-			userMessageVector.addElement(message);
-			if (isPrintToConole) System.err.println(message);
-			return false;
-		
+			sqlEx.printStackTrace();
 		} finally {
-			if (conn!=null) {
+			if (statement!=null) {
 				try {
-					conn.close();
+					statement.close();
 				} catch (SQLException sqlEx) {
 					sqlEx.printStackTrace();
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
-	/**
-	 * Checks if the specified database exists.
-	 *
-	 * @param connection the connection
-	 * @param dbNameToCheck the db name to check
-	 * @return true, if successful
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#dropDatabase(java.sql.Connection, java.lang.String)
 	 */
-	private boolean databaseExists(Connection connection, String dbNameToCheck) {
+	@Override
+	public boolean dropDatabase(Connection connection, String dbToDrop) {
 		
-		boolean dbExists = true;
+		Statement statement = null;
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate("DROP DATABASE " + dbToDrop + "");
+			return true;
+			
+		} catch (SQLException sqlEx) {
+			sqlEx.printStackTrace();
+		} finally {
+			if (statement!=null) {
+				try {
+					statement.close();
+				} catch (SQLException sqlEx) {
+					sqlEx.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getDatabaseList(java.sql.Connection)
+	 */
+	@Override
+	public List<String> getDatabaseList(Connection connection) {
+		
+		List<String> dbList = new ArrayList<>();
 		ResultSet resultSet = null;
 		try {
 			resultSet = connection.getMetaData().getCatalogs();
 			while (resultSet.next()) {
-				String databaseName = resultSet.getString(1);
-				if (databaseName.equalsIgnoreCase(dbNameToCheck)) {
-					return true;
-				}
+				dbList.add(resultSet.getString("TABLE_CAT"));
 			}
 			
 		} catch (SQLException sqlEx) {
 			sqlEx.printStackTrace();
-			dbExists = false;
 		} finally {
 			if (resultSet!=null) {
 				try {
@@ -162,10 +150,10 @@ public class MariaDbDatabaseService implements HibernateDatabaseService {
 					sqlEx.printStackTrace();
 				}
 			}
-		}
-		return dbExists;
+		}		
+		return dbList;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getHibernateSettingPanel()
 	 */
@@ -173,5 +161,5 @@ public class MariaDbDatabaseService implements HibernateDatabaseService {
 	public AbstractDatabaseSettingsPanel getHibernateSettingsPanel() {
 		return new MariaDbSQLSettingsPanel();
 	}
-
+	
 }

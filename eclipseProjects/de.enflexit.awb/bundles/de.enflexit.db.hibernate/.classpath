@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="lib/byte-buddy-1.12.18.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate-c3p0-5.6.15.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate-core-5.6.15.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate-osgi-5.6.15.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.5.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate-c3p0-5.6.7.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mchange-commons-java-0.2.19.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/byte-buddy-1.12.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/classmate-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/FastInfoset-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hibernate-commons-annotations-5.1.2.Final.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate-core-5.6.7.Final.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate-osgi-5.6.7.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/istack-commons-runtime-3.0.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jandex-2.4.2.Final.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javax.activation-api-1.2.0.jar"/>
@@ -23,12 +29,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/org.osgi.core-6.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/stax-ex-1.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/txw2-2.3.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

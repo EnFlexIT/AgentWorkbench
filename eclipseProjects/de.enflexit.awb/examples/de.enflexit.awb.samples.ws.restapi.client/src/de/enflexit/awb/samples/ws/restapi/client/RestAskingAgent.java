@@ -51,14 +51,9 @@ public class RestAskingAgent extends Agent {
 				System.out.println(sysLoad);
 				System.out.println(execState);
 			} catch (ApiException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-
-			
-
-	
 	}
 	
 	

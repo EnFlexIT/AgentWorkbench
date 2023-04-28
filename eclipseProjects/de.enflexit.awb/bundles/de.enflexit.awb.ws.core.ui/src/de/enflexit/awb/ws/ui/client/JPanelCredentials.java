@@ -365,7 +365,9 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 			
 		//If dialog ist used to edit a credential
 		if(cred!=null) {
-			this.setjDialogCredCreate(new JDialogCredentialCreation(owner, cred));
+			JDialogCredentialCreation credEdit=new JDialogCredentialCreation(owner, cred);
+			credEdit.setTitle("Edit a credential");
+			this.setjDialogCredCreate(credEdit);
 		}else {
 			this.setjDialogCredCreate(new JDialogCredentialCreation(owner)); 
 		}
