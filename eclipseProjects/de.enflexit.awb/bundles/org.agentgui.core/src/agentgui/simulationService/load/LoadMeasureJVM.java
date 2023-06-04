@@ -34,6 +34,8 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.Hashtable;
 
+import de.enflexit.common.SerialClone;
+
 /**
  * This class will do the actual load measurement of the currently running 
  * JVM. It is used from the {@link LoadMeasureThread}, which coordinates all
@@ -44,7 +46,7 @@ import java.util.Hashtable;
  * @author Christopher Nde - DAWIS - ICB - University of Duisburg - Essen
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class LoadMeasureJVM implements Cloneable {
+public class LoadMeasureJVM {
 
 	/** The JVM PID (process ID). */
 	private String jvmPID = null;
@@ -97,18 +99,29 @@ public class LoadMeasureJVM implements Cloneable {
     }
 	
     /**
-     * Returns a clone of the current object.
-     * @return LoadMeasureJVM, a new instance of this class 
+     * Returns a copy of the local instance and its measurements.
+     * @return the copy of the LoadMeasureJVM instance
      */
-    @Override
-    protected LoadMeasureJVM clone() {
-    	try {
-			return (LoadMeasureJVM) super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null;
-    }
+	public LoadMeasureJVM getCopy() {
+
+		LoadMeasureJVM copy = new LoadMeasureJVM();
+		
+		copy.setJvmPID(this.jvmPID);
+		
+		copy.setJvmMemoFree(this.jvmMemoFree);
+		copy.setJvmMemoTotal(this.jvmMemoTotal);
+		copy.setJvmMemoMax(this.jvmMemoMax);
+		
+		copy.setJvmHeapInit(this.jvmHeapInit);
+		copy.setJvmHeapMax(this.jvmHeapMax);
+		copy.setJvmHeapUsed(this.jvmHeapUsed);
+		copy.setJvmHeapCommitted(this.jvmHeapCommitted);
+		
+		copy.setJvmThreadCount(jvmThreadCount);
+		copy.setJvmThreadTimes(SerialClone.clone(jvmThreadTimes));
+		
+		return copy;
+	}
     
     /**
      * This method measures the current load of the system by using the on board functionalities of the JVM.
@@ -317,6 +330,5 @@ public class LoadMeasureJVM implements Cloneable {
 	public void setJvmThreadTimes(Hashtable<String, Long> jvmThreadTimes) {
 		this.jvmThreadTimes = jvmThreadTimes;
 	}
-
 
 }

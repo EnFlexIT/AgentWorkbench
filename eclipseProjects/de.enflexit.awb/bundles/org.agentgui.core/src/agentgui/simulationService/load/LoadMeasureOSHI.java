@@ -42,7 +42,7 @@ import oshi.hardware.GlobalMemory;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class LoadMeasureOSHI implements Cloneable {
+public class LoadMeasureOSHI {
 	
 	private boolean debug = false;
 	private boolean debugOshiSystemInfoTest = false;
@@ -106,20 +106,6 @@ public class LoadMeasureOSHI implements Cloneable {
     }
     
     /**
-     * Returns a copy of the current object.
-     * @return the copy of the current instance 
-     */
-    @Override
-    protected LoadMeasureOSHI clone() {
-    	try {
-			return (LoadMeasureOSHI) super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null;
-    }
-    
-    /**
      * Gets the system info.
      * @return the system info
      */
@@ -129,6 +115,33 @@ public class LoadMeasureOSHI implements Cloneable {
     	}
     	return systemInfo;
     }
+    
+    /**
+     * Returns a copy of the local instance and its measurements.
+     * @return the copy of the LoadMeasureOSHI instance
+     */
+    public LoadMeasureOSHI getCopy() {
+    	
+    	LoadMeasureOSHI copy = new LoadMeasureOSHI();
+
+    	copy.setProcessorName(this.getProcessorName());
+    	copy.setMhz(this.getMhz());
+    	copy.setNumberOfPhysicalCPU(this.getNumberOfPhysicalCPU());
+    	copy.setNumberOfLogicalCPU(this.getNumberOfLogicalCPU());
+
+    	copy.setCPU_Usage(this.getCPU_Usage());
+
+    	copy.setTotalMemory(this.getTotalMemory());
+    	copy.setFreeMemory(this.getFreeMemory());
+    	copy.setUsedMemory(getUsedMemory());
+    	
+    	copy.setTotalMemorySwap(this.getTotalMemorySwap());
+    	copy.setFreeMemorySwap(this.getFreeMemorySwap());
+    	copy.setUsedMemorySwap(this.getUsedMemorySwap());
+
+    	return copy;
+    }
+    
     
 	/**
 	 * Measures load of the system, by using the OSHI functionalities.

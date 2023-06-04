@@ -40,11 +40,10 @@ import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 
 /**
- * This class represents the Thread, which is permanently running on a system
- * and observes the current system information and its loads. Therefore the classes
- * {@link LoadMeasureOSHI}, {@link LoadMeasureAvgOSHI}, {@link LoadMeasureJVM} and 
+ * This class represents the Thread that is permanently and observes the current system information 
+ * and its loads. Therefore, the classes {@link LoadMeasureOSHI}, {@link LoadMeasureAvgOSHI}, {@link LoadMeasureJVM} and 
  * {@link LoadMeasureAvgJVM} are used in detail.<br>
- * Starting this Thread the Thread will give itself the name <i>Agent.GUI - Load Monitoring</i>, 
+ * Starting this Thread the Thread will give itself the name <i>Agent.Workbench - Load Monitoring</i>, 
  * which will prevent to start a second Thread of this kind on one JVM.<br>
  * This measurements will be executed every 500 milliseconds and the measured values
  * will be averaged over 5 measured values.<br>
@@ -62,16 +61,12 @@ import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
  */
 public class LoadMeasureThread extends Thread {
     
-	/** Debugging option. */
 	private static boolean debugInterval = false;
-	/** Debugging option. */
 	private static boolean debugOSHI = false;
-	/** Debugging option. */
 	private static boolean debugJVM = false;
-	/** Debugging option. */
 	private static boolean debugThreshold = false;
-	/** Debugging option. */
 	private static int debugUnit = LoadUnits.CONVERT2_MEGA_BYTE;
+
 	
 	/** The name of the running Thread. */
 	public static String LOCAL_THREAD_NAME = "Agent.Workbench - Load Monitoring";
@@ -174,8 +169,8 @@ public class LoadMeasureThread extends Thread {
 			getCurrentLoadMeasureOSHI().measureLoadOfSystem();
 			getCurrentLoadMeasureJVM().measureLoadOfSystem();
 			
-			getAvgLoadMeasureOSHI().put(getCurrentLoadMeasureOSHI().clone());
-			getAvgLoadMeassureJVM().put(getCurrentLoadMeasureJVM().clone());
+			getAvgLoadMeasureOSHI().put(getCurrentLoadMeasureOSHI().getCopy());
+			getAvgLoadMeassureJVM().put(getCurrentLoadMeasureJVM().getCopy());
 			
 			if (debugOSHI) {
 				String processorName = getCurrentLoadMeasureOSHI().getProcessorName().trim();
