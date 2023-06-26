@@ -73,13 +73,16 @@ public class ExpressionContext {
 		return contextObjectList;
 	}
 	
-	public <T> T[] getContextObject(Class<T> clazz) {
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getContextObject(Class<T> clazz) {
 		
-		T[] typeArray = null;
-		
-		
-		return typeArray;
-		
+		List<T> objectsFound = new ArrayList<>();
+		for (Object contextObject : this.getContextObjectList()) {
+			if (contextObject.getClass().equals(clazz)==true) {
+				objectsFound.add((T) contextObject);
+			}
+		}
+		return objectsFound;
 	}
 	
 	

@@ -210,10 +210,10 @@ public class JComboBoxWidePopupMenuListener implements PopupMenuListener {
 		// For some reason in JDK7 the popup will not display at its preferred
 		// width unless its location has been changed from its default
 		// (ie. for normal "pop down" shift the popup and reset)
-
 		Component comboBox = popup.getInvoker();
-		Point location = comboBox.getLocationOnScreen();
+		if (comboBox.isShowing()==false) return;
 		
+		Point location = comboBox.getLocationOnScreen();
 		if (this.isPopupAbove()==true) {
 			int height = popup.getPreferredSize().height;
 			popup.setLocation(location.x, location.y - height);

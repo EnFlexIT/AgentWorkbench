@@ -74,6 +74,7 @@ import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
+import de.enflexit.common.swing.OwnerDetection;
 
 /**
  * Represents the JPanel/Tab to configure the Distribution mechanisms for
@@ -1657,7 +1658,7 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 				String message = "Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese Option nicht deaktiviert werden.\n";
 				message += "Möchten Sie stattdessen eine andere Klasse für die statische Lastverteilung auswählen?";
 				
-				int answer = JOptionPane.showConfirmDialog(Application.getGlobalInfo().getOwnerFrameForComponent(this), Language.translate(message), Language.translate(title), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+				int answer = JOptionPane.showConfirmDialog(OwnerDetection.getOwnerFrameForComponent(this), Language.translate(message), Language.translate(title), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
 				if (answer==JOptionPane.YES_OPTION) {
 					// --- Select a new class for the static load balancing -----------------------
 					String staticLoadBalancingSelected = this.getUserSelectedBalancingClass(STATIC_BALANCING_CLASS);

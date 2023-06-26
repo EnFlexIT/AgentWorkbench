@@ -40,8 +40,6 @@ import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import de.enflexit.common.Observable;
-import de.enflexit.common.Observer;
 import java.util.Set;
 import java.util.Vector;
 
@@ -78,9 +76,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
+import de.enflexit.common.swing.OwnerDetection;
 
 /**
  * The Class BasicGraphGuiTools consists on additional visual tools for 
@@ -1252,14 +1252,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
 				
 				GeneralGraphSettings4MAS settings = networkModel.getGeneralGraphSettings4MAS();
 				
-				ComponentTypeDialog ctsDialog = null;
-				GlobalInfo globalInfo = Application.getGlobalInfo();
-				
-				Window ownerWindow = globalInfo.getOwnerFrameForComponent(this.getGraphControllerGUI());
-				if (ownerWindow==null) {
-					ownerWindow = globalInfo.getOwnerDialogForComponent(this.getGraphControllerGUI());
-				}
-				ctsDialog = new ComponentTypeDialog(ownerWindow, settings, this.graphController.getProject());
+				Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(this.getGraphControllerGUI());
+				ComponentTypeDialog ctsDialog = new ComponentTypeDialog(ownerWindow, settings, this.graphController.getProject());
 				ctsDialog.setVisible(true);
 				// - - - Waiting here - - -
 				if (ctsDialog.isCanceled()==false) {

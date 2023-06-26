@@ -1,5 +1,8 @@
 package de.enflexit.expression.gui;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -7,18 +10,16 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 
 /**
  * Reduced version of the {@link ExpressionEditorWidget} for the use as a table cell editor. 
@@ -163,9 +164,11 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		if (ae.getSource()==this.getJButtonExpressionEditor()) {
 			
-			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
+			Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(jButtonExpressionEditor) ; 
+			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(ownerWindow, this.getExpression(), this.getExpressionContext(), true);
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
@@ -173,7 +176,6 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			}
 			
 			this.jTextFieldExpression.requestFocus();
-			
 		}
 	}
 }

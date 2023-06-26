@@ -50,6 +50,7 @@ import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandle
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import de.enflexit.common.swing.OwnerDetection;
 
 /**
  * The Class DataModelStorageThread loads or saves the data models 
@@ -475,7 +476,7 @@ public class DataModelStorageThread extends Thread {
 	    	
 			// --- Determine parent component for progress ----------
 			JComponent parentComponent = this.graphController.getGraphEnvironmentControllerGUI();
-			Window ownerWindow = Application.getGlobalInfo().getOwnerFrameForComponent(parentComponent);
+			Window ownerWindow = OwnerDetection.getOwnerFrameForComponent(parentComponent);
 			
 			// --- Initiate ProgressMonitor -------------------------
 			progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);

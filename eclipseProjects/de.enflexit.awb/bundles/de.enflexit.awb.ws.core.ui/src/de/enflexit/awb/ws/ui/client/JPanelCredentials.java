@@ -24,13 +24,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.ws.client.CredentialType;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 import de.enflexit.awb.ws.ui.client.credentials.JDialogCredentialCreation;
+import de.enflexit.common.swing.OwnerDetection;
 
 /**
  * The Class JPanelCredentials for the listing and creation of credentials .
@@ -236,10 +236,10 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	 * @return the {@link JDialogCredentialCreation}
 	 */
 	public JDialogCredentialCreation getJDialogCredCreate() {
-		if(this.jDialogCredCreate==null) {
-			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-	         jDialogCredCreate=new JDialogCredentialCreation(owner);
-	         jDialogCredCreate.addWindowListener(this);
+		if (this.jDialogCredCreate==null) {
+			Window owner = OwnerDetection.getOwnerFrameForComponent(this);
+	        jDialogCredCreate=new JDialogCredentialCreation(owner);
+	        jDialogCredCreate.addWindowListener(this);
 		}
 		return jDialogCredCreate;
 	}
@@ -361,17 +361,15 @@ public class JPanelCredentials extends JPanel implements ActionListener,MouseLis
 	 * @param cred the cred, null if new credential should be create. For editing a credential add the credential as a parameter
 	 */
 	private void openJDialogCredentialCreation(AbstractCredential cred) {
-		Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
-			
+		Window owner = OwnerDetection.getOwnerFrameForComponent(this);
 		//If dialog ist used to edit a credential
-		if(cred!=null) {
+		if (cred!=null) {
 			JDialogCredentialCreation credEdit=new JDialogCredentialCreation(owner, cred);
 			credEdit.setTitle("Edit a credential");
 			this.setjDialogCredCreate(credEdit);
-		}else {
+		} else {
 			this.setjDialogCredCreate(new JDialogCredentialCreation(owner)); 
 		}
-		
 		this.getJDialogCredCreate().setVisible(true);
 		this.getJDialogCredCreate().addWindowListener(this);
 	}
