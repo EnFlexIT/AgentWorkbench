@@ -1,25 +1,35 @@
+/*
+ * 
+ */
 package de.enflexit.expression;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * The Enumeration ExpressionDataType specifies all data types that 
- * can be handled within the {@link ExpressionService}.
+ * The Class ExpressionData is basically used to hold the data of an {@link ExpressionResult}.
+ * 
+ * @see ExpressionResult#getExpressionData()
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class ExpressionData {
 	
+	/**
+	 * The Enumeration ExpressionDataType specifies all data types that 
+	 * can be handled within the {@link ExpressionService}.
+	 *
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+	 */
 	public enum DataType {
 		Boolean,
 		Integer,
+		Long,
 		Double,
 	}
 	
 	private List<DataColumn> dataColumnList;
-	
+	private TimeSeriesDescription timeSeriesDescription;
 	
 	/**
 	 * Instantiates a new expression data instance.
@@ -128,6 +138,60 @@ public class ExpressionData {
 		this.addDataColumn(name, DataType.Double, 1).setColumnData(doubleArray);
 	}
 	
+	/**
+	 * Instantiates a new expression data instance that serves as container for time series.
+	 * @param tsd the {@link TimeSeriesDescription} that describes the expression data structure 
+	 */
+	public ExpressionData(TimeSeriesDescription tsd) {
+		if (tsd==null) {
+			throw new NullPointerException("The TimeSeriesDescription for defining the ExpressionData instance was Null");
+		}
+		this.timeSeriesDescription = tsd;
+		this.initTimeSeriesStructure();
+	}
+	/**
+	 * Returns the current TimeSeriesDescription, if defined.
+	 * @return the time series description or <code>null</code>
+	 */
+	public TimeSeriesDescription getTimeSeriesDescription() {
+		return timeSeriesDescription;
+	}
+	/**
+	 * Builds up the time series structure.
+	 */
+	private void initTimeSeriesStructure() {
+		
+		// --- Add the time column ------------------------  
+		DataColumn dcTime = new DataColumn(this.getTimeSeriesDescription().getTimeColumnName(), DataType.Long, new ArrayList<Long>());
+		this.addDataColumn(dcTime);
+		
+		// --- Add data columns ---------------------------
+		for (int i = 0; i < this.getTimeSeriesDescription().getNumberOfDataColumns(); i++) {
+			
+			String columnName = this.getTimeSeriesDescription().getDataColumnNames().get(i);
+			DataType dataType = this.getTimeSeriesDescription().getDataTypes().get(i); 
+			Object dataContainer = null;
+			switch (dataType) {
+			case Boolean:
+				dataContainer = new ArrayList<Boolean>();
+				break;
+			case Integer:
+				dataContainer = new ArrayList<Integer>();
+				break;
+			case Long:
+				dataContainer = new ArrayList<Long>();
+				break;
+			case Double:
+				dataContainer = new ArrayList<Double>();
+				break;
+			}
+			
+			// --- Add as data column ---------------------
+			DataColumn dcValue = new DataColumn(columnName, dataType, dataContainer);
+			this.addDataColumn(dcValue);
+		}
+	}
+	
 	
 	// --------------------------------------------------------------
 	// --- From here, handling of DataColumns -----------------------
@@ -223,6 +287,10 @@ public class ExpressionData {
 				int intValue = 0;
 				dc = new DataColumn(name, dataType, intValue);
 				break;
+			case Long:
+				long lngValue = 0;
+				dc = new DataColumn(name, dataType, lngValue);
+				break;
 			case Double:
 				double dblValue = 0.0;
 				dc = new DataColumn(name, dataType, dblValue);
@@ -240,6 +308,10 @@ public class ExpressionData {
 				int[] intArray = new int[rows];
 				dc = new DataColumn(name, dataType, intArray);
 				break;
+			case Long:
+				long[] lngArray = new long[rows];
+				dc = new DataColumn(name, dataType, lngArray);
+				break;
 			case Double:
 				double[] dblArray = new double[rows];
 				dc = new DataColumn(name, dataType, dblArray);
@@ -248,12 +320,21 @@ public class ExpressionData {
 		}
 		
 		// --- Add the data column ------------------------
-		if (dc!=null) {
-			this.getDataColumnList().add(dc);
+		if (this.addDataColumn(dc)==true) {
+			return dc;
 		}
-		return dc;
+		return null;
 	}
-
+	/**
+	 *  Adds the specified data type as new 'column' to the current {@link ExpressionData} instance.
+	 *
+	 * @param dataColumn the data column to add
+	 * @return true, if successful
+	 */
+	public boolean addDataColumn(DataColumn dataColumn) {
+		if (dataColumn==null) return false;
+		return this.getDataColumnList().add(dataColumn);
+	}
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here, simplifying access methods for simple ExpressionData instances ----
@@ -295,15 +376,23 @@ public class ExpressionData {
 	}
 	/**
 	 * Returns the single integer value if the class was initiated with as single int value.
-	 * @return the boolean value or <code>null</code>
+	 * @return the Integer value or <code>null</code>
 	 */
 	public Integer getIntegerValue() {
 		if (this.isSingleDataColumnResult()==false) return null;
 		return this.getDataColumnList().get(0).getIntegerValue();
 	}
 	/**
+	 * Returns the single long value if the class was initiated with as single long value.
+	 * @return the Long value or <code>null</code>
+	 */
+	public Long getLongValue() {
+		if (this.isSingleDataColumnResult()==false) return null;
+		return this.getDataColumnList().get(0).getLongValue();
+	}
+	/**
 	 * Returns the single Double value if the class was initiated with as single double value.
-	 * @return the boolean value or <code>null</code>
+	 * @return the Double value or <code>null</code>
 	 */
 	public Double getDoubleValue() {
 		if (this.isSingleDataColumnResult()==false) return null;
@@ -321,22 +410,243 @@ public class ExpressionData {
 	}
 	/**
 	 * Returns the integer array if the class only contains as single integer array.
-	 * @return the boolean array or <code>null</code>
+	 * @return the integer array or <code>null</code>
 	 */
 	public Integer[] getIntegerArray() {
 		if (this.isSingleDataColumnResult()==false) return null;
 		return this.getDataColumnList().get(0).getIntegerArray();
 	}
 	/**
+	 * Returns the Long array if the class only contains as single long array.
+	 * @return the Long array or <code>null</code>
+	 */
+	public Long[] getLongArray() {
+		if (this.isSingleDataColumnResult()==false) return null;
+		return this.getDataColumnList().get(0).getLongArray();
+	}
+	/**
 	 * Returns the Double array if the class only contains as single double array.
-	 * @return the boolean array or <code>null</code>
+	 * @return the Double array or <code>null</code>
 	 */
 	public Double[] getDoubleArray() {
 		if (this.isSingleDataColumnResult()==false) return null;
 		return this.getDataColumnList().get(0).getDoubleArray();
 	}
 	
+	// ----------------------------------------------------------------------------------
+	// --- From here, handling of Time series -------------------------------------------
+	// ----------------------------------------------------------------------------------
+	/**
+	 * Checks if the current data represents a time series.
+	 * @return true, if this is time series
+	 */
+	public boolean isTimeSeries() {
+		return this.getTimeSeriesDescription()!=null;
+	}
+	/**
+	 * Checks if the current data represents a time series.
+	 * @return true, if this is time series, Otherwise an {@link TimeSeriesException} will be thrown
+	 * @throws TimeSeriesException 
+	 */
+	private boolean isTimeSeriesThrowException() {
+		if (this.isTimeSeries()==true) return true;
+		try {
+			throw new TimeSeriesException("The current ExpressionData is not a time series (it is of type " + this.getDataTypeDescription() + ")");
+		} catch (TimeSeriesException tsEx) {
+			tsEx.printStackTrace();
+		}
+		return false;
+	}
 	
+	
+	/**
+	 * Adds the specified data row.
+	 *
+	 * @param timestamp the timestamp
+	 * @param cellValues the cell values
+	 * @throws TimeSeriesException 
+	 */
+	public boolean addDataRow(long timestamp, Object ... cellValues) throws TimeSeriesException {
+		return this.addDataRow(timestamp, false, cellValues);
+	}
+	/**
+	 * Adds the specified data row to a time series.
+	 *
+	 * @param timestamp the timestamp of the data
+	 * @param doOverwrite the indicator to overwrite already available data
+	 * @param cellValues the cell values
+	 * @return true, if successful
+	 * @throws TimeSeriesException the time series exception
+	 */
+	public boolean addDataRow(long timestamp, boolean doOverwrite, Object ... cellValues) throws TimeSeriesException {
+		
+		if (this.isTimeSeriesThrowException()==false) return false;
+
+		int destinRowIndexTime = -1;
+		
+		// --- Check time -------------------------------------------
+		if (timestamp<=0) {
+			throw new TimeSeriesException("To add a data row, the time needs to be specified!");
+		} else {
+			// --- Check if the time stamp is already available -----
+			destinRowIndexTime = this.getRowIndex(timestamp);
+			if (destinRowIndexTime!=-1 && doOverwrite==false) {
+				return false;
+			}
+		}
+		
+		// --- Check cellValues -------------------------------------
+		if (cellValues==null) {
+			throw new TimeSeriesException("No data was specified to be added to the time series!");
+		} else if (cellValues.length!=this.getDataColumnCount()-1) {
+			throw new TimeSeriesException("No number of data elements specified does not match the number of data columns!");
+		}
+		
+		// --- Add the data -----------------------------------------
+		this.getDataColumn(0).getLongList().add(timestamp);
+		for (int col=0; col < cellValues.length; col++) {
+			switch (this.getDataColumn(col+1).getDataType()) {
+			case Boolean:
+				this.getDataColumn(col+1).getBooleanList().add((Boolean)cellValues[col]);
+				break;
+			case Integer:
+				this.getDataColumn(col+1).getIntegerList().add((Integer)cellValues[col]);
+				break;
+			case Long:
+				this.getDataColumn(col+1).getLongList().add((Long)cellValues[col]);
+				break;
+			case Double:
+				this.getDataColumn(col+1).getDoubleList().add((Double)cellValues[col]);
+				break;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns the data row of a time series including the timestamp as first value.
+	 *
+	 * @param timestamp the timestamp
+	 * @return the data row as Object array including the timestamp as first value.
+	 */
+	public Object[] getDataRow(long timestamp) {
+		if (this.isTimeSeriesThrowException()==false) return null;
+		return this.getDataRow(this.getRowIndex(timestamp));
+	}
+	/**
+	 * Returns the data row for the specified row index.
+	 *
+	 * @param rowIndex the row index
+	 * @return the data row as Object array including the timestamp as first value.
+	 */
+	public Object[] getDataRow(int rowIndex) {
+		if (this.isTimeSeriesThrowException()==false) return null;
+		if (rowIndex==-1) return null;
+		
+		Object[] dataRow = new Object[this.getDataColumnCount()];
+		for (int col=0; col < this.getDataColumnCount(); col++) {
+			dataRow[col] = this.getDataColumn(col).getList().get(rowIndex);
+		}
+		return dataRow;
+	}
+	
+	/**
+	 * Sets the value for the specified time in the specified column.
+	 *
+	 * @param timestamp the timestamp
+	 * @param columnIndex the column index, where '0' represents the timestamp column
+	 * @param value the value to set
+	 * @return the element previously at the specified position
+	 */
+	public Object setValueAt(long timestamp, int columnIndex, Object value) {
+		if (this.isTimeSeriesThrowException()==false) return false;
+		return this.setValueAt(this.getRowIndex(timestamp), columnIndex, value);
+	}
+	/**
+	 * Returns the value for the specified time in the specified column.
+	 *
+	 * @param timestamp the timestamp
+	 * @param columnIndex the column index, where '0' represents the timestamp column
+	 * @param value the value to set
+	 * @return true, if successful
+	 */
+	public Object getValueAt(long timestamp, int col) {
+		if (this.isTimeSeriesThrowException()==false) return null;
+		return this.getValueAt(this.getRowIndex(timestamp), col);
+	}
+	
+	/**
+	 * Set the value for the specified row and column index.
+	 *
+	 * @param rowIndex the row index
+	 * @param columnIndex the column index, where '0' represents the timestamp column
+	 * @param value the value to set
+	 * @return the element previously at the specified position
+	 */
+	public Object setValueAt(int rowIndex, int columnIndex, Object value) {
+		
+		if (this.isTimeSeriesThrowException()==false) return false;
+		if (rowIndex==-1) return false;
+		if (columnIndex<0 || columnIndex>this.getDataColumnCount()-1) return false;
+
+		// --- For null values ----------------------------
+		if (value==null) return this.getDataColumn(columnIndex).getList().set(rowIndex, null);
+		
+		// --- For none-null values -----------------------
+		switch (this.getDataColumn(columnIndex).getDataType()) {
+		case Boolean:
+			return this.getDataColumn(columnIndex).getBooleanList().set(rowIndex, (Boolean)value);
+		case Integer:
+			return this.getDataColumn(columnIndex).getIntegerList().set(rowIndex, (Integer)value);
+		case Long:
+			return this.getDataColumn(columnIndex).getLongList().set(rowIndex, (Long)value);
+		case Double:
+			return this.getDataColumn(columnIndex).getDoubleList().set(rowIndex, (Double)value);
+		} 
+		return null;
+	}
+	
+	/**
+	 * Return the value at the specified row and column index..
+	 *
+	 * @param rowIndex the row index
+	 * @param columnIndex the column index
+	 * @return the value at
+	 */
+	public Object getValueAt(int rowIndex, int columnIndex ) {
+		
+		if (this.isTimeSeriesThrowException()==false) return null;
+		if (rowIndex==-1) return null;
+		if (columnIndex<0 || columnIndex>this.getDataColumnCount()-1) return null;
+		return this.getDataColumn(columnIndex).getList().get(rowIndex);
+	}
+	
+	/**
+	 * Returns the row index for the specified timestamp.
+	 *
+	 * @param timeStamp the time stamp
+	 * @return the row index or -1, if no value could be found for the timestamp
+	 */
+	public int getRowIndex(long timeStamp) {
+		
+		this.isTimeSeriesThrowException();
+		
+		List<Long> timeList = this.getDataColumn(0).getLongList();
+		if (timeList==null) return -1;
+
+		for (int i = 0; i < timeList.size(); i++) {
+			Long timeValueList = timeList.get(i); 
+			if (timeValueList!=null && timeValueList==timeStamp) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, some description methods ------------------------------------------
+	// ----------------------------------------------------------------------------------
 	/**
 	 * Returns the data type description.
 	 * @return the data type description
@@ -354,15 +664,23 @@ public class ExpressionData {
 			if (this.isArray()==true) dtDesc += " (Array)";
 			
 		} else {
-			// --- For multi column results ---------------
-			dtDesc = "Multi-Column result";
-			String dtList = " ("; 
-			for (DataColumn dc : this.getDataColumnList()) {
-				String dt = dc.getDataType().name();
-				dtList += dtList.isEmpty()==true ? dt : ", " + dt;
+			if (this.isTimeSeries()==true) {
+				// --- Time series ------------------------
+				dtDesc = "Time Series";
+				
+			} else {
+				// --- For multi column results -----------
+				dtDesc = "Multi-Column result";
+				String dtList = " ("; 
+				for (DataColumn dc : this.getDataColumnList()) {
+					String dt = dc.getDataType().name();
+					dtList += dtList.isEmpty()==true ? dt : ", " + dt;
+				}
+				dtList += ")";
+				dtDesc += " " + dtList;
+				
 			}
-			dtList += ")";
-			dtDesc += " " + dtList;
+			
 		}
 		return dtDesc;
 	}
@@ -389,6 +707,9 @@ public class ExpressionData {
 				case Integer:
 					dvDesc = this.getIntegerValue().toString();
 					break;
+				case Long:
+					dvDesc = this.getLongValue().toString();
+					break;
 				case Double:
 					dvDesc = this.getDoubleValue().toString();
 					break;
@@ -403,6 +724,9 @@ public class ExpressionData {
 				case Integer:
 					dvDesc = this.getIntegerArray().toString();
 					break;
+				case Long:
+					dvDesc = this.getLongArray().toString();
+					break;
 				case Double:
 					dvDesc = this.getDoubleArray().toString();
 					break;
@@ -410,15 +734,24 @@ public class ExpressionData {
 			}
 			
 		} else {
-			// --- For multi column results ---------------
-			dvDesc = "Multi-Column result";
-			String dtList = " ("; 
-			for (DataColumn dc : this.getDataColumnList()) {
-				String dt = dc.getDataType().name();
-				dtList += dtList.isEmpty()==true ? dt : ", " + dt;
+			if (this.isTimeSeries()==true) {
+				// --- Time series ------------------------
+				dvDesc = "Time series";
+				// TODO
+				
+			} else {
+				// --- For multi column results -----------
+				dvDesc = "Multi-Column result";
+				String dtList = " ("; 
+				for (DataColumn dc : this.getDataColumnList()) {
+					String dt = dc.getDataType().name();
+					dtList += dtList.isEmpty()==true ? dt : ", " + dt;
+				}
+				dtList += ")";
+				dvDesc += " " + dtList;
+				
 			}
-			dtList += ")";
-			dvDesc += " " + dtList;
+			
 		}
 		return dvDesc;
 	}
@@ -444,8 +777,8 @@ public class ExpressionData {
 	public class DataColumn {
 		
 		private String colName;
-		private Object colData;
 		private DataType dataType;
+		private Object colData;
 		
 		/**
 		 * Instantiates a new data column.
@@ -476,6 +809,21 @@ public class ExpressionData {
 		}
 		
 		/**
+		 * Gets the data type.
+		 * @return the data type
+		 */
+		public DataType getDataType() {
+			return dataType;
+		}
+		/**
+		 * Sets the data type.
+		 * @param dataType the new data type
+		 */
+		public void setDataType(DataType dataType) {
+			this.dataType = dataType;
+		}
+		
+		/**
 		 * Returns the column data.
 		 * @return the column data
 		 */
@@ -489,6 +837,7 @@ public class ExpressionData {
 		public void setColumnData(Object colData) {
 			this.colData = colData;
 		}
+		
 		/**
 		 * Returns the boolean value if the column data is a single boolean value.
 		 * @return the boolean value or <code>null</code>
@@ -506,6 +855,16 @@ public class ExpressionData {
 		public Integer getIntegerValue() {
 			if (this.getColumnData() instanceof Integer) {
 				return (Integer) this.getColumnData();
+			}
+			return null;
+		}
+		/**
+		 * Returns the Long value if the column data is a single long value.
+		 * @return the Long value or <code>null</code>
+		 */
+		public Long getLongValue() {
+			if (this.getColumnData() instanceof Long) {
+				return (Long) this.getColumnData();
 			}
 			return null;
 		}
@@ -547,8 +906,8 @@ public class ExpressionData {
 		 */
 		public Boolean[] getBooleanArray() {
 			Object[] objArray = this.getObjectArray();
-			if (objArray!=null) {
-				return Arrays.asList(objArray).toArray(new Boolean[objArray.length]);
+			if (objArray!=null && objArray.length>0 && objArray[0] instanceof Boolean) {
+				return (Boolean[]) objArray;
 			}
 			return null;
 		}
@@ -558,8 +917,19 @@ public class ExpressionData {
 		 */
 		public Integer[] getIntegerArray() {
 			Object[] objArray = this.getObjectArray();
-			if (objArray!=null) {
-				return Arrays.asList(objArray).toArray(new Integer[objArray.length]);
+			if (objArray!=null && objArray.length>0 && objArray[0] instanceof Integer) {
+				return (Integer[]) objArray;
+			}
+			return null;
+		}
+		/**
+		 * If the current column data is defined so, returns it as Long array.
+		 * @return the integer array
+		 */
+		public Long[] getLongArray() {
+			Object[] objArray = this.getObjectArray();
+			if (objArray!=null && objArray.length>0 && objArray[0] instanceof Long) {
+				return (Long[]) objArray;
 			}
 			return null;
 		}
@@ -569,26 +939,78 @@ public class ExpressionData {
 		 */
 		public Double[] getDoubleArray() {
 			Object[] objArray = this.getObjectArray();
-			if (objArray!=null) {
-				return Arrays.asList(objArray).toArray(new Double[objArray.length]);
+			if (objArray!=null && objArray.length>0 && objArray[0] instanceof Double) {
+				return (Double[]) objArray;
 			}
 			return null;
 		}
 		
 		/**
-		 * Gets the data type.
-		 * @return the data type
+		 * Checks if the local data instance is of type List.
+		 * @return true, if it is a list
 		 */
-		public DataType getDataType() {
-			return dataType;
+		public boolean isList() {
+			return this.getColumnData() instanceof List<?>;
 		}
 		/**
-		 * Sets the data type.
-		 * @param dataType the new data type
+		 * Returns the current column data into an object array.
+		 * @return the object array
 		 */
-		public void setDataType(DataType dataType) {
-			this.dataType = dataType;
+		private List<?> getList() {
+			if (this.isList()==true) {
+				return (List<?>) this.getColumnData();
+			}
+			return null;
 		}
-	}
+		
+		/**
+		 * If the current column data is defined so, returns it as List of Boolean.
+		 * @return the boolean list
+		 */
+		@SuppressWarnings("unchecked")
+		public List<Boolean> getBooleanList() {
+			List<?> list = this.getList();
+			if (list!=null && this.getDataType()==DataType.Boolean) {
+				return (List<Boolean>) list;
+			}
+			return null;
+		}
+		/**
+		 * If the current column data is defined so, returns it as List of Integer.
+		 * @return the boolean list
+		 */
+		@SuppressWarnings("unchecked")
+		public List<Integer> getIntegerList() {
+			List<?> list = this.getList();
+			if (list!=null && this.getDataType()==DataType.Integer) {
+				return (List<Integer>) list;
+			}
+			return null;
+		}
+		/**
+		 * If the current column data is defined so, returns it as List of Long.
+		 * @return the boolean list
+		 */
+		@SuppressWarnings("unchecked")
+		public List<Long> getLongList() {
+			List<?> list = this.getList();
+			if (list!=null && this.getDataType()==DataType.Long) {
+				return (List<Long>) list;
+			}
+			return null;
+		}
+		/**
+		 * If the current column data is defined so, returns it as List of Double.
+		 * @return the boolean list
+		 */
+		@SuppressWarnings("unchecked")
+		public List<Double> getDoubleList() {
+			List<?> list = this.getList();
+			if (list!=null && this.getDataType()==DataType.Double) {
+				return (List<Double>) list;
+			}
+			return null;
+		}
+	} // end sub class
 
 }

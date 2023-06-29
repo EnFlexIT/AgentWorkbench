@@ -17,7 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
 
@@ -167,8 +169,14 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		
 		if (ae.getSource()==this.getJButtonExpressionEditor()) {
 			
-			Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(jButtonExpressionEditor) ; 
+			Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(jButtonExpressionEditor);
 			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(ownerWindow, this.getExpression(), this.getExpressionContext(), true);
+			if (ownerWindow!=null) {
+				double scaleWidth = 1.15;
+				double scaleHeight = 0.95;
+				editorDialog.setSize((int)(ownerWindow.getWidth() * scaleWidth), (int)(ownerWindow.getHeight() * scaleHeight));
+				JDialogSizeAndPostionController.setJDialogPositionOnScreen(editorDialog, JDialogPosition.ParentCenter);
+			}
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
