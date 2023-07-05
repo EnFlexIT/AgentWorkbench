@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.enflexit.expression;
 
 import java.util.ArrayList;
@@ -66,10 +63,25 @@ public class ExpressionData {
 	/**
 	 * Instantiates a new expression data instance with a single int value.
 	 * @param name the name of the value (can be <code>null</code>)
-	 * @param boolValue the int value
+	 * @param intValue the integer value
 	 */
 	public ExpressionData(String name, int intValue) { 
 		this.addDataColumn(name, DataType.Integer, 1).setColumnData(intValue);
+	}
+	/**
+	 * Instantiates a new expression data instance with a single double value.
+	 * @param longValue the long value
+	 */
+	public ExpressionData(long longValue) { 
+		this(null, longValue);
+	}
+	/**
+	 * Instantiates a new expression data instance with a single long value.
+	 * @param name the name of the value (can be <code>null</code>)
+	 * @param longValue the long value
+	 */
+	public ExpressionData(String name, long longValue) { 
+		this.addDataColumn(name, DataType.Long, 1).setColumnData(longValue);
 	}
 	/**
 	 * Instantiates a new expression data instance with a single double value.
@@ -161,28 +173,30 @@ public class ExpressionData {
 	 */
 	private void initTimeSeriesStructure() {
 		
-		// --- Add the time column ------------------------  
-		DataColumn dcTime = new DataColumn(this.getTimeSeriesDescription().getTimeColumnName(), DataType.Long, new ArrayList<Long>());
+		// --- Add the time column ------------------------
+		int initialListLength = this.getTimeSeriesDescription().getInitialListLength();
+		DataColumn dcTime = new DataColumn(this.getTimeSeriesDescription().getTimeColumnName(), DataType.Long, new ArrayList<Long>(initialListLength));
 		this.addDataColumn(dcTime);
 		
 		// --- Add data columns ---------------------------
 		for (int i = 0; i < this.getTimeSeriesDescription().getNumberOfDataColumns(); i++) {
 			
 			String columnName = this.getTimeSeriesDescription().getDataColumnNames().get(i);
-			DataType dataType = this.getTimeSeriesDescription().getDataTypes().get(i); 
+			DataType dataType = this.getTimeSeriesDescription().getDataTypes().get(i);
+			
 			Object dataContainer = null;
 			switch (dataType) {
 			case Boolean:
-				dataContainer = new ArrayList<Boolean>();
+				dataContainer = new ArrayList<Boolean>(initialListLength);
 				break;
 			case Integer:
-				dataContainer = new ArrayList<Integer>();
+				dataContainer = new ArrayList<Integer>(initialListLength);
 				break;
 			case Long:
-				dataContainer = new ArrayList<Long>();
+				dataContainer = new ArrayList<Long>(initialListLength);
 				break;
 			case Double:
-				dataContainer = new ArrayList<Double>();
+				dataContainer = new ArrayList<Double>(initialListLength);
 				break;
 			}
 			
@@ -467,31 +481,33 @@ public class ExpressionData {
 	 * @throws TimeSeriesException 
 	 */
 	public boolean addDataRow(long timestamp, Object ... cellValues) throws TimeSeriesException {
-		return this.addDataRow(timestamp, false, cellValues);
+		return this.addDataRow(false, timestamp, cellValues);
 	}
 	/**
 	 * Adds the specified data row to a time series.
 	 *
-	 * @param timestamp the timestamp of the data
 	 * @param doOverwrite the indicator to overwrite already available data
+	 * @param timestamp the timestamp of the data
 	 * @param cellValues the cell values
 	 * @return true, if successful
 	 * @throws TimeSeriesException the time series exception
 	 */
-	public boolean addDataRow(long timestamp, boolean doOverwrite, Object ... cellValues) throws TimeSeriesException {
+	public boolean addDataRow(boolean doOverwrite, long timestamp, Object ... cellValues) throws TimeSeriesException {
 		
 		if (this.isTimeSeriesThrowException()==false) return false;
 
-		int destinRowIndexTime = -1;
-		
 		// --- Check time -------------------------------------------
 		if (timestamp<=0) {
 			throw new TimeSeriesException("To add a data row, the time needs to be specified!");
 		} else {
 			// --- Check if the time stamp is already available -----
-			destinRowIndexTime = this.getRowIndex(timestamp);
-			if (destinRowIndexTime!=-1 && doOverwrite==false) {
-				return false;
+			int destinRowIndexTime = this.getRowIndex(timestamp);
+			if (destinRowIndexTime!=-1) {
+				if (doOverwrite==false) {
+					return false;
+				} else {
+					return this.setDataRow(destinRowIndexTime, timestamp, doOverwrite, cellValues);
+				}
 			}
 		}
 		
@@ -522,6 +538,69 @@ public class ExpressionData {
 		}
 		return true;
 	}
+	
+	/**
+	 * Sets the specified data row to the specified index position.
+	 *
+	 * @param destinRowIndex the destination row index
+	 * @param timestamp the timestamp
+	 * @param cellValues the cell values
+	 * @return true, if successful
+	 * @throws TimeSeriesException the time series exception
+	 */
+	public boolean setDataRow(int destinRowIndex, long timestamp, Object ... cellValues) throws TimeSeriesException {
+		return this.setDataRow(destinRowIndex, timestamp, false, cellValues);
+	}
+	/**
+	 * Sets the specified data row to the specified index position.
+	 *
+	 * @param destinRowIndex the destination row index
+	 * @param timestamp the timestamp of the data
+	 * @param doOverwrite the indicator to overwrite already available data
+	 * @param cellValues the cell values
+	 * @return true, if successful
+	 * @throws TimeSeriesException the time series exception
+	 */
+	public boolean setDataRow(int destinRowIndex, long timestamp, boolean doOverwrite, Object ... cellValues) throws TimeSeriesException {
+		
+		if (this.isTimeSeriesThrowException()==false) return false;
+
+		// --- Check time -------------------------------------------
+		if (destinRowIndex<=0) {
+			throw new TimeSeriesException("To set a data row, the destination row index needs to be >= 0!");
+		} 
+		if (timestamp<=0) {
+			throw new TimeSeriesException("To set a data row, the time needs to be specified!");
+		}
+		
+		// --- Check cellValues -------------------------------------
+		if (cellValues==null) {
+			throw new TimeSeriesException("No data was specified to be set to the time series!");
+		} else if (cellValues.length!=this.getDataColumnCount()-1) {
+			throw new TimeSeriesException("No number of data elements specified does not match the number of data columns!");
+		}
+		
+		// --- Add the data -----------------------------------------
+		this.getDataColumn(0).getLongList().set(destinRowIndex, timestamp);
+		for (int col=0; col < cellValues.length; col++) {
+			switch (this.getDataColumn(col+1).getDataType()) {
+			case Boolean:
+				this.getDataColumn(col+1).getBooleanList().set(destinRowIndex, (Boolean)cellValues[col]);
+				break;
+			case Integer:
+				this.getDataColumn(col+1).getIntegerList().set(destinRowIndex, (Integer)cellValues[col]);
+				break;
+			case Long:
+				this.getDataColumn(col+1).getLongList().set(destinRowIndex, (Long)cellValues[col]);
+				break;
+			case Double:
+				this.getDataColumn(col+1).getDoubleList().set(destinRowIndex, (Double)cellValues[col]);
+				break;
+			}
+		}
+		return true;
+	}
+	
 	
 	/**
 	 * Returns the data row of a time series including the timestamp as first value.
@@ -570,9 +649,9 @@ public class ExpressionData {
 	 * @param value the value to set
 	 * @return true, if successful
 	 */
-	public Object getValueAt(long timestamp, int col) {
+	public Object getValueAt(long timestamp, int columnIndex) {
 		if (this.isTimeSeriesThrowException()==false) return null;
-		return this.getValueAt(this.getRowIndex(timestamp), col);
+		return this.getValueAt(this.getRowIndex(timestamp), columnIndex);
 	}
 	
 	/**

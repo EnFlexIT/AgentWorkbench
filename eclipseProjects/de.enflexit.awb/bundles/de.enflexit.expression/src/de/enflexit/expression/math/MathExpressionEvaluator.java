@@ -57,13 +57,19 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 						if (subExpStringSearch.equals(expressionString)==true) return subResult;
 						
 						String subResultString = null;
-						if (subResult.isArray()==false) {
+						if (subResult.isTimeSeries()==true) {
+							// TODO
+							
+						} else if (subResult.isArray()==false) {
 							switch (subResult.getDataType()) {
 							case Boolean:
 								subResultString = subResult.getBooleanValue().toString();
 								break;
 							case Integer:
 								subResultString = subResult.getIntegerValue().toString();
+								break;
+							case Long:
+								subResultString = subResult.getLongValue().toString();
 								break;
 							case Double:
 								subResultString = subResult.getDoubleValue().toString();
@@ -77,6 +83,9 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 								break;
 							case Integer:
 								subResultString = subResult.getIntegerArray().toString();
+								break;
+							case Long:
+								subResultString = subResult.getLongArray().toString();
 								break;
 							case Double:
 								subResultString = subResult.getDoubleArray().toString();

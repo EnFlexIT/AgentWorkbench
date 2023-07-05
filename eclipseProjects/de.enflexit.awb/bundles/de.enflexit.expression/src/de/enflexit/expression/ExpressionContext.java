@@ -34,33 +34,6 @@ public class ExpressionContext {
 		this.addContextObjects(contextObjects);
 	}
 
-	// --------------------------------------------------------------
-	// --- From here, methods to add context instances --------------  
-	// --------------------------------------------------------------
-	/**
-	 * Adds the specified context object to the local context store.
-	 * @param contextObject the context object
-	 */
-	public void addContextObject(Object contextObject) {
-		if (contextObject!=null) {
-			this.getContextObjectList().add(contextObject);
-		}
-	}
-	/**
-	 * Sets the context objects.
-	 * @param contextObjects the new context objects
-	 */
-	public void addContextObjects(Object[] contextObjects) {
-		if (contextObjects!=null) {
-			for (int i = 0; i < contextObjects.length; i++) {
-				this.addContextObject(contextObjects[i]);
-			}
-		}
-	}
-	
-	// --------------------------------------------------------------
-	// --- From here, access methods to the context information -----  
-	// --------------------------------------------------------------
 	/**
 	 * Returns the context object list.
 	 * @return the context object list
@@ -72,7 +45,36 @@ public class ExpressionContext {
 		}
 		return contextObjectList;
 	}
+
+	/**
+	 * Adds the specified context object to the local context store.
+	 * @param contextObject the context object
+	 */
+	public boolean addContextObject(Object contextObject) {
+		if (contextObject!=null && this.getContextObjectList().contains(contextObject)==false) {
+			return this.getContextObjectList().add(contextObject);
+		}
+		return false;
+	}
+	/**
+	 * Sets the context objects.
+	 * @param contextObjects the new context objects
+	 */
+	public void addContextObjects(Object[] contextObjects) {
+		if (contextObjects!=null && contextObjects.length>0) {
+			for (int i = 0; i < contextObjects.length; i++) {
+				this.addContextObject(contextObjects[i]);
+			}
+		}
+	}
 	
+	/**
+	 * Returns all instances of the specified context class as list.
+	 *
+	 * @param <T> the generic type, specifying the context class 
+	 * @param clazz the actual context class
+	 * @return the list of context instances that are of the type specified
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getContextObject(Class<T> clazz) {
 		
@@ -84,8 +86,5 @@ public class ExpressionContext {
 		}
 		return objectsFound;
 	}
-	
-	
-	
 	
 }

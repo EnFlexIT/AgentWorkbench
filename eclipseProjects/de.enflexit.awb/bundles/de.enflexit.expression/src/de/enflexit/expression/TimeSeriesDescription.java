@@ -20,6 +20,7 @@ public class TimeSeriesDescription {
 	private List<String> dataColumnNames; 
 	private List<DataType> dataTypes;
 
+	private int initialListLength;
 	
 	/**
 	 * Instantiates a new time series description.
@@ -121,5 +122,21 @@ public class TimeSeriesDescription {
 	public int getNumberOfDataColumns() {
 		return this.getDataTypes().size();
 	}
+	
+	/**
+	 * Sets the list length.
+	 * @param initialListLength the new list length
+	 */
+	public void setInitialListLength(int listLength) {
+		this.initialListLength = listLength;
+	}
+	/**
+	 * Returns the list length.
+	 * @return the list length
+	 */
+	public int getInitialListLength() {
+		return initialListLength;
+	}
+	
 	
 }
