@@ -12,6 +12,7 @@ Export-Package: com.expression.parser,
  com.expression.parser.function,
  com.expression.parser.util,
  de.enflexit.expression,
+ de.enflexit.expression.functions,
  de.enflexit.expression.gui,
  de.enflexit.expression.math
 Import-Package: de.enflexit.common,
@@ -19,4 +20,5 @@ Import-Package: de.enflexit.common,
 Require-Bundle: org.agentgui.core
 Bundle-ClassPath: .,
  lib/com.expression.parser-3.3.0.jar
-Service-Component: OSGI-INF/mathExpressionService.xml
+Service-Component: OSGI-INF/mathExpressionService.xml,
+ OSGI-INF/fxExpressionService.xml

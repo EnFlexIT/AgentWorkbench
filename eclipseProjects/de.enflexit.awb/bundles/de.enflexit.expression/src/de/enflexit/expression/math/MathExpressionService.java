@@ -31,7 +31,7 @@ public class MathExpressionService implements ExpressionService {
 	 */
 	@Override
 	public ExpressionType getExpressionType() {
-		return ExpressionTypeMath.getInstance();
+		return MathExpressionType.getInstance();
 	}
 	
 	/* (non-Javadoc)
@@ -120,7 +120,7 @@ public class MathExpressionService implements ExpressionService {
 		functionExpressions.add("log");
 		functionExpressions.add("sqrt");
 		functionExpressions.add("cbrt");
-		expressionTemplates.put("Numerical Functions", functionExpressions);
+		expressionTemplates.put("Numerical ExpressionFunctions", functionExpressions);
 
 		ArrayList<String> trigoExpressions = new ArrayList<>();
 		trigoExpressions.add("sin");
@@ -141,7 +141,7 @@ public class MathExpressionService implements ExpressionService {
 		allExpressions.addAll(functionExpressions);
 		allExpressions.addAll(trigoExpressions);
 		
-		expressionTemplates.put("All Functions", allExpressions);
+		expressionTemplates.put("All ExpressionFunctions", allExpressions);
 		
 		return expressionTemplates;
 	}
