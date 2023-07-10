@@ -41,7 +41,7 @@ public class ExpressionServiceHelper {
 		Collections.sort(eServiceList, new Comparator<ExpressionService>() {
 			@Override
 			public int compare(ExpressionService es1, ExpressionService es2) {
-				return es1.getExpressionType().getTypePrefix().compareTo(es2.getExpressionType().getTypePrefix());
+				return es1.getExpressionType().getTypePrefix().toLowerCase().compareTo(es2.getExpressionType().getTypePrefix().toLowerCase());
 			}
 		});
 		return eServiceList;

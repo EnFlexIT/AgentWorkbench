@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -14,6 +15,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
 
@@ -83,7 +87,15 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonEditor()) {
-			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
+			
+			Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(this);
+			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(ownerWindow, this.getExpression(), this.getExpressionContext(), true);
+			if (ownerWindow!=null) {
+				double scaleWidth = 1.15;
+				double scaleHeight = 0.95;
+				editorDialog.setSize((int)(ownerWindow.getWidth() * scaleWidth), (int)(ownerWindow.getHeight() * scaleHeight));
+				JDialogSizeAndPostionController.setJDialogPositionOnScreen(editorDialog, JDialogPosition.ParentCenter);
+			}
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
