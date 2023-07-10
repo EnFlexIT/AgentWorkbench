@@ -222,6 +222,13 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 		this.getJPanelExpressionPanel().setExpressionContext(context);
 	}
 	
+	/**
+	 * Sets the expression library filter.
+	 * @param expressionServiceFilter the new expression library filter
+	 */
+	public void setExpressionServiceFilter(ExpressionServiceFilter expressionServiceFilter) {
+		this.getJPanelExpressionPanel().setExpressionServiceFilter(expressionServiceFilter);
+	}
 	
 	/**
 	 * Checks if the dialog was canceled.

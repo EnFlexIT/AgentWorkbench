@@ -39,6 +39,8 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	
 	private TableCellEditor parentEditor;
 	
+	private ExpressionServiceFilter expressionLibraryFilter;
+	
 	public ExpressionEditorWidgetForTables(TableCellEditor parentEditor, Expression expression, ExpressionContext expressionContext) {
 		this.parentEditor = parentEditor;
 		this.expression = expression;
@@ -161,6 +163,24 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		this.expressionContext = expressionContext;
 	}
 	
+	
+	
+	/**
+	 * Gets the expression library filter.
+	 * @return the expression library filter
+	 */
+	public ExpressionServiceFilter getExpressionServiceFilter() {
+		return expressionLibraryFilter;
+	}
+
+	/**
+	 * Sets the expression library filter.
+	 * @param expressionServiceFilter the new expression library filter
+	 */
+	public void setExpressionServiceFilter(ExpressionServiceFilter expressionServiceFilter) {
+		this.expressionLibraryFilter = expressionServiceFilter;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -171,6 +191,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			
 			Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(jButtonExpressionEditor);
 			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(ownerWindow, this.getExpression(), this.getExpressionContext(), true);
+			editorDialog.setExpressionServiceFilter(this.getExpressionServiceFilter());
 			if (ownerWindow!=null) {
 				double scaleWidth = 1.15;
 				double scaleHeight = 0.95;

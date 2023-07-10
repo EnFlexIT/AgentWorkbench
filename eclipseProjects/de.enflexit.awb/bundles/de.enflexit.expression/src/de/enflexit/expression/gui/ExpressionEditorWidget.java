@@ -37,6 +37,8 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	private Expression expression;
 	private ExpressionContext expressionContext;
 	
+	private ExpressionServiceFilter libraryFilter;
+	
 	/**
 	 * Instantiates a new expression editor widget.
 	 * @param expression the expression to edit
@@ -84,6 +86,7 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonEditor()) {
 			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
+			editorDialog.setExpressionServiceFilter(this.getExpressionLibraryFilter());
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
@@ -197,5 +200,23 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	public ExpressionContext getExpressionContext() {
 		return expressionContext;
 	}
+
+	/**
+	 * Gets the expression library filter.
+	 * @return the expression library filter
+	 */
+	public ExpressionServiceFilter getExpressionLibraryFilter() {
+		return libraryFilter;
+	}
+
+	/**
+	 * Sets the expression library filter.
+	 * @param libraryFilter the new expression library filter
+	 */
+	public void setExpressionLibraryFilter(ExpressionServiceFilter libraryFilter) {
+		this.libraryFilter = libraryFilter;
+	}
+	
+	
 	
 }

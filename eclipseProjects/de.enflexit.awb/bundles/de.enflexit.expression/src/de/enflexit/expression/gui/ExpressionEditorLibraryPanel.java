@@ -67,7 +67,10 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	private JList<String> jListExpressions;
 	
 	private TreeMap<String, ArrayList<String>> currentOptions;
-	private HashMap<ExpressionEditorTreeNode, ExpressionType> nodeToExpressionTypeHashMap; 
+	private HashMap<ExpressionEditorTreeNode, ExpressionType> nodeToExpressionTypeHashMap;
+	
+	private ExpressionContext expressionContext;
+	private ExpressionServiceFilter expressionServiceFilter;
 
 	
 	/**
@@ -76,7 +79,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	public ExpressionEditorLibraryPanel() {
 		this.initialize();
 	}
-	
+
 	/**
 	 * Initializes the GUI components.
 	 */
@@ -299,8 +302,12 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	 * Sets the expression context.
 	 * @param context the new expression context
 	 */
-	public void setExpressionContext(ExpressionContext context) {
-		
+	public void setExpressionContext(ExpressionContext expressionContext) {
+		this.expressionContext = expressionContext;
+		this.rebuildLibraryTree();
+	}
+	
+	private void rebuildLibraryTree() {
 		// --- Re-initiate / reset local instances ------------------ 
 		DefaultMutableTreeNode elRootNode = new DefaultMutableTreeNode("Expression Library");
 		this.getNodeToExpressionTypeHashMap().clear();
@@ -310,11 +317,15 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 		for (int i=0; i<expressionServices.size(); i++) {
 			// --- Get sub-node of service --------------------------
 			ExpressionService expressionService = expressionServices.get(i);
-			ExpressionEditorTreeNode categoryNode = expressionService.getExpressionEditorNode(context);
-			if (categoryNode!=null) {
-				elRootNode.add(categoryNode);
-				this.addAllNodesToNodeToExpressionTypeHashMap(categoryNode, expressionService.getExpressionType());
+			
+			if (this.expressionServiceFilter==null || this.expressionServiceFilter.matches(expressionService)) {
+				ExpressionEditorTreeNode categoryNode = expressionService.getExpressionEditorNode(this.expressionContext);
+				if (categoryNode!=null) {
+					elRootNode.add(categoryNode);
+					this.addAllNodesToNodeToExpressionTypeHashMap(categoryNode, expressionService.getExpressionType());
+				}
 			}
+			
 		}
 		this.getJTreeMainCategories().setModel(new DefaultTreeModel(elRootNode));
 		
@@ -323,6 +334,26 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 			this.getJTreeMainCategories().expandRow(i);
 		}
 	}
+	
+	
+	
+	/**
+	 * Gets the library filter.
+	 * @return the library filter
+	 */
+	public ExpressionServiceFilter getLibraryFilter() {
+		return expressionServiceFilter;
+	}
+
+	/**
+	 * Sets the expression service filter.
+	 * @param expressionServiceFilter the new expression service filter
+	 */
+	public void setExpressionServiceFilter(ExpressionServiceFilter expressionServiceFilter) {
+		this.expressionServiceFilter = expressionServiceFilter;
+		this.rebuildLibraryTree();
+	}
+
 	/**
 	 *
 	 * @param parentNode the parent node

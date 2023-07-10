@@ -88,6 +88,14 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 		this.getJPanelExpressionTextEditor().setExpressionContext(context);
 		this.getJPanelLibrary().setExpressionContext(context);
 	}
+	
+	/**
+	 * Sets the expression service filter.
+	 * @param expressionServiceFilter the new expression library filter
+	 */
+	public void setExpressionServiceFilter(ExpressionServiceFilter expressionServiceFilter) {
+		this.getJPanelLibrary().setExpressionServiceFilter(expressionServiceFilter);
+	}
 
 	
 	private JSplitPane getJSplitPaneMain() {
