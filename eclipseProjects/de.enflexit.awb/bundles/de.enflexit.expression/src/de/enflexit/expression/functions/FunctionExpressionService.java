@@ -14,8 +14,6 @@ import de.enflexit.expression.ExpressionType;
 public class FunctionExpressionService implements ExpressionService {
 	
 	private ExpressionEditorTreeNode expressionEditorRootNode;
-	private ExpressionFunctions expressionFunctions;
-	
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.expression.ExpressionService#getExpressionType()
@@ -33,16 +31,7 @@ public class FunctionExpressionService implements ExpressionService {
 		return new FunctionExpressionEvaluator();
 	}
 	
-	/**
-	 * Holds and returns all known expression functions.
-	 * @return the expression functions
-	 */
-	public ExpressionFunctions getExpressionFunctions() {
-		if (expressionFunctions==null) {
-			expressionFunctions = new ExpressionFunctions();
-		}
-		return expressionFunctions;
-	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.expression.ExpressionService#getExpressionEditorNode(de.enflexit.expression.ExpressionContext)
 	 */
@@ -50,7 +39,7 @@ public class FunctionExpressionService implements ExpressionService {
 	public ExpressionEditorTreeNode getExpressionEditorNode(ExpressionContext context) {
 		if (expressionEditorRootNode==null) {
 			expressionEditorRootNode = new ExpressionEditorTreeNode("Function");
-			expressionEditorRootNode.setExpressionTemplates(this.getExpressionFunctions().getFunctionTreeMap());
+			expressionEditorRootNode.setExpressionTemplates(ExpressionFunctions.getFunctionTreeMap());
 		}
 		return expressionEditorRootNode;
 	}
@@ -68,7 +57,7 @@ public class FunctionExpressionService implements ExpressionService {
 
 		// --- Everything else ------------------
 		default:
-			insertString = libraryExpression + "(<>)";
+			insertString = libraryExpression;
 			break;
 		}
 		return insertString;

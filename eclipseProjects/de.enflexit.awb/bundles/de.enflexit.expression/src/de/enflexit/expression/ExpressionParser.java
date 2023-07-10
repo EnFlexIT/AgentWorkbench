@@ -3,7 +3,7 @@ package de.enflexit.expression;
 import java.util.List;
 
 import de.enflexit.expression.functions.FunctionExpressionType;
-import de.enflexit.expression.functions.FunctionExpressionService;
+import de.enflexit.expression.functions.ExpressionFunctions;
 import de.enflexit.expression.math.MathExpressionType;
 
 /**
@@ -13,9 +13,7 @@ import de.enflexit.expression.math.MathExpressionType;
  * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class ExpressionParser {
-	
-	private static FunctionExpressionService functionExpressionService;
-	
+
 	
 	/**
 	 * Parses the provided expression String, recursively processing sub-expressions.
@@ -98,7 +96,7 @@ public class ExpressionParser {
 						
 				}
 					
-			}
+			} // -- end for ---
 		}
 		
 		// --- If no other type was determined, use math as default ---------------------
@@ -137,16 +135,6 @@ public class ExpressionParser {
 	
 	
 	/**
-	 * Returns the instance of the current {@link FunctionExpressionService}.
-	 * @return the function expression service
-	 */
-	private static FunctionExpressionService getFunctionExpressionService() {
-		if (functionExpressionService==null) {
-			functionExpressionService = (FunctionExpressionService) ExpressionServiceHelper.getExpressionService(FunctionExpressionType.getInstance());
-		}
-		return functionExpressionService;
-	}
-	/**
 	 * Checks if the specified expression string contains an expression function.
 	 *
 	 * @param expressionString the expression string
@@ -156,7 +144,7 @@ public class ExpressionParser {
 		
 		String expressionWork = expressionString.toLowerCase();
 		
-		List<String> fList = ExpressionParser.getFunctionExpressionService().getExpressionFunctions().getFunctionList();
+		List<String> fList = ExpressionFunctions.getFunctionList();
 		for (String function : fList) {
 			if (expressionWork.contains(function.toLowerCase())==true) {
 				return true;
@@ -172,7 +160,7 @@ public class ExpressionParser {
 		
 		String expressionWork = expressionString.toLowerCase();
 		
-		List<String> fList = ExpressionParser.getFunctionExpressionService().getExpressionFunctions().getFunctionList();
+		List<String> fList = ExpressionFunctions.getFunctionList();
 		for (String function : fList) {
 			String functionWork = function.toLowerCase();
 			if (expressionWork.startsWith(functionWork)==true) {
