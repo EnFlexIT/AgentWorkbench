@@ -22,7 +22,10 @@ public class ExpressionParser {
 		
 		expressionString = expressionString.trim();
 		if (expressionString.startsWith(String.valueOf(ExpressionService.EXPRESSION_OPENING_DELIMITER)) && expressionString.endsWith(String.valueOf(ExpressionService.EXPRESSION_CLOSING_DELIMITER))) {
-			expressionString = expressionString.substring(1, expressionString.length()-1);
+			String workExpressionString = expressionString.substring(1, expressionString.length()-1);
+			if (workExpressionString.contains(String.valueOf(ExpressionService.EXPRESSION_OPENING_DELIMITER))==false &&  workExpressionString.contains(String.valueOf(ExpressionService.EXPRESSION_CLOSING_DELIMITER))) {
+				expressionString = workExpressionString;
+			}
 		}
 		return expressionString.trim();
 	}

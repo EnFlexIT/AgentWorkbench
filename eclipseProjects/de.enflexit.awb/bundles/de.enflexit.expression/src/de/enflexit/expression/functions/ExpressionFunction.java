@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
+import de.enflexit.expression.ExpressionService;
+
 /**
  * The Class ExpressionFunction.
  *
@@ -189,7 +191,22 @@ public enum ExpressionFunction {
 		List<String> fList = ExpressionFunction.getFunctionList();
 		for (String function : fList) {
 			if (expressionWork.contains(function.toLowerCase())==true) {
-				return true;
+				int cut = expressionWork.indexOf(function.toLowerCase()) + function.length(); 
+				// --- Get the next character and check for function delimiter ----------
+				boolean isFunction = false;
+				for (int i = cut; i < expressionWork.length(); i++) {
+					char character = expressionWork.charAt(i);
+					if (character==' ') {
+						continue;
+					} else if (character==ExpressionService.EXPRESSION_FUNCTION_OPENING_DELIMITER) {
+						isFunction = true;
+						break;
+					} else {
+						isFunction = false;
+						break;
+					}
+				}
+				return isFunction;
 			}
 		}
 		return false;
