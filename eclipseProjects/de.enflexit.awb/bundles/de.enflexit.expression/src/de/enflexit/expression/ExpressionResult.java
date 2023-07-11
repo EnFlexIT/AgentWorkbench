@@ -117,12 +117,19 @@ public class ExpressionResult {
 		return this.getExpressionData()!=null ? this.getExpressionData().isSingleDataColumnResult() : false;
 	}
 	/**
+	 * Returns if the current ExpressionData instance is a single value result.
+	 * @return true, if is single data column result
+	 */
+	public boolean isSingleValueResult() {
+		return this.getExpressionData()!=null ? this.getExpressionData().isSingleValueResult() : false;
+	}
+	/**
 	 * If this ExpressionData instance was specified with as single {@link DataColumn}, this
 	 * method returns, if the current value represents an array or not.
 	 * @return true, if the value is an array or <code>null</code> if the current instance contains less or more that one data column
 	 */
-	public Boolean isArray() {
-		return this.getExpressionData()!=null ? this.getExpressionData().isArray() : null; 
+	public boolean isArray() {
+		return this.getExpressionData()!=null ? this.getExpressionData().isArray() : false; 
 	}
 	/**
 	 * If this ExpressionData instance was specified with as single {@link DataColumn}, this

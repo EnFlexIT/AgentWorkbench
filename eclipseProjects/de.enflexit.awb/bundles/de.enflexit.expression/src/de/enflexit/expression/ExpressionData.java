@@ -361,12 +361,19 @@ public class ExpressionData {
 		return this.getDataColumnList().size()==1;
 	}
 	/**
+	 * Returns if the current ExpressionData instance is a single value result.
+	 * @return true, if is single data column result
+	 */
+	public boolean isSingleValueResult() {
+		return this.isSingleDataColumnResult()==true && this.isArray()==false;
+	}
+	/**
 	 * If this ExpressionData instance was specified with as single {@link DataColumn}, this
 	 * method returns, if the current value represents an array or not.
 	 * @return true, if the value is an array or <code>null</code> if the current instance contains less or more that one data column
 	 */
-	public Boolean isArray() {
-		if (this.isSingleDataColumnResult()==false) return null;
+	public boolean isArray() {
+		if (this.isSingleDataColumnResult()==false) return false;
 		return this.getDataColumnList().get(0).isArray();
 	}
 	/**

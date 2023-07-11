@@ -39,7 +39,7 @@ public class FunctionExpressionService implements ExpressionService {
 	public ExpressionEditorTreeNode getExpressionEditorNode(ExpressionContext context) {
 		if (expressionEditorRootNode==null) {
 			expressionEditorRootNode = new ExpressionEditorTreeNode("Function");
-			expressionEditorRootNode.setExpressionTemplates(ExpressionFunctions.getFunctionTreeMap());
+			expressionEditorRootNode.setExpressionTemplates(ExpressionFunction.getFunctionTreeMap());
 		}
 		return expressionEditorRootNode;
 	}

@@ -120,7 +120,7 @@ public class MathExpressionService implements ExpressionService {
 		functionExpressions.add("log");
 		functionExpressions.add("sqrt");
 		functionExpressions.add("cbrt");
-		expressionTemplates.put("Numerical ExpressionFunctions", functionExpressions);
+		expressionTemplates.put("Numerical ExpressionFunction", functionExpressions);
 
 		ArrayList<String> trigoExpressions = new ArrayList<>();
 		trigoExpressions.add("sin");
@@ -141,7 +141,7 @@ public class MathExpressionService implements ExpressionService {
 		allExpressions.addAll(functionExpressions);
 		allExpressions.addAll(trigoExpressions);
 		
-		expressionTemplates.put("All ExpressionFunctions", allExpressions);
+		expressionTemplates.put("All ExpressionFunction", allExpressions);
 		
 		return expressionTemplates;
 	}

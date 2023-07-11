@@ -1,9 +1,7 @@
 package de.enflexit.expression;
 
-import java.util.List;
-
+import de.enflexit.expression.functions.ExpressionFunction;
 import de.enflexit.expression.functions.FunctionExpressionType;
-import de.enflexit.expression.functions.ExpressionFunctions;
 import de.enflexit.expression.math.MathExpressionType;
 
 /**
@@ -14,6 +12,20 @@ import de.enflexit.expression.math.MathExpressionType;
  */
 public class ExpressionParser {
 
+	/**
+	 * Returns the prepared / cleaned expression string.
+	 *
+	 * @param expressionString the expression string
+	 * @return the prepared expression string
+	 */
+	private static String getPreparedExpressionString(String expressionString) {
+		
+		expressionString = expressionString.trim();
+		if (expressionString.startsWith(String.valueOf(ExpressionService.EXPRESSION_OPENING_DELIMITER)) && expressionString.endsWith(String.valueOf(ExpressionService.EXPRESSION_CLOSING_DELIMITER))) {
+			expressionString = expressionString.substring(1, expressionString.length()-1);
+		}
+		return expressionString.trim();
+	}
 	
 	/**
 	 * Parses the provided expression String, recursively processing sub-expressions.
@@ -22,10 +34,16 @@ public class ExpressionParser {
 	 */
 	public static Expression parse(String expressionString) {
 		
+		// ------------------------------------------------------------------------------
+		// --- Do some initial preparations --------------------------------------------- 
+		// ------------------------------------------------------------------------------
+		expressionString = ExpressionParser.getPreparedExpressionString(expressionString);
+		
+		// --- Define the Expression ----------------------------------------------------
 		Expression expression = new Expression(expressionString);
 		ExpressionType expressionType = null;
 		
-		if (expressionString.indexOf(ExpressionService.EXPRESSION_OPENING_DELIMITER)==-1 && ExpressionParser.containsExpressionFunction(expressionString)==false) {
+		if (expressionString.indexOf(ExpressionService.EXPRESSION_OPENING_DELIMITER)==-1 && ExpressionFunction.containsExpressionFunction(expressionString)==false) {
 			// --------------------------------------------------------------------------
 			// --- Atomic expression (i.e. contains no sub expressions)------------------
 			// --------------------------------------------------------------------------
@@ -67,7 +85,7 @@ public class ExpressionParser {
 						expression.setErrorMessage(errMsg);
 					}
 					
-				} else if (ExpressionParser.getExpressionFunctionPrefix(expressionString.substring(currPos))!=null) {
+				} else if (ExpressionFunction.getExpressionFunctionPrefix(expressionString.substring(currPos))!=null) {
 
 					int startPos = expressionString.substring(currPos).indexOf(ExpressionService.EXPRESSION_FUNCTION_OPENING_DELIMITER);
 					if (startPos!=-1) {
@@ -131,43 +149,6 @@ public class ExpressionParser {
 		}
 		// --- No matching closing delimiter found --------
 		return -1; 
-	}
-	
-	
-	/**
-	 * Checks if the specified expression string contains an expression function.
-	 *
-	 * @param expressionString the expression string
-	 * @return true, if the specified string contains an expression function
-	 */
-	private static boolean containsExpressionFunction(String expressionString) {
-		
-		String expressionWork = expressionString.toLowerCase();
-		
-		List<String> fList = ExpressionFunctions.getFunctionList();
-		for (String function : fList) {
-			if (expressionWork.contains(function.toLowerCase())==true) {
-				return true;
-			}
-		}
-		return false;
-	}
-	/**
-	 * Returns the expression function prefix, if the specified string starts with a function description.
-	 * @param expressionString the expression string
-	 */
-	private static String getExpressionFunctionPrefix(String expressionString) {
-		
-		String expressionWork = expressionString.toLowerCase();
-		
-		List<String> fList = ExpressionFunctions.getFunctionList();
-		for (String function : fList) {
-			String functionWork = function.toLowerCase();
-			if (expressionWork.startsWith(functionWork)==true) {
-				return function;
-			}
-		}
-		return null;
 	}
 	
 	/**
