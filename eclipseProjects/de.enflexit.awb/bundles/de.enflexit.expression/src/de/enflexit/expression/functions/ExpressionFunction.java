@@ -15,7 +15,8 @@ public enum ExpressionFunction {
 	
 	MIN("MIN(<EXP>)", "Array-Functions"),
 	MAX("MAX(<EXP>)", "Array-Functions"),
-	AVG("AVG(<EXP>)", "Array-Functions")
+	AVG("AVG(<EXP>)", "Array-Functions"),
+	SUM("SUM(<EXP>)", "Array-Functions")
 
 	;
 	

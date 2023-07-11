@@ -34,6 +34,7 @@ public class FunctionExpressionEvaluator implements ExpressionServiceEvaluator {
 		
 		// --- Evaluate Expression ---------------------------------- 
 		switch (expFckt) {
+		case SUM:
 		case AVG:
 		case MAX:
 		case MIN:

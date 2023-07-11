@@ -163,6 +163,7 @@ public class ArrayFunctionEvaluator {
 			
 			switch (this.expressionFunction) {
 			case AVG:
+			case SUM:
 				sum += value;
 				break;
 
@@ -178,8 +179,9 @@ public class ArrayFunctionEvaluator {
 		
 		if (this.expressionFunction==ExpressionFunction.AVG) {
 			aggregatedValue = sum / dataArray.length;
+		} else if (this.expressionFunction==ExpressionFunction.SUM) {
+			return sum;
 		}
-		
 		return aggregatedValue;
 	}
 	
