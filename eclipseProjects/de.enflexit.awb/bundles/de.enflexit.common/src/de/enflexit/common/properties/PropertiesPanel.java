@@ -62,6 +62,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	
 	
 	private Properties properties;
+	private boolean isReadOnly;
 	
 	private JLabel jLabelHeader;
 
@@ -102,7 +103,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	 * Instantiates a new properties panel.
 	 */
 	public PropertiesPanel() {
-		this(null, "Properties");
+		this(null, "Properties", false);
 	}
 	/**
 	 * Instantiates a new properties panel.
@@ -111,10 +112,22 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	 * @param header the header to be shown
 	 */
 	public PropertiesPanel(Properties properties, String header) {
+		this(properties, header, false);
+	}
+	/**
+	 * Instantiates a new properties panel.
+	 *
+	 * @param properties the properties
+	 * @param header the header
+	 * @param isReadOnly the indicator that the properties shown are read only
+	 */
+	public PropertiesPanel(Properties properties, String header, boolean isReadOnly) {
+		this.setIsReadOnly(isReadOnly);
 		this.initialize();
 		this.setProperties(properties);
 		this.getJLabelHeader().setText(header);
 	}
+	
 	
 	/**
 	 * Return the current properties.
@@ -141,6 +154,21 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		this.getJPanelPropertiesEdit().setIdentifier(null);
 		this.resetPropertiesTree();
 		this.refillTable();
+	}
+	
+	/**
+	 * Sets that the properties are read only.
+	 * @param isReadOnly the new checks if is read only
+	 */
+	public void setIsReadOnly(boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
+	}
+	/**
+	 * Checks if is read only.
+	 * @return true, if is read only
+	 */
+	public boolean isReadOnly() {
+		return this.isReadOnly;
 	}
 	
 	/**
@@ -188,29 +216,32 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		this.add(this.getJToggleButtonTreeView(), gbc_jToggleButtonTreeView);
 		
 		GridBagConstraints gbc_jToggleButtonListView = new GridBagConstraints();
-		gbc_jToggleButtonListView.insets = new Insets(10, 5, 0, 5);
+		gbc_jToggleButtonListView.insets = new Insets(10, 5, 0, this.isReadOnly()==false ? 5 : 10);
 		gbc_jToggleButtonListView.gridx = 4;
 		gbc_jToggleButtonListView.gridy = 0;
 		this.add(this.getJToggleButtonListView(), gbc_jToggleButtonListView);
 		
-		GridBagConstraints gbc_jSeparatorHeaderRight = new GridBagConstraints();
-		gbc_jSeparatorHeaderRight.insets = new Insets(10, 5, 0, 5);
-		gbc_jSeparatorHeaderRight.fill = GridBagConstraints.VERTICAL;
-		gbc_jSeparatorHeaderRight.gridx = 5;
-		gbc_jSeparatorHeaderRight.gridy = 0;
-		this.add(this.getJSeparatorHeaderRight(), gbc_jSeparatorHeaderRight);
-		
-		GridBagConstraints gbc_jButtonAddProperty = new GridBagConstraints();
-		gbc_jButtonAddProperty.insets = new Insets(10, 5, 0, 0);
-		gbc_jButtonAddProperty.gridx = 6;
-		gbc_jButtonAddProperty.gridy = 0;
-		this.add(this.getJButtonAddProperty(), gbc_jButtonAddProperty);
-		
-		GridBagConstraints gbc_jButtonRemoveProperty = new GridBagConstraints();
-		gbc_jButtonRemoveProperty.insets = new Insets(10, 5, 0, 10);
-		gbc_jButtonRemoveProperty.gridx = 7;
-		gbc_jButtonRemoveProperty.gridy = 0;
-		this.add(this.getJButtonRemoveProperty(), gbc_jButtonRemoveProperty);
+		if (this.isReadOnly()==false) {
+			
+			GridBagConstraints gbc_jSeparatorHeaderRight = new GridBagConstraints();
+			gbc_jSeparatorHeaderRight.insets = new Insets(10, 5, 0, 5);
+			gbc_jSeparatorHeaderRight.fill = GridBagConstraints.VERTICAL;
+			gbc_jSeparatorHeaderRight.gridx = 5;
+			gbc_jSeparatorHeaderRight.gridy = 0;
+			this.add(this.getJSeparatorHeaderRight(), gbc_jSeparatorHeaderRight);
+			
+			GridBagConstraints gbc_jButtonAddProperty = new GridBagConstraints();
+			gbc_jButtonAddProperty.insets = new Insets(10, 5, 0, 0);
+			gbc_jButtonAddProperty.gridx = 6;
+			gbc_jButtonAddProperty.gridy = 0;
+			this.add(this.getJButtonAddProperty(), gbc_jButtonAddProperty);
+			
+			GridBagConstraints gbc_jButtonRemoveProperty = new GridBagConstraints();
+			gbc_jButtonRemoveProperty.insets = new Insets(10, 5, 0, 10);
+			gbc_jButtonRemoveProperty.gridx = 7;
+			gbc_jButtonRemoveProperty.gridy = 0;
+			this.add(this.getJButtonRemoveProperty(), gbc_jButtonRemoveProperty);
+		}
 		
 		GridBagConstraints gbc_jSeparatorTop = new GridBagConstraints();
 		gbc_jSeparatorTop.insets = new Insets(5, 10, 0, 10);
@@ -218,7 +249,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		gbc_jSeparatorTop.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jSeparatorTop.gridx = 0;
 		gbc_jSeparatorTop.gridy = 1;
-		add(getJSeparatorTop(), gbc_jSeparatorTop);
+		this.add(getJSeparatorTop(), gbc_jSeparatorTop);
 		
 		GridBagConstraints gbc_jScrollPaneProperties = new GridBagConstraints();
 		gbc_jScrollPaneProperties.gridwidth = 8;
@@ -226,7 +257,11 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		gbc_jScrollPaneProperties.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneProperties.gridx = 0;
 		gbc_jScrollPaneProperties.gridy = 2;
-		this.add(this.getJSplitPaneProperties(), gbc_jScrollPaneProperties);
+		if (this.isReadOnly()==true) {
+			this.add(this.getJScrollPaneProperties(),  gbc_jScrollPaneProperties);
+		} else {
+			this.add(this.getJSplitPaneProperties(), gbc_jScrollPaneProperties);
+		}
 		
 		if (this.debugDisplayPropertiesTree==true) {
 			GridBagConstraints gbc_jScrollPaneTree = new GridBagConstraints();
@@ -407,7 +442,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	private JScrollPane getJScrollPaneProperties() {
 		if (jScrollPaneProperties == null) {
 			jScrollPaneProperties = new JScrollPane();
-			jScrollPaneProperties.setViewportView(getJTableProperties());
+			jScrollPaneProperties.setViewportView(this.getJTableProperties());
 		}
 		return jScrollPaneProperties;
 	}
@@ -472,8 +507,8 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 			
 			tc = tcm.getColumn(COLUMN_PropertyName);
 			tc.setCellRenderer(propRenderer);
-			tc.setPreferredWidth(100);
-			tc.setMinWidth(100);
+			tc.setPreferredWidth(200);
+			tc.setMinWidth(150);
 			
 			tc = tcm.getColumn(COLUMN_PropertyType);
 			tc.setCellRenderer(propRenderer);
