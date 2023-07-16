@@ -2539,6 +2539,12 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				netCompAdapter.setGraphNode(null);
 			}
 		}
+		
+		// --- Ensure that the current GraphController is specified -----------
+		if (netCompAdapter!=null && netCompAdapter.getGraphEnvironmentController()==null && graphController!=null) {
+			netCompAdapter.setGraphEnvironmentController(graphController);
+			netCompAdapter.initialize();
+		}
 		return netCompAdapter;
 	}
 	/**
@@ -2602,8 +2608,14 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			if (netCompAdapterMap.size()==0) {
 				// --- Found nothing ------------------------------------------
 			} else if (netCompAdapterMap.size()==1) {
-				// --- Found single adapter -----------------------------------
-				return netCompAdapterMap.get(domainList.get(0));
+				// --- Found a single adapter ---------------------------------
+				NetworkComponentAdapter nca = netCompAdapterMap.get(domainList.get(0));
+				// --- Ensure that the current GraphController is specified ---
+				if (nca.getGraphEnvironmentController()==null && graphController!=null) {
+					nca.setGraphEnvironmentController(graphController);
+					nca.initialize();
+				}
+				return nca; 
 			} else {
 				// --- Create and return a BundlingNetworkComponentAdapter ----
 				BundlingNetworkComponentAdapter bundlingNetCompAdapter = new BundlingNetworkComponentAdapter(netCompAdapterMap);
