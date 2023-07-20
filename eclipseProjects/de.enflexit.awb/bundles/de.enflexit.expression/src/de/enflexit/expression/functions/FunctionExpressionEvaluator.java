@@ -45,6 +45,10 @@ public class FunctionExpressionEvaluator implements ExpressionServiceEvaluator {
 			}
 			break;
 			
+		case TimeSeriesDiscretization:
+			//TODO implement in separate class
+			break;
+			
 		default:
 			System.err.println("[" + this.getClass().getSimpleName() + "] Unimplemented: evaluation for function " + expFckt.name());
 			break;

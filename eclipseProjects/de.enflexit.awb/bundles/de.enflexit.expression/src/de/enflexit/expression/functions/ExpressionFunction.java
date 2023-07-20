@@ -15,10 +15,11 @@ import de.enflexit.expression.ExpressionService;
  */
 public enum ExpressionFunction {
 	
-	MIN("MIN(<EXP>)", "Array-Functions"),
-	MAX("MAX(<EXP>)", "Array-Functions"),
-	AVG("AVG(<EXP>)", "Array-Functions"),
-	SUM("SUM(<EXP>)", "Array-Functions")
+	MIN("MIN(<EXP>)", "Array Functions"),
+	MAX("MAX(<EXP>)", "Array Functions"),
+	AVG("AVG(<EXP>)", "Array Functions"),
+	SUM("SUM(<EXP>)", "Array Functions"),
+	TimeSeriesDiscretization("TimeSeriesDiscretization(<TimeSeries>,<EXP>)", "Time Series Functions")
 
 	;
 	
