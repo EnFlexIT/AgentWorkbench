@@ -61,22 +61,28 @@ public class ExpressionResult {
 	 * Instantiates a new expression result.
 	 * @param booleanArray the boolean array
 	 */
-	public ExpressionResult(boolean[] booleanArray) {
+	public ExpressionResult(Boolean[] booleanArray) {
 		this.setExpressionData(new ExpressionData(booleanArray));
 	}
-	
 	/**
 	 * Instantiates a new expression result.
 	 * @param intArray the integer array
 	 */
-	public ExpressionResult(int[] intArray) {
+	public ExpressionResult(Integer[] intArray) {
 		this.setExpressionData(new ExpressionData(intArray));
+	}
+	/**
+	 * Instantiates a new expression result.
+	 * @param longArray the long array
+	 */
+	public ExpressionResult(Long[] longArray) {
+		this.setExpressionData(new ExpressionData(longArray));
 	}
 	/**
 	 * Instantiates a new expression result.
 	 * @param doubleArray the double array
 	 */
-	public ExpressionResult(double[] doubleArray) {
+	public ExpressionResult(Double[] doubleArray) {
 		this.setExpressionData(new ExpressionData(doubleArray));
 	}
 	

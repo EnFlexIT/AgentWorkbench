@@ -1,5 +1,6 @@
 package de.enflexit.expression.functions;
 
+import java.util.ArrayList;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.ExpressionData;
@@ -31,7 +32,6 @@ public class FunctionExpressionEvaluator implements ExpressionServiceEvaluator {
 			return null;
 		}
 		
-		
 		// --- Evaluate Expression ---------------------------------- 
 		switch (expFckt) {
 		case SUM:
@@ -46,7 +46,10 @@ public class FunctionExpressionEvaluator implements ExpressionServiceEvaluator {
 			break;
 			
 		case TimeSeriesDiscretization:
-			//TODO implement in separate class
+			ArrayList<ExpressionData> parameters = this.getAllSubExpressionData(expression, context);
+			if (parameters!=null) {
+				expResult = new TimeSeriesFunctionEvaluator(expFckt, parameters).getExpressionResult();
+			}
 			break;
 			
 		default:
@@ -74,6 +77,17 @@ public class FunctionExpressionEvaluator implements ExpressionServiceEvaluator {
 			}
 		}
 		return null;
+	}
+	
+	private ArrayList<ExpressionData> getAllSubExpressionData(Expression expression, ExpressionContext context){
+		ArrayList<ExpressionData> subExpressionData = new ArrayList<>();
+		for (Expression subExpression : expression.getSubExpressions()) {
+			ExpressionResult subExpResult = subExpression.getExpressionResult(context);
+			if (subExpResult!=null) {
+				subExpressionData.add(subExpResult.getExpressionData());
+			}
+		}
+		return subExpressionData;
 	}
 	
 }

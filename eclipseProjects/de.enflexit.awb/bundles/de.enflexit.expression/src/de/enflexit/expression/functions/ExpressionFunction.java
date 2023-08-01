@@ -19,7 +19,7 @@ public enum ExpressionFunction {
 	MAX("MAX(<Array>)", "Array Functions"),
 	AVG("AVG(<Array>)", "Array Functions"),
 	SUM("SUM(<Array>)", "Array Functions"),
-	TimeSeriesDiscretization("TimeSeriesDiscretization(<TimeSeries>,<Steps>)", "Time Series Functions")
+	TimeSeriesDiscretization("TimeSeriesDiscretization(<TimeSeries>,<TimeFrom>,<TimeTo>,<NumSteps>)", "Time Series Functions")
 
 	;
 	
@@ -175,7 +175,7 @@ public enum ExpressionFunction {
 		
 		String expPrefix = ExpressionFunction.getExpressionFunctionPrefix(expressionString);
 		if (expPrefix!=null && expPrefix.isBlank()==false) {
-			return ExpressionFunction.valueOf(expPrefix.toUpperCase());
+			return ExpressionFunction.valueOf(expPrefix);
 		}
 		return null;
 	}

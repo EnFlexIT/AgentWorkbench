@@ -106,7 +106,7 @@ public class ExpressionData {
 	 * Instantiates a new expression data instance with a single boolean array.
 	 * @param boolArray the boolean array
 	 */
-	public ExpressionData(boolean boolArray[]) { 
+	public ExpressionData(Boolean boolArray[]) { 
 		this(null, boolArray);
 	}
 	/**
@@ -115,7 +115,7 @@ public class ExpressionData {
 	 * @param name the name of the value (can be <code>null</code>)
 	 * @param boolArray the boolean array
 	 */
-	public ExpressionData(String name, boolean boolArray[]) { 
+	public ExpressionData(String name, Boolean boolArray[]) { 
 		this.addDataColumn(name, DataType.Boolean, 1).setColumnData(boolArray);
 	}
 	
@@ -123,7 +123,7 @@ public class ExpressionData {
 	 * Instantiates a new expression data instance with a single int array.
 	 * @param intArray the int array
 	 */
-	public ExpressionData(int intValue[]) { 
+	public ExpressionData(Integer intValue[]) { 
 		this(null, intValue);
 	}
 	/**
@@ -131,14 +131,30 @@ public class ExpressionData {
 	 * @param name the name of the value (can be <code>null</code>)
 	 * @param intArray the int array
 	 */
-	public ExpressionData(String name, int intArray[]) { 
+	public ExpressionData(String name, Integer intArray[]) { 
 		this.addDataColumn(name, DataType.Integer, 1).setColumnData(intArray);
+	}
+	
+	/**
+	 * Instantiates a new expression data instance with a single Long array.
+	 * @param intArray the Long array
+	 */
+	public ExpressionData(Long longValue[]) { 
+		this(null, longValue);
+	}
+	/**
+	 * Instantiates a new expression data instance with a single Long value.
+	 * @param name the name of the value (can be <code>null</code>)
+	 * @param longArray the Long array
+	 */
+	public ExpressionData(String name, Long longArray[]) { 
+		this.addDataColumn(name, DataType.Long, 1).setColumnData(longArray);
 	}
 	/**
 	 * Instantiates a new expression data instance with a single double array.
 	 * @param doubleArray the double array
 	 */
-	public ExpressionData(double doubleArray[]) { 
+	public ExpressionData(Double doubleArray[]) { 
 		this(null, doubleArray);
 	}
 	/**
@@ -146,7 +162,7 @@ public class ExpressionData {
 	 * @param name the name of the value (can be <code>null</code>)
 	 * @param doubleArray the double array
 	 */
-	public ExpressionData(String name, double doubleArray[]) { 
+	public ExpressionData(String name, Double doubleArray[]) { 
 		this.addDataColumn(name, DataType.Double, 1).setColumnData(doubleArray);
 	}
 	

@@ -166,9 +166,15 @@ public class ExpressionParser {
 		int end = expressionFunction.lastIndexOf(ExpressionService.EXPRESSION_FUNCTION_CLOSING_DELIMITER);
 		
 		String  argumentString = expressionFunction.substring(start, end);
-		String[] argumentArray = argumentString.split(String.valueOf(ExpressionService.EXPRESSION_FUNCTION_ARGUMENT_DELIMITER));
-		for (int i = 0; i < argumentArray.length; i++) {
-			expression.getSubExpressions().add(ExpressionParser.parse(argumentArray[i]));
+		if (ExpressionFunction.getExpressionFunctionPrefix(argumentString)!=null) {
+			// --- Contains further expression functions -> parse -------------
+			expression.getSubExpressions().add(Expression.parse(argumentString));
+		} else {
+			// --- Contains only arguments -------------------------------------
+			String[] argumentArray = argumentString.split(String.valueOf(ExpressionService.EXPRESSION_FUNCTION_ARGUMENT_DELIMITER));
+			for (int i = 0; i < argumentArray.length; i++) {
+				expression.getSubExpressions().add(ExpressionParser.parse(argumentArray[i]));
+			}
 		}
 	}
 	

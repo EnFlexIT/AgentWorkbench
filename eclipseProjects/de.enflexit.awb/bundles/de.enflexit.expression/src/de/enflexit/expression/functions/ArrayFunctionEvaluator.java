@@ -174,6 +174,8 @@ public class ArrayFunctionEvaluator {
 			case MIN:
 				aggregatedValue = Math.min(aggregatedValue, value);
 				break;
+			default:
+				break;
 			}
 		}
 		
