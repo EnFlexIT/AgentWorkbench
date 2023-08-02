@@ -213,13 +213,13 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 
 		this.identifier = identifier;
 		
-		boolean isKnownIdentifier = this.getProperties().contains(this.identifier);
+		boolean isKnownIdentifier = this.getProperties()!=null ?  this.getProperties().contains(this.identifier) : false;
 		this.currAction = isKnownIdentifier ? Action.PropertyUpdate : Action.PropertyAdded;
 		this.getJButtonOk().setText(isKnownIdentifier==true ? "Update" : "Add");
 		
 		// --- Set to UI ----------------------------------
 		this.getJTextFieldName().setText(this.identifier);
-		PropertyValue pValue = this.getProperties().getPropertyValue(this.identifier); 
+		PropertyValue pValue = this.getProperties()!=null ? this.getProperties().getPropertyValue(this.identifier) : null; 
 		this.setPropertyValue(pValue);
 	}
 	/**

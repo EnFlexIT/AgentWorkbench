@@ -8,7 +8,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,6 +27,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultCaret;
 
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
@@ -43,6 +47,8 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	public static final String EXPRESSION_EVALUATED = "ExpressionEvaluated";
 	public static final String EXPRESSION_PLACEHOLDER = "<EXP>";
 	
+	private static final String EXPRESSION_PLACEHOLDER_REGEX = "<[\\w]+>";
+	
 	private Expression expression;
 	private ExpressionContext expressionContext;
 	
@@ -56,6 +62,8 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	
 	private JTextField jTextFieldResult;
 	private JLabel jLabelResultType;
+	
+	private Pattern expressionPlaceholderPattern;
 	
 	
 	/**
@@ -130,6 +138,26 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	private JTextArea getJTextAreaExpression() {
 		if (jTextAreaExpression == null) {
 			jTextAreaExpression = new JTextArea();
+			
+			// --- Keep the selection visible when loosing the focus ----------
+			jTextAreaExpression.setCaret(new DefaultCaret() {
+				private static final long serialVersionUID = 7524423546148968365L;
+
+				@Override
+				    public void focusGained(FocusEvent e)
+				    {
+				        setSelectionVisible(false);
+				        super.setBlinkRate(500);
+				        super.focusGained(e);
+				    }
+
+				    @Override
+				    public void focusLost(FocusEvent e)
+				    {
+				        super.focusLost(e);
+				        setSelectionVisible(true);
+				    }
+			});
 			jTextAreaExpression.addCaretListener(new CaretListener() {
 				@Override
 				public void caretUpdate(CaretEvent ce) {
@@ -298,6 +326,7 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	public void insertExpressionString(String expressionString) {
 		
 		String stringToInsert = expressionString;
+		
 		if (expressionString.contains("<>")==true) {
 			stringToInsert = expressionString.replaceAll("<>", EXPRESSION_PLACEHOLDER);
 		}
@@ -408,10 +437,24 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 		
 		// --- Check substring ----------------------------
 		String checkExp = currExpression.substring(foundOpen, foundClose);
-		if (checkExp.equalsIgnoreCase(EXPRESSION_PLACEHOLDER)==false) return;
+		Matcher expressionMatcher = this.getExpressionPlaceholderPattern().matcher(checkExp);
+		if (expressionMatcher.matches()==false) {
+			return;
+		}
 		
 		if (debug==true) System.out.println(" => '" + currExpression + "' " + foundOpen + " to " + foundClose);
 		this.highlightText(foundOpen, foundClose);
+	}
+	
+	/**
+	 * Gets the pattern to match expression placeholders.
+	 * @return the expression placeholder pattern
+	 */
+	private Pattern getExpressionPlaceholderPattern() {
+		if (expressionPlaceholderPattern==null) {
+			expressionPlaceholderPattern = Pattern.compile(EXPRESSION_PLACEHOLDER_REGEX);
+		}
+		return expressionPlaceholderPattern;
 	}
 	
 }

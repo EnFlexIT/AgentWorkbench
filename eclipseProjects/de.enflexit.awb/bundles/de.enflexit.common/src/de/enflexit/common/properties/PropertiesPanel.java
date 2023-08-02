@@ -62,6 +62,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	
 	
 	private Properties properties;
+	private boolean isReadOnly = false;
 	
 	private JLabel jLabelHeader;
 
@@ -102,7 +103,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	 * Instantiates a new properties panel.
 	 */
 	public PropertiesPanel() {
-		this(null, "Properties");
+		this(null, "Properties", false);
 	}
 	/**
 	 * Instantiates a new properties panel.
@@ -111,10 +112,22 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	 * @param header the header to be shown
 	 */
 	public PropertiesPanel(Properties properties, String header) {
+		this(properties, header, false);
+	}
+	/**
+	 * Instantiates a new properties panel.
+	 *
+	 * @param properties the properties
+	 * @param header the header
+	 * @param isReadOnly the indicator that the properties shown are read only
+	 */
+	public PropertiesPanel(Properties properties, String header, boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
 		this.initialize();
 		this.setProperties(properties);
 		this.getJLabelHeader().setText(header);
 	}
+	
 	
 	/**
 	 * Return the current properties.
@@ -154,21 +167,21 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{300, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHeader.insets = new Insets(10, 13, 0, 0);
+		gbc_jLabelHeader.insets = new Insets(10, 13, 0, 10);
 		gbc_jLabelHeader.gridx = 0;
 		gbc_jLabelHeader.gridy = 0;
 		this.add(this.getJLabelHeader(), gbc_jLabelHeader);
 		
 		GridBagConstraints gbc_jPanelSearch = new GridBagConstraints();
-		gbc_jPanelSearch.insets = new Insets(10, 10, 0, 5);
+		gbc_jPanelSearch.insets = new Insets(10, 0, 0, 5);
 		gbc_jPanelSearch.fill = GridBagConstraints.BOTH;
 		gbc_jPanelSearch.gridx = 1;
 		gbc_jPanelSearch.gridy = 0;
@@ -188,7 +201,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		this.add(this.getJToggleButtonTreeView(), gbc_jToggleButtonTreeView);
 		
 		GridBagConstraints gbc_jToggleButtonListView = new GridBagConstraints();
-		gbc_jToggleButtonListView.insets = new Insets(10, 5, 0, 5);
+		gbc_jToggleButtonListView.insets = new Insets(10, 5, 0, this.isReadOnly==false ? 5 : 10);
 		gbc_jToggleButtonListView.gridx = 4;
 		gbc_jToggleButtonListView.gridy = 0;
 		this.add(this.getJToggleButtonListView(), gbc_jToggleButtonListView);
@@ -211,6 +224,11 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		gbc_jButtonRemoveProperty.gridx = 7;
 		gbc_jButtonRemoveProperty.gridy = 0;
 		this.add(this.getJButtonRemoveProperty(), gbc_jButtonRemoveProperty);
+		if (this.isReadOnly==true) {
+			this.remove(this.getJSeparatorHeaderRight());
+			this.remove(this.getJButtonAddProperty());
+			this.remove(this.getJButtonRemoveProperty());
+		}
 		
 		GridBagConstraints gbc_jSeparatorTop = new GridBagConstraints();
 		gbc_jSeparatorTop.insets = new Insets(5, 10, 0, 10);
@@ -218,7 +236,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		gbc_jSeparatorTop.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jSeparatorTop.gridx = 0;
 		gbc_jSeparatorTop.gridy = 1;
-		add(getJSeparatorTop(), gbc_jSeparatorTop);
+		this.add(getJSeparatorTop(), gbc_jSeparatorTop);
 		
 		GridBagConstraints gbc_jScrollPaneProperties = new GridBagConstraints();
 		gbc_jScrollPaneProperties.gridwidth = 8;
@@ -227,6 +245,10 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		gbc_jScrollPaneProperties.gridx = 0;
 		gbc_jScrollPaneProperties.gridy = 2;
 		this.add(this.getJSplitPaneProperties(), gbc_jScrollPaneProperties);
+		if (this.isReadOnly==true) {
+			this.remove(this.getJSplitPaneProperties());
+			this.add(this.getJScrollPaneProperties(),  gbc_jScrollPaneProperties);
+		}
 		
 		if (this.debugDisplayPropertiesTree==true) {
 			GridBagConstraints gbc_jScrollPaneTree = new GridBagConstraints();
@@ -267,6 +289,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	private JPanel getJPanelSearch() {
 		if (jPanelSearch == null) {
 			jPanelSearch = new JPanel();
+			jPanelSearch.setMinimumSize(new Dimension(200, 26));
 			GridBagLayout gbl_jPanelSearch = new GridBagLayout();
 			gbl_jPanelSearch.columnWidths = new int[]{0, 0, 0, 0};
 			gbl_jPanelSearch.rowHeights = new int[]{0, 0};
@@ -407,7 +430,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	private JScrollPane getJScrollPaneProperties() {
 		if (jScrollPaneProperties == null) {
 			jScrollPaneProperties = new JScrollPane();
-			jScrollPaneProperties.setViewportView(getJTableProperties());
+			jScrollPaneProperties.setViewportView(this.getJTableProperties());
 		}
 		return jScrollPaneProperties;
 	}
@@ -472,13 +495,13 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 			
 			tc = tcm.getColumn(COLUMN_PropertyName);
 			tc.setCellRenderer(propRenderer);
-			tc.setPreferredWidth(100);
-			tc.setMinWidth(100);
+			tc.setPreferredWidth(200);
+			tc.setMinWidth(150);
 			
 			tc = tcm.getColumn(COLUMN_PropertyType);
 			tc.setCellRenderer(propRenderer);
-			tc.setMinWidth(100);
-			tc.setMaxWidth(100);
+			tc.setMinWidth(80);
+			tc.setMaxWidth(80);
 			
 			tc = tcm.getColumn(COLUMN_PropertyValue);
 			tc.setCellRenderer(propRenderer);

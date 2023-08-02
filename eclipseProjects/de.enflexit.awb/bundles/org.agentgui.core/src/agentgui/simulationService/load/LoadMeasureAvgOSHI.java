@@ -80,15 +80,15 @@ public class LoadMeasureAvgOSHI {
 	
 	/**
 	 * Used to put a new load measurement into this class.
-	 * @param currentLoadMeasure the current load measured
+	 * @param newLoadMeasureOSHI the current load measured
 	 */
-	public void put(LoadMeasureOSHI currentLoadMeasure) {
+	public void put(LoadMeasureOSHI newLoadMeasureOSHI) {
         
 		if (processorName==null) {
 			// setting system information once
-			this.setProcessorName(currentLoadMeasure.getProcessorName());
-			this.setMhz(currentLoadMeasure.getMhz());
-			this.setTotalCpu(currentLoadMeasure.getNumberOfPhysicalCPU());
+			this.setProcessorName(newLoadMeasureOSHI.getProcessorName());
+			this.setMhz(newLoadMeasureOSHI.getMhz());
+			this.setTotalCpu(newLoadMeasureOSHI.getNumberOfPhysicalCPU());
 		}
 
 		// inserting object in a list
@@ -96,7 +96,7 @@ public class LoadMeasureAvgOSHI {
 		if (this.measureList.size() >= this.useAVGCounter) {
 			this.measureList.remove(0);
 		}
-		this.measureList.add(currentLoadMeasure.clone()); // add new object in the list
+		this.measureList.add(newLoadMeasureOSHI);
 		this.calculateLoadAverage();
 	}
 	

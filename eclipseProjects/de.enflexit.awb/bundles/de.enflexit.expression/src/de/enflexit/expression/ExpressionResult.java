@@ -22,6 +22,7 @@ public class ExpressionResult {
 	private ExpressionData expressionData;
 	private List<Message> messageList;
 
+	
 	/**
 	 * Instantiates a new expression result.
 	 */
@@ -60,23 +61,37 @@ public class ExpressionResult {
 	 * Instantiates a new expression result.
 	 * @param booleanArray the boolean array
 	 */
-	public ExpressionResult(boolean[] booleanArray) {
+	public ExpressionResult(Boolean[] booleanArray) {
 		this.setExpressionData(new ExpressionData(booleanArray));
 	}
-	
 	/**
 	 * Instantiates a new expression result.
 	 * @param intArray the integer array
 	 */
-	public ExpressionResult(int[] intArray) {
+	public ExpressionResult(Integer[] intArray) {
 		this.setExpressionData(new ExpressionData(intArray));
+	}
+	/**
+	 * Instantiates a new expression result.
+	 * @param longArray the long array
+	 */
+	public ExpressionResult(Long[] longArray) {
+		this.setExpressionData(new ExpressionData(longArray));
 	}
 	/**
 	 * Instantiates a new expression result.
 	 * @param doubleArray the double array
 	 */
-	public ExpressionResult(double[] doubleArray) {
+	public ExpressionResult(Double[] doubleArray) {
 		this.setExpressionData(new ExpressionData(doubleArray));
+	}
+	
+	/**
+	 * Instantiates a new ExpressionResult that contains a time series.
+	 * @param tsd the {@link TimeSeriesDescription} that describes the expression data structure 
+	 */
+	public ExpressionResult(TimeSeriesDescription tsd) {
+		this.setExpressionData(new ExpressionData(tsd));
 	}
 	
 	
@@ -108,12 +123,19 @@ public class ExpressionResult {
 		return this.getExpressionData()!=null ? this.getExpressionData().isSingleDataColumnResult() : false;
 	}
 	/**
+	 * Returns if the current ExpressionData instance is a single value result.
+	 * @return true, if is single data column result
+	 */
+	public boolean isSingleValueResult() {
+		return this.getExpressionData()!=null ? this.getExpressionData().isSingleValueResult() : false;
+	}
+	/**
 	 * If this ExpressionData instance was specified with as single {@link DataColumn}, this
 	 * method returns, if the current value represents an array or not.
 	 * @return true, if the value is an array or <code>null</code> if the current instance contains less or more that one data column
 	 */
-	public Boolean isArray() {
-		return this.getExpressionData()!=null ? this.getExpressionData().isArray() : null; 
+	public boolean isArray() {
+		return this.getExpressionData()!=null ? this.getExpressionData().isArray() : false; 
 	}
 	/**
 	 * If this ExpressionData instance was specified with as single {@link DataColumn}, this
@@ -141,6 +163,13 @@ public class ExpressionResult {
 		return this.getExpressionData()!=null ? this.getExpressionData().getIntegerValue() : null;
 	}
 	/**
+	 * Returns the single Long value if the class was initiated with as single Long value.
+	 * @return the boolean value or <code>null</code>
+	 */
+	public Long getLongValue() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getLongValue() : null;
+	}
+	/**
 	 * Returns the single Double value if the class was initiated with as single double or as single integer value.
 	 * @return the boolean value or <code>null</code>
 	 */
@@ -164,6 +193,13 @@ public class ExpressionResult {
 		return this.getExpressionData()!=null ? this.getExpressionData().getIntegerArray() : null;
 	}
 	/**
+	 * Returns the Long array if the class only contains as single Long array.
+	 * @return the boolean array or <code>null</code>
+	 */
+	public Long[] getLongArray() {
+		return this.getExpressionData()!=null ? this.getExpressionData().getLongArray() : null;
+	}
+	/**
 	 * Returns the Double array if the class only contains as single double array.
 	 * @return the boolean array or <code>null</code>
 	 */
@@ -171,6 +207,109 @@ public class ExpressionResult {
 		return this.getExpressionData()!=null ? this.getExpressionData().getDoubleArray() : null;
 	}
 
+	// --- Time series handling -------
+	/**
+	 * Checks if the current data represents a time series.
+	 * @return true, if this is time series
+	 */
+	public boolean isTimeSeries() {
+		return this.getExpressionData()!=null ? this.getExpressionData().isTimeSeries() : false;
+	}
+	/**
+	 * Adds the specified data row.
+	 *
+	 * @param timestamp the timestamp
+	 * @param cellValues the cell values
+	 * @throws TimeSeriesException 
+	 */
+	public boolean addDataRow(long timestamp, Object ... cellValues) throws TimeSeriesException {
+		return this.getExpressionData()!=null ? this.getExpressionData().addDataRow(timestamp, cellValues) : false;
+	}
+	/**
+	 * Adds the specified data row to a time series.
+	 *
+	 * @param timestamp the timestamp of the data
+	 * @param doOverwrite the indicator to overwrite already available data
+	 * @param cellValues the cell values
+	 * @return true, if successful
+	 * @throws TimeSeriesException the time series exception
+	 */
+	public boolean addDataRow(long timestamp, boolean doOverwrite, Object ... cellValues) throws TimeSeriesException {
+		return this.getExpressionData()!=null ? this.getExpressionData().addDataRow(timestamp, doOverwrite, cellValues) : false;
+	}
+	/**
+	 * Returns the data row of a time series including the timestamp as first value.
+	 *
+	 * @param timestamp the timestamp
+	 * @return the data row as Object array including the timestamp as first value.
+	 */
+	public Object[] getDataRow(long timestamp) {
+		return this.getExpressionData()!=null ? this.getExpressionData().getDataRow(timestamp) : null;
+	}
+	/**
+	 * Returns the data row for the specified row index.
+	 *
+	 * @param rowIndex the row index
+	 * @return the data row as Object array including the timestamp as first value.
+	 */
+	public Object[] getDataRow(int rowIndex) {
+		return this.getExpressionData()!=null ? this.getExpressionData().getDataRow(rowIndex) : null;
+	}
+	/**
+	 * Sets the value for the specified time in the specified column.
+	 *
+	 * @param timestamp the timestamp
+	 * @param columnIndex the column index, where '0' represents the timestamp column
+	 * @param value the value to set
+	 * @return the element previously at the specified position
+	 */
+	public Object setValueAt(long timestamp, int columnIndex, Object value) {
+		return this.getExpressionData()!=null ? this.getExpressionData().setValueAt(timestamp , columnIndex, value) : null;
+	}
+	/**
+	 * Returns the value for the specified time in the specified column.
+	 *
+	 * @param timestamp the timestamp
+	 * @param columnIndex the column index, where '0' represents the timestamp column
+	 * @param value the value to set
+	 * @return true, if successful
+	 */
+	public Object getValueAt(long timestamp, int columnIndex) {
+		return this.getExpressionData()!=null ? this.getExpressionData().getValueAt(timestamp , columnIndex) : null;
+	}
+	
+	/**
+	 * Set the value for the specified row and column index.
+	 *
+	 * @param rowIndex the row index
+	 * @param columnIndex the column index, where '0' represents the timestamp column
+	 * @param value the value to set
+	 * @return the element previously at the specified position
+	 */
+	public Object setValueAt(int rowIndex, int columnIndex, Object value) {
+		return this.getExpressionData()!=null ? this.getExpressionData().setValueAt(rowIndex, columnIndex, value) : null;
+	}
+	/**
+	 * Return the value at the specified row and column index..
+	 *
+	 * @param rowIndex the row index
+	 * @param columnIndex the column index
+	 * @return the value at
+	 */
+	public Object getValueAt(int rowIndex, int columnIndex ) {
+		return this.getExpressionData()!=null ? this.getExpressionData().getValueAt(rowIndex, columnIndex) : null;
+	}
+	
+	/**
+	 * Returns the row index for the specified timestamp.
+	 *
+	 * @param timeStamp the time stamp
+	 * @return the row index or -1, if no value could be found for the timestamp
+	 */
+	public int getRowIndex(long timeStamp) {
+		return this.getExpressionData()!=null ? this.getExpressionData().getRowIndex(timeStamp) : -1;
+	}
+	
 	
 	/**
 	 * Returns the data type description of the current expression result.

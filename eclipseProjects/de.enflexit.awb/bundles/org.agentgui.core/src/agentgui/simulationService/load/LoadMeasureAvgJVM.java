@@ -80,16 +80,16 @@ public class LoadMeasureAvgJVM {
 
 	/**
 	 * Used to put a new load measurement into this class 
-	 * @param currentLoadMeasure the current load measured
+	 * @param newLoadMeasureJVM the current load measured
 	 */
-	public void put(LoadMeasureJVM currentLoadMeasure) {
+	public void put(LoadMeasureJVM newLoadMeasureJVM) {
 
-		this.jvmPID = currentLoadMeasure.getJvmPID();
+		this.jvmPID = newLoadMeasureJVM.getJvmPID();
 		
 		if (measureList.size() >= useAVGCounter) {
 			measureList.remove(0);
 		}
-		measureList.add(currentLoadMeasure.clone()); //add new object in the list
+		measureList.add(newLoadMeasureJVM);
 		this.calculateLoadAverage();
 	}
 	

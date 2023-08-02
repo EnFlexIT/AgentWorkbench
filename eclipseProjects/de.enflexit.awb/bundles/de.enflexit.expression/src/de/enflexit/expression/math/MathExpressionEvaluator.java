@@ -24,23 +24,25 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 	@Override
 	public ExpressionResult evaluate(Expression expression, ExpressionContext context) throws UnknownExpressionException {
 
-		// --- Define an ExpressionResult ---------------------------
+		// --- Define an ExpressionResult -------------------------------------
 		ExpressionResult er = new ExpressionResult();
 		
-		// --- Early exit? ------------------------------------------
+		// --- Early exit? ----------------------------------------------------
 		if (expression.hasErrors()==true) {
 			er.addErrorMessage(expression.getErrorMessage());
 			return er;
 		}
 		
-		// --- Exchange sub expressions by sub results -------------- 
+		// --- Exchange sub expressions by sub results ------------------------
 		String expressionString = expression.getExpressionString(); 
 		if (expression.getSubExpressions().size()>0) {
-			// --- Replace sub expressions by sub results -----------
+			// --- Replace sub expressions by sub results ---------------------
 			for (int i = 0; i < expression.getSubExpressions().size(); i++) {
 				Expression subExp = expression.getSubExpressions().get(i);
 				if (subExp.hasErrors()==false) {
-					// --- For an error-free expression -------------
+					// --------------------------------------------------------
+					// --- For an error-free expression -----------------------
+					// --------------------------------------------------------
 					ExpressionResult subResult = subExp.getExpressionResult(context);
 					if (subResult==null) {
 						er.addErrorMessage("ExpressionResult of sub-expression '" + subExp.getExpressionString() + "' is null!");
@@ -52,12 +54,19 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 						return er;
 						
 					} else {
-						// --- Found a VALID sub result ------------- 
+						// ----------------------------------------------------
+						// --- Found a VALID sub result ----------------------- 
+						// ----------------------------------------------------
 						String subExpStringSearch = ExpressionService.EXPRESSION_OPENING_DELIMITER + subExp.getExpressionString() + ExpressionService.EXPRESSION_CLOSING_DELIMITER;
 						if (subExpStringSearch.equals(expressionString)==true) return subResult;
 						
 						String subResultString = null;
-						if (subResult.isArray()==false) {
+						if (subResult.isTimeSeries()==true) {
+							// --- Time Series result types ------------------- 
+							// TODO
+							
+						} else if (subResult.isArray()==false) {
+							// --- Array result types -------------------------
 							switch (subResult.getDataType()) {
 							case Boolean:
 								subResultString = subResult.getBooleanValue().toString();
@@ -65,18 +74,25 @@ public class MathExpressionEvaluator implements ExpressionServiceEvaluator {
 							case Integer:
 								subResultString = subResult.getIntegerValue().toString();
 								break;
+							case Long:
+								subResultString = subResult.getLongValue().toString();
+								break;
 							case Double:
 								subResultString = subResult.getDoubleValue().toString();
 								break;
 							} 
 							
 						} else {
+							// --- Simple, atomic result values ---------------
 							switch (subResult.getDataType()) {
 							case Boolean:
 								subResultString = subResult.getBooleanArray().toString();
 								break;
 							case Integer:
 								subResultString = subResult.getIntegerArray().toString();
+								break;
+							case Long:
+								subResultString = subResult.getLongArray().toString();
 								break;
 							case Double:
 								subResultString = subResult.getDoubleArray().toString();

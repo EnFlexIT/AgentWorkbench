@@ -14,6 +14,12 @@ public interface ExpressionService {
 	public static final char EXPRESSION_OPENING_DELIMITER = '[';
 	public static final char EXPRESSION_CLOSING_DELIMITER = ']';
 	
+	public static final char EXPRESSION_SERVICE_TYPE_SUFFIX = '!';
+	
+	public static final char EXPRESSION_FUNCTION_OPENING_DELIMITER = '(';
+	public static final char EXPRESSION_FUNCTION_CLOSING_DELIMITER = ')';
+	public static final char EXPRESSION_FUNCTION_ARGUMENT_DELIMITER = ',';
+	
 	
 	/**
 	 * Gets the expression type.

@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
+import de.enflexit.common.swing.OwnerDetection;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -56,7 +57,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
@@ -761,7 +761,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	 * Show update settings dialog.
 	 */
 	private void showUpdateSettingsDialog() {
-		Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+		Frame owner = OwnerDetection.getOwnerFrameForComponent(this);
 		AuthenticatationDialog dialog = new AuthenticatationDialog(owner, this.currProject.getUpdateAuthorization(), this.currProject.getUpdateSite());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);

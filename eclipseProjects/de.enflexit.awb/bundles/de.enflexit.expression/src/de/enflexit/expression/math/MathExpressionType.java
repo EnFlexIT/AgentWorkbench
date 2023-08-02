@@ -3,26 +3,26 @@ package de.enflexit.expression.math;
 import de.enflexit.expression.ExpressionType;
 
 /**
- * The Class ExpressionTypeMath.
+ * The Class MathExpressionType.
  * 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class ExpressionTypeMath extends ExpressionType {
+public class MathExpressionType extends ExpressionType {
 	
-	private static ExpressionTypeMath instance;
-	
-	/**
-	 * Instantiates a new expression type math. Private due to singleton.
-	 */
-	private ExpressionTypeMath() {}
+	private static MathExpressionType instance;
 	
 	/**
-	 * Gets the single instance of ExpressionTypeMath.
-	 * @return single instance of ExpressionTypeMath
+	 * Instantiates a new math expression type. Private due to singleton.
 	 */
-	public static ExpressionTypeMath getInstance() {
+	private MathExpressionType() {}
+	
+	/**
+	 * Gets the single instance of MathExpressionType.
+	 * @return single instance of MathExpressionType
+	 */
+	public static MathExpressionType getInstance() {
 		if (instance==null) {
-			instance = new ExpressionTypeMath();
+			instance = new MathExpressionType();
 		}
 		return instance;
 	}

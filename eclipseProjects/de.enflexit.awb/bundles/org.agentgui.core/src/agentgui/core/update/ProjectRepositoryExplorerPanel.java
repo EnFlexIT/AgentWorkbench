@@ -74,6 +74,7 @@ import agentgui.core.update.repositoryModel.ProjectRepositoryEntries;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
 import agentgui.core.update.repositoryModel.RepositoryTagVersions;
 import de.enflexit.common.http.WebResourcesAuthorization;
+import de.enflexit.common.swing.OwnerDetection;
 
 /**
  * The Class ProjectRepositoryExplorer provides .
@@ -510,7 +511,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 			
 		} catch(ProjectRepositoryUpdateAuthorizationException ex) {
 			// --- Open UpdateSettingsDialog if previous request returned an unauthorized response
-			Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			Frame owner = OwnerDetection.getOwnerFrameForComponent(this);
 			AuthenticatationDialog dialog = new AuthenticatationDialog(owner, lastUsedAuthorization, link);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setConfirmButtonText("Connect");

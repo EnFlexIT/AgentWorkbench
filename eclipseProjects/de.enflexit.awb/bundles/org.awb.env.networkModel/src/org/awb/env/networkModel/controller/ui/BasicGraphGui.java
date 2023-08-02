@@ -96,6 +96,7 @@ import com.google.common.base.Function;
 import agentgui.core.application.Application;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
@@ -1093,7 +1094,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			}
 			
 			// --- Show the dialog, wait for the user's input -------
-			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			Frame dialogOwner = OwnerDetection.getOwnerFrameForComponent(this);
 			GeoCoordinateDialog geoDialog = new GeoCoordinateDialog(dialogOwner, olgGeoCoordinate);
 			if (geoDialog.isCanceled()==true) return;
 			
@@ -1111,7 +1112,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// ------------------------------------------------------
 			// --- Edit regular coordinates -------------------------
 			// ------------------------------------------------------
-			Frame dialogOwner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			Frame dialogOwner = OwnerDetection.getOwnerFrameForComponent(this);
 			GraphNodePositionDialog posDialog = new GraphNodePositionDialog(dialogOwner, oldCoordinate);
 			// - - - - Wait for user - - - - -
 			if (posDialog.isCanceled()==true) return;
@@ -1538,11 +1539,11 @@ public class BasicGraphGui extends JPanel implements Observer {
 	 */
 	private SatelliteDialog getSatelliteDialog() {
 		if (satelliteDialog==null){
-			Frame ownerFrame = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			Frame ownerFrame = OwnerDetection.getOwnerFrameForComponent(this);
 			if (ownerFrame!=null) {
 				satelliteDialog = new SatelliteDialog(ownerFrame, this.graphController, this);
 			} else {
-				Dialog ownerDialog = Application.getGlobalInfo().getOwnerDialogForComponent(this);
+				Dialog ownerDialog = OwnerDetection.getOwnerDialogForComponent(this);
 				satelliteDialog = new SatelliteDialog(ownerDialog, this.graphController, this);
 			}
 			satelliteDialog.setSize(this.getDimensionOfSatelliteVisualizationViewer());

@@ -21,12 +21,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.ws.client.CredentialAssignment;
 import de.enflexit.awb.ws.client.ServerURL;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
+import de.enflexit.common.swing.OwnerDetection;
 
 /**
  * The Class JPanelServerURL.
@@ -186,7 +186,7 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	 */
 	public JDialogCreateServerURL getJDialogCreateServer() {
 		if(this.jDialogCreateServer==null) {
-			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			Window owner = OwnerDetection.getOwnerFrameForComponent(this);
 			jDialogCreateServer=new JDialogCreateServerURL(owner, false);
 		}
 		return jDialogCreateServer;
@@ -255,7 +255,7 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	 * Show J dialog server url.
 	 */
 	private void showJDialogServerUrl() {
-		Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+		Window owner = OwnerDetection.getOwnerFrameForComponent(this);
 		JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner,false);
 		createServerDialog.addWindowListener(this);
 		this.setjDialogCreateServer(createServerDialog);
@@ -267,7 +267,7 @@ public class JPanelServerURL extends JPanel implements ActionListener,WsConfigur
 	 */
 	private void showJDialogForEditingAServerUrl() {
 		if (getJListServerUrl().getSelectedValue() != null) {
-			Window owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+			Window owner = OwnerDetection.getOwnerFrameForComponent(this);
 			JDialogCreateServerURL createServerDialog = new JDialogCreateServerURL(owner,false,getJListServerUrl().getSelectedValue());
 			createServerDialog.addWindowListener(this);
 			this.setjDialogCreateServer(createServerDialog);

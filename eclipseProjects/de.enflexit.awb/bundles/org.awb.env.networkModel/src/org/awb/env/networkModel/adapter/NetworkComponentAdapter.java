@@ -292,7 +292,7 @@ public abstract class NetworkComponentAdapter {
 	 * Returns the current GraphEnvironmentController.
 	 * @return the GraphEnvironmentController
 	 */
-	protected GraphEnvironmentController getGraphEnvironmentController() {
+	public GraphEnvironmentController getGraphEnvironmentController() {
 		return this.graphController;
 	}
 	

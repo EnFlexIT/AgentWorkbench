@@ -1,24 +1,23 @@
 package de.enflexit.expression.gui;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-
-import de.enflexit.expression.Expression;
-import de.enflexit.expression.ExpressionContext;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
 
 /**
  * Reduced version of the {@link ExpressionEditorWidget} for the use as a table cell editor. 
@@ -34,10 +33,9 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	private JTextField jTextFieldExpression;
 	private JButton jButtonExpressionEditor;
 	
-	private TableCellEditor parentEditor;
+	private ExpressionServiceFilter expressionLibraryFilter;
 	
-	public ExpressionEditorWidgetForTables(TableCellEditor parentEditor, Expression expression, ExpressionContext expressionContext) {
-		this.parentEditor = parentEditor;
+	public ExpressionEditorWidgetForTables(Expression expression, ExpressionContext expressionContext) {
 		this.expression = expression;
 		this.expressionContext = expressionContext;
 		this.initialize();
@@ -71,23 +69,12 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			}
 			jTextFieldExpression.setOpaque(true);
 			jTextFieldExpression.setBorder(BorderFactory.createEmptyBorder());
-			jTextFieldExpression.addFocusListener(new FocusAdapter() {
-				@Override
-				public void focusLost(FocusEvent fe) {
-					// --- Update the expression when leaving the textfield ---
-					ExpressionEditorWidgetForTables.this.expression = ExpressionEditorWidgetForTables.this.setExpressionAccordingToTextfield();
-					
-					if (fe.getOppositeComponent()!=ExpressionEditorWidgetForTables.this.getJButtonExpressionEditor()) {
-						ExpressionEditorWidgetForTables.this.parentEditor.stopCellEditing();
-					}
-				}
-			});
 			
 			jTextFieldExpression.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent ke) {
 					if (ke.getKeyCode()==KeyEvent.VK_ENTER || ke.getKeyCode()==KeyEvent.VK_TAB) {
-						ExpressionEditorWidgetForTables.this.setExpression(ExpressionEditorWidgetForTables.this.setExpressionAccordingToTextfield());
+						ExpressionEditorWidgetForTables.this.setExpression(ExpressionEditorWidgetForTables.this.getExpressionFromTextField());
 						// --- Pass to the parent -----------------------------
 						JComponent sourceComponent = (JComponent) ke.getSource();
 						sourceComponent.getParent().dispatchEvent(ke);
@@ -112,7 +99,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	 * Sets the current expression according to the text field.
 	 * @return the expression
 	 */
-	private Expression setExpressionAccordingToTextfield() {
+	private Expression getExpressionFromTextField() {
 		Expression expression = null;
 		String textFieldContent = this.getJTextFieldExpression().getText();
 		if (textFieldContent!=null && textFieldContent.isEmpty()==false) {
@@ -128,6 +115,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	 * @return the expression
 	 */
 	public Expression getExpression() {
+		this.setExpression(this.getExpressionFromTextField());
 		return expression;
 	}
 	/**
@@ -158,14 +146,41 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		this.expressionContext = expressionContext;
 	}
 	
+	
+	
+	/**
+	 * Gets the expression library filter.
+	 * @return the expression library filter
+	 */
+	public ExpressionServiceFilter getExpressionServiceFilter() {
+		return expressionLibraryFilter;
+	}
+
+	/**
+	 * Sets the expression library filter.
+	 * @param expressionServiceFilter the new expression library filter
+	 */
+	public void setExpressionServiceFilter(ExpressionServiceFilter expressionServiceFilter) {
+		this.expressionLibraryFilter = expressionServiceFilter;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		if (ae.getSource()==this.getJButtonExpressionEditor()) {
 			
-			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(null, this.getExpression(), this.getExpressionContext(), true);
+			Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(jButtonExpressionEditor);
+			ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(ownerWindow, this.getExpressionFromTextField(), this.getExpressionContext(), true);
+			editorDialog.setExpressionServiceFilter(this.getExpressionServiceFilter());
+			if (ownerWindow!=null) {
+				double scaleWidth = 1.15;
+				double scaleHeight = 0.95;
+				editorDialog.setSize((int)(ownerWindow.getWidth() * scaleWidth), (int)(ownerWindow.getHeight() * scaleHeight));
+				JDialogSizeAndPostionController.setJDialogPositionOnScreen(editorDialog, JDialogPosition.ParentCenter);
+			}
 			editorDialog.setVisible(true);
 			
 			if (editorDialog.isCanceled()==false) {
@@ -173,7 +188,6 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			}
 			
 			this.jTextFieldExpression.requestFocus();
-			
 		}
 	}
 }

@@ -55,12 +55,12 @@ import javax.swing.table.TableColumnModel;
 import org.agentgui.gui.swing.dialogs.FeatureSelectionDialog;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
-import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.p2.P2OperationsHandler;
+import de.enflexit.common.swing.OwnerDetection;
 
 /**
  * The Class FeaturePanel enables the selection and displays the required features for an agent project.
@@ -306,13 +306,13 @@ public abstract class FeaturePanel extends JPanel implements ActionListener {
 			try {
 				availableFeatures = P2OperationsHandler.getInstance().getInstalledFeatures();
 			} catch (Exception e1) {
-				Frame owner = Application.getGlobalInfo().getOwnerFrameForComponent(this);
+				Frame owner = OwnerDetection.getOwnerFrameForComponent(this);
 				JOptionPane.showMessageDialog(owner , e1.getMessage(), "Error accessing p2 profile", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
 			// --- Show the feature selection dialog --------------------------
-			Frame ownerFrame = Application.getGlobalInfo().getOwnerFrameForComponent(getJButtonAddFeatures());
+			Frame ownerFrame = OwnerDetection.getOwnerFrameForComponent(getJButtonAddFeatures());
 			FeatureSelectionDialog fsd = new FeatureSelectionDialog(ownerFrame, this.getFeatureVector(), availableFeatures);
 
 			// --- Add the selected features to the list ----------------------

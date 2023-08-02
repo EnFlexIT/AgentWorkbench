@@ -29,10 +29,6 @@
 package agentgui.core.config;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -49,9 +45,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
 
 import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.agentgui.gui.swt.SWTResourceManager;
@@ -2067,86 +2060,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public String getOIDCUsername() {
 		return oidcUsername;
-	}
-	
-	// ------------------------------------------------------------------------------------------------------
-	// ---- From here some help methods for container and component handling can be found --- Start --------- 
-	// ------------------------------------------------------------------------------------------------------
-	/**
-	 * Returns the top parent component of the specified component.
-	 * @param component the component
-	 * @return the top parent component
-	 */
-	public Component getTopParentComponent(Component component) {
-		Component compFound = component;
-		if (compFound!=null) {
-			while (compFound.getParent()!=null) {
-				compFound = compFound.getParent();
-			}	
-		}
-		return compFound;
-	}
-	/**
-	 * Returns the owner frame for the specified JComponent.
-	 * @param component the JComponent
-	 * @return the owner frame for component or null, if no component was specified
-	 */
-	public Frame getOwnerFrameForComponent(Component component) {
-		if (component== null) return null;
-		return this.getOwnerFrameForContainer(component.getParent());
-	}
-	/**
-	 * Returns the owner frame for the specified Container.
-	 * @param container the container
-	 * @return the owner frame for component or null, if no container was specified
-	 */
-	public Frame getOwnerFrameForContainer(Container container) {
-		if (container==null) return null;
-		Frame frameFound = null;
-		Container currComp = container;
-		while (currComp!=null) {
-			if (currComp instanceof Frame) {
-				frameFound = (Frame) currComp;
-				break;
-			}
-			currComp = currComp.getParent();
-		}
-		return frameFound;
-	}
-	/**
-	 * Returns the owner dialog for a JComponent.
-	 * @param component the JComponent
-	 * @return the owner dialog for component
-	 */
-	public Dialog getOwnerDialogForComponent(JComponent component) {
-		Dialog dialogFound = null;
-		Container currComp = component.getParent();
-		while (currComp!=null) {
-			if (currComp instanceof Dialog) {
-				dialogFound = (Dialog) currComp;
-				break;
-			}
-			currComp = currComp.getParent();
-		}
-		return dialogFound;
-	}
-	/**
-	 * Returns the owner JInternalFrame for a JComponent if possible.
-	 * @param component the JComponent
-	 * @return the owner JInternalFrame for component
-	 */
-	public JInternalFrame getOwnerJInternalFrameForComponent(JComponent component) {
-		
-		JInternalFrame iFrameFound = null;
-		Container currComp = component.getParent();
-		while (currComp!=null) {
-			if (currComp instanceof JInternalFrame) {
-				iFrameFound = (JInternalFrame) currComp;
-				break;
-			}
-			currComp = currComp.getParent();
-		}
-		return iFrameFound;
 	}
 	
 	/**
