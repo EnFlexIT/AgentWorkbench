@@ -405,6 +405,7 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 				ExpressionEditorTreeNode selecteNode = (ExpressionEditorTreeNode) this.getJTreeMainCategories().getLastSelectedPathComponent();
 				this.currentOptions = selecteNode.getExpressionTemplates();
 				this.getJListSubCategories().setModel(this.createCategoriesListModel());
+				this.getJListSubCategories().setSelectedIndex(0);
 			}
 		}
 	}

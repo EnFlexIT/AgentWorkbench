@@ -19,7 +19,8 @@ public enum ExpressionFunction {
 	MAX("MAX(<Array>)", "Array Functions"),
 	AVG("AVG(<Array>)", "Array Functions"),
 	SUM("SUM(<Array>)", "Array Functions"),
-	TimeSeriesDiscretization("TimeSeriesDiscretization(<TimeSeries>,<TimeFrom>,<TimeTo>,<NumSteps>)", "Time Series Functions")
+	DiscretizeLinear("DiscretizeLinear(<TimeSeries>,<TimeFrom>,<TimeTo>,<NumSteps>)", "Time Series Functions"),
+	DiscretizeStepWise("DiscretizeStepWise(<TimeSeries>,<TimeFrom>,<TimeTo>,<NumSteps>)", "Time Series Functions"),
 
 	;
 	
