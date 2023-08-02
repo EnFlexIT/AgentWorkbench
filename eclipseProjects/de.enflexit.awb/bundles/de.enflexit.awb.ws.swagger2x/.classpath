@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry exported="true" kind="lib" path="lib/classgraph-4.8.154.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javassist-3.29.2-GA.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swagger-annotations-jakarta-2.2.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swagger-core-jakarta-2.2.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swagger-integration-jakarta-2.2.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swagger-jaxrs2-jakarta-2.2.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swagger-models-jakarta-2.2.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swagger-annotations-jakarta-2.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swagger-core-jakarta-2.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swagger-integration-jakarta-2.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swagger-jaxrs2-jakarta-2.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swagger-models-jakarta-2.2.15.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
 		<attributes>
 			<attribute name="module" value="true"/>
