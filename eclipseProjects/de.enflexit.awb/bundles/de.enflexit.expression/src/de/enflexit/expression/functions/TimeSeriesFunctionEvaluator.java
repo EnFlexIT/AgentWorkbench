@@ -14,7 +14,7 @@ import de.enflexit.expression.ExpressionResult;
 public class TimeSeriesFunctionEvaluator {
 	
 	private enum DiscretizationMode{
-		LINEAR, STEPWISE
+		LINEAR, STEPWISE, AVERAGE
 	}
 	
 	private ExpressionFunction expressionFunction;
@@ -45,6 +45,8 @@ public class TimeSeriesFunctionEvaluator {
 				expressionResult.setExpressionData(this.discretize(parameters, DiscretizationMode.LINEAR));
 			} else if (expressionFunction==ExpressionFunction.DiscretizeStepWise) {
 				expressionResult.setExpressionData(this.discretize(parameters, DiscretizationMode.STEPWISE));
+			} else if (expressionFunction==ExpressionFunction.DiscretizeAverage) {
+				expressionResult.setExpressionData(this.discretize(parameters, DiscretizationMode.AVERAGE));
 			}
 		} else {
 			// --- Parameters are not okay, show an error message ---
@@ -110,11 +112,19 @@ public class TimeSeriesFunctionEvaluator {
 		long currStepStart = startTime;
 		int i = 0;
 		while (currStepStart<endTime) {
-			if (discretizationMode==DiscretizationMode.LINEAR) {
+			
+			switch(discretizationMode) {
+			case LINEAR:
 				stepValues[i] = this.getInterpolatedValueForTime(timeSeries, currStepStart);
-			} else {
+				break;
+			case STEPWISE:
 				stepValues[i] = this.getStepValueForTime(timeSeries, currStepStart);
+				break;
+			case AVERAGE:
+				stepValues[i] = this.calculateAverage(timeSeries, currStepStart, currStepStart+stepLength);
+				break;
 			}
+			
 			i++;
 			currStepStart += stepLength;
 		}
@@ -167,10 +177,9 @@ public class TimeSeriesFunctionEvaluator {
 		List<Double> values = timeSeries.getDataColumn(1).getDoubleList();
 		
 		// --- Find the relevant time series entry ------------------
-		int index = 0;{
-			while (timeStamps.get(index)<timeSearch) {
-				index++;
-			}
+		int index = 0;
+		while (timeStamps.get(index)<timeSearch) {
+			index++;
 		}
 
 		if (timeStamps.get(index)==timeSearch) {
@@ -180,6 +189,29 @@ public class TimeSeriesFunctionEvaluator {
 			// --- No exact match -> return the previous entry ------
 			return values.get(index-1);
 		}
+	}
+	
+	private double calculateAverage(ExpressionData timeSeries, long timeFrom, long timeTo) {
+		List<Long> timeStamps = timeSeries.getDataColumn(0).getLongList();
+		List<Double> values = timeSeries.getDataColumn(1).getDoubleList();
+		
+		int index = 0;
+		// --- Find the relevant time series entry ------------------
+		while (timeStamps.get(index)<timeFrom) {
+			index++;
+		}
+		if (timeStamps.get(index)>timeFrom)	index--;
+		
+		double avgValue = 0;
+		int numValues = 0;
+		
+		do {
+			avgValue += values.get(index);
+			index++;
+			numValues++;
+		} while (timeStamps.get(index)<timeTo);
+		
+		return avgValue/numValues;
 	}
 		
 }

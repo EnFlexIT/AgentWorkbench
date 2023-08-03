@@ -21,6 +21,7 @@ public enum ExpressionFunction {
 	SUM("SUM(<Array>)", "Array Functions"),
 	DiscretizeLinear("DiscretizeLinear(<TimeSeries>,<TimeFrom>,<TimeTo>,<NumSteps>)", "Time Series Functions"),
 	DiscretizeStepWise("DiscretizeStepWise(<TimeSeries>,<TimeFrom>,<TimeTo>,<NumSteps>)", "Time Series Functions"),
+	DiscretizeAverage("DiscretizeAverage(<TimeSeries>,<TimeFrom>,<TimeTo>,<NumSteps>)", "Time Series Functions");
 
 	;
 	
