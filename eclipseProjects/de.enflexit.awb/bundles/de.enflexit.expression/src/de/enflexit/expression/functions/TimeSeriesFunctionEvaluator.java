@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.enflexit.expression.ExpressionData;
+import de.enflexit.expression.ExpressionData.DataType;
 import de.enflexit.expression.ExpressionResult;
 
 /**
@@ -70,9 +71,26 @@ public class TimeSeriesFunctionEvaluator {
 			this.errorMessage = "Wrong number of parameters passed!";
 			return false;
 		}
+
+		// --- Check the parameter types ----------------------------
+		if (this.parameters.get(0).isTimeSeries()==false) {
+			this.errorMessage = "The first parameter must be a time series";
+			return false;
+		}
+		if (this.parameters.get(1).getDataType()!=DataType.Double) {
+			this.errorMessage = "The second parameter must be of type double";
+			return false;
+		}
+		if (this.parameters.get(2).getDataType()!=DataType.Double) {
+			this.errorMessage = "The third parameter must be of type double";
+			return false;
+		}
+		if (this.parameters.get(3).getDataType()!=DataType.Integer) {
+			this.errorMessage = "The fourth parameter must be of type integer";
+			return false;
+		}
 		
-		//TODO check parameter types
-		
+		// --- Check if the time range is valid ---------------------
 		long startTime = Double.valueOf(parameters.get(1).getDoubleValue()).longValue();
 		long endTime = Double.valueOf(parameters.get(2).getDoubleValue()).longValue();
 		if (endTime <= startTime) {
@@ -80,6 +98,7 @@ public class TimeSeriesFunctionEvaluator {
 			return false;
 		}
 		
+		// --- Check if the time range is covered by the original data
 		ExpressionData timeSeries = parameters.get(0);
 		List<Long> timeStamps = timeSeries.getDataColumn(0).getLongList();
 		Long timeSeriesStart = Collections.min(timeStamps);
@@ -89,8 +108,10 @@ public class TimeSeriesFunctionEvaluator {
 			return false;
 		}
 		
+		// --- All checks passed -> everything fine -----------------
 		return true;
 	}
+	
 	
 	/**
 	 * Discretizes the time series using linear interpolation.
