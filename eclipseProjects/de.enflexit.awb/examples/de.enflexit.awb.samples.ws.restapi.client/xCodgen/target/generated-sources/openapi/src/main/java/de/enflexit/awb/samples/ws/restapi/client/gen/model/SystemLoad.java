@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 
@@ -31,13 +29,12 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 /**
  * The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.
  */
-@ApiModel(description = "The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.")
 @JsonPropertyOrder({
   SystemLoad.JSON_PROPERTY_CPU_USAGE,
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-04-20T17:08:39.430297+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
 public class SystemLoad {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   private Float cpuUsage;
@@ -60,8 +57,7 @@ public class SystemLoad {
    * The CPU usage in percent
    * @return cpuUsage
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "The CPU usage in percent")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -86,8 +82,7 @@ public class SystemLoad {
    * The memory usage in percent
    * @return memUsage
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "The memory usage in percent")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_MEM_USAGE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -112,8 +107,7 @@ public class SystemLoad {
    * The Heap usage in percen
    * @return heapUsage
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "The Heap usage in percen")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_HEAP_USAGE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 

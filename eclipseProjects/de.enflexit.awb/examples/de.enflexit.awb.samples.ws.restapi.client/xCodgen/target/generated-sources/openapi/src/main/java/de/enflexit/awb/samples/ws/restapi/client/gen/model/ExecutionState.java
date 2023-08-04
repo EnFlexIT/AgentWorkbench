@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 
@@ -31,12 +29,11 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 /**
  * The Agent.Workbench execution state
  */
-@ApiModel(description = "The Agent.Workbench execution state")
 @JsonPropertyOrder({
   ExecutionState.JSON_PROPERTY_EXECUTION_MODE,
   ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-04-20T17:08:39.430297+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
 public class ExecutionState {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
@@ -132,8 +129,7 @@ public class ExecutionState {
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
    * @return executionMode
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "* 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects ")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_EXECUTION_MODE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -158,8 +154,7 @@ public class ExecutionState {
    * * &#39;SETUP&#39; - Runs the selected setup of an AWB projekt * &#39;AGENT&#39; - Runs one or more agents from an AWB project 
    * @return deviceSystemExecutionMode
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "* 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project ")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 

@@ -4,7 +4,7 @@ Agent.Workbench REST - API
 
 - API version: 1.0.0
 
-- Build date: 2022-04-20T17:08:39.430297+02:00[Europe/Berlin]
+- Build date: 2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]
 
 This is the REST-API for Agent.Workbench in an embbedded system mode.
 
@@ -17,7 +17,7 @@ This is the REST-API for Agent.Workbench in an embbedded system mode.
 Building the API client library requires:
 
 1. Java 1.8+
-2. Maven (3.8.3+)/Gradle (7.2+)
+2. Maven/Gradle
 
 ## Installation
 
@@ -75,31 +75,6 @@ Then manually install the following JARs:
 
 - `target/openapi-java-client-1.0.0.jar`
 - `target/lib/*.jar`
-
-## Usage
-
-To add a HTTP proxy for the API client, use `ClientConfig`:
-```java
-
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import de.enflexit.awb.samples.ws.restapi.client.gen.handler.*;
-import de.enflexit.awb.samples.ws.restapi.client.gen.AdminsApi;
-
-...
-
-ApiClient defaultClient = Configuration.getDefaultApiClient();
-ClientConfig clientConfig = defaultClient.getClientConfig();
-clientConfig.connectorProvider(new ApacheConnectorProvider());
-clientConfig.property(ClientProperties.PROXY_URI, "http://proxy_url_here");
-clientConfig.property(ClientProperties.PROXY_USERNAME, "proxy_username");
-clientConfig.property(ClientProperties.PROXY_PASSWORD, "proxy_password");
-defaultClient.setClientConfig(clientConfig);
-
-AdminsApi apiInstance = new AdminsApi(defaultClient);
-
-```
 
 ## Getting Started
 
@@ -159,9 +134,12 @@ Class | Method | HTTP request | Description
  - [SystemLoad](docs/SystemLoad.md)
 
 
+<a id="documentation-for-authorization"></a>
 ## Documentation for Authorization
 
+
 Authentication schemes defined for the API:
+<a id="AwbApiKey"></a>
 ### AwbApiKey
 
 

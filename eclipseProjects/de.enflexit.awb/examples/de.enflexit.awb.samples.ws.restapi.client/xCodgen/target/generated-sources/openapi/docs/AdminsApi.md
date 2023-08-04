@@ -2,11 +2,11 @@
 
 All URIs are relative to *http://localhost:8080/api*
 
-Method | HTTP request | Description
-------------- | ------------- | -------------
-[**infoGet**](AdminsApi.md#infoGet) | **GET** /info | Returns system information
-[**loadGet**](AdminsApi.md#loadGet) | **GET** /load | Returns the current System load
-[**stateGet**](AdminsApi.md#stateGet) | **GET** /state | Returns the current AWB state
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**infoGet**](AdminsApi.md#infoGet) | **GET** /info | Returns system information |
+| [**loadGet**](AdminsApi.md#loadGet) | **GET** /load | Returns the current System load |
+| [**stateGet**](AdminsApi.md#stateGet) | **GET** /state | Returns the current AWB state |
 
 
 

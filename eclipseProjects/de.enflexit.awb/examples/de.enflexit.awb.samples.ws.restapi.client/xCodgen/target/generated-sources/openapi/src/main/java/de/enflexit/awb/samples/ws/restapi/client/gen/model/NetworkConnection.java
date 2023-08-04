@@ -22,8 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 
@@ -31,7 +29,6 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 /**
  * Describes a single network connection.
  */
-@ApiModel(description = "Describes a single network connection.")
 @JsonPropertyOrder({
   NetworkConnection.JSON_PROPERTY_NAME,
   NetworkConnection.JSON_PROPERTY_DISPLAY_NAME,
@@ -41,7 +38,7 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
   NetworkConnection.JSON_PROPERTY_TRAFFIC_SEND_IN_M_B,
   NetworkConnection.JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-04-20T17:08:39.430297+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
 public class NetworkConnection {
   public static final String JSON_PROPERTY_NAME = "name";
   private String name;
@@ -76,8 +73,7 @@ public class NetworkConnection {
    * Get name
    * @return name
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_NAME)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -102,8 +98,7 @@ public class NetworkConnection {
    * Get displayName
    * @return displayName
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_DISPLAY_NAME)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -128,8 +123,7 @@ public class NetworkConnection {
    * Get macAddress
    * @return macAddress
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_MAC_ADDRESS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -154,8 +148,7 @@ public class NetworkConnection {
    * Get ip4Addresses
    * @return ip4Addresses
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_IP4_ADDRESSES)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -180,8 +173,7 @@ public class NetworkConnection {
    * Get ip6Addresses
    * @return ip6Addresses
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_IP6_ADDRESSES)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -206,8 +198,7 @@ public class NetworkConnection {
    * Get trafficSendInMB
    * @return trafficSendInMB
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_TRAFFIC_SEND_IN_M_B)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -232,8 +223,7 @@ public class NetworkConnection {
    * Get trafficReceivedInMB
    * @return trafficReceivedInMB
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 

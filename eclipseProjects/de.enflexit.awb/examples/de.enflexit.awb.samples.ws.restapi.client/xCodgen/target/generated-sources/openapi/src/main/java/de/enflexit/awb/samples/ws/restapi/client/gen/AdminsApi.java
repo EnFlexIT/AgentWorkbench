@@ -6,7 +6,7 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.ApiResponse;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.Configuration;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.Pair;
 
-import javax.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.GenericType;
 
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.ExecutionState;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemInformation;
@@ -14,10 +14,11 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.model.SystemLoad;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-04-20T17:08:39.430297+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
 public class AdminsApi {
   private ApiClient apiClient;
 
@@ -78,37 +79,12 @@ public class AdminsApi {
    * @see <a href="https://www.gitbook.io">Returns system information Documentation</a>
    */
   public ApiResponse<SystemInformation> infoGetWithHttpInfo() throws ApiException {
-    Object localVarPostBody = null;
-    
-    // create path and map variables
-    String localVarPath = "/info";
-
-    // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, String> localVarCookieParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
-    
-    
-    final String[] localVarAccepts = {
-      "applicaion/json"
-    };
-    final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-
-    final String[] localVarContentTypes = {
-      
-    };
-    final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-    String[] localVarAuthNames = new String[] { "AwbApiKey" };
-
+    String localVarAccept = apiClient.selectHeaderAccept("applicaion/json");
+    String localVarContentType = apiClient.selectHeaderContentType();
+    String[] localVarAuthNames = new String[] {"AwbApiKey"};
     GenericType<SystemInformation> localVarReturnType = new GenericType<SystemInformation>() {};
-
-    return apiClient.invokeAPI("AdminsApi.infoGet", localVarPath, "GET", localVarQueryParams, localVarPostBody,
-                               localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType,
+    return apiClient.invokeAPI("AdminsApi.infoGet", "/info", "GET", new ArrayList<>(), null,
+                               new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>(), localVarAccept, localVarContentType,
                                localVarAuthNames, localVarReturnType, false);
   }
   /**
@@ -138,37 +114,12 @@ public class AdminsApi {
      </table>
    */
   public ApiResponse<SystemLoad> loadGetWithHttpInfo() throws ApiException {
-    Object localVarPostBody = null;
-    
-    // create path and map variables
-    String localVarPath = "/load";
-
-    // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, String> localVarCookieParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
-    
-    
-    final String[] localVarAccepts = {
-      "applicaion/json"
-    };
-    final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-
-    final String[] localVarContentTypes = {
-      
-    };
-    final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-    String[] localVarAuthNames = new String[] { "AwbApiKey" };
-
+    String localVarAccept = apiClient.selectHeaderAccept("applicaion/json");
+    String localVarContentType = apiClient.selectHeaderContentType();
+    String[] localVarAuthNames = new String[] {"AwbApiKey"};
     GenericType<SystemLoad> localVarReturnType = new GenericType<SystemLoad>() {};
-
-    return apiClient.invokeAPI("AdminsApi.loadGet", localVarPath, "GET", localVarQueryParams, localVarPostBody,
-                               localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType,
+    return apiClient.invokeAPI("AdminsApi.loadGet", "/load", "GET", new ArrayList<>(), null,
+                               new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>(), localVarAccept, localVarContentType,
                                localVarAuthNames, localVarReturnType, false);
   }
   /**
@@ -202,37 +153,12 @@ public class AdminsApi {
    * @see <a href="https://www.gitbook.io">Returns the current AWB state Documentation</a>
    */
   public ApiResponse<ExecutionState> stateGetWithHttpInfo() throws ApiException {
-    Object localVarPostBody = null;
-    
-    // create path and map variables
-    String localVarPath = "/state";
-
-    // query params
-    List<Pair> localVarQueryParams = new ArrayList<Pair>();
-    Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-    Map<String, String> localVarCookieParams = new HashMap<String, String>();
-    Map<String, Object> localVarFormParams = new HashMap<String, Object>();
-
-
-    
-    
-    
-    final String[] localVarAccepts = {
-      "applicaion/json"
-    };
-    final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-
-    final String[] localVarContentTypes = {
-      
-    };
-    final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
-
-    String[] localVarAuthNames = new String[] { "AwbApiKey" };
-
+    String localVarAccept = apiClient.selectHeaderAccept("applicaion/json");
+    String localVarContentType = apiClient.selectHeaderContentType();
+    String[] localVarAuthNames = new String[] {"AwbApiKey"};
     GenericType<ExecutionState> localVarReturnType = new GenericType<ExecutionState>() {};
-
-    return apiClient.invokeAPI("AdminsApi.stateGet", localVarPath, "GET", localVarQueryParams, localVarPostBody,
-                               localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType,
+    return apiClient.invokeAPI("AdminsApi.stateGet", "/state", "GET", new ArrayList<>(), null,
+                               new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>(), localVarAccept, localVarContentType,
                                localVarAuthNames, localVarReturnType, false);
   }
 }

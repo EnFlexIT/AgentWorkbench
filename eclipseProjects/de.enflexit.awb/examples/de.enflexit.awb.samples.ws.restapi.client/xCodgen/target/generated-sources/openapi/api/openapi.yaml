@@ -152,8 +152,8 @@ components:
           type: string
       type: object
     SystemLoad:
-      description: The systems current load, includung CPU, memoryand HEAP  usage.
-        Further, the number of Java threads are returned.
+      description: "The systems current load, includung CPU, memoryand HEAP  usage.\
+        \ Further, the number of Java threads are returned."
       properties:
         cpuUsage:
           description: The CPU usage in percent

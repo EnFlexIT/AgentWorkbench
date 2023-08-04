@@ -8,20 +8,19 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/apiRegistrationService.xml
-Require-Bundle: jakarta.ws.rs-api;bundle-version="2.1.6",
- org.glassfish.jersey.core.jersey-client;bundle-version="2.35.0",
- org.glassfish.jersey.core.jersey-common;bundle-version="2.35.0",
- org.glassfish.jersey.media.jersey-media-multipart;bundle-version="2.35.0",
- org.glassfish.jersey.media.jersey-media-json-jackson;bundle-version="2.35.0",
- com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.12.2",
- com.fasterxml.jackson.core.jackson-core;bundle-version="2.12.2",
- com.fasterxml.jackson.core.jackson-databind;bundle-version="2.12.2",
- com.fasterxml.jackson.datatype.jackson-datatype-jsr310;bundle-version="2.12.2",
- wrapped.org.openapitools.jackson-databind-nullable;bundle-version="0.2.2",
- de.enflexit.awb.ws.swagger1x;bundle-version="1.6.6",
- de.enflexit.common;bundle-version="1.2.8",
- org.agentgui.core;bundle-version="2.2.4",
- org.agentgui.lib.jade;bundle-version="4.5.1",
+Require-Bundle: jakarta.ws.rs-api,
+ org.glassfish.jersey.core.jersey-client,
+ org.glassfish.jersey.core.jersey-common,
+ org.glassfish.jersey.media.jersey-media-multipart,
+ org.glassfish.jersey.media.jersey-media-json-jackson,
+ com.fasterxml.jackson.core.jackson-annotations,
+ com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-databind,
+ com.fasterxml.jackson.datatype.jackson-datatype-jsr310,
+ wrapped.org.openapitools.jackson-databind-nullable,
+ de.enflexit.common,
+ org.agentgui.core,
+ org.agentgui.lib.jade,
  de.enflexit.awb.ws.client,
  org.eclipse.osgi
 Bundle-ActivationPolicy: lazy
@@ -33,4 +32,4 @@ Export-Package: de.enflexit.awb.samples.ws.restapi.client,
  de.enflexit.awb.samples.ws.restapi.client.gen.handler,
  de.enflexit.awb.samples.ws.restapi.client.gen.handler.auth,
  de.enflexit.awb.samples.ws.restapi.client.gen.model
-Import-Package: javax.annotation
+Import-Package: jakarta.annotation

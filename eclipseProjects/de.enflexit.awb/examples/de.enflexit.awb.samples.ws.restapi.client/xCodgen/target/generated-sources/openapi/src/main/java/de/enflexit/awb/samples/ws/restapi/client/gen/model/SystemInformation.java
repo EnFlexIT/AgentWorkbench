@@ -23,8 +23,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.NetworkConnection;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -34,7 +32,6 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 /**
  * The system information consisting of Hardware and OS information
  */
-@ApiModel(description = "The system information consisting of Hardware and OS information")
 @JsonPropertyOrder({
   SystemInformation.JSON_PROPERTY_OS_DESCRIPTION,
   SystemInformation.JSON_PROPERTY_OS_MANUFACTURER,
@@ -49,7 +46,7 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-04-20T17:08:39.430297+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
 public class SystemInformation {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   private String osDescription;
@@ -85,7 +82,7 @@ public class SystemInformation {
   private Double heapMemoryMaxInGB;
 
   public static final String JSON_PROPERTY_NETWORK_CONNECTIONS = "networkConnections";
-  private List<NetworkConnection> networkConnections = null;
+  private List<NetworkConnection> networkConnections;
 
   public SystemInformation() { 
   }
@@ -99,8 +96,7 @@ public class SystemInformation {
    * Get osDescription
    * @return osDescription
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -125,8 +121,7 @@ public class SystemInformation {
    * Get osManufacturer
    * @return osManufacturer
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_OS_MANUFACTURER)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -151,8 +146,7 @@ public class SystemInformation {
    * Get osFamilly
    * @return osFamilly
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_OS_FAMILLY)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -177,8 +171,7 @@ public class SystemInformation {
    * Get osVersion
    * @return osVersion
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_OS_VERSION)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -203,8 +196,7 @@ public class SystemInformation {
    * Get processorName
    * @return processorName
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_PROCESSOR_NAME)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -229,8 +221,7 @@ public class SystemInformation {
    * Get processorFrequenceInMhz
    * @return processorFrequenceInMhz
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -255,8 +246,7 @@ public class SystemInformation {
    * Get processorNoPhysical
    * @return processorNoPhysical
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_PHYSICAL)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -281,8 +271,7 @@ public class SystemInformation {
    * Get processorNoLogical
    * @return processorNoLogical
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_LOGICAL)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -307,8 +296,7 @@ public class SystemInformation {
    * Get memoryTotalInGB
    * @return memoryTotalInGB
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_MEMORY_TOTAL_IN_G_B)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -333,8 +321,7 @@ public class SystemInformation {
    * Get swapMemoryTotalInGB
    * @return swapMemoryTotalInGB
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -359,8 +346,7 @@ public class SystemInformation {
    * Get heapMemoryMaxInGB
    * @return heapMemoryMaxInGB
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
@@ -393,8 +379,7 @@ public class SystemInformation {
    * Get networkConnections
    * @return networkConnections
   **/
-  @javax.annotation.Nullable
-  @ApiModelProperty(value = "")
+  @jakarta.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_NETWORK_CONNECTIONS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
