@@ -17,8 +17,8 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.enflexit.awb.ws.restapi.gen.model.NetworkConnection;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 /**
  * The system information consisting of Hardware and OS information
  */
-@ApiModel(description = "The system information consisting of Hardware and OS information")
+@Schema(description = "The system information consisting of Hardware and OS information")
 @JsonPropertyOrder({
   SystemInformation.JSON_PROPERTY_OS_DESCRIPTION,
   SystemInformation.JSON_PROPERTY_OS_MANUFACTURER,
@@ -103,7 +103,7 @@ public class SystemInformation   {
    * @return osDescription
    **/
   @JsonProperty(value = "osDescription")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getOsDescription() {
     return osDescription;
@@ -123,7 +123,7 @@ public class SystemInformation   {
    * @return osManufacturer
    **/
   @JsonProperty(value = "osManufacturer")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getOsManufacturer() {
     return osManufacturer;
@@ -143,7 +143,7 @@ public class SystemInformation   {
    * @return osFamilly
    **/
   @JsonProperty(value = "osFamilly")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getOsFamilly() {
     return osFamilly;
@@ -163,7 +163,7 @@ public class SystemInformation   {
    * @return osVersion
    **/
   @JsonProperty(value = "osVersion")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getOsVersion() {
     return osVersion;
@@ -183,7 +183,7 @@ public class SystemInformation   {
    * @return processorName
    **/
   @JsonProperty(value = "processorName")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getProcessorName() {
     return processorName;
@@ -203,7 +203,7 @@ public class SystemInformation   {
    * @return processorFrequenceInMhz
    **/
   @JsonProperty(value = "processorFrequenceInMhz")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getProcessorFrequenceInMhz() {
     return processorFrequenceInMhz;
@@ -223,7 +223,7 @@ public class SystemInformation   {
    * @return processorNoPhysical
    **/
   @JsonProperty(value = "processorNoPhysical")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Integer getProcessorNoPhysical() {
     return processorNoPhysical;
@@ -243,7 +243,7 @@ public class SystemInformation   {
    * @return processorNoLogical
    **/
   @JsonProperty(value = "processorNoLogical")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Integer getProcessorNoLogical() {
     return processorNoLogical;
@@ -263,7 +263,7 @@ public class SystemInformation   {
    * @return memoryTotalInGB
    **/
   @JsonProperty(value = "memoryTotalInGB")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getMemoryTotalInGB() {
     return memoryTotalInGB;
@@ -283,7 +283,7 @@ public class SystemInformation   {
    * @return swapMemoryTotalInGB
    **/
   @JsonProperty(value = "swapMemoryTotalInGB")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getSwapMemoryTotalInGB() {
     return swapMemoryTotalInGB;
@@ -303,7 +303,7 @@ public class SystemInformation   {
    * @return heapMemoryMaxInGB
    **/
   @JsonProperty(value = "heapMemoryMaxInGB")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getHeapMemoryMaxInGB() {
     return heapMemoryMaxInGB;
@@ -331,7 +331,7 @@ public class SystemInformation   {
    * @return networkConnections
    **/
   @JsonProperty(value = "networkConnections")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   @Valid 
   public List<NetworkConnection> getNetworkConnections() {
     return networkConnections;

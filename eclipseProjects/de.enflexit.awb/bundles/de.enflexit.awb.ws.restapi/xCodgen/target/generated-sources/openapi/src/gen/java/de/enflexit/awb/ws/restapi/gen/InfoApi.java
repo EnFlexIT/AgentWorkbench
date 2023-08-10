@@ -3,9 +3,11 @@ package de.enflexit.awb.ws.restapi.gen;
 import de.enflexit.awb.ws.restapi.gen.InfoApiService;
 import de.enflexit.awb.ws.restapi.gen.factories.InfoApiServiceFactory;
 
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import de.enflexit.awb.ws.restapi.gen.model.SystemInformation;
 
 import java.util.Map;
@@ -25,10 +27,9 @@ import jakarta.ws.rs.*;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
+
 @Path("/info")
-
-
-@io.swagger.annotations.Api(description = "the info API")
+@Tag(name="Info EndPoint", description = "The Info API")
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
 public class InfoApi  {
    private final InfoApiService delegate;
@@ -58,12 +59,16 @@ public class InfoApi  {
     
     
     @Produces({ "applicaion/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "AwbApiKey")
-    }, tags={ "admins", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
-    })
+//    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
+//        @io.swagger.annotations.Authorization(value = "AwbApiKey")
+//    }, tags={ "admins", })
+//    @io.swagger.annotations.ApiResponses(value = {
+//        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
+//    })
+    @Operation(summary = "Returns the hardware and system information", description = "Returns Hardware and system  inforamtion.",
+	responses = {@ApiResponse(responseCode = "OK", description = "OK_MSG", 
+					content = @Content(schema = @Schema(implementation = SystemInformation.class))),
+					@ApiResponse(responseCode = "NOT_FOUND", description = "NOT_FOUND_MSG")})
     public Response infoGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.infoGet(securityContext);

@@ -16,16 +16,18 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
  * The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.
  */
-@ApiModel(description = "The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.")
+@Schema(description = "The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.")
 @JsonPropertyOrder({
   SystemLoad.JSON_PROPERTY_CPU_USAGE,
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
@@ -55,7 +57,7 @@ public class SystemLoad   {
    * @return cpuUsage
    **/
   @JsonProperty(value = "cpuUsage")
-  @ApiModelProperty(value = "The CPU usage in percent")
+  @Schema(description = "The CPU usage in percent")
   
   public Float getCpuUsage() {
     return cpuUsage;
@@ -75,7 +77,7 @@ public class SystemLoad   {
    * @return memUsage
    **/
   @JsonProperty(value = "memUsage")
-  @ApiModelProperty(value = "The memory usage in percent")
+  @Schema(description = "The memory usage in percent")
   
   public Float getMemUsage() {
     return memUsage;
@@ -95,7 +97,7 @@ public class SystemLoad   {
    * @return heapUsage
    **/
   @JsonProperty(value = "heapUsage")
-  @ApiModelProperty(value = "The Heap usage in percen")
+  @Schema(description = "The Heap usage in percen")
   
   public Float getHeapUsage() {
     return heapUsage;

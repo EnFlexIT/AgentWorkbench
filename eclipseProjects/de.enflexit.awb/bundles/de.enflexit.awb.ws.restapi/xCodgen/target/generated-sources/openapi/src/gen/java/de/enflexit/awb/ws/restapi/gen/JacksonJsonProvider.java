@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.fasterxml.jackson.datatype.jsr310.*;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
+
 
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -14,7 +15,7 @@ import jakarta.ws.rs.ext.Provider;
 
 @Provider
 @Produces({MediaType.APPLICATION_JSON})
-public class JacksonJsonProvider extends JacksonJaxbJsonProvider {
+public class JacksonJsonProvider extends JacksonXmlBindJsonProvider {
 
     public JacksonJsonProvider() {
 

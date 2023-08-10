@@ -16,8 +16,8 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 /**
  * Describes a single network connection.
  */
-@ApiModel(description = "Describes a single network connection.")
+@Schema(description = "Describes a single network connection.")
 @JsonPropertyOrder({
   NetworkConnection.JSON_PROPERTY_NAME,
   NetworkConnection.JSON_PROPERTY_DISPLAY_NAME,
@@ -75,7 +75,7 @@ public class NetworkConnection   {
    * @return name
    **/
   @JsonProperty(value = "name")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getName() {
     return name;
@@ -95,7 +95,7 @@ public class NetworkConnection   {
    * @return displayName
    **/
   @JsonProperty(value = "displayName")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getDisplayName() {
     return displayName;
@@ -115,7 +115,7 @@ public class NetworkConnection   {
    * @return macAddress
    **/
   @JsonProperty(value = "macAddress")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getMacAddress() {
     return macAddress;
@@ -135,7 +135,7 @@ public class NetworkConnection   {
    * @return ip4Addresses
    **/
   @JsonProperty(value = "ip4Addresses")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getIp4Addresses() {
     return ip4Addresses;
@@ -155,7 +155,7 @@ public class NetworkConnection   {
    * @return ip6Addresses
    **/
   @JsonProperty(value = "ip6Addresses")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getIp6Addresses() {
     return ip6Addresses;
@@ -175,7 +175,7 @@ public class NetworkConnection   {
    * @return trafficSendInMB
    **/
   @JsonProperty(value = "trafficSendInMB")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getTrafficSendInMB() {
     return trafficSendInMB;
@@ -195,7 +195,7 @@ public class NetworkConnection   {
    * @return trafficReceivedInMB
    **/
   @JsonProperty(value = "trafficReceivedInMB")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getTrafficReceivedInMB() {
     return trafficReceivedInMB;

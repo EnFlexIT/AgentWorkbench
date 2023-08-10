@@ -1,12 +1,10 @@
 package de.enflexit.awb.ws.restapi.gen;
 
-import io.swagger.jaxrs.config.SwaggerContextService;
-import io.swagger.models.*;
-
-import io.swagger.models.auth.*;
-
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.ServletContext;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 
@@ -23,8 +21,8 @@ public class Bootstrap extends HttpServlet {
         .name("Apache 2.0")
         .url("http://www.apache.org/licenses/LICENSE-2.0.html"));
 
-    ServletContext context = config.getServletContext();
-    Swagger swagger = new Swagger().info(info);
+//    ServletContext context = config.getServletContext();
+//    Swagger swagger = new Swagger().info(info);
 
 //    new SwaggerContextService().withServletConfig(config).updateSwagger(swagger);
   }

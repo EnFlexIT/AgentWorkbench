@@ -2,10 +2,12 @@ package de.enflexit.awb.ws.restapi.gen;
 
 import de.enflexit.awb.ws.restapi.gen.LoadApiService;
 import de.enflexit.awb.ws.restapi.gen.factories.LoadApiServiceFactory;
-
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import de.enflexit.awb.ws.restapi.gen.model.SystemInformation;
 import de.enflexit.awb.ws.restapi.gen.model.SystemLoad;
 
 import java.util.Map;
@@ -26,9 +28,7 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 @Path("/load")
-
-
-@io.swagger.annotations.Api(description = "the load API")
+@Tag(name="Load EndPoint", description = "The Loaf API")
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
 public class LoadApi  {
    private final LoadApiService delegate;
@@ -58,12 +58,16 @@ public class LoadApi  {
     
     
     @Produces({ "applicaion/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns the current System load", notes = "Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes ", response = SystemLoad.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "AwbApiKey")
-    }, tags={ "admins", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "System Load", response = SystemLoad.class)
-    })
+//    @io.swagger.annotations.ApiOperation(value = "Returns the current System load", notes = "Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes ", response = SystemLoad.class, authorizations = {
+//        @io.swagger.annotations.Authorization(value = "AwbApiKey")
+//    }, tags={ "admins", })
+//    @io.swagger.annotations.ApiResponses(value = {
+//        @io.swagger.annotations.ApiResponse(code = 200, message = "System Load", response = SystemLoad.class)
+//    })
+    @Operation(summary = "Returns the current System load", description = "Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes ", 
+   	responses = {@ApiResponse(responseCode = "OK", description = "OK_MSG", 
+   					content = @Content(schema = @Schema(implementation = SystemLoad.class))),
+   					@ApiResponse(responseCode = "NOT_FOUND", description = "NOT_FOUND_MSG")})
     public Response loadGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.loadGet(securityContext);

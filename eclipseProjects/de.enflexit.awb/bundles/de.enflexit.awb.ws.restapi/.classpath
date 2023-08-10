@@ -7,7 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="xCodgen/target/generated-sources/openapi/src/gen/java"/>
 	<classpathentry kind="src" path="xCodgen/target/generated-sources/openapi/src/main/java"/>
-	<classpathentry kind="src" path="xCodgen/target/generated-sources/openapi/src/gen/java/"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

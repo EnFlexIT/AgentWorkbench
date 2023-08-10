@@ -17,8 +17,8 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 /**
  * The Agent.Workbench execution state
  */
-@ApiModel(description = "The Agent.Workbench execution state")
+@Schema(description = "The Agent.Workbench execution state")
 @JsonPropertyOrder({
   ExecutionState.JSON_PROPERTY_EXECUTION_MODE,
   ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE
@@ -119,8 +119,7 @@ public class ExecutionState   {
    * @return executionMode
    **/
   @JsonProperty(value = "executionMode")
-  @ApiModelProperty(value = "* 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects ")
-  
+  @Schema(description = "* 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects ")
   public ExecutionModeEnum getExecutionMode() {
     return executionMode;
   }
@@ -139,7 +138,7 @@ public class ExecutionState   {
    * @return deviceSystemExecutionMode
    **/
   @JsonProperty(value = "deviceSystemExecutionMode")
-  @ApiModelProperty(value = "* 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project ")
+  @Schema(description = "* 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project ")
   
   public DeviceSystemExecutionModeEnum getDeviceSystemExecutionMode() {
     return deviceSystemExecutionMode;

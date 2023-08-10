@@ -2,20 +2,16 @@ package de.enflexit.awb.ws.restapi;
 
 import java.util.Locale;
 
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Variant;
-
 import org.glassfish.jersey.server.ResourceConfig;
 
 import de.enflexit.awb.ws.restapi.gen.InfoApi;
 import de.enflexit.awb.ws.restapi.gen.JacksonJsonProvider;
 import de.enflexit.awb.ws.restapi.gen.LoadApi;
 import de.enflexit.awb.ws.restapi.gen.StateApi;
-import io.swagger.jaxrs.config.BeanConfig;
-import io.swagger.jaxrs.listing.ApiListingResource;
-import io.swagger.jaxrs.listing.SwaggerSerializers;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Variant;
 
 /**
  * The Class AwbRestApplication describes the JERSEY application to start on the configured AWB-Server.
@@ -58,23 +54,23 @@ public class RestApiConfiguration extends ResourceConfig {
 	 */
 	private void configureSwagger() {
 		
-		// --- For swagger 1.x.x (OpenAPI v2) -------------
-		this.register(ApiListingResource.class);
-		this.register(SwaggerSerializers.class);
-
-		BeanConfig config = new BeanConfig();
-		config.setTitle(APPLICATION_NAME);
-
-		config.setVersion("1.0.0");
-		config.setSchemes(new String[] {"http", "https"});
-		config.setHost("localhost:8080");
-		config.setBasePath("/api");
-
-		config.setConfigId("de.enflexit.awb.ws.restapi");
-
-		config.setResourcePackage("de.enflexit.awb.ws.restapi.gen");
-		config.setScan(true);
-		config.setPrettyPrint(true);
+//		// --- For swagger 1.x.x (OpenAPI v2) -------------
+//		this.register(ApiListingResource.class);
+//		this.register(SwaggerSerializers.class);
+//
+//		BeanConfig config = new BeanConfig();
+//		config.setTitle(APPLICATION_NAME);
+//
+//		config.setVersion("1.0.0");
+//		config.setSchemes(new String[] {"http", "https"});
+//		config.setHost("localhost:8080");
+//		config.setBasePath("/api");
+//
+//		config.setConfigId("de.enflexit.awb.ws.restapi");
+//
+//		config.setResourcePackage("de.enflexit.awb.ws.restapi.gen");
+//		config.setScan(true);
+//		config.setPrettyPrint(true);
 	}
 	
 	
