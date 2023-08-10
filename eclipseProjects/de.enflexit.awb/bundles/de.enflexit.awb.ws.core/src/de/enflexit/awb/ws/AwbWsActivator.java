@@ -7,6 +7,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.JettyServerManager;
+import jakarta.ws.rs.ext.RuntimeDelegate;
 
 /**
  * The Class WsActivator.
@@ -27,6 +28,9 @@ public class AwbWsActivator implements BundleActivator, ApplicationListener {
 	@Override
 	public void start(BundleContext context) throws Exception {
 
+		// --- Register Jersey as RuntimeDeligate ---------
+		this.registerJerseyAsRuntimeDelegate();
+		
 		// --- Add a AWB-ApplicationListener --------------
 		Application.addApplicationListener(this);
 		
@@ -90,6 +94,13 @@ public class AwbWsActivator implements BundleActivator, ApplicationListener {
 			JettyServerManager.getInstance().doServerStop(StartOn.JadeStartup);
 			break;
 		}
+	}
+	
+	/**
+	 * Registers the jersey framework as {@link RuntimeDelegate}.
+	 */
+	private void registerJerseyAsRuntimeDelegate() {
+		RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
 	}
 	
 }
