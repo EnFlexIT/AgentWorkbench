@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Swagger 2.x for OpenAPI 3.0
 Bundle-SymbolicName: de.enflexit.awb.ws.swagger2x
-Bundle-Version: 2.2.9.qualifier
+Bundle-Version: 2.2.15.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.swagger2x
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
