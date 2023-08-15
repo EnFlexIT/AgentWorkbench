@@ -1,7 +1,7 @@
 package de.enflexit.awb.samples.ws.restapi.server.impl;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import de.enflexit.awb.samples.ws.restapi.server.RestApiConfiguration;
 import de.enflexit.awb.samples.ws.restapi.server.gen.NotFoundException;

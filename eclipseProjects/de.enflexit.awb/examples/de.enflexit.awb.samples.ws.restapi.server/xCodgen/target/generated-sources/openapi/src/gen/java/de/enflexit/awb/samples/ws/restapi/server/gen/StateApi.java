@@ -3,8 +3,12 @@ package de.enflexit.awb.samples.ws.restapi.server.gen;
 import de.enflexit.awb.samples.ws.restapi.server.gen.StateApiService;
 import de.enflexit.awb.samples.ws.restapi.server.gen.factories.StateApiServiceFactory;
 
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.samples.ws.restapi.server.gen.model.ExecutionState;
 
@@ -17,19 +21,19 @@ import java.io.InputStream;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.servlet.ServletConfig;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 @Path("/state")
 
 
-@io.swagger.annotations.Api(description = "the state API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-17T17:09:44.461949400+02:00[Europe/Berlin]")
+@Tag(description = "the state API", name = "")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
 public class StateApi  {
    private final StateApiService delegate;
 
@@ -54,16 +58,24 @@ public class StateApi  {
       this.delegate = delegate;
    }
 
-    @javax.ws.rs.GET
+    @jakarta.ws.rs.GET
     
     
     @Produces({ "applicaion/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns the current AWB state", notes = "Returns the current state of Agent.Workbench consisiting information  about the execution mode, the currently open project and other. ", response = ExecutionState.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "AwbApiKey")
-    }, tags={ "admins", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = ExecutionState.class)
-    })
+    @Operation(summary = "Returns the current AWB state", description = "", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "AWB-State", content = @Content(schema = @Schema(implementation = ExecutionState.class))),
+            }
+    , tags={ "admins", }) 
+//    ==> Previous Swagger1 annotations <==    
+//    @io.swagger.annotations.ApiOperation(value = "Returns the current AWB state", notes = "Returns the current state of Agent.Workbench consisiting information  about the execution mode, the currently open project and other. ", response = ExecutionState.class, authorizations = {
+//        @io.swagger.annotations.Authorization(value = "AwbApiKey")
+//    }, tags={ "admins", })
+//    @io.swagger.annotations.ApiResponses(value = {
+//        
+//        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = ExecutionState.class)
+//        
+//    })
     public Response stateGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.stateGet(securityContext);

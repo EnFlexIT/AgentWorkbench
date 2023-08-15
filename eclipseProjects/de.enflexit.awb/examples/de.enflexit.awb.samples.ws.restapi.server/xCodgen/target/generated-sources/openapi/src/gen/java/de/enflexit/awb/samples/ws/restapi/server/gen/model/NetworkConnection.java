@@ -16,16 +16,15 @@ package de.enflexit.awb.samples.ws.restapi.server.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * Describes a single network connection.
  */
-@ApiModel(description = "Describes a single network connection.")
+@Schema(description = "Describes a single network connection.")
 @JsonPropertyOrder({
   NetworkConnection.JSON_PROPERTY_NAME,
   NetworkConnection.JSON_PROPERTY_DISPLAY_NAME,
@@ -35,7 +34,7 @@ import javax.validation.Valid;
   NetworkConnection.JSON_PROPERTY_TRAFFIC_SEND_IN_M_B,
   NetworkConnection.JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-17T17:09:44.461949400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
 public class NetworkConnection   {
   public static final String JSON_PROPERTY_NAME = "name";
   @JsonProperty(JSON_PROPERTY_NAME)
@@ -75,7 +74,7 @@ public class NetworkConnection   {
    * @return name
    **/
   @JsonProperty(value = "name")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getName() {
     return name;
@@ -95,7 +94,7 @@ public class NetworkConnection   {
    * @return displayName
    **/
   @JsonProperty(value = "displayName")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getDisplayName() {
     return displayName;
@@ -115,7 +114,7 @@ public class NetworkConnection   {
    * @return macAddress
    **/
   @JsonProperty(value = "macAddress")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getMacAddress() {
     return macAddress;
@@ -135,7 +134,7 @@ public class NetworkConnection   {
    * @return ip4Addresses
    **/
   @JsonProperty(value = "ip4Addresses")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getIp4Addresses() {
     return ip4Addresses;
@@ -155,7 +154,7 @@ public class NetworkConnection   {
    * @return ip6Addresses
    **/
   @JsonProperty(value = "ip6Addresses")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public String getIp6Addresses() {
     return ip6Addresses;
@@ -175,7 +174,7 @@ public class NetworkConnection   {
    * @return trafficSendInMB
    **/
   @JsonProperty(value = "trafficSendInMB")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getTrafficSendInMB() {
     return trafficSendInMB;
@@ -195,7 +194,7 @@ public class NetworkConnection   {
    * @return trafficReceivedInMB
    **/
   @JsonProperty(value = "trafficReceivedInMB")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   
   public Double getTrafficReceivedInMB() {
     return trafficReceivedInMB;
@@ -215,13 +214,13 @@ public class NetworkConnection   {
       return false;
     }
     NetworkConnection networkConnection = (NetworkConnection) o;
-    return Objects.equals(this.name, networkConnection.name) &&
-        Objects.equals(this.displayName, networkConnection.displayName) &&
-        Objects.equals(this.macAddress, networkConnection.macAddress) &&
-        Objects.equals(this.ip4Addresses, networkConnection.ip4Addresses) &&
-        Objects.equals(this.ip6Addresses, networkConnection.ip6Addresses) &&
-        Objects.equals(this.trafficSendInMB, networkConnection.trafficSendInMB) &&
-        Objects.equals(this.trafficReceivedInMB, networkConnection.trafficReceivedInMB);
+    return Objects.equals(name, networkConnection.name) &&
+        Objects.equals(displayName, networkConnection.displayName) &&
+        Objects.equals(macAddress, networkConnection.macAddress) &&
+        Objects.equals(ip4Addresses, networkConnection.ip4Addresses) &&
+        Objects.equals(ip6Addresses, networkConnection.ip6Addresses) &&
+        Objects.equals(trafficSendInMB, networkConnection.trafficSendInMB) &&
+        Objects.equals(trafficReceivedInMB, networkConnection.trafficReceivedInMB);
   }
 
   @Override

@@ -3,6 +3,9 @@ package de.enflexit.awb.ws.restapi;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import de.enflexit.awb.ws.core.AbstractJerseyServletWrapper;
+import de.enflexit.awb.ws.restapi.gen.Bootstrap;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 
 
 /**
@@ -22,5 +25,11 @@ public class JereseyServletContainer extends AbstractJerseyServletWrapper {
 	public ServletContainer createServletContainer(String contextPath) {
 		return new ServletContainer(new RestApiConfiguration());
 	}
-
+	
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+//		new Bootstrap().init(config);
+		super.init(config);
+	}
+	
 }

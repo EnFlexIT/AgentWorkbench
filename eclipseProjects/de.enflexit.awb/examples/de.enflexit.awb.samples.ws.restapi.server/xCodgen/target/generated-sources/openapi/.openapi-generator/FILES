@@ -9,9 +9,7 @@ src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/InfoApiService.java
 src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/JacksonJsonProvider.java
 src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/LoadApi.java
 src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/LoadApiService.java
-src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/LocalDateProvider.java
 src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/NotFoundException.java
-src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/OffsetDateTimeProvider.java
 src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/RFC3339DateFormat.java
 src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/StateApi.java
 src/gen/java/de/enflexit/awb/samples/ws/restapi/server/gen/StateApiService.java

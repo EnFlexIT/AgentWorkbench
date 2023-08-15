@@ -6,8 +6,8 @@ Bundle-Version: 2.2.15.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.swagger2x
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
-Require-Bundle: jakarta.servlet-api;bundle-version="4.0.0",
- jakarta.ws.rs-api;bundle-version="3.1.0",
+Bundle-ActivationPolicy: lazy
+Require-Bundle: jakarta.ws.rs-api;bundle-version="3.1.0",
  com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.14.1",
  com.fasterxml.jackson.core.jackson-core;bundle-version="2.14.1",
  com.fasterxml.jackson.core.jackson-databind;bundle-version="2.14.1",
@@ -17,7 +17,6 @@ Require-Bundle: jakarta.servlet-api;bundle-version="4.0.0",
  com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider;bundle-version="2.14.1",
  org.yaml.snakeyaml;bundle-version="1.27.0",
  org.apache.commons.lang3;bundle-version="3.11.0"
-Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/classgraph-4.8.154.jar,
  lib/javassist-3.29.2-GA.jar,
@@ -99,4 +98,6 @@ Export-Package: .,
  nonapi.io.github.classgraph.scanspec,
  nonapi.io.github.classgraph.types,
  nonapi.io.github.classgraph.utils
-Import-Package: org.slf4j
+Import-Package: jakarta.servlet,
+ jakarta.servlet.http,
+ org.slf4j

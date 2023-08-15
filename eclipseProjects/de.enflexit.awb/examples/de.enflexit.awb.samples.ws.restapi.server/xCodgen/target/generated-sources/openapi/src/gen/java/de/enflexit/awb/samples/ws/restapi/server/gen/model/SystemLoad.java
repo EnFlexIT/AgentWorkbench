@@ -16,22 +16,21 @@ package de.enflexit.awb.samples.ws.restapi.server.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.
  */
-@ApiModel(description = "The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.")
+@Schema(description = "The systems current load, includung CPU, memoryand HEAP  usage. Further, the number of Java threads are returned.")
 @JsonPropertyOrder({
   SystemLoad.JSON_PROPERTY_CPU_USAGE,
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-17T17:09:44.461949400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
 public class SystemLoad   {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
@@ -55,7 +54,7 @@ public class SystemLoad   {
    * @return cpuUsage
    **/
   @JsonProperty(value = "cpuUsage")
-  @ApiModelProperty(value = "The CPU usage in percent")
+  @Schema(description = "The CPU usage in percent")
   
   public Float getCpuUsage() {
     return cpuUsage;
@@ -75,7 +74,7 @@ public class SystemLoad   {
    * @return memUsage
    **/
   @JsonProperty(value = "memUsage")
-  @ApiModelProperty(value = "The memory usage in percent")
+  @Schema(description = "The memory usage in percent")
   
   public Float getMemUsage() {
     return memUsage;
@@ -95,7 +94,7 @@ public class SystemLoad   {
    * @return heapUsage
    **/
   @JsonProperty(value = "heapUsage")
-  @ApiModelProperty(value = "The Heap usage in percen")
+  @Schema(description = "The Heap usage in percen")
   
   public Float getHeapUsage() {
     return heapUsage;
@@ -115,9 +114,9 @@ public class SystemLoad   {
       return false;
     }
     SystemLoad systemLoad = (SystemLoad) o;
-    return Objects.equals(this.cpuUsage, systemLoad.cpuUsage) &&
-        Objects.equals(this.memUsage, systemLoad.memUsage) &&
-        Objects.equals(this.heapUsage, systemLoad.heapUsage);
+    return Objects.equals(cpuUsage, systemLoad.cpuUsage) &&
+        Objects.equals(memUsage, systemLoad.memUsage) &&
+        Objects.equals(heapUsage, systemLoad.heapUsage);
   }
 
   @Override

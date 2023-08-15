@@ -17,21 +17,20 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * The Agent.Workbench execution state
  */
-@ApiModel(description = "The Agent.Workbench execution state")
+@Schema(description = "The Agent.Workbench execution state")
 @JsonPropertyOrder({
   ExecutionState.JSON_PROPERTY_EXECUTION_MODE,
   ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-17T17:09:44.461949400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
 public class ExecutionState   {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
@@ -119,7 +118,7 @@ public class ExecutionState   {
    * @return executionMode
    **/
   @JsonProperty(value = "executionMode")
-  @ApiModelProperty(value = "* 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects ")
+  @Schema(description = "* 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects ")
   
   public ExecutionModeEnum getExecutionMode() {
     return executionMode;
@@ -139,7 +138,7 @@ public class ExecutionState   {
    * @return deviceSystemExecutionMode
    **/
   @JsonProperty(value = "deviceSystemExecutionMode")
-  @ApiModelProperty(value = "* 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project ")
+  @Schema(description = "* 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project ")
   
   public DeviceSystemExecutionModeEnum getDeviceSystemExecutionMode() {
     return deviceSystemExecutionMode;
@@ -159,8 +158,8 @@ public class ExecutionState   {
       return false;
     }
     ExecutionState executionState = (ExecutionState) o;
-    return Objects.equals(this.executionMode, executionState.executionMode) &&
-        Objects.equals(this.deviceSystemExecutionMode, executionState.deviceSystemExecutionMode);
+    return Objects.equals(executionMode, executionState.executionMode) &&
+        Objects.equals(deviceSystemExecutionMode, executionState.deviceSystemExecutionMode);
   }
 
   @Override

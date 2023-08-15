@@ -1,18 +1,24 @@
 package de.enflexit.awb.samples.ws.restapi.server.gen;
 
-import io.swagger.jaxrs.config.SwaggerContextService;
-import io.swagger.models.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import io.swagger.models.auth.*;
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.oas.integration.*;
+import io.swagger.v3.oas.models.*;
+import io.swagger.v3.oas.models.info.*;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 
 public class Bootstrap extends HttpServlet {
+
+  private static final long serialVersionUID = 20230810;   
+
   @Override
   public void init(ServletConfig config) throws ServletException {
+  
     Info info = new Info()
       .title("OpenAPI Server")
       .description("This is the REST-API for Agent.Workbench in an embbedded system mode.")
@@ -23,9 +29,22 @@ public class Bootstrap extends HttpServlet {
         .name("Apache 2.0")
         .url("http://www.apache.org/licenses/LICENSE-2.0.html"));
 
-    ServletContext context = config.getServletContext();
-    Swagger swagger = new Swagger().info(info);
+    OpenAPI oas = new OpenAPI();
+    oas.info(info);
 
-    new SwaggerContextService().withServletConfig(config).updateSwagger(swagger);
+    SwaggerConfiguration openApiConfig = new SwaggerConfiguration()
+        .openAPI(oas)
+        .prettyPrint(true)
+        .resourcePackages(Stream.of("io.swagger.sample.resource").collect(Collectors.toSet()));
+    
+    try {
+        new JaxrsOpenApiContextBuilder()
+            .servletConfig(config)
+            .openApiConfiguration(openApiConfig)
+            .buildContext(true);
+            
+    } catch (OpenApiConfigurationException e) {
+        throw new RuntimeException(e.getMessage(), e);
+    }
   }
 }

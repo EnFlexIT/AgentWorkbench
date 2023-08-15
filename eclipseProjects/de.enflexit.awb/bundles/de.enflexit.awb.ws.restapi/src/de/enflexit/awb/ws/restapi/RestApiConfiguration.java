@@ -36,7 +36,6 @@ public class RestApiConfiguration extends ResourceConfig {
 		super();
 		this.setApplicationName(APPLICATION_NAME);
 		this.configureEndpoints();
-		this.configureSwagger();
 	}
 	/**
 	 * Configure REST end points.
@@ -47,32 +46,8 @@ public class RestApiConfiguration extends ResourceConfig {
 		this.register(InfoApi.class);
 		this.register(LoadApi.class);
 		this.register(StateApi.class);
-	}
-	
-	/**
-	 * Configure swagger.
-	 */
-	private void configureSwagger() {
 		
-//		// --- For swagger 1.x.x (OpenAPI v2) -------------
-//		this.register(ApiListingResource.class);
-//		this.register(SwaggerSerializers.class);
-//
-//		BeanConfig config = new BeanConfig();
-//		config.setTitle(APPLICATION_NAME);
-//
-//		config.setVersion("1.0.0");
-//		config.setSchemes(new String[] {"http", "https"});
-//		config.setHost("localhost:8080");
-//		config.setBasePath("/api");
-//
-//		config.setConfigId("de.enflexit.awb.ws.restapi");
-//
-//		config.setResourcePackage("de.enflexit.awb.ws.restapi.gen");
-//		config.setScan(true);
-//		config.setPrettyPrint(true);
 	}
-	
 	
 	/**
 	 * Return the {@link Variant} for a {@link Response} of a service end point.

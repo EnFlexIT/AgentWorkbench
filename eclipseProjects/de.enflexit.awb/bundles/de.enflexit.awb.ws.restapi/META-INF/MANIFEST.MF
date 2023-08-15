@@ -6,32 +6,28 @@ Bundle-Version: 0.3.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.restapi
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
 Service-Component: OSGI-INF/awbWebHandlerApiService.xml
 Require-Bundle: de.enflexit.awb.ws.core,
  de.enflexit.oshi,
  org.agentgui.core,
- org.glassfish.jersey.containers.jersey-container-servlet;bundle-version="3.1.1",
- org.glassfish.jersey.core.jersey-client;bundle-version="3.1.1",
- org.glassfish.jersey.core.jersey-common;bundle-version="3.1.1",
- org.glassfish.jersey.media.jersey-media-multipart;bundle-version="3.1.1",
- org.glassfish.jersey.media.jersey-media-json-jackson;bundle-version="3.1.1",
- wrapped.org.openapitools.jackson-databind-nullable;bundle-version="0.2.6",
- com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.14.2",
- com.fasterxml.jackson.core.jackson-core;bundle-version="2.14.2",
- com.fasterxml.jackson.core.jackson-databind;bundle-version="2.14.2",
- com.fasterxml.jackson.datatype.jackson-datatype-jsr310;bundle-version="2.14.2",
- com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-base;bundle-version="2.14.2",
- com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider;bundle-version="2.14.2",
- com.fasterxml.jackson.module.jackson-module-jakarta-xmlbind-annotations;bundle-version="2.14.2",
- de.enflexit.awb.ws.swagger2x;bundle-version="2.2.9"
-Export-Package: de.enflexit.awb.ws.restapi,
- de.enflexit.awb.ws.restapi.gen,
- de.enflexit.awb.ws.restapi.gen.handler,
- de.enflexit.awb.ws.restapi.gen.handler.auth,
- de.enflexit.awb.ws.restapi.gen.model,
- de.enflexit.awb.ws.restapi.impl
-Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
+ org.glassfish.jersey.containers.jersey-container-servlet,
+ org.glassfish.jersey.containers.jersey-container-servlet-core,
+ org.glassfish.jersey.core.jersey-client,
+ org.glassfish.jersey.core.jersey-common,
+ org.glassfish.jersey.inject.jersey-hk2,
+ org.glassfish.jersey.media.jersey-media-multipart,
+ org.glassfish.jersey.media.jersey-media-json-jackson,
+ wrapped.org.openapitools.jackson-databind-nullable,
+ com.fasterxml.jackson.core.jackson-annotations,
+ com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-databind,
+ com.fasterxml.jackson.datatype.jackson-datatype-jsr310,
+ com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-base,
+ com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider,
+ com.fasterxml.jackson.module.jackson-module-jakarta-xmlbind-annotations,
+ de.enflexit.awb.ws.swagger2x
 Import-Package: jakarta.annotation,
  jakarta.servlet,
  jakarta.servlet.http,
@@ -47,3 +43,11 @@ Import-Package: jakarta.annotation,
  org.glassfish.jersey.inject.hk2,
  org.glassfish.jersey.server,
  org.glassfish.jersey.servlet
+Export-Package: de.enflexit.awb.ws.restapi,
+ de.enflexit.awb.ws.restapi.gen,
+ de.enflexit.awb.ws.restapi.gen.factories,
+ de.enflexit.awb.ws.restapi.gen.handler,
+ de.enflexit.awb.ws.restapi.gen.handler.auth,
+ de.enflexit.awb.ws.restapi.gen.impl,
+ de.enflexit.awb.ws.restapi.gen.model,
+ de.enflexit.awb.ws.restapi.impl
