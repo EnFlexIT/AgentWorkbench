@@ -17,7 +17,7 @@ public class ExpressionServiceFilter {
 	
 	private FilterMode filterMode;
 	
-	private ArrayList<Class<? extends ExpressionService>> filterList;
+	private ArrayList<String> filterList;
 
 	/**
 	 * Gets the filter mode.
@@ -35,7 +35,7 @@ public class ExpressionServiceFilter {
 		this.filterMode = filterMode;
 	}
 
-	private ArrayList<Class<? extends ExpressionService>> getFilterList() {
+	private ArrayList<String> getFilterList() {
 		if (filterList==null) {
 			filterList = new ArrayList<>();
 		}
@@ -46,9 +46,9 @@ public class ExpressionServiceFilter {
 	 * Adds the specified expression service to the filter.
 	 * @param serviceClass the expression type
 	 */
-	public void addServiceToFilter(Class<? extends ExpressionService> serviceClass) {
-		if (this.getFilterList().contains(serviceClass)==false) {
-			this.getFilterList().add(serviceClass);
+	public void addServiceToFilter(String serviceClassName) {
+		if (this.getFilterList().contains(serviceClassName)==false) {
+			this.getFilterList().add(serviceClassName);
 		}
 	}
 	
@@ -56,9 +56,9 @@ public class ExpressionServiceFilter {
 	 * Removes the specified expression service from the filter.
 	 * @param serviceClass the expression type
 	 */
-	public void removeServiceFromFilter(Class<? extends ExpressionService> serviceClass) {
-		if (this.getFilterList().contains(serviceClass)==true) {
-			this.getFilterList().remove(serviceClass);
+	public void removeServiceFromFilter(String serviceClassName) {
+		if (this.getFilterList().contains(serviceClassName)==true) {
+			this.getFilterList().remove(serviceClassName);
 		}
 	}
 	
@@ -68,9 +68,9 @@ public class ExpressionServiceFilter {
 	 * @return true, if successful
 	 */
 	public boolean matches(ExpressionService service) {
-		if (this.getFilterMode()==FilterMode.INCLUDE && this.getFilterList().contains(service.getClass())==true) {
+		if (this.getFilterMode()==FilterMode.INCLUDE && this.getFilterList().contains(service.getClass().getSimpleName())==true) {
 			return true;
-		} else if (this.getFilterMode()==FilterMode.EXCLUDE && this.getFilterList().contains(service.getClass())==false) {
+		} else if (this.getFilterMode()==FilterMode.EXCLUDE && this.getFilterList().contains(service.getClass().getSimpleName())==false) {
 			return true;
 		}
 		return false;

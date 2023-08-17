@@ -87,6 +87,7 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 	public void setExpressionContext(ExpressionContext context) {
 		this.getJPanelExpressionTextEditor().setExpressionContext(context);
 		this.getJPanelLibrary().setExpressionContext(context);
+		this.getJPanelStructureTreeRight().setExpressionContext(context);
 	}
 	
 	/**

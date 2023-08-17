@@ -45,7 +45,9 @@ public class FunctionExpressionEvaluator implements ExpressionServiceEvaluator {
 			}
 			break;
 			
-		case TimeSeriesDiscretization:
+		case DiscretizeLinear:
+		case DiscretizeStepWise:
+		case DiscretizeAverage:
 			ArrayList<ExpressionData> parameters = this.getAllSubExpressionData(expression, context);
 			if (parameters!=null) {
 				expResult = new TimeSeriesFunctionEvaluator(expFckt, parameters).getExpressionResult();

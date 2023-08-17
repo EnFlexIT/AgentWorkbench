@@ -15,6 +15,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
 import de.enflexit.expression.ExpressionTypeUnknown;
 
 /**
@@ -34,6 +35,10 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 	private JLabel jLabelValid;
 	private JLabel typeLabel;
 	private JLabel validLabel;
+	private JLabel jLabelValue;
+	private JLabel valueLabel;
+	
+	private ExpressionContext expressionContext;
 	
 	/**
 	 * Instantiates a new expression editor structure tree panel.
@@ -44,42 +49,62 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 	}
 	
 	/**
+	 * Sets the expression context.
+	 * @param expressionContext the new expression context
+	 */
+	public void setExpressionContext(ExpressionContext expressionContext) {
+		this.expressionContext = expressionContext;
+	}
+	/**
+	 * Gets the expression context.
+	 * @return the expression context
+	 */
+	public ExpressionContext getExpressionContext() {
+		if (expressionContext==null) {
+			expressionContext = new ExpressionContext();
+		}
+		return expressionContext;
+	}
+	
+	/**
 	 * Initialize the GUI components.
 	 */
 	private void initialize() {
 		
 		GridBagLayout gbl_this = new GridBagLayout();
 		gbl_this.columnWidths = new int[]{0, 0, 0};
-		gbl_this.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gbl_this.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gbl_this.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_this.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_this.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gbl_this);
 		
 		GridBagConstraints gbc_jLabelExpressionStructure = new GridBagConstraints();
+		gbc_jLabelExpressionStructure.insets = new Insets(0, 0, 5, 0);
 		gbc_jLabelExpressionStructure.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jLabelExpressionStructure.gridwidth = 2;
 		gbc_jLabelExpressionStructure.gridx = 0;
 		gbc_jLabelExpressionStructure.gridy = 0;
 		this.add(this.getJLabelExpressionStructure(), gbc_jLabelExpressionStructure);
 		GridBagConstraints gbc_jScrollPaneExpressionTree = new GridBagConstraints();
+		gbc_jScrollPaneExpressionTree.insets = new Insets(0, 0, 5, 0);
 		gbc_jScrollPaneExpressionTree.gridwidth = 2;
 		gbc_jScrollPaneExpressionTree.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneExpressionTree.gridx = 0;
 		gbc_jScrollPaneExpressionTree.gridy = 1;
 		this.add(this.getJScrollPaneExpressionTree(), gbc_jScrollPaneExpressionTree);
 		GridBagConstraints gbc_jLabelType = new GridBagConstraints();
-		gbc_jLabelType.insets = new Insets(5, 0, 0, 0);
+		gbc_jLabelType.insets = new Insets(5, 0, 5, 5);
 		gbc_jLabelType.gridx = 0;
 		gbc_jLabelType.gridy = 2;
 		this.add(this.getJLabelType(), gbc_jLabelType);
 		GridBagConstraints gbc_typeLabel = new GridBagConstraints();
 		gbc_typeLabel.anchor = GridBagConstraints.WEST;
-		gbc_typeLabel.insets = new Insets(5, 5, 0, 0);
+		gbc_typeLabel.insets = new Insets(5, 5, 5, 0);
 		gbc_typeLabel.gridx = 1;
 		gbc_typeLabel.gridy = 2;
 		this.add(this.getTypeLabel(), gbc_typeLabel);
 		GridBagConstraints gbc_jLabelValid = new GridBagConstraints();
-		gbc_jLabelValid.insets = new Insets(5, 0, 5, 0);
+		gbc_jLabelValid.insets = new Insets(5, 0, 5, 5);
 		gbc_jLabelValid.gridx = 0;
 		gbc_jLabelValid.gridy = 3;
 		this.add(this.getJLabelValid(), gbc_jLabelValid);
@@ -89,6 +114,17 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 		gbc_validLabel.gridx = 1;
 		gbc_validLabel.gridy = 3;
 		this.add(this.getValidLabel(), gbc_validLabel);
+		GridBagConstraints gbc_jLabelValue = new GridBagConstraints();
+		gbc_jLabelValue.insets = new Insets(0, 0, 0, 5);
+		gbc_jLabelValue.gridx = 0;
+		gbc_jLabelValue.gridy = 4;
+		add(getJLabelValue(), gbc_jLabelValue);
+		GridBagConstraints gbc_valueLabel = new GridBagConstraints();
+		gbc_valueLabel.insets = new Insets(5, 5, 5, 0);
+		gbc_valueLabel.anchor = GridBagConstraints.WEST;
+		gbc_valueLabel.gridx = 1;
+		gbc_valueLabel.gridy = 4;
+		add(getValueLabel(), gbc_valueLabel);
 	}
 	private JLabel getJLabelExpressionStructure() {
 		if (jLabelExpressionStructure == null) {
@@ -138,6 +174,7 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 	private JLabel getValidLabel() {
 		if (validLabel == null) {
 			validLabel = new JLabel("<n.a.>");
+			validLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return validLabel;
 	}
@@ -164,9 +201,16 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 					this.getValidLabel().setText("" + !selectedExpression.hasErrors());
 				}
 				
+				if (selectedExpression.hasErrors()==false) {
+					this.getValueLabel().setText(selectedExpression.getExpressionResult(this.getExpressionContext()).toString());
+				} else {
+					this.getValueLabel().setText("<n.a.>");
+				}
+				
 			} else {
 				this.getTypeLabel().setText("<n.a.>");
 				this.getValidLabel().setText("<n.a.>");
+				this.getValueLabel().setText("<n.a.>");
 			}
 			
 			this.firePropertyChange(SELECTION_CHANGED, null, selectedExpression);
@@ -218,4 +262,18 @@ public class ExpressionEditorStructureTreePanel extends JPanel implements TreeSe
 		}
 	}
 	
+	private JLabel getJLabelValue() {
+		if (jLabelValue == null) {
+			jLabelValue = new JLabel("Value:");
+			jLabelValue.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelValue;
+	}
+	private JLabel getValueLabel() {
+		if (valueLabel == null) {
+			valueLabel = new JLabel("<n.a.>");
+			valueLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return valueLabel;
+	}
 }
