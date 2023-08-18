@@ -32,6 +32,7 @@ package org.awb.env.networkModel.controller.ui;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -109,7 +110,8 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 * @param basicGraphGui the BasicGraphGui
 	 */
 	public GraphEnvironmentMousePlugin(BasicGraphGui basicGraphGui) {
-		super();
+//		super();
+		super(InputEvent.BUTTON1_DOWN_MASK, InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 		this.basicGraphGUI = basicGraphGui;
 		this.getGraphController().addObserver(this);
 	}
@@ -329,7 +331,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			}
 		}
 		
-		super.mousePressed(me);
+		this.mousePressedSuperAction(me);
 
 		Point position = me.getPoint();
 		GraphElementAccessor<GraphNode, GraphEdge> ps = this.getVisViewer().getPickSupport();
@@ -355,6 +357,75 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			}	
 			
 		}
+	}
+	
+	/**
+	 * Reimplements the superclasses mousePressed() method, identical except for the use of non-deprecated extended modifiers.
+	 * @param me the mouse event to process
+	 */
+	private void mousePressedSuperAction(MouseEvent me) {
+		down = me.getPoint();
+        @SuppressWarnings("unchecked")
+		VisualizationViewer<GraphNode,GraphEdge> vv = (VisualizationViewer<GraphNode,GraphEdge>)me.getSource();
+        GraphElementAccessor<GraphNode,GraphEdge> pickSupport = vv.getPickSupport();
+        PickedState<GraphNode> pickedVertexState = vv.getPickedVertexState();
+        PickedState<GraphEdge> pickedEdgeState = vv.getPickedEdgeState();
+        if(pickSupport != null && pickedVertexState != null) {
+            Layout<GraphNode,GraphEdge> layout = vv.getGraphLayout();
+            if(me.getModifiersEx() == modifiers) {
+                rect.setFrameFromDiagonal(down,down);
+                // p is the screen point for the mouse event
+                Point2D ip = me.getPoint();
+
+                vertex = pickSupport.getVertex(layout, ip.getX(), ip.getY());
+                if(vertex != null) {
+                    if(pickedVertexState.isPicked(vertex) == false) {
+                    	pickedVertexState.clear();
+                    	pickedVertexState.pick(vertex, true);
+                    }
+                    // layout.getLocation applies the layout Function so
+                    // q is transformed by the layout Function only
+                    Point2D q = layout.apply(vertex);
+                    // transform the mouse point to graph coordinate system
+                    Point2D gp = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.LAYOUT, ip);
+
+                    offsetx = (float) (gp.getX()-q.getX());
+                    offsety = (float) (gp.getY()-q.getY());
+                } else if((edge = pickSupport.getEdge(layout, ip.getX(), ip.getY())) != null) {
+                    pickedEdgeState.clear();
+                    pickedEdgeState.pick(edge, true);
+                } else {
+                    vv.addPostRenderPaintable(lensPaintable);
+                	pickedEdgeState.clear();
+                    pickedVertexState.clear();
+                }
+                
+            } else if(me.getModifiersEx() == addToSelectionModifiers) {
+                vv.addPostRenderPaintable(lensPaintable);
+                rect.setFrameFromDiagonal(down,down);
+                Point2D ip = me.getPoint();
+                vertex = pickSupport.getVertex(layout, ip.getX(), ip.getY());
+                if(vertex != null) {
+                    boolean wasThere = pickedVertexState.pick(vertex, !pickedVertexState.isPicked(vertex));
+                    if(wasThere) {
+                        vertex = null;
+                    } else {
+
+                        // layout.getLocation applies the layout Function so
+                        // q is transformed by the layout Function only
+                        Point2D q = layout.apply(vertex);
+                        // translate mouse point to graph coord system
+                        Point2D gp = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(Layer.LAYOUT, ip);
+
+                        offsetx = (float) (gp.getX()-q.getX());
+                        offsety = (float) (gp.getY()-q.getY());
+                    }
+                } else if((edge = pickSupport.getEdge(layout, ip.getX(), ip.getY())) != null) {
+                    pickedEdgeState.pick(edge, !pickedEdgeState.isPicked(edge));
+                }
+            }
+        }
+        if(vertex != null) me.consume();
 	}
 	
 	/**
@@ -388,7 +459,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	@Override
 	public void mouseReleased(MouseEvent me) {
 		
-		super.mouseReleased(me);
+		this.mouseReleasedSuperAction(me);
 		if (SwingUtilities.isRightMouseButton(me)) {
 			if (this.movePanelWithRightAction==true) {
 				this.movePanelWithRightAction = false;
@@ -405,6 +476,53 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			
 		}
 	}
+	
+	/**
+	 * Reimplements the superclasses mouseReleased() method, identical except for the use of non-deprecated extended modifiers.
+	 * @param me the mouse event to process
+	 */
+	private void mouseReleasedSuperAction(MouseEvent me) {
+		@SuppressWarnings("unchecked")
+		VisualizationViewer<GraphNode,GraphEdge> vv = (VisualizationViewer<GraphNode, GraphEdge>)me.getSource();
+        
+		if(me.getModifiersEx() == 0) {	// Supposed to be 1024==BUTTON1_DOWN_MASK, no idea why not?
+            if(down != null) {
+                Point2D out = me.getPoint();
+
+                if(vertex == null && heyThatsTooClose(down, out, 5) == false) {
+                    pickContainedVertices(vv, down, out, true);
+                }
+            }
+        } else if(me.getModifiersEx() == this.addToSelectionModifiers) {
+            if(down != null) {
+                Point2D out = me.getPoint();
+
+                if(vertex == null && heyThatsTooClose(down,out,5) == false) {
+                    pickContainedVertices(vv, down, out, false);
+                }
+            }
+        }
+        down = null;
+        vertex = null;
+        edge = null;
+        rect.setFrame(0,0,0,0);
+        vv.removePostRenderPaintable(lensPaintable);
+        vv.repaint();
+	}
+	
+	/**
+     * rejects picking if the rectangle is too small, like
+     * if the user meant to select one vertex but moved the
+     * mouse slightly
+     * @param p
+     * @param q
+     * @param min
+     * @return
+     */
+	private boolean heyThatsTooClose(Point2D p, Point2D q, double min) {
+        return Math.abs(p.getX()-q.getX()) < min &&
+                Math.abs(p.getY()-q.getY()) < min;
+    }
 	
 	/* (non-Javadoc)
 	 * @see edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin#mouseDragged(java.awt.event.MouseEvent)
@@ -527,7 +645,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
                 
             } else {
                 Point2D out = me.getPoint();
-                if(me.getModifiersEx() == this.addToSelectionModifiers || me.getModifiersEx() == modifiers) {
+                if(me.getModifiersEx() == this.addToSelectionModifiers || me.getModifiersEx() == this.modifiers) {
                     if (down!=null) {
                     	rect.setFrameFromDiagonal(down,out);
                     	vv.repaint();
