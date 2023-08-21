@@ -300,12 +300,16 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@Override
 	public void mouseClicked(MouseEvent me){
-
+		
+		GraphElement gePicked = this.getPickedGraphElement(me);
 		if (me.getClickCount()==2) {
 			// --- Act on double clicks ---------
-			GraphElement gePicked = this.getPickedGraphElement(me);
 			if (gePicked!=null) {
 				this.basicGraphGUI.handleObjectDoubleClick(gePicked);
+			}
+		} else {
+			if (gePicked!=null) {
+				this.basicGraphGUI.handleObjectLeftClick(gePicked, me.isShiftDown());
 			}
 		}
 	}
@@ -349,14 +353,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				this.moveNodeWithLeftAction = true;	
 				this.remindOldPositions();
 			}
-			if (me.getClickCount()!=2) {
-				GraphElement gePicked = this.getPickedGraphElement(me);
-				if (gePicked!=null) {
-					this.basicGraphGUI.handleObjectLeftClick(gePicked, me.isShiftDown());
-				}
-			}	
-			
 		}
+		List<GraphNode> graphNodeList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
+		System.out.println("[" + this.getClass().getSimpleName() + "] End of mousePressed: " + graphNodeList.size() + " nodes selected");
 	}
 	
 	/**
@@ -529,6 +528,9 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	 */
 	@Override
 	public void mouseDragged(MouseEvent me){
+		
+		List<GraphNode> graphNodeList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
+		System.out.println("[" + this.getClass().getSimpleName() + "] Beginning of mouseDragged: " + graphNodeList.size() + " nodes selected");
 
 		// --- Execute the normal (but corrected) super method ------
 		this.mouseDraggedSuperAction(me);
@@ -565,7 +567,7 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 			boolean snapToGrid = layoutSettings.isSnap2Grid();
 			double snapRaster = layoutSettings.getSnapRaster();
 			
-			List<GraphNode> graphNodeList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
+//			List<GraphNode> graphNodeList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
 			for (int i = 0; i < graphNodeList.size(); i++) {
 				
 				GraphNode pickedNode = graphNodeList.get(i);
