@@ -354,8 +354,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 				this.remindOldPositions();
 			}
 		}
-		List<GraphNode> graphNodeList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
-		System.out.println("[" + this.getClass().getSimpleName() + "] End of mousePressed: " + graphNodeList.size() + " nodes selected");
 	}
 	
 	/**
@@ -530,7 +528,6 @@ public class GraphEnvironmentMousePlugin extends PickingGraphMousePlugin<GraphNo
 	public void mouseDragged(MouseEvent me){
 		
 		List<GraphNode> graphNodeList = new ArrayList<>(this.getVisViewer().getPickedVertexState().getPicked());
-		System.out.println("[" + this.getClass().getSimpleName() + "] Beginning of mouseDragged: " + graphNodeList.size() + " nodes selected");
 
 		// --- Execute the normal (but corrected) super method ------
 		this.mouseDraggedSuperAction(me);
