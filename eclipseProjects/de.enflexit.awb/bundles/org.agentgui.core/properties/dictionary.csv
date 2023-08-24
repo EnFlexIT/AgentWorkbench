@@ -903,6 +903,7 @@ en;;Switch Graph Layout;;;
 en;;The KeyStore file should be located in directory;;;
 en;;The TrustStore file should be located in directory;;;
 en;;The component name already exists!<br>Choose a different one.;;;
+en;;The component name already exists!<br>Choose a different one.;;;
 en;;The following component type exists at least twice;;;
 en;;The following domain exists at least twice;;;
 en;;The following layout exists at least twice;;;
