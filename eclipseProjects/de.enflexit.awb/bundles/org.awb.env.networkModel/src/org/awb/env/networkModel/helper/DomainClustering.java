@@ -8,6 +8,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
+import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
 
 /**
  * The Class DomainClustering enables to cluster a {@link NetworkModel} along the specified 'domains' (or sub networks)  
@@ -60,6 +61,9 @@ public class DomainClustering extends Vector<DomainCluster> {
 		// --- Clear old result elements (if any) -----------------------------
 		this.clear();
 		
+		// --- Remind current component sorting -------------------------------
+		ComponentSorting cSorting = this.networkModel.getGeneralGraphSettings4MAS().getComponentSorting();
+		
 		// --- Examine the NetworkModel ---------------------------------------
 		Vector<NetworkComponent> netCompVector = this.getNetworkModel().getNetworkComponentVectorSorted();
 		for (int i = 0; i < netCompVector.size(); i++) {
@@ -70,7 +74,7 @@ public class DomainClustering extends Vector<DomainCluster> {
 			if (this.getDomainCluster(domain, netComp)==null) {
 				// --- Create a new domain cluster ----------------------------
 				Vector<NetworkComponent> netCompDomainCluster = this.createDomainCluster(netComp);
-				DomainCluster newDomainCluster = new DomainCluster(domain, netCompDomainCluster);
+				DomainCluster newDomainCluster = new DomainCluster(domain, netCompDomainCluster, cSorting);
 				this.add(newDomainCluster);
 			}
 		}
