@@ -1405,11 +1405,25 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 					// --- Numeric string -------------------------------------
 					reducedTitle += " " + titleFrag + " ";
 				} else {
-					// --- Non-numeric string --------------------------------- 
-					if (titleFrag.length()>2) {
-						titleFrag = titleFrag.substring(0, 2);
+					// --- Non-numeric string ---------------------------------
+					// --- Split by upper case letters ------------------------
+					String[] tfucArray = titleFrag.split("(?=\\p{Lu})");
+					if (tfucArray.length>0) {
+						String tfucResult = "";
+						for (String tfuc : tfucArray) {
+							if (tfuc.length()>3) {
+								tfuc = tfuc.substring(0,3);
+							}
+							tfucResult += tfuc;
+						}
+						reducedTitle += tfucResult + ".";
+					} else {
+						if (titleFrag.length()>3) {
+							titleFrag = titleFrag.substring(0, 3);
+						}
+						reducedTitle += titleFrag + ".";
 					}
-					reducedTitle += titleFrag + ".";
+					
 				}
 			} // end for
 			
