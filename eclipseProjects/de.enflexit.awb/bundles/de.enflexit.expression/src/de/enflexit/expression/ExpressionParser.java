@@ -23,7 +23,7 @@ public class ExpressionParser {
 		expressionString = expressionString.trim();
 		if (expressionString.startsWith(String.valueOf(ExpressionService.EXPRESSION_OPENING_DELIMITER)) && expressionString.endsWith(String.valueOf(ExpressionService.EXPRESSION_CLOSING_DELIMITER))) {
 			String workExpressionString = expressionString.substring(1, expressionString.length()-1);
-			if (workExpressionString.contains(String.valueOf(ExpressionService.EXPRESSION_OPENING_DELIMITER))==false &&  workExpressionString.contains(String.valueOf(ExpressionService.EXPRESSION_CLOSING_DELIMITER))) {
+			if (workExpressionString.startsWith(String.valueOf(ExpressionService.EXPRESSION_OPENING_DELIMITER))==false && workExpressionString.endsWith(String.valueOf(ExpressionService.EXPRESSION_CLOSING_DELIMITER))==false) {
 				expressionString = workExpressionString;
 			}
 		}
@@ -71,6 +71,7 @@ public class ExpressionParser {
 			int subStrLength;
 			for (int currPos = 0; currPos<expressionString.length(); currPos++) {
 				
+				expressionType = getExpressionType(expressionString);
 				if (expressionString.charAt(currPos)==ExpressionService.EXPRESSION_OPENING_DELIMITER) {
 					// --- Found opening delimiter --------------------------------------
 					subStrLength = ExpressionParser.findClosingDelimiter(expressionString.substring(currPos), ExpressionService.EXPRESSION_OPENING_DELIMITER, ExpressionService.EXPRESSION_CLOSING_DELIMITER);
@@ -124,6 +125,19 @@ public class ExpressionParser {
 		expression.setExpressionType(expressionType==null ? MathExpressionType.getInstance() : expressionType);
 		
 		return expression;
+	}
+	
+	private static ExpressionType getExpressionType(String expressionString) {
+		ExpressionType expressionType = null;
+		int separatorPos = expressionString.indexOf(ExpressionService.EXPRESSION_SERVICE_TYPE_SUFFIX);
+		if (separatorPos>0) {
+			// --- Find the corresponding ExpressionType ----------------------------
+			
+			String typeIdentifier = expressionString.substring(0, separatorPos);
+			expressionType = ExpressionServiceHelper.getExpressionType(typeIdentifier);
+		}
+		
+		return expressionType;
 	}
 	
 	/**
