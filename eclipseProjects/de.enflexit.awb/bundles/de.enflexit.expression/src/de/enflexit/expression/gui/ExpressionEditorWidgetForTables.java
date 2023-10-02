@@ -59,6 +59,8 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		gbc_jButtonExpressionEditor.gridx = 1;
 		gbc_jButtonExpressionEditor.gridy = 0;
 		add(getJButtonExpressionEditor(), gbc_jButtonExpressionEditor);
+		
+		this.setToolTipText(this.getJTextFieldExpression().getText());
 	}
 
 	private JTextField getJTextFieldExpression() {
@@ -126,8 +128,10 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		this.expression = expression;
 		if (expression!=null) {
 			this.getJTextFieldExpression().setText(expression.getExpressionString());
+			this.setToolTipText(expression.getExpressionString());
 		} else {
 			this.getJTextFieldExpression().setText(null);
+			this.setToolTipText(null);
 		}
 	}
 
