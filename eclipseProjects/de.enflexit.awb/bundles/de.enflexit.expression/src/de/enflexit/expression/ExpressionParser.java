@@ -37,6 +37,8 @@ public class ExpressionParser {
 	 */
 	public static Expression parse(String expressionString) {
 		
+		if (expressionString==null) return null;
+		
 		// ------------------------------------------------------------------------------
 		// --- Do some initial preparations --------------------------------------------- 
 		// ------------------------------------------------------------------------------
