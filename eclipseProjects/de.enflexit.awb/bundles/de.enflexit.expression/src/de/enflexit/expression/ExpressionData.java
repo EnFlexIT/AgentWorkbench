@@ -975,8 +975,10 @@ public class ExpressionData {
 		 * @return the Double value or <code>null</code>
 		 */
 		public Double getDoubleValue() {
-			if (this.getColumnData() instanceof Integer || this.getColumnData() instanceof Double) {
+			if (this.getColumnData() instanceof Double) {
 				return (Double) this.getColumnData();
+			} else if (this.getColumnData() instanceof Integer) {
+				return ((Integer)this.getColumnData()).doubleValue();
 			}
 			return null;
 		}
