@@ -1,5 +1,6 @@
 package de.enflexit.expression.gui;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
@@ -69,7 +70,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			if (this.expression!=null) {
 				jTextFieldExpression.setText(this.expression.getExpressionString());
 			}
-			jTextFieldExpression.setOpaque(true);
+			jTextFieldExpression.setOpaque(false);
 			jTextFieldExpression.setBorder(BorderFactory.createEmptyBorder());
 			
 			jTextFieldExpression.addKeyListener(new KeyAdapter() {
@@ -192,6 +193,19 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			}
 			
 			this.jTextFieldExpression.requestFocus();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setBackground(java.awt.Color)
+	 */
+	@Override
+	public void setBackground(Color bgColor) {
+		super.setBackground(bgColor);
+		this.getJTextFieldExpression().setBackground(bgColor);
+		if (this.expression!=null) {
+			this.getJTextFieldExpression().setText(this.expression.getExpressionString());
+			this.setToolTipText(this.expression.getExpressionString());
 		}
 	}
 }
