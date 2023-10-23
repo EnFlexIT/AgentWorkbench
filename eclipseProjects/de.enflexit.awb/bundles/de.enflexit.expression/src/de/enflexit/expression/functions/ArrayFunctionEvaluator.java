@@ -1,5 +1,8 @@
 package de.enflexit.expression.functions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.enflexit.expression.ExpressionData;
 import de.enflexit.expression.ExpressionData.DataColumn;
 import de.enflexit.expression.ExpressionData.DataType;
@@ -9,32 +12,51 @@ import de.enflexit.expression.ExpressionResult;
  * The Class ArrayFunctionEvaluator.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class ArrayFunctionEvaluator {
 
 	private ExpressionFunction expressionFunction;
-	private ExpressionData expressionData;
+	private List<ExpressionData> parametersList;
 	private int sourceDataColumnIndex; 
 	
 	/**
-	 * Instantiates a new array function evaluator.
-	 *
+	 * Instantiates a new array function evaluator with a single parameter (that can also be an array or time series).
 	 * @param expressionFunction the expression function
-	 * @param expressionData the expression data
+	 * @param parameterData the expression data
 	 */
-	public ArrayFunctionEvaluator(ExpressionFunction expressionFunction, ExpressionData expressionData) {
-		this(expressionFunction, expressionData, 1);
+	public ArrayFunctionEvaluator(ExpressionFunction expressionFunction, ExpressionData parameterData) {
+		this(expressionFunction, parameterData, 1);
 	}
 	/**
-	 * Instantiates a new array function evaluator.
-	 *
+	 * Instantiates a new array function evaluator with a single parameter (that can also be an array or time series).
 	 * @param expressionFunction the expression function
-	 * @param expressionData the expression data
+	 * @param parameterData the expression data
 	 * @param sourceDataColumnIndex the source data column index
 	 */
-	public ArrayFunctionEvaluator(ExpressionFunction expressionFunction, ExpressionData expressionData, int sourceDataColumnIndex) {
+	public ArrayFunctionEvaluator(ExpressionFunction expressionFunction, ExpressionData parameterData, int sourceDataColumnIndex) {
+		this(expressionFunction, new ArrayList<ExpressionData>(), sourceDataColumnIndex);
+		this.parametersList.add(parameterData);
+	}
+	
+	/**
+	 * Instantiates a new array function evaluator with a list of parameters (that can also be arrays or time series).
+	 * @param expressionFunction the expression function
+	 * @param parametersList the parameters list
+	 */
+	public ArrayFunctionEvaluator(ExpressionFunction expressionFunction, List<ExpressionData> parametersList) {
+		this(expressionFunction, parametersList, 1);
+	}
+	
+	/**
+	 * Instantiates a new array function evaluator with a list of parameters (that can also be arrays or time series).
+	 * @param expressionFunction the expression function
+	 * @param parametersList the parameters list
+	 * @param sourceDataColumnIndex the source data column index
+	 */
+	public ArrayFunctionEvaluator(ExpressionFunction expressionFunction, List<ExpressionData> parametersList, int sourceDataColumnIndex) {
 		this.expressionFunction = expressionFunction;
-		this.expressionData = expressionData;
+		this.parametersList = parametersList;
 		this.sourceDataColumnIndex = sourceDataColumnIndex;
 	}
 	
@@ -43,83 +65,112 @@ public class ArrayFunctionEvaluator {
 	 * @return the expression result
 	 */
 	public ExpressionResult getExpressionResult() {
+		double resultValue;
 		
-		ExpressionResult result = new ExpressionResult();
-		ExpressionData resultData = null;
-		double aggregatedValue = 0;
-		
-		if (this.expressionData.isSingleValueResult()==true) {
-			result.setExpressionData(this.expressionData);
-			
-		} else if (this.expressionData.isArray()==true) {
-			
-			switch (this.expressionData.getDataType()) {
-			case Boolean:
-				aggregatedValue = this.getAggregationResultDouble(this.expressionData.getBooleanArray(), this.expressionData.getDataType());
-				if (aggregatedValue==1.0) {
-					resultData = new ExpressionData(true);
-				} else if (aggregatedValue==0.0) {
-					resultData = new ExpressionData(false);
-				} else {
-					resultData = new ExpressionData(aggregatedValue);
-				}
-				break;
-			
-			case Integer:
-				aggregatedValue = this.getAggregationResultDouble(this.expressionData.getIntegerArray(), this.expressionData.getDataType());
-				resultData = new ExpressionData(aggregatedValue);
-				break;
-			
-			case Long:
-				aggregatedValue = this.getAggregationResultDouble(this.expressionData.getLongArray(), this.expressionData.getDataType());
-				resultData = new ExpressionData(aggregatedValue);
-				break;
-				
-			case Double:
-				aggregatedValue = this.getAggregationResultDouble(this.expressionData.getDoubleArray(), this.expressionData.getDataType());
-				resultData = new ExpressionData(aggregatedValue);
-				break;
-			}
-			
-			// --- Set ExpressionData to result -----------
-			result.setExpressionData(resultData);
-			
-		} else if (this.expressionData.isTimeSeries()==true) {
-			
-			DataColumn dCol = this.expressionData.getDataColumn(this.sourceDataColumnIndex);
-			switch (dCol.getDataType()) {
-			case Boolean:
-				aggregatedValue = this.getAggregationResultDouble(dCol.getBooleanList().toArray(), dCol.getDataType());
-				if (aggregatedValue==1.0) {
-					resultData = new ExpressionData(true);
-				} else if (aggregatedValue==0.0) {
-					resultData = new ExpressionData(false);
-				} else {
-					resultData = new ExpressionData(aggregatedValue);
-				}
-				break;
-			
-			case Integer:
-				aggregatedValue = this.getAggregationResultDouble(dCol.getIntegerList().toArray(), dCol.getDataType());
-				resultData = new ExpressionData(aggregatedValue);
-				break;
-			
-			case Long:
-				aggregatedValue = this.getAggregationResultDouble(dCol.getLongList().toArray(), dCol.getDataType());
-				resultData = new ExpressionData(aggregatedValue);
-				break;
-				
-			case Double:
-				aggregatedValue = this.getAggregationResultDouble(dCol.getDoubleList().toArray(), dCol.getDataType());
-				resultData = new ExpressionData(aggregatedValue);
-				break;
-			}
-			
-			// --- Set ExpressionData to result -----------
-			result.setExpressionData(resultData);
-			
+		// --- Set the appropriate start value for the current function -------
+		switch (this.expressionFunction) {
+		case MIN:
+			resultValue = Double.MAX_VALUE;
+			break;
+		case MAX:
+			resultValue = Double.MIN_VALUE;
+			break;
+		default:
+			resultValue = 0;
+			break;
 		}
-		return result;
+		
+		for (ExpressionData parameter : this.parametersList) {
+			double paramValue = this.getDoubleResultFromParameter(parameter);
+			switch (this.expressionFunction) {
+			case AVG:
+			case SUM:
+				resultValue += paramValue;
+				break;
+			case MIN:
+				resultValue = Math.min(resultValue, paramValue);
+				break;
+			case MAX:
+				resultValue = Math.max(resultValue, paramValue);
+				break;
+			default:
+				break;
+			}
+		}
+		
+		if (this.expressionFunction==ExpressionFunction.AVG) {
+			resultValue /= parametersList.size();
+		}
+		
+		return new ExpressionResult(resultValue);
+	}
+	
+	/**
+	 * Gets the double result from the specified parameter. For single value parameters, the value will be converted if necessary
+	 * and returned. For array and time series parameters, the currently evaluated function will be applied on the elements. 
+	 * @param parameter the parameter
+	 * @return the double result from parameter
+	 */
+	private double getDoubleResultFromParameter(ExpressionData parameter) {
+		double resultValue = 0;
+		Object[] dataArray = null;
+		
+		if (parameter.isSingleValueResult()) {
+			switch(parameter.getDataType()) {
+			case Boolean:
+				if (parameter.getBooleanValue()==true) {
+					resultValue = 1.0;
+				} else {
+					resultValue = 0.0;
+				}
+				break;
+			case Integer:
+				resultValue = Integer.valueOf(parameter.getIntegerValue()).doubleValue();
+				break;
+			case Long:
+				resultValue = Long.valueOf(parameter.getLongValue()).doubleValue();
+				break;
+			case Double:
+				resultValue  = parameter.getDoubleValue();
+				break;
+			}
+		} else if (parameter.isArray()==true) {
+			switch(parameter.getDataType()) {
+			case Boolean:
+				dataArray = parameter.getBooleanArray();
+				break;
+			case Integer:
+				dataArray = parameter.getIntegerArray();
+				break;
+			case Long:
+				dataArray = parameter.getLongArray();
+				break;
+			case Double:
+				dataArray = parameter.getDoubleArray();
+				break;
+			}
+			resultValue = this.getAggregationResultDouble(dataArray, parameter.getDataType());
+			
+		} else if (parameter.isTimeSeries()==true) {
+			DataColumn dataColumn = parameter.getDataColumn(this.sourceDataColumnIndex);
+			switch (dataColumn.getDataType()) {
+			case Boolean:
+				dataArray = dataColumn.getBooleanList().toArray();
+				break;
+			case Integer:
+				dataArray = dataColumn.getIntegerList().toArray();
+				break;
+			case Long:
+				dataArray = dataColumn.getLongList().toArray();
+				break;
+			case Double:
+				dataArray = dataColumn.getDoubleList().toArray();
+				break;
+			}
+			resultValue = this.getAggregationResultDouble(dataArray, dataColumn.getDataType());
+		}
+		
+		return resultValue;
 	}
 	
 	/**
@@ -186,7 +237,5 @@ public class ArrayFunctionEvaluator {
 		}
 		return aggregatedValue;
 	}
-	
-	
 	
 }

@@ -120,8 +120,8 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 			jSplitPaneRight.setBorder(BorderFactory.createEmptyBorder());
 			jSplitPaneRight.setRightComponent(getJPanelRightExpressions());
 			jSplitPaneRight.setOneTouchExpandable(false);
-			jSplitPaneRight.setDividerLocation(0.5);
-			jSplitPaneRight.setResizeWeight(0.5);
+			jSplitPaneRight.setDividerLocation(0.3);
+			jSplitPaneRight.setResizeWeight(0.3);
 			jSplitPaneRight.setDividerSize(2);
 
 		}

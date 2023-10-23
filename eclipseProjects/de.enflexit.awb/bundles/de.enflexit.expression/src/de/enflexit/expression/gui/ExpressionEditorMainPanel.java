@@ -106,8 +106,8 @@ public class ExpressionEditorMainPanel extends JPanel implements PropertyChangeL
 			jSplitPaneMain.setLeftComponent(this.getJSplitPaneLeft());
 			jSplitPaneMain.setBorder(BorderFactory.createEmptyBorder());
 			jSplitPaneMain.setDividerSize(7);
-			jSplitPaneMain.setDividerLocation(0.75);
-			jSplitPaneMain.setResizeWeight(0.5);
+			jSplitPaneMain.setDividerLocation(0.8);
+			jSplitPaneMain.setResizeWeight(0.8);
 			jSplitPaneMain.setOneTouchExpandable(true);
 		}
 		return jSplitPaneMain;
