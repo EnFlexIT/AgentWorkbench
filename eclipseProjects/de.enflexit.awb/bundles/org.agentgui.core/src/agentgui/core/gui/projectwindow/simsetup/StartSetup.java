@@ -566,7 +566,7 @@ public class StartSetup extends JPanel implements Observer, ActionListener {
 	}
 
     /**
-     * This method initialises jButtonStartOK
+     * This method initializes jButtonStartOK
      * @return javax.swing.JButton
      */
     private JButton getJButtonStartOK() {
