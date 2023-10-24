@@ -50,6 +50,9 @@ import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandle
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.swing.OwnerDetection;
 
 /**
@@ -284,6 +287,23 @@ public class DataModelStorageThread extends Thread {
 			ie.printStackTrace();
 		}
 
+    	// --- Indicate to the setup observer that the job is done --
+    	Project project = this.graphController.getProject();
+    	if (project!=null) {
+    		// --- Prepare SimulationSetupNotification -------------- 
+    		SimulationSetupNotification ssn = null;
+    		switch (this.organizerAction) {
+			case ORGANIZE_LOADING:
+				ssn = new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_DETAILS_LOADED);
+				break;
+
+			case ORGANIZE_SAVING:
+				ssn = new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_DETAILS_SAVED);	
+				break;
+			}
+    		project.setNotChangedButNotify(ssn);
+    	}
+    	
     	// --- Finally, close progress monitor ---------------------- 
     	if (this.isHeadlessOperation==false) {
     		SwingUtilities.invokeLater(new Runnable() {
