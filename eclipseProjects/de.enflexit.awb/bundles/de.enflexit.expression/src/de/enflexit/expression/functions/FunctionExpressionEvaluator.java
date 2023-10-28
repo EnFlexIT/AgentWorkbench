@@ -39,9 +39,16 @@ public class FunctionExpressionEvaluator implements ExpressionServiceEvaluator {
 		case MAX:
 		case MIN:
 			// --- Get the required data ----------------------------
-			ExpressionData data = this.getSubExpressionData(expression, context, 0);
-			if (data!=null) {
-				expResult = new ArrayFunctionEvaluator(expFckt, data).getExpressionResult();
+			if (expression.getSubExpressions().size()==1) {
+				ExpressionData data = this.getSubExpressionData(expression, context, 0);
+				if (data!=null) {
+					expResult = new ArrayFunctionEvaluator(expFckt, data).getExpressionResult();
+				}
+			} else {
+				ArrayList<ExpressionData> parameters = this.getAllSubExpressionData(expression, context);
+				if (parameters!=null) {
+					expResult = new ArrayFunctionEvaluator(expFckt, parameters).getExpressionResult();
+				}
 			}
 			break;
 			
