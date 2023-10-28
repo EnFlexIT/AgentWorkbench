@@ -381,6 +381,13 @@ public abstract class PlugIn implements Observer {
 					this.onSimSetupSaved(simSetup);
 					break;
 					
+				case SIMULATION_SETUP_DETAILS_LOADED:
+					this.onSimSetupDetailsLoaded(simSetup);
+					break;
+				case SIMULATION_SETUP_DETAILS_SAVED:
+					this.onSimSetupDetailsSaved(simSetup);
+					break;
+					
 				case SIMULATION_SETUP_AGENT_ADDED:
 					@SuppressWarnings("unchecked") 
 					ArrayList<AgentClassElement4SimStart> agentAdded = (ArrayList<AgentClassElement4SimStart>) sscn.getNotificationObject();
@@ -397,6 +404,8 @@ public abstract class PlugIn implements Observer {
 					String oldAgentName = renamedHM.get("oldAgentName");
 					String newAgentName = renamedHM.get("newAgentName");
 					this.onSimSetupAgentRenamed(simSetup, oldAgentName, newAgentName);
+					break;
+				default:
 					break;
 				}
 			
@@ -522,6 +531,17 @@ public abstract class PlugIn implements Observer {
 	 * @param simSetup the current {@link SimulationSetup}
 	 */
 	protected void onSimSetupSaved(SimulationSetup simSetup) { }
+	
+	/**
+	 * Will be invoked, if the details (e.g. the environment model) of a {@link SimulationSetup} were loaded
+	 * @param simSetup the current {@link SimulationSetup}
+	 */
+	protected void onSimSetupDetailsLoaded(SimulationSetup simSetup) { }
+	/**
+	 * Will be invoked, if the details (e.g. the environment model) of a {@link SimulationSetup} were saved
+	 * @param simSetup the current {@link SimulationSetup}
+	 */
+	protected void onSimSetupDetailsSaved(SimulationSetup simSetup) { }
 	
 	/**
 	 * Will be invoked, if an agent was added to a start list of a {@link SimulationSetup}.
