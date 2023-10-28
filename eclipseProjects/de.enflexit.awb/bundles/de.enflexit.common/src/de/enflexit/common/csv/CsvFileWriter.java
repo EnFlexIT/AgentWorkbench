@@ -109,7 +109,7 @@ public class CsvFileWriter {
 	/**
 	 * Writes data from a 2D array to a CSV file
 	 * @param csvFile The target file
-	 * @param data The data to be exported
+	 * @param data The data to be exported as Object[row][column] values
 	 * @return Export successful?
 	 */
 	public boolean exportData(File csvFile, Object[][] data){
@@ -119,7 +119,7 @@ public class CsvFileWriter {
 	/**
 	 * Writes data from a 2D array to a CSV file
 	 * @param csvFile The target file
-	 * @param data The data to be exported
+	 * @param data The data to be exported as Object[row][column] values
 	 * @param headline Optional headline
 	 * @return Export successful?
 	 */

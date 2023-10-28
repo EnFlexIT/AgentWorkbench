@@ -24,11 +24,13 @@ public class CsvFileReader {
 	}
 	
 	public Vector<Vector<Object>> importData(File csvFile){
+
 		Vector<Vector<Object>> importedData = null;
-		
-		if(csvFile == null){
+		if (csvFile == null) {
 			System.err.println("No CSV file selected");
-		}else{
+			
+		} else {
+
 			BufferedReader fileReader = null;
 			try {
 				
@@ -41,7 +43,6 @@ public class CsvFileReader {
 					Vector<Object> lineData = new Vector<Object>(Arrays.asList(tokens));
 					importedData.addElement(lineData);
 				}
-				
 				
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -56,9 +57,7 @@ public class CsvFileReader {
 				}
 			}
 		}
-		
 		return importedData;
 	}
-	
 	
 }
