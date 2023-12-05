@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
-Bundle-Version: 1.2.11.qualifier
+Bundle-Version: 1.2.12.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
@@ -33,6 +33,8 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.featureEvaluation.featureXML,
  de.enflexit.common.http,
  de.enflexit.common.images,
+ de.enflexit.common.linearization,
+ de.enflexit.common.linearization.ui,
  de.enflexit.common.ontology;uses:="javax.swing.table,javax.swing.tree,jade.content.onto",
  de.enflexit.common.ontology.gui;
   uses:="agentgui.core.project,
