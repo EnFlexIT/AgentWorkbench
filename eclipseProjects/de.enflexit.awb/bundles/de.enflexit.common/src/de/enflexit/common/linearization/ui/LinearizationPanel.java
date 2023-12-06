@@ -1,13 +1,20 @@
 package de.enflexit.common.linearization.ui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,17 +22,25 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumnModel;
 
 import de.enflexit.common.BundleHelper;
+import de.enflexit.common.linearization.LinearCoefficient;
+import de.enflexit.common.linearization.LinearFormula;
 import de.enflexit.common.linearization.Linearization;
-import java.awt.FlowLayout;
 
 /**
  * The Class LinearizationPanel.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class LinearizationPanel extends JPanel implements ActionListener {
+public class LinearizationPanel extends JPanel implements ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 7367197262728781067L;
 	
@@ -62,7 +77,7 @@ public class LinearizationPanel extends JPanel implements ActionListener {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 62, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 48, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
@@ -120,7 +135,7 @@ public class LinearizationPanel extends JPanel implements ActionListener {
 	private JScrollPane getJScrollPaneVariablesUsed() {
 		if (jScrollPaneVariablesUsed == null) {
 			jScrollPaneVariablesUsed = new JScrollPane();
-			jScrollPaneVariablesUsed.setViewportView(getJPanelVariablesUsed());
+			jScrollPaneVariablesUsed.setViewportView(this.getJPanelVariablesUsed());
 		}
 		return jScrollPaneVariablesUsed;
 	}
@@ -128,9 +143,38 @@ public class LinearizationPanel extends JPanel implements ActionListener {
 		if (jPanelVariablesUsed == null) {
 			jPanelVariablesUsed = new JPanel();
 			jPanelVariablesUsed.setBackground(new Color(255, 255, 255));
-			jPanelVariablesUsed.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+			jPanelVariablesUsed.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
 		}
 		return jPanelVariablesUsed;
+	}
+	
+	/**
+	 * Update the used variables in the UI.
+	 */
+	private void updateViewVariablesUsed() {
+		
+		this.getJPanelVariablesUsed().removeAll();
+		for (String variableID : this.getLinearization().getVariableIDs()) {
+			// --- Create new JButton -------------------------------
+			JButton jButtonVariableID = new JButton(variableID);
+			jButtonVariableID.setFont(new Font("Dialog", Font.BOLD, 11));
+			jButtonVariableID.setIcon(BundleHelper.getImageIcon("Delete.png"));
+			jButtonVariableID.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+			jButtonVariableID.setToolTipText("Remove variable '" + variableID + "'");
+			jButtonVariableID.setActionCommand(variableID);
+			jButtonVariableID.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					JButton jButtonVariableID = (JButton) ae.getSource();
+					LinearizationPanel.this.getLinearization().removeLinearCoefficient(jButtonVariableID.getActionCommand());
+					LinearizationPanel.this.updateView();
+				}
+			});
+			this.getJPanelVariablesUsed().add(jButtonVariableID);
+			
+		}
+		this.getJPanelVariablesUsed().validate();
+		this.getJPanelVariablesUsed().repaint();
 	}
 	private JButton getJButtonAddVariable() {
 		if (jButtonAddVariable == null) {
@@ -181,12 +225,188 @@ public class LinearizationPanel extends JPanel implements ActionListener {
 		}
 		return jScrollPaneFormulas;
 	}
+	
+	/**
+	 * Returns the table model for formulas.
+	 * @return the table model formulas
+	 */
+	private DefaultTableModel getTableModelFormulas() {
+		
+		Vector<String> columnNames = new Vector<>(); 
+
+		// --- Coefficient columns ------------------------
+		List<String> variableIDs = this.getLinearization().getVariableIDs();
+		for (String variableID : variableIDs) {
+			columnNames.add("Coeff. of " + variableID);
+		}
+		columnNames.add("Axis Intercept");
+		
+		// --- Coefficient Ranges -------------------------
+		for (String variableID : variableIDs) {
+			columnNames.add(variableID + " from (>=)");
+			columnNames.add(variableID + " to (<)");
+		}
+
+		// --- Initiate the table model -------------------
+		DefaultTableModel tableModelFormulas = new DefaultTableModel(null, columnNames) {
+			private static final long serialVersionUID = 7986575831602975168L;
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				return Double.class;
+			}
+		};
+		this.fillTableModel(tableModelFormulas);
+		
+		// --- Add table model listener ------------------- 
+		tableModelFormulas.addTableModelListener(new TableModelListener() {
+			@Override
+			public void tableChanged(TableModelEvent tmEv) {
+				if (tmEv.getType()==TableModelEvent.UPDATE) {
+					Double newValue = (Double) LinearizationPanel.this.getJTableFormulas().getModel().getValueAt(tmEv.getFirstRow(), tmEv.getColumn());
+					LinearizationPanel.this.updateValue(tmEv.getFirstRow(), tmEv.getColumn(), newValue);
+				}
+			}
+		});
+		return tableModelFormulas;
+	}
+	/**
+	 * Fills the specified table model.
+	 * @param tableModel the table model to fill
+	 */
+	private void fillTableModel(DefaultTableModel tableModel) {
+		for (LinearFormula linFormula : this.getLinearization().getLinearFormulaList()) {
+			tableModel.addRow(this.getModelRow(linFormula));
+		}
+	}
+	/**
+	 * Returns a model row for the specified LinearFormula.
+	 * @param linFormula the linear formula to a create a model row for
+	 * @return the model row
+	 */
+	private Vector<Double> getModelRow(LinearFormula linFormula) {
+		
+		Vector<Double> modelRow = new Vector<>();
+		Vector<Double> rangeColumns = new Vector<>();
+		
+		List<String> variableIDs = this.getLinearization().getVariableIDs();
+		for (String variableID : variableIDs) {
+			
+			LinearCoefficient linCoeff = linFormula.getCoefficient(variableID);
+			modelRow.add(linCoeff.getValue());
+
+			rangeColumns.add(linCoeff.getValidFrom());
+			rangeColumns.add(linCoeff.getValidTo());
+		}
+		// --- Add the axis intercept value -------------------------
+		modelRow.add(linFormula.getAxisIntercept());
+		
+		// --- Add the range columns to the actual row --------------
+		modelRow.addAll(rangeColumns);
+		
+		return modelRow;
+	}
+	
+	/**
+	 * Updates the value in the {@link Linearization}.
+	 *
+	 * @param rowIndex the table model row
+	 * @param colIndex the table model column
+	 * @param newValue the new value
+	 */
+	private void updateValue(int rowIndex, int colIndex, double newValue) {
+		
+		List<String> variableIDList = this.getLinearization().getVariableIDs();
+		int noOfCoeff = variableIDList.size();
+		LinearFormula editLinearFormula = this.getLinearization().getLinearFormulaList().get(rowIndex);
+		
+		if (colIndex <= (noOfCoeff-1)) {
+			// --- A coefficient was edited ---------------
+			String editVariableID = variableIDList.get(colIndex);
+			LinearCoefficient coefficient = editLinearFormula.getCoefficient(editVariableID);
+			coefficient.setValue(newValue);
+			
+		} else if (colIndex==noOfCoeff) {
+			// --- The axis intersection was edited -------
+			editLinearFormula.setAxisIntercept(newValue);
+		
+		} else {
+			// --- A range value was edited ---------------
+			int variableIDIndex = 0;
+			for (int i = noOfCoeff+1; i < this.getJTableFormulas().getColumnCount(); i=i+2) {
+				if (i==colIndex || (i+1)==colIndex) {
+					// --- Update coefficient value ------- 
+					String editVariableID = variableIDList.get(variableIDIndex);
+					LinearCoefficient coefficient = editLinearFormula.getCoefficient(editVariableID);
+					if (i==colIndex) {
+						// --- From value -----------------
+						coefficient.setValidFrom(newValue);
+					} else {
+						// --- To value -------------------
+						coefficient.setValidTo(newValue);
+					}
+					break;
+				}
+				variableIDIndex++;
+			}
+			
+		}
+	}
+	
+	
+	/**
+	 * Returns the JTable for formulas.
+	 * @return the JTable formulas
+	 */
 	private JTable getJTableFormulas() {
 		if (jTableFormulas == null) {
-			jTableFormulas = new JTable();
+			jTableFormulas = new JTable(this.getTableModelFormulas()) {
+				private static final long serialVersionUID = -2553594034480496315L;
+				@Override
+				public Component prepareEditor(TableCellEditor editor, int row, int column) {
+					Component comp = super.prepareEditor(editor, row, column);
+					if (comp instanceof JTextField) {
+						((JTextField) comp).selectAll();
+					}
+					return comp;
+				}
+			};
 			jTableFormulas.setFillsViewportHeight(true);
+			jTableFormulas.getTableHeader().setReorderingAllowed(false);
+			jTableFormulas.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jTableFormulas.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			jTableFormulas.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTableFormulas.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+			jTableFormulas.setRowHeight(20);
 		}
 		return jTableFormulas;
+	}
+	/**
+	 * Updates the formula table.
+	 */
+	private void updateViewFormulaTable() {
+		
+		this.getJTableFormulas().setModel(this.getTableModelFormulas());
+		this.updateTableColumnWidth();
+	}
+	/**
+	 * Updates the table column width.
+	 */
+	private void updateTableColumnWidth() {
+		
+		// --- Set a preferred column width -----------
+		int colWidth = 140;
+		TableColumnModel tcm = this.getJTableFormulas().getColumnModel();
+		for (int col = 0; col < tcm.getColumnCount(); col++) {
+			tcm.getColumn(col).setPreferredWidth(colWidth);
+		}
+	}
+	
+	/**
+	 * Updates the overall view onto the current Linearization.
+	 */
+	private void updateView() {
+		this.updateViewVariablesUsed();
+		this.updateViewFormulaTable();
 	}
 	
 	
@@ -195,6 +415,10 @@ public class LinearizationPanel extends JPanel implements ActionListener {
 	 * @return the linearization
 	 */
 	public Linearization getLinearization() {
+		if (linearization==null) {
+			linearization = new Linearization();
+			linearization.addPropertyChangeListener(this);
+		}
 		return linearization;
 	}
 	/**
@@ -203,7 +427,29 @@ public class LinearizationPanel extends JPanel implements ActionListener {
 	 */
 	public void setLinearization(Linearization linearization) {
 		this.linearization = linearization;
+		this.linearization.addPropertyChangeListener(this);
+		this.updateView();
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		switch (evt.getPropertyName()) {
+		case Linearization.PROPERTY_LINEAR_COEFFICIENT_ADDED:
+		case Linearization.PROPERTY_LINEAR_COEFFICIENT_REMOVED:
+			this.updateView();
+			break;
+		case Linearization.PROPERTY_LINEAR_FORMULA_ADDED:
+		case Linearization.PROPERTY_LINEAR_FORMULA_REMOVED:
+			this.updateViewFormulaTable();
+			break;
+		}
+	}
+	
 	
 	/**
 	 * Sets the specified ActionListener to the JButton for the add action.
@@ -233,22 +479,52 @@ public class LinearizationPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 	
 		if (ae.getSource()==this.getJButtonAddVariable()) {
+			// --- Add a new linearization variable -----------------
+			String title = "Add new variable to linearization";
+			String msg = "Please, specify the new variable for the linearization!";
+			int msgType = JOptionPane.QUESTION_MESSAGE;
 			
 			String newVariableID = null;
-			
-			String title = "Add new linearization variable";
-			String msg = "Please, specify a new variable for the linearization!";
-			newVariableID = JOptionPane.showInputDialog(this, msg, title, JOptionPane.QUESTION_MESSAGE);
-			// TODO
+			while (newVariableID==null || this.getLinearization().getVariableIDs().contains(newVariableID)) {
+				
+				String errMsg = "";
+				if (newVariableID!=null) {
+					errMsg = "\n(Note: The variable name '" + newVariableID + "' is already in use)";
+					msgType = JOptionPane.WARNING_MESSAGE;
+				}
+				// --- Ask user ---------------------------
+				newVariableID = JOptionPane.showInputDialog(this, msg + errMsg + "\n ", title, msgType);
+				if (newVariableID==null || newVariableID.isBlank()) {
+					return;
+				}
+			}
+			// --- Add new Variable
+			LinearCoefficient coeff = this.getLinearization().createLinearCoefficient(newVariableID, 0.0, Linearization.DEFAULT_DOUBLE_VALUE_MIN, Linearization.DEFAULT_DOUBLE_VALUE_MAX);
+			this.getLinearization().addLinearCoefficient(coeff);
 			
 		} else if (ae.getSource()==this.getJButtonAddFormula()) {
-			
+			// --- Add a new Formula ----------------------
+			LinearFormula formula = this.getLinearization().createLinearFormula();
+			this.getLinearization().addLinearFormula(formula);
 			
 		} else if (ae.getSource()==this.getJButtonRemoveFormula()) {
+			// --- Remove selected Formula ----------------
+			int tableRowSelected = this.getJTableFormulas().getSelectedRow();
+			if (tableRowSelected!=-1) {
+				// --- Get model row and remove -----------
+				int modelRowSelected = this.getJTableFormulas().convertRowIndexToModel(tableRowSelected);
+				LinearFormula formulaToRemove = this.getLinearization().getLinearFormulaList().get(modelRowSelected);
+				if (this.getLinearization().removeLinearFormula(formulaToRemove)==true) {
+					// --- Select next row ----------------
+					int nTableRows = this.getJTableFormulas().getRowCount();
+					if (nTableRows>0) {
+						if (tableRowSelected>(nTableRows-1)) tableRowSelected--;
+						this.getJTableFormulas().setRowSelectionInterval(tableRowSelected, tableRowSelected);
+					}
+				}
+			}
 			
 		}
-		
 	}
-	
 	
 }

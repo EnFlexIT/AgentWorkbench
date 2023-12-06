@@ -101,4 +101,24 @@ public class LinearFormula
         this.axisIntercept = value;
     }
 
+    
+    // ------------------------------------------------------------------------
+    // --- From here customized code ------------------------------------------ 
+    // ------------------------------------------------------------------------        
+	/**
+	 * Returns the coefficient that matches the specified variable ID.
+	 *
+	 * @param variableID the variable ID
+	 * @return the coefficient or <code>null</code>
+	 */
+	public LinearCoefficient getCoefficient(String variableID) {
+		
+		for (LinearCoefficient linCoeff : this.getCoefficientList()) {
+			if (linCoeff.getVariableID().equals(variableID)==true) {
+				return linCoeff;
+			}
+		}
+		return null;
+	}
+
 }

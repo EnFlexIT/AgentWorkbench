@@ -8,8 +8,11 @@
 
 package de.enflexit.common.linearization;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -53,6 +56,19 @@ public class Linearization
     @XmlElement(name = "LinearFormulaList", required = true)
     protected List<LinearFormula> linearFormulaList;
 
+
+    public static final String PROPERTY_LINEAR_COEFFICIENT_ADDED = "LinearCoefficientAdded";
+    public static final String PROPERTY_LINEAR_COEFFICIENT_REMOVED = "LinearCoefficientRemoved";
+
+    public static final String PROPERTY_LINEAR_FORMULA_ADDED = "LinearFormulaAdded";
+    public static final String PROPERTY_LINEAR_FORMULA_REMOVED = "LinearFormulaRemoved";
+    
+    public static final double DEFAULT_DOUBLE_VALUE_MAX = 999999;
+    public static final double DEFAULT_DOUBLE_VALUE_MIN = -DEFAULT_DOUBLE_VALUE_MAX;
+    
+    private transient List<PropertyChangeListener> propertyChangeListener;
+    
+    
     /**
      * Gets the value of the linearFormulaList property.
      * 
@@ -116,18 +132,81 @@ public class Linearization
     	for (LinearFormula linearFormula : this.getLinearFormulaList()) {
     		linearFormula.getCoefficientList().add(linearCoefficient.getCopy());
     	}
+    	// --- Fire property change event ---------------------------
+    	this.firePropertyChangeEvent(PROPERTY_LINEAR_COEFFICIENT_ADDED, null, linearCoefficient);
     	return true;
     }
-    
+    /**
+     * Removes the linear coefficient with the specified variable ID from all linear functions.
+     *
+     * @param variableID the variable ID
+     * @return true, if successful
+     */
+    public boolean removeLinearCoefficient(String variableID) {
+		
+    	boolean success = false;
+    	for (LinearFormula formula : this.getLinearFormulaList()) {
+    		LinearCoefficient linCoeffToDelete = formula.getCoefficient(variableID);
+    		if (linCoeffToDelete!=null) {
+    			success = formula.getCoefficientList().remove(linCoeffToDelete);
+    		}
+    	}
+    	// --- Fire property change event ---------------------------
+    	if (success==true) {
+        	this.firePropertyChangeEvent(PROPERTY_LINEAR_COEFFICIENT_REMOVED, variableID, null);
+    	}
+    	return success;
+	}
     
     /**
-     * Creates a linear formula.
+     * Creates a linear formula, considering the currently defined variableIDs.
      * @return the linear formula
      */
     public LinearFormula createLinearFormula() {
+    	
     	LinearFormula formula = new LinearFormula();
     	formula.setAxisIntercept(0);
+    	
+    	// --- Create the require LinearCoefficients ---------------- 
+    	List<String> variableIDs = this.getVariableIDs();
+    	for (String variableID : variableIDs) {
+    		formula.getCoefficientList().add(this.createLinearCoefficient(variableID, 0.0, null, null));
+    	}
     	return formula;
+    }
+    /**
+     * Adds the specified linear formula to the current Linearization.
+     *
+     * @param linearFormula the linear formula to add
+     * @return true, if successful
+     */
+    public boolean addLinearFormula(LinearFormula linearFormula) {
+    	if (linearFormula==null) return false;
+    	boolean success = this.getLinearFormulaList().add(linearFormula); 
+    	if (success==true) {
+    		this.firePropertyChangeEvent(PROPERTY_LINEAR_FORMULA_ADDED, null, linearFormula);
+    	}
+    	return success;
+    }
+    /**
+     * Removes the specified linear formula from the current Linearization.
+     *
+     * @param linearFormula the linear formula to remove
+     * @return true, if successful
+     */
+    public boolean removeLinearFormula(LinearFormula linearFormula) {
+    	
+    	if (linearFormula==null) return false;
+    	
+    	boolean success = false;
+    	int indexPos = this.getLinearFormulaList().indexOf(linearFormula);
+    	if (indexPos!=-1) {
+    		if (this.getLinearFormulaList().remove(indexPos)!=null) {
+    			success = true;
+    	    	this.firePropertyChangeEvent(PROPERTY_LINEAR_FORMULA_REMOVED, linearFormula, null);
+    		}
+    	}
+    	return success;
     }
     
     
@@ -141,7 +220,7 @@ public class Linearization
     	return this.getVariableIDs().contains(variableID);
     }
     /**
-     * Returns a list of all variableID's used in the linearization.
+     * Returns a sorted list of all variableID's used in the linearization.
      * @return the variableIDs
      */
     public List<String> getVariableIDs() {
@@ -154,7 +233,64 @@ public class Linearization
     			}
     		}
     	}
+    	Collections.sort(variableIDList);
     	return variableIDList;
+    }
+    /**
+     * Gets the number of currently defined variables.
+     * @return the number of variable I ds
+     */
+    public int getNumberOfVariableIDs() {
+		return this.getVariableIDs().size();
+	}
+    
+    
+    // ------------------------------------------------------------------------
+    // --- From here handling of property change listener --------------------- 
+    // ------------------------------------------------------------------------ 
+    /**
+     * Fires a property change event.
+     *
+     * @param propertyName the property name
+     * @param oldValue the old value
+     * @param newValue the new value
+     */
+    protected void firePropertyChangeEvent(String propertyName, Object oldValue, Object newValue) {
+    	
+    	PropertyChangeEvent pcEvent = new PropertyChangeEvent(this, propertyName, oldValue, newValue);
+    	for (PropertyChangeListener pcl : this.getPropertyChangeListener()) {
+    		try {
+    			pcl.propertyChange(pcEvent);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+    	}
+    }
+    /**
+     * Returns the property change listener.
+     * @return the property change listener
+     */
+	private List<PropertyChangeListener> getPropertyChangeListener() {
+		if (propertyChangeListener==null) {
+			propertyChangeListener = new ArrayList<>();
+		}
+		return propertyChangeListener;
+	}
+    /**
+     * Adds the property change listener.
+     * @param pcl the PropertyChangeListener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener pcl) {
+    	if (this.getPropertyChangeListener().contains(pcl)==false) {
+    		this.getPropertyChangeListener().add(pcl);
+    	}
+    }
+    /**
+     * Removes the property change listener.
+     * @param pcl the PropertyChangeListener
+     */
+    public void removePropertyChangeListener(PropertyChangeListener pcl) {
+    	this.getPropertyChangeListener().remove(pcl);
     }
     
 }

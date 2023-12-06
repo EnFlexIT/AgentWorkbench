@@ -53,6 +53,7 @@ public class LinearCoefficient
 {
 
     private final static long serialVersionUID = 201404191434L;
+    
     @XmlElement(name = "VariableID", required = true)
     protected String variableID;
     @XmlElement(name = "Value")
@@ -163,8 +164,8 @@ public class LinearCoefficient
     	LinearCoefficient lc = new LinearCoefficient();
     	lc.setVariableID(variableID);
     	lc.setValue(value!=null ? value : 1.0);
-    	lc.setValidFrom(validFrom!=null ? validFrom : Double.MIN_VALUE);
-    	lc.setValidTo(validTo!=null ? validTo : Double.MAX_VALUE);
+    	lc.setValidFrom(validFrom!=null ? validFrom : Linearization.DEFAULT_DOUBLE_VALUE_MIN);
+    	lc.setValidTo(validTo!=null ? validTo : Linearization.DEFAULT_DOUBLE_VALUE_MAX);
     	return lc;
     }
     
