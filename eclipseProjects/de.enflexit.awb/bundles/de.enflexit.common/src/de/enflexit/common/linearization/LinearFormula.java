@@ -10,6 +10,7 @@ package de.enflexit.common.linearization;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -104,7 +105,52 @@ public class LinearFormula
     
     // ------------------------------------------------------------------------
     // --- From here customized code ------------------------------------------ 
-    // ------------------------------------------------------------------------        
+    // ------------------------------------------------------------------------  
+    /**
+     * Returns a unique formula key to be used for a quick comparison.
+     * @return the formula key
+     */
+    public double getFormulaKey() {
+    	
+    	double formularKey = this.getAxisIntercept();
+    	
+    	// --- Get coefficient list sorted by variableID ------------  
+    	List<LinearCoefficient> coeffList = this.getCoefficientList();
+    	Collections.sort(coeffList, LinearCoefficient.getComparatorVariableID());
+    	// --- Add-up coefficient values ----------------------------
+    	for (LinearCoefficient lineCoeff : coeffList) {
+    		for (char character : lineCoeff.getVariableID().toCharArray()) {
+    			formularKey += (int)character;
+    		}
+    		formularKey += lineCoeff.getValue();
+    		formularKey += lineCoeff.getValidFrom();
+    		formularKey += lineCoeff.getValidTo();
+    	}
+    	return formularKey;
+    }
+    /**
+     * Returns a single key value for the ranges defined.
+     * @return the range key
+     */
+    public double getRangeKey() {
+    	
+    	double rangeKey = 0;
+    	
+    	// --- Get coefficient list sorted by variableID ------------  
+    	List<LinearCoefficient> coeffList = this.getCoefficientList();
+    	Collections.sort(coeffList, LinearCoefficient.getComparatorVariableID());
+    	// --- Add-up coefficient values ----------------------------
+    	for (LinearCoefficient lineCoeff : coeffList) {
+    		for (char character : lineCoeff.getVariableID().toCharArray()) {
+    			rangeKey += (int)character;
+    		}
+    		rangeKey += lineCoeff.getValidFrom();
+    		rangeKey += lineCoeff.getValidTo();
+    	}
+    	return rangeKey;
+    }
+    
+    
 	/**
 	 * Returns the coefficient that matches the specified variable ID.
 	 *
@@ -121,4 +167,5 @@ public class LinearFormula
 		return null;
 	}
 
+	
 }

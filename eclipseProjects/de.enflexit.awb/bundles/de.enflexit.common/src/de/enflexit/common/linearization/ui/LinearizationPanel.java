@@ -24,16 +24,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 import de.enflexit.common.BundleHelper;
 import de.enflexit.common.linearization.LinearCoefficient;
 import de.enflexit.common.linearization.LinearFormula;
 import de.enflexit.common.linearization.Linearization;
+import javax.swing.JSplitPane;
 
 /**
  * The Class LinearizationPanel.
@@ -62,6 +66,10 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 	private JButton jButtonRemoveFormula;
 	
 	private ActionListener externalActionListener;
+	private JSplitPane jSplitPane;
+	private JPanel jPanelFormulas;
+	private JPanel jPanelRanges;
+	private LinearizationCheckPanel linearizationCheckPanel;
 	
 	
 	/**
@@ -76,10 +84,10 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 	private void initialize() {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 48, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 48, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeaderVariables = new GridBagConstraints();
@@ -88,7 +96,6 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 		gbc_jLabelHeaderVariables.gridy = 0;
 		add(getJLabelHeaderVariables(), gbc_jLabelHeaderVariables);
 		GridBagConstraints gbc_jScrollPaneVariablesUsed = new GridBagConstraints();
-		gbc_jScrollPaneVariablesUsed.gridwidth = 2;
 		gbc_jScrollPaneVariablesUsed.insets = new Insets(5, 0, 0, 0);
 		gbc_jScrollPaneVariablesUsed.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneVariablesUsed.gridx = 0;
@@ -97,32 +104,16 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 		GridBagConstraints gbc_jButtonAddVariable = new GridBagConstraints();
 		gbc_jButtonAddVariable.insets = new Insets(5, 5, 0, 0);
 		gbc_jButtonAddVariable.anchor = GridBagConstraints.NORTH;
-		gbc_jButtonAddVariable.gridx = 2;
+		gbc_jButtonAddVariable.gridx = 1;
 		gbc_jButtonAddVariable.gridy = 1;
 		add(getJButtonAddVariable(), gbc_jButtonAddVariable);
-		GridBagConstraints gbc_jLabelHeaderFormulas = new GridBagConstraints();
-		gbc_jLabelHeaderFormulas.insets = new Insets(10, 0, 0, 0);
-		gbc_jLabelHeaderFormulas.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHeaderFormulas.gridx = 0;
-		gbc_jLabelHeaderFormulas.gridy = 2;
-		add(getJLabelHeaderFormulas(), gbc_jLabelHeaderFormulas);
-		GridBagConstraints gbc_jButtonAddFormula = new GridBagConstraints();
-		gbc_jButtonAddFormula.insets = new Insets(10, 5, 0, 0);
-		gbc_jButtonAddFormula.gridx = 1;
-		gbc_jButtonAddFormula.gridy = 2;
-		add(getJButtonAddFormula(), gbc_jButtonAddFormula);
-		GridBagConstraints gbc_jButtonRemoveFormula = new GridBagConstraints();
-		gbc_jButtonRemoveFormula.insets = new Insets(10, 5, 0, 0);
-		gbc_jButtonRemoveFormula.gridx = 2;
-		gbc_jButtonRemoveFormula.gridy = 2;
-		add(getJButtonRemoveFormula(), gbc_jButtonRemoveFormula);
-		GridBagConstraints gbc_jScrollPaneFormulas = new GridBagConstraints();
-		gbc_jScrollPaneFormulas.gridwidth = 3;
-		gbc_jScrollPaneFormulas.insets = new Insets(5, 0, 0, 0);
-		gbc_jScrollPaneFormulas.fill = GridBagConstraints.BOTH;
-		gbc_jScrollPaneFormulas.gridx = 0;
-		gbc_jScrollPaneFormulas.gridy = 3;
-		add(getJScrollPaneFormulas(), gbc_jScrollPaneFormulas);
+		GridBagConstraints gbc_jSplitPane = new GridBagConstraints();
+		gbc_jSplitPane.insets = new Insets(10, 0, 0, 0);
+		gbc_jSplitPane.gridwidth = 2;
+		gbc_jSplitPane.fill = GridBagConstraints.BOTH;
+		gbc_jSplitPane.gridx = 0;
+		gbc_jSplitPane.gridy = 2;
+		add(getJSplitPane(), gbc_jSplitPane);
 	}
 
 	private JLabel getJLabelHeaderVariables() {
@@ -182,13 +173,57 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 			jButtonAddVariable.setToolTipText("Add variable ...");
 			jButtonAddVariable.setIcon(BundleHelper.getImageIcon("ListPlus.png"));
 			jButtonAddVariable.setPreferredSize(new Dimension(26, 26));
+			jButtonAddVariable.setMinimumSize(new Dimension(26, 26));
+			jButtonAddVariable.setMaximumSize(new Dimension(26, 26));
 			jButtonAddVariable.setActionCommand(ACTION_COMMAND_ADD_VARIABLE);
 			jButtonAddVariable.addActionListener(this);
 		}
 		return jButtonAddVariable;
 	}
 	
-	
+	private JSplitPane getJSplitPane() {
+		if (jSplitPane == null) {
+			jSplitPane = new JSplitPane();
+			jSplitPane.setResizeWeight(0.666);
+			jSplitPane.setDividerSize(8);
+			jSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitPane.setLeftComponent(getJPanelFormulas());
+			jSplitPane.setRightComponent(getJPanelRanges());
+		}
+		return jSplitPane;
+	}
+	private JPanel getJPanelFormulas() {
+		if (jPanelFormulas == null) {
+			jPanelFormulas = new JPanel();
+			GridBagLayout gbl_jPanelFormulas = new GridBagLayout();
+			gbl_jPanelFormulas.columnWidths = new int[]{0, 0, 0, 0};
+			gbl_jPanelFormulas.rowHeights = new int[]{0, 0, 0};
+			gbl_jPanelFormulas.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelFormulas.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+			jPanelFormulas.setLayout(gbl_jPanelFormulas);
+			GridBagConstraints gbc_jLabelHeaderFormulas = new GridBagConstraints();
+			gbc_jLabelHeaderFormulas.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHeaderFormulas.gridx = 0;
+			gbc_jLabelHeaderFormulas.gridy = 0;
+			jPanelFormulas.add(getJLabelHeaderFormulas(), gbc_jLabelHeaderFormulas);
+			GridBagConstraints gbc_jButtonAddFormula = new GridBagConstraints();
+			gbc_jButtonAddFormula.gridx = 1;
+			gbc_jButtonAddFormula.gridy = 0;
+			jPanelFormulas.add(getJButtonAddFormula(), gbc_jButtonAddFormula);
+			GridBagConstraints gbc_jButtonRemoveFormula = new GridBagConstraints();
+			gbc_jButtonRemoveFormula.gridx = 2;
+			gbc_jButtonRemoveFormula.gridy = 0;
+			jPanelFormulas.add(getJButtonRemoveFormula(), gbc_jButtonRemoveFormula);
+			GridBagConstraints gbc_jScrollPaneFormulas = new GridBagConstraints();
+			gbc_jScrollPaneFormulas.insets = new Insets(0, 0, 5, 0);
+			gbc_jScrollPaneFormulas.gridwidth = 3;
+			gbc_jScrollPaneFormulas.fill = GridBagConstraints.BOTH;
+			gbc_jScrollPaneFormulas.gridx = 0;
+			gbc_jScrollPaneFormulas.gridy = 1;
+			jPanelFormulas.add(getJScrollPaneFormulas(), gbc_jScrollPaneFormulas);
+		}
+		return jPanelFormulas;
+	}
 	private JLabel getJLabelHeaderFormulas() {
 		if (jLabelHeaderFormulas == null) {
 			jLabelHeaderFormulas = new JLabel("List of linear coefficients and their boundaries");
@@ -202,6 +237,8 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 			jButtonAddFormula.setIcon(BundleHelper.getImageIcon("ListPlus.png"));
 			jButtonAddFormula.setToolTipText("Add linear equation");
 			jButtonAddFormula.setPreferredSize(new Dimension(26, 26));
+			jButtonAddFormula.setMaximumSize(new Dimension(26, 26));
+			jButtonAddFormula.setMinimumSize(new Dimension(26, 26));
 			jButtonAddFormula.setActionCommand(ACTION_COMMAND_ADD_FORMULA);
 			jButtonAddFormula.addActionListener(this);
 		}
@@ -213,6 +250,8 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 			jButtonRemoveFormula.setIcon(BundleHelper.getImageIcon("ListMinus.png"));
 			jButtonRemoveFormula.setToolTipText("Remove selected linear equation");
 			jButtonRemoveFormula.setPreferredSize(new Dimension(26, 26));
+			jButtonRemoveFormula.setMaximumSize(new Dimension(26, 26));
+			jButtonRemoveFormula.setMinimumSize(new Dimension(26, 26));
 			jButtonRemoveFormula.setActionCommand(ACTION_COMMAND_REMOVE_FORMULA);
 			jButtonRemoveFormula.addActionListener(this);
 		}
@@ -351,8 +390,6 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 			
 		}
 	}
-	
-	
 	/**
 	 * Returns the JTable for formulas.
 	 * @return the JTable formulas
@@ -361,11 +398,24 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 		if (jTableFormulas == null) {
 			jTableFormulas = new JTable(this.getTableModelFormulas()) {
 				private static final long serialVersionUID = -2553594034480496315L;
+				private int alignment = SwingConstants.LEFT;
+				@Override
+				public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+					Component comp = super.prepareRenderer(renderer, row, column);
+					if (comp instanceof JLabel) {
+						JLabel jLabel = (JLabel) comp;
+						jLabel.setHorizontalAlignment(alignment);
+					}
+					return comp;
+				}
+				
 				@Override
 				public Component prepareEditor(TableCellEditor editor, int row, int column) {
 					Component comp = super.prepareEditor(editor, row, column);
 					if (comp instanceof JTextField) {
-						((JTextField) comp).selectAll();
+						JTextField jTextField = (JTextField) comp;
+						jTextField.setHorizontalAlignment(alignment);
+						jTextField.selectAll();
 					}
 					return comp;
 				}
@@ -377,6 +427,7 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 			jTableFormulas.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTableFormulas.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 			jTableFormulas.setRowHeight(20);
+			
 		}
 		return jTableFormulas;
 	}
@@ -384,7 +435,6 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 	 * Updates the formula table.
 	 */
 	private void updateViewFormulaTable() {
-		
 		this.getJTableFormulas().setModel(this.getTableModelFormulas());
 		this.updateTableColumnWidth();
 	}
@@ -392,7 +442,6 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 	 * Updates the table column width.
 	 */
 	private void updateTableColumnWidth() {
-		
 		// --- Set a preferred column width -----------
 		int colWidth = 140;
 		TableColumnModel tcm = this.getJTableFormulas().getColumnModel();
@@ -401,6 +450,32 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 		}
 	}
 	
+	private JPanel getJPanelRanges() {
+		if (jPanelRanges == null) {
+			jPanelRanges = new JPanel();
+			GridBagLayout gbl_jPanelRanges = new GridBagLayout();
+			gbl_jPanelRanges.columnWidths = new int[]{0, 0};
+			gbl_jPanelRanges.rowHeights = new int[]{0, 0};
+			gbl_jPanelRanges.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gbl_jPanelRanges.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+			jPanelRanges.setLayout(gbl_jPanelRanges);
+			GridBagConstraints gbc_linearizationCheckPanel = new GridBagConstraints();
+			gbc_linearizationCheckPanel.insets = new Insets(5, 0, 0, 0);
+			gbc_linearizationCheckPanel.fill = GridBagConstraints.BOTH;
+			gbc_linearizationCheckPanel.gridx = 0;
+			gbc_linearizationCheckPanel.gridy = 0;
+			jPanelRanges.add(this.getLinearizationCheckPanel(), gbc_linearizationCheckPanel);
+		}
+		return jPanelRanges;
+	}
+	private LinearizationCheckPanel getLinearizationCheckPanel() {
+		if (linearizationCheckPanel == null) {
+			linearizationCheckPanel = new LinearizationCheckPanel(this.getLinearization());
+		}
+		return linearizationCheckPanel;
+	}	
+	
+	
 	/**
 	 * Updates the overall view onto the current Linearization.
 	 */
@@ -408,7 +483,6 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 		this.updateViewVariablesUsed();
 		this.updateViewFormulaTable();
 	}
-	
 	
 	/**
 	 * Returns the linearization.
@@ -428,9 +502,16 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 	public void setLinearization(Linearization linearization) {
 		this.linearization = linearization;
 		this.linearization.addPropertyChangeListener(this);
+		this.getLinearizationCheckPanel().setLinearization(this.linearization);
 		this.updateView();
+		this.doLinearizationChecks();
 	}
-	
+	/**
+	 * Does the linearization checks.
+	 */
+	private void doLinearizationChecks() {
+		this.getLinearization().getValidator().doChecksInThread();
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
@@ -441,12 +522,20 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 		switch (evt.getPropertyName()) {
 		case Linearization.PROPERTY_LINEAR_COEFFICIENT_ADDED:
 		case Linearization.PROPERTY_LINEAR_COEFFICIENT_REMOVED:
+		case Linearization.PROPERTY_LINEAR_COEFFICIENT_RENAMED:
 			this.updateView();
 			break;
 		case Linearization.PROPERTY_LINEAR_FORMULA_ADDED:
 		case Linearization.PROPERTY_LINEAR_FORMULA_REMOVED:
 			this.updateViewFormulaTable();
 			break;
+		case Linearization.PROPERTY_VALIDATION_DONE:
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					LinearizationPanel.this.getLinearizationCheckPanel().updateValidationMessages();
+				}
+			});
 		}
 	}
 	
@@ -498,14 +587,19 @@ public class LinearizationPanel extends JPanel implements ActionListener, Proper
 					return;
 				}
 			}
-			// --- Add new Variable
-			LinearCoefficient coeff = this.getLinearization().createLinearCoefficient(newVariableID, 0.0, Linearization.DEFAULT_DOUBLE_VALUE_MIN, Linearization.DEFAULT_DOUBLE_VALUE_MAX);
-			this.getLinearization().addLinearCoefficient(coeff);
+			// --- Add new LinearCoefficient --------------
+			this.getLinearization().addLinearCoefficient(LinearCoefficient.createLinearCoefficient(newVariableID, 0.0, this.getLinearization().getLowerBoundary(newVariableID), this.getLinearization().getUpperBoundary(newVariableID)));
 			
 		} else if (ae.getSource()==this.getJButtonAddFormula()) {
 			// --- Add a new Formula ----------------------
 			LinearFormula formula = this.getLinearization().createLinearFormula();
 			this.getLinearization().addLinearFormula(formula);
+			// --- Select that new formula in the table ---
+			int newRowCount = this.getJTableFormulas().getRowCount();
+			if (newRowCount>0) {
+				newRowCount--;
+				this.getJTableFormulas().setRowSelectionInterval(newRowCount, newRowCount);
+			}
 			
 		} else if (ae.getSource()==this.getJButtonRemoveFormula()) {
 			// --- Remove selected Formula ----------------

@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -56,18 +57,23 @@ public class Linearization
     @XmlElement(name = "LinearFormulaList", required = true)
     protected List<LinearFormula> linearFormulaList;
 
+    public static final double DEFAULT_DOUBLE_VALUE_MAX = 999999;
+    public static final double DEFAULT_DOUBLE_VALUE_MIN = -DEFAULT_DOUBLE_VALUE_MAX;
 
+    
     public static final String PROPERTY_LINEAR_COEFFICIENT_ADDED = "LinearCoefficientAdded";
     public static final String PROPERTY_LINEAR_COEFFICIENT_REMOVED = "LinearCoefficientRemoved";
-
+    public static final String PROPERTY_LINEAR_COEFFICIENT_RENAMED = "LinearCoefficientRenamed";
+    
     public static final String PROPERTY_LINEAR_FORMULA_ADDED = "LinearFormulaAdded";
     public static final String PROPERTY_LINEAR_FORMULA_REMOVED = "LinearFormulaRemoved";
     
-    public static final double DEFAULT_DOUBLE_VALUE_MAX = 999999;
-    public static final double DEFAULT_DOUBLE_VALUE_MIN = -DEFAULT_DOUBLE_VALUE_MAX;
+    public static final String PROPERTY_VALIDATION_DONE = "LinearizationValidationDone";
     
     private transient List<PropertyChangeListener> propertyChangeListener;
     
+    private transient LinearizationBoundaries linearizationBoundaries;
+    private transient LinearizationValidator validator;
     
     /**
      * Gets the value of the linearFormulaList property.
@@ -102,6 +108,70 @@ public class Linearization
     // ------------------------------------------------------------------------
     // --- From here customized code ------------------------------------------ 
     // ------------------------------------------------------------------------    
+    /**
+     * Gets the linearization validator.
+     * @return the LinearizationValidator currently in use
+     */
+    public LinearizationValidator getValidator() {
+    	if (validator==null) {
+    		validator = new LinearizationValidator(this);
+    	}
+		return validator;
+	}
+    /**
+     * Sets the linearization validator.
+     * @param validator the LinearizationValidator to use
+     */
+    public void setValidator(LinearizationValidator linearizationValidator) {
+		this.validator = linearizationValidator;
+	}
+    /**
+     * Checks if is valid.
+     * @return true, if is valid
+     */
+    public boolean isValid() {
+    	return this.getValidator().isValidLinearization();
+    }
+    
+    
+    /**
+     * Returns the linearization boundaries.
+     * @return the linearization boundaries
+     */
+    public LinearizationBoundaries getLinearizationBoundaries() {
+		if (linearizationBoundaries==null) {
+			linearizationBoundaries = new LinearizationBoundaries();
+		}
+    	return linearizationBoundaries;
+	}
+    /**
+     * Sets the current linearization boundaries.
+     * @param linearizationBoundaries the new linearization boundaries
+     */
+    public void setLinearizationBoundaries(LinearizationBoundaries linearizationBoundaries) {
+		this.linearizationBoundaries = linearizationBoundaries;
+	}
+	/**
+	 * Returns the lower boundary value for the specified variable.
+	 *
+	 * @param variableID the variable ID
+	 * @return the lower boundary value
+	 */
+	public double getLowerBoundary(String variableID) {
+		return this.getLinearizationBoundaries().getLowerBoundaryValue(variableID);
+	}
+	/**
+	 * Returns the upper boundary value for the specified variable.
+	 *
+	 * @param variableID the variable ID
+	 * @return the upper boundary value
+	 */
+	public double getUpperBoundary(String variableID) {
+		return this.getLinearizationBoundaries().getUpperBoundaryValue(variableID);
+	}
+    
+    
+    
     /**
      * Creates a LinearCoefficient.
      *
@@ -157,6 +227,26 @@ public class Linearization
     	}
     	return success;
 	}
+    /**
+     * Renames all linear coefficients.
+     *
+     * @param oldVariableID the old variable ID
+     * @param newVariableID the new variable ID
+     * @return true, if successful
+     */
+    public void renameLinearCoefficient(String oldVariableID, String newVariableID) {
+		
+    	for (LinearFormula formula : this.getLinearFormulaList()) {
+    		LinearCoefficient linCoeffToEdit = formula.getCoefficient(oldVariableID);
+    		if (linCoeffToEdit!=null) {
+    			linCoeffToEdit.setVariableID(newVariableID);
+    		}
+    	}
+    	// --- Fire property change event ---------------------------
+        this.firePropertyChangeEvent(PROPERTY_LINEAR_COEFFICIENT_RENAMED, oldVariableID, newVariableID);
+	}
+    
+    
     
     /**
      * Creates a linear formula, considering the currently defined variableIDs.
@@ -170,7 +260,7 @@ public class Linearization
     	// --- Create the require LinearCoefficients ---------------- 
     	List<String> variableIDs = this.getVariableIDs();
     	for (String variableID : variableIDs) {
-    		formula.getCoefficientList().add(this.createLinearCoefficient(variableID, 0.0, null, null));
+    		formula.getCoefficientList().add(this.createLinearCoefficient(variableID, 0.0, this.getLowerBoundary(variableID), this.getUpperBoundary(variableID)));
     	}
     	return formula;
     }
@@ -201,13 +291,80 @@ public class Linearization
     	boolean success = false;
     	int indexPos = this.getLinearFormulaList().indexOf(linearFormula);
     	if (indexPos!=-1) {
-    		if (this.getLinearFormulaList().remove(indexPos)!=null) {
-    			success = true;
-    	    	this.firePropertyChangeEvent(PROPERTY_LINEAR_FORMULA_REMOVED, linearFormula, null);
+    		if (this.getLinearFormulaList().size()==1) {
+    			// --- In case that we have the last formula --------
+    			LinearFormula formula = this.getLinearFormulaList().get(indexPos);
+    			formula.getCoefficientList().clear();
+    			this.firePropertyChangeEvent(PROPERTY_LINEAR_COEFFICIENT_REMOVED, null, null);
+    			
+    		} else {
+    			if (this.getLinearFormulaList().remove(indexPos)!=null) {
+    				success = true;
+    				this.firePropertyChangeEvent(PROPERTY_LINEAR_FORMULA_REMOVED, linearFormula, null);
+    			}
     		}
+    		
     	}
     	return success;
     }
+    /**
+     * Returns the linear formulas that can be identified by the specified formula key.
+     *
+     * @param formulaKey the formula key
+     * @return the list of formulas found for the key
+     */
+    public List<LinearFormula> getLinearFormulaByFormulaKey(double formulaKey) {
+    	
+    	List<LinearFormula> formulaList = new ArrayList<>();
+    	for (LinearFormula formula : this.getLinearFormulaList()) {
+    		if (formula.getFormulaKey()==formulaKey) {
+    			formulaList.add(formula);
+    		}
+    	}
+    	return formulaList;
+    }
+    /**
+     * Returns the list of formula keys derived from the currently define formulas.
+     * @return the formula key list
+     */
+    public List<Double> getFormulaKeyList() {
+    	
+    	List<Double> formulaKeyList = new ArrayList<>();
+    	for (LinearFormula formula : this.getLinearFormulaList()) {
+    		formulaKeyList.add(formula.getFormulaKey());
+    	}
+    	return formulaKeyList;
+    }
+    
+    /**
+     * Returns the linear formulas that can be identified by the specified formula key.
+     *
+     * @param rangeKey the formula key
+     * @return the list of formulas found for the key
+     */
+    public List<LinearFormula> getLinearFormulaByRangeKey(double rangeKey) {
+    	
+    	List<LinearFormula> formulaList = new ArrayList<>();
+    	for (LinearFormula formula : this.getLinearFormulaList()) {
+    		if (formula.getRangeKey()==rangeKey) {
+    			formulaList.add(formula);
+    		}
+    	}
+    	return formulaList;
+    }
+    /**
+     * Returns the list of range keys derived from the currently define formulas.
+     * @return the formula key list
+     */
+    public List<Double> getRangeKeyList() {
+    	
+    	List<Double> formulaKeyList = new ArrayList<>();
+    	for (LinearFormula formula : this.getLinearFormulaList()) {
+    		formulaKeyList.add(formula.getRangeKey());
+    	}
+    	return formulaKeyList;
+    }
+
     
     
     /**
@@ -238,10 +395,37 @@ public class Linearization
     }
     /**
      * Gets the number of currently defined variables.
-     * @return the number of variable I ds
+     * @return the number of variableID's
      */
     public int getNumberOfVariableIDs() {
 		return this.getVariableIDs().size();
+	}
+    
+    /**
+     * Returns a TreeMap, where the key represents a variableID and the value the list of 
+     * coefficients (with it ranges) used in the current linearization.
+     * 
+     * @return the coefficient range tree map
+     */
+    public TreeMap<String, List<LinearCoefficient>> getCoefficientRangeTreeMap() {
+
+    	TreeMap<String, List<LinearCoefficient>> rangeMap = new TreeMap<>();
+    	for (LinearFormula linFormula : this.getLinearFormulaList()) {
+    		// --- Check coefficients of Formula --------------------
+    		for (LinearCoefficient lcFormula : linFormula.getCoefficientList()) {
+    			String varibaleID = lcFormula.getVariableID();
+    			// --- Try to find the current list ----------------- 
+    			List<LinearCoefficient> linearCoeffList = rangeMap.get(varibaleID);
+    			if (linearCoeffList==null) {
+    				// --- Create the list --------------------------
+    				linearCoeffList = new ArrayList<>();
+    				rangeMap.put(varibaleID, linearCoeffList);
+    			}
+    			// --- Add the coefficient --------------------------
+    			linearCoeffList.add(lcFormula);
+    		}
+    	}
+		return rangeMap;
 	}
     
     
@@ -292,5 +476,5 @@ public class Linearization
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
     	this.getPropertyChangeListener().remove(pcl);
     }
-    
+
 }

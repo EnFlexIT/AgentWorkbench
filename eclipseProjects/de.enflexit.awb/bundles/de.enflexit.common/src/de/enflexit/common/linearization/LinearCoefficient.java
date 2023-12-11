@@ -9,6 +9,8 @@
 package de.enflexit.common.linearization;
 
 import java.io.Serializable;
+import java.util.Comparator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -168,5 +170,37 @@ public class LinearCoefficient
     	lc.setValidTo(validTo!=null ? validTo : Linearization.DEFAULT_DOUBLE_VALUE_MAX);
     	return lc;
     }
+
     
+    // --------------------------------------------------------------
+    // --- From here comparator factory methods ---------------------
+    // --------------------------------------------------------------    
+    /**
+     * Gets the comparator for the 'valid from' value.
+     * @return the comparator valid from
+     */
+	public static Comparator<LinearCoefficient> getComparatorValidFrom() {
+		return new Comparator<LinearCoefficient>() {
+			@Override
+			public int compare(LinearCoefficient lc1, LinearCoefficient lc2) {
+				Double validFrom1 = lc1.getValidFrom();
+				Double validFrom2 = lc2.getValidFrom();
+				return validFrom1.compareTo(validFrom2);
+			}
+		};
+	}
+	/**
+     * Gets the comparator for the 'variableID' value.
+     * @return the comparator for variableID's
+     */
+	public static Comparator<LinearCoefficient> getComparatorVariableID() {
+		return new Comparator<LinearCoefficient>() {
+			@Override
+			public int compare(LinearCoefficient lc1, LinearCoefficient lc2) {
+				String varID1 = lc1.getVariableID();
+				String varID2 = lc2.getVariableID();
+				return varID1.compareTo(varID2);
+			}
+		};
+	}
 }
