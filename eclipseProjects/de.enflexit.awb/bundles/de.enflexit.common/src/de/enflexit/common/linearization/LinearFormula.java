@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -150,7 +152,6 @@ public class LinearFormula
     	return rangeKey;
     }
     
-    
 	/**
 	 * Returns the coefficient that matches the specified variable ID.
 	 *
@@ -167,5 +168,93 @@ public class LinearFormula
 		return null;
 	}
 
+	/**
+	 * Checks if the current formula provides the required variable range for the specified variable.
+	 *
+	 * @param variableID the variable ID
+	 * @param value the value
+	 * @param isEnabledSmallerEqualComparison the indicator to enable an smaller equal comparison
+	 * @return true, if the formula is applicable for the specified variable value
+	 */
+	public boolean providesRequiredVariableRange(String variableID, Double value, boolean isEnabledSmallerEqualComparison) {
+		
+		for (LinearCoefficient linCoeff : this.getCoefficientList()) {
+			if (linCoeff.getVariableID().equals(variableID)==true) {
+				return linCoeff.providesRequiredVariableRange(value, isEnabledSmallerEqualComparison);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a {@link LinearFormulaMatch} with a match weight, derived from the current formula.
+	 *
+	 * @param variableValueTreeMap the variable value tree map
+	 * @param validToMaxTreeMap the valid to max TreeMap
+	 * @return the linear formula match
+	 */
+	public LinearFormulaMatch getLinearFormulaMatch(TreeMap<String, Double> variableValueTreeMap, TreeMap<String, Double> validToMaxTreeMap) {
+		
+		// --- Define return type -----------------------------------
+		LinearFormulaMatch formulaMatch = new LinearFormulaMatch(this);
+		
+		// --- Any variables defined? -------------------------------
+		if (this.getCoefficientList().size()==0) {
+			formulaMatch.setMatchWeight(LinearFormulaMatch.MATCH);
+			return formulaMatch;
+		}
+		
+		// --- Apply variable values to determine the match weight --
+		if (variableValueTreeMap!=null) {
+			// --- Check each variable value ------------------------ 
+    		for (String variableID : variableValueTreeMap.keySet()) {
+    			
+    			// --- Get value
+    			Double value = variableValueTreeMap.get(variableID);
+    			Double valueMax = validToMaxTreeMap.get(variableID);
+    			boolean isEnabledSmallerEqualComparison = (value>=valueMax);
+    			
+    			LinearCoefficient linCoeff = this.getCoefficient(variableID);
+    			int matchWeight = linCoeff.getMatchWeight(value, isEnabledSmallerEqualComparison);
+    			if (matchWeight==LinearFormulaMatch.NO_MATCH) {
+    				return null;
+    			} else {
+    				formulaMatch.addMatchWeight(matchWeight);
+    			}
+    		}
+		}
+		return formulaMatch;
+	}
 	
+	
+	/**
+     * Returns the calculated linearization result value for the specified variable values.
+     *
+     * @param variableValueTreeMap the variable values as TreeMap
+     * @return the calculated result value
+     */
+	public Double getResult(TreeMap<String, Double> variableValueTreeMap) {
+		
+		double sum = 0;
+		
+		int noOfExpectedVariableValues = this.getCoefficientList().size();
+		int noOfProvidedVariableValues = variableValueTreeMap==null ? 0 : variableValueTreeMap.size();
+		if (noOfProvidedVariableValues < noOfExpectedVariableValues) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The number of provided parameter does not match the number of expected parameter (" + noOfProvidedVariableValues + " < " + noOfExpectedVariableValues + ")");
+		}
+		
+		if (variableValueTreeMap!=null) {
+			for (String variableID : variableValueTreeMap.keySet()) {
+				Double value = variableValueTreeMap.get(variableID);
+				LinearCoefficient lc = this.getCoefficient(variableID);
+				Double termResult = lc.getTermResult(value);
+				if (termResult!=null) {
+					sum += termResult;
+				}
+			}
+		}
+		sum += this.getAxisIntercept();
+		return sum;
+	}
+
 }

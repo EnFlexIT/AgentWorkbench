@@ -148,6 +148,78 @@ public class LinearCoefficient
 	public LinearCoefficient getCopy() {
 		return createLinearCoefficient(this.getVariableID(), this.getValue(), this.getValidFrom(), this.getValidTo());
 	}
+	
+	/**
+	 * Checks if the current coefficient provides the required variable range and returns a match weight.
+	 *
+	 * @param value the value to check
+	 * @param isEnabledSmallerEqualComparison the indicator to enable an smaller equal comparison
+	 * @return true, if the coefficient is applicable for the specified variable value
+	 */
+	public int getMatchWeight(Double value, boolean isEnabledSmallerEqualComparison) {
+		
+		if (value==null) return LinearFormulaMatch.NO_MATCH;
+		
+		if (this.getValidFrom()==this.getValidTo() && value==this.getValidFrom()) {
+			// --- Perfect match ----------------
+			return LinearFormulaMatch.PERFECT_MATCH;
+		} else {
+			// --- Match ------------------------
+			if (isEnabledSmallerEqualComparison==true) {
+				if (value>=this.getValidFrom() & value <= this.getValidTo()) {
+					return LinearFormulaMatch.MATCH;
+				}
+			} else {
+				if (value>=this.getValidFrom() & value < this.getValidTo()) {
+					return LinearFormulaMatch.MATCH;
+				}
+			}
+		}
+		return LinearFormulaMatch.NO_MATCH;
+	}
+	
+	/**
+	 * Checks if the current coefficient provides the required variable range.
+	 *
+	 * @param value the value to check
+	 * @param isEnabledSmallerEqualComparison the indicator to enable an smaller equal comparison
+	 * @return true, if the coefficient is applicable for the specified variable value
+	 */
+	public boolean providesRequiredVariableRange(Double value, boolean isEnabledSmallerEqualComparison) {
+		
+		if (value==null) return false;
+		
+		if (this.getValidFrom()==this.getValidTo() && value==this.getValidFrom()) {
+			// --- Perfect match ----------------
+			return true;
+		} else {
+			// --- Match ------------------------
+			if (isEnabledSmallerEqualComparison==true) {
+				if (value>=this.getValidFrom() & value <= this.getValidTo()) {
+					return true;
+				}
+			} else {
+				if (value>=this.getValidFrom() & value < this.getValidTo()) {
+					return true;
+				}
+			}
+		}
+		
+		
+		return false;
+	}
+	/**
+	 * Returns the sub result from the multiplication of the local value and the specified value factor.
+	 *
+	 * @param valueFactor the value factor to be used for multiplication
+	 * @return the calculated result value
+	 */
+	public Double getTermResult(Double valueFactor) {
+		if (valueFactor==null) return null;
+		return this.getValue() * valueFactor;
+	}
+	
+	
     /**
      * Creates a LinearCoefficient.
      *
@@ -171,7 +243,6 @@ public class LinearCoefficient
     	return lc;
     }
 
-    
     // --------------------------------------------------------------
     // --- From here comparator factory methods ---------------------
     // --------------------------------------------------------------    
@@ -190,6 +261,20 @@ public class LinearCoefficient
 		};
 	}
 	/**
+     * Gets the comparator for the 'valid to' value.
+     * @return the comparator valid to
+     */
+	public static Comparator<LinearCoefficient> getComparatorValidTo() {
+		return new Comparator<LinearCoefficient>() {
+			@Override
+			public int compare(LinearCoefficient lc1, LinearCoefficient lc2) {
+				Double validTo1 = lc1.getValidTo();
+				Double validTo2 = lc2.getValidTo();
+				return validTo1.compareTo(validTo2);
+			}
+		};
+	}
+	/**
      * Gets the comparator for the 'variableID' value.
      * @return the comparator for variableID's
      */
@@ -203,4 +288,5 @@ public class LinearCoefficient
 			}
 		};
 	}
+
 }

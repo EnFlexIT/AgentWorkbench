@@ -13,6 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -57,10 +58,22 @@ public class Linearization
     @XmlElement(name = "LinearFormulaList", required = true)
     protected List<LinearFormula> linearFormulaList;
 
+    
+    // --- Constants and variables for linearization boundaries ---------------
     public static final double DEFAULT_DOUBLE_VALUE_MAX = 999999;
     public static final double DEFAULT_DOUBLE_VALUE_MIN = -DEFAULT_DOUBLE_VALUE_MAX;
 
+    private transient LinearizationBoundaries linearizationBoundaries;
+    private transient LinearizationValidator validator;
+
     
+    // --- Constants and variables to accelerate result evaluation ------------
+    private transient TreeMap<String, Double> validFromMinTreeMap;
+    private transient TreeMap<String, Double> validToMaxTreeMap;
+    private transient long timeToRenewAfterLastRequest = 1000;	// ms
+    private transient long lastRequestTime;
+    
+    // --- Constants and variables for property changes -----------------------
     public static final String PROPERTY_LINEAR_COEFFICIENT_ADDED = "LinearCoefficientAdded";
     public static final String PROPERTY_LINEAR_COEFFICIENT_REMOVED = "LinearCoefficientRemoved";
     public static final String PROPERTY_LINEAR_COEFFICIENT_RENAMED = "LinearCoefficientRenamed";
@@ -72,8 +85,6 @@ public class Linearization
     
     private transient List<PropertyChangeListener> propertyChangeListener;
     
-    private transient LinearizationBoundaries linearizationBoundaries;
-    private transient LinearizationValidator validator;
     
     /**
      * Gets the value of the linearFormulaList property.
@@ -401,6 +412,7 @@ public class Linearization
 		return this.getVariableIDs().size();
 	}
     
+    
     /**
      * Returns a TreeMap, where the key represents a variableID and the value the list of 
      * coefficients (with it ranges) used in the current linearization.
@@ -427,6 +439,149 @@ public class Linearization
     	}
 		return rangeMap;
 	}
+    
+    /**
+     * Returns the TreeMap filled with the minimum values for 'valid from' of all 
+     * {@link LinearCoefficient}s defined with the current linearization.
+     * @return the validFrom min TreeMap
+     */
+    public TreeMap<String, Double> getValidFromMinTreeMap() {
+    	if (validFromMinTreeMap==null || this.isRenewValidFromMinAndValidToMaxTreeMap()) {
+    		this.fillValidFromMinAndValidToMaxTreeMap();
+    	}
+    	this.lastRequestTime = System.currentTimeMillis();
+		return validFromMinTreeMap;
+	}
+    /**
+     * Returns the TreeMap filled with the maximum values for 'valid to' of all  
+     * {@link LinearCoefficient}s defined with the current linearization.
+     * @return the validFrom max TreeMap
+     */
+    public TreeMap<String, Double> getValidToMaxTreeMap() {
+		if (validToMaxTreeMap==null || this.isRenewValidFromMinAndValidToMaxTreeMap()) {
+			this.fillValidFromMinAndValidToMaxTreeMap();
+		}
+		this.lastRequestTime = System.currentTimeMillis();
+    	return validToMaxTreeMap;
+	}
+    /**
+     * Checks if  the 'valid from min' and the 'valid to max' TreeMaps needs to be renewed.
+     * @return true, if the TreeMaps needs to be renewed
+     */
+    private boolean isRenewValidFromMinAndValidToMaxTreeMap() {
+    	return System.currentTimeMillis()-this.timeToRenewAfterLastRequest>=this.lastRequestTime;
+    }
+    /**
+     * Fills the 'valid from min' and the 'valid to max' TreeMaps.
+     */
+    private void fillValidFromMinAndValidToMaxTreeMap() {
+    	
+    	this.validFromMinTreeMap = new TreeMap<>();
+    	this.validToMaxTreeMap = new TreeMap<>();
+    	
+    	TreeMap<String, List<LinearCoefficient>> rangeMap = this.getCoefficientRangeTreeMap();
+    	for (String variabelID : rangeMap.keySet()) {
+    		
+    		List<LinearCoefficient> linearCoeffList = rangeMap.get(variabelID);
+    		if (linearCoeffList!=null && linearCoeffList.size()!=0) {
+    			// --- Get minimum 'valid from' value ---------------   
+    			Collections.sort(linearCoeffList, LinearCoefficient.getComparatorValidFrom());
+    			this.validFromMinTreeMap.put(variabelID, linearCoeffList.get(0).getValidFrom());
+    			// --- Get maximum 'valid to' value -----------------
+    			Collections.sort(linearCoeffList, LinearCoefficient.getComparatorValidTo());
+    			this.validToMaxTreeMap.put(variabelID, linearCoeffList.get(linearCoeffList.size()-1).getValidTo());
+    		}
+    	}
+    	this.lastRequestTime = System.currentTimeMillis();
+    }
+    
+    
+    /**
+     * Returns a blueprint that can be filled with values for a later result calculation.
+     * @return a variable value tree map without values
+     * @see #getResult(TreeMap)
+     */
+    public TreeMap<String, Double> getBlueprintVariableValueTreeMap() {
+    	
+    	TreeMap<String, Double> varValueTreeMap = new TreeMap<>();
+    	List<String> variableIDList = this.getVariableIDs();
+    	for (String variableID : variableIDList) {
+    		varValueTreeMap.put(variableID, null);
+    	}
+    	return varValueTreeMap;
+    }
+    /**
+     * Returns the calculated linearization result value for the specified variable values.
+     *
+     * @param variableValueTreeMap the variable values as TreeMap
+     * @return the calculated result value
+     */
+    public Double getResult(TreeMap<String, Double> variableValueTreeMap) {
+
+    	// --- Get TreeMap with the maximum 'valid to' values -------
+    	TreeMap<String, Double> validToMaxTreeMap = this.getValidToMaxTreeMap();
+    	
+    	// --- Get a LinearFormulaMatch list ------------------------
+    	List<LinearFormulaMatch> formulaMatchList = new ArrayList<>();
+    	for (LinearFormula formula : this.getLinearFormulaList()) {
+    		LinearFormulaMatch match = formula.getLinearFormulaMatch(variableValueTreeMap, validToMaxTreeMap);
+    		if (match!=null && match.getMatchWeight()>0) {
+    			formulaMatchList.add(match);
+    		}
+    	}
+    	
+    	// --- Calculate the linearization result -------------------
+    	if (formulaMatchList.size()==0) {
+    		System.err.println("[" + this.getClass().getSimpleName() + "] No formula definition could be found for the variable values " + variableValueTreeMap.toString());
+    		return null;
+    		
+    	} else if (formulaMatchList.size()>1) {
+    		// --- Sort descending by match weight ------------------
+    		Collections.sort(formulaMatchList, new Comparator<LinearFormulaMatch>() {
+				@Override
+				public int compare(LinearFormulaMatch lfm1, LinearFormulaMatch lfm2) {
+					return lfm2.getMatchWeight().compareTo(lfm1.getMatchWeight());
+				}
+			});
+    	} 
+    	// --- Return calculation result ----------------------------
+    	return formulaMatchList.get(0).getResult(variableValueTreeMap);
+    }
+    
+    
+    /**
+     * Filters the specified formula list for the specified value of the variableID.
+     *
+     * @param formulaList the formula list
+     * @param variableID the variable ID
+     * @param value the value
+     * @return the list
+     */
+    public static List<LinearFormula> filterFormulaList(final List<LinearFormula> formulaList, final String variableID, final Double value) {
+    	
+    	// --- Sort ascending by variableID and validTo ------------- 
+    	Collections.sort(formulaList, new Comparator<LinearFormula>() {
+			@Override
+			public int compare(LinearFormula lf1, LinearFormula lf2) {
+				LinearCoefficient lc1 = lf1.getCoefficient(variableID);
+				LinearCoefficient lc2 = lf2.getCoefficient(variableID);
+				Double validTo1 = lc1.getValidTo();
+				Double validTo2 = lc2.getValidTo();
+				return validTo1.compareTo(validTo2);
+			}
+    	});
+    	
+    	// --- Filter list of formulas ------------------------------
+    	List<LinearFormula> formulaListFiltered = new ArrayList<>();
+    	for (int i = 0; i < formulaList.size(); i++) {
+    		LinearFormula formula = formulaList.get(i);
+    		boolean isLastListEntry = (i==(formulaList.size()-1));
+    		if (formula.providesRequiredVariableRange(variableID, value, isLastListEntry)==true) {
+    			formulaListFiltered.add(formula);
+    		}
+    	}
+    	return formulaListFiltered;
+    }
     
     
     // ------------------------------------------------------------------------
