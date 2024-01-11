@@ -60,19 +60,9 @@
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, dependencies for the AWB-Core                -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		
-		<!-- OAuth 2 -->
-		
-		<!-- Supported JDBC Driver -->	
-		
-		
-
-		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		<!-- From here, dependencies for the AWB-WS part             -->
-		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		<!-- Integration of latest Jersey version comptible to Jetty -->
 		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
+				<!-- javax.activation -->
 				<dependency>
 					<groupId>com.sun.activation</groupId>
 					<artifactId>javax.activation</artifactId>
@@ -81,32 +71,38 @@
 				</dependency>
 			</dependencies>
 		</location>
+
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
-				<dependency>
-					<groupId>com.sun.xml.bind</groupId>
-					<artifactId>jaxb-impl</artifactId>
-					<version>2.3.7</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>es.urjc.etsii.grafo</groupId>
-					<artifactId>scimark</artifactId>
-					<version>2.1.1</version>
-					<type>jar</type>
-				</dependency>
+				<!-- Apache commons-compress -->
 				<dependency>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-compress</artifactId>
 					<version>1.22</version>
 					<type>jar</type>
 				</dependency>
+				<!-- Apache commons-text -->
 				<dependency>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-text</artifactId>
 					<version>1.10.0</version>
 					<type>jar</type>
 				</dependency>
+				<!-- JAXB integration as bundle -->
+				<dependency>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+					<version>2.3.7</version>
+					<type>jar</type>
+				</dependency>
+				<!-- SciMark -->
+				<dependency>
+					<groupId>es.urjc.etsii.grafo</groupId>
+					<artifactId>scimark</artifactId>
+					<version>2.1.1</version>
+					<type>jar</type>
+				</dependency>
+				<!-- JFreeChart -->
 				<dependency>
 					<groupId>org.jfree</groupId>
 					<artifactId>jfreechart</artifactId>
@@ -115,6 +111,8 @@
 				</dependency>
 			</dependencies>
 		</location>
+		
+		<!-- OAuth 2 -->
 		<location includeDependencyDepth="direct" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
 				<dependency>
@@ -124,33 +122,38 @@
 					<type>jar</type>
 				</dependency>
 				<dependency>
-					<groupId>net.minidev</groupId>
-					<artifactId>json-smart</artifactId>
-					<version>2.4.8</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
 					<groupId>org.bouncycastle</groupId>
 					<artifactId>bcutil-jdk15on</artifactId>
 					<version>1.70</version>
 					<type>jar</type>
 				</dependency>
-			</dependencies>
-		</location>
-		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-			<dependencies>
 				<dependency>
-					<groupId>com.mysql</groupId>
-					<artifactId>mysql-connector-j</artifactId>
-					<version>8.0.32</version>
+					<groupId>net.minidev</groupId>
+					<artifactId>json-smart</artifactId>
+					<version>2.4.8</version>
 					<type>jar</type>
 				</dependency>
+			</dependencies>
+		</location>
+		
+		<!-- Supported JDBC Driver -->
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<!-- MariaDB-connector -->
 				<dependency>
 					<groupId>org.mariadb.jdbc</groupId>
 					<artifactId>mariadb-java-client</artifactId>
 					<version>3.1.2</version>
 					<type>jar</type>
 				</dependency>
+				<!-- MySQL-connector -->
+				<dependency>
+					<groupId>com.mysql</groupId>
+					<artifactId>mysql-connector-j</artifactId>
+					<version>8.0.32</version>
+					<type>jar</type>
+				</dependency>
+				<!-- PostGreSQL-connector -->
 				<dependency>
 					<groupId>org.postgresql</groupId>
 					<artifactId>postgresql</artifactId>
@@ -158,45 +161,16 @@
 					<type>jar</type>
 				</dependency>
 			</dependencies>
-		</location>
+		</location>	
+		
+		
+
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, dependencies for the AWB-WS part             -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- Integration of latest Jersey version comptible to Jetty -->
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
-				<dependency>
-					<groupId>com.brsanthu</groupId>
-					<artifactId>migbase64</artifactId>
-					<version>2.2</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>com.fasterxml.jackson.dataformat</groupId>
-					<artifactId>jackson-dataformat-yaml</artifactId>
-					<version>2.14.2</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>com.fasterxml.jackson.datatype</groupId>
-					<artifactId>jackson-datatype-jsr310</artifactId>
-					<version>2.14.2</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>com.fasterxml.jackson.jaxrs</groupId>
-					<artifactId>jackson-jaxrs-json-provider</artifactId>
-					<version>2.14.2</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>com.fasterxml.jackson.module</groupId>
-					<artifactId>jackson-module-jaxb-annotations</artifactId>
-					<version>2.14.2</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>com.google.code.gson</groupId>
-					<artifactId>gson</artifactId>
-					<version>2.10.1</version>
-					<type>jar</type>
-				</dependency>
 				<dependency>
 					<groupId>org.apache.aries.spifly</groupId>
 					<artifactId>org.apache.aries.spifly.dynamic.bundle</artifactId>
@@ -210,14 +184,34 @@
 					<type>jar</type>
 				</dependency>
 				<dependency>
-					<groupId>org.glassfish.jersey.containers</groupId>
-					<artifactId>jersey-container-servlet</artifactId>
-					<version>2.38</version>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm</artifactId>
+					<version>9.4</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
-					<groupId>org.glassfish.jersey.inject</groupId>
-					<artifactId>jersey-hk2</artifactId>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-commons</artifactId>
+					<version>9.4</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-util</artifactId>
+					<version>9.4</version>
+					<type>jar</type>
+				</dependency>
+				
+				<dependency>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+					<version>2.10.1</version>
+					<type>jar</type>
+				</dependency>
+				
+				<dependency>
+					<groupId>org.glassfish.jersey.containers</groupId>
+					<artifactId>jersey-container-servlet</artifactId>
 					<version>2.38</version>
 					<type>jar</type>
 				</dependency>
@@ -234,31 +228,52 @@
 					<type>jar</type>
 				</dependency>
 				<dependency>
+					<groupId>org.glassfish.jersey.inject</groupId>
+					<artifactId>jersey-hk2</artifactId>
+					<version>2.38</version>
+					<type>jar</type>
+				</dependency>
+				
+				<dependency>
+					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<artifactId>jackson-datatype-jsr310</artifactId>
+					<version>2.14.2</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.jaxrs</groupId>
+					<artifactId>jackson-jaxrs-json-provider</artifactId>
+					<version>2.14.2</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.dataformat</groupId>
+					<artifactId>jackson-dataformat-yaml</artifactId>
+					<version>2.14.2</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jaxb-annotations</artifactId>
+					<version>2.14.2</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
 					<groupId>org.openapitools</groupId>
 					<artifactId>jackson-databind-nullable</artifactId>
 					<version>0.2.4</version>
 					<type>jar</type>
 				</dependency>
+				
 				<dependency>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm-commons</artifactId>
-					<version>9.4</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm-util</artifactId>
-					<version>9.4</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>org.ow2.asm</groupId>
-					<artifactId>asm</artifactId>
-					<version>9.4</version>
+					<groupId>com.brsanthu</groupId>
+					<artifactId>migbase64</artifactId>
+					<version>2.2</version>
 					<type>jar</type>
 				</dependency>
 			</dependencies>
 		</location>
+		
 	</locations>
 
 </target>
