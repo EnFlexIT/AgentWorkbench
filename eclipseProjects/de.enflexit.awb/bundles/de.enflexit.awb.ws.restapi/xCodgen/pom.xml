@@ -7,7 +7,7 @@
 
 	<properties>
 		<openApiGeneratorVersion>5.4.0</openApiGeneratorVersion>
-		<yamlFile>RestApi.yaml</yamlFile>
+		<yamlFile>../xAPI/AWB-RestAPI.yaml</yamlFile>
 		<srcBasePackage>de.enflexit.awb.ws.restapi.gen</srcBasePackage>
 	</properties>
 	
