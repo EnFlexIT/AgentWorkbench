@@ -17,7 +17,7 @@ mvn clean package jetty:run
 You can then view the OpenAPI v2 specification here:
 
 ```
-http://localhost:8080/EnFlex.IT/AWB-Rest/1.0.0/swagger.json
+http://localhost:8080/api/swagger.json
 ```
 
 Note that if you have configured the `host` to be something other than localhost, the calls through

@@ -38,7 +38,7 @@
         </init-param>
         <init-param>
             <param-name>swagger.api.basepath</param-name>
-            <param-value>https://virtserver.swaggerhub.com/EnFlex.IT/AWB-Rest/1.0.0</param-value>
+            <param-value>https://localhost:8080/api</param-value>
         </init-param>
 
         <load-on-startup>2</load-on-startup>
@@ -50,7 +50,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>jersey</servlet-name>
-        <url-pattern>/EnFlex.IT/AWB-Rest/1.0.0/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
     <filter>
         <filter-name>ApiOriginFilter</filter-name>

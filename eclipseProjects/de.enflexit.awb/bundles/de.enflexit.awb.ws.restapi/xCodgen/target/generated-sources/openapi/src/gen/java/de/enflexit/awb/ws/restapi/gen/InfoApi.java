@@ -30,7 +30,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the info API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2022-04-19T14:42:04.744880100+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-18T14:16:57.078043800+01:00[Europe/Berlin]")
 public class InfoApi  {
    private final InfoApiService delegate;
 
@@ -58,7 +58,7 @@ public class InfoApi  {
     @GET
     
     
-    @Produces({ "applicaion/json" })
+    @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "AwbApiKey")
     }, tags={ "admins", })

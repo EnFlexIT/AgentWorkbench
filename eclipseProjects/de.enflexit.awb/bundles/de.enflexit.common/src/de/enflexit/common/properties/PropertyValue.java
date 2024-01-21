@@ -1,5 +1,6 @@
 package de.enflexit.common.properties;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,7 +19,9 @@ import de.enflexit.common.properties.Properties.PropertyType;
 	"valueClass", 
 	"valueString"
 })
-public class PropertyValue {
+public class PropertyValue implements Serializable {
+	
+	private static final long serialVersionUID = 7862806542306066372L;
 	
 	private transient Object value;
 	private String valueClass;
