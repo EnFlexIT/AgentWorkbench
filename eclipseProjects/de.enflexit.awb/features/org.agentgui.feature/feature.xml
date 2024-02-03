@@ -2,7 +2,7 @@
 <feature
       id="org.agentgui.feature"
       label="Agent.Workbench Core-Feature"
-      version="2.3.1.qualifier"
+      version="2.3.2.qualifier"
       provider-name="EnFlex.IT"
       plugin="org.agentgui.core"
       os="linux,macosx,win32"
@@ -72,7 +72,6 @@
       <import plugin="de.enflexit.api" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
-      <import plugin="de.enflexit.db.mySQL" version="5.0.8" match="greaterOrEqual"/>
       <import plugin="de.enflexit.geography"/>
       <import plugin="ch.qos.logback.classic" version="1.1.2" match="greaterOrEqual"/>
       <import plugin="ch.qos.logback.core" version="1.1.2" match="greaterOrEqual"/>
@@ -104,89 +103,56 @@
 
    <plugin
          id="org.agentgui.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.agentgui.lib.jade"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="org.agentgui.lib.jung"
-         download-size="0"
-         install-size="0"
          version="0.0.0"/>
 
    <plugin
          id="org.awb.env.networkModel"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.core.net.linux"
          os="linux"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.core.net.win32.x86_64"
          os="win32"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="ch.qos.logback.slf4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="wrapped.es.urjc.etsii.grafo.scimark"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="wrapped.org.jfree.jfreechart"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.awb.env.maps"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.enflexit.jade.tools"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.enflexit.expression"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.awb.bgSystem"
+         version="0.0.0"/>
 
 </feature>
