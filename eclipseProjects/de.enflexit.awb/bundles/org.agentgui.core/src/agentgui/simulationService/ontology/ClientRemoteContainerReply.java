@@ -2,25 +2,15 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: ClientRemoteContainerReply
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class ClientRemoteContainerReply implements AgentAction {
-
-   /**
-* Protege name: remotePID
-   */
-   private String remotePID;
-   public void setRemotePID(String value) { 
-    this.remotePID=value;
-   }
-   public String getRemotePID() {
-     return this.remotePID;
-   }
 
    /**
 * Protege name: remoteAddress
@@ -31,6 +21,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public PlatformAddress getRemoteAddress() {
      return this.remoteAddress;
+   }
+
+   /**
+* Protege name: remoteContainerName
+   */
+   private String remoteContainerName;
+   public void setRemoteContainerName(String value) { 
+    this.remoteContainerName=value;
+   }
+   public String getRemoteContainerName() {
+     return this.remoteContainerName;
    }
 
    /**
@@ -45,6 +46,17 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
+* Protege name: remotePID
+   */
+   private String remotePID;
+   public void setRemotePID(String value) { 
+    this.remotePID=value;
+   }
+   public String getRemotePID() {
+     return this.remotePID;
+   }
+
+   /**
 * Protege name: remotePerformance
    */
    private PlatformPerformance remotePerformance;
@@ -56,14 +68,14 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
 
    /**
-* Protege name: remoteAgentGuiVersion
+* Protege name: remoteVersion
    */
-   private AgentGuiVersion remoteAgentGuiVersion;
-   public void setRemoteAgentGuiVersion(AgentGuiVersion value) { 
-    this.remoteAgentGuiVersion=value;
+   private Version remoteVersion;
+   public void setRemoteVersion(Version value) { 
+    this.remoteVersion=value;
    }
-   public AgentGuiVersion getRemoteAgentGuiVersion() {
-     return this.remoteAgentGuiVersion;
+   public Version getRemoteVersion() {
+     return this.remoteVersion;
    }
 
    /**
@@ -75,17 +87,6 @@ public class ClientRemoteContainerReply implements AgentAction {
    }
    public OSInfo getRemoteOS() {
      return this.remoteOS;
-   }
-
-   /**
-* Protege name: remoteContainerName
-   */
-   private String remoteContainerName;
-   public void setRemoteContainerName(String value) { 
-    this.remoteContainerName=value;
-   }
-   public String getRemoteContainerName() {
-     return this.remoteContainerName;
    }
 
 }

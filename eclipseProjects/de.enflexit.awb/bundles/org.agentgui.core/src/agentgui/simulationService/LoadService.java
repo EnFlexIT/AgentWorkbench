@@ -54,8 +54,8 @@ import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
-import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.ontology.AgentGuiVersion;
+import agentgui.simulationService.ontology.AWB_DistributionOntology;
+import agentgui.simulationService.ontology.Version;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
 import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
@@ -1409,7 +1409,7 @@ public class LoadService extends BaseService {
 		msg.setSender(myContainer.getAMS());
 		msg.addReceiver(agentGUIAgent);		
 		msg.setLanguage(new SLCodec().getName());
-		msg.setOntology(AgentGUI_DistributionOntology.getInstance().getName());
+		msg.setOntology(AWB_DistributionOntology.getInstance().getName());
 		try {
 			msg.setContentObject(act);
 		} catch (IOException errCont) {
@@ -1574,7 +1574,7 @@ public class LoadService extends BaseService {
 		msg.setSender(myContainer.getAMS());
 		msg.addReceiver(agentGUIAgent);		
 		msg.setLanguage(new SLCodec().getName());
-		msg.setOntology(AgentGUI_DistributionOntology.getInstance().getName());
+		msg.setOntology(AWB_DistributionOntology.getInstance().getName());
 		try {
 			msg.setContentObject(act);
 		} catch (IOException errCont) {
@@ -1684,10 +1684,11 @@ public class LoadService extends BaseService {
 			
 			// --- Set Agent.GUI version info -----------------
 			VersionInfo versionInfo = Application.getGlobalInfo().getVersionInfo();
-			AgentGuiVersion version = new AgentGuiVersion();
+			Version version = new Version();
 			version.setMajorRevision(versionInfo.getVersionMajor());
 			version.setMinorRevision(versionInfo.getVersionMinor());
 			version.setMicroRevision(versionInfo.getVersionMicro());
+			version.setQualifier(versionInfo.getVersionQualifier());
 			
 			// --- Finally define this local description ------
 			myCRCReply = new ClientRemoteContainerReply();
@@ -1697,7 +1698,7 @@ public class LoadService extends BaseService {
 			myCRCReply.setRemoteOS(myOS);
 			myCRCReply.setRemotePerformance(myPerformance);
 			myCRCReply.setRemoteBenchmarkResult(bench);
-			myCRCReply.setRemoteAgentGuiVersion(version);
+			myCRCReply.setRemoteVersion(version);
 			
 			// --- Broadcast the ClientRemoteContainerReply-Object to all other container ---
 			this.broadcastLocalContainerDescription();

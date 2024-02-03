@@ -2,35 +2,25 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class ClientRegister implements AgentAction {
 
    /**
-* Protege name: clientVersion
+* Protege name: clientAddress
    */
-   private AgentGuiVersion clientVersion;
-   public void setClientVersion(AgentGuiVersion value) { 
-    this.clientVersion=value;
+   private PlatformAddress clientAddress;
+   public void setClientAddress(PlatformAddress value) { 
+    this.clientAddress=value;
    }
-   public AgentGuiVersion getClientVersion() {
-     return this.clientVersion;
-   }
-
-   /**
-* Protege name: clientOS
-   */
-   private OSInfo clientOS;
-   public void setClientOS(OSInfo value) { 
-    this.clientOS=value;
-   }
-   public OSInfo getClientOS() {
-     return this.clientOS;
+   public PlatformAddress getClientAddress() {
+     return this.clientAddress;
    }
 
    /**
@@ -56,14 +46,25 @@ public class ClientRegister implements AgentAction {
    }
 
    /**
-* Protege name: clientAddress
+* Protege name: clientVersion
    */
-   private PlatformAddress clientAddress;
-   public void setClientAddress(PlatformAddress value) { 
-    this.clientAddress=value;
+   private Version clientVersion;
+   public void setClientVersion(Version value) { 
+    this.clientVersion=value;
    }
-   public PlatformAddress getClientAddress() {
-     return this.clientAddress;
+   public Version getClientVersion() {
+     return this.clientVersion;
+   }
+
+   /**
+* Protege name: clientOS
+   */
+   private OSInfo clientOS;
+   public void setClientOS(OSInfo value) { 
+    this.clientOS=value;
+   }
+   public OSInfo getClientOS() {
+     return this.clientOS;
    }
 
 }

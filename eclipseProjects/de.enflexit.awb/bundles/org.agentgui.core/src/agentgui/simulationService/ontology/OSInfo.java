@@ -2,25 +2,15 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: OSInfo
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class OSInfo implements Concept {
-
-   /**
-* Protege name: os_name
-   */
-   private String os_name;
-   public void setOs_name(String value) { 
-    this.os_name=value;
-   }
-   public String getOs_name() {
-     return this.os_name;
-   }
 
    /**
 * Protege name: os_version
@@ -31,6 +21,17 @@ public class OSInfo implements Concept {
    }
    public String getOs_version() {
      return this.os_version;
+   }
+
+   /**
+* Protege name: os_name
+   */
+   private String os_name;
+   public void setOs_name(String value) { 
+    this.os_name=value;
+   }
+   public String getOs_name() {
+     return this.os_name;
    }
 
    /**

@@ -54,8 +54,8 @@ import agentgui.core.update.AWBUpdater;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.load.LoadMeasureThread;
-import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.ontology.AgentGuiVersion;
+import agentgui.simulationService.ontology.AWB_DistributionOntology;
+import agentgui.simulationService.ontology.Version;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
 import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
@@ -87,7 +87,7 @@ public class ServerClientAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
 	
-	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
+	private Ontology ontology = AWB_DistributionOntology.getInstance();
 	private Ontology ontologyJadeMgmt = JADEManagementOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
@@ -99,7 +99,7 @@ public class ServerClientAgent extends Agent {
 	private PlatformAddress myPlatform;
 	private PlatformPerformance myPerformance;
 	private OSInfo myOS;
-	private AgentGuiVersion myVersion;
+	private Version myVersion;
 	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private ClientRegister myRegistration = new ClientRegister();
@@ -142,7 +142,7 @@ public class ServerClientAgent extends Agent {
 				// --- Set OS-Informations --------------------
 				myOS = myCRCreply.getRemoteOS();
 				// --- Set version info -----------------------
-				myVersion = myCRCreply.getRemoteAgentGuiVersion();
+				myVersion = myCRCreply.getRemoteVersion();
 				
 			} else {
 				this.doDelete();

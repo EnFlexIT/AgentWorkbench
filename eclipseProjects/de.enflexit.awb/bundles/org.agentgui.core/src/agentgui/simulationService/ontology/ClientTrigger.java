@@ -2,14 +2,26 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: ClientTrigger
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class ClientTrigger implements AgentAction {
+
+   /**
+* Protege name: triggerTime
+   */
+   private PlatformTime triggerTime;
+   public void setTriggerTime(PlatformTime value) { 
+    this.triggerTime=value;
+   }
+   public PlatformTime getTriggerTime() {
+     return this.triggerTime;
+   }
 
    /**
 * Protege name: clientBenchmarkValue
@@ -31,17 +43,6 @@ public class ClientTrigger implements AgentAction {
    }
    public PlatformLoad getClientLoad() {
      return this.clientLoad;
-   }
-
-   /**
-* Protege name: triggerTime
-   */
-   private PlatformTime triggerTime;
-   public void setTriggerTime(PlatformTime value) { 
-    this.triggerTime=value;
-   }
-   public PlatformTime getTriggerTime() {
-     return this.triggerTime;
    }
 
 }

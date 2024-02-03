@@ -2,35 +2,25 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: SlaveRegister
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class SlaveRegister implements AgentAction {
 
    /**
-* Protege name: slaveVersion
+* Protege name: slaveAddress
    */
-   private AgentGuiVersion slaveVersion;
-   public void setSlaveVersion(AgentGuiVersion value) { 
-    this.slaveVersion=value;
+   private PlatformAddress slaveAddress;
+   public void setSlaveAddress(PlatformAddress value) { 
+    this.slaveAddress=value;
    }
-   public AgentGuiVersion getSlaveVersion() {
-     return this.slaveVersion;
-   }
-
-   /**
-* Protege name: slaveTime
-   */
-   private PlatformTime slaveTime;
-   public void setSlaveTime(PlatformTime value) { 
-    this.slaveTime=value;
-   }
-   public PlatformTime getSlaveTime() {
-     return this.slaveTime;
+   public PlatformAddress getSlaveAddress() {
+     return this.slaveAddress;
    }
 
    /**
@@ -45,6 +35,17 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
+* Protege name: slaveVersion
+   */
+   private Version slaveVersion;
+   public void setSlaveVersion(Version value) { 
+    this.slaveVersion=value;
+   }
+   public Version getSlaveVersion() {
+     return this.slaveVersion;
+   }
+
+   /**
 * Protege name: slavePerformance
    */
    private PlatformPerformance slavePerformance;
@@ -56,14 +57,14 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
-* Protege name: slaveAddress
+* Protege name: slaveTime
    */
-   private PlatformAddress slaveAddress;
-   public void setSlaveAddress(PlatformAddress value) { 
-    this.slaveAddress=value;
+   private PlatformTime slaveTime;
+   public void setSlaveTime(PlatformTime value) { 
+    this.slaveTime=value;
    }
-   public PlatformAddress getSlaveAddress() {
-     return this.slaveAddress;
+   public PlatformTime getSlaveTime() {
+     return this.slaveTime;
    }
 
 }

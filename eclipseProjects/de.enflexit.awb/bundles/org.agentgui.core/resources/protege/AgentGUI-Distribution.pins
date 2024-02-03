@@ -1,11 +1,7 @@
-; Sat Feb 10 18:49:06 CET 2018
+; Sat Feb 03 01:43:05 CET 2024
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
-
-([AgentGuiVersion] of  %3AJADE-CLASS
-
-	(%3AJADE-IGNORE FALSE))
 
 ([BenchmarkResult] of  %3AJADE-CLASS
 
@@ -69,8 +65,8 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\20 GIT\\01_AgentGui-OSGI\\eclipseProjects\\org.agentgui\\bundles\\org.agentgui.core\\src")
-	(%3AONTOLOGYNAME "AgentGUI-Distribution")
+	(%3ALOCATION "D:\\20_GIT\\01_AWB\\eclipseProjects\\de.enflexit.awb\\bundles\\org.agentgui.core\\src")
+	(%3AONTOLOGYNAME "AWB-Distribution")
 	(%3APACKAGE "agentgui.simulationService.ontology")
 	(%3ASUPPORT "j2se"))
 
@@ -99,5 +95,9 @@
 	(%3AJADE-IGNORE FALSE))
 
 ([SlaveUnregister] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Version] of  %3AJADE-CLASS
 
 	(%3AJADE-IGNORE FALSE))

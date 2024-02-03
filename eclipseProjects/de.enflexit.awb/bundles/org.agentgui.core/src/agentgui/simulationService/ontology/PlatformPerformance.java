@@ -2,14 +2,26 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class PlatformPerformance implements Concept {
+
+   /**
+* Protege name: cpu_speedMhz
+   */
+   private int cpu_speedMhz;
+   public void setCpu_speedMhz(int value) { 
+    this.cpu_speedMhz=value;
+   }
+   public int getCpu_speedMhz() {
+     return this.cpu_speedMhz;
+   }
 
    /**
 * Protege name: cpu_numberOfLogicalCores
@@ -20,17 +32,6 @@ public class PlatformPerformance implements Concept {
    }
    public int getCpu_numberOfLogicalCores() {
      return this.cpu_numberOfLogicalCores;
-   }
-
-   /**
-* Protege name: memory_totalMB
-   */
-   private int memory_totalMB;
-   public void setMemory_totalMB(int value) { 
-    this.memory_totalMB=value;
-   }
-   public int getMemory_totalMB() {
-     return this.memory_totalMB;
    }
 
    /**
@@ -45,14 +46,14 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
-* Protege name: cpu_speedMhz
+* Protege name: memory_totalMB
    */
-   private int cpu_speedMhz;
-   public void setCpu_speedMhz(int value) { 
-    this.cpu_speedMhz=value;
+   private int memory_totalMB;
+   public void setMemory_totalMB(int value) { 
+    this.memory_totalMB=value;
    }
-   public int getCpu_speedMhz() {
-     return this.cpu_speedMhz;
+   public int getMemory_totalMB() {
+     return this.memory_totalMB;
    }
 
    /**

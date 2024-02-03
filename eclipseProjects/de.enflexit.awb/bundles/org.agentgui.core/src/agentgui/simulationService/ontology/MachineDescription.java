@@ -2,35 +2,36 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: MachineDescription
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class MachineDescription implements Concept {
 
    /**
-* Protege name: benchmarkResult
+* Protege name: isThresholdExceeded
    */
-   private BenchmarkResult benchmarkResult;
-   public void setBenchmarkResult(BenchmarkResult value) { 
-    this.benchmarkResult=value;
+   private boolean isThresholdExceeded;
+   public void setIsThresholdExceeded(boolean value) { 
+    this.isThresholdExceeded=value;
    }
-   public BenchmarkResult getBenchmarkResult() {
-     return this.benchmarkResult;
+   public boolean getIsThresholdExceeded() {
+     return this.isThresholdExceeded;
    }
 
    /**
-* Protege name: isAvailable
+* Protege name: platformAddress
    */
-   private boolean isAvailable;
-   public void setIsAvailable(boolean value) { 
-    this.isAvailable=value;
+   private PlatformAddress platformAddress;
+   public void setPlatformAddress(PlatformAddress value) { 
+    this.platformAddress=value;
    }
-   public boolean getIsAvailable() {
-     return this.isAvailable;
+   public PlatformAddress getPlatformAddress() {
+     return this.platformAddress;
    }
 
    /**
@@ -56,25 +57,25 @@ public class MachineDescription implements Concept {
    }
 
    /**
-* Protege name: platformAddress
+* Protege name: isAvailable
    */
-   private PlatformAddress platformAddress;
-   public void setPlatformAddress(PlatformAddress value) { 
-    this.platformAddress=value;
+   private boolean isAvailable;
+   public void setIsAvailable(boolean value) { 
+    this.isAvailable=value;
    }
-   public PlatformAddress getPlatformAddress() {
-     return this.platformAddress;
+   public boolean getIsAvailable() {
+     return this.isAvailable;
    }
 
    /**
-* Protege name: agentGuiVersion
+* Protege name: version
    */
-   private AgentGuiVersion agentGuiVersion;
-   public void setAgentGuiVersion(AgentGuiVersion value) { 
-    this.agentGuiVersion=value;
+   private Version version;
+   public void setVersion(Version value) { 
+    this.version=value;
    }
-   public AgentGuiVersion getAgentGuiVersion() {
-     return this.agentGuiVersion;
+   public Version getVersion() {
+     return this.version;
    }
 
    /**
@@ -89,6 +90,17 @@ public class MachineDescription implements Concept {
    }
 
    /**
+* Protege name: benchmarkResult
+   */
+   private BenchmarkResult benchmarkResult;
+   public void setBenchmarkResult(BenchmarkResult value) { 
+    this.benchmarkResult=value;
+   }
+   public BenchmarkResult getBenchmarkResult() {
+     return this.benchmarkResult;
+   }
+
+   /**
 * Protege name: remoteOS
    */
    private OSInfo remoteOS;
@@ -97,17 +109,6 @@ public class MachineDescription implements Concept {
    }
    public OSInfo getRemoteOS() {
      return this.remoteOS;
-   }
-
-   /**
-* Protege name: isThresholdExceeded
-   */
-   private boolean isThresholdExceeded;
-   public void setIsThresholdExceeded(boolean value) { 
-    this.isThresholdExceeded=value;
-   }
-   public boolean getIsThresholdExceeded() {
-     return this.isThresholdExceeded;
    }
 
 }

@@ -9,8 +9,8 @@ import java.util.List;
 import agentgui.core.application.Application;
 import agentgui.core.update.AWBUpdater;
 import agentgui.simulationService.distribution.PlatformStore;
-import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.ontology.AgentGuiVersion;
+import agentgui.simulationService.ontology.AWB_DistributionOntology;
+import agentgui.simulationService.ontology.Version;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
 import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
@@ -73,7 +73,7 @@ public class ServerMasterAgent extends Agent {
 	private static long SERVER_MASTER_CLEAN_UP_INTERVAL = 1000 * 60;
 	
 	
-	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
+	private Ontology ontology = AWB_DistributionOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
 	private PlatformStore platformStore;
@@ -265,7 +265,7 @@ public class ServerMasterAgent extends Agent {
 						PlatformTime plTime = sr.getSlaveTime();
 						PlatformPerformance plPerf = sr.getSlavePerformance();
 						OSInfo os = sr.getSlaveOS();
-						AgentGuiVersion version = sr.getSlaveVersion();
+						Version version = sr.getSlaveVersion();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						
@@ -288,7 +288,7 @@ public class ServerMasterAgent extends Agent {
 						PlatformTime plTime = cr.getClientTime();
 						PlatformPerformance plPerf = cr.getClientPerformance();
 						OSInfo os = cr.getClientOS();
-						AgentGuiVersion version = cr.getClientVersion();
+						Version version = cr.getClientVersion();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
 						
@@ -364,7 +364,7 @@ public class ServerMasterAgent extends Agent {
 		 * @param foreignVersion the foreign version
 		 * @return true, if is up to date
 		 */
-		private boolean isAgentGuiVersionUpToDate(AgentGuiVersion foreignVersion) {
+		private boolean isAgentGuiVersionUpToDate(Version foreignVersion) {
 			return Application.getGlobalInfo().getVersionInfo().isUpToDate(foreignVersion.getMajorRevision(), foreignVersion.getMinorRevision(), foreignVersion.getMicroRevision());
 		}
 		
@@ -400,7 +400,7 @@ public class ServerMasterAgent extends Agent {
 	 * @see PlatformAddress
 	 * @see PlatformPerformance
 	 */
-	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platformAddress, PlatformPerformance performance, AgentGuiVersion version, Date slaveOrClientTime, boolean isServer) {
+	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platformAddress, PlatformPerformance performance, Version version, Date slaveOrClientTime, boolean isServer) {
 		
 		// --- Try getting the platform information -----------------
 		BgSystemPlatform platform = ServerMasterAgent.this.getPlatformStore().getPlatform(sender.getName());
@@ -670,7 +670,7 @@ public class ServerMasterAgent extends Agent {
 				os.setOs_version(platform.getOsVersion());
 				os.setOs_arch(platform.getOsArchitecture());
 				
-				AgentGuiVersion aguiVersion = new AgentGuiVersion();
+				Version aguiVersion = new Version();
 				aguiVersion.setMajorRevision(platform.getVersionMajor());
 				aguiVersion.setMinorRevision(platform.getVersionMinor());
 				aguiVersion.setMicroRevision(platform.getVersionMicro());
@@ -696,7 +696,7 @@ public class ServerMasterAgent extends Agent {
 				md.setIsThresholdExceeded(platform.isCurrentLoadThresholdExceeded());
 				md.setBenchmarkResult(bench);
 				md.setRemoteOS(os);
-				md.setAgentGuiVersion(aguiVersion);
+				md.setVersion(aguiVersion);
 				md.setPerformance(plPerf);
 				md.setPlatformAddress(plAdd);
 				

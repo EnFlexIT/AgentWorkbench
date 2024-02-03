@@ -8,18 +8,38 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings({ "unused", "serial" })
 public class RemoteContainerConfig implements Concept {
+
+   /**
+* Protege name: preventUsageOfUsedComputer
+   */
+   private boolean preventUsageOfUsedComputer;
+   public void setPreventUsageOfUsedComputer(boolean value) { 
+    this.preventUsageOfUsedComputer=value;
+   }
+   public boolean getPreventUsageOfUsedComputer() {
+     return this.preventUsageOfUsedComputer;
+   }
+
+   /**
+* Protege name: jadeHost
+   */
+   private String jadeHost;
+   public void setJadeHost(String value) { 
+    this.jadeHost=value;
+   }
+   public String getJadeHost() {
+     return this.jadeHost;
+   }
 
    /**
 * Protege name: hostExcludeIP
    */
    private List hostExcludeIP = new ArrayList();
    public void addHostExcludeIP(String elem) { 
-
-	List oldList = this.hostExcludeIP;
+     List oldList = this.hostExcludeIP;
      hostExcludeIP.add(elem);
    }
    public boolean removeHostExcludeIP(String elem) {
@@ -36,39 +56,6 @@ public class RemoteContainerConfig implements Concept {
    public void setHostExcludeIP(List l) {hostExcludeIP = l; }
 
    /**
-* Protege name: jadeHost
-   */
-   private String jadeHost;
-   public void setJadeHost(String value) { 
-    this.jadeHost=value;
-   }
-   public String getJadeHost() {
-     return this.jadeHost;
-   }
-
-   /**
-* Protege name: preventUsageOfUsedComputer
-   */
-   private boolean preventUsageOfUsedComputer;
-   public void setPreventUsageOfUsedComputer(boolean value) { 
-    this.preventUsageOfUsedComputer=value;
-   }
-   public boolean getPreventUsageOfUsedComputer() {
-     return this.preventUsageOfUsedComputer;
-   }
-
-   /**
-* Protege name: jadeShowGUI
-   */
-   private boolean jadeShowGUI;
-   public void setJadeShowGUI(boolean value) { 
-    this.jadeShowGUI=value;
-   }
-   public boolean getJadeShowGUI() {
-     return this.jadeShowGUI;
-   }
-
-   /**
 * Protege name: jadePort
    */
    private String jadePort;
@@ -80,6 +67,17 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
+* Protege name: jadeServices
+   */
+   private String jadeServices;
+   public void setJadeServices(String value) { 
+    this.jadeServices=value;
+   }
+   public String getJadeServices() {
+     return this.jadeServices;
+   }
+
+   /**
 * Protege name: jvmMemAllocInitial
    */
    private String jvmMemAllocInitial;
@@ -88,6 +86,17 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJvmMemAllocInitial() {
      return this.jvmMemAllocInitial;
+   }
+
+   /**
+* Protege name: jvmMemAllocMaximum
+   */
+   private String jvmMemAllocMaximum;
+   public void setJvmMemAllocMaximum(String value) { 
+    this.jvmMemAllocMaximum=value;
+   }
+   public String getJvmMemAllocMaximum() {
+     return this.jvmMemAllocMaximum;
    }
 
    /**
@@ -113,6 +122,17 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
+* Protege name: jadeShowGUI
+   */
+   private boolean jadeShowGUI;
+   public void setJadeShowGUI(boolean value) { 
+    this.jadeShowGUI=value;
+   }
+   public boolean getJadeShowGUI() {
+     return this.jadeShowGUI;
+   }
+
+   /**
 * Protege name: jadeIsRemoteContainer
    */
    private boolean jadeIsRemoteContainer;
@@ -121,28 +141,6 @@ public class RemoteContainerConfig implements Concept {
    }
    public boolean getJadeIsRemoteContainer() {
      return this.jadeIsRemoteContainer;
-   }
-
-   /**
-* Protege name: jvmMemAllocMaximum
-   */
-   private String jvmMemAllocMaximum;
-   public void setJvmMemAllocMaximum(String value) { 
-    this.jvmMemAllocMaximum=value;
-   }
-   public String getJvmMemAllocMaximum() {
-     return this.jvmMemAllocMaximum;
-   }
-
-   /**
-* Protege name: jadeServices
-   */
-   private String jadeServices;
-   public void setJadeServices(String value) { 
-    this.jadeServices=value;
-   }
-   public String getJadeServices() {
-     return this.jadeServices;
    }
 
 }

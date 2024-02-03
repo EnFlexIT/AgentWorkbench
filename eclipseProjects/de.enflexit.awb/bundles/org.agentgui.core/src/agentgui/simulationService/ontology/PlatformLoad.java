@@ -2,13 +2,14 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: PlatformLoad
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/3, 01:43:04
 */
-@SuppressWarnings("serial")
 public class PlatformLoad implements Concept {
 
    /**
@@ -23,14 +24,14 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadExceeded
+* Protege name: loadNoThreads
    */
-   private int loadExceeded;
-   public void setLoadExceeded(int value) { 
-    this.loadExceeded=value;
+   private int loadNoThreads;
+   public void setLoadNoThreads(int value) { 
+    this.loadNoThreads=value;
    }
-   public int getLoadExceeded() {
-     return this.loadExceeded;
+   public int getLoadNoThreads() {
+     return this.loadNoThreads;
    }
 
    /**
@@ -45,6 +46,17 @@ public class PlatformLoad implements Concept {
    }
 
    /**
+* Protege name: loadExceeded
+   */
+   private int loadExceeded;
+   public void setLoadExceeded(int value) { 
+    this.loadExceeded=value;
+   }
+   public int getLoadExceeded() {
+     return this.loadExceeded;
+   }
+
+   /**
 * Protege name: loadMemoryJVM
    */
    private float loadMemoryJVM;
@@ -53,17 +65,6 @@ public class PlatformLoad implements Concept {
    }
    public float getLoadMemoryJVM() {
      return this.loadMemoryJVM;
-   }
-
-   /**
-* Protege name: loadNoThreads
-   */
-   private int loadNoThreads;
-   public void setLoadNoThreads(int value) { 
-    this.loadNoThreads=value;
-   }
-   public int getLoadNoThreads() {
-     return this.loadNoThreads;
    }
 
    /**
