@@ -162,11 +162,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private Integer filePropOwnMtpPort = 7778;
 	private MtpProtocol filePropMtpProtocol = MtpProtocol.HTTP;
 	
-	private String filePropServerMasterDBHost;
-	private String filePropServerMasterDBName;
-	private String filePropServerMasterDBUser;
-	private String filePropServerMasterDBPswd;
-	
 	private Integer updateAutoConfiguration = 0;
 	private Integer updateKeepDictionary = 1;
 	private long updateDateLastChecked = 0;
@@ -1641,70 +1636,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public MtpProtocol getMtpProtocol() {
 		return filePropMtpProtocol;
 	}
-	/**
-	 * Database property for the server.nmaster
-	 * @param newDBHost the filePropServerMasterDBHost to set
-	 * @see BundleProperties
-	 */
-	public void setServerMasterDBHost(String newDBHost) {
-		this.filePropServerMasterDBHost = newDBHost;
-	}
-	/**
-	 * Database property for the server.nmaster 
-	 * @return the filePropServerMasterDBHost
-	 * @see BundleProperties
-	 */
-	public String getServerMasterDBHost() {
-		return filePropServerMasterDBHost;
-	}
-	/**
-	 * Database property for the server.nmaster
-	 * @param newDBName the filePropServerMasterDBName to set
-	 * @see BundleProperties
-	 */
-	public void setServerMasterDBName(String newDBName) {
-		this.filePropServerMasterDBName = newDBName;
-	}
-	/**
-	 * Database property for the server.nmaster
-	 * @return the filePropServerMasterDBName
-	 * @see BundleProperties
-	 */
-	public String getServerMasterDBName() {
-		return filePropServerMasterDBName;
-	}
-	/**
-	 * Database property for the server.nmaster
-	 * @param newDBUser the filePropServerMasterDBUser to set
-	 * @see BundleProperties
-	 */
-	public void setServerMasterDBUser(String newDBUser) {
-		this.filePropServerMasterDBUser = newDBUser;
-	}
-	/**
-	 * Database property for the server.nmaster
-	 * @return the filePropServerMasterDBUser
-	 * @see BundleProperties
-	 */
-	public String getServerMasterDBUser() {
-		return filePropServerMasterDBUser;
-	}
-	/**
-	 * Database property for the server.nmaster
-	 * @param newDBPswd the filePropServerMasterDBPswd to set
-	 * @see BundleProperties
-	 */
-	public void setServerMasterDBPswd(String newDBPswd) {
-		this.filePropServerMasterDBPswd = newDBPswd;
-	}
-	/**
-	 * Database property for the server.nmaster
-	 * @return the filePropServerMasterDBPswd
-	 * @see BundleProperties
-	 */
-	public String getServerMasterDBPswd() {
-		return filePropServerMasterDBPswd;
-	}
+	
 
 	// ---- Methods for the reminder of the last selected folder ----
 	/**

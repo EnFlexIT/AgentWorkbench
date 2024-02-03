@@ -332,6 +332,7 @@ public class JadeRemoteStart {
 	private String getEquinoxLauncherJar() {
 		// --- Get the equinox launcher ------------------------
 		String execJar = Application.getGlobalInfo().getFileRunnableJar();
+		if (execJar==null) return null;
 		execJar = execJar.replace("\\", "/");
 		return "-jar " + execJar;
 	}

@@ -3,7 +3,7 @@ Automatic-Module-Name: org.agentgui.core
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - Core Bundle
 Bundle-SymbolicName: org.agentgui.core;singleton:=true
-Bundle-Version: 2.3.1.qualifier
+Bundle-Version: 2.3.2.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-11
@@ -20,7 +20,7 @@ Require-Bundle: de.enflexit.api,
  de.enflexit.oidc,
  de.enflexit.oshi,
  de.enflexit.db.hibernate,
- com.mysql.cj,
+ de.enflexit.awb.bgSystem,
  javax.annotation,
  org.agentgui.lib.jade,
  wrapped.es.urjc.etsii.grafo.scimark,
@@ -58,7 +58,6 @@ Export-Package: agentgui.core.application,
  agentgui.core.classLoadService,
  agentgui.core.common,
  agentgui.core.config,
- agentgui.core.database,
  agentgui.core.environment,
  agentgui.core.gui,
  agentgui.core.gui.components,

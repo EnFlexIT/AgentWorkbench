@@ -52,7 +52,7 @@ public class JadeRemoteStartAgent extends Agent {
 	protected void setup() {
 
 		Object[] startArg = this.getArguments();
-		if (startArg.length>0) {
+		if (startArg!=null && startArg.length>0) {
 			if (startArg[0] instanceof RemoteContainerConfig) {
 				// --- Start the remote container ---------
 				this.remoteContainerConfig = (RemoteContainerConfig) startArg[0];

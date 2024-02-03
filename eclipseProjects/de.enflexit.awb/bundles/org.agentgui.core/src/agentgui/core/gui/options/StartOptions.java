@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package agentgui.core.gui.options;
 
 import java.awt.BorderLayout;
@@ -38,6 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,13 +31,19 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.bgSystem.db.BgSystemDatabaseConnectionService;
+import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.SessionFactoryMonitor;
+import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
+import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
+import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 
 /**
  * On this JPanel the starting options of AgentGUI can be set.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class StartOptions extends AbstractOptionTab implements ActionListener {
+public class StartOptions extends AbstractOptionTab implements ActionListener, HibernateStateVisualizationService {
 
 	private static final long serialVersionUID = -5837814050254569584L;
 	
@@ -89,10 +69,13 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	private JPanelMasterConfiguration jPanelMasterConfiguration;
 	private JPanelOwnMTP jPanelOwnMTP;
 	private JPanelBackgroundSystem jPanelBackgroundService;
-	private JPanelDatabase jPanelDatabase;
+	private HibernatePanel jPanelHibernatePanel;
+	private JButton jButtonDatabaseSettings;
+	private JLabel jLabelHibernateHeader;
+	private JLabel jLabelHibernateState;
 	private JPanelEmbeddedSystemAgent jPanelEmbeddedSystemAgent;
 	private JPanelMTPConfig jPanelMTPConfig;
-
+	
 	private List<AbstractJPanelForOptions> optionPanels;
 	
 
@@ -161,7 +144,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		this.registerOptionPanel(this.getJPanelOwnMTP());
 		this.registerOptionPanel(this.getJPanelMTPConfig());
 		this.registerOptionPanel(this.getJPanelBackgroundSystem());
-		this.registerOptionPanel(this.getJPanelDatabase());
+		this.registerOptionPanel(this.getJPanelHibernateState());
 		this.registerOptionPanel(this.getJPanelEmbeddedSystemAgent());
 		
 		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
@@ -185,11 +168,35 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		this.add(this.getJPanelTop(), gridBagConstraints21);
 		this.add(this.getJPanel4ScrollPane(), gridBagConstraints3);
+	
+		this.registerWindowListener();
 		
 	}
+	
 	/**
-	 * This method initializes jPanel4ScrollPane	
-	 * @return javax.swing.JPanel	
+	 * Register window listener.
+	 */
+	private void registerWindowListener() {
+		
+		// --- Check for a Window that owns this panel --------------
+		if (this.optionDialog!=null) {
+			this.optionDialog.addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentHidden(ComponentEvent e) {
+					StartOptions.this.unregisterHibernateStateVisualizationService();
+				}
+			});
+		}
+		// --- register as HibernateStateVisualizationService -------
+		this.registerHibernateStateVisualizationService();
+		// --- Check the hibernate SessionFactory state -------------
+		SessionFactoryMonitor monitor = HibernateUtilities.getSessionFactoryMonitor(BgSystemDatabaseConnectionService.SESSION_FACTORY_ID);
+		setSessionFactoryState(monitor.getFactoryID(), monitor.getSessionFactoryState());
+	}
+	
+	/**
+	 * This method initializes jPanel4ScrollPane	.
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel4ScrollPane() {
 		if (jPanel4ScrollPane == null) {
@@ -200,8 +207,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		return jPanel4ScrollPane;
 	}
 	/**
-	 * This method initializes jRadioButtonRunAsApplication	
-	 * @return javax.swing.JRadioButton	
+	 * This method initializes jRadioButtonRunAsApplication	.
+	 * @return javax.swing.JRadioButton
 	 */
 	private JRadioButton getJRadioButtonRunAsApplication() {
 		if (jRadioButtonRunAsApplication == null) {
@@ -215,8 +222,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		return jRadioButtonRunAsApplication;
 	}
 	/**
-	 * This method initializes jRadioButtonRunAsServer	
-	 * @return javax.swing.JRadioButton	
+	 * This method initializes jRadioButtonRunAsServer	.
+	 * @return javax.swing.JRadioButton
 	 */
 	private JRadioButton getJRadioButtonRunAsServer() {
 		if (jRadioButtonRunAsServer == null) {
@@ -229,8 +236,8 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		return jRadioButtonRunAsServer;
 	}
 	/**
-	 * This method initializes jRadioButtonRunAsDevice	
-	 * @return javax.swing.JRadioButton	
+	 * This method initializes jRadioButtonRunAsDevice	.
+	 * @return javax.swing.JRadioButton
 	 */
 	private JRadioButton getJRadioButtonRunAsDeviceService() {
 		if (jRadioButtonRunAsDeviceService == null) {
@@ -242,10 +249,9 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		}
 		return jRadioButtonRunAsDeviceService;
 	}
-	
 	/**
-	 * This method initializes jPanelTop	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelTop	.
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelTop() {
 		if (jPanelTop == null) {
@@ -348,16 +354,150 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		}
 		return jPanelBackgroundService;
 	}
+	
 	/**
-	 * Gets the JPanelDatabase.
-	 * @return the JPanelDatabasee
+	 * Returns the JPanel for the hibernate state.
+	 * @return the j panel hibernate state
 	 */
-	private JPanelDatabase getJPanelDatabase() {
-		if (jPanelDatabase==null) {
-			jPanelDatabase = new JPanelDatabase(this.optionDialog, this);
+	private HibernatePanel getJPanelHibernateState() {
+		if (jPanelHibernatePanel==null) {
+			jPanelHibernatePanel = new HibernatePanel(this.optionDialog, this);
 		}
-		return jPanelDatabase;
+		return jPanelHibernatePanel;
 	}
+	/**
+	 * The wrapper Class HibernatePanel.
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+	 */
+	private class HibernatePanel extends AbstractJPanelForOptions {
+		
+		private static final long serialVersionUID = -3718990899506527691L;
+		
+		/**
+		 * Instantiates a new hibernate panel.
+		 *
+		 * @param optionDialog the option dialog
+		 * @param startOptions the start options
+		 */
+		public HibernatePanel(OptionDialog optionDialog, StartOptions startOptions) {
+			super(optionDialog, startOptions);
+			this.initialize();
+		}
+		private void initialize() {
+			
+			this.setLayout(new GridBagLayout());
+			
+			GridBagConstraints gbc_Header = new GridBagConstraints();
+			gbc_Header.gridx = 0;
+			gbc_Header.gridy = 0;
+			gbc_Header.anchor = GridBagConstraints.WEST;
+			gbc_Header.fill = GridBagConstraints.BOTH;
+			gbc_Header.weightx = 0.0;
+			gbc_Header.weighty = 0.0;
+			gbc_Header.insets = new Insets(0, 0, 0, 0);
+			this.add(StartOptions.this.getJLabelHibernateHeader(), gbc_Header);
+			
+			GridBagConstraints gbc_Button = new GridBagConstraints();
+			gbc_Button.gridx = 1;
+			gbc_Button.gridy = 0;
+			gbc_Button.anchor = GridBagConstraints.EAST;
+			gbc_Button.weightx = 0.0;
+			gbc_Button.weighty = 0.0;
+			gbc_Button.insets = new Insets(0, 0, 0, 0);
+			this.add(StartOptions.this.getJButtonDatabaseSettings(), gbc_Button);
+			
+			GridBagConstraints gbc_Hibernate = new GridBagConstraints();
+			gbc_Hibernate.gridx = 0;
+			gbc_Hibernate.gridy = 1;
+			gbc_Hibernate.fill = GridBagConstraints.HORIZONTAL;
+			gbc_Hibernate.insets = new Insets(5, 0, 5, 0);
+			gbc_Hibernate.anchor = GridBagConstraints.WEST;
+			gbc_Hibernate.weightx = 0.0;
+			gbc_Hibernate.weighty = 0.0;
+			gbc_Hibernate.gridwidth = 2;
+			this.add(StartOptions.this.getJLabelHibernateState(), gbc_Hibernate);
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setGlobalData2Form()
+		 */
+		@Override
+		public void setGlobalData2Form() { }
+		/* (non-Javadoc)
+		 * @see agentgui.core.gui.options.AbstractJPanelForOptions#setFormData2Global()
+		 */
+		@Override
+		public void setFormData2Global() { }
+		/* (non-Javadoc)
+		 * @see agentgui.core.gui.options.AbstractJPanelForOptions#errorFound()
+		 */
+		@Override
+		public boolean errorFound() {
+			return false;
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.core.gui.options.AbstractJPanelForOptions#refreshView()
+		 */
+		@Override
+		public void refreshView() {
+		}
+	}
+	
+	/**
+	 * Gets the JLabel for the hibernate state.
+	 * @return the j label hibernate state
+	 */
+	private JLabel getJLabelHibernateHeader() {
+		if (jLabelHibernateHeader == null) {
+			jLabelHibernateHeader = new JLabel("[Optional] " + Language.translate("Datenbank für den 'server.master'"));
+			jLabelHibernateHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelHibernateHeader;
+	}
+	private JButton getJButtonDatabaseSettings() {
+		if (jButtonDatabaseSettings == null) {
+			jButtonDatabaseSettings = new JButton();
+			jButtonDatabaseSettings.setToolTipText("Edit database settings");
+			jButtonDatabaseSettings.setIcon(GlobalInfo.getInternalImageIcon("edit.png"));
+			jButtonDatabaseSettings.setSize(new Dimension(26, 26));
+			jButtonDatabaseSettings.setMaximumSize(new Dimension(26, 26));
+			jButtonDatabaseSettings.addActionListener(this);
+		}
+		return jButtonDatabaseSettings;
+	}
+	/**
+	 * Gets the JLabel for the hibernate state.
+	 * @return the j label hibernate state
+	 */
+	private JLabel getJLabelHibernateState() {
+		if (jLabelHibernateState == null) {
+			jLabelHibernateState = new JLabel("");
+			jLabelHibernateState.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelHibernateState;
+	}
+	/**
+	 * Registers hibernate state visualization service.
+	 */
+	private void registerHibernateStateVisualizationService() {
+		HibernateStateVisualizer.registerStateVisualizationService(this);
+	}
+	/**
+	 * Unregister hibernate state visualization service.
+	 */
+	private void unregisterHibernateStateVisualizationService() {
+		HibernateStateVisualizer.unregisterStateVisualizationService(this);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.gui.HibernateStateVisualizationService#setSessionFactoryState(java.lang.String, de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState)
+	 */
+	@Override
+	public void setSessionFactoryState(String factoryID, SessionFactoryState sessionFactoryState) {
+
+		if (factoryID.equals(BgSystemDatabaseConnectionService.SESSION_FACTORY_ID)==false) return;
+		this.getJLabelHibernateState().setIcon(sessionFactoryState.getIconImage());
+		this.getJLabelHibernateState().setText("SessionFactory '" + factoryID + "': " + sessionFactoryState.getDescription());
+	}
+
 	/**
 	 * Gets the JPanelEmbeddedSystemAgent.
 	 * @return the JPanelEmbeddedSystemAgent
@@ -383,8 +523,9 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	
 	
 	/**
-	 * This method initializes jButtonUpdateSiteDefault	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonUpdateSiteDefault	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonUseDefaults() {
 		if (jButtonUseDefaults == null) {
@@ -397,9 +538,11 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		}
 		return jButtonUseDefaults;
 	}
+	
 	/**
-	 * This method initializes jButtonApply	
-	 * @return javax.swing.JButton	
+	 * This method initializes jButtonApply	.
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJButtonApply() {
 		if (jButtonApply == null) {
@@ -415,8 +558,9 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	}
 	
 	/**
-	 * This method initializes jScrollPaneConfig	
-	 * @return javax.swing.JScrollPane	
+	 * This method initializes jScrollPaneConfig	.
+	 *
+	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPaneConfig() {
 		if (jScrollPaneConfig == null) {
@@ -427,9 +571,11 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		}
 		return jScrollPaneConfig;
 	}
+	
 	/**
-	 * This method initializes jPanelConfig	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jPanelConfig	.
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanelConfig() {
 		if (jPanelConfig == null) {
@@ -440,8 +586,9 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 		}
 		return jPanelConfig;
 	}
+	
 	/**
-	 * Resets the jPanelConfig
+	 * Resets the jPanelConfig.
 	 */
 	private void resetJPanelConfigReset() {
 		this.getJPanelConfig().removeAll();
@@ -527,8 +674,9 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	public ExecutionMode getSelectedExecutionMode() {
 		return executionModeNew;
 	}
+	
 	/**
-	 * This method handles and refreshes the view 
+	 * This method handles and refreshes the view.
 	 */
 	private void refreshView() {
 		
@@ -550,7 +698,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			this.addToConfigPanel(this.getJPanelOwnMTP());
 			this.addToConfigPanel(this.getJPanelMTPConfig());
 			this.addToConfigPanel(this.getJPanelBackgroundSystem());
-			this.addToConfigPanel(this.getJPanelDatabase());
+			this.addToConfigPanel(this.getJPanelHibernateState());
 			break;
 			
 		case DEVICE_SYSTEM:
@@ -774,6 +922,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		String actCMD = ae.getActionCommand();
 		if (actCMD.equalsIgnoreCase("runAsApplication") || actCMD.equalsIgnoreCase("runAsServer") || actCMD.equalsIgnoreCase("runAsEmbeddedSystemAgent")) {
 			if (getJRadioButtonRunAsApplication().isSelected()) {
@@ -799,8 +948,14 @@ public class StartOptions extends AbstractOptionTab implements ActionListener {
 			} else {
 				this.doOkAction();
 			}
+			
+		} else if (ae.getSource()==this.getJButtonDatabaseSettings()) {
+			Application.showDatabaseDialog(this.optionDialog, BgSystemDatabaseConnectionService.SESSION_FACTORY_ID);
+			
 		} else {
 			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actCMD);
 		}
 	}
+
+
 }  

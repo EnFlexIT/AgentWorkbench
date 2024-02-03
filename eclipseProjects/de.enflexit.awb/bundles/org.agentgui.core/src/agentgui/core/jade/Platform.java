@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package agentgui.core.jade;
 
 import java.io.File;
@@ -466,35 +438,6 @@ public class Platform {
 			// ------------------------------------------------------
 			// --- This is a Master-Server-Platform -----------------
 			// ------------------------------------------------------
-			// --- Connecting to Database ---------------------------
-			if (Application.getDatabaseConnection(true).hasErrors()==true ) {
-				
-				this.stop(true);
-				
-				String msgHead = "";
-				String msgText = "";
-				
-				msgHead += Language.translate("Konfiguration des") + " " + applicationTitle + "-" +  executionModeDescription;
-				msgText += "Die Systemkonfiguration enthält keine gültigen Angaben über den" + newLine +
-						   "Datenbankserver. Der Start von JADE wird deshalb unterbrochen." + newLine +
-						   "Bitte konfigurieren Sie einen MySQL-Datenbank-Server und" + newLine +
-						   "starten Sie den Server-Master anschließend erneut.";
-				msgText = Language.translate(msgText);
-
-				if (Application.isOperatingHeadless()==true) {
-					System.err.println("=> " + msgHead + " <=");
-					System.err.println(msgText);
-				} else {
-					String msgQuestion = Language.translate("Möchten Sie die Konfiguration nun vornehmen?");
-					msgText += newLine + newLine + msgQuestion; 
-					int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION) {
-						Application.showOptionDialog();
-					}	
-				}
-				return false;
-				
-			}
 			// --- Start 'server.master' agent ----------------------		
 			if (isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentServerMaster.toString())==false) {
 				this.startSystemAgent(SystemAgent.BackgroundSystemAgentServerMaster, null);	

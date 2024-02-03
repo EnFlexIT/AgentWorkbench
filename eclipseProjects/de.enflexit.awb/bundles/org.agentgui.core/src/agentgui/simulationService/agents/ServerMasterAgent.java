@@ -1,41 +1,14 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package agentgui.simulationService.agents;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import agentgui.core.application.Application;
-import agentgui.core.database.DBConnection;
 import agentgui.core.update.AWBUpdater;
+import agentgui.simulationService.distribution.PlatformStore;
 import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
 import agentgui.simulationService.ontology.AgentGuiVersion;
 import agentgui.simulationService.ontology.BenchmarkResult;
@@ -58,6 +31,7 @@ import agentgui.simulationService.ontology.RemoteContainerConfig;
 import agentgui.simulationService.ontology.SlaveRegister;
 import agentgui.simulationService.ontology.SlaveTrigger;
 import agentgui.simulationService.ontology.SlaveUnregister;
+import de.enflexit.awb.bgSystem.db.dataModel.BgSystemPlatform;
 import jade.content.Concept;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
@@ -72,7 +46,6 @@ import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.util.leap.ArrayList;
 
 /**
  * This agent is part of the <b>Agent.GUI</b> background-system and collects the
@@ -97,11 +70,16 @@ public class ServerMasterAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
 	
+	private static long SERVER_MASTER_CLEAN_UP_INTERVAL = 1000 * 60;
+	
+	
 	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
+	private PlatformStore platformStore;
+	
 	private ParallelBehaviour parBehaiv;
-	private DBConnection dbConn = Application.getDatabaseConnection();
+	
 	
 	/* (non-Javadoc)
 	 * @see jade.core.Agent#setup()
@@ -118,21 +96,23 @@ public class ServerMasterAgent extends Agent {
 		// --- Add Main-Behaviours ------------------------
 		this.parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
 		this.parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
-		this.parBehaiv.addSubBehaviour( new CleanUpBehaviour(this, 1000*60) );
+		this.parBehaiv.addSubBehaviour( new CleanUpBehaviour(this, SERVER_MASTER_CLEAN_UP_INTERVAL) );
 		this.parBehaiv.addSubBehaviour( new UpdateBehaviour(this, new Date()) );
 		// --- Add Parallel Behaviour ---------------------
 		this.addBehaviour(parBehaiv);
 	}
 	
-	/* (non-Javadoc)
-	 * @see jade.core.Agent#takeDown()
+	/**
+	 * Returns the platform store that is used to keep information about available server.slaves and server.clients.
+	 * @return the platform store
 	 */
-	@Override
-	protected void takeDown() {
-		super.takeDown();
-		
+	private PlatformStore getPlatformStore() {
+		if (platformStore==null) {
+			platformStore = new PlatformStore();
+		}
+		return platformStore;
 	}
-
+	
 	/**
 	 * Sends a reply ACL message with a specified agent action.
 	 *
@@ -213,25 +193,18 @@ public class ServerMasterAgent extends Agent {
 	private class CleanUpBehaviour extends TickerBehaviour {
 
 		private static final long serialVersionUID = -2401912961869254054L;
-		private long tickingInterval_ms = 0;
-		private Long tickingInterval_s = Long.valueOf(0);
 		
 		public CleanUpBehaviour(Agent a, long period) {
 			super(a, period);
-			tickingInterval_ms = period;
-			tickingInterval_s = tickingInterval_ms / 1000;
 			// --- Execute the first 'Tick' right now ------
 			this.onTick();
 		}
-
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.TickerBehaviour#onTick()
+		 */
+		@Override
 		protected void onTick() {
-			
-			String sqlStmt = null;
-			// --- Delete DB-Entries, older than the interval-length of this behaviour ---
-			sqlStmt = "DELETE FROM platforms " +
-					  "WHERE  DATE_ADD(last_contact_at, INTERVAL " + tickingInterval_s.toString() + " SECOND) < now()";
-			dbConn.getSqlExecuteUpdate(sqlStmt);
-			
+			ServerMasterAgent.this.getPlatformStore().removeOutDatedPlatforms(System.currentTimeMillis() - SERVER_MASTER_CLEAN_UP_INTERVAL);
 		}
 	}
 	// -----------------------------------------------------
@@ -295,10 +268,9 @@ public class ServerMasterAgent extends Agent {
 						AgentGuiVersion version = sr.getSlaveVersion();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
-						Date plDate = new Date(timestamp);						
 						
 						// --- Register platform ------------------------------
-						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, plDate, true);
+						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, new Date(timestamp), true);
 						if (this.isAgentGuiVersionUpToDate(version)==true) {
 							// --- Answer with 'RegisterReceipt' --------------							
 							RegisterReceipt rr = new RegisterReceipt();
@@ -319,10 +291,9 @@ public class ServerMasterAgent extends Agent {
 						AgentGuiVersion version = cr.getClientVersion();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
-						Date plDate = new Date(timestamp);						
 						
 						// --- Register platform ------------------------------
-						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, plDate, true);
+						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, new Date(timestamp), false);
 						if (this.isAgentGuiVersionUpToDate(version)==true) {
 							// --- Answer with 'RegisterReceipt' --------------							
 							RegisterReceipt rr = new RegisterReceipt();
@@ -341,9 +312,8 @@ public class ServerMasterAgent extends Agent {
 						BenchmarkResult bmr = st.getSlaveBenchmarkValue();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
-						Date plDate = new Date(timestamp);
 
-						dbTriggerPlatform(senderAID, plDate, plLoad, bmr);
+						dbTriggerPlatform(senderAID, new Date(timestamp), plLoad, bmr);
 						
 					} else if (agentAction instanceof ClientTrigger) {
 						
@@ -353,9 +323,8 @@ public class ServerMasterAgent extends Agent {
 						BenchmarkResult bmr = st.getClientBenchmarkValue();
 						
 						Long timestamp = Long.parseLong(plTime.getTimeStampAsString() );
-						Date plDate = new Date(timestamp);
 
-						dbTriggerPlatform(senderAID, plDate, plLoad, bmr);
+						dbTriggerPlatform(senderAID, new Date(timestamp), plLoad, bmr);
 						
 					} else if (agentAction instanceof SlaveUnregister) {
 
@@ -422,102 +391,58 @@ public class ServerMasterAgent extends Agent {
 	 *
 	 * @param sender the AID of the sender
 	 * @param os the information about the operating system
-	 * @param platform the PlatformAddress of the platform
+	 * @param platformAddress the PlatformAddress of the platform
 	 * @param performance the PlatformPerformance
-	 * @param time the time
-	 * @param isServer true, if the sender is a server instance of Agent.GUI
+	 * @param slaveOrClientTime the time
+	 * @param isServer true, if the sender is a server instance (not an AWB-client)
 	 * 
 	 * @see OSInfo
 	 * @see PlatformAddress
 	 * @see PlatformPerformance
 	 */
-	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platform, PlatformPerformance performance, AgentGuiVersion version, Date time, boolean isServer) {
+	private void dbRegisterPlatform(AID sender, OSInfo os, PlatformAddress platformAddress, PlatformPerformance performance, AgentGuiVersion version, Date slaveOrClientTime, boolean isServer) {
 		
-		String sqlStmt = "";
-		Timestamp sqlDate = new Timestamp(time.getTime());
-		int isServerBool = dbConn.dbBool2Integer(isServer);
-		
-		// --- Does the AID already exists in TB ----------		
-		sqlStmt = "SELECT * FROM platforms WHERE contact_agent='" + sender.getName() + "'";
-		ResultSet res = null;
-		try {
-			res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
-			res.last();
-			if ( res.getRow()==0 ) {
-				// --- Insert new dataset -----------------
-				sqlStmt = "INSERT INTO platforms SET " +
-							"contact_agent = '" + sender.getName() + "'," +
-							"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
-							"is_server = " + isServerBool + "," +
-							"ip = '" + platform.getIp() + "'," +
-							"url = '" + platform.getUrl() + "'," +
-							"jade_port = " + platform.getPort() + "," +
-							"http4mtp = '" + platform.getHttp4mtp() + "'," +
-							"vers_major = " + version.getMajorRevision() + "," +
-							"vers_minor = " + version.getMinorRevision() + "," +
-							"vers_build = " + version.getMicroRevision() + "," +
-							"os_name = '" + os.getOs_name() + "'," +
-							"os_version = '" + os.getOs_version() + "'," +
-							"os_arch = '" + os.getOs_arch() + "'," +
-							"cpu_processorName = '" + performance.getCpu_processorName() + "'," +
-							"cpu_nLogical = " + performance.getCpu_numberOfLogicalCores() + "," +
-							"cpu_nPhysical = " + performance.getCpu_numberOfPhysicalCores() + "," +
-							"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
-							"memory_total_mb = " + performance.getMemory_totalMB() + "," +
-							"benchmark_value = 0," +
-							"online_since = now()," + 
-							"last_contact_at = now()," +
-							"local_online_since = '" + sqlDate + "'," +
-							"local_last_contact_at = '" + sqlDate + "'," +
-							"currently_available = "+ dbConn.dbBool2Integer(true) + " ";
-				dbConn.getSqlExecuteUpdate(sqlStmt);
-				
-			} else {
-				// --- Update dataset ---------------------
-				sqlStmt = "UPDATE platforms SET " +
-							"contact_agent = '" + sender.getName() + "'," +
-							"platform_name = '" + platform.getIp() + ":" + platform.getPort() + "/JADE'," + 
-							"is_server = " + isServerBool + "," +
-							"ip = '" + platform.getIp() + "'," +
-							"url = '" + platform.getUrl() + "'," +
-							"jade_port = " + platform.getPort() + "," +
-							"http4mtp = '" + platform.getHttp4mtp() + "'," +
-							"vers_major = " + version.getMajorRevision() + "," +
-							"vers_minor = " + version.getMinorRevision() + "," +
-							"vers_build = " + version.getMicroRevision() + "," +
-							"os_name = '" + os.getOs_name() + "'," +
-							"os_version = '" + os.getOs_version() + "'," +
-							"os_arch = '" + os.getOs_arch() + "'," +
-							"cpu_processorName = '" + performance.getCpu_processorName() + "'," +
-							"cpu_nLogical = " + performance.getCpu_numberOfPhysicalCores() + "," +
-							"cpu_nPhysical = " + performance.getCpu_numberOfLogicalCores() + "," +
-							"cpu_speed_mhz = " + performance.getCpu_speedMhz() + "," +
-							"memory_total_mb = " + performance.getMemory_totalMB() + "," +
-							"benchmark_value = 0," +
-							"online_since = now()," + 
-							"last_contact_at = now()," +
-							"local_online_since = '" + sqlDate + "'," +
-							"local_last_contact_at = '" + sqlDate + "'," +
-							"currently_available = "+ dbConn.dbBool2Integer(true) + " " +
-						   "WHERE contact_agent='" + sender.getName() + "'";
-				dbConn.getSqlExecuteUpdate(sqlStmt);
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			dbConn.getError().setErrNumber( e.getErrorCode() );
-			dbConn.getError().setHead( "DB-Error during registration of a Slave-Server!" );
-			dbConn.getError().setText( e.getLocalizedMessage() );
-			dbConn.getError().setErr(true);
-			dbConn.getError().show();
-			
-		} finally {
-			try {
-				if (res!=null) res.close();
-			} catch (SQLException sqle) {
-				sqle.printStackTrace();
-			}
+		// --- Try getting the platform information -----------------
+		BgSystemPlatform platform = ServerMasterAgent.this.getPlatformStore().getPlatform(sender.getName());
+		if (platform==null) {
+			platform = new BgSystemPlatform();
 		}
+		
+		// --- Set the specific information -------------------------
+		platform.setContactAgent(sender.getName());
+		
+		platform.setPlatformName(platformAddress.getIp() + ":" + platformAddress.getPort() + "/JADE',");
+		platform.setServer(isServer);
+		platform.setIpAddress(platformAddress.getIp());
+		platform.setUrl(platformAddress.getUrl());
+		platform.setJadePort(platformAddress.getPort());
+		platform.setHttp4mtp(platformAddress.getHttp4mtp());
+		
+		platform.setVersionMajor(version.getMajorRevision());
+		platform.setVersionMinor(version.getMinorRevision());
+		platform.setVersionMicro(version.getMicroRevision());
+		
+		platform.setOsName(os.getOs_name());
+		platform.setOsVersion(os.getOs_version());
+		platform.setOsArchitecture(os.getOs_arch());
+		
+		platform.setCpuProcessorName(performance.getCpu_processorName());
+		platform.setCpuNoOfLogical(performance.getCpu_numberOfLogicalCores());
+		platform.setCpuNoOfPhysical(performance.getCpu_numberOfPhysicalCores());
+		platform.setCpuSpeedMHz(performance.getCpu_speedMhz());
+		platform.setMemoryMB(performance.getMemory_totalMB());
+		
+		platform.setBenchmarkValue(0);
+		
+		platform.getTimeOnlineSince();
+		platform.getTimeLastContact();
+		platform.getLocalTimeOnlineSince().setTime(slaveOrClientTime);
+		platform.getLocalTimeLastContact().setTime(slaveOrClientTime);
+		
+		platform.setCurrentlyAvailable(true);
+		
+		// --- Add or update the local PlatformStore ----------------
+		ServerMasterAgent.this.getPlatformStore().addOrUpdatePlatform(platform);
 		
 	}
 	
@@ -525,31 +450,32 @@ public class ServerMasterAgent extends Agent {
 	 * This method will process the trigger events of the involved slave- and client-platforms.
 	 *
 	 * @param sender the AID of the sender
-	 * @param time the time
+	 * @param slaveOrClientTime the time
 	 * @param platformLoad the PlatformLoad of the platform
 	 * @param benchmarkResult the BenchmarkResult of the platform
 	 * 
 	 * @see PlatformLoad
 	 * @see BenchmarkResult
 	 */
-	private void dbTriggerPlatform(AID sender, Date time, PlatformLoad platformLoad, BenchmarkResult benchmarkResult) {
+	private void dbTriggerPlatform(AID sender, Date slaveOrClientTime, PlatformLoad platformLoad, BenchmarkResult benchmarkResult) {
 		
-		String sqlStmt = "";
-		Timestamp sqlDate = new Timestamp(time.getTime());
-	
-		// --- Update Dataset ---------------------
-		sqlStmt = "UPDATE platforms SET " +
-					"last_contact_at = now()," +
-					"local_last_contact_at = '" + sqlDate + "'," +
-					"benchmark_value = " + benchmarkResult.getBenchmarkValue() + "," +
-					"currently_available = -1, " +
-					"current_load_cpu = " + platformLoad.getLoadCPU() + "," +
-					"current_load_memory_system = " + platformLoad.getLoadMemorySystem() + "," +
-					"current_load_memory_jvm = " + platformLoad.getLoadMemoryJVM() + "," +
-					"current_load_no_threads = " + platformLoad.getLoadNoThreads() + "," +
-					"current_load_threshold_exceeded = " + platformLoad.getLoadExceeded() + " " + 
-				   "WHERE contact_agent='" + sender.getName() + "'";
-		dbConn.getSqlExecuteUpdate(sqlStmt);
+		// --- Try getting the platform information -----------------
+		BgSystemPlatform platform = ServerMasterAgent.this.getPlatformStore().getPlatform(sender.getName());
+		if (platform!=null) {
+			
+			platform.getTimeLastContact().setTimeInMillis(System.currentTimeMillis());
+			platform.getLocalTimeLastContact().setTime(slaveOrClientTime);
+			
+			platform.setBenchmarkValue(benchmarkResult.getBenchmarkValue());
+			
+			platform.setCurrentlyAvailable(true);
+			platform.setCurrentLoadCPU(platformLoad.getLoadCPU());
+			platform.setCurrentLoadMemory(platformLoad.getLoadMemorySystem());
+			platform.setCurrentLoadMemoryJVM(platformLoad.getLoadMemoryJVM());
+			platform.setCurrentLoadNoOfThreads(platformLoad.getLoadNoThreads());
+			platform.setCurrentLoadThresholdExceeded(platformLoad.getLoadExceeded()==0 ? false : true);
+			ServerMasterAgent.this.getPlatformStore().addOrUpdatePlatform(platform);
+		}
 	}
 	
 	/**
@@ -559,19 +485,10 @@ public class ServerMasterAgent extends Agent {
 	 */
 	private void dbUnregisterPlatform(AID sender) {
 		
-		String sqlStmt = "";
-		// --- Update Dataset ---------------------
-		sqlStmt = "UPDATE platforms SET " +
-					"online_since = null," + 
-					"local_online_since = null," +
-					"currently_available = "+ dbConn.dbBool2Integer(false) + "," +
-					"current_load_cpu = null," +
-					"current_load_memory_system = null," +
-					"current_load_memory_jvm = null," +
-					"current_load_no_threads = null," +
-					"current_load_threshold_exceeded = null " + 
-				   "WHERE contact_agent='" + sender.getName() + "'";
-		dbConn.getSqlExecuteUpdate(sqlStmt);
+		BgSystemPlatform platform = ServerMasterAgent.this.getPlatformStore().getPlatform(sender.getName());
+		if (platform!=null) {
+			ServerMasterAgent.this.getPlatformStore().removePlatform(platform);
+		}
 	}
 	
 	
@@ -584,126 +501,94 @@ public class ServerMasterAgent extends Agent {
 	 */
 	private boolean handleClientRemoteContainerRequest(ACLMessage request, ClientRemoteContainerRequest crcr) {
 		
-		boolean exitRequest = false;
+		RemoteContainerConfig remConf = crcr.getRemoteConfig();
+		String newJadeContainerName = remConf.getJadeContainerName();
 		
-		String sqlStmt = "";
+		// --- Filter for usable platform systems -----------------------------
+		List<BgSystemPlatform> filteredPlatformList = new ArrayList<>();
+		for (BgSystemPlatform platform : this.getPlatformStore().getPlatformList()) {
+			
+			boolean isServer    = platform.isServer(); 
+			boolean isAvailable = platform.isCurrentlyAvailable();
+			boolean isLoadOk	= platform.isCurrentLoadThresholdExceeded()==false;
+			boolean isAllowedIP	= remConf.getHostExcludeIP().contains(platform.getIpAddress())==false;
+			
+			boolean isUsable 	= isServer && isAvailable && isLoadOk && isAllowedIP;
+			if (isUsable==true) {
+				filteredPlatformList.add(platform);
+			}
+		}
+		
+		// --- Sort by ResidualCalculationCapability --------------------------
+		Collections.sort(filteredPlatformList, new Comparator<BgSystemPlatform>() {
+			@Override
+			public int compare(BgSystemPlatform platform1, BgSystemPlatform platform2) {
+				Double resMflops1 = platform1.getResidualCalculationCapability();
+				Double resMflops2 = platform2.getResidualCalculationCapability();
+				return resMflops1.compareTo(resMflops2);
+			}
+		});
+
+		
+		// --- Prepare corresponding messages ---------------------------------
 		String slaveAgent = null;
 		String slaveAgentAddress = null;
-		AID slavePlatformAgent = null; 
-		
-		Action act = null;
 		ClientRemoteContainerReply replyContent = new ClientRemoteContainerReply();
-		
-		RemoteContainerConfig remConf = crcr.getRemoteConfig();
-		String containerName = remConf.getJadeContainerName();
-		
-		// --- Build exclude part of the sql-statement ------------------------
-		String excludeIPsql = "";
-		ArrayList excludeIPs = (ArrayList) remConf.getHostExcludeIP();
-		for (int i = 0; i < excludeIPs.size(); i++) {
+		if (filteredPlatformList.size()==0) {
+			// --- No Server.Slave was found => EXIT --------------------------
+			System.out.println( this.getLocalName() + ": No Server.Slave was found! - Cancle action of remote-container-request!");
 			
-			String ip = (String) excludeIPs.get(i);
-			if (excludeIPsql.contains(ip)==true) continue;
-
-			if (excludeIPsql.equals("")==false) {
-				excludeIPsql += ", ";
-			}
-			excludeIPsql += "'" + ip + "'";
-		}
-		if (excludeIPsql.equals("")==false) {
-			excludeIPsql = "AND ip NOT IN (" + excludeIPsql + ") ";
-		}
-		
-		// --------------------------------------------------------------------
-		// --- Select the machine with the highest potential of 		 ------
-		// --- Mflops (Millions of floating point operations per second) ------
-		// --- in relation to the current processor/CPU-load AND 		 ------
-		// --- with the needed memory									 ------
-		// --------------------------------------------------------------------
-		sqlStmt = "SELECT (benchmark_value-(benchmark_value*current_load_cpu/100)) AS potential, ";
-		sqlStmt+= "platforms.* ";
-		sqlStmt+= "FROM platforms ";
-		sqlStmt+= "WHERE is_server=-1 AND currently_available=-1 AND current_load_threshold_exceeded=0 ";
-		sqlStmt+= excludeIPsql;
-		sqlStmt+= "ORDER BY (benchmark_value-(benchmark_value*current_load_cpu/100)) DESC";
-		
-		ResultSet res = null;
-		try {
+			replyContent.setRemoteContainerName(newJadeContainerName);
+			replyContent.setRemoteAddress(null);
+			replyContent.setRemoteOS(null);
+			replyContent.setRemotePerformance(null);
+			replyContent.setRemoteBenchmarkResult(null);
+				
+		} else {
+			// --- Server.Slave was found => request a remote-container -------
+			BgSystemPlatform platform = filteredPlatformList.get(filteredPlatformList.size()-1);
+			
+			slaveAgent = platform.getContactAgent();
+			slaveAgentAddress = platform.getHttp4mtp();
+			
 			// ----------------------------------------------------------------
-			res = dbConn.getSqlResult4ExecuteQuery(sqlStmt);
+			// --- Collect all need information for the reply -----------------
 			// ----------------------------------------------------------------
-		
-			// --- Do we have a SQL-result ? ----------------------------------
-			if (res.wasNull())   
-				exitRequest = true;
-			if (exitRequest==false && dbConn.getRowCount(res)==0) 
-				exitRequest = true;
+			OSInfo os = new OSInfo();
+			os.setOs_name(platform.getOsName());
+			os.setOs_version(platform.getOsVersion());
+			os.setOs_arch(platform.getOsArchitecture());
 			
-			if ( exitRequest == true ) {
-				// --- No Server.Slave was found => EXIT ----------------------
-				System.out.println( this.getLocalName() + ": No Server.Slave was found! - Cancle action of remote-container-request!");
-				
-				replyContent.setRemoteContainerName(containerName);
-				replyContent.setRemoteAddress(null);
-				replyContent.setRemoteOS(null);
-				replyContent.setRemotePerformance(null);
-				replyContent.setRemoteBenchmarkResult(null);
-					
-			} else {
-				// --- Server.Slave was found => request a remote-container ---
-				res.next(); 	
-				slaveAgent = res.getString("contact_agent");
-				slaveAgentAddress = res.getString("http4mtp");
-				
-				// ------------------------------------------------------------
-				// --- Collect all need information for the reply -------------
-				// ------------------------------------------------------------
-				OSInfo os = new OSInfo();
-				os.setOs_name(res.getString("os_name"));
-				os.setOs_version(res.getString("os_version"));
-				os.setOs_arch(res.getString("os_arch"));
-				
-				PlatformAddress plAdd = new PlatformAddress();
-				plAdd.setIp(res.getString("ip"));
-				plAdd.setUrl(res.getString("url"));
-				plAdd.setPort(res.getInt("jade_port"));
-				plAdd.setHttp4mtp(res.getString("http4mtp"));
-				
-				PlatformPerformance plPerf = new PlatformPerformance();
-				plPerf.setCpu_processorName(res.getString("cpu_processorName"));
-				plPerf.setCpu_numberOfLogicalCores(res.getInt("cpu_nLogical"));
-				plPerf.setCpu_numberOfPhysicalCores(res.getInt("cpu_nPhysical"));
-				plPerf.setCpu_speedMhz(res.getInt("cpu_speed_mhz"));
-				plPerf.setMemory_totalMB(res.getInt("memory_total_mb"));
-				
-				BenchmarkResult bench = new BenchmarkResult();
-				bench.setBenchmarkValue(res.getFloat("benchmark_value"));
-				
-				replyContent.setRemoteContainerName(containerName);
-				replyContent.setRemoteAddress(plAdd);
-				replyContent.setRemoteOS(os);
-				replyContent.setRemotePerformance(plPerf);
-				replyContent.setRemoteBenchmarkResult(bench);
-				// ------------------------------------------------------------
+			PlatformAddress plAdd = new PlatformAddress();
+			plAdd.setIp(platform.getIpAddress());
+			plAdd.setUrl(platform.getUrl());
+			plAdd.setPort(platform.getJadePort());
+			plAdd.setHttp4mtp(platform.getHttp4mtp());
+			
+			PlatformPerformance plPerf = new PlatformPerformance();
+			plPerf.setCpu_processorName(platform.getCpuProcessorName());
+			plPerf.setCpu_numberOfLogicalCores(platform.getCpuNoOfLogical());
+			plPerf.setCpu_numberOfPhysicalCores(platform.getCpuNoOfPhysical());
+			plPerf.setCpu_speedMhz(platform.getCpuSpeedMHz());
+			plPerf.setMemory_totalMB(platform.getMemoryMB());
+			
+			BenchmarkResult bench = new BenchmarkResult();
+			bench.setBenchmarkValue((float) platform.getBenchmarkValue());
+			
+			replyContent.setRemoteContainerName(newJadeContainerName);
+			replyContent.setRemoteAddress(plAdd);
+			replyContent.setRemoteOS(os);
+			replyContent.setRemotePerformance(plPerf);
+			replyContent.setRemoteBenchmarkResult(bench);
+			// ------------------------------------------------------------
 
-			}
-			res.close();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-				if (res!=null) res.close();
-			} catch (SQLException sqle) {
-				sqle.printStackTrace();
-			}
 		}
+		
 		
 		// -------------------------------------------------------------------- 
 		// --- Answer Request with 'ClientRemoteContainerReply' ---------------
 		// --------------------------------------------------------------------		
-		act = new Action();
+		Action act = new Action();
 		act.setActor(this.getAID());
 		act.setAction(replyContent);
 		
@@ -717,16 +602,16 @@ public class ServerMasterAgent extends Agent {
 			return false;
 		}
 		
-		// --- If the SQL-statement had no results, exit here -----------------
-		if (exitRequest==true) return true;
+		// --- If no Server.Slave was found, exit here ------------------------
+		if (filteredPlatformList.size()==0) return true;
 			
 			
 		// -------------------------------------------------------------------- 
 		// --- Forward request to the chosen Server.Slave ---------------------
 		// --------------------------------------------------------------------		
-
+		
 		// --- Set the ReceiverAgent ------------------------------------------
-		slavePlatformAgent = new AID(slaveAgent, AID.ISGUID );
+		AID slavePlatformAgent = new AID(slaveAgent, AID.ISGUID );
 		slavePlatformAgent.addAddresses(slaveAgentAddress);
 		
 		// --- Define Action --------------------------------------------------
@@ -763,80 +648,59 @@ public class ServerMasterAgent extends Agent {
 	 */
 	private boolean handleAvailableMachineRequest(ACLMessage request) {
 		
-		boolean exitRequest = false;
-		
 		ClientAvailableMachinesReply replyContent = new ClientAvailableMachinesReply();
 		replyContent.setAvailableMachines(new jade.util.leap.ArrayList());
 		
-		ResultSet res = null;
-		try {
-			// ----------------------------------------------------------------			
-			res = this.dbConn.getSqlResult4ExecuteQuery("SELECT * FROM platforms");
-			// --- Do we have a SQL-result ? ----------------------------------
-			if (res.wasNull()) exitRequest = true;
-			if (exitRequest==false && dbConn.getRowCount(res)==0) exitRequest = true;
+		List<BgSystemPlatform> platformList = this.getPlatformStore().getPlatformList();
+		if (platformList.size()==0) {
+			System.out.println(this.getLocalName() + ": No Server.Slave or Server.Client was found!");
 			
-			if (exitRequest==true ) {
-				// --- No Server.Slave was found => EXIT ----------------------
-				System.out.println(this.getLocalName() + ": No Server.Slave or Server.Client was found!");
-					
-			} else {
-				// --- Server.Slave was found => request a remote-container ---
-				while (res.next()) {
-					// --------------------------------------------------------
-					// --- Collect single machine info ------------------------
-					// --------------------------------------------------------
-					BenchmarkResult bench = new BenchmarkResult();
-					bench.setBenchmarkValue(res.getFloat("benchmark_value"));
-					
-					OSInfo os = new OSInfo();
-					os.setOs_name(res.getString("os_name"));
-					os.setOs_version(res.getString("os_version"));
-					os.setOs_arch(res.getString("os_arch"));
-					
-					AgentGuiVersion aguiVersion = new AgentGuiVersion();
-					aguiVersion.setMajorRevision(res.getInt("vers_major"));
-					aguiVersion.setMinorRevision(res.getInt("vers_minor"));
-					aguiVersion.setMicroRevision(res.getInt("vers_build"));
-					
-					PlatformPerformance plPerf = new PlatformPerformance();
-					plPerf.setCpu_processorName(res.getString("cpu_processorName"));
-					plPerf.setCpu_numberOfLogicalCores(res.getInt("cpu_nLogical"));
-					plPerf.setCpu_numberOfPhysicalCores(res.getInt("cpu_nPhysical"));
-					plPerf.setCpu_speedMhz(res.getInt("cpu_speed_mhz"));
-					plPerf.setMemory_totalMB(res.getInt("memory_total_mb"));
-					
-					PlatformAddress plAdd = new PlatformAddress();
-					plAdd.setIp(res.getString("ip"));
-					plAdd.setUrl(res.getString("url"));
-					plAdd.setPort(res.getInt("jade_port"));
-					plAdd.setHttp4mtp(res.getString("http4mtp"));
-					
-					// --- Create machine description -------------------------
-					MachineDescription md = new MachineDescription();
-					md.setContactAgent(res.getString("contact_agent"));
-					md.setPlatformName(res.getString("platform_name"));
-					md.setIsAvailable(res.getBoolean("currently_available"));
-					md.setIsThresholdExceeded(res.getBoolean("current_load_threshold_exceeded"));
-					md.setBenchmarkResult(bench);
-					md.setRemoteOS(os);
-					md.setAgentGuiVersion(aguiVersion);
-					md.setPerformance(plPerf);
-					md.setPlatformAddress(plAdd);
-					
-					replyContent.getAvailableMachines().add(md);
-				}
-			}
-			res.close();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-				if (res!=null) res.close();
-			} catch (SQLException sqle) {
-				sqle.printStackTrace();
+		} else {
+			// --- Get all registered platform systems ----------------------------
+			for (BgSystemPlatform platform : platformList) {
+				
+				// --------------------------------------------------------
+				// --- Collect single machine info ------------------------
+				// --------------------------------------------------------
+				BenchmarkResult bench = new BenchmarkResult();
+				bench.setBenchmarkValue((float) platform.getBenchmarkValue());
+				
+				OSInfo os = new OSInfo();
+				os.setOs_name(platform.getOsName());
+				os.setOs_version(platform.getOsVersion());
+				os.setOs_arch(platform.getOsArchitecture());
+				
+				AgentGuiVersion aguiVersion = new AgentGuiVersion();
+				aguiVersion.setMajorRevision(platform.getVersionMajor());
+				aguiVersion.setMinorRevision(platform.getVersionMinor());
+				aguiVersion.setMicroRevision(platform.getVersionMicro());
+				
+				PlatformPerformance plPerf = new PlatformPerformance();
+				plPerf.setCpu_processorName(platform.getCpuProcessorName());
+				plPerf.setCpu_numberOfLogicalCores(platform.getCpuNoOfLogical());
+				plPerf.setCpu_numberOfPhysicalCores(platform.getCpuNoOfPhysical());
+				plPerf.setCpu_speedMhz(platform.getCpuSpeedMHz());
+				plPerf.setMemory_totalMB(platform.getMemoryMB());
+				
+				PlatformAddress plAdd = new PlatformAddress();
+				plAdd.setIp(platform.getIpAddress());
+				plAdd.setUrl(platform.getUrl());
+				plAdd.setPort(platform.getJadePort());
+				plAdd.setHttp4mtp(platform.getHttp4mtp());
+				
+				// --- Create machine description -------------------------
+				MachineDescription md = new MachineDescription();
+				md.setContactAgent(platform.getContactAgent());
+				md.setPlatformName(platform.getPlatformName());
+				md.setIsAvailable(platform.isCurrentlyAvailable());
+				md.setIsThresholdExceeded(platform.isCurrentLoadThresholdExceeded());
+				md.setBenchmarkResult(bench);
+				md.setRemoteOS(os);
+				md.setAgentGuiVersion(aguiVersion);
+				md.setPerformance(plPerf);
+				md.setPlatformAddress(plAdd);
+				
+				replyContent.getAvailableMachines().add(md);
 			}
 		}
 		

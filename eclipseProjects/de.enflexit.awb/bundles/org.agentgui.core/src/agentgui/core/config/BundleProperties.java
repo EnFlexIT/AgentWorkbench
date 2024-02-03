@@ -292,20 +292,6 @@ public class BundleProperties {
 		this.globalInfo.setMtpProtocol(mtpProtocol);
 		
 		
-		// --- this.DEF_MASTER_DB_HOST ---------------
-		stringPrefValue = eclipsePreferences.get(DEF_MASTER_DB_HOST, "");
-		this.globalInfo.setServerMasterDBHost(stringPrefValue.trim());
-		// --- this.DEF_MASTER_DB_NAME ---------------
-		stringPrefValue = eclipsePreferences.get(DEF_MASTER_DB_NAME, "");
-		this.globalInfo.setServerMasterDBName(stringPrefValue.trim());
-		// --- this.DEF_MASTER_DB_USER ---------------
-		stringPrefValue = eclipsePreferences.get(DEF_MASTER_DB_USER, "");
-		this.globalInfo.setServerMasterDBUser(stringPrefValue.trim());
-		// --- this.DEF_MASTER_DB_PSWD ---------------
-		stringPrefValue = eclipsePreferences.get(DEF_MASTER_DB_PSWD, "");
-		this.globalInfo.setServerMasterDBPswd(stringPrefValue.trim());
-		
-		
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------
 		integerPrefValue = eclipsePreferences.getInt(DEF_UPDATE_AUTOCONFIG, 0);
 		this.globalInfo.setUpdateAutoConfiguration(integerPrefValue);
@@ -428,16 +414,6 @@ public class BundleProperties {
 		eclipsePreferences.putInt(DEF_OWN_MTP_PORT, this.globalInfo.getOwnMtpPort());
 		// --- this.DEF_OWN_MTP_PROTOCOL -----------------
 		eclipsePreferences.put(DEF_OWN_MTP_PROTOCOL, this.globalInfo.getMtpProtocol().toString());
-		
-		
-		// --- this.DEF_MASTER_DB_HOST ---------------
-		if (this.globalInfo.getServerMasterDBHost()!=null) eclipsePreferences.put(DEF_MASTER_DB_HOST, this.globalInfo.getServerMasterDBHost());	
-		// --- this.DEF_MASTER_DB_NAME ---------------
-		if (this.globalInfo.getServerMasterDBName()!=null) eclipsePreferences.put(DEF_MASTER_DB_NAME, this.globalInfo.getServerMasterDBName());	
-		// --- this.DEF_MASTER_DB_USER ---------------
-		if (this.globalInfo.getServerMasterDBUser()!=null) eclipsePreferences.put(DEF_MASTER_DB_USER, this.globalInfo.getServerMasterDBUser());	
-		// --- this.DEF_MASTER_DB_PSWD ---------------
-		if (this.globalInfo.getServerMasterDBPswd()!=null) eclipsePreferences.put(DEF_MASTER_DB_PSWD, this.globalInfo.getServerMasterDBPswd());
 		
 		
 		// --- this.DEF_UPDATE_AUTOCONFIG -------------

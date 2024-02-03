@@ -54,6 +54,8 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.load.monitoring.AbstractMonitoringTask;
+import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.SessionFactoryMonitor;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 
 /**
@@ -148,6 +150,7 @@ public class MainWindowStatusBar extends JPanel {
 		this.add(this.getJLabelJadeState(), gbc_jLabelJadeState);
 		
 		this.setJadeStatusColor(JadeStatusColor.Red);
+		this.addSessionFactoryStates();
 	}
 	
 	/**
@@ -362,6 +365,15 @@ public class MainWindowStatusBar extends JPanel {
 	}
 	
 	/**
+	 * Set all session factory states to the status bar.
+	 */
+	private void addSessionFactoryStates() {
+		for (String sessionFactoryID : HibernateUtilities.getSessionFactoryIDList()) {
+			SessionFactoryMonitor monitor = HibernateUtilities.getSessionFactoryMonitor(sessionFactoryID);
+			this.setSessionFactoryState(sessionFactoryID, monitor.getSessionFactoryState());
+		}
+	}
+	/**
 	 * Sets the specified session factory state to the status bar.
 	 *
 	 * @param factoryID the factory ID
@@ -401,7 +413,7 @@ public class MainWindowStatusBar extends JPanel {
 					if (SwingUtilities.isLeftMouseButton(me) && me.getClickCount()==2) {
 						JLabel jLabelClicked = (JLabel) me.getSource();
 						String factoryID = (String) jLabelClicked.getClientProperty("factoryID");
-						Application.showDatabaseDialog(factoryID);
+						Application.showDatabaseDialog(Application.getMainWindow(), factoryID);
 					} 
 				}
 			});

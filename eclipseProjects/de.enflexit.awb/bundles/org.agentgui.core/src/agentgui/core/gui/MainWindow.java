@@ -1277,7 +1277,7 @@ public class MainWindow extends JFrame {
 				Application.showOptionDialog();
 
 			} else if (actionCMD.equalsIgnoreCase("DatabaseConnections")) {
-				Application.showDatabaseDialog(null);
+				Application.showDatabaseDialog(MainWindow.this, null);
 				
 			} else if (actionCMD.equalsIgnoreCase("Authentication")) {
 				Application.showAuthenticationDialog();
@@ -1568,7 +1568,7 @@ public class MainWindow extends JFrame {
 
 			// ------------------------------------------------
 			} else if (actCMD.equalsIgnoreCase("DatabaseConnections")) {
-				Application.showDatabaseDialog(null);
+				Application.showDatabaseDialog(MainWindow.this, null);
 				
 			// ------------------------------------------------
 			} else if (actCMD.equalsIgnoreCase("JadeStart")) {

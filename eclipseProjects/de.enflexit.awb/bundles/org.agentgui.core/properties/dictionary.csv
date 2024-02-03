@@ -1,7 +1,11 @@
 SOURCE_LANGUAGE;DE;EN;IT;ES;FR
 de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br> Please enter a different name for the setup.;;;
+de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please, choose a different name for the setup.;;;
 de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br> Please enter a longer name for the setup.;;;
+de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br>Please, select a longer name for the setup.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br> If not, a new setup file will be created.;;;
+de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;' ist bereits geöffnet!;' is already open!;;;
 de;'#' markiert alle Features, die zur Basisinstallation gehören.;'#' marks all features that belong to the base installation.;;;
@@ -9,10 +13,6 @@ de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of
 de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing selected!;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;<br>Bitte geben Sie einen anderen Namen für das Setup an.;<br>Please, choose a different name for the setup.;;;
-de;<br>Bitte geben Sie einen längeren Namen für das Setup an.;<br>Please, select a longer name for the setup.;;;
-de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be generated.;;;
-de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
 de;AWB auf GitBook;AWB on GitBook;;;
 de;AWB auf GitHub;AWB on GitHub;;;
@@ -157,8 +157,8 @@ de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The director
 de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
 de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>Möchten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br>Do you want to create the directory now?;;;
-de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;The selected project directory is already in use!<br><br>Please, choose a different name for your directory.;;;
+de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
 de;Datei überschreiben?;Overwrite file?;;;
@@ -168,6 +168,8 @@ de;Daten Importieren...;Import Data ...;;;
 de;Daten bearbeiten;Edit Data;;;
 de;Datenbank Verbindungen;Database Connections;;;
 de;Datenbank erfolgreich angelegt!;Database created successfully!
+de;Datenbank für den 'server.master';Database for the 'server.master';;;
+de;Datenbank für den Hauptserver (server.master);;;;
 de;Datenbank nicht vorhanden!;Database does not exist!
 de;Datenfeld;Data field
 de;Datum;Date;;;
@@ -197,9 +199,6 @@ de;Die Google-Übersetzungsfunktion wurde deaktiviert!;Google's translation feat
 de;Die Höhe des exportieren Bildes;The height of the image to be exported;;;
 de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The class of the type 'OntologyClassVisualisation' was not found!;;;
 de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.<br>Bitte wählen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the<br>database server. The execution of JADE was therefore interrupted.<br>Please, configure a valid MySQL database server and restart the Server.Master.;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Hauptserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie eine gültige Server-URL oder IP (inkl. Port)<br>und starten Sie den Dienst anschließend erneut.;The system configuration does not contain valid information about the <br>main server. The execution of JADE was therefore interrupted. <br>Please, configure a valid server URL or IP (incl. Port) <br>and start the service again.;;;
-de;Die Systemkonfiguration enthält keine gültigen Angaben über den<br>Datenbankserver. Der Start von JADE wird deshalb unterbrochen.<br>Bitte konfigurieren Sie einen MySQL-Datenbank-Server und<br>starten Sie den Server-Master anschließend erneut.;The system configuration does not contain valid information about the <br> database server. The start of JADE is therefore interrupted. <br> Please, configure the MySQL database server and then restart the server master.;;;
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Die angeforderte Ressource steht nicht mehr unter der gewählten Update-Site zur Verfügung und wurde umgeleitet;The requested resource is no longer available at the selected update site and has been redirected;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
@@ -274,6 +273,7 @@ de;Fehler - Projektname !;Error - Project Name !;;;
 de;Fehler - Projektverzeichnis !;Error - project folder !
 de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
 de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
+de;Fehler beim Auslesen der Datensätze!;;;;
 de;Fehler beim Auslesen der Datensätzen!;Error while reading records!
 de;Fehler beim Laden des Bildes:;Error while loading image:;;;
 de;Fehler beim Lesen des Graphen;Error while reading the graph
@@ -464,9 +464,6 @@ de;Minute;Minute;;;
 de;Minuten;Minutes;;;
 de;Mitwirkende;Contributors;;;
 de;Monate;Months;;;
-de;MySQL-Datenbank für den Hauptserver (server.master);MySQL-Database for the main server module (server.master);;;
-de;MySQL-Fehler:;MySQL-Error:
-de;MySQL-Fehler;MySQL-Error
 de;Möchten Sie Agent.GUI nun umschalten und neu starten ?;Do you want to switch and restart Agent.GUI ?
 de;Möchten Sie JADE nun beenden?;Quit JADE now?
 de;Möchten Sie JADE nun starten und fortfahren?;Do you want to start JADE and continue?
@@ -859,6 +856,7 @@ en;;Depending on watts (absolute);;;
 en;;Discrete squares environment;;;
 en;;Display time is time controlled;;;
 en;;Edit security store settings;;;
+en;;Export CSV File;;;
 en;;Export NetworkModel to file;;;
 en;;Geo. Layout;;;
 en;;Import CSV File;;;
