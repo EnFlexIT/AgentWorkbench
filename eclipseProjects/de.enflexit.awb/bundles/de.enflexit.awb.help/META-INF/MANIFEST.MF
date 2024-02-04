@@ -5,12 +5,13 @@ Bundle-Name: Agent.Workbench - API Help
 Bundle-SymbolicName: de.enflexit.awb.help;singleton:=true
 Bundle-Version: 2.3.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: de.enflexit.api,
+Require-Bundle: org.agentgui.core,
+ de.enflexit.api,
+ de.enflexit.awb.bgSystem,
  de.enflexit.common,
- org.eclipse.help,
- org.agentgui.core,
  org.awb.env.networkModel,
  de.enflexit.db.hibernate,
  de.enflexit.db.mySQL,
- de.enflexit.oidc 
+ de.enflexit.oidc,
+ org.eclipse.help
 Bundle-Vendor: EnFlex.IT
