@@ -10,9 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Export-Package: de.enflexit.awb.bgSystem,
  de.enflexit.awb.bgSystem.db,
- de.enflexit.awb.bgSystem.db.cfg,
- de.enflexit.awb.bgSystem.db.dataModel,
- de.enflexit.awb.bgSystem.db.mappings
+ de.enflexit.awb.bgSystem.db.dataModel
 Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
 Require-Bundle: de.enflexit.db.hibernate,
  org.eclipse.osgi
