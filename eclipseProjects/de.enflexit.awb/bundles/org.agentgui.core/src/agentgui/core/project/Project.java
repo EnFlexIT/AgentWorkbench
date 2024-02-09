@@ -1020,24 +1020,15 @@ import de.enflexit.common.properties.PropertiesListener;
 	/**
 	 * Move project libraries to the specified destination directory.
 	 *
-	 * @param destinationDirectoryRootPath the destination directory root path
-	 * @return the actual path of the resources for the file manager
+	 * @param destinationDirectory the destination directory root path
+	 * @param messageSuccess the optional message for successful export (is allowed to be <code>null</code>)
+	 * @param messageFailure the optional message, if the export failed (is allowed to be <code>null</code>)
+	 * @return the actual File that were exported to the destination directory
 	 */
-	public String exportProjectRessourcesToDestinationDirectory(String destinationDirectoryRootPath) {
-		return this.exportProjectRessourcesToDestinationDirectory(destinationDirectoryRootPath, null, null);
-	}
-	/**
-	 * Move project libraries to the specified destination directory.
-	 *
-	 * @param destinationDirectoryRootPath the destination directory root path
-	 * @param messageSuccess the optional message for successful export
-	 * @param messageFailure the optional message, if the export failed
-	 * @return the actual path of the resources for the file manager
-	 */
-	public String exportProjectRessourcesToDestinationDirectory(String destinationDirectoryRootPath, String messageSuccess, String messageFailure) {
+	public File exportProjectRessourcesToDestinationDirectory(String destinationDirectory, String messageSuccess, String messageFailure) {
 
 		// --- Define / create destination directory ----------------
-		File destinationDir = new File(destinationDirectoryRootPath);
+		File destinationDir = new File(destinationDirectory);
 		if (destinationDir.exists()==false) destinationDir.mkdirs();
 
 		// --- Define the target file -------------------------------
@@ -1047,6 +1038,7 @@ import de.enflexit.common.properties.PropertiesListener;
 		ProjectExportController pExCon = ProjectExportControllerProvider.getProjectExportController();
 		ProjectExportSettingsController pesc = new ProjectExportSettingsController(this, pExCon);
 		pesc.setIncludeAllSetups(false);
+		pesc.includeSimulationSetup(this.getSimulationSetupCurrent());
 		pesc.excludeInstallationPackage();
 		pesc.addDefaultsToExcludeList();
 		pesc.setTargetFile(projectExportFile);
@@ -1057,13 +1049,7 @@ import de.enflexit.common.properties.PropertiesListener;
 		pExCon.exportProject(this, pesc.getProjectExportSettings(), false, false);
 
 		// --- Return the root path for the file manager ------------
-		String destinationDirPath = null;
-		try {
-			destinationDirPath = destinationDir.getCanonicalPath();
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		}
-		return destinationDirPath;
+		return projectExportFile;
 	}
 
 	/**

@@ -35,6 +35,8 @@ import jade.core.behaviours.OneShotBehaviour;
 import agentgui.core.application.Application;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.MainWindow;
+import agentgui.core.jade.Platform;
+import agentgui.core.jade.PlatformStateInformation.PlatformState;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.simulationService.SimulationService;
@@ -68,6 +70,7 @@ public class LoadExecutionAgent extends Agent {
 	private int startArg;
 	
 	private MainWindow mainWindow = Application.getMainWindow();
+	private Platform platform = Application.getJadePlatform();
 	
 	
 	/* (non-Javadoc)
@@ -75,7 +78,6 @@ public class LoadExecutionAgent extends Agent {
 	 */
 	@Override
 	protected void setup() {
-		super.setup();
 		
 		Object[] startArgs = getArguments();
 		this.startArg = (Integer) startArgs[0];
@@ -94,6 +96,9 @@ public class LoadExecutionAgent extends Agent {
 			super(agent);
 		}
 		
+		/* (non-Javadoc)
+		 * @see jade.core.behaviours.Behaviour#action()
+		 */
 		@Override
 		public void action() {
 			
@@ -107,6 +112,7 @@ public class LoadExecutionAgent extends Agent {
 			// --- Do the wanted/necessary action -------------------------------------------
 			switch (startArg) {
 			case BASE_ACTION_Start:
+				LoadExecutionAgent.this.platform.setPlatformState(PlatformState.StartingMAS);
 				StaticLoadBalancingBase staticBalancing = getStartAndStaticLoadBalancingClass(myAgent);
 				if (staticBalancing!=null) {
 					myAgent.addBehaviour(staticBalancing);	
@@ -122,6 +128,7 @@ public class LoadExecutionAgent extends Agent {
 				break;
 
 			case BASE_ACTION_Pause:
+				LoadExecutionAgent.this.platform.setPlatformState(PlatformState.PausingMAS);
 				setPauseSimulation(true);
 				if (mainWindow!=null) {
 					mainWindow.setEnableSimStart(true);
@@ -132,6 +139,7 @@ public class LoadExecutionAgent extends Agent {
 				break;
 				
 			case BASE_ACTION_Restart:
+				LoadExecutionAgent.this.platform.setPlatformState(PlatformState.RestartingMAS);
 				setPauseSimulation(false);
 				if (mainWindow!=null) {
 					mainWindow.setEnableSimStart(false);
@@ -147,17 +155,16 @@ public class LoadExecutionAgent extends Agent {
 	
 	/**
 	 * This method will pause or restart the current simulation.
-	 *
-	 * @param pause the pause simulation
+	 * @param isPause true, if the MAS has to be paused
 	 */
-	private void setPauseSimulation(boolean pause) {
+	private void setPauseSimulation(boolean isPause) {
 		
 		SimulationServiceHelper simHelper = null;
 		try {
 			simHelper = (SimulationServiceHelper) getHelper(SimulationService.NAME);
-			simHelper.setPauseSimulation(pause);
-		} catch (ServiceException e) {
-			e.printStackTrace();
+			simHelper.setPauseSimulation(isPause);
+		} catch (ServiceException ex) {
+			ex.printStackTrace();
 		}		
 	}
 	

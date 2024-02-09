@@ -181,8 +181,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 		this.exportSettings = exportSettings;
 		this.showUserDialogs = showUserDialogs;
 		if (useConcurrentThread == true) {
-			ProjectExportThread exportThread = new ProjectExportThread();
-			exportThread.start();
+			new ProjectExportThread().start();
 		} else {
 			this.doExport();
 		}

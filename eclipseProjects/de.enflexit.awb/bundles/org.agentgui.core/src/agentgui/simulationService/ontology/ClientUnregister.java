@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: ClientUnregister
 * @author ontology bean generator
-* @version 2024/02/3, 01:43:04
+* @version 2024/02/9, 15:58:57
 */
 public class ClientUnregister implements AgentAction {
 

@@ -1,7 +1,6 @@
 /bin/
-/exec/
-/server/
-/download/
+/resServer/
+/resDownload/
 /build/
 /doc/api
 .settings/

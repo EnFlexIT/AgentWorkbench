@@ -31,11 +31,13 @@ package org.awb.env.networkModel.controller;
 import java.awt.Cursor;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
@@ -431,14 +433,29 @@ public class GraphEnvironmentController extends EnvironmentController {
 	public List<File> getSetupFiles(String setupName) {
 		
 		List<File> fileList = new ArrayList<File>();
+		
+		// --- Get the default files for graph and NetworkModel -----
 		fileList.add(GraphEnvironmentController.getFileGraphML(this.getEnvFolderPath(), setupName));
 		fileList.add(GraphEnvironmentController.getFileXML(this.getEnvFolderPath(), setupName));
 
+		// --- Check if a sub directory exists ----------------------
+		String setupSubDir = this.getEnvFolderPath();
+		if (setupSubDir.endsWith(File.separator)==false) setupSubDir+=File.separator;
+		setupSubDir += setupName;
+		File envSetupSubDir = new File(setupSubDir);
+		if (envSetupSubDir.exists()==true) {
+			File[] subDirFileArray = envSetupSubDir.listFiles();
+			if (subDirFileArray!=null && subDirFileArray.length>0) {
+				fileList.addAll(Arrays.asList(subDirFileArray));
+			}
+		}
+		
+		// --- Ask the specific storage services for files ----------
 		List<File> sdmServicesFileList = this.getSetupFilesFromSetupDataModelStorageServices(setupName);
 		if (sdmServicesFileList!=null) {
 			fileList.addAll(sdmServicesFileList);
 		}
-		return fileList;
+		return fileList.stream().distinct().collect(Collectors.toList());
 	}
 	
 	/*

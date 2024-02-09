@@ -107,4 +107,20 @@ public class AgentStartArguments implements Serializable {
 		return startArguments;
 	}
 
+	/**
+	 * Returns the ontology class name as String array.
+	 * @return the ontology class name array
+	 */
+	public String[] getOntologyClassNameArray() {
+		
+		int argumentSize = this.getStartArguments().size();
+		if (argumentSize==0) return null;
+		
+		String[] ontoClassArray = new String[argumentSize];
+		for (int i = 0; i < getStartArguments().size(); i++) {
+			ontoClassArray[i] = getStartArguments().get(i).getOntologyReference();
+		}
+		return ontoClassArray;
+	}
+
 }

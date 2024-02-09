@@ -8,19 +8,19 @@ import jade.core.*;
 /**
 * Protege name: MachineDescription
 * @author ontology bean generator
-* @version 2024/02/3, 01:43:04
+* @version 2024/02/9, 15:58:57
 */
 public class MachineDescription implements Concept {
 
    /**
-* Protege name: isThresholdExceeded
+* Protege name: contactAgent
    */
-   private boolean isThresholdExceeded;
-   public void setIsThresholdExceeded(boolean value) { 
-    this.isThresholdExceeded=value;
+   private String contactAgent;
+   public void setContactAgent(String value) { 
+    this.contactAgent=value;
    }
-   public boolean getIsThresholdExceeded() {
-     return this.isThresholdExceeded;
+   public String getContactAgent() {
+     return this.contactAgent;
    }
 
    /**
@@ -35,17 +35,6 @@ public class MachineDescription implements Concept {
    }
 
    /**
-* Protege name: platformName
-   */
-   private String platformName;
-   public void setPlatformName(String value) { 
-    this.platformName=value;
-   }
-   public String getPlatformName() {
-     return this.platformName;
-   }
-
-   /**
 * Protege name: performance
    */
    private PlatformPerformance performance;
@@ -54,17 +43,6 @@ public class MachineDescription implements Concept {
    }
    public PlatformPerformance getPerformance() {
      return this.performance;
-   }
-
-   /**
-* Protege name: isAvailable
-   */
-   private boolean isAvailable;
-   public void setIsAvailable(boolean value) { 
-    this.isAvailable=value;
-   }
-   public boolean getIsAvailable() {
-     return this.isAvailable;
    }
 
    /**
@@ -79,14 +57,25 @@ public class MachineDescription implements Concept {
    }
 
    /**
-* Protege name: contactAgent
+* Protege name: remoteOS
    */
-   private String contactAgent;
-   public void setContactAgent(String value) { 
-    this.contactAgent=value;
+   private OSInfo remoteOS;
+   public void setRemoteOS(OSInfo value) { 
+    this.remoteOS=value;
    }
-   public String getContactAgent() {
-     return this.contactAgent;
+   public OSInfo getRemoteOS() {
+     return this.remoteOS;
+   }
+
+   /**
+* Protege name: platformName
+   */
+   private String platformName;
+   public void setPlatformName(String value) { 
+    this.platformName=value;
+   }
+   public String getPlatformName() {
+     return this.platformName;
    }
 
    /**
@@ -101,14 +90,25 @@ public class MachineDescription implements Concept {
    }
 
    /**
-* Protege name: remoteOS
+* Protege name: isThresholdExceeded
    */
-   private OSInfo remoteOS;
-   public void setRemoteOS(OSInfo value) { 
-    this.remoteOS=value;
+   private boolean isThresholdExceeded;
+   public void setIsThresholdExceeded(boolean value) { 
+    this.isThresholdExceeded=value;
    }
-   public OSInfo getRemoteOS() {
-     return this.remoteOS;
+   public boolean getIsThresholdExceeded() {
+     return this.isThresholdExceeded;
+   }
+
+   /**
+* Protege name: isAvailable
+   */
+   private boolean isAvailable;
+   public void setIsAvailable(boolean value) { 
+    this.isAvailable=value;
+   }
+   public boolean getIsAvailable() {
+     return this.isAvailable;
    }
 
 }

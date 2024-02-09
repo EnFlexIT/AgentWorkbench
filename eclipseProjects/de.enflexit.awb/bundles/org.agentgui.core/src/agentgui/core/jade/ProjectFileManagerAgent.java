@@ -28,6 +28,8 @@
  */
 package agentgui.core.jade;
 
+import java.io.File;
+
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
 
@@ -53,19 +55,18 @@ public class ProjectFileManagerAgent extends jade.misc.FileManagerAgent {
 			return;
 		}
 		
-		String fileMangerPath = Application.getGlobalInfo().getFileManagerServerPath(true);
-		String messageSuccess = "[" + currProject.getProjectName() + "] Project resources for remote container execution successfully prepared!";;
-		String messageFailure = "[" + currProject.getProjectName() + "] Provisioning of project resources for remote container execution failed!";
-
-		Object[] originalFileMangerArguments = new Object[1];
-		originalFileMangerArguments[0] = currProject.exportProjectRessourcesToDestinationDirectory(fileMangerPath, messageSuccess, messageFailure);
-		if (originalFileMangerArguments[0]==null) {
+		// --- Check if server directory exists or is empty ---------
+		String serverDirPath = Application.getGlobalInfo().getResourceDistributionServerPath(false);
+		File serverDir = new File(serverDirPath);
+		if (serverDir.exists()==false || serverDir.listFiles().length==0) {
 			this.doDelete();
 			return;
 		}
 		
-		// --- Set start arguments for the original FileManager ----- 
-		this.setArguments(originalFileMangerArguments);
+		// --- Set start arguments for the FileManager -------------- 
+		Object[] fileMangerArgs = new Object[1];
+		fileMangerArgs[0] = serverDirPath;
+		this.setArguments(fileMangerArgs);
 		super.setup();
 	}
 	

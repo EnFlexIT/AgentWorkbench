@@ -8,7 +8,7 @@ import jade.core.*;
 /**
 * Protege name: Version
 * @author ontology bean generator
-* @version 2024/02/3, 01:43:04
+* @version 2024/02/9, 15:58:57
 */
 public class Version implements Concept {
 
@@ -24,14 +24,14 @@ public class Version implements Concept {
    }
 
    /**
-* Protege name: majorRevision
+* Protege name: qualifier
    */
-   private int majorRevision;
-   public void setMajorRevision(int value) { 
-    this.majorRevision=value;
+   private String qualifier;
+   public void setQualifier(String value) { 
+    this.qualifier=value;
    }
-   public int getMajorRevision() {
-     return this.majorRevision;
+   public String getQualifier() {
+     return this.qualifier;
    }
 
    /**
@@ -46,14 +46,14 @@ public class Version implements Concept {
    }
 
    /**
-* Protege name: qualifier
+* Protege name: majorRevision
    */
-   private String qualifier;
-   public void setQualifier(String value) { 
-    this.qualifier=value;
+   private int majorRevision;
+   public void setMajorRevision(int value) { 
+    this.majorRevision=value;
    }
-   public String getQualifier() {
-     return this.qualifier;
+   public int getMajorRevision() {
+     return this.majorRevision;
    }
 
 }

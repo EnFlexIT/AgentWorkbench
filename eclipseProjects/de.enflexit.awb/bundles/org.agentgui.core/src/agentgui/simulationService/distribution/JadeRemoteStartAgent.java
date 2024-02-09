@@ -89,7 +89,7 @@ public class JadeRemoteStartAgent extends Agent {
 		public void action() {
 			System.out.println("Prepare for remote container start ... ");
 			// --- Initiate the starter -----------------------------
-			JadeRemoteStart jrs = new JadeRemoteStart(this.getAgent(), remoteContainerConfig);
+			JadeRemoteStart jrs = new JadeRemoteStart(remoteContainerConfig);
 			if (jrs.isReadyToStartRemoteContainer()==true) {
 				// --- Start the remote container -------------------
 				System.out.println("Starting remote container ... ");
@@ -123,7 +123,7 @@ public class JadeRemoteStartAgent extends Agent {
 		public void action() {
 			System.out.println("Re-Prepare for remote container start ... ");
 			// --- Initiate the starter -----------------------------
-			JadeRemoteStart jrs = new JadeRemoteStart(this.getAgent(), remoteStartConfiguration);
+			JadeRemoteStart jrs = new JadeRemoteStart(remoteStartConfiguration);
 			if (jrs.isReadyToStartRemoteContainer()==true) {
 				// --- Start the remote container -------------------
 				System.out.println("Starting remote container ... ");

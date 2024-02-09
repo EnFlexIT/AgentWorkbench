@@ -400,7 +400,7 @@ public class ServerSlaveAgent extends Agent {
 	// -----------------------------------------------------
 
 	/**
-	 * Starts a Remote-Container for given RemoteContainerConfig-Instance.
+	 * Starts a Remote-Container for a given RemoteContainerConfig-Instance.
 	 * @param remoteContainerConfig the remote container configuration
 	 */
 	private void startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {

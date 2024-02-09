@@ -8,20 +8,9 @@ import jade.core.*;
 /**
 * Protege name: SlaveRegister
 * @author ontology bean generator
-* @version 2024/02/3, 01:43:04
+* @version 2024/02/9, 15:58:57
 */
 public class SlaveRegister implements AgentAction {
-
-   /**
-* Protege name: slaveAddress
-   */
-   private PlatformAddress slaveAddress;
-   public void setSlaveAddress(PlatformAddress value) { 
-    this.slaveAddress=value;
-   }
-   public PlatformAddress getSlaveAddress() {
-     return this.slaveAddress;
-   }
 
    /**
 * Protege name: slaveOS
@@ -35,14 +24,14 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
-* Protege name: slaveVersion
+* Protege name: slaveAddress
    */
-   private Version slaveVersion;
-   public void setSlaveVersion(Version value) { 
-    this.slaveVersion=value;
+   private PlatformAddress slaveAddress;
+   public void setSlaveAddress(PlatformAddress value) { 
+    this.slaveAddress=value;
    }
-   public Version getSlaveVersion() {
-     return this.slaveVersion;
+   public PlatformAddress getSlaveAddress() {
+     return this.slaveAddress;
    }
 
    /**
@@ -65,6 +54,17 @@ public class SlaveRegister implements AgentAction {
    }
    public PlatformTime getSlaveTime() {
      return this.slaveTime;
+   }
+
+   /**
+* Protege name: slaveVersion
+   */
+   private Version slaveVersion;
+   public void setSlaveVersion(Version value) { 
+    this.slaveVersion=value;
+   }
+   public Version getSlaveVersion() {
+     return this.slaveVersion;
    }
 
 }

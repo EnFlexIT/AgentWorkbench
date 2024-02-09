@@ -1,12 +1,43 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.core.jade;
 
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -18,10 +49,12 @@ import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
+import agentgui.core.jade.PlatformStateInformation.PlatformState;
+import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.network.NetworkAddresses;
+import agentgui.core.network.PortChecker;
 import agentgui.core.plugin.PlugInsLoaded;
 import agentgui.core.project.Project;
 import agentgui.core.utillity.UtilityAgent;
@@ -29,6 +62,12 @@ import agentgui.core.utillity.UtilityAgent.UtilityAgentJob;
 import agentgui.logging.DebugService;
 import agentgui.simulationService.LoadService;
 import agentgui.simulationService.SimulationService;
+import agentgui.simulationService.distribution.HTTPServer;
+import agentgui.simulationService.distribution.HTTPServer.ContextHandler;
+import agentgui.simulationService.distribution.HTTPServer.FileContextHandler;
+import agentgui.simulationService.distribution.HTTPServer.Request;
+import agentgui.simulationService.distribution.HTTPServer.Response;
+import agentgui.simulationService.distribution.HTTPServer.VirtualHost;
 import agentgui.simulationService.load.LoadMeasureThread;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
 import jade.core.AID;
@@ -86,6 +125,8 @@ public class Platform {
 		}
 	}
 	
+	private PlatformStateInformation stateInformation;;
+
 	private Hashtable<SystemAgent , String> systemAgentsClasses;
 	
 	private NetworkAddresses networkAddresses;
@@ -94,14 +135,54 @@ public class Platform {
 	private final String mainContainerName = jade.core.AgentContainer.MAIN_CONTAINER_NAME;
 	private ArrayList<AgentContainer> agentContainerList;
 	
-	private Project fileMangerProject;
+	private HTTPServer httpServer;
 	
 	/**
 	 * Constructor of this class.
 	 */
 	public Platform() {
-
+		this.setPlatformState(PlatformState.Standby);
 	}	
+	
+	/**
+	 * Returns the PlatformStateInformation.
+	 * @return the state information
+	 */
+	public PlatformStateInformation getPlatformStateInformation() {
+		if (stateInformation==null) {
+			stateInformation = new PlatformStateInformation();
+		}
+		return stateInformation;
+	}
+	/**
+	 * Sets the current platform state.
+	 * @param newStatePlatformState the new platform state
+	 */
+	public void setPlatformState(PlatformState newStatePlatformState) {
+		this.getPlatformStateInformation().setPlatformState(newStatePlatformState);
+	}
+	/**
+	 * Returns the current platform state.
+	 * @return the platform state
+	 */
+	public PlatformState getPlatformState() {
+		return this.getPlatformStateInformation().getPlatformState();
+	}
+	/**
+	 * Adds the specified property change listener.
+	 * @param listener the listener
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.getPlatformStateInformation().addPropertyChangeListener(listener);
+	}
+	/**
+	 * Removes the specified property change listener.
+	 * @param listener the listener
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.getPlatformStateInformation().removePropertyChangeListener(listener);
+	}
+	
 	
 	/**
 	 * Returns the currently available network addresses / IP's.
@@ -182,9 +263,9 @@ public class Platform {
 	 */
 	private boolean doStart(boolean showRMA, Profile containerProfile) {
 		
-		boolean startSucceed = false;		
+		boolean startSucceeded = false;		
 		if (this.isMainContainerRunning()==true) {
-			startSucceed = true;
+			startSucceeded = true;
 			
 		} else {
 			
@@ -197,16 +278,23 @@ public class Platform {
 				// --------------------------------------------------
 				this.delayHeadlessServerStartByCheckingMasterURL();
 				// --- Notify plugins for agent Start --------------- 
+				this.setPlatformState(PlatformState.InformPlugins);
 				this.notifyPluginsForStartMAS();
 				// --- Check for valid plugin preconditions --------- 
 				if (this.hasValidPreconditionsInPlugins()==false) {
 					this.resetLocalRuntimeVariables();
 					return false;
 				}
+				// --- Check for a project resource distribution ---- 
+				if (this.isRequiredProjectResourcesDistribution()==true) {
+					this.setPlatformState(PlatformState.PreparingProjectResources);
+					this.doPreparationForProjectResourcesDistribution();
+				}
 				// --- Notify about JADE start ----------------------
 				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.JADE_START));
 				
 				// --- Start Platform -------------------------------
+				this.setPlatformState(PlatformState.StartingJADE);
 				Runtime jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
@@ -218,11 +306,14 @@ public class Platform {
 						Platform.this.jadeMainContainer = null;
 						Platform.this.getAgentContainerList().clear();
 						Application.setJadeStatusColor(JadeStatusColor.Red);
+						Platform.this.setPlatformState(PlatformState.Standby);
 						if (Application.getMainWindow()!=null){
 							Application.getMainWindow().setSimulationReady2Start();
 						}
+						// --- Stop download server -----------------
+						Platform.this.stopDownloadServer();
 						// --- Remove directory for file transfer ---
-						Platform.this.removeFileTransferDirectories();
+						Platform.this.removeResourceDistributionDirectories();
 						// --- Notify plugins for termination -------
 						Platform.this.notifyPluginsForTerminatedMAS();
 						// --- Reset known network addresses --------
@@ -243,7 +334,7 @@ public class Platform {
 				// --- Start MainContainer --------------------------
 				this.jadeMainContainer = jadeRuntime.createMainContainer(profile);
 				if (this.jadeMainContainer!=null) {
-					startSucceed = true;
+					startSucceeded = true;
 				}
 				
 			} catch (Exception ex) {
@@ -253,11 +344,11 @@ public class Platform {
 		}
 
 		// --- Start the Application Background-Agents ---------------
-		if (startSucceed==true) {
+		if (startSucceeded==true) {
 			if (this.startBackgroundAgents(showRMA)==false) return false;
 			Application.setJadeStatusColor(JadeStatusColor.Green);
 		}
-		return startSucceed;
+		return startSucceeded;
 	}
 	
 	
@@ -315,6 +406,7 @@ public class Platform {
 	 */
 	private void stopJade() {
 		
+		this.setPlatformState(PlatformState.TerminatingMAS);
 		if (this.isMainContainerRunning()==true) {
 			// --- How to stop JADE? ----------------------
 			boolean useClassicWay = false;
@@ -392,6 +484,7 @@ public class Platform {
 		this.jadeMainContainer = null;
 		
 		Application.setJadeStatusColor(JadeStatusColor.Red);
+		this.setPlatformState(PlatformState.Standby);
 		if (Application.getMainWindow()!=null) {
 			Application.getMainWindow().setSimulationReady2Start();
 		}
@@ -418,15 +511,22 @@ public class Platform {
 		String applicationTitle = Application.getGlobalInfo().getApplicationTitle();
 		String executionModeDescription = Application.getGlobalInfo().getExecutionModeDescription();
 		
+		this.setPlatformState(PlatformState.StartBackgroundSystemAgents);
+		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			// --- Start "server.client" agent ----------------------
 			if (this.isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentApplication.toString())==false) {
 				this.startSystemAgent(SystemAgent.BackgroundSystemAgentApplication, null);
 			}
-			
-			// --- Start "file.manager" agent -----------------------
-			this.startFileMangerAgent();
+
+			// --- In case a resource distribution is required ------
+			if (this.isRequiredProjectResourcesDistribution()==true) {
+				// --- Start a download server ----------------------
+				this.startDownloadServer();
+				// --- Start "file.manager" agent -------------------
+				//this.startFileMangerAgent();
+			}
 			
 			// --- Start RMA ('Remote Monitoring Agent') -----------
 			if (showRMA==true) {
@@ -439,7 +539,7 @@ public class Platform {
 			// --- This is a Master-Server-Platform -----------------
 			// ------------------------------------------------------
 			// --- Start 'server.master' agent ----------------------		
-			if (isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentServerMaster.toString())==false) {
+			if (this.isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentServerMaster.toString())==false) {
 				this.startSystemAgent(SystemAgent.BackgroundSystemAgentServerMaster, null);	
 			}
 			break;
@@ -481,7 +581,7 @@ public class Platform {
 				
 			} 
 			// --- Start 'server.slave' agent -----------------------
-			if (isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentServerSlave.toString())==false) {
+			if (this.isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentServerSlave.toString())==false) {
 				startSystemAgent(SystemAgent.BackgroundSystemAgentServerSlave, null);
 			}
 			break;
@@ -502,11 +602,18 @@ public class Platform {
 			
 			switch (Application.getGlobalInfo().getDeviceServiceExecutionMode()) {
 			case SETUP:
+				// --- Start "server.client" agent ----------------------
 				if (isAgentRunningInMainContainer(SystemAgent.BackgroundSystemAgentApplication.toString())==false) {
-					startSystemAgent(SystemAgent.BackgroundSystemAgentApplication, null);
+					this.startSystemAgent(SystemAgent.BackgroundSystemAgentApplication, null);
 				}
-				// --- Start "file.manager" agent -----------------------
-				this.startFileMangerAgent();
+				
+				// --- In case a resource distribution is required ------
+				if (this.isRequiredProjectResourcesDistribution()==true) {
+					// --- Start a download server ----------------------
+					this.startDownloadServer();
+					// --- Start "file.manager" agent -------------------
+					//this.startFileMangerAgent();
+				}
 				break;
 
 			case AGENT:
@@ -698,15 +805,6 @@ public class Platform {
 			// ------------------------------------------------------
 			// jadeContainerProfile.setParameter("jade_core_AgentContainerImpl_verboseshutdown", new Boolean(true).toString());
 			// ------------------------------------------------------
-			
-			// --- If the current project has external resources ---- 
-			boolean hasBundelJars = currProject.getProjectBundleLoader().getBundleJarsListModel().size()>0;
-			boolean hasRegularJars = currProject.getProjectBundleLoader().getRegularJarsListModel().size()>0;
-			boolean ideExecuted = Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE;
-			if (hasBundelJars==true || hasRegularJars==true || ideExecuted==true) {
-				// --- Set marker to start the ProjectFileManagerAgent ---------
-				this.fileMangerProject = currProject;
-			}
 			
 		}		
 		return jadeContainerProfile;
@@ -972,17 +1070,191 @@ public class Platform {
 		return systemAgentsClasses;
 	}
 	
+	/**
+	 * Checks if project resources distribution is required.
+	 * @return true, if is required project resources distribution
+	 */
+	private boolean isRequiredProjectResourcesDistribution() {
+		
+		// --- Running as APPLICATION ? -----------------------------
+		boolean isApplication = Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION;
+		if (isApplication==false) return false;
+
+		// --- Do we have a project? --------------------------------
+		Project currProject = Application.getProjectFocused();
+		if (currProject==null) return false;
+		
+		// --- Is enabled load balancing? ---------------------------
+		boolean isDoStaticLoadBalancing = currProject.getDistributionSetup().isDoStaticLoadBalancing();
+		boolean isDoDynamicLoadBalancing = currProject.getDistributionSetup().isDoDynamicLoadBalancing();
+		boolean isDoLoadBalancing = isDoStaticLoadBalancing || isDoDynamicLoadBalancing;
+		return isDoLoadBalancing;
+	}
+	
+	/**
+	 * Does the required project resources distribution.
+	 */
+	private boolean doPreparationForProjectResourcesDistribution() {
+		
+		if (this.isRequiredProjectResourcesDistribution()==false) return false;
+		
+		// --- Do we have a project? --------------------------------
+		String workingDirPath = Application.getGlobalInfo().getResourceDistributionServerPath(true);
+		Project currProject = Application.getProjectFocused();
+
+		String messageSuccess = "[" + currProject.getProjectName() + "] Project resources for remote container execution successfully prepared!";;
+		String messageFailure = "[" + currProject.getProjectName() + "] Provisioning of project resources for remote container execution failed!";
+
+		System.out.println("[" + currProject.getProjectName() + "] Start preparing project resources into directory '" + workingDirPath + "' ...");
+		File projectFile = currProject.exportProjectRessourcesToDestinationDirectory(workingDirPath, messageSuccess, messageFailure);
+		if (projectFile.exists()==false) {
+			return false;
+		}
+		return true;
+	}
 	
 	/**
 	 * Starts the file manger agent that provides the required project resources for a 
 	 * distributed execution in different container (requires a running background system).
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated 
 	private void startFileMangerAgent() {
 		
-		if (this.fileMangerProject==null) return;
+		if (this.isRequiredProjectResourcesDistribution()==false) return;
 		if (this.isAgentRunningInMainContainer(SystemAgent.ProjectFileManager.toString())==true) return;
 		// --- Start the project file manager agent -----------------
 		this.startSystemAgent(SystemAgent.ProjectFileManager, null);
+	}
+	
+	/**
+	 * Starts a download server to enable server.slave instances to download the required resources.
+	 */
+	private boolean startDownloadServer() {
+		
+		this.setPlatformState(PlatformState.StartingHTTP);
+		
+		boolean success = false;
+		if (this.httpServer==null) {
+			// --- Start an HTTPServer to enable server.slave downloads of resources ----
+			int httpPort = new PortChecker(8081).getFreePort();
+			File workingDirPath = new File(Application.getGlobalInfo().getResourceDistributionServerPath(true));
+            
+			try {
+            	this.httpServer = new HTTPServer(httpPort);
+
+            	VirtualHost host = httpServer.getVirtualHost(null); // default host
+            	host.setAllowGeneratedIndex(true); // with directory index pages
+				host.addContext("/", new FileContextHandler(workingDirPath));
+				host.addContext("/api/time", new ContextHandler() {
+					public int serve(Request req, Response resp) throws IOException {
+						long now = System.currentTimeMillis();
+						resp.getHeaders().add("Content-Type", "text/plain");
+						resp.send(200, String.format("%tF %<tT", now));
+						return 0;
+					}
+				});
+				this.httpServer.start();
+				success = true;
+				
+            } catch (IOException startEx) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while starting Download Server for distributed simulations.");
+				startEx.printStackTrace();
+				try {
+					this.httpServer.stop();
+				} catch (Exception stopEx) {
+					stopEx.printStackTrace();
+				} finally {
+					this.httpServer = null;
+				}
+			}
+            System.out.println("HTTPServer is listening on port " + httpPort);
+			
+		} else {
+			// --- HTTPServer is already running ----------------------------------------
+			System.err.println("[" + this.getClass().getSimpleName() + "] The Download Server is already working.");
+			success = true;
+		}
+		return success;
+	}
+	/**
+	 * Returns the URL of the download server.
+	 * @return the download server URL
+	 */
+	public String getDownloadServerURL() {
+		
+		if (this.httpServer==null || this.jadeMainContainer==null) return null;
+		
+		JadeUrlConfiguration jadeURL = new JadeUrlConfiguration(this.jadeMainContainer.getPlatformName());
+		if (jadeURL.hasErrors()==true) return null;
+		
+		int port = this.httpServer.getPort();
+		return "http://" + jadeURL.getHostIP() + (port==80 ? "" : ":" + port);
+	}
+	/**
+	 * Returns the list of files currently hosted by the HTTP server.
+	 *
+	 * @param addServerURLPrefix the indicator to add the server URL as prefix
+	 * @return the list of files that can be downloaded from the server
+	 */
+	public List<String> getDownloadServerFileList(boolean addServerURLPrefix) {
+		
+		if (this.httpServer==null) return null;
+		
+		File workingDir = new File(Application.getGlobalInfo().getResourceDistributionServerPath(false));
+		if (workingDir.exists()==false) return null;
+		
+		List<String> fileList = new ArrayList<>();
+		String filePrefix = addServerURLPrefix==true ? this.getDownloadServerURL() : "";
+
+		this.addToFileList(workingDir, fileList, filePrefix);
+		
+		return fileList;
+	}
+	/**
+	 * Adds the the files that can be found in the specified source directroy to the specified list.
+	 *
+	 * @param sourceDirectory the source directory
+	 * @param fileList the file list to fill
+	 * @param prefix the prefix to use
+	 */
+	private void addToFileList(File sourceDirectory, List<String> fileList, String prefix) {
+		
+		if (sourceDirectory==null || sourceDirectory.isDirectory()==false) return;
+		
+		for (File file : sourceDirectory.listFiles()) {
+			if (file.isDirectory()) {
+				this.addToFileList(sourceDirectory, fileList, prefix);
+			} else {
+				Path relativePath = sourceDirectory.toPath().relativize(file.toPath());
+				fileList.add(prefix + "/" + relativePath.toString().replace("\\", "/"));
+			}
+		}
+	}
+	/**
+	 * Stops the download server.
+	 * @return true, if successful
+	 */
+	private boolean stopDownloadServer() {
+		
+		boolean success = true;
+		if (this.httpServer!=null) {
+			// --- Stop the server ------------------------
+			this.httpServer.stop();
+			this.httpServer = null;
+			
+			// --- Delete 'working' directory -------------
+			try {
+				String workingDirPath = Application.getGlobalInfo().getResourceDistributionServerPath(false);
+				if (new File(workingDirPath).exists()==true) {
+					RecursiveFolderDeleter killer = new RecursiveFolderDeleter();
+					killer.deleteFolder(workingDirPath);
+				}
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
+		}
+		return success;
 	}
 	
 	/**
@@ -1359,11 +1631,11 @@ public class Platform {
 	/**
 	 * Removes the file transfer directories that are only used if JADE is running.
 	 */
-	private void removeFileTransferDirectories() {
+	private void removeResourceDistributionDirectories() {
 		
 		// --- Delete 'server' directory ------------------
 		try {
-			String serverPath = Application.getGlobalInfo().getFileManagerServerPath(false);
+			String serverPath = Application.getGlobalInfo().getResourceDistributionServerPath(false);
 			if (new File(serverPath).exists()==true) {
 				RecursiveFolderDeleter killer = new RecursiveFolderDeleter();
 				killer.deleteFolder(serverPath);
@@ -1374,7 +1646,7 @@ public class Platform {
 
 		// --- Delete 'download' directory ----------------
 		try {
-			String downloadPath = Application.getGlobalInfo().getFileManagerDownloadPath(false);
+			String downloadPath = Application.getGlobalInfo().getResourceDistributionDownloadPath(false);
 			if (new File(downloadPath).exists()==true) {
 				RecursiveFolderDeleter killer = new RecursiveFolderDeleter();
 				killer.deleteFolder(downloadPath);

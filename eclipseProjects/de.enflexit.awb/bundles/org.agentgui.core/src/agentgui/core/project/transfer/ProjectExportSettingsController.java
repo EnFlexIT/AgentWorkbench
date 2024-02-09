@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import agentgui.core.application.Application;
 import agentgui.core.project.Project;
@@ -122,51 +123,51 @@ public class ProjectExportSettingsController {
 		return projectExportController;
 	}
 
+	
 	/**
 	 * Gets the file to setup hash.
 	 * @return the file to setup hash
 	 */
 	private HashMap<File, String> getFileToSetupHash() {
 		if (fileToSetupHash==null) {
-			fileToSetupHash = new HashMap<>();
 			this.evaluateSetupFiles();
 		}
 		return fileToSetupHash;
 	}
-	
 	/**
 	 * Gets the setup to files hash.
 	 * @return the setup to files hash
 	 */
 	private HashMap<String, ArrayList<File>> getSetupToFilesHash() {
 		if (setupToFilesHash==null) {
-			setupToFilesHash = new HashMap<>();
 			this.evaluateSetupFiles();
 		}
 		return setupToFilesHash;
 	}
-	
-	
 	/**
 	 * Evaluates the available setup files.
 	 */
 	private void evaluateSetupFiles() {
 		
-		this.getFileToSetupHash().clear();
-		this.getSetupToFilesHash().clear();
-
+		boolean isDebug = false;
+		fileToSetupHash = new HashMap<>();
+		setupToFilesHash = new HashMap<>();
+		
 		// --- Check all setups -------------------------------------
 		List<String> simSetups = new ArrayList<>(this.getProject().getSimulationSetups().keySet());
 		for (int i = 0; i < simSetups.size(); i++) {
 			
 			String setupName = simSetups.get(i);
-
+			
 			// --- Get all files related to the setup ---------------
-			List<File> setupFiles = this.getProject().getSimulationSetups().getSetupFiles(setupName);
+			List<File> setupFiles = this.getProject().getSimulationSetups().getSetupFiles(setupName).stream().distinct().collect(Collectors.toList());
+			if (isDebug) System.out.println((i>0 ? "\n" : "") + "[" + this.getClass().getSimpleName() + "] Files for Setup '" + setupName + "' (" + setupFiles.size() + " files found):");
 			
 			ArrayList<File> setupFileListFound = new ArrayList<>();
 			for (int j = 0; j < setupFiles.size(); j++) {
 				File setupFile = setupFiles.get(j);
+				if (isDebug) System.out.println("[" + this.getClass().getSimpleName() + "] " + setupFile.toString());
+				
 				if (setupFile.exists()==true) {
 					// --- Remind setup to file and vice versa ------
 					setupFileListFound.add(setupFile);

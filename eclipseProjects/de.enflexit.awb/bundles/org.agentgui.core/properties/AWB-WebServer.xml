@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <jettyConfiguration>
     <serverName>AWB-WebServer</serverName>
-    <startOn>ManualStart</startOn>
+    <startOn>AwbStart</startOn>
     <mutableHandlerCollection>true</mutableHandlerCollection>
     <jettySettings>
         <entry>
@@ -123,7 +123,7 @@
                 <key>_ServerWideSecurityConfiguration</key>
                 <value>
                     <contextPath>_ServerWideSecurityConfiguration</contextPath>
-                    <securityHandlerName>SingleUserSecurityHandler</securityHandlerName>
+                    <securityHandlerName>JwtSingleUserSecurityHandler</securityHandlerName>
                     <securityHandlerActivated>true</securityHandlerActivated>
                     <securityHandlerConfiguration>
                         <entry>
@@ -132,7 +132,7 @@
                         </entry>
                         <entry>
                             <key>User Password</key>
-                            <value>test</value>
+                            <value>admin</value>
                         </entry>
                     </securityHandlerConfiguration>
                 </value>

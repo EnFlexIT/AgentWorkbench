@@ -124,7 +124,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 								  JadeRemoteStart.jvmMemo256MB, JadeRemoteStart.jvmMemo512MB,
 								  JadeRemoteStart.jvmMemo1GB, JadeRemoteStart.jvmMemo2GB,
 								  JadeRemoteStart.jvmMemo4GB, JadeRemoteStart.jvmMemo8GB,
-								  JadeRemoteStart.jvmMemo16GB,JadeRemoteStart.jvmMemo32GB};
+								  JadeRemoteStart.jvmMemo16GB,JadeRemoteStart.jvmMemo32GB,
+								  JadeRemoteStart.jvmMemo48GB, JadeRemoteStart.jvmMemo64GB};
 	private DefaultComboBoxModel<String> comboModelInitial = new DefaultComboBoxModel<String>(comboData);
 	private DefaultComboBoxModel<String> comboModelMaximal = new DefaultComboBoxModel<String>(comboData);
 	private DefaultComboBoxModel<TimeSelection> comboModelRecordingInterval;

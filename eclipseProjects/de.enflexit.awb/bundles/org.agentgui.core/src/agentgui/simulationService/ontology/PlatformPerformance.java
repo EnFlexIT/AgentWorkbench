@@ -8,31 +8,9 @@ import jade.core.*;
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2024/02/3, 01:43:04
+* @version 2024/02/9, 15:58:57
 */
 public class PlatformPerformance implements Concept {
-
-   /**
-* Protege name: cpu_speedMhz
-   */
-   private int cpu_speedMhz;
-   public void setCpu_speedMhz(int value) { 
-    this.cpu_speedMhz=value;
-   }
-   public int getCpu_speedMhz() {
-     return this.cpu_speedMhz;
-   }
-
-   /**
-* Protege name: cpu_numberOfLogicalCores
-   */
-   private int cpu_numberOfLogicalCores;
-   public void setCpu_numberOfLogicalCores(int value) { 
-    this.cpu_numberOfLogicalCores=value;
-   }
-   public int getCpu_numberOfLogicalCores() {
-     return this.cpu_numberOfLogicalCores;
-   }
 
    /**
 * Protege name: cpu_numberOfPhysicalCores
@@ -43,6 +21,17 @@ public class PlatformPerformance implements Concept {
    }
    public int getCpu_numberOfPhysicalCores() {
      return this.cpu_numberOfPhysicalCores;
+   }
+
+   /**
+* Protege name: cpu_speedMhz
+   */
+   private int cpu_speedMhz;
+   public void setCpu_speedMhz(int value) { 
+    this.cpu_speedMhz=value;
+   }
+   public int getCpu_speedMhz() {
+     return this.cpu_speedMhz;
    }
 
    /**
@@ -65,6 +54,17 @@ public class PlatformPerformance implements Concept {
    }
    public String getCpu_processorName() {
      return this.cpu_processorName;
+   }
+
+   /**
+* Protege name: cpu_numberOfLogicalCores
+   */
+   private int cpu_numberOfLogicalCores;
+   public void setCpu_numberOfLogicalCores(int value) { 
+    this.cpu_numberOfLogicalCores=value;
+   }
+   public int getCpu_numberOfLogicalCores() {
+     return this.cpu_numberOfLogicalCores;
    }
 
 }

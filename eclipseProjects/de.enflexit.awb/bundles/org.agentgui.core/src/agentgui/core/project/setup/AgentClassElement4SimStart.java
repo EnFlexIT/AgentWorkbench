@@ -43,7 +43,7 @@ import jade.core.Agent;
 
 /**
  * Provides a container instance in order to configure an agents start
- * configuration. This class is used in the simulation setup of <b>Agent.GUI</b>
+ * configuration. This class is used in the simulation setup of <b>Agent.Workbench</b>
  * 
  * @see agentgui.core.project.setup.SimulationSetup
  * 

@@ -837,17 +837,16 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return localProjects;		
 	}	
 	
+	// ---- Methods to get local path information for the resource distribution ---------
 	/**
-	 * Defines the local root directory that is used by the file.manager to provide file content. 
-	 * In this folder sources will be stored, which can be loaded to remote containers in order to 
-	 * enable a distributed execution of a MAS. If the folder doesn't exists, it will be created.
+	 * Returns the absolute base path for the resource distribution server.
 	 *
-	 * @param forceDirectoryCreation set true, if the directory should be created 
-	 * @return path to the folder, where possible downloads will be stored ('/AgentGUI/fmServer[PID]/')
+	 * @param forceDirectoryCreation the indicator to force the directory creation
+	 * @return the server path for the resource distribution
 	 */
-	public String getFileManagerServerPath(boolean forceDirectoryCreation) {
-		String pathServer = "fmServer_" + this.getProcessID() + File.separator;
-		String returnPath = this.getFilePathAbsolute(pathServer);
+	public String getResourceDistributionServerPath(boolean forceDirectoryCreation) {
+		String subPathServer = "resServer" + File.separator;
+		String returnPath = this.getFilePathAbsolute(subPathServer);
 		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
@@ -858,8 +857,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @param forceDirectoryCreation set true, if the directory should be created
 	 * @return path to the folder, where downloads will be saved ('/AgentGUI/fmDownload[PID]/')
 	 */
-	public String getFileManagerDownloadPath(boolean forceDirectoryCreation) {
-		String pathDownload = "fmDownload_" + this.getProcessID() + File.separator;
+	public String getResourceDistributionDownloadPath(boolean forceDirectoryCreation) {
+		String pathDownload = "resDownload" + File.separator;
 		String returnPath = this.getFilePathAbsolute(pathDownload);
 		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
 		return returnPath;
@@ -1430,7 +1429,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		if (SystemEnvironmentHelper.isWindowsOperatingSystem()==true) {
 			// --- Nothing to do here yet -----------------
 		} else if (SystemEnvironmentHelper.isLinuxOperatingSystem()==true) {
-			String linuxLoggingBasePath = "/var/log/agentgui";
+			String linuxLoggingBasePath = "/var/log/awb";
 			// --- Check write permission -----------------
 			if (new File(linuxLoggingBasePath).canWrite()==true) {
 				defaultLoggingBasePath = linuxLoggingBasePath;
@@ -1637,7 +1636,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return filePropMtpProtocol;
 	}
 	
-
 	// ---- Methods for the reminder of the last selected folder ----
 	/**
 	 * This method can be used in order to remind the last folder 

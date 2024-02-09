@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -480,7 +481,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 				fileList.addAll(envFileList);
 			}
 		}
-		return fileList;
+		return fileList.stream().distinct().collect(Collectors.toList());
 	}
 	
 }

@@ -55,7 +55,6 @@ import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
 import agentgui.simulationService.ontology.AWB_DistributionOntology;
-import agentgui.simulationService.ontology.Version;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
 import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
@@ -66,6 +65,7 @@ import agentgui.simulationService.ontology.PlatformAddress;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import agentgui.simulationService.ontology.Version;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
 import jade.content.lang.sl.SLCodec;
@@ -81,7 +81,6 @@ import jade.core.IMTPException;
 import jade.core.Location;
 import jade.core.MainContainer;
 import jade.core.Node;
-import jade.core.NotFoundException;
 import jade.core.Profile;
 import jade.core.ProfileException;
 import jade.core.Service;
@@ -93,7 +92,6 @@ import jade.core.management.AgentManagementSlice;
 import jade.core.messaging.MessagingSlice;
 import jade.core.mobility.AgentMobilityHelper;
 import jade.lang.acl.ACLMessage;
-import jade.mtp.MTPDescriptor;
 import jade.util.Logger;
 import jade.util.ObjectManager;
 import jade.util.leap.ArrayList;
@@ -1484,40 +1482,23 @@ public class LoadService extends BaseService {
 			}
 		}
 		
-		// --- Get the AID of the file manager agent ----------------
-		AID fileManagerAID = null;
-		try {
-			AID[] agentAIDs = myMainContainer.agentNames();
-			for (int i = 0; i < agentAIDs.length; i++) {
-				if (agentAIDs[i].getLocalName().equals(SystemAgent.ProjectFileManager.toString())==true) {
-					fileManagerAID = agentAIDs[i]; 
-					break;
-				}
-			} 
-			// --- Add the know MTP addresses -----------------------
-			if (fileManagerAID!=null) {
-				ContainerID containerID = myMainContainer.getContainerID(fileManagerAID);
-				jade.util.leap.List mtps = myMainContainer.containerMTPs(containerID);
-				for (int i = 0; i < mtps.size(); i++) {
-					MTPDescriptor mtpDescriptors = (MTPDescriptor) mtps.get(i);
-					for (int j = 0; j < mtpDescriptors.getAddresses().length; j++) {
-						fileManagerAID.addAddresses(mtpDescriptors.getAddresses()[j]);
-					}
-				}
+		// --- Get the download server URL and its resources --------
+		ArrayList httpDownloadFiles = null;
+		List<String> downloadFiles = Application.getJadePlatform().getDownloadServerFileList(true);
+		if (downloadFiles!=null && downloadFiles.size()>0) {
+			httpDownloadFiles = new ArrayList();
+			for (String downloadFile : downloadFiles) {
+				httpDownloadFiles.add(downloadFile);
 			}
-			
-		} catch (NotFoundException nfEx) {
-			nfEx.printStackTrace();
 		}
-		
 		
 		// --- For the Jade-Logger with love ;-) --------------------
 		if (myLogger.isLoggable(Logger.FINE)) {
 			myLogger.log(Logger.FINE, "-- Infos to start the remote container ------------");
 			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
 			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
-			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
-			myLogger.log(Logger.FINE, "=> ProjectFileManagerAgent: " + fileManagerAID.toString());
+			myLogger.log(Logger.FINE, "=> IP + Port:        " + myIP +  " - Port: " + myPort);
+			myLogger.log(Logger.FINE, "=> File Download:    " + (downloadFiles==null ? " - " : downloadFiles.toString()));
 		}
 		
 		// ----------------------------------------------------------
@@ -1525,7 +1506,7 @@ public class LoadService extends BaseService {
 		// ----------------------------------------------------------
 		RemoteContainerConfig remConf = new RemoteContainerConfig();
 		remConf.setJadeShowGUI(true);
-		remConf.setFileManagerAgent(fileManagerAID);
+		remConf.setHttpDownloadFiles(httpDownloadFiles);
 		remConf.setJadeIsRemoteContainer(true);
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeHost(myIP);
