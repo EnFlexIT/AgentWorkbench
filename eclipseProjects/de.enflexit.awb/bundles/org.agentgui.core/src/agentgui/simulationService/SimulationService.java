@@ -463,6 +463,8 @@ public class SimulationService extends BaseService {
 		 */
 		public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
 
+			if (environmentInstanceNextParts==null) return;
+			
 			synchronized (environmentInstanceNextPartsLocal) {
 				// --- Put single changes into the local store until ---- 
 				// --- the expected number of answers is not reached ----

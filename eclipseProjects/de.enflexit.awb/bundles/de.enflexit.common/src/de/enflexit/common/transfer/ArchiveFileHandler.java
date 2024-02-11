@@ -122,7 +122,6 @@ public class ArchiveFileHandler {
 			return false;
 		}
 	}
-
 	/**
 	 * Decompresses an archive file to the specified target folder.
 	 *
@@ -132,6 +131,18 @@ public class ArchiveFileHandler {
 	 * @return true, if successful
 	 */
 	public boolean decompressFolder(File archiveFile, File targetFolder, ArchiveFormat archiveFormat) {
+		return this.decompressFolder(archiveFile, targetFolder, archiveFormat, null);
+	}
+	/**
+	 * Decompresses an archive file to the specified target folder.
+	 *
+	 * @param archiveFile the archive file
+	 * @param targetFolder the target folder
+	 * @param archiveFormat the archive format
+	 * @param renameBaseFolderTo [optional] the name to which the original folder should be renamed to; can be <code>null</code>
+	 * @return true, if successful
+	 */
+	public boolean decompressFolder(File archiveFile, File targetFolder, ArchiveFormat archiveFormat, String renameBaseFolderTo) {
 
 		this.archiveFormat = archiveFormat;
 		boolean success;
@@ -142,20 +153,33 @@ public class ArchiveFileHandler {
 			// --- Get an input stream for the current archive format
 			inputStream = this.createArchiveInputStream(archiveFile);
 
-			// --- Handle the archive entries -----------
+			// --- Handle the archive entries -----------------------
+			String baseDirName = null;
+			boolean isFirstEntry = true;
+			
 			ArchiveEntry entry;
+			while ((entry = inputStream.getNextEntry())!=null) {
 
-			while ((entry = inputStream.getNextEntry()) != null) {
-				Path targetPath = targetFolder.toPath().resolve(entry.getName());
-
+				// --- Check if we work on the first entry ----------
+				String entryName = entry.getName();
+				if (isFirstEntry==true) {
+					baseDirName = entryName;
+					isFirstEntry = false;
+				}
+				
+				// --- Rename entry ---------------------------------
+				if (renameBaseFolderTo!=null && baseDirName!=null) {
+					entryName = entryName.replace(baseDirName, renameBaseFolderTo + "/");
+				}
+				
+				// --- Define destination path ----------------------
+				Path targetPath = targetFolder.toPath().resolve(entryName);
 				if (entry.isDirectory() == true) {
-
-					// --- Folders ---------------
+					// --- Folders ----------------------------------
 					Files.createDirectories(targetPath);
 
 				} else {
-
-					// --- Files ---------------
+					// --- Files ------------------------------------
 					int count;
 					byte data[] = new byte[this.bufferSize];
 
@@ -165,17 +189,13 @@ public class ArchiveFileHandler {
 					while ((count = inputStream.read(data, 0, this.bufferSize)) != -1) {
 						bufferedOutputStream.write(data, 0, count);
 					}
-
 					bufferedOutputStream.close();
 
 				}
-
-			}
-
+			} // end while
 			success = true;
 
 		} catch (IOException e) {
-
 			System.err.println("Error extracting archive file " + archiveFile.getName() + " to " + targetFolder);
 			e.printStackTrace();
 			success = false;

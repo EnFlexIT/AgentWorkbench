@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.project.Project;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
@@ -166,7 +167,7 @@ public class JadeRemoteStart {
 			System.out.println(this.getClass().getSimpleName() + ": Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
 			// --- Load project XML and check required features -----
 			final Project remoteProject = Project.loadProjectXml(this.rcProjectDirectory);
-			if (remoteProject.requiresFeatureInstallation()==true) {
+			if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct && remoteProject.requiresFeatureInstallation()==true) {
 				// --- Remind the start configuration ---------------
 				String configFilePath = JadeRemoteStartConfiguration.getDefaultConfigurationFile().getAbsolutePath();
 				boolean isSavedConfig = JadeRemoteStartConfiguration.saveRemoteStartConfiguration(new JadeRemoteStartConfiguration(this.rcProjectDirectory, this.reCoCo));
@@ -174,7 +175,7 @@ public class JadeRemoteStart {
 					System.out.println(this.getClass().getSimpleName() + ": Saved remote start configuration to " + configFilePath);
 				}
 				// --- Install the required features ---------------- 
-				System.out.println(this.getClass().getSimpleName() + ": Install required project features ...");
+				System.out.println(this.getClass().getSimpleName() + ": Installing required project features ...");
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
@@ -501,7 +502,7 @@ public class JadeRemoteStart {
 			
 			// --- Extract project file into download directory -----
 			ArchiveFileHandler extractor = new ArchiveFileHandler();
-			extractor.decompressFolder(fileDownload, targetProjectDirectory, ArchiveFormat.ZIP);
+			extractor.decompressFolder(fileDownload, targetProjectDirectory.getParentFile(), ArchiveFormat.ZIP, targetProjectDirectory.getName());
 			
 			// --- Remove downloaded project file -------------------
 			if (fileDownload.delete()==false) {
