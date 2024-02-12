@@ -277,24 +277,29 @@ public class Platform {
 				// --- Master-URL and maybe delay the JADE start ----
 				// --------------------------------------------------
 				this.delayHeadlessServerStartByCheckingMasterURL();
-				// --- Notify plugins for agent Start --------------- 
-				this.setPlatformState(PlatformState.InformPlugins);
-				this.notifyPluginsForStartMAS();
-				// --- Check for valid plugin preconditions --------- 
-				if (this.hasValidPreconditionsInPlugins()==false) {
-					this.resetLocalRuntimeVariables();
-					return false;
+				
+				// --- For open projects ----------------------------
+				if (Application.getProjectFocused()!=null) {
+					// --- Notify plugins for agent Start ----------- 
+					this.setPlatformState(PlatformState.InformPlugins);
+					this.notifyPluginsForStartMAS();
+					// --- Check for valid plugin preconditions ----- 
+					if (this.hasValidPreconditionsInPlugins()==false) {
+						this.resetLocalRuntimeVariables();
+						return false;
+					}
+					// --- Check for project resource distribution -- 
+					if (this.isRequiredProjectResourcesDistribution()==true) {
+						this.setPlatformState(PlatformState.PreparingProjectResources);
+						this.doPreparationForProjectResourcesDistribution();
+					}
 				}
-				// --- Check for a project resource distribution ---- 
-				if (this.isRequiredProjectResourcesDistribution()==true) {
-					this.setPlatformState(PlatformState.PreparingProjectResources);
-					this.doPreparationForProjectResourcesDistribution();
-				}
+				
 				// --- Notify about JADE start ----------------------
+				this.setPlatformState(PlatformState.StartingJADE);
 				Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.JADE_START));
 				
 				// --- Start Platform -------------------------------
-				this.setPlatformState(PlatformState.StartingJADE);
 				Runtime jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
@@ -406,8 +411,9 @@ public class Platform {
 	 */
 	private void stopJade() {
 		
-		this.setPlatformState(PlatformState.TerminatingMAS);
 		if (this.isMainContainerRunning()==true) {
+			// --- Set platform state ---------------------
+			this.setPlatformState(PlatformState.TerminatingMAS);
 			// --- How to stop JADE? ----------------------
 			boolean useClassicWay = false;
 			if (useClassicWay==true) {
@@ -1074,7 +1080,7 @@ public class Platform {
 	 * Checks if project resources distribution is required.
 	 * @return true, if is required project resources distribution
 	 */
-	private boolean isRequiredProjectResourcesDistribution() {
+	public boolean isRequiredProjectResourcesDistribution() {
 		
 		// --- Running as APPLICATION ? -----------------------------
 		boolean isApplication = Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION;

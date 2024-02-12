@@ -112,7 +112,7 @@ public class LoadExecutionAgent extends Agent {
 			// --- Do the wanted/necessary action -------------------------------------------
 			switch (startArg) {
 			case BASE_ACTION_Start:
-				LoadExecutionAgent.this.platform.setPlatformState(PlatformState.StartingMAS);
+				// --- PlatformState will be set in balancing class ! ---------
 				StaticLoadBalancingBase staticBalancing = getStartAndStaticLoadBalancingClass(myAgent);
 				if (staticBalancing!=null) {
 					myAgent.addBehaviour(staticBalancing);	
@@ -146,6 +146,7 @@ public class LoadExecutionAgent extends Agent {
 					mainWindow.setEnableSimPause(true);
 					mainWindow.setEnableSimStop(true);
 				}
+				Application.getJadePlatform().setPlatformState(PlatformState.RunningMAS);
 				myAgent.doDelete();
 				break;
 			}

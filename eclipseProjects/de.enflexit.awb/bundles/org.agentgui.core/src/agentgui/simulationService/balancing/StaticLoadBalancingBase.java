@@ -85,7 +85,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	
 	/**
 	 * This Method will be called right before the begin of the action() method and 
-	 * will start the visualisation agent in the prepared tag of <b>Agent.GUI</b>.
+	 * will start the visualization agent in the prepared tag of <b>Agent.GUI</b>.
 	 */
 	@Override
 	public void onStart() {

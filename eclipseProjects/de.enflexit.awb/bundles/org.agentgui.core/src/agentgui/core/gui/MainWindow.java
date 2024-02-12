@@ -124,7 +124,8 @@ public class MainWindow extends JFrame {
 	private JFrameSizeAndPostionController windowController;
 	
 	private MainWindowStatusBar jPanelStatusBar;
-
+	private PlatformStatusDialog platformStatusDialog;
+	
 	private JSplitPane jSplitPane4ProjectDesktop;
 	private JDesktopPane jDesktopPane4Projects;
 	private JTabbedPane4Consoles jTabbedPane4Console;
@@ -171,31 +172,34 @@ public class MainWindow extends JFrame {
 	 */
 	public MainWindow() {
 
-		// --- Set the IconImage ----------------------------------
+		// --- Set the IconImage ------------------------------------
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
 
-		// --- Set the Look and Feel of the Application -----------
+		// --- Set the Look and Feel of the Application -------------
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-		// --- Configure console and divider position -------------
+		// --- Configure console and divider position ---------------
 		double windowHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 100;
 		if (Application.getGlobalInfo().isMaximzeMainWindow()==false) {
 			windowHeight = this.getSizeRelatedToScreenSize().getHeight() - 100;
 		}
 		this.visibleDividersLocation = (int) windowHeight * 3/4; 
 	
-		// --- Create the Main-Elements of the Application --------
+		// --- Create the Main-Elements of the Application ----------
 		this.initComponents();
 
-		// --- Set the JTabbedPan for remote console output -------
+		// --- Set the JTabbedPan for remote console output ---------
 		SysOutBoard.setConsoleFolder(this.getJTabbedPane4Console());
 		this.getJTabbedPane4Console().setVisible(false);
 
-		// --- Finalize the display of the application ------------
+		// --- Finalize the display of the application --------------
 		this.setTitelAddition("");
 		this.setCloseButtonPosition(false);
 
 		this.setLocationRelativeTo(null);
+		
+		// --- Initialize the PlatformStatusDialog ------------------ 
+		this.getPlatformStatusDialog();
 		
 		// --- Proceed the MainWindow Extensions --------------------
 		this.proceedMainWindowExtensions();
@@ -1679,6 +1683,21 @@ public class MainWindow extends JFrame {
 		}
 	}
 
+	// --------------------------------------------------------------
+	// --- Start the PlatformStatusDialog to show JADE state --------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the platform status dialog.
+	 * @return the platform status dialog
+	 */
+	public PlatformStatusDialog getPlatformStatusDialog() {
+		if (platformStatusDialog==null) {
+			platformStatusDialog = new PlatformStatusDialog(this);
+		}
+		return platformStatusDialog;
+	}
+	
+	
 	// ----------------------------------------------------
 	// --- Test and debug area ------------------ Start ---
 	// ----------------------------------------------------

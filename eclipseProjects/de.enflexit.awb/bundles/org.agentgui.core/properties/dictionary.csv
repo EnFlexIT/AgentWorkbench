@@ -156,7 +156,7 @@ de;Das Seitenverhältnis des exportierten Bildes;The aspect ratio of the image t
 de;Das Verzeichnis existiert bereits. Der Import wird unterbrochen.;The directory already exists. The import is interrupted.
 de;Das Widget für die Klasse ist nicht definiert!;The widget of this class is not defined!;;;
 de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' is not saved yet!<br>Save it now?;;;
-de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;;;;
+de;Das aktuelle Projekt '@' ist noch nicht gespeichert!<br>Möchten Sie es nun speichern ?;The current project '@' was not saved yet!<br>Save it now?;;;
 de;Das angegebene Projekt-Basisverzeichnis konnte nicht gefunden werden.<br>Möchten Sie das Verzeichnis jetzt erstellen?;The specified project base directory could not be found.<br>Do you want to create the directory now?;;;
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;The selected project directory is already in use!<br><br>Please, choose a different name for your directory.;;;
 de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bitte wählen Sie einen anderen Namen für Ihr Verzeichnis;Your chosen project directory is already in use! <br><br> Please select another name for the directory
@@ -170,7 +170,7 @@ de;Daten bearbeiten;Edit Data;;;
 de;Datenbank Verbindungen;Database Connections;;;
 de;Datenbank erfolgreich angelegt!;Database created successfully!
 de;Datenbank für den 'server.master';Database for the 'server.master';;;
-de;Datenbank für den Hauptserver (server.master);;;;
+de;Datenbank für den Hauptserver (server.master);Database for the main server (server.master);;;
 de;Datenbank nicht vorhanden!;Database does not exist!
 de;Datenfeld;Data field
 de;Datum;Date;;;
@@ -272,9 +272,6 @@ de;Fehler - PlugIn:;Error - PlugIn:
 de;Fehler - Projektauswahl !;Error - project selection!
 de;Fehler - Projektname !;Error - Project Name !;;;
 de;Fehler - Projektverzeichnis !;Error - project folder !
-de;Fehler bei der Ausführung von 'executeQuery'!;Error when executing 'executeQuery'!
-de;Fehler bei der Ausführung von 'executeUpdate'!;Error when executing 'executeUpdate'!
-de;Fehler beim Auslesen der Datensätze!;;;;
 de;Fehler beim Auslesen der Datensätzen!;Error while reading records!
 de;Fehler beim Laden des Bildes:;Error while loading image:;;;
 de;Fehler beim Lesen des Graphen;Error while reading the graph

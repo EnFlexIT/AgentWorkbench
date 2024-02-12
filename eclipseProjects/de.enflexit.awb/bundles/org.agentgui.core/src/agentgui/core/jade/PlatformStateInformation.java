@@ -33,6 +33,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import agentgui.core.application.Application;
+
 /**
  * The Class PlatformStateInformation serves as a state board for the Jade {@link Platform}.
  *
@@ -41,10 +43,10 @@ import java.util.List;
 public class PlatformStateInformation {
 
 	public enum PlatformState {
-		Standby("Awaiting call to execute the Multi-Agent System."),
-		InformPlugins("Inform registered Plugins about upcomming start of JADE."),
-		PreparingProjectResources("Preparing project resources for distributed execution of the MAS."),
-		StartingJADE("Starting JADE platform."),
+		Standby("Awaiting call to execute the Multi-Agent System"),
+		InformPlugins("Informing registered PlugIns about upcoming start of JADE"),
+		PreparingProjectResources("Preparing project resources for distributed execution of the MAS"),
+		StartingJADE("Starting JADE platform"),
 		StartBackgroundSystemAgents("Starting Background System agents"),
 		StartingHTTP("Starting HTTP-Server for project resource distribution"),
 		StartingRemote("Starting remote container for agent distribution"),
@@ -89,6 +91,44 @@ public class PlatformStateInformation {
 	public PlatformState getPlatformState() {
 		return platformState;
 	}
+	
+	/**
+	 * Returns the list of subsequent platform states, starting from the specified old platform state.
+	 *
+	 * @param startPlatformState the old platform state
+	 * @return the platform state list
+	 */
+	public static List<PlatformState> getPlatformStateList(PlatformState startPlatformState) {
+		
+		boolean isAvailableProject = Application.getProjectFocused()!=null;
+		boolean isResDistribution = Application.getJadePlatform().isRequiredProjectResourcesDistribution();
+		
+		boolean addToList = false;
+		List<PlatformState>  stateList = new ArrayList<>();
+		for (PlatformState ps : PlatformState.values()) {
+			if (ps==startPlatformState) addToList = true;
+			if (addToList==true) {
+				// --- Some special excludes --------------
+				if (isAvailableProject==false) {
+					if (ps==PlatformState.InformPlugins) continue;
+					if (ps==PlatformState.PreparingProjectResources) continue;
+					if (ps==PlatformState.StartingHTTP) continue;
+					if (ps==PlatformState.StartingMAS) continue;
+					if (ps==PlatformState.PausingMAS) continue;
+					if (ps==PlatformState.RestartingMAS) continue;
+				}
+				
+				if (isResDistribution==false) {
+					if (ps==PlatformState.PreparingProjectResources) continue;
+					if (ps==PlatformState.StartingHTTP) continue;
+					if (ps==PlatformState.StartingRemote) continue;
+				}
+				stateList.add(ps);
+			}
+		}
+		return stateList;
+	}
+	
 	
 	
 	// --------------------------------------------------------------

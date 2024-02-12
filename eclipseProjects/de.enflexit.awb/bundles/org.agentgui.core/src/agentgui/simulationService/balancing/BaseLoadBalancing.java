@@ -97,7 +97,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	/** The locations in the distributed system. */
 	protected Hashtable<String, Location> currContainerLoactions = null;
 	
-	
+	private boolean isStaticLoadBalancing;
 	
 	/**
 	 * Instantiates a new base load balancing.
@@ -110,6 +110,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
 			this.currDisSetup = this.currProject.getDistributionSetup();
 		}
+		this.isStaticLoadBalancing = (this instanceof StaticLoadBalancingBase);
 		this.setLoadHelper();
 		this.setSimulationHelper();
 		this.setThresholdLevels();
@@ -120,8 +121,9 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 */
 	@Override
 	public void action() {
-		Application.getJadePlatform().setPlatformState(PlatformState.StartingMAS);
+		if (this.isStaticLoadBalancing == true) Application.getJadePlatform().setPlatformState(PlatformState.StartingMAS);
 		this.doBalancing();
+		if (this.isStaticLoadBalancing == true) Application.getJadePlatform().setPlatformState(PlatformState.RunningMAS);
 	}
 	
 	/**
@@ -472,6 +474,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			newContainerName = loadHelper.startNewRemoteContainer(remoteContainerConfig);
 			
 			while (true) {
+				Application.getJadePlatform().setPlatformState(PlatformState.StartingRemote);
 				Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
 				if (waitCont.isStarted()) {
 					System.out.println("Remote Container '" + newContainerName + "' was started!");
