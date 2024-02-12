@@ -30,6 +30,13 @@ package agentgui.core.update;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -646,7 +653,20 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @return the download file name URL
 	 */
 	private String getFileNameURLDownload(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry) {
-		return this.getLinkOrPathWithDirectorySuffix(sourceDirectoryOrWebReference, "/") + updateRepositoryEntry.getFileName();
+		
+		String urlString = this.getLinkOrPathWithDirectorySuffix(sourceDirectoryOrWebReference, "/") + updateRepositoryEntry.getFileName();
+		try {
+			URL url = new URL(URLDecoder.decode(urlString, StandardCharsets.UTF_8.toString()));
+	        URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+	        String urlStringCleaned = uri.toString();
+	        if (urlStringCleaned!=null) {
+	        	urlString = urlStringCleaned;
+	        }
+			
+		} catch (MalformedURLException | URISyntaxException | UnsupportedEncodingException urlEx) {
+			urlEx.printStackTrace();
+		}
+		return urlString;
 	}
 	/**
 	 * Return the repository file name.
