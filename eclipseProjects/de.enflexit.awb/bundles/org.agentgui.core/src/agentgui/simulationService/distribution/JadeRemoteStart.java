@@ -112,7 +112,7 @@ public class JadeRemoteStart {
 		this.reCoCo = remoteContainerConfig;
 		
 		if (this.debug) {
-			System.out.println("Class '" + this.getClass().getName() + "' in debug modus ...");
+			System.out.println("[" + this.getClass().getSimpleName() + "] Starting in debug modus !");
 		}
 		
 		// --- Configure JVM arguments ------------------------------
@@ -164,7 +164,7 @@ public class JadeRemoteStart {
 		
 		// --- If a remote container project can be found ----------- 
 		if (this.rcProjectDirectory!=null) {
-			System.out.println(this.getClass().getSimpleName() + ": Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
+			System.out.println("[" + this.getClass().getSimpleName() + "] Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
 			// --- Load project XML and check required features -----
 			final Project remoteProject = Project.loadProjectXml(this.rcProjectDirectory);
 			if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct && remoteProject.requiresFeatureInstallation()==true) {
@@ -172,7 +172,7 @@ public class JadeRemoteStart {
 				String configFilePath = JadeRemoteStartConfiguration.getDefaultConfigurationFile().getAbsolutePath();
 				boolean isSavedConfig = JadeRemoteStartConfiguration.saveRemoteStartConfiguration(new JadeRemoteStartConfiguration(this.rcProjectDirectory, this.reCoCo));
 				if (isSavedConfig==true) {
-					System.out.println(this.getClass().getSimpleName() + ": Saved remote start configuration to " + configFilePath);
+					System.out.println("[" + this.getClass().getSimpleName() + "] Saved remote start configuration to " + configFilePath);
 				}
 				// --- Install the required features ---------------- 
 				System.out.println(this.getClass().getSimpleName() + ": Installing required project features ...");
@@ -182,7 +182,7 @@ public class JadeRemoteStart {
 						try {
 							remoteProject.installRequiredFeatures();
 						} catch (Exception e) {
-							System.err.println("Not all required features have been installed successfully:");
+							System.err.println("[" + this.getClass().getSimpleName() + "] Not all required features have been installed successfully:");
 							System.err.println(e.getMessage());
 							//TODO figure out how to handle this
 						}
@@ -259,7 +259,7 @@ public class JadeRemoteStart {
 		// --- merge execute statement ----------
 		String execute = java + " " + javaVMArgs + " " + equinoxLauncherJar +  " " + project + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
-		System.out.println( "Execute: " + execute);
+		System.out.println("[" + this.getClass().getSimpleName() + "] Execute: " + execute);
 		
 		// --------------------------------------
 		Scanner in = null;
@@ -473,6 +473,7 @@ public class JadeRemoteStart {
 		String filePathDownload = dirPathDownload + localFileName;
 		
 		Download download = new Download(httpDownloadURL, filePathDownload);
+		System.out.println("[" + this.getClass().getSimpleName() + "] Starting download of " + httpDownloadURL + " to " + filePathDownload + " ... ");
 		download.startDownload();
 		
 		
@@ -502,6 +503,7 @@ public class JadeRemoteStart {
 			
 			// --- Extract project file into download directory -----
 			ArchiveFileHandler extractor = new ArchiveFileHandler();
+			System.out.println("[" + this.getClass().getSimpleName() + "] Decompress file " + fileDownload.getName() + " to " + targetProjectDirectory.getParentFile() + " ... ");
 			extractor.decompressFolder(fileDownload, targetProjectDirectory.getParentFile(), ArchiveFormat.ZIP, targetProjectDirectory.getName());
 			
 			// --- Remove downloaded project file -------------------

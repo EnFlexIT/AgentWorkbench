@@ -137,6 +137,10 @@ public class Platform {
 	
 	private HTTPServer httpServer;
 	
+	public static final long DEFAULT_REMOTE_CONTAINER_WAITING_DURATION = (1000 * 20); // --- 20 Seconds as default ---
+	private Long projectResourcesPackagingTime;
+	
+	
 	/**
 	 * Constructor of this class.
 	 */
@@ -303,6 +307,8 @@ public class Platform {
 				Runtime jadeRuntime = Runtime.instance();	
 				jadeRuntime.invokeOnTermination(new Runnable() {
 					public void run() {
+						// --- Set platform state ---------------------
+						Platform.this.setPlatformState(PlatformState.TerminatingMAS);
 						// --- Terminate platform -------------------
 						LoadMeasureThread.removeMonitoringTasksForAgents();
 						// --- Notify about JADE start --------------
@@ -316,6 +322,7 @@ public class Platform {
 							Application.getMainWindow().setSimulationReady2Start();
 						}
 						// --- Stop download server -----------------
+						Platform.this.projectResourcesPackagingTime = null;
 						Platform.this.stopDownloadServer();
 						// --- Remove directory for file transfer ---
 						Platform.this.removeResourceDistributionDirectories();
@@ -488,6 +495,7 @@ public class Platform {
 		// --- Reset runtime-variables -------------------- 
 		this.getAgentContainerList().clear();
 		this.jadeMainContainer = null;
+		this.projectResourcesPackagingTime = null;
 		
 		Application.setJadeStatusColor(JadeStatusColor.Red);
 		this.setPlatformState(PlatformState.Standby);
@@ -1096,7 +1104,6 @@ public class Platform {
 		boolean isDoLoadBalancing = isDoStaticLoadBalancing || isDoDynamicLoadBalancing;
 		return isDoLoadBalancing;
 	}
-	
 	/**
 	 * Does the required project resources distribution.
 	 */
@@ -1112,26 +1119,39 @@ public class Platform {
 		String messageFailure = "[" + currProject.getProjectName() + "] Provisioning of project resources for remote container execution failed!";
 
 		System.out.println("[" + currProject.getProjectName() + "] Start preparing project resources into directory '" + workingDirPath + "' ...");
+
+		long timePackagingStart = System.currentTimeMillis();
 		File projectFile = currProject.exportProjectRessourcesToDestinationDirectory(workingDirPath, messageSuccess, messageFailure);
 		if (projectFile.exists()==false) {
 			return false;
 		}
+		this.projectResourcesPackagingTime = System.currentTimeMillis() - timePackagingStart;
 		return true;
 	}
-	
 	/**
-	 * Starts the file manger agent that provides the required project resources for a 
-	 * distributed execution in different container (requires a running background system).
+	 * Returns the project resources packaging time.
+	 * @return the project resources packaging time
 	 */
-	@SuppressWarnings("unused")
-	@Deprecated 
-	private void startFileMangerAgent() {
-		
-		if (this.isRequiredProjectResourcesDistribution()==false) return;
-		if (this.isAgentRunningInMainContainer(SystemAgent.ProjectFileManager.toString())==true) return;
-		// --- Start the project file manager agent -----------------
-		this.startSystemAgent(SystemAgent.ProjectFileManager, null);
+	private Long getProjectResourcesPackagingTime() {
+		if (this.isRequiredProjectResourcesDistribution()==false) {
+			return null;
+		}
+		return projectResourcesPackagingTime;
 	}
+	/**
+	 * Returns a waiting duration, when starting a new remote container .
+	 * @return the remote container waiting duration
+	 */
+	public long getRemoteContainerWaitingDuration() {
+		
+		Long waitingDuration = Platform.DEFAULT_REMOTE_CONTAINER_WAITING_DURATION;
+		Long packagingDuration = this.getProjectResourcesPackagingTime();
+		if (packagingDuration!=null) {
+			waitingDuration = waitingDuration + packagingDuration;
+		}
+		return waitingDuration;
+	}
+	
 	
 	/**
 	 * Starts a download server to enable server.slave instances to download the required resources.

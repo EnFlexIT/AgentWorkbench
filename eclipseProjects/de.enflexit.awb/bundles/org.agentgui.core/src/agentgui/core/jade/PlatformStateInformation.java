@@ -47,7 +47,7 @@ public class PlatformStateInformation {
 		InformPlugins("Informing registered PlugIns about upcoming start of JADE"),
 		PreparingProjectResources("Preparing project resources for distributed execution of the MAS"),
 		StartingJADE("Starting JADE platform"),
-		StartBackgroundSystemAgents("Starting Background System agents"),
+		StartBackgroundSystemAgents("Starting Background System Agent"),
 		StartingHTTP("Starting HTTP-Server for project resource distribution"),
 		StartingRemote("Starting remote container for agent distribution"),
 		StartingMAS("Starting Multi-Agent System"),

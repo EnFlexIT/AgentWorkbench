@@ -1548,12 +1548,12 @@ public class LoadService extends BaseService {
 		act.setAction(req);
 
 		// --- Define receiver of the Message ----------------------- 
-		AID agentGUIAgent = new AID(SystemAgent.BackgroundSystemAgentApplication +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
+		AID aidAwbBackgroundAgent = new AID(SystemAgent.BackgroundSystemAgentApplication +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
 		
 		// --- Build Message ----------------------------------------
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setSender(myContainer.getAMS());
-		msg.addReceiver(agentGUIAgent);		
+		msg.addReceiver(aidAwbBackgroundAgent);		
 		msg.setLanguage(new SLCodec().getName());
 		msg.setOntology(AWB_DistributionOntology.getInstance().getName());
 		try {
@@ -1563,10 +1563,10 @@ public class LoadService extends BaseService {
 		}
 
 		// --- Send message -----------------------------------------
-		myContainer.postMessageToLocalAgent(msg, agentGUIAgent);
+		myContainer.postMessageToLocalAgent(msg, aidAwbBackgroundAgent);
 		
 		// --- Remind, that we're waiting for this container --------
-		loadInfo.setNewContainer2Wait4(remConf.getJadeContainerName());
+		loadInfo.setNewContainer2Wait4(remConf.getJadeContainerName(), Application.getJadePlatform().getRemoteContainerWaitingDuration());
 		
 		// --- Return -----------------------------------------------
 		return remConf.getJadeContainerName();

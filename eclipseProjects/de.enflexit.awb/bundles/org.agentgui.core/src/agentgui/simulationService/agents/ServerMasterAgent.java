@@ -271,12 +271,11 @@ public class ServerMasterAgent extends Agent {
 						
 						// --- Register platform ------------------------------
 						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, new Date(timestamp), true);
-						if (this.isAgentGuiVersionUpToDate(version)==true) {
-							// --- Answer with 'RegisterReceipt' --------------							
-							RegisterReceipt rr = new RegisterReceipt();
-							ACLMessage reply = msg.createReply();
-							sendReply(reply, rr);
-						} else {
+						// --- Answer with 'RegisterReceipt' ------------------				
+						RegisterReceipt rr = new RegisterReceipt();
+						ACLMessage reply = msg.createReply();
+						sendReply(reply, rr);
+						if (this.isAgentGuiVersionUpToDate(version)==false) {
 							// --- Prepare for update of client or slave ------
 							this.replyUpdateAdvice(msg);
 						}
@@ -294,12 +293,11 @@ public class ServerMasterAgent extends Agent {
 						
 						// --- Register platform ------------------------------
 						dbRegisterPlatform(senderAID, os, plAdd, plPerf, version, new Date(timestamp), false);
-						if (this.isAgentGuiVersionUpToDate(version)==true) {
-							// --- Answer with 'RegisterReceipt' --------------							
-							RegisterReceipt rr = new RegisterReceipt();
-							ACLMessage reply = msg.createReply();
-							sendReply(reply, rr);
-						} else {
+						// --- Answer with 'RegisterReceipt' ------------------					
+						RegisterReceipt rr = new RegisterReceipt();
+						ACLMessage reply = msg.createReply();
+						sendReply(reply, rr);
+						if (this.isAgentGuiVersionUpToDate(version)==false) {
 							// --- Prepare for update of client or slave ------
 							this.replyUpdateAdvice(msg);
 						}

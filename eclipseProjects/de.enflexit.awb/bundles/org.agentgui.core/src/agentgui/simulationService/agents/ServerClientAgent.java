@@ -173,14 +173,6 @@ public class ServerClientAgent extends Agent {
 		// --- Set myTime ---------------------------------
 		myPlatformTime.setTimeStampAsString(Long.toString(System.currentTimeMillis())) ;
 		
-		// --- Send 'Register'-Information ----------------
-		myRegistration.setClientAddress(myPlatform);
-		myRegistration.setClientTime(myPlatformTime);
-		myRegistration.setClientPerformance(myPerformance);
-		myRegistration.setClientOS(myOS);
-		myRegistration.setClientVersion(myVersion);
-		this.sendMessage2MainServer(myRegistration);
-		
 		// --- Add Main-Behaviours ------------------------
 		parBehaiv = new ParallelBehaviour(this,ParallelBehaviour.WHEN_ALL);
 		parBehaiv.addSubBehaviour( new MessageReceiveBehaviour() );
@@ -198,6 +190,14 @@ public class ServerClientAgent extends Agent {
 		} catch (StaleProxyException agentErr) {
 			agentErr.printStackTrace();
 		}
+		
+		// --- Send 'Register'-Information ----------------
+		myRegistration.setClientAddress(myPlatform);
+		myRegistration.setClientTime(myPlatformTime);
+		myRegistration.setClientPerformance(myPerformance);
+		myRegistration.setClientOS(myOS);
+		myRegistration.setClientVersion(myVersion);
+		this.sendMessage2MainServer(myRegistration);
 		
 	}
 	
