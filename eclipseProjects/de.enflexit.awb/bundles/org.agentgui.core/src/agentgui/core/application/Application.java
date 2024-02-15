@@ -400,7 +400,8 @@ public class Application {
 			if (project2OpenAfterStart!=null) {
 				try {
 					System.out.println("Load project '" + project2OpenAfterStart + "' ...");
-					Project.load(project2OpenAfterStart);
+					Application.setProjectFocused(Project.load(project2OpenAfterStart));
+					
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
