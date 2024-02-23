@@ -32,15 +32,15 @@ public class PhoneBookRegistrationResponder extends SimpleAchieveREResponder {
 	 * @param localPhoneBook the local phone book
 	 */
 	public PhoneBookRegistrationResponder(Agent agent, PhoneBook localPhoneBook) {
-		super(agent, createMessageTemplate());
+		super(agent, getMessageTemplate());
 		this.localPhoneBook = localPhoneBook;
 	}
 
 	/**
-	 * Creates the message template for this protocol responder.
+	 * Gets the message template matching this protocol responder.
 	 * @return the message template
 	 */
-	private static MessageTemplate createMessageTemplate() {
+	public static MessageTemplate getMessageTemplate() {
 		MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(FIPA_REQUEST);
 		MessageTemplate matchConversationID = MessageTemplate.MatchConversationId(CONVERSATION_ID);
 		return MessageTemplate.and(matchProtocol, matchConversationID);
