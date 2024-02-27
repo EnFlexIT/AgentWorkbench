@@ -89,6 +89,13 @@ public class JadeRemoteStart {
 	private String jadeContainerName = "remote";
 	
 	private File rcProjectDirectory = null; 
+
+	// --- Remote debug default options ---------
+	private boolean isEnabledRemoteDebugging = false;
+	private String jvmRemDebugTransport = "dt_socket";
+	private String jvmRemDebugAddress = "8000";
+	private String jvmRemDebugServer = "y";			
+	private String jvmRemDebugSuspend = "y";
 	
 	
 	/**
@@ -215,6 +222,10 @@ public class JadeRemoteStart {
 		if (this.jvmMemAllocUseDefaults==false) {
 			javaVMArgs = "-Xms" + this.jvmMemAllocInitial + " -Xmx" + this.jvmMemAllocMaximum;
 		} 
+		// --- Enable remote debugging ----------
+		if (this.isEnabledRemoteDebugging==true) {
+			javaVMArgs += " -Xrunjdwp:transport=" + this.jvmRemDebugTransport + ",address=" + this.jvmRemDebugAddress + ",server=" + this.jvmRemDebugServer + ",suspend=" + this.jvmRemDebugSuspend + "";
+		}
 		
 		// --------------------------------------
 		// --- Class-Path configuration ---------
@@ -249,7 +260,7 @@ public class JadeRemoteStart {
 		if (localHost!=null && localHost.equals("")==false) {
 			jadeArgs += "-local-host " + localHost + " ";	
 		}
-		// --- Show GUI? ------------------------
+		// --- Show RMA UI? ---------------------
 		if (this.jadeShowGUI==true) {
 			jadeArgs += this.jadeShowGUIAgentName + this.jadeContainerName + ":jade.tools.rma.rma ";
 		}		
