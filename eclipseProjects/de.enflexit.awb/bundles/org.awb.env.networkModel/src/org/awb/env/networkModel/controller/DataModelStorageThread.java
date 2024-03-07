@@ -102,7 +102,6 @@ public class DataModelStorageThread extends Thread {
 	private long firstDisplayWaitTime = 0;			// ms
 	private long firstDisplayTime;
 	
-	private final long vectorDividerBytesPerThread = 450000; 
 	private int maxNumberOfThreads = 5;
 	
 	// --- Variables for the worker -----------------------
@@ -221,24 +220,11 @@ public class DataModelStorageThread extends Thread {
 		this.elementsToConvert = sumCompVector.size();
 		if (this.elementsToConvert==0) return;
 		
-		// --- Summarize the file sizes -----------------------------
-		long fileSizeXML = GraphEnvironmentController.getFileXML(this.graphController.getEnvFolderPath(), this.setupName).length();
-		long fileSizeGraphML = GraphEnvironmentController.getFileGraphML(this.graphController.getEnvFolderPath(), this.setupName).length();
-		long fileSize = fileSizeXML + fileSizeGraphML; 
-		
 		// --- Split component vector -------------------------------
-		int noOfVector = 1;
-		try {
-			noOfVector = ((int) (fileSize / this.vectorDividerBytesPerThread))+1;
-		} catch (Exception ex) {
-			//ex.printStackTrace();
-		}
-		// --- If '1' here, check number of components --------------
-		if (noOfVector<=1 && this.elementsToConvert>1) noOfVector = this.maxNumberOfThreads;
+		int noOfVector = this.maxNumberOfThreads;
 		// --- Finally, adjust the number of Threads ----------------
 		if (noOfVector>this.elementsToConvert) noOfVector=this.elementsToConvert;
 		if (noOfVector>this.maxNumberOfThreads) noOfVector=this.maxNumberOfThreads;
-		if (noOfVector<=0) noOfVector=1;
 		if (this.debug==true) noOfVector = 1;
 		
 		// --- Define separation Vector -----------------------------

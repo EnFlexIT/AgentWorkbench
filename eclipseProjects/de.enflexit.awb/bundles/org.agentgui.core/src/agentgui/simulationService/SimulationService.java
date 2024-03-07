@@ -146,7 +146,7 @@ public class SimulationService extends BaseService {
 		
 		this.myContainer = ac;
 		this.myMainContainer = ac.getMain();	
-		// --- Initialise local attributes ----------------  
+		// --- Initialize local attributes ----------------  
 		this.displayAgents = new Vector<AbstractDisplayAgent>();
 		this.displayAgentDistribution = new HashMap<String, Integer>();
 		this.agentList = new Hashtable<String, AID>();

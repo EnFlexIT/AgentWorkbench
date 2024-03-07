@@ -5,6 +5,69 @@
     <mutableHandlerCollection>true</mutableHandlerCollection>
     <jettySettings>
         <entry>
+            <key>cors.allowCredentials</key>
+            <value>
+                <key>cors.allowCredentials</key>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.allowedHeaders</key>
+            <value>
+                <key>cors.allowedHeaders</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">X-Requested-With,Content-Type,Accept,Origin</value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.allowedMethods</key>
+            <value>
+                <key>cors.allowedMethods</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">GET,POST,HEAD</value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.allowedOrigins</key>
+            <value>
+                <key>cors.allowedOrigins</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">*</value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.allowedTimingOrigins</key>
+            <value>
+                <key>cors.allowedTimingOrigins</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.chainPreflight</key>
+            <value>
+                <key>cors.chainPreflight</key>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.exposedHeaders</key>
+            <value>
+                <key>cors.exposedHeaders</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.filter.enabled</key>
+            <value>
+                <key>cors.filter.enabled</key>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+            </value>
+        </entry>
+        <entry>
+            <key>cors.preflightMaxAge</key>
+            <value>
+                <key>cors.preflightMaxAge</key>
+                <value xsi:type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">1800</value>
+            </value>
+        </entry>
+        <entry>
             <key>http.enabled</key>
             <value>
                 <key>http.enabled</key>
@@ -71,14 +134,12 @@
             <key>ssl.keypassword</key>
             <value>
                 <key>ssl.keypassword</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">test</value>
             </value>
         </entry>
         <entry>
             <key>ssl.keystore</key>
             <value>
                 <key>ssl.keystore</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">AWB-WebServer.pfx</value>
             </value>
         </entry>
         <entry>
@@ -99,7 +160,6 @@
             <key>ssl.password</key>
             <value>
                 <key>ssl.password</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">test</value>
             </value>
         </entry>
         <entry>
@@ -118,25 +178,6 @@
         </entry>
     </jettySettings>
     <securitySettings>
-        <servletSecurityConfigurations>
-            <entry>
-                <key>_ServerWideSecurityConfiguration</key>
-                <value>
-                    <contextPath>_ServerWideSecurityConfiguration</contextPath>
-                    <securityHandlerName>JwtSingleUserSecurityHandler</securityHandlerName>
-                    <securityHandlerActivated>true</securityHandlerActivated>
-                    <securityHandlerConfiguration>
-                        <entry>
-                            <key>User Name</key>
-                            <value>admin</value>
-                        </entry>
-                        <entry>
-                            <key>User Password</key>
-                            <value>admin</value>
-                        </entry>
-                    </securityHandlerConfiguration>
-                </value>
-            </entry>
-        </servletSecurityConfigurations>
+        <servletSecurityConfigurations/>
     </securitySettings>
 </jettyConfiguration>

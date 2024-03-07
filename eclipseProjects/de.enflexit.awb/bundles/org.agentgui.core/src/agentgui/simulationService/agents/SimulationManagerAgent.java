@@ -102,7 +102,7 @@ public abstract class SimulationManagerAgent extends Agent {
 			  return;
 		}
 		
-		// --- Get the initial EnvironmentModel from Agent.GUI setup ----------
+		// --- Get the initial EnvironmentModel from the AWB setup ------------
 		this.setEnvironmentModel(this.getEnvironmentModelFromSetup());
 
 		this.sensorPlugIn();

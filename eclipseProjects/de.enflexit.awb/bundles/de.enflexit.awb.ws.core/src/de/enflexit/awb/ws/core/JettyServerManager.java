@@ -2,8 +2,11 @@ package de.enflexit.awb.ws.core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.TreeMap;
+
+import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpVersion;
@@ -19,7 +22,10 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.FilterMapping;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.component.AttributeContainerMap;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -335,11 +341,13 @@ public class JettyServerManager {
 
 		// ----------------------------------------------------------
 		// --- Check to add further handler -------------------------
-		List<AwbWebHandlerService> handlerList = this.getAwbWebRegistry().getAwbWebHandlerService(serverConfig.getServerName());
-		if (handlerList.size()>0) {
-			for (int i = 0; i < handlerList.size(); i++) {
-				AwbWebHandlerService handlerService = handlerList.get(i);
-				hCollection.addHandler(handlerService.getHandler());
+		if (hCollection!=null) {
+			List<AwbWebHandlerService> handlerList = this.getAwbWebRegistry().getAwbWebHandlerService(serverConfig.getServerName());
+			if (handlerList.size()>0) {
+				for (int i = 0; i < handlerList.size(); i++) {
+					AwbWebHandlerService handlerService = handlerList.get(i);
+					hCollection.addHandler(handlerService.getHandler());
+				}
 			}
 		}
 		
@@ -369,6 +377,17 @@ public class JettyServerManager {
 		}
 
 		// ----------------------------------------------------------
+		// --- Enable CrossOriginFilter ? ---------------------------
+		boolean isCorsEnabled = (boolean) server.getAttribute(JettyConstants.CORS_ENABLED.getJettyKey());
+		if (isCorsEnabled==true) {
+			if (hCollection==null) {
+				this.enableCrossOriginFilter(server, initialHandler);
+			} else {
+				this.enableCrossOriginFilter(server, hCollection);
+			}
+		}
+		
+		// ----------------------------------------------------------
 		// --- Always redirect HTTP to HTTPS? -----------------------
 		boolean isRedirectToHTTPS = (boolean) server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());;
 		if (isStartHTTPS==true && isRedirectToHTTPS==true) {
@@ -376,7 +395,6 @@ public class JettyServerManager {
 			secRedirHandler.setHandler(server.getHandler());
 			server.setHandler(secRedirHandler);
 		}
-		
 		
 		// ----------------------------------------------------------
 		// --- Execute the start of the server ----------------------
@@ -561,6 +579,43 @@ public class JettyServerManager {
 		}
 	}
 	
+	
+	/**
+	 * Wraps a cross origin filter around the specified collection of Handler.
+	 * @param hCollection the h collection
+	 * @return the handler collection that wraps the original handler
+	 */
+	private void enableCrossOriginFilter(Server server, HandlerCollection hCollection) {
+		for (Handler handler : hCollection.getHandlers()) {
+			this.enableCrossOriginFilter(server, handler);
+		}
+	}
+	/**
+	 * Enable cross origin filter.
+	 * @param handler the handler
+	 */
+	private void enableCrossOriginFilter(Server server, Handler handler) {
+		
+		if (handler instanceof ServletContextHandler == false) return;
+		
+		// --- Wrap the current handler -------------------
+		ServletContextHandler servContHandler = (ServletContextHandler) handler;
+		
+		// --- Define filter ------------------------------
+		FilterHolder cors = servContHandler.addFilter(CrossOriginFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+		// --- Get CORS-settings --------------------------
+		for (JettyConstants jettyConstant : JettyConstants.values()) {
+			
+			if (jettyConstant.getJettyKey().startsWith("cors.")==false) continue;
+			if (jettyConstant.getJettyKey().startsWith("cors.filter")==true) continue;
+			
+			String crossOriginParam = jettyConstant.getJettyKey().split("\\.")[1];
+			String crossOriginValue = server.getAttribute(jettyConstant.getJettyKey()).toString();
+			cors.setInitParameter(crossOriginParam, crossOriginValue);
+		}
+	}
+	
+	
 	/**
 	 * Start configured server.
 	 *
@@ -628,7 +683,9 @@ public class JettyServerManager {
 			// --- Stop the server -----------------------
 			server.stop();
 			// --- Remove security handler ---------------
-			this.removeSecurityHandler(server.getHandlers());
+			Handler[] handlerArray = server.getHandlers();
+			this.removeSecurityHandler(handlerArray);
+			this.removeCorsFilter(handlerArray);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -677,6 +734,58 @@ public class JettyServerManager {
 		} else if (handler instanceof HandlerCollection) {
 			HandlerCollection handlerCollection = (HandlerCollection) handler;
 			this.removeSecurityHandler(handlerCollection.getHandlers());
+		}
+	}
+	
+	/**
+	 * Removes the CORS filter from the specified handler array..
+	 * @param handlerArray the handler array
+	 */
+	private void removeCorsFilter(Handler[] handlerArray) {
+		if (handlerArray==null) return;
+		for (int i = 0; i < handlerArray.length; i++) {
+			this.removeCorsFilter(handlerArray[i]);
+		}
+	}
+	/**
+	 * Removes the CORS filter.
+	 * @param handler the handler
+	 */
+	private void removeCorsFilter(Handler handler) {
+		
+		if (handler instanceof ServletContextHandler) {
+			
+			// --- Cast to required type ----------------------------
+			ServletContextHandler servletContextHandler = (ServletContextHandler) handler;
+			
+			// --- Check the FilterMappings -------------------------
+			FilterMapping[] fmArray = servletContextHandler.getServletHandler().getFilterMappings();
+			for (FilterMapping fm : fmArray) {
+				if (fm.getFilterName().contains(CrossOriginFilter.class.getName())==true) {
+					servletContextHandler.getServletHandler().removeFilterMapping(fm);
+				}
+			}
+			
+			// --- Check the FilterHolder ---------------------------
+			FilterHolder[] fhArray = servletContextHandler.getServletHandler().getFilters();
+			for (FilterHolder fh : fhArray) {
+				if (fh.getClassName().equals(CrossOriginFilter.class.getName())==true) {
+					servletContextHandler.getServletHandler().removeFilterHolder(fh);
+					continue;
+				}
+				if (fh.getHeldClass()!=null && fh.getHeldClass().equals(CrossOriginFilter.class)==true) {
+					servletContextHandler.getServletHandler().removeFilterHolder(fh);
+					continue;
+				}
+			}
+			
+		} else if (handler instanceof HandlerWrapper) {
+			HandlerWrapper handlerWrapper = (HandlerWrapper) handler;
+			this.removeCorsFilter(handlerWrapper.getHandlers());
+			
+		} else if (handler instanceof HandlerCollection) {
+			HandlerCollection handlerCollection = (HandlerCollection) handler;
+			this.removeCorsFilter(handlerCollection.getHandlers());
 		}
 	}
 	

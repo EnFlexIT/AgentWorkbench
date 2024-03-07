@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core;
 
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+
 import de.enflexit.common.crypto.KeyStoreType;
 
 /**
@@ -30,12 +32,23 @@ public enum JettyConstants {
 	SSL_WANTCLIENTAUTH("ssl.wantclientauth", 19, Boolean.class, false, new Boolean[] {true, false}),
 
 	HTTP_MINTHREADS("http.minThreads", 20, Integer.class, 8  , null),
-	HTTP_MAXTHREADS("http.maxThreads", 21, Integer.class, 200, null);
+	HTTP_MAXTHREADS("http.maxThreads", 21, Integer.class, 200, null),
 	
 //	CONTEXT_PATH("context.path", 18, String.class, null, null),
 //	CONTEXT_SESSIONINACTIVEINTERVAL("context.sessioninactiveinterval", 19, Integer.class, 300, null),
 	
 //	HOUSEKEEPER_INTERVAL("housekeeper.interval", 20, Integer.class, null, null);
+	
+	
+	CORS_ENABLED("cors.filter.enabled", 30, Boolean.class, false, new Boolean[] {true, false}),
+	CORS_ALLOWED_ORIGINS_PARAM("cors." + CrossOriginFilter.ALLOWED_ORIGINS_PARAM, 31, String.class, "*", null),
+	CORS_ALLOWED_TIMING_ORIGINS_PARAM("cors." + CrossOriginFilter.ALLOWED_TIMING_ORIGINS_PARAM, 32, String.class, "", null),
+	CORS_ALLOWED_METHODS_PARAM("cors." + CrossOriginFilter.ALLOWED_METHODS_PARAM, 33, String.class, "GET,POST,HEAD", null),
+	CORS_ALLOWED_HEADERS_PARAM("cors." + CrossOriginFilter.ALLOWED_HEADERS_PARAM, 34, String.class, "X-Requested-With,Content-Type,Accept,Origin", null),
+	CORS_PREFLIGHT_MAX_AGE_PARAM("cors." + CrossOriginFilter.PREFLIGHT_MAX_AGE_PARAM, 35, Integer.class, 1800, null),
+	CORS_ALLOW_CREDENTIALS_PARAM("cors." + CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, 36, Boolean.class, true, new Boolean[] {true, false}),
+	CORS_EXPOSED_HEADERS_PARAM("cors." + CrossOriginFilter.EXPOSED_HEADERS_PARAM, 37, String.class, "", null),
+	CORS_CHAIN_PREFLIGHT_PARAM("cors." + CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, 38, Boolean.class, true,  new Boolean[] {true, false});
 	
 	
 	private String jettyKey;
