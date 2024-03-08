@@ -176,7 +176,6 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JButton jButtonSelectDynamicClass;
 
 	private JLabel jLabelRecording;
-	private JLabel jLabelDummy;
 	private JSeparator jSeparator01;
 	private JSeparator jSeparator02;
 	private JSeparator jSeparator03;
@@ -184,6 +183,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	private JSeparator jSeparator05;
 	
 	private String autosaveRealMetricsOnSimStopString = "Reale Metriken der Agenten bei Simulationsstop aktualisieren";
+	private JLabel jLabelAdditionalTimeOut;
+	private JTextField jTextFieldAdditionalTimeOut;
 
 	
 	/**
@@ -450,23 +451,50 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 	 */
 	private JPanel getJPanelRemoteConfig() {
 		if (jPanelRemoteConfig == null) {
-			GridBagConstraints gridBagConstraints39 = new GridBagConstraints();
-			gridBagConstraints39.gridx = 1;
-			gridBagConstraints39.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints39.weightx = 0.5;
-			gridBagConstraints39.gridy = 2;
-			GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
-			gridBagConstraints32.anchor = GridBagConstraints.WEST;
-			gridBagConstraints32.insets = new Insets(5, 0, 0, 0);
-			gridBagConstraints32.gridx = 5;
-			gridBagConstraints32.gridy = 2;
-			gridBagConstraints32.weightx = 0.0;
-			gridBagConstraints32.fill = GridBagConstraints.HORIZONTAL;
-			GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
-			gridBagConstraints34.anchor = GridBagConstraints.EAST;
-			gridBagConstraints34.gridx = 4;
-			gridBagConstraints34.gridy = 2;
-			gridBagConstraints34.insets = new Insets(5, 10, 0, 5);
+			
+			jPanelRemoteConfig = new JPanel();
+			GridBagLayout gbl_jPanelRemoteConfig = new GridBagLayout();
+			gbl_jPanelRemoteConfig.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			jPanelRemoteConfig.setLayout(gbl_jPanelRemoteConfig);
+			GridBagConstraints gridBagConstraints38 = new GridBagConstraints();
+			gridBagConstraints38.anchor = GridBagConstraints.WEST;
+			gridBagConstraints38.gridx = 0;
+			gridBagConstraints38.gridy = 0;
+			gridBagConstraints38.gridwidth = 5;
+			jPanelRemoteConfig.add(getJCheckBoxPreventUsageOfUsedComputers(), gridBagConstraints38);		
+			GridBagConstraints gridBagConstraints36 = new GridBagConstraints();
+			gridBagConstraints36.anchor = GridBagConstraints.NORTHEAST;
+			gridBagConstraints36.gridx = 5;
+			gridBagConstraints36.gridy = 0;
+			gridBagConstraints36.insets = new Insets(0, 20, 0, 0);
+			jPanelRemoteConfig.add(getJButtonRemoteDefault(), gridBagConstraints36);
+			GridBagConstraints gridBagConstraints37 = new GridBagConstraints();
+			gridBagConstraints37.anchor = GridBagConstraints.WEST;
+			gridBagConstraints37.gridwidth = 6;
+			gridBagConstraints37.gridx = 0;
+			gridBagConstraints37.gridy = 1;
+			gridBagConstraints37.weightx = 0.0;
+			gridBagConstraints37.insets = new Insets(8, 0, 0, 0);
+			jPanelRemoteConfig.add(getJCheckBoxShowRMA(), gridBagConstraints37);
+			GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
+			gridBagConstraints33.anchor = GridBagConstraints.WEST;
+			gridBagConstraints33.gridwidth = 2;
+			gridBagConstraints33.gridx = 0;
+			gridBagConstraints33.gridy = 2;
+			gridBagConstraints33.weightx = 0.0;
+			gridBagConstraints33.insets = new Insets(7, 22, 0, 0);
+			jLabelMemoryAlloc = new JLabel();
+			jLabelMemoryAlloc.setText("Arbeitsspeicher für Remote-JVM");
+			jLabelMemoryAlloc.setFont(new Font("Dialog", Font.BOLD, 12));
+			jPanelRemoteConfig.add(jLabelMemoryAlloc, gridBagConstraints33);
+			GridBagConstraints gridBagConstraints35 = new GridBagConstraints();
+			gridBagConstraints35.anchor = GridBagConstraints.EAST;
+			gridBagConstraints35.gridx = 2;
+			gridBagConstraints35.gridy = 2;
+			gridBagConstraints35.insets = new Insets(5, 10, 0, 5);
+			jLabelMemoryMin = new JLabel();
+			jLabelMemoryMin.setText("Init.");
+			jPanelRemoteConfig.add(jLabelMemoryMin, gridBagConstraints35);
 			GridBagConstraints gridBagConstraints30 = new GridBagConstraints();
 			gridBagConstraints30.anchor = GridBagConstraints.WEST;
 			gridBagConstraints30.insets = new Insets(5, 0, 0, 0);
@@ -474,58 +502,36 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			gridBagConstraints30.gridy = 2;
 			gridBagConstraints30.weightx = 0.0;
 			gridBagConstraints30.fill = GridBagConstraints.HORIZONTAL;
-			GridBagConstraints gridBagConstraints35 = new GridBagConstraints();
-			gridBagConstraints35.anchor = GridBagConstraints.EAST;
-			gridBagConstraints35.gridx = 2;
-			gridBagConstraints35.gridy = 2;
-			gridBagConstraints35.insets = new Insets(5, 10, 0, 5);
-			GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
-			gridBagConstraints33.anchor = GridBagConstraints.WEST;
-			gridBagConstraints33.gridwidth = 1;
-			gridBagConstraints33.gridx = 0;
-			gridBagConstraints33.gridy = 2;
-			gridBagConstraints33.weightx = 0.0;
-			gridBagConstraints33.insets = new Insets(5, 22, 0, 0);
-			GridBagConstraints gridBagConstraints36 = new GridBagConstraints();
-			gridBagConstraints36.anchor = GridBagConstraints.NORTHEAST;
-			gridBagConstraints36.gridx = 5;
-			gridBagConstraints36.gridy = 0;
-			gridBagConstraints36.insets = new Insets(0, 20, 0, 0);
-			GridBagConstraints gridBagConstraints38 = new GridBagConstraints();
-			gridBagConstraints38.anchor = GridBagConstraints.WEST;
-			gridBagConstraints38.gridx = -1;
-			gridBagConstraints38.gridy = -1;
-			gridBagConstraints38.gridwidth = 5;
-			gridBagConstraints38.insets = new Insets(0, 0, 0, 0);
-			GridBagConstraints gridBagConstraints37 = new GridBagConstraints();
-			gridBagConstraints37.anchor = GridBagConstraints.WEST;
-			gridBagConstraints37.gridwidth = 5;
-			gridBagConstraints37.gridx = 0;
-			gridBagConstraints37.gridy = 1;
-			gridBagConstraints37.weightx = 0.0;
-			gridBagConstraints37.insets = new Insets(8, 0, 0, 0);
-			
-			jLabelDummy = new JLabel();
-			jLabelDummy.setText(" ");
-			jLabelMemoryMin = new JLabel();
-			jLabelMemoryMin.setText("Init.");
+			jPanelRemoteConfig.add(getJComboBoxJVMMemoryInitial(), gridBagConstraints30);
+			GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
+			gridBagConstraints34.anchor = GridBagConstraints.EAST;
+			gridBagConstraints34.gridx = 4;
+			gridBagConstraints34.gridy = 2;
+			gridBagConstraints34.insets = new Insets(5, 10, 0, 5);
 			jLabelMemoryMax = new JLabel();
 			jLabelMemoryMax.setText("Max.");
-			jLabelMemoryAlloc = new JLabel();
-			jLabelMemoryAlloc.setText("Arbeitsspeicher für Remote-JVM");
-			jLabelMemoryAlloc.setFont(new Font("Dialog", Font.BOLD, 12));
-			
-			jPanelRemoteConfig = new JPanel();
-			jPanelRemoteConfig.setLayout(new GridBagLayout());
-			jPanelRemoteConfig.add(getJCheckBoxPreventUsageOfUsedComputers(), gridBagConstraints38);		
-			jPanelRemoteConfig.add(getJCheckBoxShowRMA(), gridBagConstraints37);
-			jPanelRemoteConfig.add(getJButtonRemoteDefault(), gridBagConstraints36);
-			jPanelRemoteConfig.add(jLabelMemoryAlloc, gridBagConstraints33);
-			jPanelRemoteConfig.add(jLabelMemoryMin, gridBagConstraints35);
-			jPanelRemoteConfig.add(getJComboBoxJVMMemoryInitial(), gridBagConstraints30);
 			jPanelRemoteConfig.add(jLabelMemoryMax, gridBagConstraints34);
+			GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
+			gridBagConstraints32.anchor = GridBagConstraints.WEST;
+			gridBagConstraints32.insets = new Insets(5, 0, 0, 0);
+			gridBagConstraints32.gridx = 5;
+			gridBagConstraints32.gridy = 2;
+			gridBagConstraints32.weightx = 0.0;
+			gridBagConstraints32.fill = GridBagConstraints.HORIZONTAL;
 			jPanelRemoteConfig.add(getJComboBoxJVMMemoryMaximum(), gridBagConstraints32);
-			jPanelRemoteConfig.add(jLabelDummy, gridBagConstraints39);
+			GridBagConstraints gbc_jLabelAdditionalTimeOut = new GridBagConstraints();
+			gbc_jLabelAdditionalTimeOut.gridwidth = 5;
+			gbc_jLabelAdditionalTimeOut.insets = new Insets(5, 22, 0, 5);
+			gbc_jLabelAdditionalTimeOut.anchor = GridBagConstraints.WEST;
+			gbc_jLabelAdditionalTimeOut.gridx = 0;
+			gbc_jLabelAdditionalTimeOut.gridy = 3;
+			jPanelRemoteConfig.add(getJLabelAdditionalTimeOut(), gbc_jLabelAdditionalTimeOut);
+			GridBagConstraints gbc_jTextfieldAdditionalTimeOut = new GridBagConstraints();
+			gbc_jTextfieldAdditionalTimeOut.insets = new Insets(5, 0, 0, 0);
+			gbc_jTextfieldAdditionalTimeOut.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jTextfieldAdditionalTimeOut.gridx = 5;
+			gbc_jTextfieldAdditionalTimeOut.gridy = 3;
+			jPanelRemoteConfig.add(getJTextFieldAdditionalTimeOut(), gbc_jTextfieldAdditionalTimeOut);
 		}
 		return jPanelRemoteConfig;
 	}
@@ -690,6 +696,24 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		}
 		return error;
 	}
+	
+	private JLabel getJLabelAdditionalTimeOut() {
+		if (jLabelAdditionalTimeOut == null) {
+			jLabelAdditionalTimeOut = new JLabel(Language.translate("Zusätzliches Timeout für den Start von Remote-Containern [s]") + ":");
+			jLabelAdditionalTimeOut.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelAdditionalTimeOut;
+	}
+	private JTextField getJTextFieldAdditionalTimeOut() {
+		if (jTextFieldAdditionalTimeOut == null) {
+			jTextFieldAdditionalTimeOut = new JTextField();
+			jTextFieldAdditionalTimeOut.addKeyListener(this.getKeyAdapter4Numbers());
+			jTextFieldAdditionalTimeOut.setPreferredSize(new Dimension(80, 26));
+			jTextFieldAdditionalTimeOut.getDocument().addDocumentListener(this.getDocumentListener4IntegerJTextField());
+		}
+		return jTextFieldAdditionalTimeOut;
+	}
+	
 	
 	/**
 	 * This method initializes jCheckBoxDoLoadStatic	
@@ -1480,7 +1504,10 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 						} 
 						
 						// --- Save new value in the distribution setup -------
-						if (srcDoc==getJTextFieldAgentsExpected().getDocument()) {
+						if (srcDoc==getJTextFieldAdditionalTimeOut().getDocument()) {
+							currDistributionSetup.setAdditionalRemoteContainerTimeOutInSeconds(number);
+							
+						} else if (srcDoc==getJTextFieldAgentsExpected().getDocument()) {
 							currDistributionSetup.setNumberOfAgents(number);
 						} else if (srcDoc==getJTextFieldContainerExpected().getDocument()) {
 							currDistributionSetup.setNumberOfContainer(number);
@@ -1553,6 +1580,8 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 		this.getJCheckBoxShowRMA().setSelected(currRemoteContainerConfiguration.isShowJADErmaGUI());
 		this.getJComboBoxJVMMemoryMaximum().setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocMaximum());
 		this.getJComboBoxJVMMemoryInitial().setSelectedItem(currRemoteContainerConfiguration.getJvmMemAllocInitial());
+		
+		this.getJTextFieldAdditionalTimeOut().setText(currDistributionSetup.getAdditionalRemoteContainerTimeOutInSeconds() + "");
 		
 		this.getJCheckBoxDoLoadStatic().setSelected(currDistributionSetup.isDoStaticLoadBalancing());
 		this.getJTextFieldAgentsExpected().setText(((Integer)currDistributionSetup.getNumberOfAgents()).toString());
@@ -1762,4 +1791,5 @@ public class Distribution extends JScrollPane implements ActionListener, Observe
 			}
 		}
 	}
+	
 } 

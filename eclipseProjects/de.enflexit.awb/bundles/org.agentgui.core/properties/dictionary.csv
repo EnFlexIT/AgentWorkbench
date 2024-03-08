@@ -788,6 +788,7 @@ de;Zum Einbinden von externen bin-Ressourcen, ist<br>eine Aktualisierung der Pro
 de;Zum Löschen, wählen Sie bitte eine der dargestellten Ontologien aus!;In order to delete an ontology, just select one class of a displayed ontology!;;;
 de;Zur Zeit ist kein Agenten-Projekt geöffnet.;There is currently no open agent project.;;;
 de;Zurücksetzen;Reset
+de;Zusätzliches Timeout für den Start von Remote-Containern [s];Additional Timeout for a remote-container start [s];;;
 de;Zyklisch !;Cyclic!
 de;Zähler Start:;Counter Start:;;;
 de;Zähler Stop:;Counter Stop:;;;

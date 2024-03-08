@@ -1145,6 +1145,9 @@ public class Platform {
 	public long getRemoteContainerWaitingDuration() {
 		
 		Long waitingDuration = Platform.DEFAULT_REMOTE_CONTAINER_WAITING_DURATION;
+		long additionalDuration = Math.abs(Application.getProjectFocused().getDistributionSetup().getAdditionalRemoteContainerTimeOutInSeconds()) * 1000;
+		waitingDuration += additionalDuration;
+		
 		Long packagingDuration = this.getProjectResourcesPackagingTime();
 		if (packagingDuration!=null) {
 			waitingDuration = waitingDuration + packagingDuration;

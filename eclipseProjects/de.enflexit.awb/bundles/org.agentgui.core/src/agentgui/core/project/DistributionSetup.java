@@ -54,6 +54,7 @@ public class DistributionSetup implements Serializable {
 	
 	private int numberOfAgents = 0;
 	private int numberOfContainer = 0;
+	private int additionalRemoteContainerTimeOutInSeconds;
 	
 	private boolean doDynamicLoadBalancing = false;
 	private String dynamicLoadBalancingClass = DEFAULT_DynamicLoadBalancingClass;
@@ -117,6 +118,21 @@ public class DistributionSetup implements Serializable {
 	 */
 	public void setNumberOfContainer(int numberOfContainer) {
 		this.numberOfContainer = numberOfContainer;
+	}
+	
+	/**
+	 * Returns the additional remote container time out in seconds.
+	 * @return the additional remote container time out in seconds
+	 */
+	public int getAdditionalRemoteContainerTimeOutInSeconds() {
+		return additionalRemoteContainerTimeOutInSeconds;
+	}
+	/**
+	 * Sets the additional remote container time out in seconds.
+	 * @param additionalRemoteContainerTimeOutInSeconds the new additional remote container time out in seconds
+	 */
+	public void setAdditionalRemoteContainerTimeOutInSeconds(int additionalRemoteContainerTimeOutInSeconds) {
+		this.additionalRemoteContainerTimeOutInSeconds = additionalRemoteContainerTimeOutInSeconds;
 	}
 	
 	/**
