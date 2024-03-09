@@ -18,8 +18,8 @@
 
 		<property name="hibernate.enable_lazy_load_no_trans">true</property>
 
-		<property name="hibernate.c3p0.min_size">5</property>
-		<property name="hibernate.c3p0.max_size">10</property>
+		<property name="hibernate.c3p0.min_size">3</property>
+		<property name="hibernate.c3p0.max_size">5</property>
 		<property name="hibernate.c3p0.max_statements">50</property>
 		<property name="hibernate.c3p0.idle_test_period">1800</property>
 		<property name="hibernate.c3p0.timeout">3600</property>
