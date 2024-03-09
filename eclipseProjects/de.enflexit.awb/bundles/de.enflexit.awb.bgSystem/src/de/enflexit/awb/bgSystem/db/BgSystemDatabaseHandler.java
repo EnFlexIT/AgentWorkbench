@@ -70,7 +70,10 @@ public class BgSystemDatabaseHandler {
 	private void doTransactionRollBack(Transaction transaction) {
 		
 		try {
-			transaction.rollback();
+			if (transaction!=null) {
+				transaction.rollback();
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			// --- Dispose session to renew handler state - 
@@ -103,6 +106,7 @@ public class BgSystemDatabaseHandler {
 				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
 				successful = false;
+				
 			} finally {
 				session.clear();
 			}

@@ -31,7 +31,9 @@ package agentgui.simulationService.load;
 import jade.core.AID;
 import jade.core.Location;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import agentgui.core.jade.Platform;
@@ -179,6 +181,21 @@ public class LoadInformation  {
 		}
 		return newContainers2Wait4;
 	}
+	
+	/**
+	 * Returns the list of pending {@link Container2Wait4}.
+	 * @return the remote container pending
+	 */
+	public List<Container2Wait4> getRemoteContainerPending() {
+		List<Container2Wait4> containerList = new ArrayList<>();
+		for (Container2Wait4 c2w4 : this.getNewContainers2Wait4Hash().values()) {
+			if (c2w4.isPending()==true) {
+				containerList.add(c2w4);
+			}
+		}
+		return containerList;
+	}
+	
 	
 	/**
 	 * Method to calculate the cycle-frequency of the simulation.
@@ -492,13 +509,20 @@ public class LoadInformation  {
 		public void setCancelled(boolean chanceld) {
 			this.cancelled = chanceld;
 		}
-		
 		/**
 		 * Checks if is cancelled.
 		 * @return the cancelled-boolean
 		 */
 		public boolean isCancelled() {
 			return cancelled;
+		}
+		
+		/**
+		 * Checks if the container to wait for is pending.
+		 * @return true, if is pending
+		 */
+		public boolean isPending() {
+			return this.isStarted()==false && this.isCancelled()==false && this.isTimedOut()==false;
 		}
 
 	}

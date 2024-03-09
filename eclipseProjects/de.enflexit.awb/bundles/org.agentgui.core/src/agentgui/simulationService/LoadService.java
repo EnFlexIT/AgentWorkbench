@@ -1430,7 +1430,6 @@ public class LoadService extends BaseService {
 		// --- Variable for the new container name ------------------
 		String newContainerPrefix = "remote";
 		String newContainerName = null;
-		Integer newContainerNo = 0;
 		
 		// --- Get the local IP-Address -----------------------------
 		String myIP = myContainer.getNodeDescriptor().getContainer().getAddress();
@@ -1447,27 +1446,8 @@ public class LoadService extends BaseService {
 			myServices += service;				
 		}			
 		
-		// --- Define the new container name ------------------------
-		try {
-			Service.Slice[] slices = getAllSlices();
-			for (int i = 0; i < slices.length; i++) {
-				LoadServiceSlice slice = (LoadServiceSlice) slices[i];
-				String sliceName = slice.getNode().getName();
-				if (sliceName.startsWith(newContainerPrefix)) {
-					String endString = sliceName.replace(newContainerPrefix, "");
-					try {
-						Integer endNumber = Integer.parseInt(endString);
-						if (endNumber>newContainerNo) {
-							newContainerNo = endNumber;
-						}	
-						
-					} catch (Exception e) {}
-				}
-			}	
-		} catch (ServiceException errSlices) {
-			errSlices.printStackTrace();
-		}
-		newContainerNo++;
+		// --- Find a number for the desired container name ---------
+		Integer newContainerNo = this.getNewContainerPostfixNumber(newContainerPrefix);
 		newContainerName = newContainerPrefix + newContainerNo;
 		
 		// --- Get machines to be excluded for remote start ---------
@@ -1523,6 +1503,53 @@ public class LoadService extends BaseService {
 			remConf.setJvmMemAllocMaximum(this.defaults4RemoteContainerConfig.getJvmMemAllocMaximum());
 		}
 		return remConf;
+	}
+	/**
+	 * Return a new container post fix number for the specified container name.
+	 *
+	 * @param containerName the container name
+	 * @return the new container post fix number
+	 */
+	private int getNewContainerPostfixNumber(String containerName) {
+		
+		Integer newContainerNo = 0;
+		try {
+			// --- Which container are already available? -----------
+			Service.Slice[] slices = getAllSlices();
+			for (int i = 0; i < slices.length; i++) {
+				LoadServiceSlice slice = (LoadServiceSlice) slices[i];
+				String sliceName = slice.getNode().getName();
+				if (sliceName.startsWith(containerName)) {
+					String endString = sliceName.replace(containerName, "");
+					try {
+						Integer endNumber = Integer.parseInt(endString);
+						if (endNumber > newContainerNo) {
+							newContainerNo = endNumber;
+						}	
+					} catch (Exception e) {}
+				}
+			}	
+		} catch (ServiceException errSlices) {
+			errSlices.printStackTrace();
+		}
+		
+		// --- For which container we're already waiting? -----------
+		for (Container2Wait4 c2w4 :this.loadInfo.getRemoteContainerPending()) {
+			String pendingContainerName = c2w4.getContainerName();
+			if (pendingContainerName.startsWith(containerName)) {
+				String endString = pendingContainerName.replace(containerName, "");
+				try {
+					Integer endNumber = Integer.parseInt(endString);
+					if (endNumber > newContainerNo) {
+						newContainerNo = endNumber;
+					}	
+				} catch (Exception e) {}
+			}
+		}
+		
+		// --- Increase number & return -----------------------------
+		newContainerNo++;
+		return newContainerNo;
 	}
 	
 	/**
