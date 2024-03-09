@@ -25,7 +25,11 @@ public class PlatformStore {
 	 */
 	public List<BgSystemPlatform> getPlatformList() {
 		if (platformList==null) {
+			// --- Try to get the database entries --------
 			platformList = this.dbGetPlatformList();
+			if (platformList==null) {
+				platformList = new ArrayList<>();
+			}
 		}
 		return platformList;
 	}
@@ -144,8 +148,14 @@ public class PlatformStore {
 	 * Synchronizes DB platform list.
 	 */
 	private void dbSynchronizePlatformList() {
+		
 		if (this.isAvailableDatabaseConnection()==false) return;
-		this.getDatabaseHandler().setBgSystemPlatformList(this.getPlatformList());
+		try {
+			this.getDatabaseHandler().setBgSystemPlatformList(this.getPlatformList());
+		} catch (Exception ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error while synchronizing background system list into database:");
+			ex.printStackTrace();
+		}
 	}
 	/**
 	 * Returns the list of available background system platforms from DB.
@@ -153,9 +163,13 @@ public class PlatformStore {
 	 */
 	private List<BgSystemPlatform> dbGetPlatformList() {
 		
-		List<BgSystemPlatform> platformList = new ArrayList<>();
-		if (this.isAvailableDatabaseConnection()==true) {
-			platformList.addAll(this.getDatabaseHandler().getBgSystemPlatformList());	
+		if (this.isAvailableDatabaseConnection()==false) return null;
+		List<BgSystemPlatform> platformList = null;
+		try {
+			platformList = this.getDatabaseHandler().getBgSystemPlatformList();
+		} catch (Exception ex) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error while aquireing background system list from database:");
+			ex.printStackTrace();
 		}
 		return platformList;
 	}

@@ -63,6 +63,20 @@ public class BgSystemDatabaseHandler {
 		this.setSession(null);
 	}
 	
+	/**
+	 * Does a transaction roll back.
+	 * @param transaction the transaction
+	 */
+	private void doTransactionRollBack(Transaction transaction) {
+		
+		try {
+			transaction.rollback();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			// --- Dispose session to renew handler state - 
+			this.dispose();
+		}
+	}
 	
 	// --------------------------------------------------------------
 	// --- From here, working on data -------------------------------
@@ -77,8 +91,6 @@ public class BgSystemDatabaseHandler {
 		Session session = this.getSession();
 		if (session!=null) {
 			
-			session.clear();
-
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
@@ -88,9 +100,11 @@ public class BgSystemDatabaseHandler {
 				successful = true;
 				
 			} catch (Exception ex) {
-				if (transaction!=null) transaction.rollback();
+				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
 				successful = false;
+			} finally {
+				session.clear();
 			}
 		}
 		return successful;
@@ -114,8 +128,10 @@ public class BgSystemDatabaseHandler {
 				transaction.commit();
 				
 			} catch (Exception ex) {
-				if (transaction!=null) transaction.rollback();
+				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
+			} finally {
+				session.clear();
 			}
 		}
 		return bgSysPlatforms;
@@ -133,8 +149,6 @@ public class BgSystemDatabaseHandler {
 		Session session = this.getSession();
 		if (session!=null) {
 			
-			session.clear();
-
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
@@ -144,9 +158,11 @@ public class BgSystemDatabaseHandler {
 				successful = true;
 				
 			} catch (Exception ex) {
-				if (transaction!=null) transaction.rollback();
+				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
 				successful = false;
+			} finally {
+				session.clear();
 			}
 		}
 		return successful;
@@ -162,8 +178,6 @@ public class BgSystemDatabaseHandler {
 		Session session = this.getSession();
 		if (session!=null) {
 			
-			session.clear();
-
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
@@ -172,8 +186,10 @@ public class BgSystemDatabaseHandler {
 				transaction.commit();
 				
 			} catch (Exception ex) {
-				if (transaction!=null) transaction.rollback();
+				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
+			} finally {
+				session.clear();
 			}
 		}
 		return noOfDeletations;
@@ -200,8 +216,10 @@ public class BgSystemDatabaseHandler {
 				transaction.commit();
 				
 			} catch (Exception ex) {
-				if (transaction!=null) transaction.rollback();
+				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
+			} finally {
+				session.clear();
 			}
 		}
 		return bgSysPlatformList;
@@ -217,8 +235,6 @@ public class BgSystemDatabaseHandler {
 		Session session = this.getSession();
 		if (session!=null) {
 			
-			session.clear();
-
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
@@ -238,9 +254,11 @@ public class BgSystemDatabaseHandler {
 				successful = true;
 				
 			} catch (Exception ex) {
-				if (transaction!=null) transaction.rollback();
+				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
 				successful = false;
+			} finally {
+				session.clear();
 			}
 		}
 		return successful;
