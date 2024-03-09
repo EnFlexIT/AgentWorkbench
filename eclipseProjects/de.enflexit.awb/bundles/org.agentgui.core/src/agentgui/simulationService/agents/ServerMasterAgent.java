@@ -1,9 +1,38 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package agentgui.simulationService.agents;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import agentgui.core.application.Application;
@@ -79,6 +108,9 @@ public class ServerMasterAgent extends Agent {
 	private PlatformStore platformStore;
 	
 	private ParallelBehaviour parBehaiv;
+	
+	private HashMap<String, Long> lastRequestedSlaveAgents;
+	private long lastRequestTimeOut = 30 * 1000; // 30 seconds
 	
 	
 	/* (non-Javadoc)
@@ -491,6 +523,34 @@ public class ServerMasterAgent extends Agent {
 	
 	
 	/**
+	 * Returns the last requested slave agents.
+	 * @return the last requested slave agents
+	 */
+	private HashMap<String, Long> getLastRequestedSlaveAgents() {
+		if (lastRequestedSlaveAgents==null) {
+			lastRequestedSlaveAgents = new HashMap<>();
+		}
+		return lastRequestedSlaveAgents;
+	}
+	/**
+	 * Checks if is slave agent request is timed out.
+	 *
+	 * @param contactAgent the contact agent
+	 * @return true, if is slave agent request timed out
+	 */
+	private boolean isSlaveAgentRequestTimedOut(String contactAgent) {
+		
+		Long timeOut = this.getLastRequestedSlaveAgents().get(contactAgent);
+		if (timeOut!=null) {
+			if (System.currentTimeMillis() < timeOut) {
+				return false;
+			}
+			this.getLastRequestedSlaveAgents().remove(contactAgent);
+		}
+		return true;
+	}
+	
+	/**
 	 * Handles the client remote container request.
 	 *
 	 * @param request the request ACLMessage
@@ -505,13 +565,14 @@ public class ServerMasterAgent extends Agent {
 		// --- Filter for usable platform systems -----------------------------
 		List<BgSystemPlatform> filteredPlatformList = new ArrayList<>();
 		for (BgSystemPlatform platform : this.getPlatformStore().getPlatformList()) {
-			
+
 			boolean isServer    = platform.isServer(); 
 			boolean isAvailable = platform.isCurrentlyAvailable();
 			boolean isLoadOk	= platform.isCurrentLoadThresholdExceeded()==false;
 			boolean isAllowedIP	= remConf.getHostExcludeIP().contains(platform.getIpAddress())==false;
+			boolean isTimedOut  = this.isSlaveAgentRequestTimedOut(platform.getContactAgent());
 			
-			boolean isUsable 	= isServer && isAvailable && isLoadOk && isAllowedIP;
+			boolean isUsable 	= isServer && isAvailable && isLoadOk && isAllowedIP && isTimedOut;
 			if (isUsable==true) {
 				filteredPlatformList.add(platform);
 			}
@@ -579,6 +640,9 @@ public class ServerMasterAgent extends Agent {
 			replyContent.setRemotePerformance(plPerf);
 			replyContent.setRemoteBenchmarkResult(bench);
 			// ------------------------------------------------------------
+			
+			// --- Remind as last requested -------------------------------
+			this.getLastRequestedSlaveAgents().put(slaveAgent, System.currentTimeMillis() + this.lastRequestTimeOut);
 
 		}
 		
