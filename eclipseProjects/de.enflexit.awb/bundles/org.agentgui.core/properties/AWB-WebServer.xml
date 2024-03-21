@@ -15,7 +15,7 @@
             <key>cors.allowedHeaders</key>
             <value>
                 <key>cors.allowedHeaders</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">X-Requested-With,Content-Type,Accept,Origin</value>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">*</value>
             </value>
         </entry>
         <entry>
@@ -57,7 +57,7 @@
             <key>cors.filter.enabled</key>
             <value>
                 <key>cors.filter.enabled</key>
-                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
             </value>
         </entry>
         <entry>
@@ -134,12 +134,14 @@
             <key>ssl.keypassword</key>
             <value>
                 <key>ssl.keypassword</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">test</value>
             </value>
         </entry>
         <entry>
             <key>ssl.keystore</key>
             <value>
                 <key>ssl.keystore</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">AWB-WebServer.pfx</value>
             </value>
         </entry>
         <entry>
@@ -160,6 +162,7 @@
             <key>ssl.password</key>
             <value>
                 <key>ssl.password</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">test</value>
             </value>
         </entry>
         <entry>
@@ -178,6 +181,25 @@
         </entry>
     </jettySettings>
     <securitySettings>
-        <servletSecurityConfigurations/>
+        <servletSecurityConfigurations>
+            <entry>
+                <key>_ServerWideSecurityConfiguration</key>
+                <value>
+                    <contextPath>_ServerWideSecurityConfiguration</contextPath>
+                    <securityHandlerName>JwtSingleUserSecurityHandler</securityHandlerName>
+                    <securityHandlerActivated>true</securityHandlerActivated>
+                    <securityHandlerConfiguration>
+                        <entry>
+                            <key>User Name</key>
+                            <value>test</value>
+                        </entry>
+                        <entry>
+                            <key>User Password</key>
+                            <value>test</value>
+                        </entry>
+                    </securityHandlerConfiguration>
+                </value>
+            </entry>
+        </servletSecurityConfigurations>
     </securitySettings>
 </jettyConfiguration>
