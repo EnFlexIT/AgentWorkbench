@@ -22,20 +22,26 @@ Require-Bundle: org.eclipse.osgi,
  org.eclipse.jetty.io,
  org.eclipse.jetty.util.ajax,
  org.apache.aries.spifly.dynamic.bundle,
- de.enflexit.awb.ws.jetty
+ de.enflexit.awb.ws.jetty,
+ io.jsonwebtoken.jjwt-api
 Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core,
  de.enflexit.awb.ws.core.model,
  de.enflexit.awb.ws.core.security,
+ de.enflexit.awb.ws.core.security.jwt,
+ de.enflexit.awb.ws.core.util,
  de.enflexit.awb.ws.server
 Import-Package: de.enflexit.common,
  de.enflexit.common.crypto,
  de.enflexit.common.swing,
  javax.servlet;version="4.0.0",
+ javax.servlet.http;version="4.0.0",
  javax.ws.rs.container;version="2.1.6",
  javax.ws.rs.core;version="2.1.6",
  javax.xml.bind,
  javax.xml.bind.annotation,
+ org.apache.commons.codec.binary,
  org.apache.commons.lang3,
  org.glassfish.jersey.server.spi;version="2.35.0",
- org.glassfish.jersey.servlet;version="2.35.0"
+ org.glassfish.jersey.servlet;version="2.35.0",
+ org.slf4j
