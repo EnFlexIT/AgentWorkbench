@@ -23,36 +23,36 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 
 /**
- * the jwt which needs to be validated,
+ * Object that holds Version Information. Is Object for scalability
  */
-@ApiModel(description = "the jwt which needs to be validated,")
+@ApiModel(description = "Object that holds Version Information. Is Object for scalability")
 @JsonPropertyOrder({
-  JWT.JSON_PROPERTY_JWT
+  Version.JSON_PROPERTY_VERSION_NUMBER
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-18T14:16:57.078043800+01:00[Europe/Berlin]")
-public class JWT   {
-  public static final String JSON_PROPERTY_JWT = "jwt";
-  @JsonProperty(JSON_PROPERTY_JWT)
-  private String jwt;
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+public class Version   {
+  public static final String JSON_PROPERTY_VERSION_NUMBER = "versionNumber";
+  @JsonProperty(JSON_PROPERTY_VERSION_NUMBER)
+  private String versionNumber;
 
-  public JWT jwt(String jwt) {
-    this.jwt = jwt;
+  public Version versionNumber(String versionNumber) {
+    this.versionNumber = versionNumber;
     return this;
   }
 
   /**
-   * jwt in XXX.YYY.ZZZ format
-   * @return jwt
+   * the version number
+   * @return versionNumber
    **/
-  @JsonProperty(value = "jwt")
-  @ApiModelProperty(required = true, value = "jwt in XXX.YYY.ZZZ format")
+  @JsonProperty(value = "versionNumber")
+  @ApiModelProperty(required = true, value = "the version number")
   @NotNull 
-  public String getJwt() {
-    return jwt;
+  public String getVersionNumber() {
+    return versionNumber;
   }
 
-  public void setJwt(String jwt) {
-    this.jwt = jwt;
+  public void setVersionNumber(String versionNumber) {
+    this.versionNumber = versionNumber;
   }
 
 
@@ -64,22 +64,22 @@ public class JWT   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    JWT JWT = (JWT) o;
-    return Objects.equals(this.jwt, JWT.jwt);
+    Version version = (Version) o;
+    return Objects.equals(this.versionNumber, version.versionNumber);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(jwt);
+    return Objects.hash(versionNumber);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class JWT {\n");
+    sb.append("class Version {\n");
     
-    sb.append("    jwt: ").append(toIndentedString(jwt)).append("\n");
+    sb.append("    versionNumber: ").append(toIndentedString(versionNumber)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -3,7 +3,7 @@ package de.enflexit.awb.ws.restapi.gen.impl;
 import de.enflexit.awb.ws.restapi.gen.*;
 import de.enflexit.awb.ws.restapi.gen.model.*;
 
-import de.enflexit.awb.ws.restapi.gen.model.SystemLoad;
+import de.enflexit.awb.ws.restapi.gen.model.BundleInformation;
 
 import java.util.List;
 import de.enflexit.awb.ws.restapi.gen.NotFoundException;
@@ -16,9 +16,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
-public class LoadApiServiceImpl extends LoadApiService {
+public class InstallationDetailsApiServiceImpl extends InstallationDetailsApiService {
     @Override
-    public Response loadGet(SecurityContext securityContext) throws NotFoundException {
+    public Response installationDetailsGet(SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }

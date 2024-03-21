@@ -5,7 +5,7 @@ import de.enflexit.awb.ws.restapi.gen.model.*;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import de.enflexit.awb.ws.restapi.gen.model.JWT;
+import de.enflexit.awb.ws.restapi.gen.model.BundleInformation;
 
 import java.util.List;
 import de.enflexit.awb.ws.restapi.gen.NotFoundException;
@@ -15,7 +15,7 @@ import java.io.InputStream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.validation.constraints.*;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-18T14:16:57.078043800+01:00[Europe/Berlin]")
-public abstract class ValidateApiService {
-    public abstract Response validatePost(JWT JWT,SecurityContext securityContext) throws NotFoundException;
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+public abstract class InstallationDetailsApiService {
+    public abstract Response installationDetailsGet(SecurityContext securityContext) throws NotFoundException;
 }

@@ -1,13 +1,12 @@
 package de.enflexit.awb.ws.restapi.gen;
 
 import de.enflexit.awb.ws.restapi.gen.model.*;
-import de.enflexit.awb.ws.restapi.gen.InfoApiService;
-import de.enflexit.awb.ws.restapi.gen.factories.InfoApiServiceFactory;
+import de.enflexit.awb.ws.restapi.gen.DoRestartApiService;
+import de.enflexit.awb.ws.restapi.gen.factories.DoRestartApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
-import de.enflexit.awb.ws.restapi.gen.model.SystemInformation;
 
 import java.util.Map;
 import java.util.List;
@@ -26,22 +25,22 @@ import javax.ws.rs.*;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
-@Path("/info")
+@Path("/doRestart")
 
 
-@io.swagger.annotations.Api(description = "the info API")
+@io.swagger.annotations.Api(description = "the doRestart API")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
-public class InfoApi  {
-   private final InfoApiService delegate;
+public class DoRestartApi  {
+   private final DoRestartApiService delegate;
 
-   public InfoApi(@Context ServletConfig servletContext) {
-      InfoApiService delegate = null;
+   public DoRestartApi(@Context ServletConfig servletContext) {
+      DoRestartApiService delegate = null;
 
       if (servletContext != null) {
-         String implClass = servletContext.getInitParameter("InfoApi.implementation");
+         String implClass = servletContext.getInitParameter("DoRestartApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (InfoApiService) Class.forName(implClass).newInstance();
+               delegate = (DoRestartApiService) Class.forName(implClass).newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -49,24 +48,25 @@ public class InfoApi  {
       }
 
       if (delegate == null) {
-         delegate = InfoApiServiceFactory.getInfoApi();
+         delegate = DoRestartApiServiceFactory.getDoRestartApi();
       }
 
       this.delegate = delegate;
    }
 
-    @GET
+    @POST
     
     
-    @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
+    
+    @io.swagger.annotations.ApiOperation(value = "", notes = "tries to shedule restart", response = Void.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "BearerAuth")
-    }, tags={ "admins", })
+    }, tags={ "doAction", })
     @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
+        @io.swagger.annotations.ApiResponse(code = 423, message = "Restart could not be initiated", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "Restart will happen. History can be accessed via eventLog", response = Void.class)
     })
-    public Response infoGet(@Context SecurityContext securityContext)
+    public Response doRestartPost(@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.infoGet(securityContext);
+        return delegate.doRestartPost(securityContext);
     }
 }

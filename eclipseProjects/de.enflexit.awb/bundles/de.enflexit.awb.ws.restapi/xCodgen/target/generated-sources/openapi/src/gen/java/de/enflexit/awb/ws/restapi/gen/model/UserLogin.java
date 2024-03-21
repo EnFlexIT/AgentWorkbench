@@ -23,15 +23,14 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 
 /**
- * the username of the user, the password of the user
+ * UserLogin
  */
-@ApiModel(description = "the username of the user, the password of the user")
 @JsonPropertyOrder({
-  Credentials.JSON_PROPERTY_USERNAME,
-  Credentials.JSON_PROPERTY_PASSWORD
+  UserLogin.JSON_PROPERTY_USERNAME,
+  UserLogin.JSON_PROPERTY_PASSWORD
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-18T14:16:57.078043800+01:00[Europe/Berlin]")
-public class Credentials   {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+public class UserLogin   {
   public static final String JSON_PROPERTY_USERNAME = "username";
   @JsonProperty(JSON_PROPERTY_USERNAME)
   private String username;
@@ -40,17 +39,17 @@ public class Credentials   {
   @JsonProperty(JSON_PROPERTY_PASSWORD)
   private String password;
 
-  public Credentials username(String username) {
+  public UserLogin username(String username) {
     this.username = username;
     return this;
   }
 
   /**
-   * username as plain string
+   * Get username
    * @return username
    **/
   @JsonProperty(value = "username")
-  @ApiModelProperty(required = true, value = "username as plain string")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getUsername() {
     return username;
@@ -60,17 +59,17 @@ public class Credentials   {
     this.username = username;
   }
 
-  public Credentials password(String password) {
+  public UserLogin password(String password) {
     this.password = password;
     return this;
   }
 
   /**
-   * password in plain text
+   * Get password
    * @return password
    **/
   @JsonProperty(value = "password")
-  @ApiModelProperty(required = true, value = "password in plain text")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getPassword() {
     return password;
@@ -89,9 +88,9 @@ public class Credentials   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Credentials credentials = (Credentials) o;
-    return Objects.equals(this.username, credentials.username) &&
-        Objects.equals(this.password, credentials.password);
+    UserLogin userLogin = (UserLogin) o;
+    return Objects.equals(this.username, userLogin.username) &&
+        Objects.equals(this.password, userLogin.password);
   }
 
   @Override
@@ -103,7 +102,7 @@ public class Credentials   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Credentials {\n");
+    sb.append("class UserLogin {\n");
     
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");

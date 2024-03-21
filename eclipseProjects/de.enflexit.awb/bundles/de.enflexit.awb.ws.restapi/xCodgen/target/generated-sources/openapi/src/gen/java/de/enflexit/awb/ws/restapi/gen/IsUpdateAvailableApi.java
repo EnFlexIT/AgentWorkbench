@@ -1,13 +1,12 @@
 package de.enflexit.awb.ws.restapi.gen;
 
 import de.enflexit.awb.ws.restapi.gen.model.*;
-import de.enflexit.awb.ws.restapi.gen.InfoApiService;
-import de.enflexit.awb.ws.restapi.gen.factories.InfoApiServiceFactory;
+import de.enflexit.awb.ws.restapi.gen.IsUpdateAvailableApiService;
+import de.enflexit.awb.ws.restapi.gen.factories.IsUpdateAvailableApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
-import de.enflexit.awb.ws.restapi.gen.model.SystemInformation;
 
 import java.util.Map;
 import java.util.List;
@@ -26,22 +25,22 @@ import javax.ws.rs.*;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
-@Path("/info")
+@Path("/isUpdateAvailable")
 
 
-@io.swagger.annotations.Api(description = "the info API")
+@io.swagger.annotations.Api(description = "the isUpdateAvailable API")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
-public class InfoApi  {
-   private final InfoApiService delegate;
+public class IsUpdateAvailableApi  {
+   private final IsUpdateAvailableApiService delegate;
 
-   public InfoApi(@Context ServletConfig servletContext) {
-      InfoApiService delegate = null;
+   public IsUpdateAvailableApi(@Context ServletConfig servletContext) {
+      IsUpdateAvailableApiService delegate = null;
 
       if (servletContext != null) {
-         String implClass = servletContext.getInitParameter("InfoApi.implementation");
+         String implClass = servletContext.getInitParameter("IsUpdateAvailableApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (InfoApiService) Class.forName(implClass).newInstance();
+               delegate = (IsUpdateAvailableApiService) Class.forName(implClass).newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -49,7 +48,7 @@ public class InfoApi  {
       }
 
       if (delegate == null) {
-         delegate = InfoApiServiceFactory.getInfoApi();
+         delegate = IsUpdateAvailableApiServiceFactory.getIsUpdateAvailableApi();
       }
 
       this.delegate = delegate;
@@ -59,14 +58,14 @@ public class InfoApi  {
     
     
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Checks wether an update for the AWB is available or not", notes = "", response = Boolean.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "BearerAuth")
-    }, tags={ "admins", })
+    }, tags={ "info", })
     @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
+        @io.swagger.annotations.ApiResponse(code = 200, message = "request successful. boolean in response indicates wether update is available or not", response = Boolean.class)
     })
-    public Response infoGet(@Context SecurityContext securityContext)
+    public Response isUpdateAvailableGet(@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.infoGet(securityContext);
+        return delegate.isUpdateAvailableGet(securityContext);
     }
 }

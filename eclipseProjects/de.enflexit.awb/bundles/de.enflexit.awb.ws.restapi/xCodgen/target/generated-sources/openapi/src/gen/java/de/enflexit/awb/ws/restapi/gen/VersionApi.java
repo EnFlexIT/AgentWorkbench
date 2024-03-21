@@ -1,13 +1,13 @@
 package de.enflexit.awb.ws.restapi.gen;
 
 import de.enflexit.awb.ws.restapi.gen.model.*;
-import de.enflexit.awb.ws.restapi.gen.InfoApiService;
-import de.enflexit.awb.ws.restapi.gen.factories.InfoApiServiceFactory;
+import de.enflexit.awb.ws.restapi.gen.VersionApiService;
+import de.enflexit.awb.ws.restapi.gen.factories.VersionApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
-import de.enflexit.awb.ws.restapi.gen.model.SystemInformation;
+import de.enflexit.awb.ws.restapi.gen.model.Version;
 
 import java.util.Map;
 import java.util.List;
@@ -26,22 +26,22 @@ import javax.ws.rs.*;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
-@Path("/info")
+@Path("/version")
 
 
-@io.swagger.annotations.Api(description = "the info API")
+@io.swagger.annotations.Api(description = "the version API")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
-public class InfoApi  {
-   private final InfoApiService delegate;
+public class VersionApi  {
+   private final VersionApiService delegate;
 
-   public InfoApi(@Context ServletConfig servletContext) {
-      InfoApiService delegate = null;
+   public VersionApi(@Context ServletConfig servletContext) {
+      VersionApiService delegate = null;
 
       if (servletContext != null) {
-         String implClass = servletContext.getInitParameter("InfoApi.implementation");
+         String implClass = servletContext.getInitParameter("VersionApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (InfoApiService) Class.forName(implClass).newInstance();
+               delegate = (VersionApiService) Class.forName(implClass).newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -49,7 +49,7 @@ public class InfoApi  {
       }
 
       if (delegate == null) {
-         delegate = InfoApiServiceFactory.getInfoApi();
+         delegate = VersionApiServiceFactory.getVersionApi();
       }
 
       this.delegate = delegate;
@@ -59,14 +59,14 @@ public class InfoApi  {
     
     
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Return most up to date version number", notes = "", response = Version.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "BearerAuth")
-    }, tags={ "admins", })
+    }, tags={ "info", })
     @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
+        @io.swagger.annotations.ApiResponse(code = 200, message = "Request was successful and user receives versionNumber", response = Version.class)
     })
-    public Response infoGet(@Context SecurityContext securityContext)
+    public Response versionGet(@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.infoGet(securityContext);
+        return delegate.versionGet(securityContext);
     }
 }

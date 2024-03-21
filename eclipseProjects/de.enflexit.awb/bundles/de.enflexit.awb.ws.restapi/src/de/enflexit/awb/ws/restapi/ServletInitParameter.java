@@ -4,7 +4,8 @@ import java.util.HashMap;
 
 import de.enflexit.awb.ws.restapi.impl.InfoApiImpl;
 import de.enflexit.awb.ws.restapi.impl.LoadApiImpl;
-import de.enflexit.awb.ws.restapi.impl.StateApiImpl;
+import de.enflexit.awb.ws.restapi.impl.ExecutionStateApiImpl;
+import de.enflexit.awb.ws.restapi.impl.UserApiImpl;
 
 /**
  * The Class ServletInitParameter.
@@ -22,7 +23,8 @@ public class ServletInitParameter extends HashMap<String, String>{
 		
 		this.put("InfoApi.implementation", InfoApiImpl.class.getName());
 		this.put("LoadApi.implementation", LoadApiImpl.class.getName());
-		this.put("StateApi.implementation", StateApiImpl.class.getName());
+		this.put("StateApi.implementation", ExecutionStateApiImpl.class.getName());
+		this.put("UserApi.implementation", UserApiImpl.class.getName());
 		
 	}
 }

@@ -3,7 +3,8 @@ package de.enflexit.awb.ws.restapi.gen.impl;
 import de.enflexit.awb.ws.restapi.gen.*;
 import de.enflexit.awb.ws.restapi.gen.model.*;
 
-import de.enflexit.awb.ws.restapi.gen.model.ExecutionState;
+import de.enflexit.awb.ws.restapi.gen.model.Event;
+import de.enflexit.awb.ws.restapi.gen.model.EventLogTypes;
 
 import java.util.List;
 import de.enflexit.awb.ws.restapi.gen.NotFoundException;
@@ -15,10 +16,10 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.validation.constraints.*;
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-18T14:16:57.078043800+01:00[Europe/Berlin]")
-public class StateApiServiceImpl extends StateApiService {
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+public class EventLogApiServiceImpl extends EventLogApiService {
     @Override
-    public Response stateGet(SecurityContext securityContext) throws NotFoundException {
+    public Response eventLogGet( @NotNull EventLogTypes type,  @Min(1) @Max(100)Integer amount, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }

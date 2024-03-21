@@ -1,8 +1,8 @@
 package de.enflexit.awb.ws.restapi.gen;
 
 import de.enflexit.awb.ws.restapi.gen.model.*;
-import de.enflexit.awb.ws.restapi.gen.StateApiService;
-import de.enflexit.awb.ws.restapi.gen.factories.StateApiServiceFactory;
+import de.enflexit.awb.ws.restapi.gen.ExecutionStateApiService;
+import de.enflexit.awb.ws.restapi.gen.factories.ExecutionStateApiServiceFactory;
 
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
@@ -26,22 +26,22 @@ import javax.ws.rs.*;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
-@Path("/state")
+@Path("/executionState")
 
 
-@io.swagger.annotations.Api(description = "the state API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-18T14:16:57.078043800+01:00[Europe/Berlin]")
-public class StateApi  {
-   private final StateApiService delegate;
+@io.swagger.annotations.Api(description = "the executionState API")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+public class ExecutionStateApi  {
+   private final ExecutionStateApiService delegate;
 
-   public StateApi(@Context ServletConfig servletContext) {
-      StateApiService delegate = null;
+   public ExecutionStateApi(@Context ServletConfig servletContext) {
+      ExecutionStateApiService delegate = null;
 
       if (servletContext != null) {
-         String implClass = servletContext.getInitParameter("StateApi.implementation");
+         String implClass = servletContext.getInitParameter("ExecutionStateApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (StateApiService) Class.forName(implClass).newInstance();
+               delegate = (ExecutionStateApiService) Class.forName(implClass).newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -49,7 +49,7 @@ public class StateApi  {
       }
 
       if (delegate == null) {
-         delegate = StateApiServiceFactory.getStateApi();
+         delegate = ExecutionStateApiServiceFactory.getExecutionStateApi();
       }
 
       this.delegate = delegate;
@@ -60,13 +60,13 @@ public class StateApi  {
     
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Returns the current AWB state", notes = "Returns the current state of Agent.Workbench consisiting information  about the execution mode, the currently open project and other. ", response = ExecutionState.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "AwbApiKey")
+        @io.swagger.annotations.Authorization(value = "BearerAuth")
     }, tags={ "admins", })
     @io.swagger.annotations.ApiResponses(value = {
         @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = ExecutionState.class)
     })
-    public Response stateGet(@Context SecurityContext securityContext)
+    public Response executionStateGet(@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.stateGet(securityContext);
+        return delegate.executionStateGet(securityContext);
     }
 }

@@ -31,7 +31,7 @@ import javax.validation.Valid;
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-18T14:16:57.078043800+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
 public class SystemLoad   {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
@@ -55,8 +55,8 @@ public class SystemLoad   {
    * @return cpuUsage
    **/
   @JsonProperty(value = "cpuUsage")
-  @ApiModelProperty(value = "The CPU usage in percent")
-  
+  @ApiModelProperty(required = true, value = "The CPU usage in percent")
+  @NotNull 
   public Float getCpuUsage() {
     return cpuUsage;
   }
@@ -75,8 +75,8 @@ public class SystemLoad   {
    * @return memUsage
    **/
   @JsonProperty(value = "memUsage")
-  @ApiModelProperty(value = "The memory usage in percent")
-  
+  @ApiModelProperty(required = true, value = "The memory usage in percent")
+  @NotNull 
   public Float getMemUsage() {
     return memUsage;
   }
@@ -95,8 +95,8 @@ public class SystemLoad   {
    * @return heapUsage
    **/
   @JsonProperty(value = "heapUsage")
-  @ApiModelProperty(value = "The Heap usage in percen")
-  
+  @ApiModelProperty(required = true, value = "The Heap usage in percen")
+  @NotNull 
   public Float getHeapUsage() {
     return heapUsage;
   }
