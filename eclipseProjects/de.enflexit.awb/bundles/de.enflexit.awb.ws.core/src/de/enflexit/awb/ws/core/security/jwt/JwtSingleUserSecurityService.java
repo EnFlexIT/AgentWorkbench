@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -46,6 +47,10 @@ public class JwtSingleUserSecurityService implements AwbSecurityHandlerService {
 
 		// --- Set JWT configuration to system environment ----------
 		Map<String, String> jwtConfig = new HashMap<>();
+		
+		Base64.getDecoder().decode("Toaster");
+		
+		
 		jwtConfig.put(JwtAuthenticator.JWT_SECRET, "Das ist ein Test String Das ist ein Test String Das ist ein Test String ");
 		jwtConfig.put(JwtAuthenticator.JWT_ISSUER, "AWB-Webserver");
 		jwtConfig.put(JwtAuthenticator.JWT_COOKIE_NAME, "");

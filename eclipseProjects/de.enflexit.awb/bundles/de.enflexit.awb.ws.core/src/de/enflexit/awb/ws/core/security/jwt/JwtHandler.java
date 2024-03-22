@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
-import org.apache.commons.codec.binary.Base64;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -56,7 +54,7 @@ public class JwtHandler {
 	 */
 	public void init(String secret, String issuer) throws IllegalArgumentException, UnsupportedEncodingException {
 		
-		byte[] byteKey = Base64.decodeBase64(secret);
+		byte[] byteKey = secret.getBytes();
 		this.setSecreteKey(Keys.hmacShaKeyFor(byteKey));
 		
 		this.setIssuer(issuer);
