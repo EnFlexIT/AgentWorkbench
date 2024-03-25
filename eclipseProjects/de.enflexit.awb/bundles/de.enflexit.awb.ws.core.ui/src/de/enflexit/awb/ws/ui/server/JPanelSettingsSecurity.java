@@ -7,11 +7,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -19,8 +18,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,6 +34,7 @@ import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
+import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.common.swing.TableCellListener;
 
 /**
@@ -219,13 +223,16 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 			
 			Vector<String> tableHeader = new Vector<>();
 			tableHeader.add("Parameter");
+			tableHeader.add("Type");
 			tableHeader.add("Value");
 			
 			tableModelConfiguration = new DefaultTableModel(null, tableHeader) {
 				private static final long serialVersionUID = 8247294167382441521L;
 				@Override
 				public boolean isCellEditable(int row, int column) {
-					if (column==0) return false;
+					if (column<=1) {
+						return false;
+					}
 					return true;
 				}
 				@Override
@@ -233,6 +240,7 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 					switch (columnIndex) {
 					case 0:
 					case 1:
+					case 2:
 						return String.class;
 					}
 					return null;
@@ -243,7 +251,49 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 	}
 	private JTable getJTableConfiguration() {
 		if (jTableConfiguration == null) {
-			jTableConfiguration = new JTable(this.getTableModelConfiguration());
+			jTableConfiguration = new JTable(this.getTableModelConfiguration()) {
+				private static final long serialVersionUID = 8288687946000021206L;
+				@Override
+				public TableCellRenderer getCellRenderer(int row, int column) {
+					TableCellRenderer renderer = super.getCellRenderer(row, column);
+					if (column==1) {
+						renderer = this.getDefaultRenderer(String.class);
+					} else if (column==2) {
+						Class<?> clazz = (Class<?>) JPanelSettingsSecurity.this.getJTableConfiguration().getValueAt(row, 1);
+						renderer = this.getDefaultRenderer(clazz);
+						if (clazz.equals(Boolean.class)==true) {
+							JCheckBox checkRenderer = (JCheckBox) renderer;
+							checkRenderer.setOpaque(true);
+							checkRenderer.setHorizontalAlignment(JCheckBox.LEFT);
+						}
+					}
+					return renderer;
+				}
+				@Override
+				public TableCellEditor getCellEditor(int row, int column) {
+					TableCellEditor editor = super.getCellEditor(row, column);
+					if (column==1) {
+						editor = this.getDefaultEditor(String.class);
+					} else if (column==2) {
+						Class<?> clazz = (Class<?>) JPanelSettingsSecurity.this.getJTableConfiguration().getValueAt(row, 1);
+						editor = this.getDefaultEditor(clazz);
+						DefaultCellEditor defaultEditor = (DefaultCellEditor) editor;
+						if (clazz.equals(Boolean.class)==true) {
+							JCheckBox checkEditor = (JCheckBox) defaultEditor.getComponent();
+							checkEditor.setHorizontalAlignment(JCheckBox.LEFT);
+						} else if (clazz.equals(Integer.class)==true) {
+							JTextField tfEditor = (JTextField) defaultEditor.getComponent();
+							tfEditor.setHorizontalAlignment(JTextField.LEFT);
+							tfEditor.addKeyListener(new KeyAdapter4Numbers(false));
+						} else if (clazz.equals(Double.class)==true) {
+							JTextField tfEditor = (JTextField) defaultEditor.getComponent();
+							tfEditor.setHorizontalAlignment(JTextField.LEFT);
+							tfEditor.addKeyListener(new KeyAdapter4Numbers(true));
+						}
+					}
+					return editor;
+				}
+			};
 			jTableConfiguration.setFillsViewportHeight(true);
 			jTableConfiguration.setShowGrid(false);
 			jTableConfiguration.setRowHeight(20);
@@ -251,9 +301,15 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 			
 			jTableConfiguration.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableConfiguration.getTableHeader().setReorderingAllowed(false);
-			jTableConfiguration.setAutoCreateRowSorter(true);
+			//jTableConfiguration.setAutoCreateRowSorter(true);
+			
+			TableColumnModel tcm = jTableConfiguration.getColumnModel();
+			tcm.getColumn(1).setMinWidth(0);
+			tcm.getColumn(1).setMaxWidth(0);
+			
 			// --- Create TableCellListener ---------------
 			new TableCellListener(jTableConfiguration, this);
+			
 		}
 		return jTableConfiguration;
 	}
@@ -270,13 +326,32 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 		// --- Early exit ? -------------------------------
 		if (secHandlerConfig==null || secHandlerConfig.size()==0) return;
 		
+		// --- Get Service instance for type requests ----- 
+		AwbSecurityHandlerService shService = SecurityHandlerService.getAwbSecurityHandlerService(this.getSecurityConfiguration().getSecurityHandlerName());
+
 		// --- Fill each list element into table model ----
-		List<String> configKeys = new ArrayList<>(secHandlerConfig.keySet());
-		for (String configKey : configKeys) {
+		for (String configKey : shService.getConfigurationKeys()) {
+
+			// --- Evaluate key type ----------------------
+			Class<?> keyType = shService.getKeyType(configKey);
+			if (keyType==null) continue;
+			
+			String valueString = secHandlerConfig.get(configKey);
+			
 			// --- Add data model row ---------------------
 			Vector<Object> row = new Vector<>();
 			row.add(configKey);
-			row.add(secHandlerConfig.get(configKey));
+			row.add(keyType);
+			if (keyType.equals(String.class)==true) {
+				row.add(valueString);
+			} else if (keyType.equals(Boolean.class)==true) {
+				row.add(valueString!=null && valueString.isBlank()==false ? Boolean.valueOf(valueString) : false);				
+			} else if (keyType.equals(Integer.class)==true) {
+				row.add(valueString!=null && valueString.isBlank()==false ? Integer.valueOf(valueString) : 0);
+			} else if (keyType.equals(Double.class)==true) {
+				row.add(valueString!=null && valueString.isBlank()==false ? Double.valueOf(valueString) : 0.0);
+			}
+			
 			this.getTableModelConfiguration().addRow(row);
 		}
 	}
@@ -436,17 +511,75 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 			// --- React on table cell changes --------------------------------
 			TableCellListener tcl = (TableCellListener) ae.getSource();
 			int row = tcl.getRow();
-			String oldValue = (String) tcl.getOldValue();
-			String newValue = (String) tcl.getNewValue();
-			if (newValue!=null && newValue.isBlank()==true) newValue = null;
+
+			String configKey = (String) this.getJTableConfiguration().getValueAt(row, 0);
+			Class<?> keyType = (Class<?>) this.getJTableConfiguration().getValueAt(row, 1);
+			Object newValueObject = tcl.getNewValue();
 			
-			if (StringUtils.equals(newValue, oldValue)==false) {
+			// --- Evaluate new value -----------------------------------------
+			boolean isEqualValue = false;
+			if (keyType.equals(String.class)==true) {
+				String oldValue = (String) tcl.getOldValue();
+				String newValue = (String) newValueObject;
+				if (newValue!=null && newValue.isBlank()==true) newValue = null;
+				isEqualValue = StringUtils.equals(newValue, oldValue);
+				
+			} else if (keyType.equals(Boolean.class)==true) {
+				Boolean oldValue = (Boolean) tcl.getOldValue();
+				Boolean newValue = (Boolean) newValueObject;
+				isEqualValue = newValue.equals(oldValue);
+				
+			} else if (keyType.equals(Integer.class)==true) {
+				Integer oldValue = this.getIntegerValue(tcl.getOldValue());
+				Integer newValue = this.getIntegerValue(tcl.getNewValue());
+				isEqualValue = newValue.equals(oldValue);
+				
+			} else if (keyType.equals(Double.class)==true) {
+				Double oldValue = this.getDoubleValue(tcl.getOldValue());
+				Double newValue = this.getDoubleValue(tcl.getNewValue());
+				isEqualValue = newValue.equals(oldValue);
+			}
+			
+			if (isEqualValue==false) {
 				// --- Adjust in security configuration -----------------------
-				String configKey = (String) this.getJTableConfiguration().getValueAt(row, 0);
-				this.getSecurityConfiguration().getSecurityHandlerConfiguration().put(configKey, newValue);
+				this.getSecurityConfiguration().getSecurityHandlerConfiguration().put(configKey, newValueObject.toString());
 			}
 		}
 	}
+	
+	private Integer getIntegerValue(Object valueObject) {
+		
+		if (valueObject==null) return null;
+		
+		Integer intValue = null;
+		if (valueObject instanceof String) {
+			if ("".equals(valueObject)) {
+				intValue = 0;
+			} else {
+				intValue = Integer.valueOf((String)valueObject);
+			}
+		} else if (valueObject instanceof Integer) {
+			intValue = (Integer) valueObject;
+		}
+		return intValue;
+	}
+	private Double getDoubleValue(Object valueObject) {
+		
+		if (valueObject==null) return null;
+		
+		Double dblValue = null;
+		if (valueObject instanceof String) {
+			if ("".equals(valueObject)==true) {
+				dblValue = 0.0;
+			} else {
+				dblValue = Double.valueOf((String)valueObject);
+			}
+		} else if (valueObject instanceof Integer) {
+			dblValue = (Double) valueObject;
+		}
+		return dblValue;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.server.JettyConfigurationInterface#stopEditing()

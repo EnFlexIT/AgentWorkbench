@@ -118,7 +118,7 @@ public class JPanelPasswordAuthenticationCredentials extends AbstractCredentialP
 	//-------------------------------------------------
 	
 	/**
-	 * Fills the UserPassword related JTextfields. If the credential is create or was set before. 
+	 * Fills the Password related JTextfields. If the credential is create or was set before. 
 	 */
 	public void fillPasswordTextfields() {
 		fillJTextfieldUsername();
