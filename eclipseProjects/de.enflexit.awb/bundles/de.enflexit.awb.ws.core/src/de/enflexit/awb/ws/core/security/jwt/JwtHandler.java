@@ -25,7 +25,8 @@ public class JwtHandler {
 
 	private SecretKey secreteKey;
 	private String issuer;
-	
+	private Integer validityPeriod;
+		
 	private JwtParser jwtParser;
 
 	
@@ -43,6 +44,13 @@ public class JwtHandler {
 		this.issuer = issuer;
 	}
 	
+	public int getValidityPeriod() {
+		return validityPeriod;
+	}
+	public void setValidityPeriod(int validityPeriod) {
+		this.validityPeriod = validityPeriod;
+	}
+	
 	
 	/**
 	 * Inits the JwtHandler.
@@ -52,14 +60,17 @@ public class JwtHandler {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 * @throws UnsupportedEncodingException the unsupported encoding exception
 	 */
-	public void init(String secret, String issuer) throws IllegalArgumentException, UnsupportedEncodingException {
+	public void init(String secret, String issuer, int validityPeriod) throws IllegalArgumentException, UnsupportedEncodingException {
 		
 		byte[] byteKey = secret.getBytes();
-		this.setSecreteKey(Keys.hmacShaKeyFor(byteKey));
 		
+		this.setSecreteKey(Keys.hmacShaKeyFor(byteKey));
 		this.setIssuer(issuer);
+		this.setValidityPeriod(validityPeriod);
+		
 		// --- Test call to validate secrete and issuer parameter ---
-		this.createJwsToken("Test", "TestUSer", "Maintainer");
+		this.createJwsToken("Test", "TestUser", "Maintainer");
+		
 	}
 	
 	/**
@@ -73,7 +84,7 @@ public class JwtHandler {
 	public String createJwsToken(String subject, String userName, String role) {
 		
 		// --- Define expiration --------------------------
-		long expDuration = 1000l * 60 * 60 * 24 * 30 * 3; // --- 90 days ~ 3 month ---
+		long expDuration = 1000l * 60 * this.getValidityPeriod();
 		long nowTimeStamp = System.currentTimeMillis();
 		long expTimeStamp = nowTimeStamp + expDuration;
 		
