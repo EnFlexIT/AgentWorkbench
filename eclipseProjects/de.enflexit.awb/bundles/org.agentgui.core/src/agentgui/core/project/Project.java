@@ -1021,11 +1021,12 @@ import de.enflexit.common.properties.PropertiesListener;
 	 * Move project libraries to the specified destination directory.
 	 *
 	 * @param destinationDirectory the destination directory root path
+	 * @param isExportEntireProject the indicator to export the entire project or not
 	 * @param messageSuccess the optional message for successful export (is allowed to be <code>null</code>)
 	 * @param messageFailure the optional message, if the export failed (is allowed to be <code>null</code>)
 	 * @return the actual File that were exported to the destination directory
 	 */
-	public File exportProjectRessourcesToDestinationDirectory(String destinationDirectory, String messageSuccess, String messageFailure) {
+	public File exportProjectRessourcesToDestinationDirectory(String destinationDirectory, boolean isExportEntireProject, String messageSuccess, String messageFailure) {
 
 		// --- Define / create destination directory ----------------
 		File destinationDir = new File(destinationDirectory);
@@ -1037,10 +1038,12 @@ import de.enflexit.common.properties.PropertiesListener;
 		// --- Define the export settings ---------------------------
 		ProjectExportController pExCon = ProjectExportControllerProvider.getProjectExportController();
 		ProjectExportSettingsController pesc = new ProjectExportSettingsController(this, pExCon);
-		pesc.setIncludeAllSetups(false);
-		pesc.includeSimulationSetup(this.getSimulationSetupCurrent());
+		if (isExportEntireProject==false) {
+			pesc.setIncludeAllSetups(false);
+			pesc.includeSimulationSetup(this.getSimulationSetupCurrent());
+			pesc.addDefaultsToExcludeList();
+		}
 		pesc.excludeInstallationPackage();
-		pesc.addDefaultsToExcludeList();
 		pesc.setTargetFile(projectExportFile);
 
 		// --- Do the export ----------------------------------------

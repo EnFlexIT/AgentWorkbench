@@ -55,6 +55,7 @@ public class DistributionSetup implements Serializable {
 	private int numberOfAgents = 0;
 	private int numberOfContainer = 0;
 	private int additionalRemoteContainerTimeOutInSeconds;
+	private boolean isDistributeAllProjectResources;
 	
 	private boolean doDynamicLoadBalancing = false;
 	private String dynamicLoadBalancingClass = DEFAULT_DynamicLoadBalancingClass;
@@ -133,6 +134,21 @@ public class DistributionSetup implements Serializable {
 	 */
 	public void setAdditionalRemoteContainerTimeOutInSeconds(int additionalRemoteContainerTimeOutInSeconds) {
 		this.additionalRemoteContainerTimeOutInSeconds = additionalRemoteContainerTimeOutInSeconds;
+	}
+	
+	/**
+	 * Checks if is distribute all project resources.
+	 * @return true, if is distribute all project resources
+	 */
+	public boolean isDistributeAllProjectResources() {
+		return this.isDistributeAllProjectResources;
+	}
+	/**
+	 * Sets to distribute all project resources or not.
+	 * @param isDistributeAllProjectResources the new distribute all project resources
+	 */
+	public void setDistributeAllProjectResources(boolean isDistributeAllProjectResources) {
+		this.isDistributeAllProjectResources = isDistributeAllProjectResources;
 	}
 	
 	/**

@@ -301,6 +301,7 @@ de;Französisch;French
 de;Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese Option nicht deaktiviert werden.<br>Möchten Sie stattdessen eine andere Klasse für die statische Lastverteilung auswählen?;This option cannot be deactivated for the currently selected class for the static load balancing.<br>Would you like to choose a different class for the static load balancing instead?;;;
 de;Gegenwarts-Zeit.;Present Time;;;
 de;Geräte-Agent;Embedded System Agent;;;
+de;Gesamtes Projekt verteilen;Distribute entire project;;;
 de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
 de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
 de;Google - Übersetzung;Google translation;;;
@@ -733,6 +734,7 @@ de;Verteilung + Grenzwerte;Distribution + Thresholds
 de;Verteilung der Agenten basierend auf:;Distribution of agents based on:;;;
 de;Verteilung der Agenten bei "PredictiveStaticLoadBalancing" basierend auf:;Distribution of agents in "PredictiveStaticLoadBalancing" based on: ;;;
 de;Verteilung der Agenten nur auf Remote-Maschinen;Distribute agents to remote container only;;;
+de;Verteilung von Projektressourcen;Distribution of project resources;;;
 de;Verteilung;Distribution
 de;Verwenden Sie das Kontextmenü im Projektbaum, um einen Start-Tab festzulegen.;Use the context menu in the project tree in order to specify a start tab.;;;
 de;Verzeichnis auswählen;Select Directory;;;

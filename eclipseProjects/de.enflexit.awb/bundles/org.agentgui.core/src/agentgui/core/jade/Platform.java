@@ -1104,6 +1104,20 @@ public class Platform {
 		boolean isDoLoadBalancing = isDoStaticLoadBalancing || isDoDynamicLoadBalancing;
 		return isDoLoadBalancing;
 	}
+	
+	/**
+	 * Checks if is distribute all project resources.
+	 * @return true, if is distribute all project resources
+	 */
+	private boolean isDistributeAllProjectResources() {
+
+		// --- Do we have a project? --------------------------------
+		Project currProject = Application.getProjectFocused();
+		if (currProject==null) return false;
+		
+		// --- Is enabled load balancing? ---------------------------
+		return currProject.getDistributionSetup().isDistributeAllProjectResources();
+	}
 	/**
 	 * Does the required project resources distribution.
 	 */
@@ -1121,7 +1135,7 @@ public class Platform {
 		System.out.println("[" + currProject.getProjectName() + "] Start preparing project resources into directory '" + workingDirPath + "' ...");
 
 		long timePackagingStart = System.currentTimeMillis();
-		File projectFile = currProject.exportProjectRessourcesToDestinationDirectory(workingDirPath, messageSuccess, messageFailure);
+		File projectFile = currProject.exportProjectRessourcesToDestinationDirectory(workingDirPath, this.isDistributeAllProjectResources(), messageSuccess, messageFailure);
 		if (projectFile.exists()==false) {
 			return false;
 		}
