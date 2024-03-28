@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
+import java.util.List;
+
 import org.eclipse.jetty.security.UserAuthentication;
 
 /**
@@ -21,14 +23,37 @@ public class JwtAuthentication extends UserAuthentication {
     public JwtAuthentication(JwtAuthenticator authenticator, final JwtPrincipal principle) {
         super(authenticator.getAuthMethod(), new JwtUserIdentity(principle));
     }
+    
     /**
-     * Returns the JWT Token that was successfully validated to permit authentication.
-     * @return the JWT Token that was successfully validated to permit authentication.
+     * Returns the current JwtPrincipal.
+     * @return the JwtPrincipal
      */
-    public String getJwtToken() {
-        return ((JwtPrincipal)this.getUserIdentity().getUserPrincipal()).getJwtToken();
+    private JwtPrincipal getJwtPrincipal() {
+    	return (JwtPrincipal)this.getUserIdentity().getUserPrincipal();
     }
-
+    
+    /**
+	 * Returns the list of JWT token for the current principal.
+	 * @return the jwtTokenList
+	 */
+    public List<String> getJwtTokenList() {
+		return this.getJwtPrincipal().getJwtTokenList();
+	}
+    /**
+     * Return the list of invalid JWT token.
+     * @return the invalid JWT token
+     */
+    public List<String> getInvalidJwtToken() {
+    	return this.getJwtPrincipal().getInvalidJwtToken();
+    }
+    /**
+     * Removes the specified JWT token.
+     * @param jwtToken the JWT token to remove
+     */
+    public void removeJwtToken(String jwtToken) {
+    	this.getJwtPrincipal().removeJwtToken(jwtToken);
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jetty.security.UserAuthentication#toString()
      */
@@ -36,5 +61,6 @@ public class JwtAuthentication extends UserAuthentication {
     public String toString() {
     	return super.toString();
     }
-    
+
+
 }

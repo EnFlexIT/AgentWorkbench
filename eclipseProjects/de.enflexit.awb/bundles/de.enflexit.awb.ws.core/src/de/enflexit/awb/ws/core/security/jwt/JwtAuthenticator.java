@@ -6,8 +6,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -62,12 +60,12 @@ public class JwtAuthenticator extends LoginAuthenticator {
 	private int validityPeriod;
 	private boolean renewWithEachCall;
 	
-	/** JWT ticket parser component. */
-	private JwtHandler jwtHandler;
 	private Charset charset;
 
-	/** Map of tickets to sessions. */
-	private ConcurrentMap<String, JwtAuthentication> sessionMap;
+	/** JWT token parser component. */
+	private JwtHandler jwtHandler;
+	/** Map of JWT token to sessions. */
+	private JwtSessionStore jwtSessionStore;
 
 	
 	/**
@@ -76,7 +74,8 @@ public class JwtAuthenticator extends LoginAuthenticator {
 	 */
 	public JwtAuthenticator(Map<String, String> configMap) {
 		this.applyConfiguration(configMap);
-		this.getSessionMap();
+		this.getJwtHandler();
+		this.getJwtSessionStore();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jetty.security.Authenticator#getAuthMethod()
@@ -115,8 +114,6 @@ public class JwtAuthenticator extends LoginAuthenticator {
 			verbose = Boolean.valueOf(configMap.get(JWT_VERBOSE));
 			logger.info("verbose jwt logging enabled");
 		}
-		
-		this.getJwtHandler();
 	}
 
 	public String getIssuer() {
@@ -158,6 +155,10 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		this.charset = charset;
 	}
 
+	/**
+	 * Returns the JWT token handler (for creation and parsing).
+	 * @return the JwtHandler
+	 */
 	private JwtHandler getJwtHandler() {
 		if (jwtHandler==null) {
 			jwtHandler = new JwtHandler();
@@ -170,7 +171,16 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		}
 		return jwtHandler;
 	}
-	
+	/**
+	 * Return the JWT session store.
+	 * @return the JwtSessionStore
+	 */
+	private JwtSessionStore getJwtSessionStore() {
+		if (jwtSessionStore==null) {
+			jwtSessionStore = new JwtSessionStore();
+		}
+		return jwtSessionStore;
+	}
 
 	/**
 	 * Validates a login request.
@@ -202,12 +212,12 @@ public class JwtAuthenticator extends LoginAuthenticator {
                     if (i > 0) {
                         String username = credentials.substring(0, i);
                         String password = credentials.substring(i + 1);
-                        UserIdentity user = login(username, password, request);
-                        if (user != null) {
+                        UserIdentity user = this.login(username, password, request);
+                        if (user!=null) {
                         	// --- Create JWT for the user ------
                         	String jwtToken = this.getJwtHandler().createJwsToken(DEFAULT_JWT_CLAIM_SUBJECT, username, DEFAULT_JWT_CLAIM_ROLE);
                         	JwtPrincipal jwtPrincipal = (JwtPrincipal) user.getUserPrincipal();
-                        	jwtPrincipal.setJwtToken(jwtToken);
+                        	jwtPrincipal.addJwtToken(jwtToken);
                         	
                             response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), AUTH_HEADER_VALUE_PREFIX + jwtToken);
                         	return new JwtAuthentication(this, jwtPrincipal);
@@ -255,7 +265,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
 			Authentication authentication = this.validateLoginRequest(servletRequest, servletResponse, mandatory); 
 			if (authentication!=null && authentication instanceof JwtAuthentication) {
 				// --- Cache the JwtAuthentication created ---------- 
-				this.cacheAuthentication((JwtAuthentication) authentication);
+				this.getJwtSessionStore().cacheAuthentication((JwtAuthentication) authentication);
 			}
             return authentication;
 		}
@@ -270,6 +280,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				// --- Try parsing JWT string -----------------------
 				JwtParsed jwtParsed = this.getJwtHandler().parse(jwtInput);
 				if (jwtParsed.hasExceptions()==true || jwtParsed.getJwsClaims()==null) {
+					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("unable to decode jwt, returning unauthenticated");
 					return Authentication.UNAUTHENTICATED;
 				}
@@ -277,15 +288,17 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				// --- Test user name and role ----------------------
 				String username = jwtParsed.getPayload().get(JWT_CLAIM_USER, String.class);
 				String role     = jwtParsed.getPayload().get(JWT_CLAIM_ROLE, String.class);
-				if (username==null) {
+				if (username==null || username.isBlank()==true) {
+					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("no username provided in jwt, returning unauthenticated");
 					return Authentication.UNAUTHENTICATED;
 				}
 				if (verbose) logger.info("jwt username={} role={}", username, role);
 				
 				// --- Get JwtAuthentication from local cache -------
-				authentication = this.getAuthentication(jwtInput);
+				authentication = this.getJwtSessionStore().getAuthentication(jwtInput);
 				if (authentication==null) {
+					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("jwt token not found in local cache, returning unauthenticated");
 					return Authentication.UNAUTHENTICATED;
 				}
@@ -293,25 +306,24 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				// --- Check the user name again -------------------- 
 				String prevUsername = authentication.getUserIdentity().getUserPrincipal().getName();
 				if (username.equals(prevUsername)==false) {
+					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("user name differs, returning unauthenticated");
 					return Authentication.UNAUTHENTICATED;
 				}
 				
 				// --- Renew JWT token with each call? --------------
 				if (this.isRenewWithEachCall()==true) {
-					
-					// --- Create new JwtAuthentication -------------
+					// --- Add token to current JwtAuthentication ---
                 	String jwtToken = this.getJwtHandler().createJwsToken(DEFAULT_JWT_CLAIM_SUBJECT, username, DEFAULT_JWT_CLAIM_ROLE);
                 	JwtPrincipal jwtPrincipal = (JwtPrincipal) authentication.getUserIdentity().getUserPrincipal();
-                	jwtPrincipal.setJwtToken(jwtToken);
-                	authentication = new JwtAuthentication(this, jwtPrincipal);
+                	jwtPrincipal.addJwtToken(jwtToken);
                 	
                 	// --- Adjust response header -------------------
                 	HttpServletResponse response = (HttpServletResponse) servletResponse;
                 	response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), AUTH_HEADER_VALUE_PREFIX + jwtToken);
-					
-                    this.removeAuthentication(jwtInput);
-					this.cacheAuthentication(authentication);
+
+                	// --- Save to session store --------------------
+                	this.getJwtSessionStore().cacheAuthentication(authentication);
 				}
 				
 			} catch (Exception e) {
@@ -326,7 +338,10 @@ public class JwtAuthenticator extends LoginAuthenticator {
 			}
 		}
 
-		if (authentication != null) return authentication;
+		// --- Return an authentication ----------------------------- 
+		if (authentication != null) {
+			return authentication;
+		}
 		return Authentication.UNAUTHENTICATED;
 	}
 
@@ -337,8 +352,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
 	public boolean secureResponse(final ServletRequest request, final ServletResponse response, final boolean mandatory, final Authentication.User user) throws ServerAuthException {
 		return true;
 	}
-
-	/**
+	/**
 	 * Get the bearer token from the HTTP request. The token is in the HTTP request
 	 * "Authorization" header in the form of: "Bearer [token]"
 	 */
@@ -346,40 +360,6 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		String authHeader = request.getHeader(HttpHeader.AUTHORIZATION.asString());
 		if (authHeader != null && authHeader.startsWith(AUTH_HEADER_VALUE_PREFIX)) {
 			return authHeader.substring(AUTH_HEADER_VALUE_PREFIX.length());
-		}
-		return null;
-	}
-	
-	
-	
-	// --------------------------------------------------------------
-	// --- From here local session cache for open sessions ----------
-	// --------------------------------------------------------------
-	/**
-	 * Returns the currently cached JwtAuthentication sessions.
-	 * @return the session map
-	 */
-	private ConcurrentMap<String, JwtAuthentication> getSessionMap() {
-		if (sessionMap==null) {
-			sessionMap = new ConcurrentHashMap<>();
-		}
-		return sessionMap;
-	}
-	
-	private void cacheAuthentication(JwtAuthentication authentication) {
-		if (authentication!=null) {
-			this.getSessionMap().put(authentication.getJwtToken(), authentication);
-		}
-	}
-	private JwtAuthentication getAuthentication(String jwtToken) {
-		if (jwtToken!=null) {
-			return this.getSessionMap().get(jwtToken);
-		}
-		return null;
-	}
-	protected JwtAuthentication removeAuthentication(String jwtToken) {
-		if (jwtToken!=null) {
-			return this.getSessionMap().remove(jwtToken);
 		}
 		return null;
 	}
