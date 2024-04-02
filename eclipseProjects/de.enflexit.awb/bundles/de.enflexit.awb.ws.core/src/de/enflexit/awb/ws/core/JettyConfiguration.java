@@ -158,6 +158,18 @@ public class JettyConfiguration implements Serializable {
 		
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MINTHREADS));
 		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.HTTP_MAXTHREADS));
+		
+		// --- CORS attributes --------------------------------------
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.CORS_ENABLED));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CORS_ALLOWED_ORIGINS_PARAM));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CORS_ALLOWED_TIMING_ORIGINS_PARAM));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CORS_ALLOWED_METHODS_PARAM));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CORS_ALLOWED_HEADERS_PARAM));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.CORS_PREFLIGHT_MAX_AGE_PARAM));
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.CORS_ALLOW_CREDENTIALS_PARAM));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CORS_EXPOSED_HEADERS_PARAM));		
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.CORS_CHAIN_PREFLIGHT_PARAM));
+		
 	}
 	
 	/**

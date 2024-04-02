@@ -28,8 +28,15 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 @Path("/load")
+<<<<<<< HEAD
 @Tag(name="Load EndPoint", description = "The Loaf API")
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
+=======
+
+
+@io.swagger.annotations.Api(description = "the load API")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+>>>>>>> refs/heads/master
 public class LoadApi  {
    private final LoadApiService delegate;
 
@@ -57,6 +64,7 @@ public class LoadApi  {
     @jakarta.ws.rs.GET
     
     
+<<<<<<< HEAD
     @Produces({ "applicaion/json" })
 //    @io.swagger.annotations.ApiOperation(value = "Returns the current System load", notes = "Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes ", response = SystemLoad.class, authorizations = {
 //        @io.swagger.annotations.Authorization(value = "AwbApiKey")
@@ -68,6 +76,15 @@ public class LoadApi  {
    	responses = {@ApiResponse(responseCode = "OK", description = "OK_MSG", 
    					content = @Content(schema = @Schema(implementation = SystemLoad.class))),
    					@ApiResponse(responseCode = "NOT_FOUND", description = "NOT_FOUND_MSG")})
+=======
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "Returns the current System load", notes = "Returns the current system load measured by Agent.Workbench that includes CPU-, memory- and Java Heap - load. Further, the number of threads and agents will be returnes ", response = SystemLoad.class, authorizations = {
+        @io.swagger.annotations.Authorization(value = "BearerAuth")
+    }, tags={ "admins", })
+    @io.swagger.annotations.ApiResponses(value = {
+        @io.swagger.annotations.ApiResponse(code = 200, message = "System Load", response = SystemLoad.class)
+    })
+>>>>>>> refs/heads/master
     public Response loadGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.loadGet(securityContext);

@@ -1,5 +1,6 @@
 package de.enflexit.expression.gui;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
@@ -59,6 +60,8 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		gbc_jButtonExpressionEditor.gridx = 1;
 		gbc_jButtonExpressionEditor.gridy = 0;
 		add(getJButtonExpressionEditor(), gbc_jButtonExpressionEditor);
+		
+		this.setToolTipText(this.getJTextFieldExpression().getText());
 	}
 
 	private JTextField getJTextFieldExpression() {
@@ -67,7 +70,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			if (this.expression!=null) {
 				jTextFieldExpression.setText(this.expression.getExpressionString());
 			}
-			jTextFieldExpression.setOpaque(true);
+			jTextFieldExpression.setOpaque(false);
 			jTextFieldExpression.setBorder(BorderFactory.createEmptyBorder());
 			
 			jTextFieldExpression.addKeyListener(new KeyAdapter() {
@@ -126,8 +129,10 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		this.expression = expression;
 		if (expression!=null) {
 			this.getJTextFieldExpression().setText(expression.getExpressionString());
+			this.setToolTipText(expression.getExpressionString());
 		} else {
 			this.getJTextFieldExpression().setText(null);
+			this.setToolTipText(null);
 		}
 	}
 
@@ -188,6 +193,19 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			}
 			
 			this.jTextFieldExpression.requestFocus();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setBackground(java.awt.Color)
+	 */
+	@Override
+	public void setBackground(Color bgColor) {
+		super.setBackground(bgColor);
+		this.getJTextFieldExpression().setBackground(bgColor);
+		if (this.expression!=null) {
+			this.getJTextFieldExpression().setText(this.expression.getExpressionString());
+			this.setToolTipText(this.expression.getExpressionString());
 		}
 	}
 }

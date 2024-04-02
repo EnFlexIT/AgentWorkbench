@@ -54,10 +54,15 @@ import de.enflexit.common.Language;
 import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
 import de.enflexit.common.ontology.AgentStartConfiguration;
+import de.enflexit.common.ontology.OntologyClassTreeObject;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import jade.content.lang.Codec.CodecException;
+import jade.content.lang.xml.XMLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -712,4 +717,139 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		return this.getDynForm().getOntoArgsInstanceCopy();
 	}
 
+
+	// ------------------------------------------------------------------------>
+	// --- From here some static help methods ---------------------------------
+	// ------------------------------------------------------------------------>	
+	/**
+	 * Returns the instance array of the specified Base64 encoded XML array.
+	 *
+	 * @param xml64Array the xml 64 array
+	 * @param ontologyClassNameArray the ontology class name array
+	 * @param ontoHelper the onto helper
+	 * @return the instances of base 64 XML array
+	 */
+	public static Object[] getInstancesOfBase64XMLArray(String[] xml64Array, String[] ontologyClassNameArray, OntologyVisualizationHelper ontoHelper) {
+		
+		if (xml64Array==null || xml64Array.length==0) return null;
+		if (ontologyClassNameArray==null || ontologyClassNameArray.length!=xml64Array.length) return null;
+		
+		Object[] instanceArray = new Object[xml64Array.length];
+		for (int i = 0; i < xml64Array.length; i++) {
+			
+			String xml64 = xml64Array[i];
+			String xml = null;
+			if (xml64!=null && xml64.equals("")==false) {
+				try {
+					xml = new String(Base64.decodeBase64(xml64.getBytes()), "UTF8");
+					OntologyClassTreeObject octo = ontoHelper.getClassTreeObject(ontologyClassNameArray[i]);
+					if (octo!=null) {
+						Ontology ontology = octo.getOntologyClass().getOntologyInstance();
+						instanceArray[i] = new XMLCodec().decodeObject(ontology, xml);
+					}
+					
+				} catch (UnsupportedEncodingException | CodecException | OntologyException uee) {
+					uee.printStackTrace();
+				}
+			}
+		}
+		return instanceArray;
+	}
+	
+	/**
+	 * Returns the instance array of the specified Base64 encoded XML array.
+	 *
+	 * @param xmlArray the xml 64 array
+	 * @param ontologyClassNameArray the ontology class name array
+	 * @param ontoHelper the onto helper
+	 * @return the instances of base 64 XML array
+	 */
+	public static Object[] getInstancesOfXMLArray(String[] xmlArray, String[] ontologyClassNameArray, OntologyVisualizationHelper ontoHelper) {
+		
+		if (xmlArray==null || xmlArray.length==0) return null;
+		if (ontologyClassNameArray==null || ontologyClassNameArray.length!=xmlArray.length) return null;
+		
+		Object[] instanceArray = new Object[xmlArray.length];
+		for (int i = 0; i < xmlArray.length; i++) {
+			
+			String xml = xmlArray[i];
+			if (xml!=null && xml.equals("")==false) {
+				try {
+					OntologyClassTreeObject octo = ontoHelper.getClassTreeObject(ontologyClassNameArray[i]);
+					if (octo!=null) {
+						Ontology ontology = octo.getOntologyClass().getOntologyInstance();
+						instanceArray[i] = new XMLCodec().decodeObject(ontology, xml);
+					}
+					
+				} catch (CodecException | OntologyException uee) {
+					uee.printStackTrace();
+				}
+			}
+		}
+		return instanceArray;
+	}
+	
+	/**
+	 * Returns the Base64 encoded XML array of the specified ontology instances.
+	 *
+	 * @param instanceArray the instance array
+	 * @param ontologyClassNameArray the ontology class name array
+	 * @param ontoHelper the onto helper
+	 * @return the base 64 XML array of instances
+	 */
+	public static String[] getBase64XMLArrayOfInstances(Object[] instanceArray, String[] ontologyClassNameArray, OntologyVisualizationHelper ontoHelper) {
+		
+		if (instanceArray==null || instanceArray.length==0) return null;
+		if (ontologyClassNameArray==null || ontologyClassNameArray.length!=instanceArray.length) return null;
+		
+		String[] xml64Array = new String[instanceArray.length];
+		for (int i = 0; i < instanceArray.length; i++) {
+			
+			Object instance = instanceArray[i];
+
+			try {
+				OntologyClassTreeObject octo = ontoHelper.getClassTreeObject(ontologyClassNameArray[i]);
+				Ontology ontology = octo.getOntologyClass().getOntologyInstance();
+
+				String xml = new XMLCodec().encodeObject(ontology, instance, true);
+				xml64Array[i] = new String(Base64.encodeBase64(xml.getBytes("UTF8")));
+				
+			} catch (CodecException | OntologyException | UnsupportedEncodingException ex) {
+				ex.printStackTrace();
+			}
+			
+		}
+		return xml64Array;
+	}
+	/**
+	 * Returns a XML array of the specified ontology instances.
+	 *
+	 * @param instanceArray the instance array
+	 * @param ontologyClassNameArray the ontology class name array
+	 * @param ontoHelper the onto helper
+	 * @return the base 64 XML array of instances
+	 */
+	public static String[] getXMLArrayOfInstances(Object[] instanceArray, String[] ontologyClassNameArray, OntologyVisualizationHelper ontoHelper) {
+		
+		if (instanceArray==null || instanceArray.length==0) return null;
+		if (ontologyClassNameArray==null || ontologyClassNameArray.length!=instanceArray.length) return null;
+		
+		String[] xmlArray = new String[instanceArray.length];
+		for (int i = 0; i < instanceArray.length; i++) {
+			
+			Object instance = instanceArray[i];
+			try {
+				OntologyClassTreeObject octo = ontoHelper.getClassTreeObject(ontologyClassNameArray[i]);
+				Ontology ontology = octo.getOntologyClass().getOntologyInstance();
+				
+				xmlArray[i] = new XMLCodec().encodeObject(ontology, instance, true);
+				
+			} catch (CodecException | OntologyException ex) {
+				ex.printStackTrace();
+			}
+			
+		}
+		return xmlArray;
+	}
+	
 }

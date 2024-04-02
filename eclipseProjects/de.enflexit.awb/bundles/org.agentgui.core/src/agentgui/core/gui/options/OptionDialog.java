@@ -88,8 +88,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private Frame owner = null;
-	
 	private JSplitPane jSplitPaneMain = null;
 	private JTabbedPane jTabbedPaneRight = null;
 	private JScrollPane jScrollPaneLeft = null;
@@ -117,7 +115,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	public OptionDialog(Frame owner) {
 		super(owner);
-		this.owner = owner;
 		
 		// --- Prepare OptionTree -----------------------------------
 		this.rootNode = new DefaultMutableTreeNode(Language.translate("Optionen"));
@@ -155,14 +152,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 	
 	/**
-	 * This method initialises this.
+	 * This method initializes the dialog.
 	 */
 	private void initialize() {
 		
 		this.setModal(true);
-		if (this.owner==null) {
-			this.setAlwaysOnTop(true);
-		}
 
 		this.setTitle("Optionen");
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());

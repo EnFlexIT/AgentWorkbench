@@ -2,36 +2,15 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: SlaveRegister
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/9, 15:58:57
 */
-@SuppressWarnings("serial")
 public class SlaveRegister implements AgentAction {
-
-   /**
-* Protege name: slaveVersion
-   */
-   private AgentGuiVersion slaveVersion;
-   public void setSlaveVersion(AgentGuiVersion value) { 
-    this.slaveVersion=value;
-   }
-   public AgentGuiVersion getSlaveVersion() {
-     return this.slaveVersion;
-   }
-
-   /**
-* Protege name: slaveTime
-   */
-   private PlatformTime slaveTime;
-   public void setSlaveTime(PlatformTime value) { 
-    this.slaveTime=value;
-   }
-   public PlatformTime getSlaveTime() {
-     return this.slaveTime;
-   }
 
    /**
 * Protege name: slaveOS
@@ -42,6 +21,17 @@ public class SlaveRegister implements AgentAction {
    }
    public OSInfo getSlaveOS() {
      return this.slaveOS;
+   }
+
+   /**
+* Protege name: slaveAddress
+   */
+   private PlatformAddress slaveAddress;
+   public void setSlaveAddress(PlatformAddress value) { 
+    this.slaveAddress=value;
+   }
+   public PlatformAddress getSlaveAddress() {
+     return this.slaveAddress;
    }
 
    /**
@@ -56,14 +46,25 @@ public class SlaveRegister implements AgentAction {
    }
 
    /**
-* Protege name: slaveAddress
+* Protege name: slaveTime
    */
-   private PlatformAddress slaveAddress;
-   public void setSlaveAddress(PlatformAddress value) { 
-    this.slaveAddress=value;
+   private PlatformTime slaveTime;
+   public void setSlaveTime(PlatformTime value) { 
+    this.slaveTime=value;
    }
-   public PlatformAddress getSlaveAddress() {
-     return this.slaveAddress;
+   public PlatformTime getSlaveTime() {
+     return this.slaveTime;
+   }
+
+   /**
+* Protege name: slaveVersion
+   */
+   private Version slaveVersion;
+   public void setSlaveVersion(Version value) { 
+    this.slaveVersion=value;
+   }
+   public Version getSlaveVersion() {
+     return this.slaveVersion;
    }
 
 }

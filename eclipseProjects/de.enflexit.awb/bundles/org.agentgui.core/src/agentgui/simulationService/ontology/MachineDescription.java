@@ -2,57 +2,25 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: MachineDescription
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/9, 15:58:57
 */
-@SuppressWarnings("serial")
 public class MachineDescription implements Concept {
 
    /**
-* Protege name: benchmarkResult
+* Protege name: contactAgent
    */
-   private BenchmarkResult benchmarkResult;
-   public void setBenchmarkResult(BenchmarkResult value) { 
-    this.benchmarkResult=value;
+   private String contactAgent;
+   public void setContactAgent(String value) { 
+    this.contactAgent=value;
    }
-   public BenchmarkResult getBenchmarkResult() {
-     return this.benchmarkResult;
-   }
-
-   /**
-* Protege name: isAvailable
-   */
-   private boolean isAvailable;
-   public void setIsAvailable(boolean value) { 
-    this.isAvailable=value;
-   }
-   public boolean getIsAvailable() {
-     return this.isAvailable;
-   }
-
-   /**
-* Protege name: platformName
-   */
-   private String platformName;
-   public void setPlatformName(String value) { 
-    this.platformName=value;
-   }
-   public String getPlatformName() {
-     return this.platformName;
-   }
-
-   /**
-* Protege name: performance
-   */
-   private PlatformPerformance performance;
-   public void setPerformance(PlatformPerformance value) { 
-    this.performance=value;
-   }
-   public PlatformPerformance getPerformance() {
-     return this.performance;
+   public String getContactAgent() {
+     return this.contactAgent;
    }
 
    /**
@@ -67,25 +35,25 @@ public class MachineDescription implements Concept {
    }
 
    /**
-* Protege name: agentGuiVersion
+* Protege name: performance
    */
-   private AgentGuiVersion agentGuiVersion;
-   public void setAgentGuiVersion(AgentGuiVersion value) { 
-    this.agentGuiVersion=value;
+   private PlatformPerformance performance;
+   public void setPerformance(PlatformPerformance value) { 
+    this.performance=value;
    }
-   public AgentGuiVersion getAgentGuiVersion() {
-     return this.agentGuiVersion;
+   public PlatformPerformance getPerformance() {
+     return this.performance;
    }
 
    /**
-* Protege name: contactAgent
+* Protege name: version
    */
-   private String contactAgent;
-   public void setContactAgent(String value) { 
-    this.contactAgent=value;
+   private Version version;
+   public void setVersion(Version value) { 
+    this.version=value;
    }
-   public String getContactAgent() {
-     return this.contactAgent;
+   public Version getVersion() {
+     return this.version;
    }
 
    /**
@@ -100,6 +68,28 @@ public class MachineDescription implements Concept {
    }
 
    /**
+* Protege name: platformName
+   */
+   private String platformName;
+   public void setPlatformName(String value) { 
+    this.platformName=value;
+   }
+   public String getPlatformName() {
+     return this.platformName;
+   }
+
+   /**
+* Protege name: benchmarkResult
+   */
+   private BenchmarkResult benchmarkResult;
+   public void setBenchmarkResult(BenchmarkResult value) { 
+    this.benchmarkResult=value;
+   }
+   public BenchmarkResult getBenchmarkResult() {
+     return this.benchmarkResult;
+   }
+
+   /**
 * Protege name: isThresholdExceeded
    */
    private boolean isThresholdExceeded;
@@ -108,6 +98,17 @@ public class MachineDescription implements Concept {
    }
    public boolean getIsThresholdExceeded() {
      return this.isThresholdExceeded;
+   }
+
+   /**
+* Protege name: isAvailable
+   */
+   private boolean isAvailable;
+   public void setIsAvailable(boolean value) { 
+    this.isAvailable=value;
+   }
+   public boolean getIsAvailable() {
+     return this.isAvailable;
    }
 
 }

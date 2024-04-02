@@ -14,6 +14,8 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.UserIdentity;
 
+import de.enflexit.awb.ws.core.util.ServletHelper;
+
 /**
  * The Class SingleApiKeySecurityHandler ... TODO
  *
@@ -97,6 +99,7 @@ public class SingleApiKeySecurityHandler extends ConstraintSecurityHandler imple
 	 */
 	@Override
 	protected boolean isAuthMandatory(Request baseRequest, Response base_response, Object constraintInfo) {
+		if (ServletHelper.isPreflightRequest(baseRequest)==true) return false;
 		return !this.isAuthorizedAccess(baseRequest);
 	}
 	

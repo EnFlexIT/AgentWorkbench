@@ -2,36 +2,15 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: PlatformAddress
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/9, 15:58:57
 */
-@SuppressWarnings("serial")
 public class PlatformAddress implements Concept {
-
-   /**
-* Protege name: port
-   */
-   private int port;
-   public void setPort(int value) { 
-    this.port=value;
-   }
-   public int getPort() {
-     return this.port;
-   }
-
-   /**
-* Protege name: http4mtp
-   */
-   private String http4mtp;
-   public void setHttp4mtp(String value) { 
-    this.http4mtp=value;
-   }
-   public String getHttp4mtp() {
-     return this.http4mtp;
-   }
 
    /**
 * Protege name: ip
@@ -45,6 +24,17 @@ public class PlatformAddress implements Concept {
    }
 
    /**
+* Protege name: port
+   */
+   private int port;
+   public void setPort(int value) { 
+    this.port=value;
+   }
+   public int getPort() {
+     return this.port;
+   }
+
+   /**
 * Protege name: url
    */
    private String url;
@@ -53,6 +43,17 @@ public class PlatformAddress implements Concept {
    }
    public String getUrl() {
      return this.url;
+   }
+
+   /**
+* Protege name: http4mtp
+   */
+   private String http4mtp;
+   public void setHttp4mtp(String value) { 
+    this.http4mtp=value;
+   }
+   public String getHttp4mtp() {
+     return this.http4mtp;
    }
 
 }

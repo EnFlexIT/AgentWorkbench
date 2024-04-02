@@ -107,7 +107,7 @@ public class TableCellEditor4Domains extends AbstractCellEditor implements Table
 			}
 			@Override
 			public void changedUpdate(DocumentEvent de) {
-//				this.setNewDocValue(de);
+				this.setNewDocValue(de);
 			}
 			private void setNewDocValue(DocumentEvent de) {
 				// --- Get old and new value for domain name --------

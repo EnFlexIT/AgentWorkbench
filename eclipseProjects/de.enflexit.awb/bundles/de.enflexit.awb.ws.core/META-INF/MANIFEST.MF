@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AWB WS-Core Bundle
-Bundle-SymbolicName: de.enflexit.awb.ws.core;singleton:=true
+Bundle-SymbolicName: de.enflexit.awb.ws.core
 Bundle-Version: 11.0.14.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ws.core
@@ -26,18 +26,26 @@ Require-Bundle: org.eclipse.osgi,
  org.bouncycastle.bcprov,
  org.apache.aries.spifly.dynamic.bundle,
  org.eclipse.equinox.app
+ de.enflexit.awb.ws.jetty,
+ io.jsonwebtoken.jjwt-api
 Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core,
  de.enflexit.awb.ws.core.model,
  de.enflexit.awb.ws.core.security,
+ de.enflexit.awb.ws.core.security.jwt,
+ de.enflexit.awb.ws.core.util,
  de.enflexit.awb.ws.server
 Import-Package: de.enflexit.common,
  de.enflexit.common.crypto,
  de.enflexit.common.swing,
  jakarta.servlet,
+ jakarta.servlet.http,
+ jakarta.ws.rs.container,
+ jakarta.ws.rs.core,
  jakarta.ws.rs.ext,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,
  org.apache.commons.lang3,
  org.glassfish.jersey.server.spi,
- org.glassfish.jersey.servlet
+ org.glassfish.jersey.servlet,
+ org.slf4j

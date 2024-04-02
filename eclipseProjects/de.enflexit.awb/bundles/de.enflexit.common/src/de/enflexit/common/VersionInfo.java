@@ -37,7 +37,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 /**
- * This class manages the local version info of Agent.Workbench.
+ * This class manages the local version information of Agent.Workbench.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -145,7 +145,6 @@ public class VersionInfo {
 	public Integer getVersionMinor() {
 		return this.getVersion()!=null ? this.getVersion().getMinor() : 0;
 	}
-	
 	/**
 	 * Provides the build number of the version.
 	 * @return the version build
@@ -153,6 +152,14 @@ public class VersionInfo {
 	public Integer getVersionMicro() {
 		return this.getVersion()!=null ? this.getVersion().getMicro() : 0;
 	}
+	/**
+	 * Provides the version qualifier as String.
+	 * @return the version qualifier as string
+	 */
+	public String getVersionQualifier() {
+		return this.getVersion()!=null ? this.getVersion().getQualifier(): "";
+	}
+	
 	/**
 	 * Provides the date where this version was build as Date.
 	 * @return the version date
@@ -168,13 +175,6 @@ public class VersionInfo {
 			}
 		}
 		return date;
-	}
-	/**
-	 * Provides the date where this version was build as a String.
-	 * @return the version date as string
-	 */
-	public String getVersionDateAsString() {
-		return this.getVersion().getQualifier();
 	}
 
 	/**

@@ -85,6 +85,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.io.GraphIOException;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The Environment Network Model. This class encapsulates a JUNG graph representing a grid, with edges representing the grid components.
  * 
@@ -94,6 +95,7 @@ import edu.uci.ics.jung.io.GraphIOException;
  */
 public class NetworkModel extends DisplaytEnvironmentModel {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5712689010090750522L;
 
 	/** This attribute stores layout settings like the DomainSettings and the ComponentTypeSettings. */
@@ -101,6 +103,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	
 	/** The layout (name) used for this NetworkModel. */
 	private String layoutID;
+	
+	/** The map settings tree map. */
 	private TreeMap<String, MapSettings> mapSettingsTreeMap;
 
 	
@@ -110,7 +114,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	private HashMap<String, GraphElement> graphElements;
 	/** A list of all NetworkComponents in the NetworkModel, accessible by ID. */
 	private TreeMap<String, NetworkComponent> networkComponents;
-	/** A list of {@link GraphElement} (that are {@link GraphNode} or {@link GraphEdge}) mapped to one or more {@link NetworkComponent}'s */
+	
+	/**  A list of {@link GraphElement} (that are {@link GraphNode} or {@link GraphEdge}) mapped to one or more {@link NetworkComponent}'s. */
 	private transient HashMap<GraphElement, List<NetworkComponent>> graphElementToNetworkComponents;  
 	
 	/** The Hash of NetworkComponentAdapter. */
@@ -124,11 +129,16 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	private HashMap<String, NetworkModel> alternativeNetworkModel;
 
-	/** The outer network components of this NetworkModel with no Connections */
+	/**  The outer network components of this NetworkModel with no Connections. */
 	private transient ArrayList<String> outerNetworkComponents;
+	
+	/** The connections of biggest branch. */
 	private transient int connectionsOfBiggestBranch;
 
-
+	/** The currently available NetworkComponentCopierThreads */
+	private transient List<NetworkComponentCopierThread> networkComponentCopierThreads;
+	
+	
 	/**
 	 * Default constructor.
 	 */
@@ -489,10 +499,13 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return done;
 	}
+	
 	/**
 	 * Removes a relation reminder between a GraphElement and a NetworkComponent.
+	 *
 	 * @param graphElement the graph element
 	 * @param networkComponent the network component
+	 * @return true, if successful
 	 */
 	private boolean removeGraphElementToNetworkComponentRelation(GraphElement graphElement, NetworkComponent networkComponent) {
 		
@@ -558,7 +571,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public NetworkModel getCopy(boolean isCloneNetworkModel) {
 		
 		NetworkModel networkModelCopy = null;	
-		synchronized  (this) {
+		synchronized(this) {
 
 			if (isCloneNetworkModel==true) {
 				// ------------------------------------------------------------
@@ -584,40 +597,38 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 				// --- Create a copy of the networkComponents -----------------
 				TreeMap<String, NetworkComponent> copyOfComponents = new TreeMap<String, NetworkComponent>();
-				
 				List<NetworkComponent> netCompList = new ArrayList<NetworkComponent>(this.getNetworkComponents().values());
-				for (int i = 0; i < netCompList.size(); i++) {
 
-					// --- Copy NetworkComponent ------------------------------
-					NetworkComponent netComp = netCompList.get(i);
-					NetworkComponent netCompCopy = null;
+				
+				// ------------------------------------------------------------
+				// --- Create working threads to copy the NetworkComponent ----
+				int maxNoOfCopyThreads = 9;
+				int currCopyThread = 0;
+				while (this.getNetworkComponentCopierThreads().size() < maxNoOfCopyThreads) {
+					NetworkComponentCopierThread ncCopier = new NetworkComponentCopierThread(this, copyOfComponents);
+					ncCopier.setName(Thread.currentThread().getName() + "-NetworkComponentCopier-" + (currCopyThread + 1));
+					this.getNetworkComponentCopierThreads().add(ncCopier);
+					currCopyThread++;
+				}
+				// --- Distribute the NetworkComponents -----------------------
+				currCopyThread = 0;
+				for (NetworkComponent netCompToCopy : netCompList) {
+					this.getNetworkComponentCopierThreads().get(currCopyThread).getNetworkComponentListToCopy().add(netCompToCopy);
+					currCopyThread++;
+					if (currCopyThread>=maxNoOfCopyThreads) {
+						currCopyThread = 0;
+					}
+				}
+				// --- Start the copy processes -------------------------------
+				this.getNetworkComponentCopierThreads().forEach(ncCopier -> ncCopier.start());
+				
+				// --- Wait for the termination of the copier threads ---------
+				this.waitForNetworkComponentCopierThreads();
 
-					try {
-						// --- Try to get the NetworkComponentAdapter --------- 
-						NetworkComponentAdapter netCompAdapter = this.getNetworkComponentAdapter(null, netComp);
-						if (netCompAdapter!=null) {
-							NetworkComponentAdapter4DataModel dmAdapter = netCompAdapter.getNewDataModelAdapter();
-							if (dmAdapter!=null) {
-								netCompCopy = netComp.getCopy(false); 
-								Object dmCopy = dmAdapter.getDataModelCopy(netComp.getDataModel());
-								netCompCopy.setDataModel(dmCopy);
-							}
-						}
-						
-					} catch (Exception ex) {
-						System.err.println("[" + this.getClass().getSimpleName() + "] Error while copy network component '" + netComp.getId() + "'");
-						ex.printStackTrace();
-					}
-						
-					// --- In case of an error above --------------------------
-					if (netCompCopy==null) {
-						netCompCopy = netComp.getCopy();
-					}
-					// --- Add to new component tree map ----------------------
-					copyOfComponents.put(netCompCopy.getId(), netCompCopy);
-				} 
 				// --- Set NetworkComponents to copy --------------------------
 				networkModelCopy.setNetworkComponents(copyOfComponents);
+				// ------------------------------------------------------------
+				
 		
 				// --- Copy LayoutID ------------------------------------------
 				networkModelCopy.setLayoutID(new String(this.getLayoutID()));
@@ -661,8 +672,120 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 	
 	/**
-	 * This method gets the GraphElements that are part of the given NetworkComponent
-	 * 
+	 * Waits for the finalization of the {@link NetworkComponentCopierThread}s.
+	 */
+	private void waitForNetworkComponentCopierThreads() {
+		
+		while (this.getNetworkComponentCopierThreads().size()>0) {
+			synchronized (this.getNetworkComponentCopierThreads()) {
+				try {
+					this.getNetworkComponentCopierThreads().wait();
+				} catch (InterruptedException inEx) {
+					inEx.printStackTrace();
+				}
+			}
+		}
+		// --- Reset local variable -------------
+		this.networkComponentCopierThreads = null;
+	}
+	/**
+	 * Removes the specified network component copier thread.
+	 * @param netComCopier the NetworkComponentCopierThread to remove
+	 */
+	private void removeNetworkComponentCopierThread(NetworkComponentCopierThread netComCopier) {
+		synchronized (this.getNetworkComponentCopierThreads()) {
+			this.getNetworkComponentCopierThreads().remove(netComCopier);
+			this.getNetworkComponentCopierThreads().notifyAll();
+		}
+	}
+	/**
+	 * Returns the list of network component copier threads.
+	 * @return the network component copier threads
+	 */
+	private List<NetworkComponentCopierThread> getNetworkComponentCopierThreads() {
+		if (networkComponentCopierThreads==null) {
+			networkComponentCopierThreads = new ArrayList<>();
+		}
+		return networkComponentCopierThreads;
+	}
+		
+	/**
+	 * The Class NetworkComponentCopierThread is used to copy a list of NetworkComponent 
+	 * in a parallel manner during the copying process of a NetworkModel.
+	 * .
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+	 */
+	private class NetworkComponentCopierThread extends Thread {
+		
+		private NetworkModel networkModel;
+		private List<NetworkComponent> netCompListToCopy;
+		private TreeMap<String, NetworkComponent> destinTreeMap;
+		
+		/**
+		 * Instantiates a new network component copier thread.
+		 *
+		 * @param networkModel the network model
+		 * @param destinTreeMap the destination TreeMap
+		 */
+		public NetworkComponentCopierThread(NetworkModel networkModel, TreeMap<String, NetworkComponent> destinTreeMap) {
+			this.networkModel = networkModel;
+			this.destinTreeMap = destinTreeMap;
+		}
+		/**
+		 * Return the list of NetworkComponents to copy.
+		 * @return the network component list to copy
+		 */
+		public List<NetworkComponent> getNetworkComponentListToCopy() {
+			if (netCompListToCopy==null) {
+				netCompListToCopy = new ArrayList<>();
+			}
+			return netCompListToCopy;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
+		@Override
+		public void run() {
+			
+			for (NetworkComponent netComp : this.getNetworkComponentListToCopy()) {
+				
+				// --- Copy NetworkComponent ------------------------------
+				NetworkComponent netCompCopy = null;
+				try {
+					// --- Try to get the NetworkComponentAdapter --------- 
+					NetworkComponentAdapter netCompAdapter = this.networkModel.getNetworkComponentAdapter(null, netComp);
+					if (netCompAdapter!=null) {
+						NetworkComponentAdapter4DataModel dmAdapter = netCompAdapter.getNewDataModelAdapter();
+						if (dmAdapter!=null) {
+							netCompCopy = netComp.getCopy(false); 
+							Object dmCopy = dmAdapter.getDataModelCopy(netComp.getDataModel());
+							netCompCopy.setDataModel(dmCopy);
+						}
+					}
+					
+				} catch (Exception ex) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] Error while copy network component '" + netComp.getId() + "'");
+					ex.printStackTrace();
+				}
+					
+				// --- In case of an error above --------------------------
+				if (netCompCopy==null) {
+					netCompCopy = netComp.getCopy();
+				}
+				// --- Add to new component tree map ----------------------
+				destinTreeMap.put(netCompCopy.getId(), netCompCopy);
+			}
+			
+			// --- Set finalized to the coordinating wait thread ----------
+			this.networkModel.removeNetworkComponentCopierThread(this);
+		}
+	}
+	
+	
+	/**
+	 * This method gets the GraphElements that are part of the given NetworkComponent.
+	 *
 	 * @param networkComponent The NetworkComponent
 	 * @return The GraphElements
 	 */
@@ -1100,7 +1223,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Gets all networkComponents contained in a GraphNode Set
+	 * Gets all networkComponents contained in a GraphNode Set.
 	 *
 	 * @param graphNodes the graph nodes
 	 * @return the network components
@@ -1481,7 +1604,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 	
 	/**
-	 * Merge two Clusters which are part of the same model and connected to each other
+	 * Merge two Clusters which are part of the same model and connected to each other.
 	 *
 	 * @param clusterNC the cluster nc
 	 * @param supplementNC the supplement nc
@@ -2030,8 +2153,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public boolean isDistributionNode(GraphNode graphNode) {
 		return this.containsDistributionNode(this.getNetworkComponents(graphNode));
 	}
+	
 	/**
-	 * Checks if the specified NetworkComponent is a distribution node that is that a NetworkComponent is a single GraphNode
+	 * Checks if the specified NetworkComponent is a distribution node that is that a NetworkComponent is a single GraphNode.
 	 *
 	 * @param networkComponent the network component
 	 * @return true, if is distribution node
@@ -2075,8 +2199,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Checks whether a network component is in the star graph element
-	 * 
+	 * Checks whether a network component is in the star graph element.
+	 *
 	 * @param netComp the network component to check
 	 * @return true if the component is a star graph element
 	 */
@@ -2239,7 +2363,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Merges Cluster NetworkModel with this NetworkModel and removes the Cluster if it's part of this model
+	 * Merges Cluster NetworkModel with this NetworkModel and removes the Cluster if it's part of this model.
 	 *
 	 * @param clusterNetworkComponent the cluster network component
 	 */
@@ -2315,8 +2439,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/**
 	 * Gets the outer connection remaining graph elements.
 	 *
-	 * @param outerNodes the outer nodes 
-	 * @param networkComponentsToCluster the network components to cluster
+	 * @param outerNodes the outer nodes
+	 * @param networkComponentsToClusterList the network components to cluster list
 	 * @return the outer connection remaining graph elements
 	 */
 	private HashMap<GraphNode, HashSet<GraphElement>> getOuterConnectionRemainingGraphElements(Vector<GraphNode> outerNodes, List<NetworkComponent> networkComponentsToClusterList) {

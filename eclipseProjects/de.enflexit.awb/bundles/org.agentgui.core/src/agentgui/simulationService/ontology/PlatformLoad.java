@@ -2,35 +2,36 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: PlatformLoad
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/9, 15:58:57
 */
-@SuppressWarnings("serial")
 public class PlatformLoad implements Concept {
 
    /**
-* Protege name: loadCPU
+* Protege name: loadMemoryJVM
    */
-   private float loadCPU;
-   public void setLoadCPU(float value) { 
-    this.loadCPU=value;
+   private float loadMemoryJVM;
+   public void setLoadMemoryJVM(float value) { 
+    this.loadMemoryJVM=value;
    }
-   public float getLoadCPU() {
-     return this.loadCPU;
+   public float getLoadMemoryJVM() {
+     return this.loadMemoryJVM;
    }
 
    /**
-* Protege name: loadExceeded
+* Protege name: loadMemorySystem
    */
-   private int loadExceeded;
-   public void setLoadExceeded(int value) { 
-    this.loadExceeded=value;
+   private float loadMemorySystem;
+   public void setLoadMemorySystem(float value) { 
+    this.loadMemorySystem=value;
    }
-   public int getLoadExceeded() {
-     return this.loadExceeded;
+   public float getLoadMemorySystem() {
+     return this.loadMemorySystem;
    }
 
    /**
@@ -45,17 +46,6 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadMemoryJVM
-   */
-   private float loadMemoryJVM;
-   public void setLoadMemoryJVM(float value) { 
-    this.loadMemoryJVM=value;
-   }
-   public float getLoadMemoryJVM() {
-     return this.loadMemoryJVM;
-   }
-
-   /**
 * Protege name: loadNoThreads
    */
    private int loadNoThreads;
@@ -67,14 +57,25 @@ public class PlatformLoad implements Concept {
    }
 
    /**
-* Protege name: loadMemorySystem
+* Protege name: loadExceeded
    */
-   private float loadMemorySystem;
-   public void setLoadMemorySystem(float value) { 
-    this.loadMemorySystem=value;
+   private int loadExceeded;
+   public void setLoadExceeded(int value) { 
+    this.loadExceeded=value;
    }
-   public float getLoadMemorySystem() {
-     return this.loadMemorySystem;
+   public int getLoadExceeded() {
+     return this.loadExceeded;
+   }
+
+   /**
+* Protege name: loadCPU
+   */
+   private float loadCPU;
+   public void setLoadCPU(float value) { 
+    this.loadCPU=value;
+   }
+   public float getLoadCPU() {
+     return this.loadCPU;
    }
 
 }

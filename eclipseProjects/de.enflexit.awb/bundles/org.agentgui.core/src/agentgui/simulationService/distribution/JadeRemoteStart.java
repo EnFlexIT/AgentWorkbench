@@ -28,34 +28,21 @@
  */
 package agentgui.simulationService.distribution;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Scanner;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import agentgui.core.application.Application;
+import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.project.Project;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.transfer.ArchiveFileHandler;
 import de.enflexit.common.transfer.ArchiveFileHandler.ArchiveFormat;
-import jade.core.AID;
-import jade.core.Agent;
+import de.enflexit.common.transfer.Download;
 import jade.core.Profile;
-import jade.misc.FileInfo;
-import jade.misc.FileManagerClient;
+import jade.util.leap.ArrayList;
 
 /**
  * This class is only used by the {@link ServerSlaveAgent} of the background
@@ -68,35 +55,25 @@ import jade.misc.FileManagerClient;
  */
 public class JadeRemoteStart {
 
-	/** Constant for a memory of 16 MB. */
 	public static final String jvmMemo16MB 	= "16m";
-	/** Constant for a memory of 32 MB. */
 	public static final String jvmMemo32MB 	= "32m";
-	/** Constant for a memory of 64 MB. */
 	public static final String jvmMemo64MB 	= "64m";
-	/** Constant for a memory of 128 MB. */
 	public static final String jvmMemo128MB = "128m";
-	/** Constant for a memory of 256 MB. */
 	public static final String jvmMemo256MB = "256m";
-	/** Constant for a memory of 512 MB. */
 	public static final String jvmMemo512MB = "512m";
-	/** Constant for a memory of 1024 MB. */
+
 	public static final String jvmMemo1GB 	= "1g";
-	/** Constant for a memory of 2048 MB. */
 	public static final String jvmMemo2GB 	= "2g";
-	/** Constant for a memory of 4096 MB. */
 	public static final String jvmMemo4GB 	= "4g";
-	/** Constant for a memory of 8192 MB. */
 	public static final String jvmMemo8GB 	= "8g";
-	/** Constant for a memory of 16384 MB. */
 	public static final String jvmMemo16GB 	= "16g";
-	/** Constant for a memory of 32768 MB. */
 	public static final String jvmMemo32GB 	= "32g";
+	public static final String jvmMemo48GB 	= "48g";
+	public static final String jvmMemo64GB 	= "64g";
 	
 	
 	private boolean debug = false;
 	
-	private Agent myAgent;
 	private RemoteContainerConfig reCoCo;
 	
 	private boolean jvmMemAllocUseDefaults = true;
@@ -112,6 +89,13 @@ public class JadeRemoteStart {
 	private String jadeContainerName = "remote";
 	
 	private File rcProjectDirectory = null; 
+
+	// --- Remote debug default options ---------
+	private boolean isEnabledRemoteDebugging = false;
+	private String jvmRemDebugTransport = "dt_socket";
+	private String jvmRemDebugAddress = "8000";
+	private String jvmRemDebugServer = "y";			
+	private String jvmRemDebugSuspend = "y";
 	
 	
 	/**
@@ -120,8 +104,8 @@ public class JadeRemoteStart {
 	 * @param agent the current agent that uses this class
 	 * @param remoteStartConfiguration the remote start configuration
 	 */
-	public JadeRemoteStart(Agent agent, JadeRemoteStartConfiguration remoteStartConfiguration) {
-		this(agent, remoteStartConfiguration.getRemoteContainerConfig());
+	public JadeRemoteStart(JadeRemoteStartConfiguration remoteStartConfiguration) {
+		this(remoteStartConfiguration.getRemoteContainerConfig());
 		this.rcProjectDirectory = remoteStartConfiguration.getProjectPath();
 	}
 	/**
@@ -130,13 +114,12 @@ public class JadeRemoteStart {
 	 * @param agent the current agent that uses this class
 	 * @param remoteContainerConfig the RemoteContainerConfig
 	 */
-	public JadeRemoteStart(Agent agent, RemoteContainerConfig remoteContainerConfig) {
+	public JadeRemoteStart(RemoteContainerConfig remoteContainerConfig) {
 		
-		this.myAgent = agent;
 		this.reCoCo = remoteContainerConfig;
 		
 		if (this.debug) {
-			System.out.println("Class '" + this.getClass().getName() + "' in debug modue ...");
+			System.out.println("[" + this.getClass().getSimpleName() + "] Starting in debug modus !");
 		}
 		
 		// --- Configure JVM arguments ------------------------------
@@ -176,35 +159,37 @@ public class JadeRemoteStart {
 		
 		// --- If not already available, download project files -----
 		if (this.rcProjectDirectory==null) {
-			if (this.reCoCo.getFileManagerAgent()==null) {
+			// --- Get download information -------------------------
+			ArrayList httpDownloadFiles = (ArrayList) this.reCoCo.getHttpDownloadFiles();
+			if (httpDownloadFiles==null || httpDownloadFiles.size()==0) {
 				// --- No project for download ----------------------
 				return true;
-			} else {
-				// --- Download project resources -------------------
-				this.rcProjectDirectory = this.downloadFilesFromFileManagerAgent(this.reCoCo.getFileManagerAgent(), this.myAgent);
 			}
+			// --- Download the first file only (project file) ------
+			this.rcProjectDirectory = this.downloadFileFromHTTPServer((String) httpDownloadFiles.get(0));
 		}
+		
 		// --- If a remote container project can be found ----------- 
 		if (this.rcProjectDirectory!=null) {
-			System.out.println(this.getClass().getSimpleName() + ": Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
+			System.out.println("[" + this.getClass().getSimpleName() + "] Found installed remote project '" + this.rcProjectDirectory.getName() + "'");
 			// --- Load project XML and check required features -----
 			final Project remoteProject = Project.loadProjectXml(this.rcProjectDirectory);
-			if (remoteProject.requiresFeatureInstallation()==true) {
+			if (Application.getGlobalInfo().getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverProduct && remoteProject.requiresFeatureInstallation()==true) {
 				// --- Remind the start configuration ---------------
 				String configFilePath = JadeRemoteStartConfiguration.getDefaultConfigurationFile().getAbsolutePath();
 				boolean isSavedConfig = JadeRemoteStartConfiguration.saveRemoteStartConfiguration(new JadeRemoteStartConfiguration(this.rcProjectDirectory, this.reCoCo));
 				if (isSavedConfig==true) {
-					System.out.println(this.getClass().getSimpleName() + ": Saved remote start configuration to " + configFilePath);
+					System.out.println("[" + this.getClass().getSimpleName() + "] Saved remote start configuration to " + configFilePath);
 				}
 				// --- Install the required features ---------------- 
-				System.out.println(this.getClass().getSimpleName() + ": Install required project features ...");
+				System.out.println(this.getClass().getSimpleName() + ": Installing required project features ...");
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
 						try {
 							remoteProject.installRequiredFeatures();
 						} catch (Exception e) {
-							System.err.println("Not all required features have been installed successfully:");
+							System.err.println("[" + this.getClass().getSimpleName() + "] Not all required features have been installed successfully:");
 							System.err.println(e.getMessage());
 							//TODO figure out how to handle this
 						}
@@ -237,6 +222,10 @@ public class JadeRemoteStart {
 		if (this.jvmMemAllocUseDefaults==false) {
 			javaVMArgs = "-Xms" + this.jvmMemAllocInitial + " -Xmx" + this.jvmMemAllocMaximum;
 		} 
+		// --- Enable remote debugging ----------
+		if (this.isEnabledRemoteDebugging==true) {
+			javaVMArgs += " -Xrunjdwp:transport=" + this.jvmRemDebugTransport + ",address=" + this.jvmRemDebugAddress + ",server=" + this.jvmRemDebugServer + ",suspend=" + this.jvmRemDebugSuspend + "";
+		}
 		
 		// --------------------------------------
 		// --- Class-Path configuration ---------
@@ -271,7 +260,7 @@ public class JadeRemoteStart {
 		if (localHost!=null && localHost.equals("")==false) {
 			jadeArgs += "-local-host " + localHost + " ";	
 		}
-		// --- Show GUI? ------------------------
+		// --- Show RMA UI? ---------------------
 		if (this.jadeShowGUI==true) {
 			jadeArgs += this.jadeShowGUIAgentName + this.jadeContainerName + ":jade.tools.rma.rma ";
 		}		
@@ -281,7 +270,7 @@ public class JadeRemoteStart {
 		// --- merge execute statement ----------
 		String execute = java + " " + javaVMArgs + " " + equinoxLauncherJar +  " " + project + " " + jade  + " " + jadeArgs;
 		execute = execute.replace("  ", " ");
-		System.out.println( "Execute: " + execute);
+		System.out.println("[" + this.getClass().getSimpleName() + "] Execute: " + execute);
 		
 		// --------------------------------------
 		Scanner in = null;
@@ -332,6 +321,7 @@ public class JadeRemoteStart {
 	private String getEquinoxLauncherJar() {
 		// --- Get the equinox launcher ------------------------
 		String execJar = Application.getGlobalInfo().getFileRunnableJar();
+		if (execJar==null) return null;
 		execJar = execJar.replace("\\", "/");
 		return "-jar " + execJar;
 	}
@@ -471,53 +461,43 @@ public class JadeRemoteStart {
 	}
 
 	
-	// ------------------------------------------------------------------------
-	// --- From here, methods for the file download and ----------------------- 
-	// --- the handling of project files can be found -------------------------
-	// ------------------------------------------------------------------------
 	/**
-	 * Downloads the provided files from the file manager agent (coming from a client application), installs 
-	 * the received project in the project directory and returns the actual project directory as file,
-	 * 
-	 * @param fileMangerAID the file manger AID
-	 * @param myAgent the current agent that uses this class
+	 * Downloads the specified file from a HTTP-server.
+	 *
+	 * @param httpDownloadURL the file download URL
+	 * @param localFileName the local file name
+	 * @return true, if successful
 	 */
-	private File downloadFilesFromFileManagerAgent(AID fileMangerAID, Agent myAgent) {
-
-		if (fileMangerAID==null) return null;
-
-		// -- Initiate a FileManagerClient --------------------------
-		FileManagerClient fmClient = new FileManagerClient(fileMangerAID, myAgent);
-		try {
-			// --- List the available files -------------------------
-			List<FileInfo> fileInfoList = this.getFileListFromFileManager(fmClient, null, null);
-			if (fileInfoList!=null && fileInfoList.size()>0) {
-				// --- Convert to list of path names ----------------
-				List<String> pathList = this.convertToDirPathNameList(fileInfoList);
-				// --- Download the files ---------------------------
-				File downloadFile = this.doZipDownload(fmClient, pathList);
-				// --- Extract the zip file -------------------------
-				this.doZipExtraction(downloadFile, fileInfoList);
-				// --- Delete the zip file --------------------------
-				downloadFile.delete();
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		// --- Extract the *.agui file to the projects directory ----
+	private File downloadFileFromHTTPServer(String httpDownloadURL) {
+		
+		if (httpDownloadURL==null || httpDownloadURL.isBlank()==true) return null;
+		
+		// ------------------------------------------------------------------------------
+		// --- Download the specified file ----------------------------------------------
+		// ------------------------------------------------------------------------------		
+		// --- As example: http://192.168.178.38:8081/peak_virtual_pilot.agui ----
+		String localFileNameWithoutHTTP = httpDownloadURL.substring( httpDownloadURL.indexOf(":") + 3);
+		String localFileName = localFileNameWithoutHTTP.substring(localFileNameWithoutHTTP.indexOf("/") + 1);
+		localFileName = localFileName.replace("/", File.separator);
+		
+		String dirPathDownload = Application.getGlobalInfo().getResourceDistributionDownloadPath(true);
+		String filePathDownload = dirPathDownload + localFileName;
+		
+		Download download = new Download(httpDownloadURL, filePathDownload);
+		System.out.println("[" + this.getClass().getSimpleName() + "] Starting download of " + httpDownloadURL + " to " + filePathDownload + " ... ");
+		download.startDownload();
+		
+		
+		// ------------------------------------------------------------------------------
+		// --- Extract the zip-file *.agui ----------------------------------------------
+		// ------------------------------------------------------------------------------
 		File targetProjectDirectory = null;
-		String dirPathProjects = Application.getGlobalInfo().getPathProjects();
-		String dirPathDownload = Application.getGlobalInfo().getFileManagerDownloadPath(true);
 		File dirDownload = new File(dirPathDownload);
-		if (dirDownload.exists()==true) {
-			
-			// --- Get the *.agui file ------------------------------ 
-			File fileProjectTransfer = this.getProjectTransferFile(dirDownload);
+		File fileDownload = new File(filePathDownload);
+		if (dirDownload.exists()==true && fileDownload.exists()==true) {
 			
 			// --- Get the regular projects sub directory name ------
-			String projectSubDirectoryPath = fileProjectTransfer.getName();
+			String projectSubDirectoryPath = fileDownload.getName();
 			int pos = projectSubDirectoryPath.lastIndexOf(".");
 			if (pos > 0) {
 				projectSubDirectoryPath = projectSubDirectoryPath.substring(0, pos);
@@ -525,6 +505,7 @@ public class JadeRemoteStart {
 			
 			// --- Define target directory --------------------------
 			Integer prefixCounter = 1;
+			String dirPathProjects = Application.getGlobalInfo().getPathProjects();
 			while (targetProjectDirectory==null || targetProjectDirectory.exists()==true) {
 				String projectPrefix = "rc" + String.format("%02d", prefixCounter) + "-";
 				targetProjectDirectory = new File(dirPathProjects + projectPrefix + projectSubDirectoryPath);
@@ -533,262 +514,16 @@ public class JadeRemoteStart {
 			
 			// --- Extract project file into download directory -----
 			ArchiveFileHandler extractor = new ArchiveFileHandler();
-			extractor.decompressFolder(fileProjectTransfer, dirDownload, ArchiveFormat.ZIP);
+			System.out.println("[" + this.getClass().getSimpleName() + "] Decompress file " + fileDownload.getName() + " to " + targetProjectDirectory.getParentFile() + " ... ");
+			extractor.decompressFolder(fileDownload, targetProjectDirectory.getParentFile(), ArchiveFormat.ZIP, targetProjectDirectory.getName());
 			
-			// --- Move extracted to project directory --------------
-			try {
-				File dirExtracted = new File(dirPathDownload + projectSubDirectoryPath);
-				Files.move(dirExtracted.toPath(), targetProjectDirectory.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException ioEx) {
-				ioEx.printStackTrace();
-			}
-			
-			// --- Remove project file ------------------------------
-			if (fileProjectTransfer.delete()==false) {
-				fileProjectTransfer.deleteOnExit();
+			// --- Remove downloaded project file -------------------
+			if (fileDownload.delete()==false) {
+				fileDownload.deleteOnExit();
 			}
 			
 		}
 		return targetProjectDirectory;
 	}
-
-	/**
-	 * Returns the FileInfo list that can be provided by the file manager.
-	 *
-	 * @param fmClient the fm client
-	 * @param initialFileList the initial file list
-	 * @param subDirectory the sub directory
-	 * @return the file list from file manager
-	 */
-	private List<FileInfo> getFileListFromFileManager(FileManagerClient fmClient, List<FileInfo> initialFileList, String subDirectory) {
-		
-		List<FileInfo> fileList = null;
-		if (initialFileList!=null) {
-			fileList = initialFileList;
-		} else {
-			fileList = new java.util.ArrayList<>();
-		}
-		
-		try {
-			List<FileInfo> fileInfoList = fmClient.listFiles(subDirectory);
-			if (fileInfoList!=null && fileInfoList.size()>0) {
-				for (int i = 0; i < fileInfoList.size(); i++) {
-					FileInfo fileInfo = fileInfoList.get(i);
-					// --- Create the file description ------------------------
-					String dirPathName = this.convertToDirPathName(fileInfo);
-					if (fileInfo.isDirectory()) {
-						this.getFileListFromFileManager(fmClient, fileList, dirPathName);
-					} else {
-						fileList.add(fileInfo);
-					}
-				}
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return fileList;
-	}
-	/**
-	 * Converts the specified FileInfo to a directory path name.
-	 *
-	 * @param currSubDirPath the current sub directory path
-	 * @param fileInfo the file info
-	 * @return the string
-	 */
-	private String convertToDirPathName(FileInfo fileInfo) {
-		String dirPathName = fileInfo.getPath() + "/" + fileInfo.getName();
-		while (dirPathName.startsWith(".")) {
-			dirPathName = dirPathName.substring(1);
-		}
-		return dirPathName;
-	}
-	/**
-	 * Converts the specified list with FileInfo's to a list of path names.
-	 *
-	 * @param fileInfoList the file info list
-	 * @return the list with path names
-	 */
-	private List<String> convertToDirPathNameList(List<FileInfo> fileInfoList) {
-		
-		if (fileInfoList==null || fileInfoList.size()==0) return null;
-		
-		List<String> pathList = new java.util.ArrayList<>();
-		for (int i = 0; i < fileInfoList.size(); i++) {
-			String filePathName = this.convertToDirPathName(fileInfoList.get(i));
-			pathList.add(filePathName);
-		}
-		return pathList;
-	}
-	
-	/**
-	 * Does the actual download of the specified file list.
-	 *
-	 * @param fmClient the current FileManagerClient
-	 * @param pathList the path list
-	 * @return the file
-	 * @throws Exception 
-	 */
-	private File doZipDownload(FileManagerClient fmClient, List<String> pathList) throws Exception {
-		
-		// --- Download the file that is either compressed or a single file -----
-		String downLoadFileName = "rcsaDownload.zip";
-		File downloadFile = new File(Application.getGlobalInfo().getFileManagerDownloadPath(true) + downLoadFileName);
-		// --- Request the InputStream  for the download ------------------------
-		InputStream inputStream = fmClient.downloadMultiple(pathList);
-		OutputStream outputStream = null;
-		try {
-			
-			// --- Download the file --------------------------------------------
-			outputStream = new FileOutputStream(downloadFile);
-			int read = 0;
-			byte[] bytes = new byte[1024];
-			while ((read=inputStream.read(bytes))!=-1) {
-				outputStream.write(bytes, 0, read);
-			}
-
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		} finally {
-			if (inputStream!=null) {
-				try {
-					inputStream.close();
-				} catch (IOException ioEx) {
-					ioEx.printStackTrace();
-				}
-			}
-			if (outputStream!=null) {
-				try {
-					//outputStream.flush();
-					outputStream.close();
-				} catch (IOException ioEx) {
-					ioEx.printStackTrace();
-				}
-			}
-		}
-		return downloadFile;
-	}
-	
-	/**
-	 * Does the download extraction.
-	 *
-	 * @param archiveFile the archive file (zip)
-	 * @param downloadFileList the download file list
-	 */
-	private void doZipExtraction(File archiveFile, List<FileInfo> downloadFileList) {
-		
-		ZipFile zipFile = null;
-		try {
-			// --- Access jar file ----------------------------------
-			zipFile = new JarFile(archiveFile);
-			String basePath = Application.getGlobalInfo().getFileManagerDownloadPath(true);
-			
-			for (int i = 0; i < downloadFileList.size(); i++) {
-				
-				FileInfo fi = downloadFileList.get(i);
-				String destinationFilePath = basePath + this.convertToDirPathName(fi);
-				// --- Define destination file ----------------------
-				File destinationFile = new File(destinationFilePath);
-				// --- Check destination directory ------------------
-				File destinationDir = destinationFile.getParentFile();
-				if (destinationDir.exists()==false) {
-					destinationDir.mkdirs();
-				}
-				// --- Ensure to overwrite the files ---------------- 
-				if (destinationFile.exists()==true) {
-					destinationFile.delete();
-				}
-				
-				// --- Get zip entry and extract it -----------------
-				ZipEntry zEntry = zipFile.getEntry(fi.getName());
-				if (zEntry!=null) {
-					this.doZipFileExtract(zipFile, zEntry, destinationFile);
-				}
-			}
-			
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		} finally {
-			if (zipFile!=null) {
-				try {
-					zipFile.close();
-				} catch (IOException ioEx) {
-					ioEx.printStackTrace();
-				}
-			}
-		}
-		
-	}
-	/**
-	 * Extracts the specified file from a zip file.
-	 *
-	 * @param zipFile the jar
-	 * @param zipEntry the specific zip entry
-	 * @param destinationFile the destination file
-	 */
-	private void doZipFileExtract(ZipFile zipFile, ZipEntry zipEntry, File destinationFile) {
-		
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = new BufferedInputStream(zipFile.getInputStream(zipEntry));
-			out = new BufferedOutputStream(new FileOutputStream(destinationFile));
-			byte[] buffer = new byte[2048];
-			for (;;) {
-				int nBytes = in.read(buffer);
-				if (nBytes <= 0)
-					break;
-				out.write(buffer, 0, nBytes);
-			}
-			out.flush();
-			out.close();
-			in.close();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (in!=null) {
-				try {
-					in.close();
-				} catch (IOException ioEx) {
-					ioEx.printStackTrace();
-				}
-			}
-			if (out!=null) {
-				try {
-					out.close();
-				} catch (IOException ioEx) {
-					ioEx.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Returns the project transfer file that can be found in the specified directory.
-	 *
-	 * @param searchDirectory the search directory
-	 * @return the project transfer file
-	 */
-	private File getProjectTransferFile(File searchDirectory) {
-		
-		if (searchDirectory==null) return null;
-	
-		// --- Search for a packed project file ---------------------
-		File[] filesFound =  searchDirectory.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith("." + Application.getGlobalInfo().getFileEndProjectZip());
-			}
-		});
-		
-		File aguiFile = null;
-		if (filesFound.length>0) {
-			// --- Take first , since only one file is expected ------
-			aguiFile = filesFound[0];
-		}
-		return aguiFile;
-	}
-	
 	
 }

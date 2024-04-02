@@ -80,16 +80,17 @@ public class PerformanceGroup {
 	 * Sort performance measurement list.
 	 */
 	private void sortPerformanceMeasurementList() {
-		Collections.sort(this.getPerformanceMeasurementListOfGroup(), new Comparator<PerformanceMeasurement>() {
-			@Override
-			public int compare(PerformanceMeasurement pm1, PerformanceMeasurement pm2) {
-				String desc1 = pm1.getTaskDescriptor();
-				String desc2 = pm2.getTaskDescriptor();
-				return desc1.compareTo(desc2);
-			}
-		});
+		synchronized (this.getPerformanceMeasurementListOfGroup()) {
+			Collections.sort(this.getPerformanceMeasurementListOfGroup(), new Comparator<PerformanceMeasurement>() {
+				@Override
+				public int compare(PerformanceMeasurement pm1, PerformanceMeasurement pm2) {
+					String desc1 = pm1.getTaskDescriptor();
+					String desc2 = pm2.getTaskDescriptor();
+					return desc1.compareTo(desc2);
+				}
+			});
+		}
 	}
-	
 	
 	/**
 	 * Removes (and thus resets) all group member from the global instance.

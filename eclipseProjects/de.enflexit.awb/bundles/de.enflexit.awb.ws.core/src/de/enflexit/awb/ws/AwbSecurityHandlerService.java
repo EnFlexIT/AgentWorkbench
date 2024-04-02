@@ -18,11 +18,20 @@ public interface AwbSecurityHandlerService {
 	 */
 	public String getSecurityHandlerName();
 	
+	
 	/**
 	 * Has to return the configuration keys that are to be used in the security handler configuration.
 	 * @return the configuration keys
 	 */
 	public String[] getConfigurationKeys();
+	
+	/**
+	 * Returns the type of the specified key.
+	 * @param key the key
+	 * @return the key type
+	 */
+	public Class<?> getKeyType(String key);
+	
 	
 	/**
 	 * Has to return a new instance of the SecurityHandlerService based on the specified security handler configuration.
@@ -31,5 +40,6 @@ public interface AwbSecurityHandlerService {
 	 * @return the new security handler
 	 */
 	public SecurityHandler getNewSecurityHandler(TreeMap<String, String> securityHandlerConfiguration);
+
 	
 }

@@ -2,25 +2,15 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: ClientRegister
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/9, 15:58:57
 */
-@SuppressWarnings("serial")
 public class ClientRegister implements AgentAction {
-
-   /**
-* Protege name: clientVersion
-   */
-   private AgentGuiVersion clientVersion;
-   public void setClientVersion(AgentGuiVersion value) { 
-    this.clientVersion=value;
-   }
-   public AgentGuiVersion getClientVersion() {
-     return this.clientVersion;
-   }
 
    /**
 * Protege name: clientOS
@@ -53,6 +43,17 @@ public class ClientRegister implements AgentAction {
    }
    public PlatformTime getClientTime() {
      return this.clientTime;
+   }
+
+   /**
+* Protege name: clientVersion
+   */
+   private Version clientVersion;
+   public void setClientVersion(Version value) { 
+    this.clientVersion=value;
+   }
+   public Version getClientVersion() {
+     return this.clientVersion;
    }
 
    /**

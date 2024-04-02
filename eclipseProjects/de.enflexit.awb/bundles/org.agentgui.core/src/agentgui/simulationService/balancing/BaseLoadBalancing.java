@@ -31,11 +31,13 @@ package agentgui.simulationService.balancing;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import agentgui.core.jade.PlatformStateInformation.PlatformState;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.AgentClassElement4SimStart;
@@ -51,6 +53,7 @@ import agentgui.simulationService.load.LoadInformation.NodeDescription;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadThresholdLevels;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import de.enflexit.common.ontology.AgentStartArguments;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 import jade.core.Agent;
 import jade.core.Location;
@@ -95,7 +98,9 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	/** The locations in the distributed system. */
 	protected Hashtable<String, Location> currContainerLoactions = null;
 	
+	private boolean isStaticLoadBalancing;
 	
+	private List<RemoteContainerMonitor> remoteContainerMonitorHashMap;
 	
 	/**
 	 * Instantiates a new base load balancing.
@@ -108,6 +113,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			this.currSimSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
 			this.currDisSetup = this.currProject.getDistributionSetup();
 		}
+		this.isStaticLoadBalancing = (this instanceof StaticLoadBalancingBase);
 		this.setLoadHelper();
 		this.setSimulationHelper();
 		this.setThresholdLevels();
@@ -118,7 +124,9 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 */
 	@Override
 	public void action() {
+		if (this.isStaticLoadBalancing == true) Application.getJadePlatform().setPlatformState(PlatformState.StartingMAS);
 		this.doBalancing();
+		if (this.isStaticLoadBalancing == true) Application.getJadePlatform().setPlatformState(PlatformState.RunningMAS);
 	}
 	
 	/**
@@ -181,12 +189,10 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		
 		if (ace4SimStart.getStartArguments()!=null) {
 			
-			String selectedAgentReference = ace4SimStart.getElementClass().getName();
-			OntologyInstanceViewer oiv = new OntologyInstanceViewer(currProject.getOntologyVisualisationHelper(), currProject.getAgentStartConfiguration(), selectedAgentReference);
-			oiv.setConfigurationXML(ace4SimStart.getStartArguments());
-			
-			Object[] startArgs = oiv.getConfigurationInstances();
-			return startArgs;
+			String agentClassName = ace4SimStart.getElementClass().getName();
+			AgentStartArguments startArgumentsConfiguration = currProject.getAgentStartConfiguration().getAgentStartArguments(agentClassName);
+			// --- Lean approach without swing problems ---
+			return OntologyInstanceViewer.getInstancesOfXMLArray(ace4SimStart.getStartArguments(), startArgumentsConfiguration.getOntologyClassNameArray(), this.currProject.getOntologyVisualisationHelper());
 		}
 		return null;
 	}
@@ -435,6 +441,34 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		return false;
 	}
 	
+	// --------------------------------------------------------------
+	// --- From here, handling of remote container ------------------
+	// --------------------------------------------------------------	
+	/**
+	 * Returns the remote container monitor list.
+	 * @return the remote container monitor list
+	 */
+	private List<RemoteContainerMonitor> getRemoteContainerMonitorList() {
+		if (remoteContainerMonitorHashMap==null) {
+			remoteContainerMonitorHashMap = new ArrayList<>();
+		}
+		return remoteContainerMonitorHashMap;
+	}
+	/**
+	 * Returns the list of RemoteContainerMonitor for pending containers.
+	 * @return the remote container monitor for pending container
+	 */
+	private List<RemoteContainerMonitor> getRemoteContainerMonitorListForPendingContainer() {
+		
+		List<RemoteContainerMonitor> pendingRCMs = new ArrayList<>();
+		for (RemoteContainerMonitor rcm : this.getRemoteContainerMonitorList()) {
+			if (rcm.getContainer2WaitFo()==null || rcm.getContainer2WaitFo().isPending()==true) {
+				pendingRCMs.add(rcm);
+			}
+		}
+		return pendingRCMs;
+	}
+	
 	/**
 	 * This Method can be invoked, if a new remote container is required.
 	 * If the container was started the method returns the new containers name and
@@ -462,52 +496,41 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * @see #currContainerBenchmarkResults
 	 */
 	protected String startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {
+		return this.startRemoteContainer(remoteContainerConfig, true);
+	}
+	/**
+	 * This Method can be invoked, if a new remote container is required.
+	 * If the container was started the method returns the new containers name and
+	 * will update the local information of {@link #currContainerLoactions} and
+	 * {@link #currContainerBenchmarkResults}.
+	 *
+	 * @param remoteContainerConfig the remote container configuration out of the Project
+	 * @param isWaitForRemoteContainer the indicator to wait for the remote container
+	 * @return the name of the new container
+	 * @see #currContainerLoactions
+	 * @see #currContainerBenchmarkResults
+	 */
+	protected String startRemoteContainer(RemoteContainerConfig remoteContainerConfig, boolean isWaitForRemoteContainer) {
 		
-		boolean newContainerStarted = false;
 		String newContainerName = null;
 		try {
-			// --- Start a new remote container -----------------
+			// --- Start a new remote container -----------
+			Application.getJadePlatform().setPlatformState(PlatformState.StartingRemote);
 			LoadServiceHelper loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
 			newContainerName = loadHelper.startNewRemoteContainer(remoteContainerConfig);
 			
-			while (true) {
-				Container2Wait4 waitCont = loadHelper.startNewRemoteContainerStaus(newContainerName);	
-				if (waitCont.isStarted()) {
-					System.out.println("Remote Container '" + newContainerName + "' was started!");
-					newContainerStarted = true;
-					break;
-				}
-				if (waitCont.isCancelled()) {
-					System.out.println("Remote Container '" + newContainerName + "' was NOT started!");
-					newContainerStarted = false;
-					break;
-				}
-				if (waitCont.isTimedOut()) {
-					System.out.println("Remote Container '" + newContainerName + "' timed out!");
-					newContainerStarted = false;
-					break;	
-				}
-				this.block(100);
-			} // end while
+			// --- Remind that container to wait for ------
+			RemoteContainerMonitor rcm = new RemoteContainerMonitor(newContainerName);
+			this.getRemoteContainerMonitorList().add(rcm);
 			
-			if (newContainerStarted==true) {
-
-				while (loadHelper.getContainerDescription(newContainerName).getJvmPID()==null) {
-					this.block(100);
+			// --- Directly wait for remote container -----
+			if (isWaitForRemoteContainer==true) {
+				this.waitForRemoteContainer();
+				if (rcm.getContainer2WaitFo().isStarted()==true) {
+					return newContainerName;
 				}
-				while (loadHelper.getContainerLoadHash().get(newContainerName)==null) {
-					this.block(100);
-				}
-				// --- Update the locations of all involved container --------------- 
-				currContainerLoactions = loadHelper.getContainerLocations();
-				
-				// --- Get the benchmark-result for this node/container -------------
-				NodeDescription containerDesc = loadHelper.getContainerDescription(newContainerName);
-				Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
-				currContainerBenchmarkResults.put(newContainerName, benchmarkValue);
-				
-				return newContainerName;
 			}
+			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -525,35 +548,25 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 */
 	protected Hashtable<String, Location> startNumberOfRemoteContainer(int numberOfContainer, boolean filterMainContainer, RemoteContainerConfig remoteContainerConfig) {
 		
-		Hashtable<String, Location> newContainerLocations = null;
-		
 		// --- Is the simulation service running ? -----------------------
-		if (isLoadServiceIsRunning()==false) {
+		if (this.isLoadServiceIsRunning()==false) {
 			System.out.println("Can not start remote container - LoadService is not running!");
 			return null;
 		}
+		if (numberOfContainer<=0) return null;
 		
-		// --- Start the required number of container -------------------- 
-		int startMistakes = 0;
-		int startMistakesMax = 2;
-		Vector<String> containerList = new Vector<String>();
-		while (containerList.size()< numberOfContainer) {
-		
-			String newContainer = this.startRemoteContainer(remoteContainerConfig);
-			if (newContainer!=null) {
-				containerList.add(newContainer);	
-			} else {
-				startMistakes++;
-			}
-			if (startMistakes>=startMistakesMax) {
-				break;
-			}
+		// --- Start the required number of container --------------------
+		for (int i = 0; i < numberOfContainer; i++) {
+			this.startRemoteContainer(remoteContainerConfig, false);
 		}
+		// --- Wait for the remote container start -----------------------
+		this.waitForRemoteContainer();
+
 		
 		// --- Get the locations of the started container ----------------
-		LoadServiceHelper loadHelper;
+		Hashtable<String, Location> newContainerLocations = null;
 		try {
-			loadHelper = (LoadServiceHelper) myAgent.getHelper(LoadService.NAME);
+			LoadServiceHelper loadHelper = (LoadServiceHelper) this.myAgent.getHelper(LoadService.NAME);
 			newContainerLocations = loadHelper.getContainerLocations();
 			
 		} catch (ServiceException e) {
@@ -562,7 +575,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		}
 
 		// --- If wanted, filter the Main-Container out ------------------
-		if (filterMainContainer == true) {
+		if (newContainerLocations!=null && filterMainContainer==true) {
 			newContainerLocations.remove(jade.core.AgentContainer.MAIN_CONTAINER_NAME);
 			if (newContainerLocations.size()==0) {
 				newContainerLocations = null;
@@ -570,8 +583,90 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 		}
 		return newContainerLocations;
 	}
-
-
+	
+	/**
+	 * Waits for all registered remote container that are listed in 
+	 * {@link #getRemoteContainerMonitorList()} and that are in the state 'pending'.
+	 * 
+	 * @see #getRemoteContainerMonitorList()
+	 * @see #getRemoteContainerMonitorListForPendingContainer()
+	 * @see Container2Wait4#isPending()
+	 */
+	private void waitForRemoteContainer() {
+		
+		while (true) {
+			
+			// --- Get the pending remote container ---------------------------
+			List<RemoteContainerMonitor> pendingList = this.getRemoteContainerMonitorListForPendingContainer(); 
+			for (RemoteContainerMonitor rcm : pendingList) {
+				
+				// --- Get new container status -------------------------------
+				String newContainerName = rcm.getContainerName(); 
+				Container2Wait4 c2w4 = null;
+				try {
+					c2w4 = loadHelper.startNewRemoteContainerStaus(newContainerName);	
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+				
+				if (c2w4!=null) {
+					// --- Remind for later handling --------------------------
+					rcm.setContainer2WaitFo(c2w4);
+					if (c2w4.isStarted()) {
+						this.collectRemoteContainerInformation(newContainerName);
+						System.out.println("Remote Container '" + newContainerName + "' was started!");
+						break;
+					}
+					if (c2w4.isCancelled()) {
+						System.out.println("Remote Container '" + newContainerName + "' was NOT started!");
+						break;
+					}
+					if (c2w4.isTimedOut()) {
+						System.out.println("Remote Container '" + newContainerName + "' timed out!");
+						break;	
+					}
+				}
+			} // end for pending RemoteContainerMonitor
+			
+			// --- Exit while or continue -------------------------------------
+			if (this.getRemoteContainerMonitorListForPendingContainer().size()==0) {
+				// --- Everything done, exit ----------------------------------
+				this.getRemoteContainerMonitorList().clear();
+				return;
+			} else {
+				// --- Block for another repeat -------------------------------
+				this.block(250);
+			}
+		} // end while(true)
+	}
+	
+	/**
+	 * Collects information about the specified remote container.
+	 * @param containerName the container name
+	 */
+	private void collectRemoteContainerInformation(String containerName) {
+		
+		try {
+			while (loadHelper.getContainerDescription(containerName).getJvmPID()==null) {
+				this.block(100);
+			}
+			while (loadHelper.getContainerLoadHash().get(containerName)==null) {
+				this.block(100);
+			}
+			// --- Update container locations ------------------------- 
+			currContainerLoactions = loadHelper.getContainerLocations();
+			
+			// --- Get the benchmark-result for this node/container -------------
+			NodeDescription containerDesc = loadHelper.getContainerDescription(containerName);
+			Float benchmarkValue = containerDesc.getBenchmarkValue().getBenchmarkValue();
+			currContainerBenchmarkResults.put(containerName, benchmarkValue);
+			
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	/**
 	 * This Method transfers the new LoadAgentMap-Instance to the SimulationService
 	 * and informs the agent about the location they have to migrate.
@@ -579,14 +674,41 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 	 * @param transferAgents the new agent migration
 	 */
 	protected void setAgentMigration(Vector<AID_Container> transferAgents) {
-		
 		try {
 			simHelper.setAgentMigration(transferAgents);
-			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		
 	}
+
+	
+	/**
+	 * The Class RemoteContainerMonitor.
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+	 */
+	private class RemoteContainerMonitor {
+		
+		private String containerName;
+		private Container2Wait4 container2WaitFo;
+		
+		public RemoteContainerMonitor(String containerName) {
+			this.setContainerName(containerName);
+		}
+		
+		public String getContainerName() {
+			return containerName;
+		}
+		public void setContainerName(String containerName) {
+			this.containerName = containerName;
+		}
+		
+		public Container2Wait4 getContainer2WaitFo() {
+			return container2WaitFo;
+		}
+		public void setContainer2WaitFo(Container2Wait4 container2WaitFo) {
+			this.container2WaitFo = container2WaitFo;
+		}
+	}
+	
 	
 }

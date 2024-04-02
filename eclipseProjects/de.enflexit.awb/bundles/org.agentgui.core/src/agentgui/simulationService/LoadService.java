@@ -54,8 +54,7 @@ import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.load.threading.ThreadDetail;
 import agentgui.simulationService.load.threading.ThreadProtocol;
 import agentgui.simulationService.load.threading.ThreadProtocolReceiver;
-import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.ontology.AgentGuiVersion;
+import agentgui.simulationService.ontology.AWB_DistributionOntology;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientAvailableMachinesReply;
 import agentgui.simulationService.ontology.ClientAvailableMachinesRequest;
@@ -66,6 +65,7 @@ import agentgui.simulationService.ontology.PlatformAddress;
 import agentgui.simulationService.ontology.PlatformLoad;
 import agentgui.simulationService.ontology.PlatformPerformance;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import agentgui.simulationService.ontology.Version;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
 import jade.content.lang.sl.SLCodec;
@@ -81,7 +81,6 @@ import jade.core.IMTPException;
 import jade.core.Location;
 import jade.core.MainContainer;
 import jade.core.Node;
-import jade.core.NotFoundException;
 import jade.core.Profile;
 import jade.core.ProfileException;
 import jade.core.Service;
@@ -93,7 +92,6 @@ import jade.core.management.AgentManagementSlice;
 import jade.core.messaging.MessagingSlice;
 import jade.core.mobility.AgentMobilityHelper;
 import jade.lang.acl.ACLMessage;
-import jade.mtp.MTPDescriptor;
 import jade.util.Logger;
 import jade.util.ObjectManager;
 import jade.util.leap.ArrayList;
@@ -1409,7 +1407,7 @@ public class LoadService extends BaseService {
 		msg.setSender(myContainer.getAMS());
 		msg.addReceiver(agentGUIAgent);		
 		msg.setLanguage(new SLCodec().getName());
-		msg.setOntology(AgentGUI_DistributionOntology.getInstance().getName());
+		msg.setOntology(AWB_DistributionOntology.getInstance().getName());
 		try {
 			msg.setContentObject(act);
 		} catch (IOException errCont) {
@@ -1432,7 +1430,6 @@ public class LoadService extends BaseService {
 		// --- Variable for the new container name ------------------
 		String newContainerPrefix = "remote";
 		String newContainerName = null;
-		Integer newContainerNo = 0;
 		
 		// --- Get the local IP-Address -----------------------------
 		String myIP = myContainer.getNodeDescriptor().getContainer().getAddress();
@@ -1449,27 +1446,8 @@ public class LoadService extends BaseService {
 			myServices += service;				
 		}			
 		
-		// --- Define the new container name ------------------------
-		try {
-			Service.Slice[] slices = getAllSlices();
-			for (int i = 0; i < slices.length; i++) {
-				LoadServiceSlice slice = (LoadServiceSlice) slices[i];
-				String sliceName = slice.getNode().getName();
-				if (sliceName.startsWith(newContainerPrefix)) {
-					String endString = sliceName.replace(newContainerPrefix, "");
-					try {
-						Integer endNumber = Integer.parseInt(endString);
-						if (endNumber>newContainerNo) {
-							newContainerNo = endNumber;
-						}	
-						
-					} catch (Exception e) {}
-				}
-			}	
-		} catch (ServiceException errSlices) {
-			errSlices.printStackTrace();
-		}
-		newContainerNo++;
+		// --- Find a number for the desired container name ---------
+		Integer newContainerNo = this.getNewContainerPostfixNumber(newContainerPrefix);
 		newContainerName = newContainerPrefix + newContainerNo;
 		
 		// --- Get machines to be excluded for remote start ---------
@@ -1484,40 +1462,23 @@ public class LoadService extends BaseService {
 			}
 		}
 		
-		// --- Get the AID of the file manager agent ----------------
-		AID fileManagerAID = null;
-		try {
-			AID[] agentAIDs = myMainContainer.agentNames();
-			for (int i = 0; i < agentAIDs.length; i++) {
-				if (agentAIDs[i].getLocalName().equals(SystemAgent.ProjectFileManager.toString())==true) {
-					fileManagerAID = agentAIDs[i]; 
-					break;
-				}
-			} 
-			// --- Add the know MTP addresses -----------------------
-			if (fileManagerAID!=null) {
-				ContainerID containerID = myMainContainer.getContainerID(fileManagerAID);
-				jade.util.leap.List mtps = myMainContainer.containerMTPs(containerID);
-				for (int i = 0; i < mtps.size(); i++) {
-					MTPDescriptor mtpDescriptors = (MTPDescriptor) mtps.get(i);
-					for (int j = 0; j < mtpDescriptors.getAddresses().length; j++) {
-						fileManagerAID.addAddresses(mtpDescriptors.getAddresses()[j]);
-					}
-				}
+		// --- Get the download server URL and its resources --------
+		ArrayList httpDownloadFiles = null;
+		List<String> downloadFiles = Application.getJadePlatform().getDownloadServerFileList(true);
+		if (downloadFiles!=null && downloadFiles.size()>0) {
+			httpDownloadFiles = new ArrayList();
+			for (String downloadFile : downloadFiles) {
+				httpDownloadFiles.add(downloadFile);
 			}
-			
-		} catch (NotFoundException nfEx) {
-			nfEx.printStackTrace();
 		}
-		
 		
 		// --- For the Jade-Logger with love ;-) --------------------
 		if (myLogger.isLoggable(Logger.FINE)) {
 			myLogger.log(Logger.FINE, "-- Infos to start the remote container ------------");
 			myLogger.log(Logger.FINE, "=> Services2Start:   " + myServices);
 			myLogger.log(Logger.FINE, "=> NewContainerName: " + newContainerName);
-			myLogger.log(Logger.FINE, "=> ThisAddresses:    " + myIP +  " - Port: " + myPort);
-			myLogger.log(Logger.FINE, "=> ProjectFileManagerAgent: " + fileManagerAID.toString());
+			myLogger.log(Logger.FINE, "=> IP + Port:        " + myIP +  " - Port: " + myPort);
+			myLogger.log(Logger.FINE, "=> File Download:    " + (downloadFiles==null ? " - " : downloadFiles.toString()));
 		}
 		
 		// ----------------------------------------------------------
@@ -1525,7 +1486,7 @@ public class LoadService extends BaseService {
 		// ----------------------------------------------------------
 		RemoteContainerConfig remConf = new RemoteContainerConfig();
 		remConf.setJadeShowGUI(true);
-		remConf.setFileManagerAgent(fileManagerAID);
+		remConf.setHttpDownloadFiles(httpDownloadFiles);
 		remConf.setJadeIsRemoteContainer(true);
 		remConf.setJadeContainerName(newContainerName);
 		remConf.setJadeHost(myIP);
@@ -1542,6 +1503,53 @@ public class LoadService extends BaseService {
 			remConf.setJvmMemAllocMaximum(this.defaults4RemoteContainerConfig.getJvmMemAllocMaximum());
 		}
 		return remConf;
+	}
+	/**
+	 * Return a new container post fix number for the specified container name.
+	 *
+	 * @param containerName the container name
+	 * @return the new container post fix number
+	 */
+	private int getNewContainerPostfixNumber(String containerName) {
+		
+		Integer newContainerNo = 0;
+		try {
+			// --- Which container are already available? -----------
+			Service.Slice[] slices = getAllSlices();
+			for (int i = 0; i < slices.length; i++) {
+				LoadServiceSlice slice = (LoadServiceSlice) slices[i];
+				String sliceName = slice.getNode().getName();
+				if (sliceName.startsWith(containerName)) {
+					String endString = sliceName.replace(containerName, "");
+					try {
+						Integer endNumber = Integer.parseInt(endString);
+						if (endNumber > newContainerNo) {
+							newContainerNo = endNumber;
+						}	
+					} catch (Exception e) {}
+				}
+			}	
+		} catch (ServiceException errSlices) {
+			errSlices.printStackTrace();
+		}
+		
+		// --- For which container we're already waiting? -----------
+		for (Container2Wait4 c2w4 :this.loadInfo.getRemoteContainerPending()) {
+			String pendingContainerName = c2w4.getContainerName();
+			if (pendingContainerName.startsWith(containerName)) {
+				String endString = pendingContainerName.replace(containerName, "");
+				try {
+					Integer endNumber = Integer.parseInt(endString);
+					if (endNumber > newContainerNo) {
+						newContainerNo = endNumber;
+					}	
+				} catch (Exception e) {}
+			}
+		}
+		
+		// --- Increase number & return -----------------------------
+		newContainerNo++;
+		return newContainerNo;
 	}
 	
 	/**
@@ -1567,14 +1575,14 @@ public class LoadService extends BaseService {
 		act.setAction(req);
 
 		// --- Define receiver of the Message ----------------------- 
-		AID agentGUIAgent = new AID(SystemAgent.BackgroundSystemAgentApplication +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
+		AID aidAwbBackgroundAgent = new AID(SystemAgent.BackgroundSystemAgentApplication +  "@" + this.myContainer.getPlatformID(), AID.ISGUID);
 		
 		// --- Build Message ----------------------------------------
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setSender(myContainer.getAMS());
-		msg.addReceiver(agentGUIAgent);		
+		msg.addReceiver(aidAwbBackgroundAgent);		
 		msg.setLanguage(new SLCodec().getName());
-		msg.setOntology(AgentGUI_DistributionOntology.getInstance().getName());
+		msg.setOntology(AWB_DistributionOntology.getInstance().getName());
 		try {
 			msg.setContentObject(act);
 		} catch (IOException errCont) {
@@ -1582,10 +1590,10 @@ public class LoadService extends BaseService {
 		}
 
 		// --- Send message -----------------------------------------
-		myContainer.postMessageToLocalAgent(msg, agentGUIAgent);
+		myContainer.postMessageToLocalAgent(msg, aidAwbBackgroundAgent);
 		
 		// --- Remind, that we're waiting for this container --------
-		loadInfo.setNewContainer2Wait4(remConf.getJadeContainerName());
+		loadInfo.setNewContainer2Wait4(remConf.getJadeContainerName(), Application.getJadePlatform().getRemoteContainerWaitingDuration());
 		
 		// --- Return -----------------------------------------------
 		return remConf.getJadeContainerName();
@@ -1684,10 +1692,11 @@ public class LoadService extends BaseService {
 			
 			// --- Set Agent.GUI version info -----------------
 			VersionInfo versionInfo = Application.getGlobalInfo().getVersionInfo();
-			AgentGuiVersion version = new AgentGuiVersion();
+			Version version = new Version();
 			version.setMajorRevision(versionInfo.getVersionMajor());
 			version.setMinorRevision(versionInfo.getVersionMinor());
 			version.setMicroRevision(versionInfo.getVersionMicro());
+			version.setQualifier(versionInfo.getVersionQualifier());
 			
 			// --- Finally define this local description ------
 			myCRCReply = new ClientRemoteContainerReply();
@@ -1697,7 +1706,7 @@ public class LoadService extends BaseService {
 			myCRCReply.setRemoteOS(myOS);
 			myCRCReply.setRemotePerformance(myPerformance);
 			myCRCReply.setRemoteBenchmarkResult(bench);
-			myCRCReply.setRemoteAgentGuiVersion(version);
+			myCRCReply.setRemoteVersion(version);
 			
 			// --- Broadcast the ClientRemoteContainerReply-Object to all other container ---
 			this.broadcastLocalContainerDescription();

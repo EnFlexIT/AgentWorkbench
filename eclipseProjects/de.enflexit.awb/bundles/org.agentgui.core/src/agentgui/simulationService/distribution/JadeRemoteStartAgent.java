@@ -52,7 +52,7 @@ public class JadeRemoteStartAgent extends Agent {
 	protected void setup() {
 
 		Object[] startArg = this.getArguments();
-		if (startArg.length>0) {
+		if (startArg!=null && startArg.length>0) {
 			if (startArg[0] instanceof RemoteContainerConfig) {
 				// --- Start the remote container ---------
 				this.remoteContainerConfig = (RemoteContainerConfig) startArg[0];
@@ -87,12 +87,12 @@ public class JadeRemoteStartAgent extends Agent {
 		 */
 		@Override
 		public void action() {
-			System.out.println("Prepare for remote container start ... ");
 			// --- Initiate the starter -----------------------------
-			JadeRemoteStart jrs = new JadeRemoteStart(this.getAgent(), remoteContainerConfig);
+			JadeRemoteStart jrs = new JadeRemoteStart(remoteContainerConfig);
+			System.out.println("[" + jrs.getClass().getSimpleName() + "] Prepare for remote container start ... ");
 			if (jrs.isReadyToStartRemoteContainer()==true) {
 				// --- Start the remote container -------------------
-				System.out.println("Starting remote container ... ");
+				System.out.println("[" + jrs.getClass().getSimpleName() + "] Starting remote container ... ");
 				jrs.startJade();
 			}
 			// +++ Returns here after container shutdown ++++++++++++
@@ -121,12 +121,12 @@ public class JadeRemoteStartAgent extends Agent {
 		 */
 		@Override
 		public void action() {
-			System.out.println("Re-Prepare for remote container start ... ");
 			// --- Initiate the starter -----------------------------
-			JadeRemoteStart jrs = new JadeRemoteStart(this.getAgent(), remoteStartConfiguration);
+			JadeRemoteStart jrs = new JadeRemoteStart(remoteStartConfiguration);
+			System.out.println("[" + jrs.getClass().getSimpleName() + "] Re-Prepare for remote container start ... ");
 			if (jrs.isReadyToStartRemoteContainer()==true) {
 				// --- Start the remote container -------------------
-				System.out.println("Starting remote container ... ");
+				System.out.println("[" + jrs.getClass().getSimpleName() + "] Starting remote container ... ");
 				jrs.startJade();
 			}
 			// +++ Returns here after container shutdown ++++++++++++

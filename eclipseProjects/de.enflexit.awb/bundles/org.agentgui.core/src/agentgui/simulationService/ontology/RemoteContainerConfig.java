@@ -8,42 +8,41 @@ import jade.core.*;
 /**
 * Protege name: RemoteContainerConfig
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/9, 15:58:57
 */
-@SuppressWarnings({ "unused", "serial" })
 public class RemoteContainerConfig implements Concept {
 
    /**
-* Protege name: hostExcludeIP
+* Protege name: jadeContainerName
    */
-   private List hostExcludeIP = new ArrayList();
-   public void addHostExcludeIP(String elem) { 
-
-	List oldList = this.hostExcludeIP;
-     hostExcludeIP.add(elem);
+   private String jadeContainerName;
+   public void setJadeContainerName(String value) { 
+    this.jadeContainerName=value;
    }
-   public boolean removeHostExcludeIP(String elem) {
-     List oldList = this.hostExcludeIP;
-     boolean result = hostExcludeIP.remove(elem);
-     return result;
+   public String getJadeContainerName() {
+     return this.jadeContainerName;
    }
-   public void clearAllHostExcludeIP() {
-     List oldList = this.hostExcludeIP;
-     hostExcludeIP.clear();
-   }
-   public Iterator getAllHostExcludeIP() {return hostExcludeIP.iterator(); }
-   public List getHostExcludeIP() {return hostExcludeIP; }
-   public void setHostExcludeIP(List l) {hostExcludeIP = l; }
 
    /**
-* Protege name: jadeHost
+* Protege name: jvmMemAllocMaximum
    */
-   private String jadeHost;
-   public void setJadeHost(String value) { 
-    this.jadeHost=value;
+   private String jvmMemAllocMaximum;
+   public void setJvmMemAllocMaximum(String value) { 
+    this.jvmMemAllocMaximum=value;
    }
-   public String getJadeHost() {
-     return this.jadeHost;
+   public String getJvmMemAllocMaximum() {
+     return this.jvmMemAllocMaximum;
+   }
+
+   /**
+* Protege name: jadeIsRemoteContainer
+   */
+   private boolean jadeIsRemoteContainer;
+   public void setJadeIsRemoteContainer(boolean value) { 
+    this.jadeIsRemoteContainer=value;
+   }
+   public boolean getJadeIsRemoteContainer() {
+     return this.jadeIsRemoteContainer;
    }
 
    /**
@@ -69,6 +68,27 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
+* Protege name: hostExcludeIP
+   */
+   private List hostExcludeIP = new ArrayList();
+   public void addHostExcludeIP(String elem) { 
+     List oldList = this.hostExcludeIP;
+     hostExcludeIP.add(elem);
+   }
+   public boolean removeHostExcludeIP(String elem) {
+     List oldList = this.hostExcludeIP;
+     boolean result = hostExcludeIP.remove(elem);
+     return result;
+   }
+   public void clearAllHostExcludeIP() {
+     List oldList = this.hostExcludeIP;
+     hostExcludeIP.clear();
+   }
+   public Iterator getAllHostExcludeIP() {return hostExcludeIP.iterator(); }
+   public List getHostExcludeIP() {return hostExcludeIP; }
+   public void setHostExcludeIP(List l) {hostExcludeIP = l; }
+
+   /**
 * Protege name: jadePort
    */
    private String jadePort;
@@ -80,61 +100,6 @@ public class RemoteContainerConfig implements Concept {
    }
 
    /**
-* Protege name: jvmMemAllocInitial
-   */
-   private String jvmMemAllocInitial;
-   public void setJvmMemAllocInitial(String value) { 
-    this.jvmMemAllocInitial=value;
-   }
-   public String getJvmMemAllocInitial() {
-     return this.jvmMemAllocInitial;
-   }
-
-   /**
-* Protege name: jadeContainerName
-   */
-   private String jadeContainerName;
-   public void setJadeContainerName(String value) { 
-    this.jadeContainerName=value;
-   }
-   public String getJadeContainerName() {
-     return this.jadeContainerName;
-   }
-
-   /**
-* Protege name: fileManagerAgent
-   */
-   private AID fileManagerAgent;
-   public void setFileManagerAgent(AID value) { 
-    this.fileManagerAgent=value;
-   }
-   public AID getFileManagerAgent() {
-     return this.fileManagerAgent;
-   }
-
-   /**
-* Protege name: jadeIsRemoteContainer
-   */
-   private boolean jadeIsRemoteContainer;
-   public void setJadeIsRemoteContainer(boolean value) { 
-    this.jadeIsRemoteContainer=value;
-   }
-   public boolean getJadeIsRemoteContainer() {
-     return this.jadeIsRemoteContainer;
-   }
-
-   /**
-* Protege name: jvmMemAllocMaximum
-   */
-   private String jvmMemAllocMaximum;
-   public void setJvmMemAllocMaximum(String value) { 
-    this.jvmMemAllocMaximum=value;
-   }
-   public String getJvmMemAllocMaximum() {
-     return this.jvmMemAllocMaximum;
-   }
-
-   /**
 * Protege name: jadeServices
    */
    private String jadeServices;
@@ -143,6 +108,49 @@ public class RemoteContainerConfig implements Concept {
    }
    public String getJadeServices() {
      return this.jadeServices;
+   }
+
+   /**
+* Protege name: httpDownloadFiles
+   */
+   private List httpDownloadFiles = new ArrayList();
+   public void addHttpDownloadFiles(String elem) { 
+     List oldList = this.httpDownloadFiles;
+     httpDownloadFiles.add(elem);
+   }
+   public boolean removeHttpDownloadFiles(String elem) {
+     List oldList = this.httpDownloadFiles;
+     boolean result = httpDownloadFiles.remove(elem);
+     return result;
+   }
+   public void clearAllHttpDownloadFiles() {
+     List oldList = this.httpDownloadFiles;
+     httpDownloadFiles.clear();
+   }
+   public Iterator getAllHttpDownloadFiles() {return httpDownloadFiles.iterator(); }
+   public List getHttpDownloadFiles() {return httpDownloadFiles; }
+   public void setHttpDownloadFiles(List l) {httpDownloadFiles = l; }
+
+   /**
+* Protege name: jadeHost
+   */
+   private String jadeHost;
+   public void setJadeHost(String value) { 
+    this.jadeHost=value;
+   }
+   public String getJadeHost() {
+     return this.jadeHost;
+   }
+
+   /**
+* Protege name: jvmMemAllocInitial
+   */
+   private String jvmMemAllocInitial;
+   public void setJvmMemAllocInitial(String value) { 
+    this.jvmMemAllocInitial=value;
+   }
+   public String getJvmMemAllocInitial() {
+     return this.jvmMemAllocInitial;
    }
 
 }

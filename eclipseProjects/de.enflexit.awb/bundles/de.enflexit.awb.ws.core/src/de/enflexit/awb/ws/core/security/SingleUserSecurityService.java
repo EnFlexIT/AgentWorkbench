@@ -31,7 +31,13 @@ public class SingleUserSecurityService implements AwbSecurityHandlerService {
 	public String[] getConfigurationKeys() {
 		return this.configParameterKeys;
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#getKeyType(java.lang.String)
+	 */
+	@Override
+	public Class<?> getKeyType(String key) {
+		return String.class;
+	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#getNewSecurityHandler(java.util.TreeMap)
 	 */
@@ -43,5 +49,6 @@ public class SingleUserSecurityService implements AwbSecurityHandlerService {
 		// --- Return the new instance of the SecurtiyHandler -------
 		return new SingleUserSecurityHandler(userName, password);
 	}
+
 
 }

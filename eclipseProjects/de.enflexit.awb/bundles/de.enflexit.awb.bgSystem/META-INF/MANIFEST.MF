@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AWB - Background System Bundle
+Bundle-SymbolicName: de.enflexit.awb.bgSystem
+Automatic-Module-Name: de.enflexit.awb.bgSystem
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate
+Export-Package: de.enflexit.awb.bgSystem,
+ de.enflexit.awb.bgSystem.db,
+ de.enflexit.awb.bgSystem.db.dataModel
+Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
+Require-Bundle: de.enflexit.db.hibernate,
+ org.eclipse.osgi

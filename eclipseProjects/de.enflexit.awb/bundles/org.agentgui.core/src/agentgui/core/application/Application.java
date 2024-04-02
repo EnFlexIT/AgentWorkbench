@@ -30,6 +30,7 @@ package agentgui.core.application;
 
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -60,7 +61,6 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.database.DBConnection;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.MainWindow;
 import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
@@ -131,9 +131,7 @@ public class Application {
 	private static OptionDialog optionDialog;
 	/** With this attribute/class the agent platform (JADE) will be controlled. */
 	private static Platform jadePlatform;
-	/** The ODBC connection to the database //TODO */
-	private static DBConnection dbConnection;
-	
+		
 
 	/** The project that has to be opened after application start. Received from program parameter.*/
 	private static String project2OpenAfterStart;
@@ -349,30 +347,7 @@ public class Application {
 		getIApplication().setSwingMainWindow(newMainWindow);	
 	}
 	
-	
-	/**
-	 * Returns the database connection.
-	 * @param renewDatabaseConnection the renew database connection
-	 * @return the database connection
-	 */
-	public static DBConnection getDatabaseConnection(boolean renewDatabaseConnection) {
-		if (renewDatabaseConnection==true) {
-			Application.dbConnection = new DBConnection();
-			return Application.dbConnection;
-		}
-		return Application.getDatabaseConnection();
-	}
-	/**
-	 * Returns the database connection for the Application.
-	 * @return the database connection
-	 */
-	public static DBConnection getDatabaseConnection() {
-		if (Application.dbConnection==null) {
-			Application.dbConnection = new DBConnection();
-		}
-		return Application.dbConnection;
-	}
-	
+		
 	/**
 	 * Returns the lApplication.
 	 * @return the l application
@@ -425,7 +400,8 @@ public class Application {
 			if (project2OpenAfterStart!=null) {
 				try {
 					System.out.println("Load project '" + project2OpenAfterStart + "' ...");
-					Project.load(project2OpenAfterStart);
+					Application.getProjectsLoaded().add(project2OpenAfterStart);
+					
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -1071,13 +1047,16 @@ public class Application {
 	
 	/**
 	 * Opens the central {@link AwbDatabaseDialog} of the application with a specified factoryID.
+	 *
+	 * @param ownerWindow the owner window
 	 * @param factoryID the factory ID to configure or <code>null</code>
 	 */
-	public static void showDatabaseDialog(String factoryID) {
+	public static void showDatabaseDialog(Window ownerWindow, String factoryID) {
 		
 		if (awbDatabaseDialog!=null) return;
-		if (isRunningAsServer()==true) {
-			awbDatabaseDialog = new AwbDatabaseDialog(null, factoryID);
+		
+		if (ownerWindow!=null) {
+			awbDatabaseDialog = new AwbDatabaseDialog(ownerWindow, factoryID);
 		} else {
 			awbDatabaseDialog = new AwbDatabaseDialog(getMainWindow(), factoryID);
 		}

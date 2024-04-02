@@ -36,8 +36,8 @@ import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.distribution.JadeRemoteStartAgent;
 import agentgui.simulationService.distribution.JadeRemoteStartConfiguration;
 import agentgui.simulationService.load.LoadMeasureThread;
-import agentgui.simulationService.ontology.AgentGUI_DistributionOntology;
-import agentgui.simulationService.ontology.AgentGuiVersion;
+import agentgui.simulationService.ontology.AWB_DistributionOntology;
+import agentgui.simulationService.ontology.Version;
 import agentgui.simulationService.ontology.BenchmarkResult;
 import agentgui.simulationService.ontology.ClientRemoteContainerReply;
 import agentgui.simulationService.ontology.ClientRemoteContainerRequest;
@@ -86,7 +86,7 @@ public class ServerSlaveAgent extends Agent {
 
 	private static final long serialVersionUID = -3947798460986588734L;
 	
-	private Ontology ontology = AgentGUI_DistributionOntology.getInstance();
+	private Ontology ontology = AWB_DistributionOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
 	private PlatformAddress mainPlatform = new PlatformAddress();
@@ -97,7 +97,7 @@ public class ServerSlaveAgent extends Agent {
 	private PlatformAddress myPlatform;
 	private PlatformPerformance myPerformance;
 	private OSInfo myOS;
-	private AgentGuiVersion myVersion;
+	private Version myVersion;
 	
 	private PlatformTime myPlatformTime = new PlatformTime();
 	private SlaveRegister myRegistration = new SlaveRegister();
@@ -137,7 +137,7 @@ public class ServerSlaveAgent extends Agent {
 			// --- Set OS-Informations ------------------------
 			myOS = myCRCreply.getRemoteOS();
 			// --- Set version info ---------------------------
-			myVersion = myCRCreply.getRemoteAgentGuiVersion();
+			myVersion = myCRCreply.getRemoteVersion();
 			
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -400,7 +400,7 @@ public class ServerSlaveAgent extends Agent {
 	// -----------------------------------------------------
 
 	/**
-	 * Starts a Remote-Container for given RemoteContainerConfig-Instance.
+	 * Starts a Remote-Container for a given RemoteContainerConfig-Instance.
 	 * @param remoteContainerConfig the remote container configuration
 	 */
 	private void startRemoteContainer(RemoteContainerConfig remoteContainerConfig) {

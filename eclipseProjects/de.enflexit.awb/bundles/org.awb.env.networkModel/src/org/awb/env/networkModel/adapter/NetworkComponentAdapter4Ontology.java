@@ -152,7 +152,9 @@ public abstract class NetworkComponentAdapter4Ontology extends NetworkComponentA
 	 */
 	@Override
 	public boolean save() {
-		this.getOntologyInstanceViewer().save();
+		if (this.oiv!=null) {
+			this.getOntologyInstanceViewer().save();
+		}
 		return true;
 	}
 

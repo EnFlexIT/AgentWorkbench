@@ -31,9 +31,12 @@ package agentgui.simulationService.load;
 import jade.core.AID;
 import jade.core.Location;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
+import agentgui.core.jade.Platform;
 import agentgui.simulationService.LoadServiceHelper;
 import agentgui.simulationService.agents.ServerMasterAgent;
 import agentgui.simulationService.ontology.BenchmarkResult;
@@ -180,6 +183,21 @@ public class LoadInformation  {
 	}
 	
 	/**
+	 * Returns the list of pending {@link Container2Wait4}.
+	 * @return the remote container pending
+	 */
+	public List<Container2Wait4> getRemoteContainerPending() {
+		List<Container2Wait4> containerList = new ArrayList<>();
+		for (Container2Wait4 c2w4 : this.getNewContainers2Wait4Hash().values()) {
+			if (c2w4.isPending()==true) {
+				containerList.add(c2w4);
+			}
+		}
+		return containerList;
+	}
+	
+	
+	/**
 	 * Method to calculate the cycle-frequency of the simulation.
 	 */
 	public void setSimulationCycleStartTimeStamp() {
@@ -235,13 +253,14 @@ public class LoadInformation  {
 	/**
 	 * Sets the container name on which the running system is waiting for, because
 	 * a new remote container was requested.
+	 *
 	 * @param container2Wait4 the new new container2 wait4
-	 * 
+	 * @param maxWaitingTime the maximum waiting time in milliseconds
 	 * @see LoadServiceHelper#startNewRemoteContainer()
 	 * @see LoadServiceHelper#startNewRemoteContainer(agentgui.simulationService.ontology.RemoteContainerConfig)
 	 */
-	public void setNewContainer2Wait4(String container2Wait4) {
-		Container2Wait4 cont = new Container2Wait4(container2Wait4);
+	public void setNewContainer2Wait4(String container2Wait4, Long maxWaitingTime) {
+		Container2Wait4 cont = new Container2Wait4(container2Wait4, maxWaitingTime);
 		this.getNewContainers2Wait4Hash().put(container2Wait4, cont);
 	}
 	/**
@@ -422,18 +441,23 @@ public class LoadInformation  {
 	public class Container2Wait4 {
 		
 		private String containerName = null;
-		private long timeOut = (1000 * 20); // --- 10 Seconds ---
-		private long time4TimeOut = 0;
+		private long timeOut = 0;
 		private boolean started = false;
 		private boolean cancelled = false;
 		
 		/**
 		 * Constructor of this Sub-Class.
+		 *
 		 * @param newContainerName the new container name
+		 * @param maxWaitingDuration [optional] the time out duration to be used for waiting on the new container
 		 */
-		public Container2Wait4(String newContainerName) {
-			setContainerName(newContainerName);
-			time4TimeOut = System.currentTimeMillis() + timeOut;
+		public Container2Wait4(String newContainerName, Long maxWaitingDuration) {
+			this.setContainerName(newContainerName);
+			if (maxWaitingDuration!=null && maxWaitingDuration>Platform.DEFAULT_REMOTE_CONTAINER_WAITING_DURATION) {
+				this.timeOut = System.currentTimeMillis() + maxWaitingDuration;
+			} else {
+				this.timeOut = System.currentTimeMillis() + Platform.DEFAULT_REMOTE_CONTAINER_WAITING_DURATION;
+			}
 		}
 
 		/**
@@ -456,7 +480,7 @@ public class LoadInformation  {
 		 * @return if the RemoteContainerRequest is timed out or not
 		 */
 		public boolean isTimedOut(){
-			if (System.currentTimeMillis() > time4TimeOut) {
+			if (System.currentTimeMillis() > timeOut) {
 				return true;
 			} else {
 				return false;	
@@ -480,18 +504,25 @@ public class LoadInformation  {
 
 		/**
 		 * Sets the cancelled.
-		 * @param chanceld the cancelled to set
+		 * @param cancelled the cancelled to set
 		 */
 		public void setCancelled(boolean chanceld) {
 			this.cancelled = chanceld;
 		}
-		
 		/**
 		 * Checks if is cancelled.
 		 * @return the cancelled-boolean
 		 */
 		public boolean isCancelled() {
 			return cancelled;
+		}
+		
+		/**
+		 * Checks if the container to wait for is pending.
+		 * @return true, if is pending
+		 */
+		public boolean isPending() {
+			return this.isStarted()==false && this.isCancelled()==false && this.isTimedOut()==false;
 		}
 
 	}

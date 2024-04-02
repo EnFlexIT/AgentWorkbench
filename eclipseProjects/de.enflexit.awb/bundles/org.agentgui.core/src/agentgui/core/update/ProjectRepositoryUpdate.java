@@ -659,7 +659,7 @@ public class ProjectRepositoryUpdate extends Thread {
 		return this.getLinkOrPathWithDirectorySuffix(sourceDirectoryOrWebReference, File.separator) + updateRepositoryEntry.getFileName();
 	}
 	/**
-	 * Returns the link or path with the deisred directory suffix.
+	 * Returns the link or path with the desired directory suffix.
 	 * @param linkOfPath the link of path
 	 * @param desiredSuffix the desired suffix
 	 * @return the link or path with directory suffix

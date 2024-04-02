@@ -1,4 +1,4 @@
-; Sat Feb 10 18:49:06 CET 2018
+; Fri Feb 09 16:12:07 CET 2024
 ; 
 ;+ (version "3.3.1")
 ;+ (build "Build 430")
@@ -22,33 +22,33 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_10137] of  Property_List
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_10153] of  String
+([AgentGUI-Distribution_ProjectKB_Instance_10148] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10154] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10149] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10155] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10150] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([AgentGUI-Distribution_ProjectKB_Instance_10156] of  Map
+([AgentGUI-Distribution_ProjectKB_Instance_10151] of  Map
 )
 
-([AgentGUI-Distribution_ProjectKB_Instance_10157] of  Map_Entry
+([AgentGUI-Distribution_ProjectKB_Instance_10152] of  Map_Entry
 
 	(key "InstanceDisplay.yellow_stickies")
 	(key_class "java.lang.String")
-	(value "AgentGUI-Distribution_ProjectKB_Instance_10156")
+	(value "AgentGUI-Distribution_ProjectKB_Instance_10151")
 	(value_class "java.util.Map"))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_133] of  Widget
@@ -385,10 +385,10 @@
 ([AgentGUI-Distribution_ProjectKB_Instance_224] of  Map
 
 	(entries
-		[AgentGUI-Distribution_ProjectKB_Instance_10154]
-		[AgentGUI-Distribution_ProjectKB_Instance_10155]
-		[AgentGUI-Distribution_ProjectKB_Instance_10157])
-	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_10156]))
+		[AgentGUI-Distribution_ProjectKB_Instance_10149]
+		[AgentGUI-Distribution_ProjectKB_Instance_10150]
+		[AgentGUI-Distribution_ProjectKB_Instance_10152])
+	(referenced_maps [AgentGUI-Distribution_ProjectKB_Instance_10151]))
 
 ([AgentGUI-Distribution_ProjectKB_Instance_98] of  String
 
@@ -411,7 +411,7 @@
 
 ([BROWSER_SLOT_NAMES] of  Property_List
 
-	(properties [AgentGUI-Distribution_ProjectKB_Instance_10153]))
+	(properties [AgentGUI-Distribution_ProjectKB_Instance_10148]))
 
 ([CLSES_TAB] of  Widget
 
@@ -645,7 +645,7 @@
 	(default_facet_metaclass ":STANDARD-FACET")
 	(default_instance_widget_class_name "edu.stanford.smi.protege.widget.FormWidget")
 	(default_slot_metaclass ":STANDARD-SLOT")
-	(included_projects "file:/C:/Protege2/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
+	(included_projects "file:/C:/Protege/plugins/nl.uva.psy.swi.beangenerator/projects/SimpleJADEAbstractOntology.pprj")
 	(journaling_enabled FALSE)
 	(next_frame_number 0)
 	(options [KB_001031_Instance_1])

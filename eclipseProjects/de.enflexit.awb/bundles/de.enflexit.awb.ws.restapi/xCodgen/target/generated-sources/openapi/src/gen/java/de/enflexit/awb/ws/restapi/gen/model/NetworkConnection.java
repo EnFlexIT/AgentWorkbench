@@ -35,7 +35,11 @@ import jakarta.validation.Valid;
   NetworkConnection.JSON_PROPERTY_TRAFFIC_SEND_IN_M_B,
   NetworkConnection.JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B
 })
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
+=======
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+>>>>>>> refs/heads/master
 public class NetworkConnection   {
   public static final String JSON_PROPERTY_NAME = "name";
   @JsonProperty(JSON_PROPERTY_NAME)
@@ -75,8 +79,13 @@ public class NetworkConnection   {
    * @return name
    **/
   @JsonProperty(value = "name")
+<<<<<<< HEAD
   @Schema(description = "")
   
+=======
+  @ApiModelProperty(required = true, value = "")
+  @NotNull 
+>>>>>>> refs/heads/master
   public String getName() {
     return name;
   }
@@ -95,8 +104,13 @@ public class NetworkConnection   {
    * @return displayName
    **/
   @JsonProperty(value = "displayName")
+<<<<<<< HEAD
   @Schema(description = "")
   
+=======
+  @ApiModelProperty(required = true, value = "")
+  @NotNull 
+>>>>>>> refs/heads/master
   public String getDisplayName() {
     return displayName;
   }
@@ -115,8 +129,13 @@ public class NetworkConnection   {
    * @return macAddress
    **/
   @JsonProperty(value = "macAddress")
+<<<<<<< HEAD
   @Schema(description = "")
   
+=======
+  @ApiModelProperty(required = true, value = "")
+  @NotNull 
+>>>>>>> refs/heads/master
   public String getMacAddress() {
     return macAddress;
   }
@@ -135,8 +154,13 @@ public class NetworkConnection   {
    * @return ip4Addresses
    **/
   @JsonProperty(value = "ip4Addresses")
+<<<<<<< HEAD
   @Schema(description = "")
   
+=======
+  @ApiModelProperty(required = true, value = "")
+  @NotNull 
+>>>>>>> refs/heads/master
   public String getIp4Addresses() {
     return ip4Addresses;
   }
@@ -155,8 +179,13 @@ public class NetworkConnection   {
    * @return ip6Addresses
    **/
   @JsonProperty(value = "ip6Addresses")
+<<<<<<< HEAD
   @Schema(description = "")
   
+=======
+  @ApiModelProperty(required = true, value = "")
+  @NotNull 
+>>>>>>> refs/heads/master
   public String getIp6Addresses() {
     return ip6Addresses;
   }
@@ -175,8 +204,13 @@ public class NetworkConnection   {
    * @return trafficSendInMB
    **/
   @JsonProperty(value = "trafficSendInMB")
+<<<<<<< HEAD
   @Schema(description = "")
   
+=======
+  @ApiModelProperty(required = true, value = "")
+  @NotNull 
+>>>>>>> refs/heads/master
   public Double getTrafficSendInMB() {
     return trafficSendInMB;
   }
@@ -195,8 +229,13 @@ public class NetworkConnection   {
    * @return trafficReceivedInMB
    **/
   @JsonProperty(value = "trafficReceivedInMB")
+<<<<<<< HEAD
   @Schema(description = "")
   
+=======
+  @ApiModelProperty(required = true, value = "")
+  @NotNull 
+>>>>>>> refs/heads/master
   public Double getTrafficReceivedInMB() {
     return trafficReceivedInMB;
   }

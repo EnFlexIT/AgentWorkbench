@@ -40,10 +40,9 @@ import agentgui.core.project.setup.AgentClassElement4SimStart;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 
 /**
- * This class is the default class for the start of an agency of <b>Agent.GUI</b>. 
+ * This class is the default class for the start of an agency of <b>Agent.Workbench</b>. 
  * In case, that you want to define a tailored method to start an agent 
- * simulation, write a new class, which extends {@link StaticLoadBalancingBase}.<br>
- * This new class will be selectable within the 
+ * system, write a new class that extends {@link StaticLoadBalancingBase}.<br>
  * 
  * @see StaticLoadBalancingBase
  * @see BaseLoadBalancing

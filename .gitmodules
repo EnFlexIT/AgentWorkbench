@@ -1,0 +1,3 @@
+[submodule "/eclipseProjects/de.enflexit.awb/bundles/de.enflexit.awb.ws.restapi/xAPI"]
+	path = /eclipseProjects/de.enflexit.awb/bundles/de.enflexit.awb.ws.restapi/xAPI
+	url = https://github.com/EnFlexIT/RestAPIs.git

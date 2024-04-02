@@ -50,6 +50,9 @@ import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandle
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
+import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetupNotification;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.common.swing.OwnerDetection;
 
 /**
@@ -99,7 +102,6 @@ public class DataModelStorageThread extends Thread {
 	private long firstDisplayWaitTime = 0;			// ms
 	private long firstDisplayTime;
 	
-	private final long vectorDividerBytesPerThread = 450000; 
 	private int maxNumberOfThreads = 5;
 	
 	// --- Variables for the worker -----------------------
@@ -218,24 +220,11 @@ public class DataModelStorageThread extends Thread {
 		this.elementsToConvert = sumCompVector.size();
 		if (this.elementsToConvert==0) return;
 		
-		// --- Summarize the file sizes -----------------------------
-		long fileSizeXML = GraphEnvironmentController.getFileXML(this.graphController.getEnvFolderPath(), this.setupName).length();
-		long fileSizeGraphML = GraphEnvironmentController.getFileGraphML(this.graphController.getEnvFolderPath(), this.setupName).length();
-		long fileSize = fileSizeXML + fileSizeGraphML; 
-		
 		// --- Split component vector -------------------------------
-		int noOfVector = 1;
-		try {
-			noOfVector = ((int) (fileSize / this.vectorDividerBytesPerThread))+1;
-		} catch (Exception ex) {
-			//ex.printStackTrace();
-		}
-		// --- If '1' here, check number of components --------------
-		if (noOfVector<=1 && this.elementsToConvert>1) noOfVector = this.maxNumberOfThreads;
+		int noOfVector = this.maxNumberOfThreads;
 		// --- Finally, adjust the number of Threads ----------------
 		if (noOfVector>this.elementsToConvert) noOfVector=this.elementsToConvert;
 		if (noOfVector>this.maxNumberOfThreads) noOfVector=this.maxNumberOfThreads;
-		if (noOfVector<=0) noOfVector=1;
 		if (this.debug==true) noOfVector = 1;
 		
 		// --- Define separation Vector -----------------------------
@@ -284,6 +273,23 @@ public class DataModelStorageThread extends Thread {
 			ie.printStackTrace();
 		}
 
+    	// --- Indicate to the setup observer that the job is done --
+    	Project project = this.graphController.getProject();
+    	if (project!=null) {
+    		// --- Prepare SimulationSetupNotification -------------- 
+    		SimulationSetupNotification ssn = null;
+    		switch (this.organizerAction) {
+			case ORGANIZE_LOADING:
+				ssn = new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_DETAILS_LOADED);
+				break;
+
+			case ORGANIZE_SAVING:
+				ssn = new SimulationSetupNotification(SimNoteReason.SIMULATION_SETUP_DETAILS_SAVED);	
+				break;
+			}
+    		project.setNotChangedButNotify(ssn);
+    	}
+    	
     	// --- Finally, close progress monitor ---------------------- 
     	if (this.isHeadlessOperation==false) {
     		SwingUtilities.invokeLater(new Runnable() {

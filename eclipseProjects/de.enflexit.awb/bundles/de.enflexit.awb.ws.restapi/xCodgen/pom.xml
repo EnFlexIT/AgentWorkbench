@@ -6,8 +6,13 @@
 	<packaging>pom</packaging>
 
 	<properties>
+<<<<<<< HEAD
 		<openApiGeneratorVersion>6.5.0</openApiGeneratorVersion>
 		<yamlFile>RestApi.yaml</yamlFile>
+=======
+		<openApiGeneratorVersion>5.4.0</openApiGeneratorVersion>
+		<yamlFile>../xAPI/AWB-RestAPI.yaml</yamlFile>
+>>>>>>> refs/heads/master
 		<srcBasePackage>de.enflexit.awb.ws.restapi.gen</srcBasePackage>
 	</properties>
 	

@@ -62,31 +62,37 @@ public class TimeSeriesFunctionEvaluator {
 	 * @return true, if successful
 	 */
 	private boolean checkParameters() {
+		// --- Check if all required parameters are provided --------
 		if (this.parameters==null) {
 			this.errorMessage = "No parameters passed!";
 			return false;
 		}
-		
 		if (this.parameters.size()!=4) {
 			this.errorMessage = "Wrong number of parameters passed!";
 			return false;
 		}
+		for (int i=0; i<4; i++) {
+			if (this.parameters.get(i)==null) {
+				this.errorMessage = "Parameter no. " + i + " is null!";
+				return false;
+			}
+		}
 
 		// --- Check the parameter types ----------------------------
 		if (this.parameters.get(0).isTimeSeries()==false) {
-			this.errorMessage = "The first parameter must be a time series";
+			this.errorMessage = "The first parameter must be a time series!";
 			return false;
 		}
 		if (this.parameters.get(1).getDataType()!=DataType.Double) {
-			this.errorMessage = "The second parameter must be of type double";
+			this.errorMessage = "The second parameter must be of type double!";
 			return false;
 		}
 		if (this.parameters.get(2).getDataType()!=DataType.Double) {
-			this.errorMessage = "The third parameter must be of type double";
+			this.errorMessage = "The third parameter must be of type double!";
 			return false;
 		}
 		if (this.parameters.get(3).getDataType()!=DataType.Integer) {
-			this.errorMessage = "The fourth parameter must be of type integer";
+			this.errorMessage = "The fourth parameter must be of type integer!";
 			return false;
 		}
 		

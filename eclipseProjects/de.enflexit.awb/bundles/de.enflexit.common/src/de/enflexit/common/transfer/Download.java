@@ -33,11 +33,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
@@ -81,6 +87,23 @@ public class Download {
 		this.srcFileURL  = sourceFileURL;
 		this.destFileLocale = destinationFileLocal;
 		this.webResAuth = webResAuth;
+		this.checkAndCorrectSourceURL();
+	}
+	/**
+	 * Will check the source URL (e.g. for blanks) and will correct it as required.
+	 */
+	private void checkAndCorrectSourceURL() {
+		
+		try {
+			URL url = new URL(URLDecoder.decode(this.srcFileURL, StandardCharsets.UTF_8.toString()));
+	        URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+	        String urlStringCleaned = uri.toString();
+	        if (urlStringCleaned!=null && urlStringCleaned.equals(this.srcFileURL)==false) {
+	        	this.srcFileURL = urlStringCleaned;
+	        }
+		} catch (MalformedURLException | URISyntaxException | UnsupportedEncodingException urlEx) {
+			//urlEx.printStackTrace();
+		}
 	}
 	
 	/**

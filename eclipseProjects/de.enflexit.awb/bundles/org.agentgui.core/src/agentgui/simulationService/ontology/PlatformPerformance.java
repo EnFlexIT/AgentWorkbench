@@ -2,36 +2,15 @@ package agentgui.simulationService.ontology;
 
 
 import jade.content.*;
+import jade.util.leap.*;
+import jade.core.*;
 
 /**
 * Protege name: PlatformPerformance
 * @author ontology bean generator
-* @version 2018/02/10, 18:49:04
+* @version 2024/02/9, 15:58:57
 */
-@SuppressWarnings("serial")
 public class PlatformPerformance implements Concept {
-
-   /**
-* Protege name: cpu_numberOfLogicalCores
-   */
-   private int cpu_numberOfLogicalCores;
-   public void setCpu_numberOfLogicalCores(int value) { 
-    this.cpu_numberOfLogicalCores=value;
-   }
-   public int getCpu_numberOfLogicalCores() {
-     return this.cpu_numberOfLogicalCores;
-   }
-
-   /**
-* Protege name: memory_totalMB
-   */
-   private int memory_totalMB;
-   public void setMemory_totalMB(int value) { 
-    this.memory_totalMB=value;
-   }
-   public int getMemory_totalMB() {
-     return this.memory_totalMB;
-   }
 
    /**
 * Protege name: cpu_numberOfPhysicalCores
@@ -56,6 +35,17 @@ public class PlatformPerformance implements Concept {
    }
 
    /**
+* Protege name: memory_totalMB
+   */
+   private int memory_totalMB;
+   public void setMemory_totalMB(int value) { 
+    this.memory_totalMB=value;
+   }
+   public int getMemory_totalMB() {
+     return this.memory_totalMB;
+   }
+
+   /**
 * Protege name: cpu_processorName
    */
    private String cpu_processorName;
@@ -64,6 +54,17 @@ public class PlatformPerformance implements Concept {
    }
    public String getCpu_processorName() {
      return this.cpu_processorName;
+   }
+
+   /**
+* Protege name: cpu_numberOfLogicalCores
+   */
+   private int cpu_numberOfLogicalCores;
+   public void setCpu_numberOfLogicalCores(int value) { 
+    this.cpu_numberOfLogicalCores=value;
+   }
+   public int getCpu_numberOfLogicalCores() {
+     return this.cpu_numberOfLogicalCores;
    }
 
 }

@@ -20,6 +20,8 @@ import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
 
+import de.enflexit.awb.ws.core.util.ServletHelper;
+
 /**
  * The Class SingleUserSecurityHandler enables to secure an API by a basic authentication
  * with an user name and a password.
@@ -30,7 +32,6 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 
 	private final String login;
 	private final String password;
-	
 	
 	/**
 	 * Instantiates a new SingleUserSecurityHandler that enables an unprotected access
@@ -52,7 +53,7 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 		
 		this.setAuthenticator(new BasicAuthenticator());
 		this.setIdentityService(new DefaultIdentityService());
-		this.setLoginService(new SingleUserLoginService(login, password));
+		this.setLoginService(new SingleUserLoginService());
 	}
 
 	/**
@@ -85,7 +86,8 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 	 * @see org.eclipse.jetty.security.SecurityHandler#isAuthMandatory(org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, java.lang.Object)
 	 */
 	@Override
-	protected boolean isAuthMandatory(Request baseRequest, Response base_response, Object constraintInfo) {
+	protected boolean isAuthMandatory(Request request, Response base_response, Object constraintInfo) {
+		if (ServletHelper.isPreflightRequest(request)==true) return false;
 		return this.isSecured();
 	}
 	
@@ -96,31 +98,19 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 	protected boolean checkWebResourcePermissions(String pathInContext, Request request, Response response, Object constraintInfo, UserIdentity userIdentity) throws IOException {
 		return userIdentity!=null && StringUtils.equals(login, userIdentity.getUserPrincipal().getName());
 	}
-
+	
+	
 	// --------------------------------------------------------------
-	// --- From her the locally used SingleUserLoginService ---------
+	// --- From her the locally used JwtLoginService ---------
 	// --------------------------------------------------------------	
 	/**
-	 * The Class SingleUserLoginService.
+	 * The Class JwtLoginService.
 	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
 	 */
 	public class SingleUserLoginService implements LoginService {
 
-		private final String login;
-		private final String password;
-
 		private IdentityService identityService;
 		
-		/**
-		 * Instantiates a new single user login service.
-		 *
-		 * @param login the login
-		 * @param password the password
-		 */
-		public SingleUserLoginService(final String login, final String password) {
-			this.login = login;
-			this.password = password;
-		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jetty.security.LoginService#getName()
@@ -136,7 +126,7 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 		@Override
 		public UserIdentity login(String username, Object credentials, ServletRequest request) {
 			
-			if (StringUtils.equals(login, username) && StringUtils.equals(password, String.valueOf(credentials))) {
+			if (StringUtils.equals(SingleUserSecurityHandler.this.login, username) && StringUtils.equals(SingleUserSecurityHandler.this.password, String.valueOf(credentials))) {
 				
 				final Credential credential = new Password(String.valueOf(credentials));
 				final Principal principal   = new KnownUser(username, credential);

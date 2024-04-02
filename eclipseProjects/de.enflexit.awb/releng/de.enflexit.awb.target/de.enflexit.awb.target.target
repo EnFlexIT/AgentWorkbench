@@ -167,7 +167,7 @@
 		<!-- From here, dependencies for the AWB-WS part             -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- Jetty with the jakarta namespace -->
-		
+		<!-- Integration of latest Jersey version compatible to Jetty -->
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
 				<dependency>
@@ -188,13 +188,13 @@
 					<version>11.0.15</version>
 					<type>jar</type>
 				</dependency>
-			</dependencies>
-		</location>
-		
-		
-		<!-- Integration of latest Jersey version comptible to Jetty -->
-		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
-			<dependencies>
+				<dependency>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-servlets</artifactId>
+					<version>11.0.15</version>
+					<type>jar</type>
+				</dependency>
+				
 				<dependency>
 					<groupId>org.apache.aries.spifly</groupId>
 					<artifactId>org.apache.aries.spifly.dynamic.bundle</artifactId>
@@ -281,6 +281,40 @@
 					<artifactId>migbase64</artifactId>
 					<version>2.2</version>
 					<type>jar</type>
+				</dependency>
+				
+				<dependency>
+					<groupId>com.brsanthu</groupId>
+					<artifactId>migbase64</artifactId>
+					<version>2.2</version>
+					<type>jar</type>
+				</dependency>
+				
+				
+			</dependencies>
+		</location>
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, JJWT-dependencies 				             -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>io.jsonwebtoken</groupId>
+					<artifactId>jjwt-api</artifactId>
+					<version>0.12.5</version>
+				</dependency>
+				<dependency>
+					<groupId>io.jsonwebtoken</groupId>
+					<artifactId>jjwt-impl</artifactId>
+					<version>0.12.5</version>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>io.jsonwebtoken</groupId>
+					<artifactId>jjwt-gson</artifactId>
+					<version>0.12.5</version>
+					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
 		</location>

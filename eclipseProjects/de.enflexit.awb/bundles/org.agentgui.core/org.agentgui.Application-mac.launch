@@ -14,6 +14,7 @@
     <setAttribute key="deselected_workspace_bundles"/>
     <booleanAttribute key="includeOptional" value="true"/>
     <stringAttribute key="location" value="${workspace_loc}/../runtime-org.agentgui.core.product"/>
+    <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <stringAttribute key="org.eclipse.debug.core.source_locator_id" value="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"/>
     <stringAttribute key="org.eclipse.debug.core.source_locator_memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;sourceLookupDirector&gt;&#13;&#10;&lt;sourceContainers duplicates=&quot;false&quot;&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;javaProject name=&amp;quot;net.agenthygrid.core&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.jdt.launching.sourceContainer.javaProject&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;packageFragmentRoot handle=&amp;quot;=net.agenthygrid.core/lib\/SensitivityMatrix\/jampack.jar&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;packageFragmentRoot handle=&amp;quot;=net.agenthygrid.core/lib\/RxTx\/RXTXcomm-2.2pre2.jar&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;packageFragmentRoot handle=&amp;quot;=net.agenthygrid.core/lib\/PowerFlow\/lib\/Jama-1.0.3.jar&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;packageFragmentRoot handle=&amp;quot;=net.agenthygrid.core/lib\/modbusTCP\/jamod-1.2-SNAPSHOT.jar&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;packageFragmentRoot handle=&amp;quot;=net.agenthygrid.core/lib\/jSoup\/jsoup-1.9.2.jar&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;packageFragmentRoot handle=&amp;quot;=net.agenthygrid.core/lib\/jpigpio\/jpigpio-1.0.10-js.jar&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;default/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.debug.core.containerType.default&quot;/&gt;&#13;&#10;&lt;/sourceContainers&gt;&#13;&#10;&lt;/sourceLookupDirector&gt;&#13;&#10;"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
@@ -31,7 +32,6 @@
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="javax.annotation@default:default"/>
         <setEntry value="javax.inject@default:default"/>
-        <setEntry value="javax.servlet@default:default"/>
         <setEntry value="org.apache.batik.constants@default:default"/>
         <setEntry value="org.apache.batik.css@default:default"/>
         <setEntry value="org.apache.batik.i18n@default:default"/>
@@ -54,7 +54,6 @@
         <setEntry value="org.eclipse.core.databinding@default:default"/>
         <setEntry value="org.eclipse.core.expressions@default:default"/>
         <setEntry value="org.eclipse.core.filebuffers@default:default"/>
-        <setEntry value="org.eclipse.core.filesystem.macosx@default:false"/>
         <setEntry value="org.eclipse.core.filesystem@default:default"/>
         <setEntry value="org.eclipse.core.jobs@default:default"/>
         <setEntry value="org.eclipse.core.net@default:default"/>
@@ -80,7 +79,6 @@
         <setEntry value="org.eclipse.e4.ui.services@default:default"/>
         <setEntry value="org.eclipse.e4.ui.widgets@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.addons.swt@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.cocoa@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench3@default:default"/>
@@ -116,7 +114,6 @@
         <setEntry value="org.eclipse.equinox.preferences@default:default"/>
         <setEntry value="org.eclipse.equinox.region@default:false"/>
         <setEntry value="org.eclipse.equinox.registry@default:default"/>
-        <setEntry value="org.eclipse.equinox.security.macosx@default:false"/>
         <setEntry value="org.eclipse.equinox.security.ui@default:default"/>
         <setEntry value="org.eclipse.equinox.security@default:default"/>
         <setEntry value="org.eclipse.equinox.simpleconfigurator.manipulator@default:default"/>
@@ -124,7 +121,6 @@
         <setEntry value="org.eclipse.equinox.transforms.hook@default:false"/>
         <setEntry value="org.eclipse.equinox.weaving.hook@default:false"/>
         <setEntry value="org.eclipse.help@default:default"/>
-        <setEntry value="org.eclipse.jdt.annotation*2.2.600.v20200408-1511@default:default"/>
         <setEntry value="org.eclipse.jface.databinding@default:default"/>
         <setEntry value="org.eclipse.jface.text@default:default"/>
         <setEntry value="org.eclipse.jface@default:default"/>
@@ -133,11 +129,9 @@
         <setEntry value="org.eclipse.osgi.util@default:default"/>
         <setEntry value="org.eclipse.osgi@-1:true"/>
         <setEntry value="org.eclipse.rcp@default:default"/>
-        <setEntry value="org.eclipse.swt.cocoa.macosx.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
         <setEntry value="org.eclipse.team.core@default:default"/>
         <setEntry value="org.eclipse.text@default:default"/>
-        <setEntry value="org.eclipse.ui.cocoa@default:false"/>
         <setEntry value="org.eclipse.ui.editors@default:default"/>
         <setEntry value="org.eclipse.ui.forms@default:default"/>
         <setEntry value="org.eclipse.ui.ide@default:default"/>
@@ -151,7 +145,7 @@
         <setEntry value="org.eclipse.urischeme@default:default"/>
         <setEntry value="org.sat4j.core@default:default"/>
         <setEntry value="org.sat4j.pb@default:default"/>
-        <setEntry value="org.slf4j.api*1.7.30.v20200204-2150@default:default"/>
+        <setEntry value="org.slf4j.api@default:default"/>
         <setEntry value="org.tukaani.xz@default:default"/>
         <setEntry value="org.w3c.css.sac@default:default"/>
         <setEntry value="org.w3c.dom.events@default:default"/>
@@ -165,15 +159,11 @@
         <setEntry value="de.enflexit.db.hibernate@default:default"/>
         <setEntry value="de.enflexit.db.mySQL@default:default"/>
         <setEntry value="de.enflexit.geography@default:default"/>
-        <setEntry value="de.enflexit.jaxb@default:default"/>
-        <setEntry value="de.enflexit.oidc.libs@default:default"/>
         <setEntry value="de.enflexit.oidc@default:default"/>
         <setEntry value="de.enflexit.oshi@default:true"/>
         <setEntry value="org.agentgui.core@default:default"/>
-        <setEntry value="org.agentgui.lib.jFreeChart@default:default"/>
         <setEntry value="org.agentgui.lib.jade@default:default"/>
         <setEntry value="org.agentgui.lib.jung@default:default"/>
-        <setEntry value="org.agentgui.lib.scimark@default:default"/>
         <setEntry value="org.awb.env.networkModel@default:default"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>

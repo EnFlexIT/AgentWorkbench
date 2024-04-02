@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService;
 import de.enflexit.common.ServiceFinder;
 
 /**
@@ -28,6 +29,7 @@ public class SecurityHandlerService {
 			localAwbSecurityHandlerServiceList = new ArrayList<AwbSecurityHandlerService>();
 			localAwbSecurityHandlerServiceList.add(new SingleUserSecurityService());
 			localAwbSecurityHandlerServiceList.add(new SingleApiKeySecurityService());
+			localAwbSecurityHandlerServiceList.add(new JwtSingleUserSecurityService());
 		}
 		return localAwbSecurityHandlerServiceList;
 	}

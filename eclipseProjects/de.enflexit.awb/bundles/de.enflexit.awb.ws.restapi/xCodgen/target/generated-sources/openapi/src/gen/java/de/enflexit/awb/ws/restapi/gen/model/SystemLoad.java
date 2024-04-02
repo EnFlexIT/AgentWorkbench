@@ -33,7 +33,11 @@ import jakarta.validation.Valid;
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
+<<<<<<< HEAD
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
+=======
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+>>>>>>> refs/heads/master
 public class SystemLoad   {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
@@ -57,8 +61,13 @@ public class SystemLoad   {
    * @return cpuUsage
    **/
   @JsonProperty(value = "cpuUsage")
+<<<<<<< HEAD
   @Schema(description = "The CPU usage in percent")
   
+=======
+  @ApiModelProperty(required = true, value = "The CPU usage in percent")
+  @NotNull 
+>>>>>>> refs/heads/master
   public Float getCpuUsage() {
     return cpuUsage;
   }
@@ -77,8 +86,13 @@ public class SystemLoad   {
    * @return memUsage
    **/
   @JsonProperty(value = "memUsage")
+<<<<<<< HEAD
   @Schema(description = "The memory usage in percent")
   
+=======
+  @ApiModelProperty(required = true, value = "The memory usage in percent")
+  @NotNull 
+>>>>>>> refs/heads/master
   public Float getMemUsage() {
     return memUsage;
   }
@@ -97,8 +111,13 @@ public class SystemLoad   {
    * @return heapUsage
    **/
   @JsonProperty(value = "heapUsage")
+<<<<<<< HEAD
   @Schema(description = "The Heap usage in percen")
   
+=======
+  @ApiModelProperty(required = true, value = "The Heap usage in percen")
+  @NotNull 
+>>>>>>> refs/heads/master
   public Float getHeapUsage() {
     return heapUsage;
   }

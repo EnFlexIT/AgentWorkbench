@@ -29,8 +29,15 @@ import jakarta.validation.Valid;
 
 
 @Path("/info")
+<<<<<<< HEAD
 @Tag(name="Info EndPoint", description = "The Info API")
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-04-01T19:11:06.016775900+02:00[Europe/Berlin]")
+=======
+
+
+@io.swagger.annotations.Api(description = "the info API")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+>>>>>>> refs/heads/master
 public class InfoApi  {
    private final InfoApiService delegate;
 
@@ -58,6 +65,7 @@ public class InfoApi  {
     @jakarta.ws.rs.GET
     
     
+<<<<<<< HEAD
     @Produces({ "applicaion/json" })
 //    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
 //        @io.swagger.annotations.Authorization(value = "AwbApiKey")
@@ -69,6 +77,15 @@ public class InfoApi  {
 	responses = {@ApiResponse(responseCode = "OK", description = "OK_MSG", 
 					content = @Content(schema = @Schema(implementation = SystemInformation.class))),
 					@ApiResponse(responseCode = "NOT_FOUND", description = "NOT_FOUND_MSG")})
+=======
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
+        @io.swagger.annotations.Authorization(value = "BearerAuth")
+    }, tags={ "admins", })
+    @io.swagger.annotations.ApiResponses(value = {
+        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
+    })
+>>>>>>> refs/heads/master
     public Response infoGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.infoGet(securityContext);
