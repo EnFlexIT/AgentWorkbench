@@ -21,9 +21,9 @@ Require-Bundle: org.eclipse.jetty.http,
  org.eclipse.jetty.io,
  org.eclipse.jetty.security,
  org.eclipse.jetty.server,
- org.eclipse.jetty.servlet,
- org.eclipse.jetty.util,
- org.eclipse.jetty.util.ajax
+ org.eclipse.jetty.ee8.servlet,
+ org.eclipse.jetty.util
+ 
 Automatic-Module-Name: de.enflexit.awb.ws.core.openid
 Bundle-ClassPath: .,
  lib/jetty-alpn-client-11.0.15.jar,

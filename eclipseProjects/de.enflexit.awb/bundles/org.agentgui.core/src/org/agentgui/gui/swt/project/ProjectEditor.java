@@ -29,7 +29,7 @@
 package org.agentgui.gui.swt.project;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
 import org.agentgui.gui.swing.project.ProjectWindowTab;

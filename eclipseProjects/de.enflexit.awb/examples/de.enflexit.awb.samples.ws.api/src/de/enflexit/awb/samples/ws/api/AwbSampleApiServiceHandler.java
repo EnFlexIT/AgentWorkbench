@@ -1,8 +1,8 @@
 package de.enflexit.awb.samples.ws.api;
 
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.ee8.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee8.servlet.ServletHolder;
 
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.server.AwbServer;

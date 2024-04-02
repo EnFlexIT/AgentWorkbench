@@ -14,7 +14,6 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.geography,
  org.awb.env.networkModel,
  org.agentgui.lib.jung,
- org.apache.commons.logging,
  org.eclipse.core.runtime,
  org.eclipse.equinox.preferences
 Export-Package: org.awb.env.maps,

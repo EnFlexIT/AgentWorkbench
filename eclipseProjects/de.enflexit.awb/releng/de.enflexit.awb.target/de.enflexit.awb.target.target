@@ -6,8 +6,9 @@
 			<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
-			<repository location="https://download.eclipse.org/releases/2023-06/"/>
+			<repository location="https://download.eclipse.org/releases/2024-03/"/>
 			<!--  Space for older versions (as reminder) 
+			<repository location="https://download.eclipse.org/releases/2023-06/"/> <= Latest for Java 11
 			<repository location="https://download.eclipse.org/releases/2023-03/"/>
 			<repository location="https://download.eclipse.org/releases/2022-12/"/>
 			<repository location="https://download.eclipse.org/releases/2022-09/"/>
@@ -15,7 +16,7 @@
 			<repository location="https://download.eclipse.org/releases/2022-03/"/>
 			<repository location="https://download.eclipse.org/releases/2021-12/"/>
 			<repository location="https://download.eclipse.org/releases/2021-09/"/>
-			<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java8 
+			<repository location="https://download.eclipse.org/releases/2020-06/"/> <= Last for Java 8 
 			<repository location="https://download.eclipse.org/releases/2020-03/"/>
 			<repository location="https://download.eclipse.org/releases/2019-12/"/>
 			<repository location="https://download.eclipse.org/releases/2019-09/"/>
@@ -60,7 +61,15 @@
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
 			-->
 		</location>
-
+		
+		<!-- 
+		<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="org.eclipse.orbit.maven.jetty.all.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.orbit.maven.jetty.all.source.feature.group" version="0.0.0"/>
+			<repository location="https://download.eclipse.org/tools/orbit/simrel/maven-jetty/release/12.0.6"/>
+		</location>
+		-->
+		
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, dependencies for the AWB-Core                -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -70,14 +79,14 @@
 				<dependency>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-compress</artifactId>
-					<version>1.23.0</version>
+					<version>1.26.1</version>
 					<type>jar</type>
 				</dependency>
 				<!-- Apache commons-text -->
 				<dependency>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-text</artifactId>
-					<version>1.10.0</version>
+					<version>1.11.0</version>
 					<type>jar</type>
 				</dependency>
 				<!-- JAXB integration as bundle -->
@@ -171,6 +180,14 @@
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
 				<dependency>
+					<groupId>jakarta.servlet</groupId>
+					<artifactId>jakarta.servlet-api</artifactId>
+					<version>6.0.0</version>
+					<type>jar</type>
+				</dependency>
+
+				<!-- 
+				<dependency>
 					<groupId>org.eclipse.jetty</groupId>
 					<artifactId>jetty-server</artifactId>
 					<version>11.0.15</version>
@@ -225,6 +242,7 @@
 					<version>9.5</version>
 					<type>jar</type>
 				</dependency>
+				-->
 				
 				<dependency>
 					<groupId>org.glassfish.jersey.containers</groupId>
