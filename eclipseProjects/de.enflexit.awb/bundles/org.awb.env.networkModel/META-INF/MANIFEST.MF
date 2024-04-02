@@ -39,7 +39,7 @@ Require-Bundle: de.enflexit.api,
  org.agentgui.lib.jung,
  org.eclipse.core.runtime,
  org.eclipse.osgi.services,
- org.apache.commons.commons-text
+ org.apache.commons.text
 Bundle-ActivationPolicy: lazy
 Import-Package: jakarta.xml.bind,
  jakarta.xml.bind.annotation
