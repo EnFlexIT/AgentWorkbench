@@ -3,7 +3,7 @@ Automatic-Module-Name: org.agentgui.core
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - Core Bundle
 Bundle-SymbolicName: org.agentgui.core;singleton:=true
-Bundle-Version: 2.3.2.qualifier
+Bundle-Version: 2.4.0.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-11
