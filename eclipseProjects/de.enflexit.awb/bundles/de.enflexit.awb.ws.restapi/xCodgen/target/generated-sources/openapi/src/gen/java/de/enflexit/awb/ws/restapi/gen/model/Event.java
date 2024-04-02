@@ -18,22 +18,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.enflexit.awb.ws.restapi.gen.model.EventLogTypes;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * An Event that occured and can be logged
  */
-@ApiModel(description = "An Event that occured and can be logged")
+@Schema(description = "An Event that occured and can be logged")
 @JsonPropertyOrder({
   Event.JSON_PROPERTY_TIME,
   Event.JSON_PROPERTY_TYPE_OF_EVENT,
   Event.JSON_PROPERTY_EVENT
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
 public class Event   {
   public static final String JSON_PROPERTY_TIME = "time";
   @JsonProperty(JSON_PROPERTY_TIME)
@@ -108,7 +107,7 @@ public class Event   {
    * @return time
    **/
   @JsonProperty(value = "time")
-  @ApiModelProperty(required = true, value = "The time at which the event happened")
+  @Schema(required = true, description = "The time at which the event happened")
   @NotNull 
   public String getTime() {
     return time;
@@ -128,7 +127,7 @@ public class Event   {
    * @return typeOfEvent
    **/
   @JsonProperty(value = "typeOfEvent")
-  @ApiModelProperty(value = "")
+  @Schema(description = "")
   @Valid 
   public EventLogTypes getTypeOfEvent() {
     return typeOfEvent;
@@ -148,7 +147,7 @@ public class Event   {
    * @return event
    **/
   @JsonProperty(value = "event")
-  @ApiModelProperty(required = true, value = "the event that has happened")
+  @Schema(required = true, description = "the event that has happened")
   @NotNull 
   public EventEnum getEvent() {
     return event;
@@ -177,7 +176,6 @@ public class Event   {
   public int hashCode() {
     return Objects.hash(time, typeOfEvent, event);
   }
-
 
   @Override
   public String toString() {

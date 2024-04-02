@@ -16,11 +16,10 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * UserLogin
@@ -29,7 +28,7 @@ import javax.validation.Valid;
   UserLogin.JSON_PROPERTY_USERNAME,
   UserLogin.JSON_PROPERTY_PASSWORD
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
 public class UserLogin   {
   public static final String JSON_PROPERTY_USERNAME = "username";
   @JsonProperty(JSON_PROPERTY_USERNAME)
@@ -49,7 +48,7 @@ public class UserLogin   {
    * @return username
    **/
   @JsonProperty(value = "username")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public String getUsername() {
     return username;
@@ -69,7 +68,7 @@ public class UserLogin   {
    * @return password
    **/
   @JsonProperty(value = "password")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public String getPassword() {
     return password;
@@ -98,14 +97,13 @@ public class UserLogin   {
     return Objects.hash(username, password);
   }
 
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserLogin {\n");
     
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
-    sb.append("    password: ").append(toIndentedString(password)).append("\n");
+    sb.append("    password: ").append("*").append("\n");
     sb.append("}");
     return sb.toString();
   }

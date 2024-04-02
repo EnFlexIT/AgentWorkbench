@@ -1,6 +1,6 @@
 package de.enflexit.awb.ws.core.util;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.server.Request;
 

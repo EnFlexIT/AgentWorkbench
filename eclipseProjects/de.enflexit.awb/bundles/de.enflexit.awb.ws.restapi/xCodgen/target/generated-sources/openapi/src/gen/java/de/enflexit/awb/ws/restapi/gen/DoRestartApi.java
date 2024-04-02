@@ -1,11 +1,15 @@
 package de.enflexit.awb.ws.restapi.gen;
 
-import de.enflexit.awb.ws.restapi.gen.model.*;
 import de.enflexit.awb.ws.restapi.gen.DoRestartApiService;
 import de.enflexit.awb.ws.restapi.gen.factories.DoRestartApiServiceFactory;
 
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 import java.util.Map;
@@ -17,30 +21,31 @@ import java.io.InputStream;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.servlet.ServletConfig;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 @Path("/doRestart")
 
 
-@io.swagger.annotations.Api(description = "the doRestart API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@Tag(description = "the doRestart API", name = "")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
 public class DoRestartApi  {
+
    private final DoRestartApiService delegate;
 
    public DoRestartApi(@Context ServletConfig servletContext) {
-      DoRestartApiService delegate = null;
 
+      DoRestartApiService delegate = null;
       if (servletContext != null) {
          String implClass = servletContext.getInitParameter("DoRestartApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (DoRestartApiService) Class.forName(implClass).newInstance();
+               delegate = (DoRestartApiService) Class.forName(implClass).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -50,21 +55,19 @@ public class DoRestartApi  {
       if (delegate == null) {
          delegate = DoRestartApiServiceFactory.getDoRestartApi();
       }
-
       this.delegate = delegate;
    }
 
-    @POST
-    
-    
-    
-    @io.swagger.annotations.ApiOperation(value = "", notes = "tries to shedule restart", response = Void.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "BearerAuth")
-    }, tags={ "doAction", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 423, message = "Restart could not be initiated", response = Void.class),
-        @io.swagger.annotations.ApiResponse(code = 200, message = "Restart will happen. History can be accessed via eventLog", response = Void.class)
-    })
+
+    @jakarta.ws.rs.POST
+    @Operation(summary = "", description = "", responses = {
+            @ApiResponse(responseCode = "423", description = "Restart could not be initiated", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "200", description = "Restart will happen. History can be accessed via eventLog", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            },security = {
+            @SecurityRequirement(name = "BearerAuth")
+        }, tags={ "doAction", }) 
     public Response doRestartPost(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.doRestartPost(securityContext);

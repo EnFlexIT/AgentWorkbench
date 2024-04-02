@@ -16,20 +16,19 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * Object that holds Version Information. Is Object for scalability
  */
-@ApiModel(description = "Object that holds Version Information. Is Object for scalability")
+@Schema(description = "Object that holds Version Information. Is Object for scalability")
 @JsonPropertyOrder({
   Version.JSON_PROPERTY_VERSION_NUMBER
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
 public class Version   {
   public static final String JSON_PROPERTY_VERSION_NUMBER = "versionNumber";
   @JsonProperty(JSON_PROPERTY_VERSION_NUMBER)
@@ -45,7 +44,7 @@ public class Version   {
    * @return versionNumber
    **/
   @JsonProperty(value = "versionNumber")
-  @ApiModelProperty(required = true, value = "the version number")
+  @Schema(required = true, description = "the version number")
   @NotNull 
   public String getVersionNumber() {
     return versionNumber;
@@ -72,7 +71,6 @@ public class Version   {
   public int hashCode() {
     return Objects.hash(versionNumber);
   }
-
 
   @Override
   public String toString() {

@@ -5,7 +5,7 @@ import java.security.Principal;
 import java.util.Map;
 
 import javax.security.auth.Subject;
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;

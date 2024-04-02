@@ -8,7 +8,6 @@ import com.fasterxml.jackson.datatype.jsr310.*;
 
 import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
 
-
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.ext.Provider;

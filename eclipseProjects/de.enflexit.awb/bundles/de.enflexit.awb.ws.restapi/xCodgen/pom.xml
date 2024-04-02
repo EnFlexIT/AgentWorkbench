@@ -6,13 +6,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-<<<<<<< HEAD
-		<openApiGeneratorVersion>6.5.0</openApiGeneratorVersion>
-		<yamlFile>RestApi.yaml</yamlFile>
-=======
-		<openApiGeneratorVersion>5.4.0</openApiGeneratorVersion>
+		<openApiGeneratorVersion>7.4.0</openApiGeneratorVersion>
 		<yamlFile>../xAPI/AWB-RestAPI.yaml</yamlFile>
->>>>>>> refs/heads/master
 		<srcBasePackage>de.enflexit.awb.ws.restapi.gen</srcBasePackage>
 	</properties>
 	
@@ -31,7 +26,7 @@
 							<inputSpec>${project.basedir}/${yamlFile}</inputSpec>
 							<!-- For server code -->	
 							<generatorName>jaxrs-jersey</generatorName>
-							<library>jersey2</library>
+							<library>jersey3</library>
 							
 							<apiPackage>${srcBasePackage}</apiPackage>
 							<modelPackage>${srcBasePackage}.model</modelPackage>

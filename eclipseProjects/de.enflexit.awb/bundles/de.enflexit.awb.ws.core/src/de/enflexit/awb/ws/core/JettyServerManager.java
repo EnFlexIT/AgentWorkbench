@@ -6,7 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.TreeMap;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpVersion;
