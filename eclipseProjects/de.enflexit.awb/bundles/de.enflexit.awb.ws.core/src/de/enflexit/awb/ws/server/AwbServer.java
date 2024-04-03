@@ -1,10 +1,12 @@
 package de.enflexit.awb.ws.server;
 
+import java.util.List;
+
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Handler.Sequence;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 
 import agentgui.core.application.Application;
@@ -66,7 +68,7 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 	 * @see de.enflexit.awb.ws.core.JettyCustomizer#customizeConfiguration(org.eclipse.jetty.server.Server, org.eclipse.jetty.server.handler.HandlerCollection)
 	 */
 	@Override
-	public Server customizeConfiguration(Server server, HandlerCollection handlerCollection) {
+	public Server customizeConfiguration(Server server, Sequence handlerCollection) {
 
 		// --- Define ResourceHandler for static content ------------
 		ResourceHandler resHandler = new ResourceHandler();
@@ -80,10 +82,10 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         
         // --- Define a ContextHandlerCollection --------------------
         ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection(ctxHandler);
-        Handler[] handlerArray = handlerCollection.getHandlers();
-        if (handlerArray!=null) {
-        	for (int i = 0; i < handlerArray.length; i++) {
-        		contextHandlerCollection.addHandler(handlerArray[i]);
+        List<Handler> handlerList = handlerCollection.getHandlers();
+        if (handlerList!=null) {
+        	for (int i = 0; i < handlerList.size(); i++) {
+        		contextHandlerCollection.addHandler(handlerList.get(i));
         	} 
         }
         server.setHandler(contextHandlerCollection);

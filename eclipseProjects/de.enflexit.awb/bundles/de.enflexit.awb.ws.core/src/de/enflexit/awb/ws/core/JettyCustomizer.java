@@ -1,7 +1,7 @@
 package de.enflexit.awb.ws.core;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.Handler.Sequence;;
 
 /**
  * The Interface JettyCustomizer can be used with a {@link JettyConfiguration} to
@@ -21,7 +21,7 @@ public interface JettyCustomizer {
 	 * If not null, it represents the current handler of the server
 	 * @return has to return the customized server
 	 */
-	public Server customizeConfiguration(Server server, HandlerCollection handlerCollection);
+	public Server customizeConfiguration(Server server, Sequence handlerCollection);
 	
 	
 }

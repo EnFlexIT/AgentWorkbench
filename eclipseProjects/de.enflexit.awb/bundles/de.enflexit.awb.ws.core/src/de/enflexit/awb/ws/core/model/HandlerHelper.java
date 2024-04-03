@@ -1,7 +1,6 @@
 package de.enflexit.awb.ws.core.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -9,9 +8,10 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Handler.Sequence;
+import org.eclipse.jetty.server.Handler.Wrapper;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerWrapper;
+
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.core.JettyServerInstances;
 
@@ -124,15 +124,15 @@ public class HandlerHelper {
 			DefaultMutableTreeNode handlerNode = new DefaultMutableTreeNode(new ServerTreeNodeHandler(handler, handlerService));
 			handlerNodes.add(handlerNode);
 			
-			if (handler instanceof HandlerWrapper) {
-				HandlerWrapper handlerWrapper = (HandlerWrapper)handler;
-				List<Handler> subHandlerList = HandlerHelper.sort(Arrays.asList(handlerWrapper.getHandlers()));
+			if (handler instanceof Wrapper) {
+				Wrapper handlerWrapper = (Wrapper)handler;
+				List<Handler> subHandlerList = HandlerHelper.sort(handlerWrapper.getHandlers());
 				List<DefaultMutableTreeNode> subHandlerNodes = HandlerHelper.getHandlerTrees(subHandlerList, handlerServiceList, handlerNode);
 				HandlerHelper.addSubNodes(handlerNode, subHandlerNodes);
 				
-			} else if (handler instanceof HandlerCollection) {
-				HandlerCollection handlerCollection = (HandlerCollection) handler;
-				List<Handler> subHandlerList = HandlerHelper.sort(Arrays.asList(handlerCollection.getHandlers()));
+			} else if (handler instanceof Sequence) {
+				Sequence handlerCollection = (Sequence) handler;
+				List<Handler> subHandlerList = HandlerHelper.sort(handlerCollection.getHandlers());
 				List<DefaultMutableTreeNode>subHandlerNodes = HandlerHelper.getHandlerTrees(subHandlerList, handlerServiceList, handlerNode);
 				HandlerHelper.addSubNodes(handlerNode, subHandlerNodes);
 			}

@@ -176,7 +176,6 @@
 		<!-- From here, dependencies for the AWB-WS part             -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- Jetty with the jakarta namespace -->
-		<!-- Integration of latest Jersey version compatible to Jetty -->
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
 				<dependency>
@@ -186,29 +185,28 @@
 					<type>jar</type>
 				</dependency>
 
-				<!-- 
 				<dependency>
 					<groupId>org.eclipse.jetty</groupId>
 					<artifactId>jetty-server</artifactId>
-					<version>11.0.15</version>
+					<version>12.0.6</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-servlet</artifactId>
-					<version>11.0.15</version>
+					<groupId>org.eclipse.jetty.ee10</groupId>
+					<artifactId>jetty-ee10-servlet</artifactId>
+					<version>12.0.6</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty.ee10</groupId>
+					<artifactId>jetty-ee10-servlets</artifactId>
+					<version>12.0.6</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
 					<groupId>org.eclipse.jetty</groupId>
 					<artifactId>jetty-openid</artifactId>
-					<version>11.0.15</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-servlets</artifactId>
-					<version>11.0.15</version>
+					<version>12.0.6</version>
 					<type>jar</type>
 				</dependency>
 				
@@ -242,8 +240,14 @@
 					<version>9.5</version>
 					<type>jar</type>
 				</dependency>
-				-->
 				
+				
+			</dependencies>
+		</location>
+
+		<!-- Integration of latest Jersey version compatible to Jetty -->
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>				
 				<dependency>
 					<groupId>org.glassfish.jersey.containers</groupId>
 					<artifactId>jersey-container-servlet</artifactId>
@@ -268,7 +272,11 @@
 					<version>3.1.3</version>
 					<type>jar</type>
 				</dependency>
-				
+			</dependencies>
+		</location>
+	
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>				
 				<dependency>
 					<groupId>com.fasterxml.jackson.jakarta.rs</groupId>
 					<artifactId>jackson-jakarta-rs-base</artifactId>
@@ -307,7 +315,6 @@
 					<version>2.2</version>
 					<type>jar</type>
 				</dependency>
-				
 				
 			</dependencies>
 		</location>

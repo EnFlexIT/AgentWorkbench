@@ -1,6 +1,7 @@
 package de.enflexit.awb.ws.core;
 
-import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.server.handler.CrossOriginHandler;
+import org.eclipse.jetty.ee10.servlets.CrossOriginFilter;
 
 import de.enflexit.common.crypto.KeyStoreType;
 

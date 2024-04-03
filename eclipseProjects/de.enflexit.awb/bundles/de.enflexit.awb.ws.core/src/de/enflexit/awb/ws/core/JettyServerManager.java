@@ -19,13 +19,13 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerWrapper;
+import org.eclipse.jetty.server.Handler.Sequence;
+import org.eclipse.jetty.server.Handler.Wrapper;
 import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.FilterMapping;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.FilterMapping;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.component.AttributeContainerMap;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -137,7 +137,7 @@ public class JettyServerManager {
 			// --- Check if server is running -----------------------
 			String serverName = newHandlerService.getServerNameNotNull();
 			Server server = this.getServer(serverName);
-			HandlerCollection hCollection = this.getHandlerCollection(serverName);
+			Sequence hCollection = this.getHandlerCollection(serverName);
 			if (server!=null && hCollection!=null && this.getAwbWebRegistry().isValidAwbWebHandlerService(newHandlerService, true)==null) {
 				// --- Add the new handler to the HandlerCollection ---------
 				try {
@@ -171,7 +171,7 @@ public class JettyServerManager {
 			// --- Check if server is running -----------------------
 			String serverName = handlerToRemove.getServerNameNotNull();
 			Server server = this.getServer(serverName);
-			HandlerCollection hCollection = this.getHandlerCollection(serverName);
+			Sequence hCollection = this.getHandlerCollection(serverName);
 			if (server!=null && hCollection!=null && this.getAwbWebRegistry().isValidAwbWebHandlerService(handlerToRemove, false)==null) {
 				// --- Remove the handler ---------------------------
 				try {
@@ -254,7 +254,7 @@ public class JettyServerManager {
 	 * @param serverName the server name
 	 * @return the handler collection
 	 */
-	public HandlerCollection getHandlerCollection(String serverName) {
+	public Sequence getHandlerCollection(String serverName) {
 		JettyServerInstances sInst = this.getJettyServerInstanceHash().get(serverName);
 		if (sInst!=null) return sInst.getHandlerCollection();
 		return null;
@@ -319,7 +319,7 @@ public class JettyServerManager {
 		// ----------------------------------------------------------
 		// --- Set the Handler according to the configuration -------
 		Handler initialHandler = serverConfig.getHandler();
-		HandlerCollection hCollection = serverConfig.isMutableHandlerCollection()==true ? new HandlerCollection(true) : null;
+		Sequence hCollection = serverConfig.isMutableHandlerCollection()==true ? new Sequence(true, null) : null;
 		if (hCollection==null) {
 			// --- NO handler collection ----------------------------
 			if (initialHandler==null) {
@@ -526,11 +526,11 @@ public class JettyServerManager {
 	 * @param hCollection the handler collection to secure
 	 * @param securitySettings the security settings
 	 */
-	private void secureHandler(HandlerCollection hCollection, JettySecuritySettings securitySettings) {
-		Handler[] handlerArray = hCollection.getHandlers();
-		if (handlerArray==null) return;
-		for (int i = 0; i < handlerArray.length; i++) {
-			this.secureHandler(handlerArray[i], securitySettings);
+	private void secureHandler(Sequence hCollection, JettySecuritySettings securitySettings) {
+		List<Handler> handlerList = hCollection.getHandlers();
+		if (handlerList==null) return;
+		for (int i = 0; i < handlerList.size(); i++) {
+			this.secureHandler(handlerList.get(i), securitySettings);
 		}
 	}
 	/**
@@ -586,7 +586,7 @@ public class JettyServerManager {
 	 * @param hCollection the h collection
 	 * @return the handler collection that wraps the original handler
 	 */
-	private void enableCrossOriginFilter(Server server, HandlerCollection hCollection) {
+	private void enableCrossOriginFilter(Server server, Sequence hCollection) {
 		for (Handler handler : hCollection.getHandlers()) {
 			this.enableCrossOriginFilter(server, handler);
 		}
@@ -684,9 +684,9 @@ public class JettyServerManager {
 			// --- Stop the server -----------------------
 			server.stop();
 			// --- Remove security handler ---------------
-			Handler[] handlerArray = server.getHandlers();
-			this.removeSecurityHandler(handlerArray);
-			this.removeCorsFilter(handlerArray);
+			List<Handler> handlerList = server.getHandlers();
+			this.removeSecurityHandler(handlerList);
+			this.removeCorsFilter(handlerList);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -707,12 +707,12 @@ public class JettyServerManager {
 	
 	/**
 	 * Removes the security handler from the specified handler array.
-	 * @param handlerArray the handler array
+	 * @param handlerList the handler list
 	 */
-	private void removeSecurityHandler(Handler[] handlerArray) {
-		if (handlerArray==null) return;
-		for (int i = 0; i < handlerArray.length; i++) {
-			this.removeSecurityHandler(handlerArray[i]);
+	private void removeSecurityHandler(List<Handler> handlerList) {
+		if (handlerList==null) return;
+		for (int i = 0; i < handlerList.size(); i++) {
+			this.removeSecurityHandler(handlerList.get(i));
 		}
 	}
 	/**
@@ -728,24 +728,24 @@ public class JettyServerManager {
 				servletContextHandler.getInitParams().remove(AWB_SECURED);
 			}
 			
-		} else if (handler instanceof HandlerWrapper) {
-			HandlerWrapper handlerWrapper = (HandlerWrapper) handler;
+		} else if (handler instanceof Wrapper) {
+			Wrapper handlerWrapper = (Wrapper) handler;
 			this.removeSecurityHandler(handlerWrapper.getHandlers());
 			
-		} else if (handler instanceof HandlerCollection) {
-			HandlerCollection handlerCollection = (HandlerCollection) handler;
+		} else if (handler instanceof Sequence) {
+			Sequence handlerCollection = (Sequence) handler;
 			this.removeSecurityHandler(handlerCollection.getHandlers());
 		}
 	}
 	
 	/**
 	 * Removes the CORS filter from the specified handler array..
-	 * @param handlerArray the handler array
+	 * @param handlerList the handler array
 	 */
-	private void removeCorsFilter(Handler[] handlerArray) {
-		if (handlerArray==null) return;
-		for (int i = 0; i < handlerArray.length; i++) {
-			this.removeCorsFilter(handlerArray[i]);
+	private void removeCorsFilter(List<Handler> handlerList) {
+		if (handlerList==null) return;
+		for (int i = 0; i < handlerList.size(); i++) {
+			this.removeCorsFilter(handlerList.get(i));
 		}
 	}
 	/**
@@ -780,12 +780,12 @@ public class JettyServerManager {
 				}
 			}
 			
-		} else if (handler instanceof HandlerWrapper) {
-			HandlerWrapper handlerWrapper = (HandlerWrapper) handler;
+		} else if (handler instanceof Wrapper) {
+			Wrapper handlerWrapper = (Wrapper) handler;
 			this.removeCorsFilter(handlerWrapper.getHandlers());
 			
-		} else if (handler instanceof HandlerCollection) {
-			HandlerCollection handlerCollection = (HandlerCollection) handler;
+		} else if (handler instanceof Sequence) {
+			Sequence handlerCollection = (Sequence) handler;
 			this.removeCorsFilter(handlerCollection.getHandlers());
 		}
 	}

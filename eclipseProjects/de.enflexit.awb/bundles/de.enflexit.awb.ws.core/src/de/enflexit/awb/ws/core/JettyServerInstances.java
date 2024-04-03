@@ -1,11 +1,10 @@
 package de.enflexit.awb.ws.core;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.Handler.Sequence;
+import org.eclipse.jetty.server.Server;;
 
 /**
  * The Class JettyServerInstances stores the runtime instance of a server and enables to
@@ -16,7 +15,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 public class JettyServerInstances {
 
 	private Server server;
-	private HandlerCollection handlerCollection;
+	private Sequence handlerCollection;
 
 	
 	/**
@@ -25,7 +24,7 @@ public class JettyServerInstances {
 	 * @param server the server
 	 * @param handlerCollection the handler collection
 	 */
-	public JettyServerInstances(Server server, HandlerCollection handlerCollection) { 
+	public JettyServerInstances(Server server, Sequence handlerCollection) { 
 		if (server==null) {
 			throw new NullPointerException("The server instance is not allowed to null!");
 		}
@@ -52,14 +51,14 @@ public class JettyServerInstances {
 	 * Sets the handler collection.
 	 * @param handlerCollection the new handler collection
 	 */
-	public void setHandlerCollection(HandlerCollection handlerCollection) {
+	public void setHandlerCollection(Sequence handlerCollection) {
 		this.handlerCollection = handlerCollection;
 	}
 	/**
 	 * Returns the handler collection.
 	 * @return the handler collection
 	 */
-	public HandlerCollection getHandlerCollection() {
+	public Sequence getHandlerCollection() {
 		return handlerCollection;
 	}
 
@@ -74,7 +73,7 @@ public class JettyServerInstances {
 	 */
 	public List<Handler> getServerHandlerList() {
 		if (this.getServer()!=null ) {
-			return Arrays.asList(this.getServer().getHandlers());
+			return this.getServer().getHandlers();
 		}
 		return null;
 	}
