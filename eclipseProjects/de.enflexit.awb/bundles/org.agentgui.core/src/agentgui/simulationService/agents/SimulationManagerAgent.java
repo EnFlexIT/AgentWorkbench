@@ -438,6 +438,40 @@ public abstract class SimulationManagerAgent extends Agent {
 	}
 
 	/**
+	 * Returns the Vector of current EnvironmentNotification's.
+	 * @return the notifications
+	 */
+	public Vector<EnvironmentNotification> getNotifications() {
+		if (notifications==null) {
+			notifications = new Vector<EnvironmentNotification>();
+		}
+		return notifications;
+	}
+	
+	/**
+	 * Extracts and returns a Vector of notifications that match the specified content type class.
+	 *
+	 * @param contentTypeClass the content type class
+	 * @return the vector of notifications found
+	 */
+	protected Vector<EnvironmentNotification> getNotificationsByConentType(Class<?> contentTypeClass) {
+		
+		Vector<EnvironmentNotification> contentEnvNotifications = new Vector<>();
+		synchronized (this.getNotifications()) {
+			// --- Find the corresponding notifications -------------
+			for (EnvironmentNotification envNote : this.getNotifications()) {
+				if (envNote.getNotification().getClass().equals(contentTypeClass)==true) {
+					contentEnvNotifications.add(envNote);
+				}
+			}
+			// --- Remove from notifications ------------------------
+			this.getNotifications().removeAll(contentEnvNotifications);
+		}
+		return contentEnvNotifications;
+	}
+	
+	
+	/**
 	 * This CyclicBehaviour is used in order to act on the incoming notifications.
 	 *  
 	 * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
@@ -454,8 +488,13 @@ public abstract class SimulationManagerAgent extends Agent {
 			boolean removeFirstElement = false;
 					
 			// --- Get the first element and work on it -----------------------
+			EnvironmentNotification notification = null;
 			if (SimulationManagerAgent.this.isDoTerminate==false && SimulationManagerAgent.this.getNotifications().size()!=0) {
-				EnvironmentNotification notification = SimulationManagerAgent.this.getNotifications().get(0);
+				notification = SimulationManagerAgent.this.getNotifications().get(0);
+				if (notification==null) {
+					SimulationManagerAgent.this.getNotifications().remove(0);
+					return;
+				}
 				SimulationManagerAgent.this.onManagerNotification(notification);
 				removeFirstElement = true;				
 			}
@@ -465,7 +504,7 @@ public abstract class SimulationManagerAgent extends Agent {
 				// --- => Remove this element and control the notifications ---
 				synchronized (SimulationManagerAgent.this.getNotifications()) {
 					if (removeFirstElement==true && SimulationManagerAgent.this.getNotifications().size()>0) {
-						SimulationManagerAgent.this.getNotifications().remove(0);
+						SimulationManagerAgent.this.getNotifications().remove(notification);
 					}
 					if (SimulationManagerAgent.this.getNotifications().size()==0) {
 						this.block();
@@ -477,9 +516,8 @@ public abstract class SimulationManagerAgent extends Agent {
 				this.block();
 			}
 		}
-		
-		
 	}
+	
 	
 	/**
 	 * This method will be executed if a ManagerNotification arrives this agent.
@@ -574,15 +612,4 @@ public abstract class SimulationManagerAgent extends Agent {
 		this.agentAnswers = agentAnswers;
 	}
 	
-	/**
-	 * Returns the Vector of current EnvironmentNotification's.
-	 * @return the notifications
-	 */
-	public Vector<EnvironmentNotification> getNotifications() {
-		if (notifications==null) {
-			notifications = new Vector<EnvironmentNotification>();
-		}
-		return notifications;
-	}
-
 }
