@@ -359,6 +359,35 @@ public abstract class SimulationManagerAgent extends Agent {
 	 */
 	protected void proceedAgentAnswers(Hashtable<AID, Object> agentAnswers) {}
 	
+	/**
+	 * Returns the current state of agent answers from the simulation service.
+	 *
+	 * @param isFromMainOnly the indicator to collect from the main container only, otherwise all container involved will be requested
+	 * @return the current state of agent answers
+	 */
+	public Hashtable<String, Hashtable<AID, Object>> getEnvironmentInstanceNextParts() {
+		try {
+			return this.simHelper.getEnvironmentInstanceNextParts();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/**
+	 * Returns the current state of agent answers from the simulation service.
+	 *
+	 * @param isFromMainOnly the indicator to collect from the main container only, otherwise all container involved will be requested
+	 * @return the current state of agent answers
+	 */
+	public Hashtable<AID, Object> getEnvironmentInstanceNextPartsFromMain() {
+		try {
+			return this.simHelper.getEnvironmentInstanceNextPartsFromMain();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	
 	/**
 	 * This method can be used to transfer any kind of information to one member of the current environment model.

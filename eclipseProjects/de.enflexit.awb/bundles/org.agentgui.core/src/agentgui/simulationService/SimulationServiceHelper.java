@@ -290,13 +290,20 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	public void resetEnvironmentInstanceNextParts() throws ServiceException;
 	
 	/**
-	 * Gets the parts for the next environment instance coming from different {@link SimulationAgent}.
+	 * Returns the parts for the next environment instances, coming from all container and all simulating agents {e.g. @link SimulationAgent}.
+	 *
+	 * @return the environment instance next parts as pair container name to HashTable of agent answers
+	 * @throws ServiceException the ServiceException
+	 */
+	public Hashtable<String, Hashtable<AID, Object>> getEnvironmentInstanceNextParts() throws ServiceException;
+	
+	/**
+	 * Returns the parts for the next environment instances that already arrived at the MainContainer.
 	 *
 	 * @return the environment instance next parts
 	 * @throws ServiceException the ServiceException
 	 */
-	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException;
-	
+	public Hashtable<AID, Object> getEnvironmentInstanceNextPartsFromMain() throws ServiceException;
 	
 	/**
 	 * Registers a DisplayAgent at the SimulationService.

@@ -133,7 +133,7 @@ public class SimulationService extends BaseService {
 
 	/** --- The next EnvironmentObject-Instance in parts (answers of agents) --- */
 	private int environmentInstanceNextPartsExpected;
-	private Hashtable<AID, Object> environmentInstanceNextParts;
+	private Hashtable<AID, Object> environmentInstanceNextPartsMain;
 	private Hashtable<AID, Object> environmentInstanceNextPartsLocal;
 	
 		
@@ -151,7 +151,7 @@ public class SimulationService extends BaseService {
 		this.displayAgentDistribution = new HashMap<String, Integer>();
 		this.agentList = new Hashtable<String, AID>();
 		this.localServiceActuator4Manager = new ServiceActuatorManager();
-		this.environmentInstanceNextParts = new Hashtable<AID, Object>();
+		this.environmentInstanceNextPartsMain = new Hashtable<AID, Object>();
 		this.environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 		// --- Create filters -----------------------------
 		this.outFilter = new CommandOutgoingFilter();
@@ -193,7 +193,7 @@ public class SimulationService extends BaseService {
 		this.displayAgentDistribution = null;
 		this.agentList = null;
 		this.localServiceActuator4Manager = null;
-		this.environmentInstanceNextParts = null;
+		this.environmentInstanceNextPartsMain = null;
 		this.environmentInstanceNextPartsLocal = null;
 		this.environmentModel = null;
 	}
@@ -463,8 +463,6 @@ public class SimulationService extends BaseService {
 		 */
 		public void setEnvironmentInstanceNextPart(AID fromAgent, Object nextPart) throws ServiceException {
 
-			if (environmentInstanceNextParts==null) return;
-			
 			synchronized (environmentInstanceNextPartsLocal) {
 				// --- Put single changes into the local store until ---- 
 				// --- the expected number of answers is not reached ----
@@ -487,9 +485,17 @@ public class SimulationService extends BaseService {
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#getEnvironmentInstanceNextParts()
 		 */
-		public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws ServiceException {
+		public Hashtable<String, Hashtable<AID, Object>> getEnvironmentInstanceNextParts() throws ServiceException {
+			return broadcastGetEnvironmentInstanceNextParts(getAllSlices());
+		}
+		/* (non-Javadoc)
+		 * @see agentgui.simulationService.SimulationServiceHelper#getEnvironmentInstanceNextPartsFromMain()
+		 */
+		@Override
+		public Hashtable<AID, Object> getEnvironmentInstanceNextPartsFromMain() throws ServiceException {
 			return mainGetEnvironmentInstanceNextParts();
 		}
+		
 		/* (non-Javadoc)
 		 * @see agentgui.simulationService.SimulationServiceHelper#resetEnvironmentInstanceNextParts()
 		 */
@@ -597,6 +603,37 @@ public class SimulationService extends BaseService {
 	}	
 	
 	/**
+	 * This method returns the complete environment-model-changes from all known container.
+	 *
+	 * @return the HashTable with container name to the agent answer HashTable pairs
+	 * @throws ServiceException the service exception
+	 */
+	private Hashtable<String, Hashtable<AID, Object>> broadcastGetEnvironmentInstanceNextParts(Service.Slice[] slices) throws ServiceException {
+		
+		if (myLogger.isLoggable(Logger.CONFIG)) {
+			myLogger.log(Logger.CONFIG, "Try to get new environment-parts from all container!");
+		}
+		// --- Prepare return value -----------------------
+		Hashtable<String, Hashtable<AID, Object>> containerAgentAnswers = new Hashtable<>();
+		for (int i = 0; i < slices.length; i++) {
+			String sliceName = null;
+			try {
+				SimulationServiceSlice slice = (SimulationServiceSlice) slices[i];
+				sliceName = slice.getNode().getName();
+				if (myLogger.isLoggable(Logger.FINER)) {
+					myLogger.log(Logger.FINER, "Try to get new environment-parts from " + sliceName);
+				}
+				Hashtable<AID, Object> localAgentAnswers = slice.getEnvironmentInstanceNextParts();
+				containerAgentAnswers.put(sliceName, localAgentAnswers);
+				
+			} catch(Throwable t) {
+				myLogger.log(Logger.WARNING, "Error while trying to get new environment-parts from slice  " + sliceName, t);
+			}
+		}
+		return containerAgentAnswers;
+	}	
+	
+	/**
 	 * This method returns the complete environment-model-changes from the Main-Container.
 	 *
 	 * @return the hashtable
@@ -614,7 +651,7 @@ public class SimulationService extends BaseService {
 			if (myLogger.isLoggable(Logger.FINER)) {
 				myLogger.log(Logger.FINER, "Try to get new environment-parts from " + sliceName);
 			}
-			return slice.getEnvironmentInstanceNextParts();
+			return slice.getEnvironmentInstanceNextPartsFromMain();
 			
 		} catch(Throwable t) {
 			myLogger.log(Logger.WARNING, "Error while trying to get new environment-parts from slice  " + sliceName, t);
@@ -1183,9 +1220,15 @@ public class SimulationService extends BaseService {
 					}	
 					setEnvironmentInstanceNextPart(nextPartsLocal);		
 					
+				} else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT_NEXT_PARTS_FROM_MAIN)) {
+					if (myLogger.isLoggable(Logger.FINE)) {
+						myLogger.log(Logger.FINE, "Answering main container request for the next parts of the environment-model" );
+					}	
+					cmd.setReturnValue(getEnvironmentInstanceNextPartsFromMain());
+					
 				} else if (cmdName.equals(SimulationServiceSlice.SIM_GET_ENVIRONMENT_NEXT_PARTS)) {
 					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Answering request for the next parts of the environment-model" );
+						myLogger.log(Logger.FINE, "Answering container request for the next parts of the environment-model" );
 					}	
 					cmd.setReturnValue(getEnvironmentInstanceNextParts());
 					
@@ -1361,30 +1404,36 @@ public class SimulationService extends BaseService {
 		 * @param nextPartsLocal the Hashtable of changes in the environment
 		 */
 		private void setEnvironmentInstanceNextPart(Hashtable<AID, Object> nextPartsLocal) {
-			environmentInstanceNextParts.putAll(nextPartsLocal);
-			if (environmentInstanceNextParts.size()>=environmentInstanceNextPartsExpected) {
+			environmentInstanceNextPartsMain.putAll(nextPartsLocal);
+			if (environmentInstanceNextPartsMain.size()>=environmentInstanceNextPartsExpected) {
 				// --- We are in the Main-Container and got the expected ---  
 				// --- number of answers for a single simulation step	 ---
 				try {
-					broadcastNotifyManagerPutAgentAnswers(environmentInstanceNextParts);
+					broadcastNotifyManagerPutAgentAnswers(environmentInstanceNextPartsMain);
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
 			}
 		}
 		/**
-		 * Provides the environment changes as a Hashtable<AID, Object>
-		 *
+		 * Provides the container specific environment changes as a HashTable<AID, Object>
+		 * @return the environment changes for the next simulation step
+		 */
+		private Hashtable<AID, Object> getEnvironmentInstanceNextPartsFromMain() {
+			return environmentInstanceNextPartsMain;
+		}
+		/**
+		 * Provides the overall environment changes as a HashTable<AID, Object> from the current container
 		 * @return the environment changes for the next simulation step
 		 */
 		private Hashtable<AID, Object> getEnvironmentInstanceNextParts() {
-			return environmentInstanceNextParts;
+			return environmentInstanceNextPartsLocal;
 		}
 		/**
-		 * Will reset the local set of environment changes to a new and empty Hashtable.
+		 * Will reset the local set of environment changes to a new and empty HashTable.
 		 */
 		private void resetEnvironmentInstanceNextParts() {
-			environmentInstanceNextParts = new Hashtable<AID, Object>();
+			environmentInstanceNextPartsMain = new Hashtable<AID, Object>();
 			environmentInstanceNextPartsLocal = new Hashtable<AID, Object>();
 		}
 		
