@@ -2,7 +2,7 @@
 <feature
       id="org.agentgui.feature"
       label="Agent.Workbench Core-Feature"
-      version="2.4.0.qualifier"
+      version="2.4.1.qualifier"
       provider-name="EnFlex.IT"
       plugin="org.agentgui.core"
       os="linux,macosx,win32"
