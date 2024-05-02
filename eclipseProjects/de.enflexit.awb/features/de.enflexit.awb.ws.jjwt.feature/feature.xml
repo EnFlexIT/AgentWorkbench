@@ -23,10 +23,12 @@
 
    <plugin
          id="io.jsonwebtoken.jjwt-gson"
+         os="linux,macosx,win32"
          version="0.0.0"/>
 
    <plugin
          id="io.jsonwebtoken.jjwt-impl"
+         os="linux,macosx,win32"
          version="0.0.0"/>
 
 </feature>
