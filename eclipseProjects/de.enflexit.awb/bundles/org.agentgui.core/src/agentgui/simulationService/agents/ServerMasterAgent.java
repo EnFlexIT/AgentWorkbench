@@ -307,7 +307,7 @@ public class ServerMasterAgent extends Agent {
 						RegisterReceipt rr = new RegisterReceipt();
 						ACLMessage reply = msg.createReply();
 						sendReply(reply, rr);
-						if (this.isAgentGuiVersionUpToDate(version)==false) {
+						if (this.isAgentWorkbenchVersionUpToDate(version)==false) {
 							// --- Prepare for update of client or slave ------
 							this.replyUpdateAdvice(msg);
 						}
@@ -329,7 +329,7 @@ public class ServerMasterAgent extends Agent {
 						RegisterReceipt rr = new RegisterReceipt();
 						ACLMessage reply = msg.createReply();
 						sendReply(reply, rr);
-						if (this.isAgentGuiVersionUpToDate(version)==false) {
+						if (this.isAgentWorkbenchVersionUpToDate(version)==false) {
 							// --- Prepare for update of client or slave ------
 							this.replyUpdateAdvice(msg);
 						}
@@ -394,8 +394,8 @@ public class ServerMasterAgent extends Agent {
 		 * @param foreignVersion the foreign version
 		 * @return true, if is up to date
 		 */
-		private boolean isAgentGuiVersionUpToDate(Version foreignVersion) {
-			return Application.getGlobalInfo().getVersionInfo().isUpToDate(foreignVersion.getMajorRevision(), foreignVersion.getMinorRevision(), foreignVersion.getMicroRevision());
+		private boolean isAgentWorkbenchVersionUpToDate(Version foreignVersion) {
+			return Application.getGlobalInfo().getVersionInfo().isUpToDate(foreignVersion.getMajorRevision(), foreignVersion.getMinorRevision(), foreignVersion.getMicroRevision(), foreignVersion.getQualifier());
 		}
 		
 		/**
@@ -451,6 +451,7 @@ public class ServerMasterAgent extends Agent {
 		platform.setVersionMajor(version.getMajorRevision());
 		platform.setVersionMinor(version.getMinorRevision());
 		platform.setVersionMicro(version.getMicroRevision());
+		platform.setVersionBuild(version.getQualifier());
 		
 		platform.setOsName(os.getOs_name());
 		platform.setOsVersion(os.getOs_version());

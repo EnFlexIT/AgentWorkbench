@@ -86,10 +86,15 @@ public class VersionInfo {
 	public void printVersionInfo() {
 		System.out.println(this.getVersionInfo());
 		if (debug==true) {
+			System.out.println("Version.Mayor " + this.getVersionInfo());
 			System.out.println("Version.Mayor " + this.getVersionMajor());
 			System.out.println("Version.Minor " + this.getVersionMinor());
 			System.out.println("Version.Micro " + this.getVersionMicro());
 			System.out.println("Qualifier " + this.getVersion().getQualifier());
+
+			// --- Some further test calls ---------------- 
+			System.out.println("Qualifier " + this.getQualifierDateTimeLong("v20221112-0806"));
+			System.out.println("Qualifier " + this.getQualifierDateTimeLong("202209192100"));
 		}
 	}
 
@@ -194,9 +199,10 @@ public class VersionInfo {
 	 * @param foreignMajorRevision the major revision to compare
 	 * @param foreignMinorRevision the minor revision to compare
 	 * @param foreignMicroRevision the micro revision number to compare
+	 * @param foreignQualifier the foreign version qualifier
 	 * @return true, if is newer version
 	 */
-	public boolean isUpToDate(Integer foreignMajorRevision, Integer foreignMinorRevision, Integer foreignMicroRevision) {
+	public boolean isUpToDate(Integer foreignMajorRevision, Integer foreignMinorRevision, Integer foreignMicroRevision, String foreignQualifier) {
 		
 		if (this.getVersionMajor()>foreignMajorRevision) {
 			return false;
@@ -206,10 +212,37 @@ public class VersionInfo {
 			} else {
 				if (this.getVersionMicro()>foreignMicroRevision) {
 					return false;
+				} else {
+					// --- Compare qualifier ----
+					if (this.getQualifierDateTimeLong(this.getVersionQualifier()) > this.getQualifierDateTimeLong(foreignQualifier)) {
+						return false;
+					}
 				}
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Return the qualifier as long value to compare.
+	 *
+	 * @param qualifier the qualifier
+	 * @return the qualifier date time long
+	 */
+	private Long getQualifierDateTimeLong(String qualifier) {
+		
+		Long qualifierLong = 0L;
+		try {
+			
+			String qParse = qualifier;
+			qParse = qParse.replaceAll("-", "");
+			qParse = qParse.replaceAll("[^0-9]", "");
+			qualifierLong = Long.parseLong(qParse);
+			
+		} catch (Exception ex) {
+			if (this.debug) ex.printStackTrace();
+		}
+		return qualifierLong;
 	}
 	
 }

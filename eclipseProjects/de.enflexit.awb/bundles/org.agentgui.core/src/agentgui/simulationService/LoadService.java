@@ -1690,7 +1690,7 @@ public class LoadService extends BaseService {
 			// --- Get the PID of this JVM --------------------
 			String jvmPID = LoadMeasureThread.getCurrentLoadMeasureJVM().getJvmPID();
 			
-			// --- Set Agent.GUI version info -----------------
+			// --- Set Agent.Workbench version info -----------
 			VersionInfo versionInfo = Application.getGlobalInfo().getVersionInfo();
 			Version version = new Version();
 			version.setMajorRevision(versionInfo.getVersionMajor());
