@@ -22,13 +22,27 @@ public final class TableCellColorHelper {
 	/** The Constant TB_ALTERNATEROWCOLOR. */
 	public final static Color TB_ALTERNATEROWCOLOR = new Color(242, 242, 242);
 	/** The Constant TB_HIGHLIGHT. */
-	public final static Color TB_HIGHLIGHT = new Color(57, 105, 138);
- 
+	public static Color TB_HIGHLIGHT = new Color(57, 105, 138);
+	
 	/** The Constant TB_TEXTFOREGROUND. */
 	public final static Color TB_TEXTFOREGROUND = new Color(35, 35, 36);
 	/** The Constant TB_TEXTFOREGROUND_SELECTED. */
 	public final static Color TB_TEXTFOREGROUND_SELECTED = Color.WHITE;
 
+	
+	
+	/**
+	 * Sets the table highlight color.
+	 * @param newColor the new table highlight color; set <code>null</code> for system default value
+	 */
+	public static void setTableHighlightColor(Color newColor) {
+		if (newColor==null) {
+			TB_HIGHLIGHT = new Color(57, 105, 138);
+		} else {
+			TB_HIGHLIGHT = newColor;
+		}
+	}
+	
 	
 	/**
 	 * Sets the color for a component that is located in a cell of a JTable.

@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * The Class AwbUiAdjustments.
@@ -95,7 +96,6 @@ public class AwbLookAndFeelAdjustments {
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException lnfEx) {
 			System.err.println("Cannot install " + lnfClassName + " on this platform:" + lnfEx.getMessage());
-			//lnfEx.printStackTrace();
 		}
 	}
 	
@@ -124,20 +124,16 @@ public class AwbLookAndFeelAdjustments {
 		// --- See a full list of color keys and their default values on the Nimbus Defaults page:
 		// --- https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/lookandfeel/_nimbusDefaults.html#primary
 		// ----------------------------------------------------------------------------------------------------------------------
-		// --- New splash color: new Color(20, 130, 172)
+		// --- Splash color: new Color(20, 130, 172)
+		// ----------------------------------------------------------------------------------------------------------------------
+		
 		switch (getAwbLook()) {
 		case Light:
-			UIManager.put("nimbusBase", new Color(240, 240, 240));
-			UIManager.put("nimbusBlueGrey", new Color(240, 240, 240));
-			UIManager.put("control", new Color(240, 240, 240));
-			
-			UIManager.put("MenuBar:Menu[Selected].textForeground", new Color(20, 130, 172));
-			
-			
+			AwbLookAndFeelAdjustments.doLookAndFeelAdjustmentsLightMode();
 			break;
 			
 		case Dark:
-			
+			AwbLookAndFeelAdjustments.doLookAndFeelAdjustmentsDarkMode();
 			break;
 
 		default:
@@ -156,8 +152,39 @@ public class AwbLookAndFeelAdjustments {
 		// --- Do adjustments for ProgressBar -----------------------
 		AwbProgressBarPainter painter = new AwbProgressBarPainter(new Color(161, 198, 231), new Color(91, 155, 213), Color.GRAY);
 		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled].foregroundPainter", painter);
-		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);		
+		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);
 		
 	}
 
+	/**
+	 * Do look and feel adjustments for the light mode.
+	 */
+	private static void doLookAndFeelAdjustmentsLightMode() {
+		
+		Color splashColor = new Color(20, 130, 172); 
+		
+		UIManager.put("nimbusBase", new Color(240, 240, 240));
+		UIManager.put("nimbusBlueGrey", new Color(240, 240, 240));
+		UIManager.put("control", new Color(240, 240, 240));
+		
+		UIManager.put("nimbusSelectionBackground", splashColor);
+		TableCellColorHelper.setTableHighlightColor(splashColor);
+		
+		UIManager.put("MenuBar:Menu[Selected].textForeground", splashColor);
+		UIManager.put("MenuItem[MouseOver].textForeground", splashColor);
+		
+		// --- Test area ----
+		//UIManager.put("Tree.selectionBackground", new Color(20, 130, 172));
+		//UIManager.put("Tree.textBackground", new Color(20, 130, 172));
+		
+	}
+	
+	/**
+	 * Do look and feel adjustments for the dark mode.
+	 */
+	private static void doLookAndFeelAdjustmentsDarkMode() {
+		
+		
+	}
+	
 }
