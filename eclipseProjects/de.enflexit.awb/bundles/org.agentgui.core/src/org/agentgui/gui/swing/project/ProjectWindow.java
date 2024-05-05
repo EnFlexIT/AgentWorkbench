@@ -827,23 +827,23 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	private DefaultMutableTreeNode addProjectTabInternal(ProjectWindowTab projectWindowTab) {
 
-		// --- create Node ----------------------
+		// --- create Node ------------------------------------------
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(projectWindowTab);
 		DefaultMutableTreeNode pareNode = null;
 		JTabbedPane tabbedPaneParent = null;
 
 		String parentName = projectWindowTab.getParentName();
 
-		// --- Add to the TreeModel -------------
+		// --- Add to the TreeModel ---------------------------------
 		if (parentName != null) {
-			// --- Parent available? ------------ 
+			// --- Parent available? --------------------------------
 			pareNode = this.getTreeNode(parentName);
 			if (pareNode==null) return null;
 			
-			// --- Add to the parent ------------
+			// --- Add to the parent --------------------------------
 			ProjectWindowTab pareNodePWT = (ProjectWindowTab) pareNode.getUserObject();
 			tabbedPaneParent = pareNodePWT.getCompForChildComp();
-			// --- add ChangeListener -----------
+			// --- add ChangeListener -------------------------------
 			this.addChangeListener(tabbedPaneParent);
 
 		} else {
@@ -851,17 +851,21 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			tabbedPaneParent = projectViewRightTabs;
 		}
 
+		// --- Set empty border for visualization -------------------  
+		JComponent jCompVis = projectWindowTab.getJComponentForVisualization();
+		jCompVis.setBorder(BorderFactory.createEmptyBorder());
+		
 		if (projectWindowTab.getIndexPosition()!=-1 && projectWindowTab.getIndexPosition()<pareNode.getChildCount()) {
-			// --- Add to parent node/tab at index position ----
+			// --- Add to parent node/tab at index position ---------
 			pareNode.insert(newNode, projectWindowTab.getIndexPosition());
-			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getJComponentForVisualization(), projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
+			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), jCompVis, projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
 		} else {
-			// --- Just add to parent node/tab -----------------
+			// --- Just add to parent node/tab ----------------------
 			pareNode.add(newNode);
-			tabbedPaneParent.addTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getJComponentForVisualization(), projectWindowTab.getTipText());
+			tabbedPaneParent.addTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), jCompVis, projectWindowTab.getTipText());
 		}
 
-		// --- refresh view ---------------------
+		// --- refresh view -----------------------------------------
 		this.getTreeModel().reload();
 		this.projectTreeExpand2Level(3, true);
 		return newNode;

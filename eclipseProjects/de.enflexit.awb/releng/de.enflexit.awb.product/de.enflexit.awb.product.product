@@ -6,7 +6,7 @@
    <aboutInfo>
       <image path="/org.agentgui.core/icons/awb128.png"/>
       <text>
-         Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and execute Agents and Multi-Agent systems in various ways.
+         Agent Workbench (AWB) is an OSGI- and Eclipse-based RCP application that enables to configure and execute Agents and Multi-Agent Systems in various ways.
       </text>
    </aboutInfo>
 
@@ -24,7 +24,7 @@
 
    <splash
       location="org.agentgui.core"
-      startupProgressRect="5,275,445,15" />
+      startupProgressRect="3,267,494,12" />
    <launcher name="AgentWorkbench">
       <linux icon="/icons/awb.xpm"/>
       <macosx icon="/icons/awb.icns"/>
@@ -34,8 +34,10 @@
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
    </plugins>
@@ -53,7 +55,7 @@
    </configurations>
 
    <repositories>
-      <repository location="https://p2.enflex.it/awb/latest/" name="" enabled="true" />
+      <repository location="https://p2.enflex.it/awb/latest/" name="EnFlex.IT - Update-Site" enabled="true" />
    </repositories>
 
    <preferencesInfo>

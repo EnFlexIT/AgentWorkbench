@@ -68,7 +68,8 @@ public class TabForSubPanels extends JPanel  {
 	private void initialize() {
 		this.setSize(400, 250);
 		this.setLayout(new BorderLayout());
-		this.add(getJTabbedPane(), BorderLayout.CENTER);
+		this.setBorder(BorderFactory.createEmptyBorder());
+		this.add(this.getJTabbedPane(), BorderLayout.CENTER);
 	}
 
 	/**

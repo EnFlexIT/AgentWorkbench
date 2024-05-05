@@ -46,6 +46,30 @@ import agentgui.core.config.GlobalInfo;
  */
 public class AwbLookAndFeelAdjustments {
 
+	public enum AwbLook {
+		Default,
+		Light,
+		Dark
+	}
+	
+	private static AwbLook awbLook = AwbLook.Default;
+	
+	/**
+	 * Returns the current AWB look.
+	 * @return the AWB look
+	 * @see AwbLook
+	 */
+	public static AwbLook getAwbLook() {
+		return awbLook;
+	}
+	/**
+	 * Sets the new AWB look.
+	 * @param newAwbLook the new AWB look
+	 */
+	public static void setAwbLook(AwbLook newAwbLook) {
+		awbLook = newAwbLook;
+	}
+	
 	/**
 	 * Sets the look and feel to the swing UI Manager.
 	 *
@@ -92,6 +116,33 @@ public class AwbLookAndFeelAdjustments {
 	 * Do look and feel adjustments for the Nimbus LookAndFeel.
 	 */
 	private static void doLookAndFeelAdjustmentsForNimbus() {
+		
+		// ----------------------------------------------------------------------------------------------------------------------
+		// --- From https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/lookandfeel/color.html
+		// ----------------------------------------------------------------------------------------------------------------------
+		// --- From Oracle These three base colors, nimbusBase, nimbusBlueGrey, and control, will address most of your needs. 
+		// --- See a full list of color keys and their default values on the Nimbus Defaults page:
+		// --- https://docs.oracle.com/javase%2Ftutorial%2Fuiswing%2F%2F/lookandfeel/_nimbusDefaults.html#primary
+		// ----------------------------------------------------------------------------------------------------------------------
+		// --- New splash color: new Color(20, 130, 172)
+		switch (getAwbLook()) {
+		case Light:
+			UIManager.put("nimbusBase", new Color(240, 240, 240));
+			UIManager.put("nimbusBlueGrey", new Color(240, 240, 240));
+			UIManager.put("control", new Color(240, 240, 240));
+			
+			UIManager.put("MenuBar:Menu[Selected].textForeground", new Color(20, 130, 172));
+			
+			
+			break;
+			
+		case Dark:
+			
+			break;
+
+		default:
+			break;
+		}
 		
 		// --- Do adjustments for TabbedPane ------------------------ 
 		UIManager.put("TabbedPane.focus", Color.GRAY);

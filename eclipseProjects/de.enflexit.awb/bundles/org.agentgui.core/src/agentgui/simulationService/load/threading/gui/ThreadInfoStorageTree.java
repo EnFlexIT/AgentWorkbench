@@ -40,7 +40,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
@@ -688,8 +687,8 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
     		isSelected = false;
 	    	this.activeIcon = GlobalInfo.getInternalImageIcon("StatGreen.png");
 	    	this.inActiveIcon = GlobalInfo.getInternalImageIcon("StatRed.png");
-	    	this.agentActiveIcon= new ImageIcon(((GlobalInfo.getInternalImageIcon("AgentGUIGreen.png")).getImage()).getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
-	    	this.agentInActiveIcon= new ImageIcon(((GlobalInfo.getInternalImageIcon("AgentGUI.png")).getImage()).getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+	    	this.agentActiveIcon= GlobalInfo.getInternalImageIcon("AWB-Green16.png");
+	    	this.agentInActiveIcon= GlobalInfo.getInternalImageIcon("AWB-Red16.png");
 	    }
 
 	    /* (non-Javadoc)

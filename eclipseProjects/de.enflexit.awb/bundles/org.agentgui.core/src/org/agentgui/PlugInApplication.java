@@ -53,12 +53,12 @@ public class PlugInApplication implements IApplication {
 	 * The Enumeration ApplicationVisualizationBy.
 	 */
 	public enum ApplicationVisualizationBy {
-		AgentGuiSwing,
+		AgentWorkbenchSwing,
 		EclipseFramework
 	}
 	
 	/** Set this variable to switch the visualization */
-	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentGuiSwing;
+	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentWorkbenchSwing;
 	
 	private IApplicationContext iApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
@@ -105,7 +105,7 @@ public class PlugInApplication implements IApplication {
 	 */
 	private boolean isSpecialStartOnMac() {
 		boolean isMac = SystemEnvironmentHelper.isMacOperatingSystem();
-		boolean isSwingVisualiszation = this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing;
+		boolean isSwingVisualiszation = this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentWorkbenchSwing;
 		return isMac & isSwingVisualiszation;
 	}
 	
@@ -246,7 +246,7 @@ public class PlugInApplication implements IApplication {
 	@Override
 	public void stop() {
 		
-		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentGuiSwing) {
+		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentWorkbenchSwing) {
 			// --- Check for open projects ------
 			if (Application.stopAgentWorkbench()==false) return;
 			// --- Stop LogFileWriter -----------
@@ -287,7 +287,7 @@ public class PlugInApplication implements IApplication {
 		try {
 			// --- Case separation UI ---------------------
 			switch (this.visualisationBy) {
-			case AgentGuiSwing:
+			case AgentWorkbenchSwing:
 				// --- Visualization by Agent.GUI/Swing ---
 				this.appReturnValue = this.startSwingMainWindow(postWindowOpenRunnable);
 				break;

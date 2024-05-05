@@ -94,7 +94,7 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 		}
 		this.setPartName("Project Editor");
 		this.setContentDescription("The project editor enables to edit projects");
-		this.setTitleImage(GlobalInfo.getInternalSWTImage("AgentGUIGreen16.png"));
+		this.setTitleImage(GlobalInfo.getInternalSWTImage("AWB-Green16.png"));
 	}
 	
 	/* (non-Javadoc)
