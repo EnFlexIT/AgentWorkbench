@@ -34,3 +34,8 @@
 * [AWB-Structures](development/awb-structures/README.md)
   * [Operational Main Classes](development/awb-structures/awb-structure.md)
 
+***
+
+* [AWB Web-Services](awb-web-services/README.md)
+  * [Providing Web-Services](awb-web-services/providing-web-services.md)
+  * [Using Web-Services](awb-web-services/using-web-services.md)
