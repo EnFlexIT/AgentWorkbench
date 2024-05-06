@@ -3,7 +3,7 @@ package de.enflexit.awb.ws.restapi.gen.factories;
 import de.enflexit.awb.ws.restapi.gen.DoRestartApiService;
 import de.enflexit.awb.ws.restapi.gen.impl.DoRestartApiServiceImpl;
 
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
 public class DoRestartApiServiceFactory {
     private static final DoRestartApiService service = new DoRestartApiServiceImpl();
 

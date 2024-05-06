@@ -311,6 +311,12 @@ public class JwtAuthenticator extends LoginAuthenticator {
 					return Authentication.UNAUTHENTICATED;
 				}
 				
+				// --- Logout the current user? ---------------------
+				if (ServletHelper.isLogoutPathRequest((Request) request)==true) {
+					this.getJwtSessionStore().removeAuthentication(jwtInput);
+					return Authentication.UNAUTHENTICATED;
+				}
+				
 				// --- Renew JWT token with each call? --------------
 				if (this.isRenewWithEachCall()==true) {
 					// --- Add token to current JwtAuthentication ---

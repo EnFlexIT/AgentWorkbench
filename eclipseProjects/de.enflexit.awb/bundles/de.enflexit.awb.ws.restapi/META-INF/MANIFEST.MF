@@ -4,7 +4,7 @@ Bundle-Name: AWB WS-Rest API Bundle
 Bundle-SymbolicName: de.enflexit.awb.ws.restapi
 Bundle-Version: 0.3.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.restapi
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbWebHandlerApiService.xml
 Require-Bundle: jakarta.servlet-api,
@@ -30,7 +30,8 @@ Export-Package: de.enflexit.awb.ws.restapi,
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/javax.annotation-api-1.3.2.jar
-Import-Package: javax.ws.rs;version="2.1.6",
+Import-Package: de.enflexit.common,
+ javax.ws.rs;version="2.1.6",
  javax.ws.rs.core;version="2.1.6",
  javax.ws.rs.ext;version="2.1.6",
  org.eclipse.jetty.server;version="10.0.6",

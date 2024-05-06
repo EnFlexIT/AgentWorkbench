@@ -31,7 +31,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the eventLog API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
 public class EventLogApi  {
    private final EventLogApiService delegate;
 
@@ -61,7 +61,7 @@ public class EventLogApi  {
     
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "get logs of specific type", notes = "", response = Event.class, responseContainer = "List", authorizations = {
-        @io.swagger.annotations.Authorization(value = "BearerAuth")
+        @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "info", })
     @io.swagger.annotations.ApiResponses(value = {
         @io.swagger.annotations.ApiResponse(code = 200, message = "Return Logs of specified type", response = Event.class, responseContainer = "List")

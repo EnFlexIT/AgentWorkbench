@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
 import de.enflexit.awb.ws.restapi.gen.model.PasswordChange;
-import de.enflexit.awb.ws.restapi.gen.model.UserLogin;
 
 import java.util.Map;
 import java.util.List;
@@ -31,7 +30,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the user API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
 public class UserApi  {
    private final UserApiService delegate;
 
@@ -61,7 +60,7 @@ public class UserApi  {
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Changes the user password", notes = "", response = Void.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "BearerAuth")
+        @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "user", })
     @io.swagger.annotations.ApiResponses(value = {
         @io.swagger.annotations.ApiResponse(code = 200, message = "successfully logged-in", response = Void.class),
@@ -71,19 +70,33 @@ public class UserApi  {
     throws NotFoundException {
         return delegate.changePassword(passwordChange, securityContext);
     }
-    @POST
+    @GET
     @Path("/login")
-    @Consumes({ "application/json" })
+    
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Logs user into the system", notes = "", response = Void.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "BearerAuth")
+    @io.swagger.annotations.ApiOperation(value = "Logs user into the system", notes = "Does NOT use Bearer Auth like whole other application. Only Endpoint that uses Basic Authentication. Expects previously configured Credentials and returns appropriate Bearer Token", response = String.class, authorizations = {
+        @io.swagger.annotations.Authorization(value = "basicAuth")
     }, tags={ "user", })
     @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully logged-in", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully logged-in", response = String.class),
         @io.swagger.annotations.ApiResponse(code = 200, message = "Invalid username/password supplied", response = Void.class)
     })
-    public Response loginUser(@ApiParam(value = "The credentials to login.") @Valid  UserLogin userLogin,@Context SecurityContext securityContext)
+    public Response loginUser(@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.loginUser(userLogin, securityContext);
+        return delegate.loginUser(securityContext);
+    }
+    @GET
+    @Path("/logout")
+    
+    
+    @io.swagger.annotations.ApiOperation(value = "Logs the user out of the system", notes = "Deletes the jwt that has been used to make this request and does not return a new jwt. Effectively logging the user out of the System ", response = Void.class, authorizations = {
+        @io.swagger.annotations.Authorization(value = "bearerAuth")
+    }, tags={ "user", })
+    @io.swagger.annotations.ApiResponses(value = {
+        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully logged the user out", response = Void.class)
+    })
+    public Response logout(@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.logout(securityContext);
     }
 }

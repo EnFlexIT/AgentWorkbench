@@ -30,7 +30,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the installationDetails API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
 public class InstallationDetailsApi  {
    private final InstallationDetailsApiService delegate;
 
@@ -60,7 +60,7 @@ public class InstallationDetailsApi  {
     
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Get the details about an AWB Installation", notes = "", response = BundleInformation.class, responseContainer = "List", authorizations = {
-        @io.swagger.annotations.Authorization(value = "BearerAuth")
+        @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "info", })
     @io.swagger.annotations.ApiResponses(value = {
         @io.swagger.annotations.ApiResponse(code = 200, message = "Return the Details about an AWB Installtion", response = BundleInformation.class, responseContainer = "List")

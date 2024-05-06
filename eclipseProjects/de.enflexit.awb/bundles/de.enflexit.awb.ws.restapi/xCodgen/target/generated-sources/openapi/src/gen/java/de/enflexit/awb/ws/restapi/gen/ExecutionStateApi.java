@@ -30,7 +30,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the executionState API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
 public class ExecutionStateApi  {
    private final ExecutionStateApiService delegate;
 
@@ -60,7 +60,7 @@ public class ExecutionStateApi  {
     
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Returns the current AWB state", notes = "Returns the current state of Agent.Workbench consisiting information  about the execution mode, the currently open project and other. ", response = ExecutionState.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "BearerAuth")
+        @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "admins", })
     @io.swagger.annotations.ApiResponses(value = {
         @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = ExecutionState.class)

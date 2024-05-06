@@ -29,7 +29,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the doUpdate API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
 public class DoUpdateApi  {
    private final DoUpdateApiService delegate;
 
@@ -59,7 +59,7 @@ public class DoUpdateApi  {
     
     
     @io.swagger.annotations.ApiOperation(value = "", notes = "tries to initiate update of awb", response = Void.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "BearerAuth")
+        @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "doAction", })
     @io.swagger.annotations.ApiResponses(value = {
         @io.swagger.annotations.ApiResponse(code = 423, message = "AWB cant currently be updated due to unknown circumstances", response = Void.class),

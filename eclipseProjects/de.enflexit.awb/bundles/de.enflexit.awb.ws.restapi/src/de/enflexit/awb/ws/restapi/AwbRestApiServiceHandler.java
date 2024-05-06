@@ -36,9 +36,6 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 			ServletHolder jersey = servletContextHandler.addServlet(JereseyServletContainer.class, "/*");
 			jersey.setInitParameters(new ServletInitParameter());
 			jersey.setInitOrder(1);
-			
-//			servletContextHandler.addFilter(ApiOriginFilter.class, "/*", EnumSet.of(DispatcherType.INCLUDE, DispatcherType.REQUEST));
-			
 		}
 		return servletContextHandler;
 	}

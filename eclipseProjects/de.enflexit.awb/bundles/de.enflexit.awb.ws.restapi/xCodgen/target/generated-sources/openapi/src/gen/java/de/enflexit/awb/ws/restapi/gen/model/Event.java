@@ -33,7 +33,7 @@ import javax.validation.Valid;
   Event.JSON_PROPERTY_TYPE_OF_EVENT,
   Event.JSON_PROPERTY_EVENT
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-03-21T17:19:35.482673500+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
 public class Event   {
   public static final String JSON_PROPERTY_TIME = "time";
   @JsonProperty(JSON_PROPERTY_TIME)

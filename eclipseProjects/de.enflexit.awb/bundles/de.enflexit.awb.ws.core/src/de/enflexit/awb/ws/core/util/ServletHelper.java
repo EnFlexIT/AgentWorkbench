@@ -12,6 +12,7 @@ import org.eclipse.jetty.server.Request;
 public class ServletHelper {
 
 	public static final String lOGIN_PATH = "/user/login";
+	public static final String lOGOUT_PATH = "/user/logout";
 	
 	/**
 	 * Checks if the specified request is a preflight request.
@@ -37,6 +38,16 @@ public class ServletHelper {
 	 */
 	public static boolean isLoginPathRequest(Request request) {
 		return request.getPathInContext().endsWith(lOGIN_PATH);
+	}
+	
+	/**
+	 * Checks if the specified request is a logout request.
+	 *
+	 * @param request the request
+	 * @return true, if is logout path request
+	 */
+	public static boolean isLogoutPathRequest(Request request) {
+		return request.getPathInContext().endsWith(lOGOUT_PATH);
 	}
 	
 }
