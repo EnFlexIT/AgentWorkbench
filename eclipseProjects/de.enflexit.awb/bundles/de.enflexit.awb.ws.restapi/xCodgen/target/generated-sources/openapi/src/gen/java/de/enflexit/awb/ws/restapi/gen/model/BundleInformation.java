@@ -35,7 +35,7 @@ import javax.validation.Valid;
   BundleInformation.JSON_PROPERTY_BUNDLE_I_D,
   BundleInformation.JSON_PROPERTY_VERSION
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class BundleInformation   {
   public static final String JSON_PROPERTY_FEATURE_NAME = "FeatureName";
   @JsonProperty(JSON_PROPERTY_FEATURE_NAME)

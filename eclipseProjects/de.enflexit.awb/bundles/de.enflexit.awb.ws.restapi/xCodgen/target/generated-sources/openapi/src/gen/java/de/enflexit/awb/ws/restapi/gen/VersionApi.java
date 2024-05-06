@@ -30,7 +30,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the version API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class VersionApi  {
    private final VersionApiService delegate;
 
@@ -59,7 +59,7 @@ public class VersionApi  {
     
     
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Return most up to date version number", notes = "", response = Version.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Return the current version number of Agent.Workbench", notes = "", response = Version.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "info", })
     @io.swagger.annotations.ApiResponses(value = {

@@ -24,14 +24,16 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 
 /**
- * The Agent.Workbench execution state
+ * The Agent.Workbench execution state with its open project and the selected setup
  */
-@ApiModel(description = "The Agent.Workbench execution state")
+@ApiModel(description = "The Agent.Workbench execution state with its open project and the selected setup")
 @JsonPropertyOrder({
   ExecutionState.JSON_PROPERTY_EXECUTION_MODE,
-  ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE
+  ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE,
+  ExecutionState.JSON_PROPERTY_PROJECT,
+  ExecutionState.JSON_PROPERTY_SETUP
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class ExecutionState   {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
@@ -109,6 +111,14 @@ public class ExecutionState   {
   @JsonProperty(JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE)
   private DeviceSystemExecutionModeEnum deviceSystemExecutionMode;
 
+  public static final String JSON_PROPERTY_PROJECT = "project";
+  @JsonProperty(JSON_PROPERTY_PROJECT)
+  private String project;
+
+  public static final String JSON_PROPERTY_SETUP = "setup";
+  @JsonProperty(JSON_PROPERTY_SETUP)
+  private String setup;
+
   public ExecutionState executionMode(ExecutionModeEnum executionMode) {
     this.executionMode = executionMode;
     return this;
@@ -149,6 +159,46 @@ public class ExecutionState   {
     this.deviceSystemExecutionMode = deviceSystemExecutionMode;
   }
 
+  public ExecutionState project(String project) {
+    this.project = project;
+    return this;
+  }
+
+  /**
+   * The currently open project
+   * @return project
+   **/
+  @JsonProperty(value = "project")
+  @ApiModelProperty(value = "The currently open project")
+  
+  public String getProject() {
+    return project;
+  }
+
+  public void setProject(String project) {
+    this.project = project;
+  }
+
+  public ExecutionState setup(String setup) {
+    this.setup = setup;
+    return this;
+  }
+
+  /**
+   * The currently open project-setup
+   * @return setup
+   **/
+  @JsonProperty(value = "setup")
+  @ApiModelProperty(value = "The currently open project-setup")
+  
+  public String getSetup() {
+    return setup;
+  }
+
+  public void setSetup(String setup) {
+    this.setup = setup;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -160,12 +210,14 @@ public class ExecutionState   {
     }
     ExecutionState executionState = (ExecutionState) o;
     return Objects.equals(this.executionMode, executionState.executionMode) &&
-        Objects.equals(this.deviceSystemExecutionMode, executionState.deviceSystemExecutionMode);
+        Objects.equals(this.deviceSystemExecutionMode, executionState.deviceSystemExecutionMode) &&
+        Objects.equals(this.project, executionState.project) &&
+        Objects.equals(this.setup, executionState.setup);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(executionMode, deviceSystemExecutionMode);
+    return Objects.hash(executionMode, deviceSystemExecutionMode, project, setup);
   }
 
 
@@ -176,6 +228,8 @@ public class ExecutionState   {
     
     sb.append("    executionMode: ").append(toIndentedString(executionMode)).append("\n");
     sb.append("    deviceSystemExecutionMode: ").append(toIndentedString(deviceSystemExecutionMode)).append("\n");
+    sb.append("    project: ").append(toIndentedString(project)).append("\n");
+    sb.append("    setup: ").append(toIndentedString(setup)).append("\n");
     sb.append("}");
     return sb.toString();
   }

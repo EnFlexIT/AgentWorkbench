@@ -43,7 +43,7 @@ import javax.validation.Valid;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class SystemInformation   {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)

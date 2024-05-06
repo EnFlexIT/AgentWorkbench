@@ -23,36 +23,111 @@ import javax.validation.constraints.*;
 import javax.validation.Valid;
 
 /**
- * Object that holds Version Information. Is Object for scalability
+ * Object that holds Version Information.
  */
-@ApiModel(description = "Object that holds Version Information. Is Object for scalability")
+@ApiModel(description = "Object that holds Version Information.")
 @JsonPropertyOrder({
-  Version.JSON_PROPERTY_VERSION_NUMBER
+  Version.JSON_PROPERTY_MAJOR,
+  Version.JSON_PROPERTY_MINOR,
+  Version.JSON_PROPERTY_MICRO,
+  Version.JSON_PROPERTY_QUALIFIER
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class Version   {
-  public static final String JSON_PROPERTY_VERSION_NUMBER = "versionNumber";
-  @JsonProperty(JSON_PROPERTY_VERSION_NUMBER)
-  private String versionNumber;
+  public static final String JSON_PROPERTY_MAJOR = "major";
+  @JsonProperty(JSON_PROPERTY_MAJOR)
+  private Integer major;
 
-  public Version versionNumber(String versionNumber) {
-    this.versionNumber = versionNumber;
+  public static final String JSON_PROPERTY_MINOR = "minor";
+  @JsonProperty(JSON_PROPERTY_MINOR)
+  private Integer minor;
+
+  public static final String JSON_PROPERTY_MICRO = "micro";
+  @JsonProperty(JSON_PROPERTY_MICRO)
+  private Integer micro;
+
+  public static final String JSON_PROPERTY_QUALIFIER = "qualifier";
+  @JsonProperty(JSON_PROPERTY_QUALIFIER)
+  private String qualifier;
+
+  public Version major(Integer major) {
+    this.major = major;
     return this;
   }
 
   /**
-   * the version number
-   * @return versionNumber
+   * the major version number
+   * @return major
    **/
-  @JsonProperty(value = "versionNumber")
-  @ApiModelProperty(required = true, value = "the version number")
+  @JsonProperty(value = "major")
+  @ApiModelProperty(required = true, value = "the major version number")
   @NotNull 
-  public String getVersionNumber() {
-    return versionNumber;
+  public Integer getMajor() {
+    return major;
   }
 
-  public void setVersionNumber(String versionNumber) {
-    this.versionNumber = versionNumber;
+  public void setMajor(Integer major) {
+    this.major = major;
+  }
+
+  public Version minor(Integer minor) {
+    this.minor = minor;
+    return this;
+  }
+
+  /**
+   * the minor version number
+   * @return minor
+   **/
+  @JsonProperty(value = "minor")
+  @ApiModelProperty(required = true, value = "the minor version number")
+  @NotNull 
+  public Integer getMinor() {
+    return minor;
+  }
+
+  public void setMinor(Integer minor) {
+    this.minor = minor;
+  }
+
+  public Version micro(Integer micro) {
+    this.micro = micro;
+    return this;
+  }
+
+  /**
+   * the micro version number
+   * @return micro
+   **/
+  @JsonProperty(value = "micro")
+  @ApiModelProperty(required = true, value = "the micro version number")
+  @NotNull 
+  public Integer getMicro() {
+    return micro;
+  }
+
+  public void setMicro(Integer micro) {
+    this.micro = micro;
+  }
+
+  public Version qualifier(String qualifier) {
+    this.qualifier = qualifier;
+    return this;
+  }
+
+  /**
+   * the version qualifier
+   * @return qualifier
+   **/
+  @JsonProperty(value = "qualifier")
+  @ApiModelProperty(required = true, value = "the version qualifier")
+  @NotNull 
+  public String getQualifier() {
+    return qualifier;
+  }
+
+  public void setQualifier(String qualifier) {
+    this.qualifier = qualifier;
   }
 
 
@@ -65,12 +140,15 @@ public class Version   {
       return false;
     }
     Version version = (Version) o;
-    return Objects.equals(this.versionNumber, version.versionNumber);
+    return Objects.equals(this.major, version.major) &&
+        Objects.equals(this.minor, version.minor) &&
+        Objects.equals(this.micro, version.micro) &&
+        Objects.equals(this.qualifier, version.qualifier);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(versionNumber);
+    return Objects.hash(major, minor, micro, qualifier);
   }
 
 
@@ -79,7 +157,10 @@ public class Version   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Version {\n");
     
-    sb.append("    versionNumber: ").append(toIndentedString(versionNumber)).append("\n");
+    sb.append("    major: ").append(toIndentedString(major)).append("\n");
+    sb.append("    minor: ").append(toIndentedString(minor)).append("\n");
+    sb.append("    micro: ").append(toIndentedString(micro)).append("\n");
+    sb.append("    qualifier: ").append(toIndentedString(qualifier)).append("\n");
     sb.append("}");
     return sb.toString();
   }

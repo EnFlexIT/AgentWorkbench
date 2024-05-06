@@ -9,10 +9,12 @@ import javax.ws.rs.core.Variant;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import de.enflexit.awb.ws.restapi.gen.ExecutionStateApi;
 import de.enflexit.awb.ws.restapi.gen.InfoApi;
 import de.enflexit.awb.ws.restapi.gen.JacksonJsonProvider;
 import de.enflexit.awb.ws.restapi.gen.LoadApi;
 import de.enflexit.awb.ws.restapi.gen.UserApi;
+import de.enflexit.awb.ws.restapi.gen.VersionApi;
 import de.enflexit.awb.ws.restapi.impl.ExecutionStateApiImpl;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
@@ -49,10 +51,11 @@ public class RestApiConfiguration extends ResourceConfig {
 	private void configureEndpoints() {
 		this.register(JacksonJsonProvider.class);
 	
+		this.register(UserApi.class);
 		this.register(InfoApi.class);
 		this.register(LoadApi.class);
-		this.register(ExecutionStateApiImpl.class);
-		this.register(UserApi.class);
+		this.register(ExecutionStateApi.class);
+		this.register(VersionApi.class);
 	}
 	
 	/**
