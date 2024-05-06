@@ -30,7 +30,7 @@ import javax.validation.Valid;
 
 
 @io.swagger.annotations.Api(description = "the user API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
 public class UserApi  {
    private final UserApiService delegate;
 
@@ -63,8 +63,8 @@ public class UserApi  {
         @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "user", })
     @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully logged-in", response = Void.class),
-        @io.swagger.annotations.ApiResponse(code = 200, message = "Invalid username/password supplied", response = Void.class)
+        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully change password", response = Void.class),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "invalid parameters supplied", response = Void.class)
     })
     public Response changePassword(@ApiParam(value = "The credentials to login.") @Valid  PasswordChange passwordChange,@Context SecurityContext securityContext)
     throws NotFoundException {
@@ -89,7 +89,7 @@ public class UserApi  {
     @Path("/logout")
     
     
-    @io.swagger.annotations.ApiOperation(value = "Logs the user out of the system", notes = "Deletes the jwt that has been used to make this request and does not return a new jwt. Effectively logging the user out of the System ", response = Void.class, authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Logs out the user from the system", notes = "Effectively logs-out the user from the System ", response = Void.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "bearerAuth")
     }, tags={ "user", })
     @io.swagger.annotations.ApiResponses(value = {

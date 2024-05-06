@@ -29,7 +29,7 @@ import javax.validation.Valid;
   PasswordChange.JSON_PROPERTY_PASSWORD_OLD,
   PasswordChange.JSON_PROPERTY_PASSWORD_NEW
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T16:29:27.241008700+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
 public class PasswordChange   {
   public static final String JSON_PROPERTY_PASSWORD_OLD = "password_old";
   @JsonProperty(JSON_PROPERTY_PASSWORD_OLD)

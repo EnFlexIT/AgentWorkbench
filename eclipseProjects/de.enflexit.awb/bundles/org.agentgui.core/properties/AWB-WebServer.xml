@@ -199,11 +199,11 @@
                         </entry>
                         <entry>
                             <key>JWT Token - Renew with every call</key>
-                            <value>true</value>
+                            <value>false</value>
                         </entry>
                         <entry>
                             <key>JWT Token - Validity Period [Min]</key>
-                            <value>5</value>
+                            <value>10</value>
                         </entry>
                         <entry>
                             <key>JWT Verbose</key>
@@ -215,10 +215,6 @@
                         </entry>
                         <entry>
                             <key>User Name</key>
-                            <value>test</value>
-                        </entry>
-                        <entry>
-                            <key>User Password</key>
                             <value>test</value>
                         </entry>
                     </securityHandlerConfiguration>
