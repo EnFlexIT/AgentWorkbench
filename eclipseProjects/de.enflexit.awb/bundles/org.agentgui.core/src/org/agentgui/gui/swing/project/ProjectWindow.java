@@ -41,9 +41,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Enumeration;
 import java.util.HashMap;
-import de.enflexit.common.Observable;
-import de.enflexit.common.Observer;
-
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -83,6 +80,8 @@ import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
 import agentgui.core.gui.projectwindow.simsetup.SetupPropertiesPanel;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.project.Project;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
@@ -853,7 +852,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		// --- Set empty border for visualization -------------------  
 		JComponent jCompVis = projectWindowTab.getJComponentForVisualization();
-		jCompVis.setBorder(BorderFactory.createEmptyBorder());
+		jCompVis.setBorder(null);
 		
 		if (projectWindowTab.getIndexPosition()!=-1 && projectWindowTab.getIndexPosition()<pareNode.getChildCount()) {
 			// --- Add to parent node/tab at index position ---------

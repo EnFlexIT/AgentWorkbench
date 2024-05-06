@@ -88,7 +88,7 @@ public class AwbLookAndFeelAdjustments {
 			String lnfClassNameOld = lnfOld.getClass().getName();
 			if (lnfClassName.equals(lnfClassNameOld)==false) {
 				UIManager.setLookAndFeel(lnfClassName);
-				doLookAndFeelAdjustments();
+				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 				if (invoker!=null) {
 					SwingUtilities.updateComponentTreeUI(invoker);
 				}
@@ -137,10 +137,17 @@ public class AwbLookAndFeelAdjustments {
 			break;
 
 		default:
+			AwbLookAndFeelAdjustments.doLookAndFeelAdjustmentsDefaultMode();
 			break;
 		}
+	}
+
+	/**
+	 * Do look and feel adjustments for the default mode.
+	 */
+	private static void doLookAndFeelAdjustmentsDefaultMode() {
 		
-		// --- Do adjustments for TabbedPane ------------------------ 
+		// --- Do adjustments for TabbedPane ------------------------
 		UIManager.put("TabbedPane.focus", Color.GRAY);
 		
 		UIManager.put("TabbedPane.highlight", Color.WHITE);
@@ -148,14 +155,13 @@ public class AwbLookAndFeelAdjustments {
 		
 		UIManager.put("TabbedPane.shadow", Color.LIGHT_GRAY);
 		UIManager.put("TabbedPane.darkShadow", Color.LIGHT_GRAY);
-
+		
 		// --- Do adjustments for ProgressBar -----------------------
 		AwbProgressBarPainter painter = new AwbProgressBarPainter(new Color(161, 198, 231), new Color(91, 155, 213), Color.GRAY);
 		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled].foregroundPainter", painter);
 		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);
-		
 	}
-
+	
 	/**
 	 * Do look and feel adjustments for the light mode.
 	 */
@@ -166,7 +172,8 @@ public class AwbLookAndFeelAdjustments {
 		UIManager.put("nimbusBase", new Color(240, 240, 240));
 		UIManager.put("nimbusBlueGrey", new Color(240, 240, 240));
 		UIManager.put("control", new Color(240, 240, 240));
-		
+		UIManager.put("nimbusOrange", splashColor);
+
 		UIManager.put("nimbusSelectionBackground", splashColor);
 		TableCellColorHelper.setTableHighlightColor(splashColor);
 		

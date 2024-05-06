@@ -67,20 +67,6 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintText(java.awt.Graphics, int, java.awt.Font, java.awt.FontMetrics, int, java.lang.String, java.awt.Rectangle, boolean)
-	 */
-	@Override
-	protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
-		if (tabIndex==tabPane.getSelectedIndex()) {
-			super.paintText(g, tabPlacement, fontSelected, metrics, tabIndex, title, textRect, isSelected);
-		} else {
-			super.paintText(g, tabPlacement, fontNotSelected, metrics, tabIndex, title, textRect, isSelected);
-		}
-	}
-	
-	
-	
 	/**
 	 * Sets the tab header visible (or not).
 	 * @param tabHeaderVisible the indicator to set tab header visible
@@ -95,6 +81,31 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 	public boolean isTabHeaderVisible() {
 		return tabHeaderVisible;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintText(java.awt.Graphics, int, java.awt.Font, java.awt.FontMetrics, int, java.lang.String, java.awt.Rectangle, boolean)
+	 */
+	@Override
+	protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
+		if (this.isTabHeaderVisible()==true) {
+			if (tabIndex==tabPane.getSelectedIndex()) {
+				super.paintText(g, tabPlacement, fontSelected, metrics, tabIndex, title, textRect, isSelected);
+			} else {
+				super.paintText(g, tabPlacement, fontNotSelected, metrics, tabIndex, title, textRect, isSelected);
+			}
+		}
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintContentBorder(java.awt.Graphics, int, int)
+	 */
+	@Override
+	protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {
+		if (this.isTabHeaderVisible()==true) {
+			super.paintContentBorder(g, tabPlacement, selectedIndex);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabAreaHeight(int, int, int)
 	 */
@@ -125,6 +136,9 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 		}
 		return 0;
 	}
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabWidth(int, int, java.awt.FontMetrics)
+	 */
 	@Override
 	protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
 		if (this.isTabHeaderVisible()==true) {
@@ -132,4 +146,5 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 		}
 		return 0;
 	}
+	
 }
