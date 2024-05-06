@@ -151,7 +151,7 @@ public class MainWindowStatusBar extends JPanel {
 		gbc_jLabelJadeState.gridy = 0;
 		this.add(this.getJLabelJadeState(), gbc_jLabelJadeState);
 		
-		this.setBorder(new MatteBorder(2, 0, 0, 0, UIManager.getColor("controlDkShadow")));
+		this.setBorder(new MatteBorder(1, 0, 0, 0, UIManager.getColor("controlDkShadow")));
 		this.setJadeStatusColor(JadeStatusColor.Red);
 		this.addSessionFactoryStates();
 	}

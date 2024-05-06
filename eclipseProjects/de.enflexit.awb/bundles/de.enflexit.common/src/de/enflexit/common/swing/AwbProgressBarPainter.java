@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.gui.swing;
+package de.enflexit.common.swing;
 
 import java.awt.Color;
 import java.awt.GradientPaint;

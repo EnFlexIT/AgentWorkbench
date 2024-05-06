@@ -26,7 +26,7 @@
  * Boston, MA  02111-1307, USA.
  * **************************************************************
  */
-package org.agentgui.gui.swing;
+package de.enflexit.common.swing;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -36,9 +36,6 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
-import agentgui.core.config.GlobalInfo;
-import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * The Class AwbUiAdjustments.
@@ -53,7 +50,9 @@ public class AwbLookAndFeelAdjustments {
 		Dark
 	}
 	
-	private static AwbLook awbLook = AwbLook.Default;
+	private static AwbLook awbLook = AwbLook.Light;
+	
+	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
 	
 	/**
 	 * Returns the current AWB look.
@@ -107,7 +106,7 @@ public class AwbLookAndFeelAdjustments {
 		if (GraphicsEnvironment.isHeadless()==true) return;
 		
 		LookAndFeel lnf = UIManager.getLookAndFeel();
-		if (lnf.getClass().getName().equals(GlobalInfo.DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
+		if (lnf.getClass().getName().equals(DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
 			doLookAndFeelAdjustmentsForNimbus();
 		}
 	}

@@ -105,6 +105,16 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 			super.paintContentBorder(g, tabPlacement, selectedIndex);
 		}
 	}
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#paintTabBorder(java.awt.Graphics, int, int, int, int, int, int, boolean)
+	 */
+	@Override
+	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+		if (this.isTabHeaderVisible()==true) {
+			super.paintTabBorder(g, tabPlacement, tabIndex, x, y, w, h, isSelected);
+		}
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#calculateTabAreaHeight(int, int, int)
