@@ -50,7 +50,7 @@ public class AwbLookAndFeelAdjustments {
 		Dark
 	}
 	
-	private static AwbLook awbLook = AwbLook.Light;
+	private static AwbLook awbLook = AwbLook.Default;
 	
 	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
 	
