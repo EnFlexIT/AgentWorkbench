@@ -318,7 +318,7 @@
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, hivemq-mqtt-client - dependencies 			 -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-		<location includeDependencyDepth="infinite" includeDependencyScopes="compile,runtime" includeSource="true" missingManifest="generate" type="Maven">
+		<!--location includeDependencyDepth="infinite" includeDependencyScopes="compile,runtime" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
 				<dependency>
 					<groupId>com.hivemq</groupId>
@@ -327,7 +327,7 @@
 					<type>jar</type>
 				</dependency>
 			</dependencies>
-		</location>
+		</location-->
 		
 	</locations>
 
