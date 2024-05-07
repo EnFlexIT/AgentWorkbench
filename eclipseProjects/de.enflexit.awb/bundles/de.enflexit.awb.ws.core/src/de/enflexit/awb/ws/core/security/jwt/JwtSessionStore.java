@@ -34,7 +34,7 @@ public class JwtSessionStore {
 			List<String> invalidToken = authentication.getInvalidJwtToken(); 
 			for (String token : invalidToken) {
 				authentication.removeJwtToken(token);
-				this.removeAuthentication(token);
+				this.getSessionMap().remove(token);
 			}
 			
 			// --- Store valid token in local session map -----------
@@ -58,7 +58,7 @@ public class JwtSessionStore {
 	}
 	
 	/**
-	 * Removes the JwtAuthentication of the specified JWT token.
+	 * Removes the JwtAuthentication from the session store by considering all JWT token.
 	 *
 	 * @param jwtToken the JWT token
 	 * @return the removed JwtAuthentication
@@ -68,6 +68,10 @@ public class JwtSessionStore {
 			JwtAuthentication jwtAuth = this.getSessionMap().remove(jwtToken); 
 			if (jwtAuth!=null) {
 				jwtAuth.removeJwtToken(jwtToken);
+				// --- Remove all other known token -------
+				for (String token : jwtAuth.getJwtTokenList()) {
+					this.getSessionMap().remove(token);
+				}
 			}
 			return jwtAuth;
 		}

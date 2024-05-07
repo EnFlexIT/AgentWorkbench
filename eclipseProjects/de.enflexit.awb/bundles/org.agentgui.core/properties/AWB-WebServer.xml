@@ -199,7 +199,7 @@
                         </entry>
                         <entry>
                             <key>JWT Token - Renew with every call</key>
-                            <value>false</value>
+                            <value>true</value>
                         </entry>
                         <entry>
                             <key>JWT Token - Validity Period [Min]</key>
