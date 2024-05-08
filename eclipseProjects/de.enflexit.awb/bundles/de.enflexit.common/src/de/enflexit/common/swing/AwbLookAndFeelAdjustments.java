@@ -31,11 +31,19 @@ package de.enflexit.common.swing;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  * The Class AwbUiAdjustments.
@@ -43,6 +51,8 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class AwbLookAndFeelAdjustments {
+
+	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
 
 	public enum AwbLook {
 		Default,
@@ -52,7 +62,8 @@ public class AwbLookAndFeelAdjustments {
 	
 	private static AwbLook awbLook = AwbLook.Default;
 	
-	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+	private static boolean isFurtherLaFToInstall = false;
+	private static boolean isFurtherLaFToInstalled = false;
 	
 	/**
 	 * Returns the current AWB look.
@@ -71,6 +82,47 @@ public class AwbLookAndFeelAdjustments {
 	}
 	
 	/**
+	 * Returns all installed look and feels.
+	 * @return the installed look and feels
+	 */
+	public static LookAndFeelInfo[] getInstalledLookAndFeels() {
+		
+		// --- Install further LookAndFeels ---------------
+		if (isFurtherLaFToInstall==true && isFurtherLaFToInstalled==false) {
+			AwbLookAndFeelAdjustments.installLookAndFeels();
+		}
+		
+		// --- Sort list of installed LookAndFeels --------
+		LookAndFeelInfo[] lookAndFeels = UIManager.getInstalledLookAndFeels();
+		Arrays.sort(lookAndFeels, new Comparator<LookAndFeelInfo>() {
+			@Override
+			public int compare(LookAndFeelInfo laf1, LookAndFeelInfo laf2) {
+				return laf1.getName().compareTo(laf2.getName());
+			}
+		});
+		return lookAndFeels;
+	}
+
+	/**
+	 * Installs further look and feels.
+	 */
+	private static void installLookAndFeels() {
+		
+		try {
+			FlatLightLaf.installLafInfo();
+			FlatDarculaLaf.installLafInfo();
+			FlatDarkLaf.installLafInfo();
+			FlatIntelliJLaf.installLafInfo();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			isFurtherLaFToInstalled = true;
+		}
+	}
+	
+	
+	/**
 	 * Sets the look and feel to the swing UI Manager.
 	 *
 	 * @param lnfClassName the new look and feel
@@ -81,10 +133,11 @@ public class AwbLookAndFeelAdjustments {
 		if (GraphicsEnvironment.isHeadless()==true) return;
 		if (lnfClassName==null || lnfClassName.isEmpty()==true) return;
 		
+		String lnfClassNameOld=null;
 		try {
 			// --- Get the old look and feel first ------------------
 			LookAndFeel lnfOld = UIManager.getLookAndFeel();
-			String lnfClassNameOld = lnfOld.getClass().getName();
+			lnfClassNameOld = lnfOld.getClass().getName();
 			if (lnfClassName.equals(lnfClassNameOld)==false) {
 				UIManager.setLookAndFeel(lnfClassName);
 				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
@@ -95,6 +148,21 @@ public class AwbLookAndFeelAdjustments {
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException lnfEx) {
 			System.err.println("Cannot install " + lnfClassName + " on this platform:" + lnfEx.getMessage());
+			
+		} finally {
+			// --- Switch back to old LookAndFeel
+			if (lnfClassNameOld!=null) {
+				try {
+					UIManager.setLookAndFeel(lnfClassName);
+					AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
+					if (invoker!=null) {
+						SwingUtilities.updateComponentTreeUI(invoker);
+					}
+					
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+					ex.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -182,6 +250,11 @@ public class AwbLookAndFeelAdjustments {
 		// --- Test area ----
 		//UIManager.put("Tree.selectionBackground", new Color(20, 130, 172));
 		//UIManager.put("Tree.textBackground", new Color(20, 130, 172));
+		
+//		UIManager.put("SplitPane:SplitPaneDivider[Enabled].backgroundPainter", new AwbSplitPaneDividerPainter(null, 1));
+//		UIManager.put("SplitPane:SplitPaneDivider[Focused].backgroundPainter", new AwbSplitPaneDividerPainter(null, 2));
+//		UIManager.put("SplitPane:SplitPaneDivider[Enabled].foregroundPainter", new AwbSplitPaneDividerPainter(null, 3));
+//		UIManager.put("SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter", new AwbSplitPaneDividerPainter(null, 4));
 		
 	}
 	

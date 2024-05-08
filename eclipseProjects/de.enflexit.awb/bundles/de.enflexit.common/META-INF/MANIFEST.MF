@@ -3,13 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
-Bundle-Version: 1.2.13.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-Vendor: EnFlex.IT
 Bundle-ClassPath: .
 Require-Bundle: de.enflexit.api,
+ de.enflexit.common.flatlaf,
  com.sun.xml.bind.jaxb-impl,
  org.eclipse.osgi.services,
  org.eclipse.core.runtime,

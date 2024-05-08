@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EnFlex.IT - FlatLaf Bundle
+Bundle-SymbolicName: de.enflexit.common.flatlaf
+Automatic-Module-Name: de.enflexit.common.flatlaf
+Bundle-Vendor: EnFlex.IT
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-ClassPath: .,
+ lib/flatlaf-3.4.1.jar
+Bundle-Version: 3.4.1.qualifier
+Eclipse-BundleShape: dir
+Export-Package: com.formdev.flatlaf,
+ com.formdev.flatlaf.icons,
+ com.formdev.flatlaf.json,
+ com.formdev.flatlaf.resources,
+ com.formdev.flatlaf.themes,
+ com.formdev.flatlaf.ui,
+ com.formdev.flatlaf.util
+Import-Package: org.slf4j
+Bundle-NativeCode: *,
+ flatlaf-windows-arm64.dll;osname=Windows; processor=ARM64,
+ flatlaf-windows-x86_64.dll;osname=Windows; processor=x86-64,
+ flatlaf-windows-x86.dll;osname=Windows; processor=x86,
+ libflatlaf-linux-x86_64.so;osname=Linux; processor=x86-64,
+ libflatlaf-macos-arm64.dylib;osname=MacOSX; processor=ARM64,
+ libflatlaf-macos-x86_64.dylib;osname=MacOSX; processor=x86-64
+

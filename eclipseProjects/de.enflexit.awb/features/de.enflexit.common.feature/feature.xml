@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.common.feature"
       label="Agent.Workbench Common-Feature"
-      version="2.1.13.qualifier"
+      version="2.2.0.qualifier"
       provider-name="EnFlex.IT"
       os="linux,macosx,win32"
       arch="x86,x86_64">
@@ -78,6 +78,10 @@
 
    <plugin
          id="de.enflexit.oshi"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.common.flatlaf"
          version="0.0.0"/>
 
 </feature>

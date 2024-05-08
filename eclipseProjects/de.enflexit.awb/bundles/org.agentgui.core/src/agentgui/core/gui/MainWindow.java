@@ -67,7 +67,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
@@ -94,6 +94,7 @@ import agentgui.core.update.AWBUpdater;
 import agentgui.core.update.ProjectRepositoryExplorerDialog;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
 
@@ -1007,10 +1008,9 @@ public class MainWindow extends JFrame {
 	 */
 	private void setJMenuExtraLnF() {
 
-		UIManager.LookAndFeelInfo installedLnF[] = UIManager.getInstalledLookAndFeels();
-		for (int i = 0, n = installedLnF.length; i < n; i++) {
-			boolean setBold = installedLnF[i].getClassName().equals(Application.getGlobalInfo().getAppLookAndFeelClassName());
-			jMenuExtraLnF.add(new JMenuItmenLnF(installedLnF[i].getName(), installedLnF[i].getClassName(), setBold));
+		for (LookAndFeelInfo lafInfo : AwbLookAndFeelAdjustments.getInstalledLookAndFeels()) {
+			boolean setBold = lafInfo.getClassName().equals(Application.getGlobalInfo().getAppLookAndFeelClassName());
+			jMenuExtraLnF.add(new JMenuItmenLnF(lafInfo.getName(), lafInfo.getClassName(), setBold));
 		}
 	}
 
