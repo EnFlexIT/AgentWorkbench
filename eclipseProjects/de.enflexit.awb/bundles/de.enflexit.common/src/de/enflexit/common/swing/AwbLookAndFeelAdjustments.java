@@ -31,11 +31,15 @@ package de.enflexit.common.swing;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -265,5 +269,71 @@ public class AwbLookAndFeelAdjustments {
 		
 		
 	}
+	
+	/**
+	 * Checks if the current Look and feel is a dark look and feel.
+	 * @return true, if is dark look and feel
+	 */
+	public static boolean isDarkLookAndFeel() {
+		
+		boolean isDark = false;
+		boolean isDebug = false;
+		
+		// --- Get text colors from UiManager -------------
+		List<String> colorNameList = new ArrayList<String>();
+		
+		UIDefaults uiDefaults = UIManager.getLookAndFeel().getDefaults();
+		for (Object key : uiDefaults.keySet()) {
+			
+			// --- Filter for String 'text' ---------------
+			if (key instanceof String==false) continue;
+			String keyString = ((String)key).toLowerCase();
+			if (keyString.contains("text")==false) continue;
+			if (keyString.contains("background")==true) continue;
+			if (keyString.contains("foreground")==true) continue;
+			if (keyString.contains("disable")==true) continue;
+			if (keyString.contains("textarea")==true) continue;
+			if (keyString.contains("textfield")==true) continue;
+			if (keyString.contains("textpane")==true) continue;
+			if (keyString.contains("high")==true) continue;
+
+			// --- Check if value is a color -------------- 
+			Object value = uiDefaults.get(key);
+			if (value instanceof Color==false) continue;
+			
+			colorNameList.add((String) key);
+		}
+
+		if (isDebug==true) {
+			Collections.sort(colorNameList);
+			System.out.println("Color named with text: " + colorNameList.size());
+		}
+		
+		// --- Calculate average luminance ----------------
+		double luminanceAvg = 0;
+		for (String  colorName : colorNameList) {
+			// --- Calculate simgle luminance -------------
+			Color color = uiDefaults.getColor(colorName);
+			int r = color.getRed();
+			int g = color.getGreen();
+			int b = color.getBlue();
+			double luminance = 0.2126*r + 0.7152*g + 0.0722*b;
+			luminanceAvg += luminance;
+			if (isDebug==true) {
+				boolean isDarkTextColor = luminance < 128 ? true : false;
+				System.out.println("Color Name: " + colorName + ", RGB(" + r +", " + g + ", " + b + "), Luminance: " + luminance + ", is dark text color: " + isDarkTextColor);
+			}
+		}
+		if (isDebug==true) System.out.println();
+
+		// --- Final calculation --------------------------
+		if (colorNameList.size()>0) {
+			luminanceAvg = luminanceAvg / colorNameList.size();
+			boolean isDarkAvgTextColor = luminanceAvg < 128 ? true : false;
+			return !isDarkAvgTextColor;
+		}
+		return isDark;
+	}
+	
 	
 }

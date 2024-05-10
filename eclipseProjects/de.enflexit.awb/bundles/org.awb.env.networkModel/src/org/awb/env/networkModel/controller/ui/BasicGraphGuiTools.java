@@ -225,6 +225,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	if (jToolBarEdit == null) {
     		jToolBarEdit = new JToolBar();
     		jToolBarEdit.setOrientation(JToolBar.VERTICAL);
+    		jToolBarEdit.setAlignmentY(JToolBar.TOP_ALIGNMENT);
     		jToolBarEdit.setFloatable(false);
     		jToolBarEdit.setPreferredSize(new Dimension(30, 30));
     		jToolBarEdit.addKeyListener(this.getKeyAdapterPasteActionStop());
@@ -269,6 +270,8 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
     	if (jToolBarView == null) {
     		jToolBarView = new JToolBar();
     		jToolBarView.setOrientation(JToolBar.VERTICAL);
+    		jToolBarView.setAlignmentY(JToolBar.TOP_ALIGNMENT);
+    		
     		jToolBarView.setFloatable(false);
     		jToolBarView.setPreferredSize(new Dimension(30, 30));
 

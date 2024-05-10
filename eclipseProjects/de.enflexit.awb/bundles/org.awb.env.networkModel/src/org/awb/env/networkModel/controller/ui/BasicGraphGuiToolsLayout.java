@@ -129,6 +129,7 @@ public class BasicGraphGuiToolsLayout extends JToolBar implements ActionListener
 	private void buildToolBar() {
 		
 		this.setOrientation(JToolBar.VERTICAL);
+		this.setAlignmentY(JToolBar.TOP_ALIGNMENT);
 		this.setFloatable(false);
 		this.setPreferredSize(new Dimension(30, 30));
 		this.setVisible(this.basicGraphGuiTools.getJToggleButtonLayoutToolBar().isSelected());
