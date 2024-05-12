@@ -13,7 +13,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.WindowConstants;
 
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
@@ -90,7 +89,6 @@ public class CSV_FilePreview extends JDialog {
 	private JTabbedPane getJTabbedPaneImport() {
 		if (jTabbedPaneImport == null) {
 			jTabbedPaneImport = new JTabbedPane(JTabbedPane.TOP);
-			jTabbedPaneImport.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPaneImport.setFont(new Font("Dialog", Font.BOLD, 13));
 		}
 		return jTabbedPaneImport;

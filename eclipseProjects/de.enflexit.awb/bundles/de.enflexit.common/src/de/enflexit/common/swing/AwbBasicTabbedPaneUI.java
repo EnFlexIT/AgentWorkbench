@@ -34,6 +34,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import javax.swing.JComponent;
+import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 /**
@@ -47,6 +49,16 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 	private Font fontNotSelected = null;
 	 
 	private boolean tabHeaderVisible = true;
+	
+	
+	/**
+     * Create a UI.
+     * @param c a component
+     * @return a UI
+     */
+    public static ComponentUI createUI(JComponent c) {
+        return new AwbBasicTabbedPaneUI();
+    }
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.plaf.basic.BasicTabbedPaneUI#installDefaults()
@@ -66,7 +78,7 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 		fontNotSelected = tabPane.getFont().deriveFont(Font.PLAIN);
 		
 	}
-
+	
 	/**
 	 * Sets the tab header visible (or not).
 	 * @param tabHeaderVisible the indicator to set tab header visible

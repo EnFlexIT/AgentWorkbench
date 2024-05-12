@@ -59,7 +59,6 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.JHyperLink;
@@ -292,7 +291,6 @@ public class AboutDialog extends JDialog implements ActionListener{
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane();
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.setTabPlacement(JTabbedPane.TOP);
 			

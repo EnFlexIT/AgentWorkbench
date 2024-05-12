@@ -96,6 +96,7 @@ import com.google.common.base.Function;
 import agentgui.core.application.Application;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
+import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
@@ -656,16 +657,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 						BufferedImage bufferedImage;
 						if (currentColor.equals(Color.WHITE) || currentColor.equals(Color.BLACK)) {
 							// --- If the color is set to black or white, just use the unchanged image ----------
-							bufferedImage = GraphGlobals.convertToBufferedImage(imageIcon.getImage());
+							bufferedImage = ImageHelper.convertToBufferedImage(imageIcon.getImage());
 						} else {
 							// --- Otherwise, replace the defined basic color with the one specified in the node layout ---------
-							bufferedImage = GraphGlobals.exchangeColor(GraphGlobals.convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
+							bufferedImage = ImageHelper.exchangeColor(ImageHelper.convertToBufferedImage(imageIcon.getImage()), GeneralGraphSettings4MAS.IMAGE_ICON_COLORIZE_BASE_COLOR, currentColor);
 						}
 						
 						if (bufferedImage != null) {
 							// --- Scale the image icon? --------
 							if (scaleMultiplier>1) {
-								bufferedImage = GraphGlobals.scaleBufferedImage(bufferedImage, scaleMultiplier);
+								bufferedImage = ImageHelper.scaleBufferedImage(bufferedImage, scaleMultiplier);
 							}
 							// --- 3. Remind the images ---------
 							LayeredIcon layeredIconUnPicked = new LayeredIcon(bufferedImage);

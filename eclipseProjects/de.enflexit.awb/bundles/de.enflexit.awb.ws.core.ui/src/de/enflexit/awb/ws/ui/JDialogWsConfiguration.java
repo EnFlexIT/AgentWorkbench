@@ -24,7 +24,6 @@ import javax.swing.WindowConstants;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
 import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
@@ -121,7 +120,6 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab(" WS - Server ",  null, this.getJPanelServerConfiguration(), null);
 			jTabbedPane.addTab(" WS - Clients ", null, this.getJPanelClientConfiguration(), null);

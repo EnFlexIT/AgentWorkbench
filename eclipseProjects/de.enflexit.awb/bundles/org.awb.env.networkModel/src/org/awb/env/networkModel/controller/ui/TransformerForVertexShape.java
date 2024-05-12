@@ -44,6 +44,7 @@ import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import com.google.common.base.Function;
 
+import de.enflexit.common.images.ImageHelper;
 import edu.uci.ics.jung.visualization.FourPassImageShaper;
 import edu.uci.ics.jung.visualization.decorators.AbstractVertexShapeTransformer;
 
@@ -131,7 +132,7 @@ public class TransformerForVertexShape<V, E> extends AbstractVertexShapeTransfor
 			}
 			if (imageIcon != null) {
 				// --- Cache the image shape, if not zero-sized ----------- 
-				imageShape = FourPassImageShaper.getShape(GraphGlobals.convertToBufferedImage(imageIcon.getImage()));
+				imageShape = FourPassImageShaper.getShape(ImageHelper.convertToBufferedImage(imageIcon.getImage()));
 				if (imageShape!=null && imageShape.getBounds().getWidth()>0 && imageShape.getBounds().getHeight()>0) {
 					
 					int width = imageIcon.getImage().getWidth(null);

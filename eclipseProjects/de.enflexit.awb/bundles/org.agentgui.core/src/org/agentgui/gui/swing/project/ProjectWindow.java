@@ -538,17 +538,15 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			projectViewRightTabs = new JTabbedPane();
 			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
 			projectViewRightTabs.setName("ProjectTabs");
-			projectViewRightTabs.setUI(new AwbBasicTabbedPaneUI());
+//			projectViewRightTabs.setUI(new AwbBasicTabbedPaneUI());
 			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 13));
 			projectViewRightTabs.addMouseListener(this.getTabMouseListener());
 			projectViewRightTabs.addChangeListener(this.getTabSelectionListener());
 		}
 		return projectViewRightTabs;
 	}
-
 	/**
 	 * This method instantiates the MouseListener for the Tab-Selections.
-	 *
 	 * @return the tab mouse listener
 	 */
 	public MouseListener getTabMouseListener() {
@@ -570,7 +568,35 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		}
 		return tabMouseListener;
 	}
+	/**
+	 * This method instantiates the ChangeListener for Tab-Selections.
+	 * @return the tab selection listener
+	 */
+	public ChangeListener getTabSelectionListener() {
 
+		if (tabSelectionListener == null) {
+			tabSelectionListener = new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent evt) {
+
+					if (pauseTabSelectionListener) return;
+
+					ProjectWindowTab pwt = getProjectWindowTabSelected();
+					if (pwt != null) {
+						DefaultMutableTreeNode selectedNode = getTreeNode(pwt.getTitle());
+						DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) jTreeProject.getLastSelectedPathComponent();
+						if (selectedNode != currentNode) {
+							pauseTreeSelectionListener = true;
+							jTreeProject.setSelectionPath(new TreePath(selectedNode.getPath()));
+							pauseTreeSelectionListener = false;
+						}
+					}
+				}
+			};
+		}
+		return tabSelectionListener;
+	}
+	
 	/**
 	 * Returns the JPopupMenu for the tabs.
 	 * 
@@ -697,36 +723,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		}
 	}
 
-	/**
-	 * This method instantiates the ChangeListener for Tab-Selections.
-	 * 
-	 * @return the tab selection listener
-	 */
-	public ChangeListener getTabSelectionListener() {
-
-		if (tabSelectionListener == null) {
-			tabSelectionListener = new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent evt) {
-
-					if (pauseTabSelectionListener)
-						return;
-
-					ProjectWindowTab pwt = getProjectWindowTabSelected();
-					if (pwt != null) {
-						DefaultMutableTreeNode selectedNode = getTreeNode(pwt.getTitle());
-						DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) jTreeProject.getLastSelectedPathComponent();
-						if (selectedNode != currentNode) {
-							pauseTreeSelectionListener = true;
-							jTreeProject.setSelectionPath(new TreePath(selectedNode.getPath()));
-							pauseTreeSelectionListener = false;
-						}
-					}
-				}
-			};
-		}
-		return tabSelectionListener;
-	}
 
 	/**
 	 * Gets the currently selected tab as instance of ProjectWindowTab.
@@ -953,27 +949,24 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		}
 		return nodeFound;
 	}
+	
 
 	/**
 	 * Sets the focus to a specified Tab of the project Window.
-	 * 
-	 * @param searchFor the new focus2 tab
-	 */
-	public void setFocus2Tab(String searchFor) {
-		DefaultMutableTreeNode currNode = getTreeNode(searchFor);
-		this.setFocus2Tab(currNode);
-	}
-
-	/**
-	 * Sets the focus to a specified Tab of the project Window.
-	 * 
 	 * @param pwt the new focus2 tab
 	 */
 	public void setFocus2Tab(ProjectWindowTab pwt) {
 		String tabCaption = pwt.getTitle();
 		this.setFocus2Tab(tabCaption);
 	}
-
+	/**
+	 * Sets the focus to a specified Tab of the project Window.
+	 * @param searchFor the new focus2 tab
+	 */
+	public void setFocus2Tab(String searchFor) {
+		DefaultMutableTreeNode currNode = getTreeNode(searchFor);
+		this.setFocus2Tab(currNode);
+	}
 	/**
 	 * Sets the focus to a specified Tab of the {@link ProjectWindow}, where the node represents the corresponding node of
 	 * the project tree.

@@ -85,7 +85,6 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.PropertyContentProvider.FileToProvide;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 
@@ -589,7 +588,6 @@ private static final long serialVersionUID = 1L;
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane();
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab("Wörterbuch", null, getJScrollPaneDictionary(), null);
 			jTabbedPane.addTab("Übersetzen ...", null, getJPanelTranslation(), null);

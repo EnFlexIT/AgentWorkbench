@@ -29,6 +29,7 @@
 package agentgui.core.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -47,6 +48,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -94,6 +96,7 @@ import agentgui.core.update.AWBUpdater;
 import agentgui.core.update.ProjectRepositoryExplorerDialog;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
@@ -120,7 +123,6 @@ public class MainWindow extends JFrame {
 		MenuHelp
 	}
 	
-	private final ImageIcon iconClose = GlobalInfo.getInternalImageIcon("MBclose.png");
 	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 
 	private JFrameSizeAndPostionController windowController;
@@ -165,7 +167,9 @@ public class MainWindow extends JFrame {
 
 	private JToolBar jToolBarCloseProject;
 	private JButton jButtonCloseProject;
-
+	private ImageIcon iconCloseProject;
+	private Color textColor;
+	
 	private JButton jButtonSimStart;
 	private JButton jButtonSimPause;
 	private JButton jButtonSimStop;
@@ -1512,28 +1516,50 @@ public class MainWindow extends JFrame {
 		return jButtonCloseProject;
 	}
 	/**
+	 * Returns the close button ImageIcon.
+	 * @return the close button image icon
+	 */
+	private ImageIcon getCloseButtonImageIcon() {
+		if (iconCloseProject==null || this.getJMenuMainProject().getForeground().equals(this.textColor)==false) {
+			
+			// --- Load the base image first ------------------------
+			iconCloseProject = GlobalInfo.getInternalImageIcon("MBclose.png");
+			try {
+				// --- Get current text color and exchange color ----
+				this.textColor = this.getJMenuMainProject().getForeground();
+				BufferedImage bice = ImageHelper.convertToBufferedImage(iconCloseProject.getImage());
+				bice = ImageHelper.exchangeColor(bice, Color.black, this.textColor);
+				// --- Remind icon for later call ------------------- 
+				iconCloseProject = new ImageIcon(bice);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} 
+		return iconCloseProject;
+	}
+	
+	/**
 	 * Sets the close button position.
 	 *
 	 * @param setVisible the new close button position
 	 */
 	public void setCloseButtonPosition(boolean setVisible) {
 
-		//System.out.println("ToDo: Set close button color according to LookAndFeel - is dark Look and Feel: " + AwbLookAndFeelAdjustments.isDarkLookAndFeel());
-		//System.out.println("Try getting icon from UiManager");
-		
 		if (this.getJButtonCloseProject().isVisible() == false) {
 			this.getJButtonCloseProject().setVisible(true);
 		}
 		if (setVisible == true) {
-			this.getJButtonCloseProject().setIcon(iconClose);
+			this.getJButtonCloseProject().setIcon(this.getCloseButtonImageIcon());
 			this.getJButtonCloseProject().setEnabled(true);
 		} else {
-			this.getJButtonCloseProject().setIcon(iconCloseDummy);
+			this.getJButtonCloseProject().setIcon(this.iconCloseDummy);
 			this.getJButtonCloseProject().setEnabled(false);
 		}
 
-		if (jMenuBarMain != null) {
-			jMenuBarMain.revalidate();
+		if (jPanelToolBar != null) {
+			jPanelToolBar.validate();
+			jPanelToolBar.repaint();
 		}
 	}
 	

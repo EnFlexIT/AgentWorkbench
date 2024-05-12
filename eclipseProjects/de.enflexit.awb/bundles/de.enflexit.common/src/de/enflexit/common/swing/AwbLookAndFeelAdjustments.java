@@ -231,6 +231,10 @@ public class AwbLookAndFeelAdjustments {
 		AwbProgressBarPainter painter = new AwbProgressBarPainter(new Color(161, 198, 231), new Color(91, 155, 213), Color.GRAY);
 		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled].foregroundPainter", painter);
 		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);
+		
+		// --- Do adjustments for TabbedPaneUI ----------------------
+		UIManager.getDefaults().put("TabbedPaneUI", AwbBasicTabbedPaneUI.class.getName());
+		
 	}
 	
 	/**
@@ -268,6 +272,57 @@ public class AwbLookAndFeelAdjustments {
 	private static void doLookAndFeelAdjustmentsDarkMode() {
 		
 		
+	}
+
+	
+	// ------------------------------------------------------------------
+	// --- Some general help functions for the current LookAndFeel ------
+	// ------------------------------------------------------------------	
+	/**
+	 * Prints the current look and feel properties.
+	 *
+	 * @param filterPhrases [optional] filter phrases
+	 */
+	public static void printCurrentLookAndFeelProperties(String ... filterPhrases) {
+		
+		List<String> propNameList = new ArrayList<String>();
+		
+		UIDefaults uiDefaults = UIManager.getLookAndFeel().getDefaults();
+		for (Object key : uiDefaults.keySet()) {
+			// --- Filter for String 'key' ----------------
+			if (key instanceof String==false) continue;
+
+			// --- Matches filter phrases ? ---------------
+			String keyString = (String) key;
+			if (isMatchingFilter(keyString, filterPhrases)) {
+				propNameList.add((String)key);
+			}
+		}
+		Collections.sort(propNameList);
+		
+		for (String key : propNameList) {
+			Object value = uiDefaults.get(key);
+			System.out.println(key + " \t\t " + value.toString());
+		}
+	}
+	/**
+	 * Checks if the specified key is matching the specified filter phrases.
+	 *
+	 * @param key the key
+	 * @param filterPhrases the filter phrases
+	 * @return true, if is matching filter
+	 */
+	private static boolean isMatchingFilter(String key, String ... filterPhrases) {
+		
+		if (key==null | key.length()==0) return false;
+		if (filterPhrases==null || filterPhrases.length==0) return true;
+		
+		for (String filterPhrase : filterPhrases) {
+			if (key.toLowerCase().contains(filterPhrase.toLowerCase())==true) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
