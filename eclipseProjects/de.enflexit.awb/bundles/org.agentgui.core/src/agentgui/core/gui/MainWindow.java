@@ -98,7 +98,9 @@ import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.common.swing.JDialogSizeAndPostionController;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
+import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
 import java.awt.GridBagConstraints;
 
@@ -203,8 +205,6 @@ public class MainWindow extends JFrame {
 		this.setTitelAddition("");
 		this.setCloseButtonPosition(false);
 
-		this.setLocationRelativeTo(null);
-		
 		// --- Initialize the PlatformStatusDialog ------------------ 
 		this.getPlatformStatusDialog();
 		
@@ -213,6 +213,9 @@ public class MainWindow extends JFrame {
 		
 		this.pack();
 		this.setVisible(true);
+
+		// --- Place MainWindow center on screen --------------------
+		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
 	}
 
 	/**

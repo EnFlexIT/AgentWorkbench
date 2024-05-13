@@ -67,7 +67,7 @@ public class AwbLookAndFeelAdjustments {
 	private static AwbLook awbLook = AwbLook.Default;
 	
 	private static boolean isFurtherLaFToInstall = false;
-	private static boolean isFurtherLaFToInstalled = false;
+	private static boolean isFurtherLaFInstalled = false;
 	
 	/**
 	 * Returns the current AWB look.
@@ -92,7 +92,7 @@ public class AwbLookAndFeelAdjustments {
 	public static LookAndFeelInfo[] getInstalledLookAndFeels() {
 		
 		// --- Install further LookAndFeels ---------------
-		if (isFurtherLaFToInstall==true && isFurtherLaFToInstalled==false) {
+		if (isFurtherLaFToInstall==true && isFurtherLaFInstalled==false) {
 			AwbLookAndFeelAdjustments.installLookAndFeels();
 		}
 		
@@ -121,7 +121,7 @@ public class AwbLookAndFeelAdjustments {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			isFurtherLaFToInstalled = true;
+			isFurtherLaFInstalled = true;
 		}
 	}
 	

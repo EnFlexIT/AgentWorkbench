@@ -538,7 +538,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			projectViewRightTabs = new JTabbedPane();
 			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
 			projectViewRightTabs.setName("ProjectTabs");
-//			projectViewRightTabs.setUI(new AwbBasicTabbedPaneUI());
 			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 13));
 			projectViewRightTabs.addMouseListener(this.getTabMouseListener());
 			projectViewRightTabs.addChangeListener(this.getTabSelectionListener());
