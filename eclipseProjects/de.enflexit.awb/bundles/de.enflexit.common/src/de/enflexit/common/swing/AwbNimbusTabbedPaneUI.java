@@ -39,17 +39,16 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 /**
- * The Class AwbBasicTabbedPaneUI defines the appearance of tabs (e.g. the color settings).
+ * The Class AwbNimbusTabbedPaneUI defines the appearance of tabs (e.g. the color settings).
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
+public class AwbNimbusTabbedPaneUI extends BasicTabbedPaneUI implements AwbTabbedPaneHeaderPainter {
 
 	private Font fontSelected = null;
 	private Font fontNotSelected = null;
 	 
 	private boolean tabHeaderVisible = true;
-	
 	
 	/**
      * Create a UI.
@@ -57,7 +56,7 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
      * @return a UI
      */
     public static ComponentUI createUI(JComponent c) {
-        return new AwbBasicTabbedPaneUI();
+        return new AwbNimbusTabbedPaneUI();
     }
 	
 	/* (non-Javadoc)
@@ -79,17 +78,17 @@ public class AwbBasicTabbedPaneUI extends BasicTabbedPaneUI {
 		
 	}
 	
-	/**
-	 * Sets the tab header visible (or not).
-	 * @param tabHeaderVisible the indicator to set tab header visible
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.swing.AwbTabbedPaneHeaderPainter#setTabHeaderVisible(boolean)
 	 */
+	@Override
 	public void setTabHeaderVisible(boolean tabHeaderVisible) {
 		this.tabHeaderVisible = tabHeaderVisible;
 	}
-	/**
-	 * Checks if tab headers are visible.
-	 * @return true, if tab headers are visible
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.swing.AwbTabbedPaneHeaderPainter#isTabHeaderVisible()
 	 */
+	@Override
 	public boolean isTabHeaderVisible() {
 		return tabHeaderVisible;
 	}

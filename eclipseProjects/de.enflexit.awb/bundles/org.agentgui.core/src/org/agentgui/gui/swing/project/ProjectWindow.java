@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package org.agentgui.gui.swing.project;
 
 import java.awt.BorderLayout;
@@ -82,7 +54,7 @@ import agentgui.core.gui.projectwindow.simsetup.StartSetup;
 import agentgui.core.project.Project;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
+import de.enflexit.common.swing.AwbTabbedPaneHeaderPainter;
 
 /**
  * This extended JInternalFrame graphically encapsulates the the project in the main window (class CoreWindow)
@@ -112,7 +84,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private JMenuItem jMenueItemMaximizeSelectedTab;
 	private JMenuItem jMenueItemDefineAsProjectStartTab;
 
-	private JTabbedPane projectViewRightTabs;
+	private JTabbedPane jTabbedPaneProjectWindowTabs;
 	private ChangeListener tabSelectionListener;
 	private MouseListener tabMouseListener;
 
@@ -219,14 +191,14 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		pwt.add();
 		this.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
 
+		// --- Setup Properties -----------------------
+		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Setup-Eigenschaften"), null, null, new SetupPropertiesPanel(this.currProject, Language.translate("Setup-Eigenschaften")), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+		pwt.add();
 		// --- start configuration for agents ---------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
 		// --- simulation environment -----------------
 		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
-		pwt.add();
-		// --- Setup Properties -----------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Setup-Eigenschaften"), null, null, new SetupPropertiesPanel(this.currProject, Language.translate("Setup-Eigenschaften")), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
 		
 		
@@ -305,9 +277,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		if (isTreeVisible==true) {
 			this.getJPanelContent().add(this.getJSplitPaneProjectView(), BorderLayout.CENTER);
 			this.getJSplitPaneProjectView().setLeftComponent(this.getJScrollPane());
-			this.getJSplitPaneProjectView().setRightComponent(this.getProjectViewRightTabs());
+			this.getJSplitPaneProjectView().setRightComponent(this.getJTabbedPaneProjectWindowTabs());
 		} else {
-			this.getJPanelContent().add(this.getProjectViewRightTabs(), BorderLayout.CENTER);
+			this.getJPanelContent().add(this.getJTabbedPaneProjectWindowTabs(), BorderLayout.CENTER);
 		}
 		this.getJPanelContent().validate();
 		this.getJPanelContent().repaint();
@@ -329,7 +301,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			jSplitPaneProjectView.setDividerLocation(210);
 			jSplitPaneProjectView.setDividerSize(10);
 			jSplitPaneProjectView.setLeftComponent(this.getJScrollPane());
-			jSplitPaneProjectView.setRightComponent(this.getProjectViewRightTabs());
+			jSplitPaneProjectView.setRightComponent(this.getJTabbedPaneProjectWindowTabs());
 		}
 		return jSplitPaneProjectView;
 	}
@@ -499,12 +471,8 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	@Override
 	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
-		
-		this.setTabHeaderVisible(this.getProjectViewRightTabs(), isProjectTabHeaderVisible);
-		
-		Container tabParent = this.getProjectViewRightTabs().getParent();
-		tabParent.validate();
-		tabParent.repaint();
+		this.setTabHeaderVisible(this.getJTabbedPaneProjectWindowTabs(), isProjectTabHeaderVisible);
+		this.getJSplitPaneProjectView().setRightComponent(this.getJTabbedPaneProjectWindowTabs());
 	}
 	/**
 	 * Sets the specified tab header visible or not.
@@ -514,8 +482,8 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	private void setTabHeaderVisible(JTabbedPane jTabbedPane, boolean isTabHeaderVisible) {
 		
-		if (jTabbedPane.getUI() instanceof AwbBasicTabbedPaneUI) {
-			AwbBasicTabbedPaneUI tabUI = (AwbBasicTabbedPaneUI) jTabbedPane.getUI();
+		if (jTabbedPane.getUI() instanceof AwbTabbedPaneHeaderPainter) {
+			AwbTabbedPaneHeaderPainter tabUI = (AwbTabbedPaneHeaderPainter) jTabbedPane.getUI();
 			tabUI.setTabHeaderVisible(isTabHeaderVisible);
 		}
 
@@ -533,16 +501,16 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * This method initializes ProjectViewRight.
 	 * @return javax.swing.JTabbedPane
 	 */
-	private JTabbedPane getProjectViewRightTabs() {
-		if (projectViewRightTabs == null) {
-			projectViewRightTabs = new JTabbedPane();
-			projectViewRightTabs.setTabPlacement(JTabbedPane.TOP);
-			projectViewRightTabs.setName("ProjectTabs");
-			projectViewRightTabs.setFont(new Font("Dialog", Font.BOLD, 13));
-			projectViewRightTabs.addMouseListener(this.getTabMouseListener());
-			projectViewRightTabs.addChangeListener(this.getTabSelectionListener());
+	private JTabbedPane getJTabbedPaneProjectWindowTabs() {
+		if (jTabbedPaneProjectWindowTabs == null) {
+			jTabbedPaneProjectWindowTabs = new JTabbedPane();
+			jTabbedPaneProjectWindowTabs.setTabPlacement(JTabbedPane.TOP);
+			jTabbedPaneProjectWindowTabs.setName("ProjectTabs");
+			jTabbedPaneProjectWindowTabs.setFont(new Font("Dialog", Font.BOLD, 13));
+			jTabbedPaneProjectWindowTabs.addMouseListener(this.getTabMouseListener());
+			jTabbedPaneProjectWindowTabs.addChangeListener(this.getTabSelectionListener());
 		}
-		return projectViewRightTabs;
+		return jTabbedPaneProjectWindowTabs;
 	}
 	/**
 	 * This method instantiates the MouseListener for the Tab-Selections.
@@ -732,9 +700,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		ProjectWindowTab tabSelected = null;
 
-		int selIndex = this.projectViewRightTabs.getSelectedIndex();
+		int selIndex = this.jTabbedPaneProjectWindowTabs.getSelectedIndex();
 		if (selIndex > -1) {
-			String tabTitle = this.projectViewRightTabs.getTitleAt(selIndex);
+			String tabTitle = this.jTabbedPaneProjectWindowTabs.getTitleAt(selIndex);
 			tabSelected = getProjectWindowTab(tabTitle);
 			if (tabSelected != null) {
 				JTabbedPane subPane = tabSelected.getCompForChildComp();
@@ -796,7 +764,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		int newIndexPos = indexPosition;
 
 		if (newIndexPos < 0) {
-			newIndexPos = projectViewRightTabs.getTabCount(); // Default
+			newIndexPos = jTabbedPaneProjectWindowTabs.getTabCount(); // Default
 			String parentName = projectWindowTab.getParentName();
 			if (parentName != null) {
 				ProjectWindowTab parentPWT = this.getProjectWindowTab(parentName);
@@ -842,21 +810,19 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		} else {
 			pareNode = this.getRootNode();
-			tabbedPaneParent = projectViewRightTabs;
+			tabbedPaneParent = jTabbedPaneProjectWindowTabs;
 		}
 
 		// --- Set empty border for visualization -------------------  
-		JComponent jCompVis = projectWindowTab.getJComponentForVisualization();
-		jCompVis.setBorder(null);
 		
 		if (projectWindowTab.getIndexPosition()!=-1 && projectWindowTab.getIndexPosition()<pareNode.getChildCount()) {
 			// --- Add to parent node/tab at index position ---------
 			pareNode.insert(newNode, projectWindowTab.getIndexPosition());
-			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), jCompVis, projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
+			tabbedPaneParent.insertTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getJComponentForVisualization(), projectWindowTab.getTipText(), projectWindowTab.getIndexPosition());
 		} else {
 			// --- Just add to parent node/tab ----------------------
 			pareNode.add(newNode);
-			tabbedPaneParent.addTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), jCompVis, projectWindowTab.getTipText());
+			tabbedPaneParent.addTab(projectWindowTab.getTitle(), projectWindowTab.getIcon(), projectWindowTab.getJComponentForVisualization(), projectWindowTab.getTipText());
 		}
 
 		// --- refresh view -----------------------------------------
@@ -924,7 +890,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			}
 		}
 		this.getRootNode().removeAllChildren();
-		this.projectViewRightTabs.removeAll();
+		this.jTabbedPaneProjectWindowTabs.removeAll();
 	}
 
 	/**

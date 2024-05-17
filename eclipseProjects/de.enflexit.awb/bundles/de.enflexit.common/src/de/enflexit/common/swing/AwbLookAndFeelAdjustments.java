@@ -37,7 +37,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -66,7 +65,7 @@ public class AwbLookAndFeelAdjustments {
 	
 	private static AwbLook awbLook = AwbLook.Default;
 	
-	private static boolean isFurtherLaFToInstall = false;
+	private static boolean isFurtherLaFToInstall = true;
 	private static boolean isFurtherLaFInstalled = false;
 	
 	/**
@@ -129,21 +128,21 @@ public class AwbLookAndFeelAdjustments {
 	/**
 	 * Sets the look and feel to the swing UI Manager.
 	 *
-	 * @param lnfClassName the new look and feel
+	 * @param lafClassNameNew the new look and feel
 	 * @param invoker the visual invoker of this method
 	 */
-	public static void setLookAndFeel(String lnfClassName, Component invoker) {
+	public static void setLookAndFeel(String lafClassNameNew, Component invoker) {
 		
 		if (GraphicsEnvironment.isHeadless()==true) return;
-		if (lnfClassName==null || lnfClassName.isEmpty()==true) return;
+		if (lafClassNameNew==null || lafClassNameNew.isEmpty()==true) return;
 		
-		String lnfClassNameOld=null;
+		String lafClassNameOld = null;
 		try {
-			// --- Get the old look and feel first ------------------
-			LookAndFeel lnfOld = UIManager.getLookAndFeel();
-			lnfClassNameOld = lnfOld.getClass().getName();
-			if (lnfClassName.equals(lnfClassNameOld)==false) {
-				UIManager.setLookAndFeel(lnfClassName);
+			// --- Check against old LookAndFeel first --------------
+			lafClassNameOld = UIManager.getLookAndFeel().getClass().getName();
+			if (lafClassNameNew.equals(lafClassNameOld)==false) {
+				// --- Set the new LookAndFeel ----------------------
+				UIManager.setLookAndFeel(lafClassNameNew);
 				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 				if (invoker!=null) {
 					SwingUtilities.updateComponentTreeUI(invoker);
@@ -151,22 +150,22 @@ public class AwbLookAndFeelAdjustments {
 			}
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException lnfEx) {
-			System.err.println("Cannot install " + lnfClassName + " on this platform:" + lnfEx.getMessage());
-			
-		} finally {
-			// --- Switch back to old LookAndFeel
-			if (lnfClassNameOld!=null) {
+			System.err.println("[" + AwbLookAndFeelAdjustments.class.getSimpleName() + "] Cannot install " + lafClassNameNew + " on this platform:" + lnfEx.getMessage());
+			// --- Switch back to previous LookAndFeel --------------
+			if (lafClassNameOld!=null) {
 				try {
-					UIManager.setLookAndFeel(lnfClassName);
+					UIManager.setLookAndFeel(lafClassNameOld);
 					AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 					if (invoker!=null) {
 						SwingUtilities.updateComponentTreeUI(invoker);
 					}
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+					System.err.println("[" + AwbLookAndFeelAdjustments.class.getSimpleName() + "] Cannot revert to  " + lafClassNameOld + " on this platform:" + lnfEx.getMessage());
 					ex.printStackTrace();
 				}
 			}
+
 		}
 	}
 	
@@ -177,12 +176,25 @@ public class AwbLookAndFeelAdjustments {
 		
 		if (GraphicsEnvironment.isHeadless()==true) return;
 		
-		LookAndFeel lnf = UIManager.getLookAndFeel();
-		if (lnf.getClass().getName().equals(DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
+		String lafClassName = UIManager.getLookAndFeel().getClass().getName();
+		if (lafClassName.equals(DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
+			// --- Nimbus -----------------------
 			doLookAndFeelAdjustmentsForNimbus();
+		} else if (lafClassName.startsWith("com.formdev.flatlaf.")==true) {
+			// --- FlatLaF ----------------------
+			doLookAndFeelAdjustmentsForFlatLaf();
 		}
 	}
 
+	/**
+	 * Do look and feel adjustments for the FlatLaF LookAndFeel.
+	 */
+	private static void doLookAndFeelAdjustmentsForFlatLaf() {
+		
+		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbFlatLafTabbedPaneUI.class.getName());
+	}
+	
+	
 	/**
 	 * Do look and feel adjustments for the Nimbus LookAndFeel.
 	 */
@@ -233,7 +245,7 @@ public class AwbLookAndFeelAdjustments {
 		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);
 		
 		// --- Do adjustments for TabbedPaneUI ----------------------
-		UIManager.getDefaults().put("TabbedPaneUI", AwbBasicTabbedPaneUI.class.getName());
+		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbNimbusTabbedPaneUI.class.getName());
 		
 	}
 	

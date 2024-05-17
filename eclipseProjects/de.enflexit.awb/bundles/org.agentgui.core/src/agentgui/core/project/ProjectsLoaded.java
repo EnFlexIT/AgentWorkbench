@@ -389,7 +389,20 @@ public class ProjectsLoaded {
 			this.setProjectMenuItems();
 			// --- 3. Set the right value to the MenueBar 'View' ------------------
 			this.setProjectView4DevOrUser();
+			// --- 4. Set project tabs visible or not -----------------------------
+			this.setProjectTabHeaderInVisible();
 		}
+	}
+	
+	/**
+	 * According to the current project settings, sets the project tab header visible or invisible.
+	 */
+	private void setProjectTabHeaderInVisible() {
+		
+		Project project = Application.getProjectFocused();
+		if (project==null) return;
+
+		project.getProjectEditorWindow().setProjectTabHeaderVisible(project.isProjectTabHeaderVisible());
 	}
 	
 	/**

@@ -270,7 +270,7 @@ public class ProjectWindowTab {
 	 * Gets the index position.
 	 * @return the indexPosition
 	 */
-	public int getIndexPosition() {
+	public Integer getIndexPosition() {
 		if (this.getJComponentForVisualization()!=null) {
 			Container container = this.getJComponentForVisualization().getParent();
 			if (container!=null && container instanceof JTabbedPane) {

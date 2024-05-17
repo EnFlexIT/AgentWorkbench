@@ -43,7 +43,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.KeyStroke;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -82,10 +81,10 @@ public class MaximizedTab extends JInternalFrame {
 	 */
 	private void initialize() {
 		
+		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setClosable(true);
-		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		this.setVisible(true);
-		this.registerEscapeKeyStroke();
+		
 		this.addInternalFrameListener(new InternalFrameAdapter() {
 			/* (non-Javadoc)
 			 * @see javax.swing.event.InternalFrameAdapter#internalFrameClosing(javax.swing.event.InternalFrameEvent)
@@ -95,20 +94,13 @@ public class MaximizedTab extends JInternalFrame {
 				projectWindow.tabRestore();
 				super.internalFrameClosing(ife);
 			}
-			/* (non-Javadoc)
-			 * @see javax.swing.event.InternalFrameAdapter#internalFrameDeactivated(javax.swing.event.InternalFrameEvent)
-			 */
-			@Override
-			public void internalFrameDeactivated(InternalFrameEvent e) {
-				super.internalFrameDeactivated(e);
-			}
-			
 		});
-		((BasicInternalFrameUI) this.getUI()).setNorthPane(null);
 	
 		// --- Add ComponentListener to MainWindow -------- 
 		this.addComponentListenerOfMainWindow();
+		this.registerEscapeKeyStroke();
 		
+		this.setVisible(true);
 	}
 	
 	/* (non-Javadoc)
