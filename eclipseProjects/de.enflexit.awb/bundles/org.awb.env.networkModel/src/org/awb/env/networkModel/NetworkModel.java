@@ -573,7 +573,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		NetworkModel networkModelCopy = null;	
 		synchronized(this) {
 
-			if (isCloneNetworkModel==true) {
+			// --- Define max number of copy threads --------------------------
+			int maxNoOfCopyThreads = 9;
+			if (isCloneNetworkModel==true || this.getNetworkComponents().size()<=maxNoOfCopyThreads) {
 				// ------------------------------------------------------------
 				// --- Make a serialization copy the NetworkModel -------------
 				// ------------------------------------------------------------
@@ -602,7 +604,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				
 				// ------------------------------------------------------------
 				// --- Create working threads to copy the NetworkComponent ----
-				int maxNoOfCopyThreads = 9;
 				int currCopyThread = 0;
 				while (this.getNetworkComponentCopierThreads().size() < maxNoOfCopyThreads) {
 					NetworkComponentCopierThread ncCopier = new NetworkComponentCopierThread(this, copyOfComponents);
@@ -620,7 +621,9 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 					}
 				}
 				// --- Start the copy processes -------------------------------
-				this.getNetworkComponentCopierThreads().forEach(ncCopier -> ncCopier.start());
+				synchronized (this.getNetworkComponentCopierThreads()) {
+					this.getNetworkComponentCopierThreads().forEach(ncCopier -> ncCopier.start());
+				}
 				
 				// --- Wait for the termination of the copier threads ---------
 				this.waitForNetworkComponentCopierThreads();
