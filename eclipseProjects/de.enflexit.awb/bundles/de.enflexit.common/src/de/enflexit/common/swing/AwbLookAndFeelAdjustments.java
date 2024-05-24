@@ -37,7 +37,7 @@ public class AwbLookAndFeelAdjustments {
 	
 	private static AwbLook awbLook = AwbLook.Default;
 	
-	private static boolean isFurtherLaFToInstall = true;
+	private static boolean isFurtherLaFToInstall = false;
 	private static boolean isFurtherLaFInstalled = false;
 	
 	/**
