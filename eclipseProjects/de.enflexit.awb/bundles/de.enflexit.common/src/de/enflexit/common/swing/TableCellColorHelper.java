@@ -17,6 +17,8 @@ public final class TableCellColorHelper {
 	private static boolean debug = false;
 	private static boolean colorPropertiesAlreadyPrinted = false;
 	
+	private static boolean isEnabledTableCellColorHelper = true;
+	
 	/** The Constant TB_BACKGROUND. */
 	public final static Color TB_BACKGROUND = Color.WHITE;
 	/** The Constant TB_ALTERNATEROWCOLOR. */
@@ -52,6 +54,7 @@ public final class TableCellColorHelper {
 	 * @param isSelected the indicator, if the row is selected
 	 */
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected) {
+		if (isEnabledTableCellColorHelper==false) return;
 		setTableCellRendererColors(comp, row, isSelected, TableCellColorHelper.TB_BACKGROUND);
 	}
 	
@@ -65,6 +68,7 @@ public final class TableCellColorHelper {
 	 */
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected, Color tableBgColor) {
 
+		if (isEnabledTableCellColorHelper==false) return;
 		// --- do the settings --------------
 		comp.setOpaque(true);
 		if (isSelected == true) {

@@ -42,8 +42,8 @@ import javax.swing.KeyStroke;
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.http.WebResourcesAuthorization;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 import java.awt.Insets;
 
@@ -79,7 +79,7 @@ public class ProjectRepositoryExplorerDialog extends JDialog implements ProjectR
 		this.setContentElements();
 		
 		this.setSize(1200, 750);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.setVisible(true);
 	}

@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>de.enflexit.common.flatlaf</name>
-	<comment></comment>
+	<comment>JavaCC Nature</comment>
 	<projects>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>sf.eclipse.javacc.core.javaccbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -35,5 +40,6 @@
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>sf.eclipse.javacc.core.javaccnature</nature>
 	</natures>
 </projectDescription>

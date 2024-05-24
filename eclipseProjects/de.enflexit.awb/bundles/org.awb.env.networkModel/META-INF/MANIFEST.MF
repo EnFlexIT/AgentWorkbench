@@ -33,7 +33,6 @@ Export-Package: org.awb.env.networkModel,
  org.awb.env.networkModel.visualisation.notifications
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
- de.enflexit.common.flatlaf,
  de.enflexit.geography,
  org.agentgui.core,
  org.agentgui.lib.jade,

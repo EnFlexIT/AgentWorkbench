@@ -39,11 +39,11 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 /**
- * The Class AwbNimbusTabbedPaneUI defines the appearance of tabs (e.g. the color settings).
+ * The Class AwbTabbedPaneUI_Nimbus defines the appearance of tabs (e.g. the color settings).
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg-Essen
  */
-public class AwbNimbusTabbedPaneUI extends BasicTabbedPaneUI implements AwbTabbedPaneHeaderPainter {
+public class AwbTabbedPaneUI_Nimbus extends BasicTabbedPaneUI implements AwbTabbedPaneHeaderPainter {
 
 	private Font fontSelected = null;
 	private Font fontNotSelected = null;
@@ -56,7 +56,7 @@ public class AwbNimbusTabbedPaneUI extends BasicTabbedPaneUI implements AwbTabbe
      * @return a UI
      */
     public static ComponentUI createUI(JComponent c) {
-        return new AwbNimbusTabbedPaneUI();
+        return new AwbTabbedPaneUI_Nimbus();
     }
 	
 	/* (non-Javadoc)

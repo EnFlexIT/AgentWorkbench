@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.common.swing;
 
 import java.awt.Color;
@@ -49,7 +21,7 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 /**
- * The Class AwbUiAdjustments.
+ * The Class AwbLookAndFeelAdjustments.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -176,12 +148,16 @@ public class AwbLookAndFeelAdjustments {
 		
 		if (GraphicsEnvironment.isHeadless()==true) return;
 		
+		// --- By default, remove custom ClassLoader ------
+		UIManager.getLookAndFeelDefaults().remove("ClassLoader");
+		
+		// --- Do LookAndFee specific settings ------------
 		String lafClassName = UIManager.getLookAndFeel().getClass().getName();
 		if (lafClassName.equals(DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
-			// --- Nimbus -----------------------
+			// --- Nimbus ---------------------------------
 			doLookAndFeelAdjustmentsForNimbus();
 		} else if (lafClassName.startsWith("com.formdev.flatlaf.")==true) {
-			// --- FlatLaF ----------------------
+			// --- FlatLaF --------------------------------
 			doLookAndFeelAdjustmentsForFlatLaf();
 		}
 	}
@@ -191,7 +167,9 @@ public class AwbLookAndFeelAdjustments {
 	 */
 	private static void doLookAndFeelAdjustmentsForFlatLaf() {
 		
-		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbFlatLafTabbedPaneUI.class.getName());
+		//IntelliJTheme.setup(Utils.class.getResourceAsStream("/com/formdev/flatlaf/intellijthemes/themes/Cobalt_2.theme.json" ) );
+		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbTabbedPaneUI_FlatLaf.class.getName());
+		UIManager.getLookAndFeelDefaults().put("ClassLoader", AwbLookAndFeelAdjustments.class.getClassLoader());
 	}
 	
 	
@@ -210,7 +188,7 @@ public class AwbLookAndFeelAdjustments {
 		// --- Splash color: new Color(20, 130, 172)
 		// ----------------------------------------------------------------------------------------------------------------------
 		
-		switch (getAwbLook()) {
+		switch (AwbLookAndFeelAdjustments.getAwbLook()) {
 		case Light:
 			AwbLookAndFeelAdjustments.doLookAndFeelAdjustmentsLightMode();
 			break;
@@ -245,7 +223,7 @@ public class AwbLookAndFeelAdjustments {
 		UIManager.getLookAndFeelDefaults().put("ProgressBar[Enabled+Finished].foregroundPainter", painter);
 		
 		// --- Do adjustments for TabbedPaneUI ----------------------
-		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbNimbusTabbedPaneUI.class.getName());
+		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbTabbedPaneUI_Nimbus.class.getName());
 		
 	}
 	

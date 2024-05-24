@@ -11,11 +11,11 @@ import javax.swing.plaf.ComponentUI;
 import com.formdev.flatlaf.ui.FlatTabbedPaneUI;
 
 /**
- * The Class AwbFlatLafTabbedPaneUI.
+ * The Class AwbTabbedPaneUI_FlatLaf.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class AwbFlatLafTabbedPaneUI extends FlatTabbedPaneUI implements AwbTabbedPaneHeaderPainter {
+public class AwbTabbedPaneUI_FlatLaf extends FlatTabbedPaneUI implements AwbTabbedPaneHeaderPainter {
 	 
 	private boolean tabHeaderVisible = true;
 	
@@ -25,7 +25,7 @@ public class AwbFlatLafTabbedPaneUI extends FlatTabbedPaneUI implements AwbTabbe
      * @return a UI
      */
     public static ComponentUI createUI(JComponent c) {
-        return new AwbFlatLafTabbedPaneUI();
+        return new AwbTabbedPaneUI_FlatLaf();
     }
 	
 	/* (non-Javadoc)

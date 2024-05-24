@@ -24,8 +24,8 @@ import javax.swing.WindowConstants;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
 import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class JDialogWsConfiguration enables to configure WS server and clients.
@@ -80,7 +80,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		int height = (int)(screenSize.getHeight() * 0.6);
 		int width  = (int) (screenSize.getWidth() * 0.6);
 		this.setSize(width, height);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 
 		GridBagLayout gridBagLayout = new GridBagLayout();

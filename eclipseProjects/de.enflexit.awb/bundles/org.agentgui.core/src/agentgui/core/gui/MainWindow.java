@@ -98,9 +98,9 @@ import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
 import java.awt.GridBagConstraints;
 
@@ -215,7 +215,7 @@ public class MainWindow extends JFrame {
 		this.setVisible(true);
 
 		// --- Place MainWindow center on screen --------------------
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
 	}
 
 	/**
@@ -280,7 +280,6 @@ public class MainWindow extends JFrame {
 		// --- Set button for simulation control ----------
 		this.setSimulationReady2Start();
 	}
-
 	/**
 	 * Returns the JFrameSizeAndPostionController used for the MainWindow.
 	 */
@@ -290,6 +289,7 @@ public class MainWindow extends JFrame {
 		}
 		return windowController;
 	}
+	
 	/**
 	 * Return the size in relation (scaled) to the screen size.
 	 */

@@ -52,8 +52,8 @@ import org.agentgui.gui.AwbBenchmarkMonitor;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This JDialog is used to display the progress of the benchmark during its runtime.<br>
@@ -108,7 +108,7 @@ public class BenchmarkMonitor extends JDialog implements ActionListener, AwbBenc
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		// --- Translations ----
 		jLabelBenchmark.setText(Language.translate("Bitte warten! Der Benchmark wird durchgeführt ..."));

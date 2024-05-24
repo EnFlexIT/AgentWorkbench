@@ -30,8 +30,8 @@ import de.enflexit.awb.ws.credential.BearerTokenCredential;
 import de.enflexit.awb.ws.credential.JwtToken;
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class JDialogCredentialCreation for the creation of a credential.
@@ -83,7 +83,7 @@ public class JDialogCredentialCreation extends JDialog implements ActionListener
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setSize(500, 300);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{351, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
