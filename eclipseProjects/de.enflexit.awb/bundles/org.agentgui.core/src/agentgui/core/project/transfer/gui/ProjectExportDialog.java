@@ -72,8 +72,8 @@ import agentgui.core.project.setup.SimulationSetup;
 import agentgui.core.project.transfer.ProjectExportController;
 import agentgui.core.project.transfer.ProjectExportSettings;
 import agentgui.core.project.transfer.ProjectExportSettingsController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator.FileDescriptor;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluatorListener;
@@ -225,7 +225,7 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 		
 		this.setModal(true);
 		this.setSize(830, 500);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 
 	/**

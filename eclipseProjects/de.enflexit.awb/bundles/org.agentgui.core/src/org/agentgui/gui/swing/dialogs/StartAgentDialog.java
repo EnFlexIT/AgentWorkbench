@@ -59,8 +59,8 @@ import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.AgentSelector;
 import de.enflexit.common.classSelection.ClassElement2Display;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.ControllerException;
 
@@ -135,7 +135,7 @@ public class StartAgentDialog extends JDialog implements ActionListener {
 		this.setContentElements();
 		
 		this.setSize(600, 230);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 
 	private void setContentElements() {

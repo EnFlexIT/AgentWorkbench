@@ -57,8 +57,8 @@ import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.xml.XMLCodec;
 import jade.content.onto.Ontology;
@@ -326,7 +326,7 @@ public class OntologyInstanceViewer extends JTabbedPane {
 		int diaWidth = (int) (screenSize.width*0.8);
 		int diaHeight = (int) (screenSize.height * 0.9);
 		dialog.setSize(new Dimension(diaWidth, diaHeight));
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(dialog, JDialogPosition.ParentCenter);	
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(dialog, JDialogPosition.ParentCenter);	
 		
 	    // --- Remind and remove THIS from the parent -----
 	    this.getDynTableJPanel().setOntologyClassVisualsationVisible(null);

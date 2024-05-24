@@ -7,11 +7,14 @@ Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: .,
- lib/flatlaf-3.4.1.jar
+ lib/flatlaf-3.4.1.jar,
+ lib/flatlaf-intellij-themes-3.4.1.jar
 Bundle-Version: 3.4.1.qualifier
 Eclipse-BundleShape: dir
 Export-Package: com.formdev.flatlaf,
  com.formdev.flatlaf.icons,
+ com.formdev.flatlaf.intellijthemes,
+ com.formdev.flatlaf.intellijthemes.materialthemeuilite,
  com.formdev.flatlaf.json,
  com.formdev.flatlaf.resources,
  com.formdev.flatlaf.themes,

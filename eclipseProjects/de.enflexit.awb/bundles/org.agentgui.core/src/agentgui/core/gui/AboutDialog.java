@@ -59,8 +59,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.JHyperLink;
 
 /**
@@ -156,7 +156,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 		
 		// --- Set Dialog size and position -------------------------
 		this.setSize(650, 500);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
 	/**

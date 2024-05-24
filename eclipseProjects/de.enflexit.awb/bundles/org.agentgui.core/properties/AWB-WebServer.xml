@@ -50,14 +50,14 @@
             <key>cors.exposedHeaders</key>
             <value>
                 <key>cors.exposedHeaders</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></value>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">*</value>
             </value>
         </entry>
         <entry>
             <key>cors.filter.enabled</key>
             <value>
                 <key>cors.filter.enabled</key>
-                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
             </value>
         </entry>
         <entry>
@@ -134,14 +134,12 @@
             <key>ssl.keypassword</key>
             <value>
                 <key>ssl.keypassword</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">test</value>
             </value>
         </entry>
         <entry>
             <key>ssl.keystore</key>
             <value>
                 <key>ssl.keystore</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">AWB-WebServer.pfx</value>
             </value>
         </entry>
         <entry>
@@ -162,7 +160,6 @@
             <key>ssl.password</key>
             <value>
                 <key>ssl.password</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">test</value>
             </value>
         </entry>
         <entry>
@@ -191,11 +188,11 @@
                     <securityHandlerConfiguration>
                         <entry>
                             <key>JWT Issuer</key>
-                            <value>AWB-HEMS</value>
+                            <value>AWB-Web-UI</value>
                         </entry>
                         <entry>
                             <key>JWT Secrete</key>
-                            <value>Das ist ein langer Text, der als Test verwendet wird</value>
+                            <value>Das ist ein langer Text, den ich hiermit noch länger mache.</value>
                         </entry>
                         <entry>
                             <key>JWT Token - Renew with every call</key>
@@ -203,11 +200,10 @@
                         </entry>
                         <entry>
                             <key>JWT Token - Validity Period [Min]</key>
-                            <value>10</value>
+                            <value>010</value>
                         </entry>
                         <entry>
                             <key>JWT Verbose</key>
-                            <value>false</value>
                         </entry>
                         <entry>
                             <key>Password</key>

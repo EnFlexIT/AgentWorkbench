@@ -51,8 +51,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.common.Language;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 
 /**
@@ -502,7 +502,7 @@ public class DynTableJPanel extends JPanel {
 			// --- Center, if dialog --------------------------------
 			if (this.getContainerMainFrame() instanceof JDialog) {
 				JDialog jDialog = (JDialog) this.getContainerMainFrame(); 
-				JDialogSizeAndPostionController.setJDialogPositionOnScreen(jDialog, JDialogPosition.ParentCenter);
+				WindowSizeAndPostionController.setJDialogPositionOnScreen(jDialog, JDialogPosition.ParentCenter);
 			}
 
 		}

@@ -21,8 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.SerialClone;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.OSGBCoordinate;
 import de.enflexit.geography.coordinates.UTMCoordinate;
@@ -112,7 +112,7 @@ public class GeoCoordinateDialog extends JDialog implements ActionListener {
 		
 		// --- Set Dialog position ----------------------------------
 		this.setSize(450, 350);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.setVisible(true);
 	}

@@ -32,8 +32,8 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.crypto.CertificateProperties;
 import de.enflexit.common.crypto.KeyStoreController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This class allows the user to configure the HTTPS Message Transport protocol.
@@ -130,7 +130,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		
 		this.setContentElements();
 		this.setSize(820, 590);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 	}
 	

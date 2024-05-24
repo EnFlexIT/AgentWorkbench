@@ -51,8 +51,8 @@ import de.enflexit.common.Language;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -153,7 +153,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 		
 		// --- Dialog zentrieren ------------------------------------
 		this.setSize(600, 500);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	}
 

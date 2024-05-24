@@ -41,8 +41,8 @@ import javax.swing.JPanel;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This JDialog is a reserve dialog in case that tray icons are not supported
@@ -86,7 +86,7 @@ public class AWBTrayDialog extends JDialog implements MouseListener {
 		this.add(trayIconPopUp);
 		this.setAlwaysOnTop(true);
 		
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentBottomRight);
 		
 		String viewTitle = Application.getGlobalInfo().getApplicationTitle();
 		jContentPane.setToolTipText(viewTitle);

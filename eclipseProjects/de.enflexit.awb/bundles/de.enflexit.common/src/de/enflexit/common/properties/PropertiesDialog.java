@@ -13,8 +13,8 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.BundleHelper;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class PropertiesDialog enables to edit the specified Properties.
@@ -59,7 +59,7 @@ public class PropertiesDialog extends JDialog {
 		this.setSize(1000, 650);
 		this.registerEscapeKeyStroke();
 		
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();

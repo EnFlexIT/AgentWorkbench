@@ -8,8 +8,8 @@ import javax.swing.KeyStroke;
 
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
 
@@ -91,7 +91,7 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 		
 		this.setSize(1000, 600);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.registerEscapeKeyStroke();
 		

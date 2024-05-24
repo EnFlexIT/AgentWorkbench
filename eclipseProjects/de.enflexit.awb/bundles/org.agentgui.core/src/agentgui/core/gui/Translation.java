@@ -85,8 +85,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.PropertyContentProvider.FileToProvide;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The JDialog is used in order to allow the translations between all defined languages
@@ -228,7 +228,7 @@ private static final long serialVersionUID = 1L;
 		this.setKeyListenEvents();
 		
 		// --- Center dialog ----------------------------------------
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 	    // --- Translate --------------------------------------------
 		this.setTitle(appName + ": " + Language.translate("Wörterbuch"));

@@ -14,13 +14,13 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 /**
- * The class JFrameSizeAndPostionController allows to permanently check the position
- * of a window and to react on situations where the window is not properly displayed
- * (works especially also for {@link JFrame} and {@link JDialog}). 
+ * The class WindowSizeAndPostionController allows to adjust the positioning of 
+ * {@link JFrame} and {@link JDialog} with respect to size, owner components and
+ * by also considering multiple screens. 
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JDialogSizeAndPostionController {
+public class WindowSizeAndPostionController {
 
 	public enum JDialogPosition {
 		ParentTopLeft,

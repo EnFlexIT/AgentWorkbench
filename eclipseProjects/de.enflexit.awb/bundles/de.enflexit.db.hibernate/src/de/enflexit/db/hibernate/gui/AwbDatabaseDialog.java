@@ -28,8 +28,8 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
@@ -104,7 +104,7 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener, Hibern
 		});
 		
 		// --- Set Dialog position ----------------------------------
-	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+	    WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	    // --- Register as state visualizer -------------------------
 		HibernateStateVisualizer.registerStateVisualizationService(this);

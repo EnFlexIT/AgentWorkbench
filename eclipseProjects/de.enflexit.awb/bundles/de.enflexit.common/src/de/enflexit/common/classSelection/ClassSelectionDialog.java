@@ -42,8 +42,8 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This extended JDialog uses the {@link ClassSelectionPanel} in order to allow 
@@ -125,7 +125,7 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 				setVisible(false);
 			}
 		});
-	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+	    WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	/**
      * Registers the escape key stroke in order to close this dialog.

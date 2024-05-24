@@ -43,8 +43,8 @@ import javax.swing.JPanel;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.ontology.gui.DynForm;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 /**
  * Abstract super class for dialogs for chart viewing and editing. 
  * ChartEditorDialogs are containers for ChartEditorJPanel implementations for 
@@ -91,7 +91,7 @@ public abstract class ChartEditorJDialog extends JDialog implements ActionListen
 		this.getContentPane().add(getButtonPane(), BorderLayout.SOUTH);
 
 		// --- Center dialog --------------------
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);	
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);	
 	}
 	
 	protected JPanel getButtonPane(){

@@ -50,8 +50,8 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import de.enflexit.common.Language;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The ZipperMonitor class will be used within the Zipper-class of this package.<br>
@@ -116,7 +116,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		
 		// --- Translate ----
