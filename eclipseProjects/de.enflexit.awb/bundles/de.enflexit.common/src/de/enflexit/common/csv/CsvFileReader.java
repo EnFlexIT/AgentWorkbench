@@ -8,25 +8,40 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
 
+/**
+ * A generic CSV file reader implementation.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class CsvFileReader {
 	
 	private static final String DEFAULT_SEPARATOR = ";";
 
-	private String separator;
+	private String columnSeparator;
 	
+	/**
+	 * Instantiates a new CSV file reader, using the default column separator.
+	 */
 	public CsvFileReader(){
 		this(DEFAULT_SEPARATOR);
 	}
 
-	public CsvFileReader(String separator) {
-		super();
-		this.separator = separator;
+	/**
+	 * Instantiates a new CSV file reader, using the specified column separator.
+	 * @param columnSeparator the separator
+	 */
+	public CsvFileReader(String columnSeparator) {
+		this.columnSeparator = columnSeparator;
 	}
 	
+	/**
+	 * Imports data from the specified CSV file.
+	 * @param csvFile the csv file
+	 * @return the imported data vector
+	 */
 	public Vector<Vector<Object>> importData(File csvFile){
 
 		Vector<Vector<Object>> importedData = null;
-		if (csvFile == null) {
+		if (csvFile == null || csvFile.exists()==false) {
 			System.err.println("No CSV file selected");
 			
 		} else {
@@ -39,7 +54,7 @@ public class CsvFileReader {
 				
 				String line;
 				while((line = fileReader.readLine()) != null){
-					String[] tokens = line.split(this.separator);
+					String[] tokens = line.split(this.columnSeparator);
 					Vector<Object> lineData = new Vector<Object>(Arrays.asList(tokens));
 					importedData.addElement(lineData);
 				}
