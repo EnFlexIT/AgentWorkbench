@@ -299,18 +299,19 @@
 					<groupId>io.jsonwebtoken</groupId>
 					<artifactId>jjwt-api</artifactId>
 					<version>0.12.5</version>
+					<type>jar</type>
 				</dependency>
 				<dependency>
 					<groupId>io.jsonwebtoken</groupId>
 					<artifactId>jjwt-impl</artifactId>
 					<version>0.12.5</version>
-					<scope>runtime</scope>
+					<type>jar</type>
 				</dependency>
 				<dependency>
 					<groupId>io.jsonwebtoken</groupId>
 					<artifactId>jjwt-gson</artifactId>
 					<version>0.12.5</version>
-					<scope>runtime</scope>
+					<type>jar</type>
 				</dependency>
 			</dependencies>
 		</location>
