@@ -91,7 +91,7 @@ public class TimeSeriesFunctionEvaluator {
 			this.errorMessage = "The third parameter must be of type double!";
 			return false;
 		}
-		if (this.parameters.get(3).getDataType()!=DataType.Integer) {
+		if (this.isIntegerValue(this.parameters.get(3))==false) {
 			this.errorMessage = "The fourth parameter must be of type integer!";
 			return false;
 		}
@@ -118,6 +118,23 @@ public class TimeSeriesFunctionEvaluator {
 		return true;
 	}
 	
+	/**
+	 * Checks if the provided parameter is either an integer, or a double actually containing an integer value
+	 * @param parameter the parameter
+	 * @return true, if is integer value
+	 */
+	private boolean isIntegerValue(ExpressionData parameter) {
+		if (parameter.getDataType()==DataType.Integer) {
+			// --- The parameter is of type integer -----------------
+			return true;
+		} else if (parameter.getDataType()==DataType.Double) {
+			// --- The parameter is of type double -> check if it has no decimal places
+			double value = parameter.getDoubleValue();
+			return Math.floor(value)==value;
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * Discretizes the time series using linear interpolation.
@@ -131,14 +148,14 @@ public class TimeSeriesFunctionEvaluator {
 
 		ExpressionData timeSeries = parameters.get(0);
 		
-		int numberOfSteps = parameters.get(3).getIntegerValue();
-		long stepLength = (endTime-startTime) / numberOfSteps;
+		int numberOfSteps = this.getIntegerValueFromParameter(parameters.get(3));
+		long stepLength = (endTime-startTime) / (numberOfSteps-1);
 		
 		Double[] stepValues = new Double[numberOfSteps];
 		
 		long currStepStart = startTime;
 		int i = 0;
-		while (currStepStart<endTime) {
+		while (currStepStart<=endTime) {
 			
 			switch(discretizationMode) {
 			case LINEAR:
@@ -158,6 +175,21 @@ public class TimeSeriesFunctionEvaluator {
 		
 		ExpressionData expressionResult = new ExpressionData(stepValues);
 		return expressionResult;
+	}
+	
+	/**
+	 * Gets the integer value from parameter of type integer or double.
+	 * @param parameter the parameter
+	 * @return the integer value from parameter
+	 */
+	private Integer getIntegerValueFromParameter(ExpressionData parameter) {
+		if (parameter.getDataType()==DataType.Integer) {
+			return parameter.getIntegerValue();
+		} else if (parameter.getDataType()==DataType.Double) {
+			return Double.valueOf(parameter.getDoubleValue()).intValue();
+		} else {
+			return null;
+		}
 	}
 	
 	/**
