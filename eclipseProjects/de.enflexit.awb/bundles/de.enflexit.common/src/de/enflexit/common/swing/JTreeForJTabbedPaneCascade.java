@@ -50,20 +50,33 @@ public class JTreeForJTabbedPaneCascade extends JTree implements ChangeListener,
 	private void initialize() {
 		this.setModel(this.getTreeModel());
 		this.addTreeSelectionListener(this);
-		this.reBuildView();
+		this.reBuildTree();
 	}
 	/**
-	 * ReBuilds the Jtree and thus its view.
+	 * ReBuilds this JTree and thus its view.
 	 */
-	public void reBuildView() {
+	public void reBuildTree() {
 		
+		// --- Remind current selection -----------------------------
+		DefaultMutableTreeNode treeNodeSected = (DefaultMutableTreeNode) this.getLastSelectedPathComponent();
+		
+		// --- Remove all nodes, except the root node ---------------
 		this.removeAllChangeListener();
 		this.getRootNode().removeAllChildren();
 		
+		// --- Search for JTabbedPane tabs and build tree -----------
 		this.searchJComponent(this.mainJComponent, this.getRootNode());
+		
+		// --- Update view ------------------------------------------
 		this.getTreeModel().reload();
 		this.expandAll();
 		this.setRootVisible(false);
+		if (treeNodeSected==null) return;
+		
+		// --- ReSelect tree node again -----------------------------
+		TabbedPaneTreeNodeObject tno = (TabbedPaneTreeNodeObject) treeNodeSected.getUserObject();
+		this.setFocusToTab(tno.getTabTitle());
+		
 	}
 	
 	/**
