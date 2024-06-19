@@ -31,11 +31,11 @@ package de.enflexit.common.transfer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -90,7 +90,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 * @param iconImage the icon image that can be used as a decorator for the ZipperMonitor
 	 * @param lookAndFeelClassName the look and feel class name or reference
 	 */
-	public ZipperMonitor(Frame owner, String applicationName, Image iconImage, String lookAndFeelClassName) {
+	public ZipperMonitor(Window owner, String applicationName, Image iconImage, String lookAndFeelClassName) {
 		super(owner);
 		this.appName = applicationName;
 		this.iconImage = iconImage;

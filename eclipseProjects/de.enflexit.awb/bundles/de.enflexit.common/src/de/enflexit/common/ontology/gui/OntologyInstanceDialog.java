@@ -31,10 +31,10 @@ package de.enflexit.common.ontology.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -91,7 +91,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * @param owner the owner
 	 * @param ontologyVisualisationHelper the {@link OntologyVisualizationHelper}
 	 */
-	public OntologyInstanceDialog(Frame owner, OntologyVisualizationHelper ontologyVisualisationHelper) {
+	public OntologyInstanceDialog(Window owner, OntologyVisualizationHelper ontologyVisualisationHelper) {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.ontologyInstanceViewerConstructor = 0;
@@ -106,7 +106,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * @param agentStartConfiguration the agent configuration
 	 * @param agentReference the agent reference
 	 */
-	public OntologyInstanceDialog(Frame owner, OntologyVisualizationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
+	public OntologyInstanceDialog(Window owner, OntologyVisualizationHelper ontologyVisualisationHelper, AgentStartConfiguration agentStartConfiguration, String agentReference) {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.agentStartConfiguration = agentStartConfiguration;
@@ -122,7 +122,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 	 * @param ontologyVisualisationHelper the {@link OntologyVisualizationHelper}
 	 * @param ontologyClassReference the ontology class reference
 	 */
-	public OntologyInstanceDialog(Frame owner, OntologyVisualizationHelper ontologyVisualisationHelper, String[] ontologyClassReference) {
+	public OntologyInstanceDialog(Window owner, OntologyVisualizationHelper ontologyVisualisationHelper, String[] ontologyClassReference) {
 		super(owner);
 		this.ontologyVisualisationHelper = ontologyVisualisationHelper;
 		this.ontologyClassReference = ontologyClassReference;
