@@ -10,10 +10,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/classLoadService.xml, 
  OSGI-INF/dbStateVisualService.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.annotation;version="[1.3.5,2.0.0)",
- javax.inject;version="1.0.0",
- javax.xml.bind,
- javax.xml.bind.annotation,
+Import-Package: jakarta.annotation,
+ jakarta.inject,
+ jakarta.xml.bind,
+ jakarta.xml.bind.annotation,
  org.slf4j;version="1.7.10"
 Require-Bundle: de.enflexit.api,
  de.enflexit.common,
