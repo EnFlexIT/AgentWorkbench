@@ -37,7 +37,6 @@ src/gen/java/de/enflexit/awb/ws/restapi/gen/model/NetworkConnection.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/PasswordChange.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SystemInformation.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SystemLoad.java
-src/gen/java/de/enflexit/awb/ws/restapi/gen/model/UserLogin.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Version.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/Bootstrap.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/DoRestartApiServiceFactory.java

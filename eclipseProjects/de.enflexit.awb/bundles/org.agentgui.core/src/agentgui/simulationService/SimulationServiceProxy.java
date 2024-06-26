@@ -377,6 +377,31 @@ public class SimulationServiceProxy extends SliceProxy implements SimulationServ
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	public Hashtable<AID, Object> getEnvironmentInstanceNextPartsFromMain() throws IMTPException {
+		try {
+			GenericCommand cmd = new GenericCommand(SIM_GET_ENVIRONMENT_NEXT_PARTS_FROM_MAIN, SimulationService.NAME, null);
+			Node n = getNode();
+			Object result = n.accept(cmd);
+			if((result != null) && (result instanceof Throwable)) {
+				if(result instanceof IMTPException) {
+					throw (IMTPException)result;
+				} else {
+					throw new IMTPException("An undeclared exception was thrown", (Throwable)result);
+				}
+			}
+			Hashtable<AID, Object> nextParts = (Hashtable<AID, Object>) result;
+			return nextParts;
+		}
+		catch(ServiceException se) {
+			throw new IMTPException("Unable to access remote node", se);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see agentgui.simulationService.SimulationServiceSlice#getEnvironmentInstanceNextParts()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
 	public Hashtable<AID, Object> getEnvironmentInstanceNextParts() throws IMTPException {
 		try {
 			GenericCommand cmd = new GenericCommand(SIM_GET_ENVIRONMENT_NEXT_PARTS, SimulationService.NAME, null);

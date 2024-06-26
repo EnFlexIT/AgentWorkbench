@@ -28,7 +28,6 @@
  */
 package de.enflexit.common.classSelection;
 
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,8 +41,8 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This extended JDialog uses the {@link ClassSelectionPanel} in order to allow 
@@ -84,7 +83,7 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 	 * @param clazz2Search4Description the clazz2 search4 description
 	 * @param allowNull the allow null
 	 */
-	public ClassSelectionDialog(Frame ownerWindow, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
+	public ClassSelectionDialog(Window ownerWindow, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull) {
 		super(ownerWindow);
 		this.classSelectionPanel = new ClassSelectionPanel(clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
 		this.initialize();
@@ -125,7 +124,7 @@ public class ClassSelectionDialog extends JDialog implements ClassSelectionListe
 				setVisible(false);
 			}
 		});
-	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+	    WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	/**
      * Registers the escape key stroke in order to close this dialog.

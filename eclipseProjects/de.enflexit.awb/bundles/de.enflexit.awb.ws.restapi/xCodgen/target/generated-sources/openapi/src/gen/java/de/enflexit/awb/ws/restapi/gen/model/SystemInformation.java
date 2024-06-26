@@ -17,18 +17,18 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.enflexit.awb.ws.restapi.gen.model.NetworkConnection;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+import javax.validation.constraints.*;
+import javax.validation.Valid;
 
 /**
  * The system information consisting of Hardware and OS information
  */
-@Schema(description = "The system information consisting of Hardware and OS information")
+@ApiModel(description = "The system information consisting of Hardware and OS information")
 @JsonPropertyOrder({
   SystemInformation.JSON_PROPERTY_OS_DESCRIPTION,
   SystemInformation.JSON_PROPERTY_OS_MANUFACTURER,
@@ -43,7 +43,7 @@ import jakarta.validation.Valid;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class SystemInformation   {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
@@ -91,7 +91,7 @@ public class SystemInformation   {
 
   public static final String JSON_PROPERTY_NETWORK_CONNECTIONS = "networkConnections";
   @JsonProperty(JSON_PROPERTY_NETWORK_CONNECTIONS)
-  private List<@Valid NetworkConnection> networkConnections = new ArrayList<>();
+  private List<NetworkConnection> networkConnections = new ArrayList<>();
 
   public SystemInformation osDescription(String osDescription) {
     this.osDescription = osDescription;
@@ -103,7 +103,7 @@ public class SystemInformation   {
    * @return osDescription
    **/
   @JsonProperty(value = "osDescription")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getOsDescription() {
     return osDescription;
@@ -123,7 +123,7 @@ public class SystemInformation   {
    * @return osManufacturer
    **/
   @JsonProperty(value = "osManufacturer")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getOsManufacturer() {
     return osManufacturer;
@@ -143,7 +143,7 @@ public class SystemInformation   {
    * @return osFamilly
    **/
   @JsonProperty(value = "osFamilly")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getOsFamilly() {
     return osFamilly;
@@ -163,7 +163,7 @@ public class SystemInformation   {
    * @return osVersion
    **/
   @JsonProperty(value = "osVersion")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getOsVersion() {
     return osVersion;
@@ -183,7 +183,7 @@ public class SystemInformation   {
    * @return processorName
    **/
   @JsonProperty(value = "processorName")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getProcessorName() {
     return processorName;
@@ -203,7 +203,7 @@ public class SystemInformation   {
    * @return processorFrequenceInMhz
    **/
   @JsonProperty(value = "processorFrequenceInMhz")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public Double getProcessorFrequenceInMhz() {
     return processorFrequenceInMhz;
@@ -223,7 +223,7 @@ public class SystemInformation   {
    * @return processorNoPhysical
    **/
   @JsonProperty(value = "processorNoPhysical")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public Integer getProcessorNoPhysical() {
     return processorNoPhysical;
@@ -243,7 +243,7 @@ public class SystemInformation   {
    * @return processorNoLogical
    **/
   @JsonProperty(value = "processorNoLogical")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public Integer getProcessorNoLogical() {
     return processorNoLogical;
@@ -263,7 +263,7 @@ public class SystemInformation   {
    * @return memoryTotalInGB
    **/
   @JsonProperty(value = "memoryTotalInGB")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public Double getMemoryTotalInGB() {
     return memoryTotalInGB;
@@ -283,7 +283,7 @@ public class SystemInformation   {
    * @return swapMemoryTotalInGB
    **/
   @JsonProperty(value = "swapMemoryTotalInGB")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public Double getSwapMemoryTotalInGB() {
     return swapMemoryTotalInGB;
@@ -303,7 +303,7 @@ public class SystemInformation   {
    * @return heapMemoryMaxInGB
    **/
   @JsonProperty(value = "heapMemoryMaxInGB")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public Double getHeapMemoryMaxInGB() {
     return heapMemoryMaxInGB;
@@ -313,15 +313,12 @@ public class SystemInformation   {
     this.heapMemoryMaxInGB = heapMemoryMaxInGB;
   }
 
-  public SystemInformation networkConnections(List<@Valid NetworkConnection> networkConnections) {
+  public SystemInformation networkConnections(List<NetworkConnection> networkConnections) {
     this.networkConnections = networkConnections;
     return this;
   }
 
   public SystemInformation addNetworkConnectionsItem(NetworkConnection networkConnectionsItem) {
-    if (this.networkConnections == null) {
-      this.networkConnections = new ArrayList<>();
-    }
     this.networkConnections.add(networkConnectionsItem);
     return this;
   }
@@ -331,13 +328,13 @@ public class SystemInformation   {
    * @return networkConnections
    **/
   @JsonProperty(value = "networkConnections")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull @Valid 
-  public List<@Valid NetworkConnection> getNetworkConnections() {
+  public List<NetworkConnection> getNetworkConnections() {
     return networkConnections;
   }
 
-  public void setNetworkConnections(List<@Valid NetworkConnection> networkConnections) {
+  public void setNetworkConnections(List<NetworkConnection> networkConnections) {
     this.networkConnections = networkConnections;
   }
 
@@ -369,6 +366,7 @@ public class SystemInformation   {
   public int hashCode() {
     return Objects.hash(osDescription, osManufacturer, osFamilly, osVersion, processorName, processorFrequenceInMhz, processorNoPhysical, processorNoLogical, memoryTotalInGB, swapMemoryTotalInGB, heapMemoryMaxInGB, networkConnections);
   }
+
 
   @Override
   public String toString() {

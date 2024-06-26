@@ -48,7 +48,7 @@ public enum JettyConstants {
 	CORS_ALLOWED_HEADERS_PARAM("cors." + CrossOriginFilter.ALLOWED_HEADERS_PARAM, 34, String.class, "X-Requested-With,Content-Type,Accept,Origin", null),
 	CORS_PREFLIGHT_MAX_AGE_PARAM("cors." + CrossOriginFilter.PREFLIGHT_MAX_AGE_PARAM, 35, Integer.class, 1800, null),
 	CORS_ALLOW_CREDENTIALS_PARAM("cors." + CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, 36, Boolean.class, true, new Boolean[] {true, false}),
-	CORS_EXPOSED_HEADERS_PARAM("cors." + CrossOriginFilter.EXPOSED_HEADERS_PARAM, 37, String.class, "", null),
+	CORS_EXPOSED_HEADERS_PARAM("cors." + CrossOriginFilter.EXPOSED_HEADERS_PARAM, 37, String.class, "*", null),
 	CORS_CHAIN_PREFLIGHT_PARAM("cors." + CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, 38, Boolean.class, true,  new Boolean[] {true, false});
 	
 	

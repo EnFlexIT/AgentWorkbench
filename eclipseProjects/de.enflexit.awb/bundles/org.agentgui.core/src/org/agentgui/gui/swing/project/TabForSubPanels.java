@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import agentgui.core.project.Project;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
  * This class can be used in order to create a tab that can hold further sub tabs 
@@ -68,7 +67,8 @@ public class TabForSubPanels extends JPanel  {
 	private void initialize() {
 		this.setSize(400, 250);
 		this.setLayout(new BorderLayout());
-		this.add(getJTabbedPane(), BorderLayout.CENTER);
+		this.setBorder(BorderFactory.createEmptyBorder());
+		this.add(this.getJTabbedPane(), BorderLayout.CENTER);
 	}
 
 	/**
@@ -79,7 +79,6 @@ public class TabForSubPanels extends JPanel  {
 		if (jTabbedPaneIntern == null) {
 			jTabbedPaneIntern = new JTabbedPane();
 			jTabbedPaneIntern.setTabPlacement(JTabbedPane.TOP);
-			jTabbedPaneIntern.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPaneIntern.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPaneIntern.setBorder(BorderFactory.createEmptyBorder());
 			

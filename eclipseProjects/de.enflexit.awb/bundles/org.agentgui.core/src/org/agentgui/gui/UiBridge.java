@@ -160,7 +160,7 @@ public class UiBridge {
 			System.err.println("SWT Console not implemented yet!");
 			break;
 
-		case AgentGuiSwing:
+		case AgentWorkbenchSwing:
 			// --- Swing console ----------------
 			console = new org.agentgui.gui.swing.logging.JPanelConsole(isForLocalConsoleOutput);
 			break;
@@ -184,7 +184,7 @@ public class UiBridge {
 			System.err.println("SWT Console Dialog not implemented yet!");
 			break;
 
-		case AgentGuiSwing:
+		case AgentWorkbenchSwing:
 			// --- Swing console dialog ---------
 			consoleDialog = new org.agentgui.gui.swing.logging.JFrame4Consoles();
 			break;
@@ -206,9 +206,9 @@ public class UiBridge {
 			System.err.println("SWT Tray Icon not implemented yet!");
 			break;
 
-		case AgentGuiSwing:
+		case AgentWorkbenchSwing:
 			// --- Swing tray icon --------------
-			trayIcon = new org.agentgui.gui.swing.systemtray.AgentGUITrayIcon();
+			trayIcon = new org.agentgui.gui.swing.systemtray.AWBTrayIcon();
 			break;
 		}
 		return trayIcon;
@@ -228,7 +228,7 @@ public class UiBridge {
 			System.err.println("SWT Benchmark Monitor not implemented yet!");
 			break;
 
-		case AgentGuiSwing:
+		case AgentWorkbenchSwing:
 			// --- Swing tray icon --------------
 			monitor = new org.agentgui.gui.swing.dialogs.BenchmarkMonitor(Application.getMainWindow());
 			break;
@@ -253,7 +253,7 @@ public class UiBridge {
 			System.err.println("SWT Progress Monitor not implemented yet!");
 			break;
 	
-		case AgentGuiSwing:
+		case AgentWorkbenchSwing:
 			// --- Swing progress visualization dialog --------------------
 			
 			// --- Try to get a JDesktopPane ----------------------------
@@ -291,7 +291,7 @@ public class UiBridge {
 			projectDialog = new org.agentgui.gui.swt.dialogs.ProjectNewOpen(this.getActiveWorkbenchWindowShell(), title, currentAction);
 			break;
 
-		case AgentGuiSwing:
+		case AgentWorkbenchSwing:
 			// --- Swing dialog -----------------
 			projectDialog = new org.agentgui.gui.swing.dialogs.ProjectNewOpen(this.getSwingMainWindow(), title, currentAction);
 			break;
@@ -323,7 +323,7 @@ public class UiBridge {
 			}
 			break;
 			
-		case AgentGuiSwing:
+		case AgentWorkbenchSwing:
 			// --- Swing editor -----------------
 			projectEditorWindow = new org.agentgui.gui.swing.project.ProjectWindow(project);
 			break;

@@ -74,9 +74,8 @@ import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This JDialog represents the option dialog, where the 
@@ -173,7 +172,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		// --- Size and center dialog -------------------------------
 		Rectangle screenSize = this.getGraphicsConfiguration().getBounds();
 		this.setSize((int) (screenSize.getWidth()*0.7), (int)(screenSize.getHeight()*0.8));
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
 	}
 
@@ -289,7 +288,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 		if (jTabbedPaneRight == null) {
 			jTabbedPaneRight = new JTabbedPane();
 			jTabbedPaneRight.setTabPlacement(JTabbedPane.TOP);
-			jTabbedPaneRight.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPaneRight.setFont(new Font("Dialog", Font.BOLD, 13));
 		}
 		return jTabbedPaneRight;

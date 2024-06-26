@@ -17,16 +17,17 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.enflexit.awb.ws.restapi.gen.model.Version;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+import javax.validation.constraints.*;
+import javax.validation.Valid;
 
 /**
  * Contains Information about one singular Bundle
  */
-@Schema(description = "Contains Information about one singular Bundle")
+@ApiModel(description = "Contains Information about one singular Bundle")
 @JsonPropertyOrder({
   BundleInformation.JSON_PROPERTY_FEATURE_NAME,
   BundleInformation.JSON_PROPERTY_PROVIDER,
@@ -34,7 +35,7 @@ import jakarta.validation.Valid;
   BundleInformation.JSON_PROPERTY_BUNDLE_I_D,
   BundleInformation.JSON_PROPERTY_VERSION
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class BundleInformation   {
   public static final String JSON_PROPERTY_FEATURE_NAME = "FeatureName";
   @JsonProperty(JSON_PROPERTY_FEATURE_NAME)
@@ -66,7 +67,7 @@ public class BundleInformation   {
    * @return featureName
    **/
   @JsonProperty(value = "FeatureName")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getFeatureName() {
     return featureName;
@@ -86,7 +87,7 @@ public class BundleInformation   {
    * @return provider
    **/
   @JsonProperty(value = "Provider")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getProvider() {
     return provider;
@@ -106,7 +107,7 @@ public class BundleInformation   {
    * @return bundleName
    **/
   @JsonProperty(value = "BundleName")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getBundleName() {
     return bundleName;
@@ -126,7 +127,7 @@ public class BundleInformation   {
    * @return bundleID
    **/
   @JsonProperty(value = "BundleID")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull @Valid 
   public BigDecimal getBundleID() {
     return bundleID;
@@ -146,7 +147,7 @@ public class BundleInformation   {
    * @return version
    **/
   @JsonProperty(value = "Version")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull @Valid 
   public Version getVersion() {
     return version;
@@ -177,6 +178,7 @@ public class BundleInformation   {
   public int hashCode() {
     return Objects.hash(featureName, provider, bundleName, bundleID, version);
   }
+
 
   @Override
   public String toString() {

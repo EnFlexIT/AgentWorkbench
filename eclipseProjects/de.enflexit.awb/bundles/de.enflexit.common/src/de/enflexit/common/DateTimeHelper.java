@@ -16,6 +16,12 @@ public class DateTimeHelper {
 
 	public static final String DEFAULT_TIME_FORMAT_PATTERN = "dd.MM.yy HH:mm:ss";
 	
+	public static final long MILLISECONDS_FOR_SECOND = 1000;
+	public static final long MILLISECONDS_FOR_MINUTE = MILLISECONDS_FOR_SECOND * 60;
+	public static final long MILLISECONDS_FOR_HOUR = MILLISECONDS_FOR_MINUTE * 60;
+	public static final long MILLISECONDS_FOR_DAY = MILLISECONDS_FOR_MINUTE * 24;
+	public static final long MILLISECONDS_FOR_WEEK = MILLISECONDS_FOR_DAY * 7;
+	public static final long MILLISECONDS_FOR_MONTH_30 = MILLISECONDS_FOR_DAY * 30;
 	
 	/**
 	 * Return the date from the specified time stamp in milliseconds.

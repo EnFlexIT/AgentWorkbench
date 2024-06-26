@@ -21,8 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.SerialClone;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 
 /**
@@ -109,7 +109,7 @@ public class GraphNodePositionDialog extends JDialog implements ActionListener {
 		});
 		
 		// --- Set Dialog position ----------------------------------
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);		
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);		
 		
 		this.setVisible(true);
 	}

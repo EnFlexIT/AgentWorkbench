@@ -34,6 +34,8 @@ import java.util.Collections;
 import java.util.List;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
+import de.enflexit.common.properties.Properties;
+
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -377,6 +379,8 @@ public abstract class EnvironmentController extends Observable implements Observ
 		envModel.setTimeModel(this.getTimeModel());
 		envModel.setDisplayEnvironment(this.getDisplayEnvironmentModel());
 		envModel.setAbstractEnvironment(this.getAbstractEnvironmentModel());
+		envModel.setProjectProperties(this.getProjectProperties());
+		envModel.setSetupProperties(this.getSetupProperties());
 		return envModel;
 	}
 	
@@ -465,6 +469,32 @@ public abstract class EnvironmentController extends Observable implements Observ
 	  * @return a copy of the environment model
 	  */
 	public abstract AbstractEnvironmentModel getAbstractEnvironmentModelCopy();
+	
+	
+	/**
+	 * Returns the current project properties if available.
+	 * @return the project properties
+	 */
+	public Properties getProjectProperties() {
+		if (this.currProject!=null) {
+			return this.currProject.getProperties();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the current setup properties if available.
+	 * @return the setup properties
+	 */
+	public Properties getSetupProperties() {
+		if (this.currProject!=null) {
+			SimulationSetup currSetup = this.currProject.getSimulationSetups().getCurrSimSetup();
+			if (currSetup!=null) {
+				return currSetup.getProperties();
+			}
+		}
+		return null;
+	}
 	
 	
 	/**

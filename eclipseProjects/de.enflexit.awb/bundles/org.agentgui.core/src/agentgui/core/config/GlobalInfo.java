@@ -46,7 +46,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.agentgui.gui.swt.SWTResourceManager;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.Platform;
@@ -76,6 +75,7 @@ import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.VersionInfo;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -112,7 +112,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Variables ------------------------------------------------
 	private static ExecutionEnvironment localExecutionEnvironment = ExecutionEnvironment.ExecutedOverIDE;
 	
-	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = AwbLookAndFeelAdjustments.DEFAUL_LOOK_AND_FEEL_CLASS;
 	private static String localAppLnF = DEFAUL_LOOK_AND_FEEL_CLASS;
 	private static Class<?> localAppLnFClass;
 	

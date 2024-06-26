@@ -7,10 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.security.ServerAuthException;
@@ -308,6 +308,12 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (username.equals(prevUsername)==false) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("user name differs, returning unauthenticated");
+					return Authentication.UNAUTHENTICATED;
+				}
+				
+				// --- Logout the current user? ---------------------
+				if (ServletHelper.isLogoutPathRequest((Request) request)==true) {
+					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					return Authentication.UNAUTHENTICATED;
 				}
 				

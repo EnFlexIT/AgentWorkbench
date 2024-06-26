@@ -4,8 +4,8 @@ import java.io.File;
 
 import javax.swing.JDialog;
 
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -54,7 +54,7 @@ public class DirectoryDialog extends JDialog {
 		
 		this.setModal(true);
 		this.setSize(500, 400);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		this.setVisible(true);
 		

@@ -78,8 +78,8 @@ import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.ExceptionHandling;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Dialog TimeFormatImportConfiguration is used to set the 
@@ -189,7 +189,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 		this.setExampleParse();
 		
 		// --- Center dialog ----------------------------------------
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	}
 	/**

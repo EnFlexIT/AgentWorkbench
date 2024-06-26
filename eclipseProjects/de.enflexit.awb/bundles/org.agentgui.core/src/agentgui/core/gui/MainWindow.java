@@ -29,6 +29,7 @@
 package agentgui.core.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -36,7 +37,6 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -48,6 +48,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -62,12 +63,13 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
@@ -94,8 +96,13 @@ import agentgui.core.update.AWBUpdater;
 import agentgui.core.update.ProjectRepositoryExplorerDialog;
 import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import de.enflexit.common.images.ImageHelper;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
+import java.awt.GridBagConstraints;
 
 /**
  * This class represents the main user-interface of the application AgentGUI.
@@ -118,7 +125,6 @@ public class MainWindow extends JFrame {
 		MenuHelp
 	}
 	
-	private final ImageIcon iconClose = GlobalInfo.getInternalImageIcon("MBclose.png");
 	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 
 	private JFrameSizeAndPostionController windowController;
@@ -132,7 +138,6 @@ public class MainWindow extends JFrame {
 	private JPanelConsole jPanelConsoleLocal;
 	private int visibleDividersLocation;
 
-	private JMenuBar jMenuBarBase;
 	private JMenuBar jMenuBarMain;
 	private JMenu jMenuMainProject;
 	
@@ -155,14 +160,18 @@ public class MainWindow extends JFrame {
 	private JMenu jMenuMainWindows;
 	private JMenu jMenuMainHelp;
 
-	private JMenuItem jMenuCloseButton;
-
+	private JPanel jPanelToolBar;
 	private JToolBar jToolBarApplication;
 	private JButton jButtonProjectTree;
 	private SetupSelectorToolbar setupSelectorToolbar;
 	private JButton jButtonJadeTools;
 	private JPopupMenu jPopupMenuJadeTools;
 
+	private JToolBar jToolBarCloseProject;
+	private JButton jButtonCloseProject;
+	private ImageIcon iconCloseProject;
+	private Color textColor;
+	
 	private JButton jButtonSimStart;
 	private JButton jButtonSimPause;
 	private JButton jButtonSimStop;
@@ -196,8 +205,6 @@ public class MainWindow extends JFrame {
 		this.setTitelAddition("");
 		this.setCloseButtonPosition(false);
 
-		this.setLocationRelativeTo(null);
-		
 		// --- Initialize the PlatformStatusDialog ------------------ 
 		this.getPlatformStatusDialog();
 		
@@ -206,6 +213,9 @@ public class MainWindow extends JFrame {
 		
 		this.pack();
 		this.setVisible(true);
+
+		// --- Place MainWindow center on screen --------------------
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
 	}
 
 	/**
@@ -213,15 +223,15 @@ public class MainWindow extends JFrame {
 	 */
 	private void initComponents() {
 
-		this.setJMenuBar(this.getJMenuBarBase());
+		this.setJMenuBar(this.getJMenuBarMain());
 
-		this.add(this.getJToolBarApplication(), BorderLayout.NORTH);
-		this.add(this.getStatusBar(), BorderLayout.SOUTH);
-		this.add(this.getJSplit4ProjectDesktop());
+		getContentPane().add(this.getJPanelToolbar(), BorderLayout.NORTH);
+		getContentPane().add(this.getStatusBar(), BorderLayout.SOUTH);
+		getContentPane().add(this.getJSplit4ProjectDesktop());
 
 		Dimension frameSize = this.getSizeRelatedToScreenSize();
 		this.setPreferredSize(frameSize);
-		this.setSize(frameSize);
+		this.setSize(new Dimension(1384, 739));
 
 		// --- Maximze the JFrame, if configured in the GlobalInfo --
 		if (Application.getGlobalInfo().isMaximzeMainWindow() == true) {
@@ -270,7 +280,6 @@ public class MainWindow extends JFrame {
 		// --- Set button for simulation control ----------
 		this.setSimulationReady2Start();
 	}
-
 	/**
 	 * Returns the JFrameSizeAndPostionController used for the MainWindow.
 	 */
@@ -280,6 +289,7 @@ public class MainWindow extends JFrame {
 		}
 		return windowController;
 	}
+	
 	/**
 	 * Return the size in relation (scaled) to the screen size.
 	 */
@@ -632,41 +642,24 @@ public class MainWindow extends JFrame {
 	// ------------------------------------------------------------
 	/**
 	 * This method returns the current instance of the applications menu bar.
-	 * @return the j menu bar base
-	 */
-	private JMenuBar getJMenuBarBase() {
-		if (jMenuBarBase == null) {
-			jMenuBarBase = new JMenuBar();
-			jMenuBarBase.setLayout(new GridBagLayout());
-			Insets insets = new Insets(0, 0, 0, 0);
-			jMenuBarBase.add(this.getJMenuBarMain(), new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, insets, 0, 0));
-			jMenuBarBase.add(this.getCloseButton(), new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.VERTICAL, insets, 0, 0));
-		}
-		return jMenuBarBase;
-	}
-
-	/**
-	 * This method returns the current instance of the applications menu bar.
 	 * @return the j menu bar main
 	 */
 	private JMenuBar getJMenuBarMain() {
 		if (jMenuBarMain == null) {
 			jMenuBarMain = new JMenuBar();
 			jMenuBarMain.setBorder(null);
-			jMenuBarMain.setLayout(new GridBagLayout());
 
-			jMenuBarMain.add(getJMenuMainProject());
-			jMenuBarMain.add(getJMenuMainView());
-			jMenuBarMain.add(getJMenuMainJade());
-			jMenuBarMain.add(getJMenuMainSimulation());
-			jMenuBarMain.add(getJMenuMainExtra());
-			jMenuBarMain.add(getJMenuMainWindow());
-			jMenuBarMain.add(getJMenuMainHelp());
+			jMenuBarMain.add(this.getJMenuMainProject());
+			jMenuBarMain.add(this.getJMenuMainView());
+			jMenuBarMain.add(this.getJMenuMainJade());
+			jMenuBarMain.add(this.getJMenuMainSimulation());
+			jMenuBarMain.add(this.getJMenuMainExtra());
+			jMenuBarMain.add(this.getJMenuMainWindow());
+			jMenuBarMain.add(this.getJMenuMainHelp());
 
 		}
 		return jMenuBarMain;
 	}
-
 	/**
 	 * This method can be used in order to add an individual menu at a specified index position of the menu bar.
 	 *
@@ -1007,10 +1000,9 @@ public class MainWindow extends JFrame {
 	 */
 	private void setJMenuExtraLnF() {
 
-		UIManager.LookAndFeelInfo installedLnF[] = UIManager.getInstalledLookAndFeels();
-		for (int i = 0, n = installedLnF.length; i < n; i++) {
-			boolean setBold = installedLnF[i].getClassName().equals(Application.getGlobalInfo().getAppLookAndFeelClassName());
-			jMenuExtraLnF.add(new JMenuItmenLnF(installedLnF[i].getName(), installedLnF[i].getClassName(), setBold));
+		for (LookAndFeelInfo lafInfo : AwbLookAndFeelAdjustments.getInstalledLookAndFeels()) {
+			boolean setBold = lafInfo.getClassName().equals(Application.getGlobalInfo().getAppLookAndFeelClassName());
+			jMenuExtraLnF.add(new JMenuItmenLnF(lafInfo.getName(), lafInfo.getClassName(), setBold));
 		}
 	}
 
@@ -1093,50 +1085,6 @@ public class MainWindow extends JFrame {
 			jMenuMainHelp.add(new CWMenuItem("EclipseWindow", "Eclipse Window", "eclipse.png"));
 		}
 		return jMenuMainHelp;
-	}
-
-	// ------------------------------------------------------------
-	// --- Menu "Close-Button" ------------------------------------
-	// ------------------------------------------------------------
-	/**
-	 * Gets the close button.
-	 *
-	 * @return the close button
-	 */
-	private JMenuItem getCloseButton() {
-		if (jMenuCloseButton == null) {
-			jMenuCloseButton = new CWMenuItem("ProjectClose", "", "MBclose.png");
-			jMenuCloseButton.setText("");
-			jMenuCloseButton.setToolTipText(Language.translate("Projekt schließen"));
-			jMenuCloseButton.setBorder(null);
-			jMenuCloseButton.setMargin(new Insets(0, 0, 0, 0));
-			jMenuCloseButton.setPreferredSize(new Dimension(30, jMenuCloseButton.getHeight()));
-			jMenuCloseButton.setIcon(iconCloseDummy);
-		}
-		return jMenuCloseButton;
-	}
-
-	/**
-	 * Sets the close button position.
-	 *
-	 * @param setVisible the new close button position
-	 */
-	public void setCloseButtonPosition(boolean setVisible) {
-
-		if (jMenuCloseButton.isVisible() == false) {
-			jMenuCloseButton.setVisible(true);
-		}
-		if (setVisible == true) {
-			jMenuCloseButton.setIcon(iconClose);
-			jMenuCloseButton.setEnabled(true);
-		} else {
-			jMenuCloseButton.setIcon(iconCloseDummy);
-			jMenuCloseButton.setEnabled(false);
-		}
-
-		if (jMenuBarMain != null) {
-			jMenuBarMain.revalidate();
-		}
 	}
 
 	// ------------------------------------------------------------
@@ -1332,6 +1280,38 @@ public class MainWindow extends JFrame {
 	// --- Create Toolbar - START ---------------------------------
 	// ------------------------------------------------------------
 	/**
+	 * Return the JPanel for the toolbar.
+	 * @return the jPanelToolbar
+	 */
+	private JPanel getJPanelToolbar() {
+		if (jPanelToolBar==null) {
+			jPanelToolBar = new JPanel();
+			jPanelToolBar.setPreferredSize(new Dimension(100, 26));
+			
+			GridBagLayout gbl_jPanelToolBar = new GridBagLayout();
+			gbl_jPanelToolBar.columnWidths = new int[]{0,0,0};
+			gbl_jPanelToolBar.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+			gbl_jPanelToolBar.rowHeights = new int[]{26, 0};
+			gbl_jPanelToolBar.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelToolBar.setLayout(gbl_jPanelToolBar);
+			
+			GridBagConstraints gbc_jToolBarApplication = new GridBagConstraints();
+			gbc_jToolBarApplication.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jToolBarApplication.gridx = 0;
+			gbc_jToolBarApplication.gridy = 0;
+			jPanelToolBar.add(this.getJToolBarApplication(), gbc_jToolBarApplication);
+			
+			GridBagConstraints gbc_jToolBarCloseProject = new GridBagConstraints();
+			gbc_jToolBarCloseProject.anchor = GridBagConstraints.WEST;
+			gbc_jToolBarCloseProject.fill = GridBagConstraints.HORIZONTAL;
+			gbc_jToolBarCloseProject.gridx = 1;
+			gbc_jToolBarCloseProject.gridy = 0;
+			gbc_jToolBarCloseProject.insets.set(0, 0, 0, 5);
+			jPanelToolBar.add(this.getJToolBarCloseProject(), gbc_jToolBarCloseProject);
+		}
+		return jPanelToolBar;
+	}
+	/**
 	 * Returns the main JToolBar of the application window.
 	 * @return the main JToolBar of the application window
 	 */
@@ -1342,7 +1322,7 @@ public class MainWindow extends JFrame {
 			jToolBarApplication = new JToolBar("MainBar");
 			jToolBarApplication.setFloatable(false);
 			jToolBarApplication.setRollover(true);
-
+			
 			jToolBarApplication.add(new JToolBarButton("New", Language.translate("Neues Projekt"), null, "MBnew.png"));
 			jToolBarApplication.add(new JToolBarButton("Open", Language.translate("Projekt öffnen"), null, "MBopen.png"));
 			jToolBarApplication.add(new JToolBarButton("Save", Language.translate("Projekt speichern"), null, "MBsave.png"));
@@ -1395,6 +1375,7 @@ public class MainWindow extends JFrame {
 				jToolBarApplication.add(new JToolBarButton("Test", Language.translate("Test"), "Funktion Testen", null));
 			}
 			// --------------------------------------------
+			
 		}
 		return jToolBarApplication;
 	}
@@ -1506,6 +1487,87 @@ public class MainWindow extends JFrame {
 	// ------------------------------------------------------------
 
 	// ------------------------------------------------------------
+	// --- Toolbar "Close-Button" ---------------------------------
+	// ------------------------------------------------------------
+	/**
+	 * Gets the j tool bar close project.
+	 * @return the jToolBarCloseProject
+	 */
+	private JToolBar getJToolBarCloseProject() {
+		if (jToolBarCloseProject == null) {
+			jToolBarCloseProject = new JToolBar("ProjectControl");
+			jToolBarCloseProject.setFloatable(false);
+			jToolBarCloseProject.setRollover(true);
+			jToolBarCloseProject.add(this.getJButtonCloseProject());
+		}
+		return jToolBarCloseProject;
+	}
+	/**
+	 * Gets the project close button.
+	 * @return the close button
+	 */
+	private JButton getJButtonCloseProject() {
+		if (jButtonCloseProject == null) {
+			jButtonCloseProject = new JToolBarButton("ProjectClose", Language.translate("Projekt schließen"), null, "MBclose.png");
+			jButtonCloseProject.setText("");
+			jButtonCloseProject.setToolTipText(Language.translate("Projekt schließen"));
+			jButtonCloseProject.setBorder(null);
+			jButtonCloseProject.setMargin(new Insets(0, 0, 0, 0));
+			jButtonCloseProject.setPreferredSize(new Dimension(26, 26));
+			jButtonCloseProject.setIcon(iconCloseDummy);
+		}
+		return jButtonCloseProject;
+	}
+	/**
+	 * Returns the close button ImageIcon.
+	 * @return the close button image icon
+	 */
+	private ImageIcon getCloseButtonImageIcon() {
+		if (iconCloseProject==null || this.getJMenuMainProject().getForeground().equals(this.textColor)==false) {
+			
+			// --- Load the base image first ------------------------
+			iconCloseProject = GlobalInfo.getInternalImageIcon("MBclose.png");
+			try {
+				// --- Get current text color and exchange color ----
+				this.textColor = this.getJMenuMainProject().getForeground();
+				BufferedImage bice = ImageHelper.convertToBufferedImage(iconCloseProject.getImage());
+				bice = ImageHelper.exchangeColor(bice, Color.black, this.textColor);
+				// --- Remind icon for later call ------------------- 
+				iconCloseProject = new ImageIcon(bice);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} 
+		return iconCloseProject;
+	}
+	
+	/**
+	 * Sets the close button position.
+	 *
+	 * @param setVisible the new close button position
+	 */
+	public void setCloseButtonPosition(boolean setVisible) {
+
+		if (this.getJButtonCloseProject().isVisible() == false) {
+			this.getJButtonCloseProject().setVisible(true);
+		}
+		if (setVisible == true) {
+			this.getJButtonCloseProject().setIcon(this.getCloseButtonImageIcon());
+			this.getJButtonCloseProject().setEnabled(true);
+		} else {
+			this.getJButtonCloseProject().setIcon(this.iconCloseDummy);
+			this.getJButtonCloseProject().setEnabled(false);
+		}
+
+		if (jPanelToolBar != null) {
+			jPanelToolBar.validate();
+			jPanelToolBar.repaint();
+		}
+	}
+	
+	
+	// ------------------------------------------------------------
 	// --- Sub class for toolbar buttons --------------------------
 	// ------------------------------------------------------------
 	/**
@@ -1608,6 +1670,10 @@ public class MainWindow extends JFrame {
 			} else if (actCMD.equalsIgnoreCase("SimulationStop")) {
 				Application.getJadePlatform().stop(true);
 
+			} else if (actCMD.equalsIgnoreCase("ProjectClose")) {
+				Project currProject = Application.getProjectFocused();
+				if (currProject!=null) currProject.close();
+				
 			} else if (actCMD.equalsIgnoreCase("Test")) {
 				MainWindow.this.testMethod();
 				

@@ -72,8 +72,8 @@ import org.agentgui.gui.AwbProjectNewOpenDialog;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This GUI is used in order to create, open or delete a project.
@@ -130,7 +130,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 		this.initialize();
 
 		// --- Center Dialog ----------------------------------------
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);	
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);	
 
 	    switch (currentAction) {
 	    case NewProject:

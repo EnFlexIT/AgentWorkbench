@@ -220,35 +220,34 @@ public class DisplayAgent extends AbstractDisplayAgent {
 		try {
 			// --- Empty the Vector of NetworkModel's -----------------------------------
 			EnvironmentModel envModel = this.getEnvironmentModelStimuli().remove(0);
-			if (this.myEnvironmentModel!=envModel) {
+			if (envModel!=null && this.myEnvironmentModel!=envModel) {
+				// --- Set a new environment model to display ---------------------------
 				this.myEnvironmentModel = envModel;	
-			}
-			// --- Update TimModel Display ----------------------------------------------
-			this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
-			
-			// --- Update NetworkModel, if allowed -------------------------------------- 
-			if (this.isEnableNetworkModelUpdate()==true) {
-				if (this.isEnableNetworkModelCopy()==true) {
-					final NetworkModel netModelCopy = this.getNetworkModel().getCopy();
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							getGraphEnvironmentController().setDisplayEnvironmentModel(netModelCopy);
-						}
-					});
+
+				// --- Update NetworkModel, if allowed ---------------------------------- 
+				if (this.isEnableNetworkModelUpdate()==true) {
 					
-				} else {
-					// --- Set original NetworkModel ------------------------------------ 
-					SwingUtilities.invokeAndWait(new Runnable() {
-						@Override
-						public void run() {
-							getGraphEnvironmentController().setDisplayEnvironmentModel(myEnvironmentModel.getDisplayEnvironment());
-						}
-					});					
-					
+					// --- Get original or copy -----------------------------------------
+					NetworkModel networkModel = (NetworkModel) this.myEnvironmentModel.getDisplayEnvironment();
+					if (networkModel!=null && this.isEnableNetworkModelCopy()==true) {
+						networkModel = networkModel.getCopy();
+					}
+					// --- Set to visualization -----------------------------------------
+					if (networkModel!=null) {
+						final NetworkModel networkModelToDisplay = networkModel;
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								DisplayAgent.this.getGraphEnvironmentController().setDisplayEnvironmentModel(networkModelToDisplay);
+							}
+						});
+					}
 				}
 			}
 			
+			// --- Finally, update TimModel Display -------------------------------------
+			this.setTimeModelDisplay(this.myEnvironmentModel.getTimeModel());
+						
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

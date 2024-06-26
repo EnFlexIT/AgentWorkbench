@@ -53,8 +53,8 @@ import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 
 import de.enflexit.api.Translator;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * This class provides a simple interface to the OpenID Connect authorisation.
@@ -237,7 +237,7 @@ public class OIDCAuthorization {
 		}
 		authDialog.setContentPane(oidcPanel);
 		authDialog.setSize(new Dimension(500, 190));
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(authDialog, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(authDialog, JDialogPosition.ParentCenter);
 		return authDialog;
 	}
 

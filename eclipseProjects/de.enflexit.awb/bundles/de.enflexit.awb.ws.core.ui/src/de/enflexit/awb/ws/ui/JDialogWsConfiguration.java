@@ -24,9 +24,8 @@ import javax.swing.WindowConstants;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
 import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class JDialogWsConfiguration enables to configure WS server and clients.
@@ -81,7 +80,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		int height = (int)(screenSize.getHeight() * 0.6);
 		int width  = (int) (screenSize.getWidth() * 0.6);
 		this.setSize(width, height);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -121,7 +120,6 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 	private JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab(" WS - Server ",  null, this.getJPanelServerConfiguration(), null);
 			jTabbedPane.addTab(" WS - Clients ", null, this.getJPanelClientConfiguration(), null);

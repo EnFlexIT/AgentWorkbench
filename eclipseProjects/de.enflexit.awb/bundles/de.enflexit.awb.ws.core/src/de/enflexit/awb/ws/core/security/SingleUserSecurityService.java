@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import org.eclipse.jetty.security.SecurityHandler;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 
 /**
  * The Class SingleUserSecurityService describes the {@link SingleUserSecurityHandler}
@@ -14,7 +15,7 @@ import de.enflexit.awb.ws.AwbSecurityHandlerService;
  */
 public class SingleUserSecurityService implements AwbSecurityHandlerService {
 
-	private final String[] configParameterKeys = new String[]{"User Name", "User Password"};
+	private final String[] configParameterKeys = new String[]{JwtParameter.UserName.getKey(), JwtParameter.Password.getKey()};
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#getSecurityHandlerName()
@@ -43,12 +44,7 @@ public class SingleUserSecurityService implements AwbSecurityHandlerService {
 	 */
 	@Override
 	public SecurityHandler getNewSecurityHandler(TreeMap<String, String> securityHandlerConfiguration) {
-		// --- Get the required parameter ---------------------------
-		String userName = securityHandlerConfiguration.get(this.configParameterKeys[0]);
-		String password = securityHandlerConfiguration.get(this.configParameterKeys[1]);
-		// --- Return the new instance of the SecurtiyHandler -------
-		return new SingleUserSecurityHandler(userName, password);
+		return new SingleUserSecurityHandler(securityHandlerConfiguration);
 	}
-
 
 }

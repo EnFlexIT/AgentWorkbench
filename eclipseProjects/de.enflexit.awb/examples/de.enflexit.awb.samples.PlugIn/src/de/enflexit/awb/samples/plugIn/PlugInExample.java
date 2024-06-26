@@ -59,7 +59,7 @@ public class PlugInExample extends PlugIn {
 		JMenuItem myJMenuItem = new JMenuItem("! Here I am  !");
 		myJMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Great, you found me! That was the 'Here I am'-action !");
+				System.out.println("Great, you found me! That was the 'Here I am - action !");
 			}
 		});
 		

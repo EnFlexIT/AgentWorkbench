@@ -39,8 +39,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 import javax.swing.JSplitPane;
 
@@ -97,7 +97,7 @@ public class DynTreeViewer extends JDialog {
 		this.setTitle("DynForm - SlotView");
 		this.setContentPane(getJSplitPane());
 		this.setSize(900, 300);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenTopLeft);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenTopLeft);
 	}
 
 	/**

@@ -20,8 +20,8 @@ import javax.swing.event.DocumentListener;
 import de.enflexit.awb.ws.client.ServerURL;
 import de.enflexit.awb.ws.client.WsCredentialStore;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class JDialogCreateServerURL enables the creation of a {@link ServerURL}.
@@ -38,7 +38,7 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 	public JDialogCreateServerURL(Window owner, boolean isVisible) {
 		super(owner);
 		this.getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.setSize(300, 120);
 		this.setModal(true);
 		
@@ -59,7 +59,7 @@ public class JDialogCreateServerURL extends JDialog implements ActionListener,Do
 			this.setModifiedServerURL(serverURL);
 		}
 		getContentPane().add(getJPanelServerURL(), BorderLayout.CENTER);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		this.getJButtonCreateServerURL().setText("Save changes");
 		this.setSize(300, 120);
 		this.setModal(true);

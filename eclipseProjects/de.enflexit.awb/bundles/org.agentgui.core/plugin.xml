@@ -30,7 +30,7 @@
          </property>
          <property
                name="startupProgressRect"
-               value="5,275,445,15">
+               value="3,267,494,12">
          </property>
          <property
                name="aboutImage"
@@ -38,7 +38,7 @@
          </property>
          <property
                name="aboutText"
-               value="Agent Workbench (AWB), formerly named Agent.GUI is an Eclipse based RCP application that enables to configure and execute Agents and Multi-Agent systems in various ways.">
+               value="Agent Workbench (AWB) is an OSGI- and Eclipse-based RCP application that enables to configure and execute Agents and Multi-Agent Systems in various ways.">
          </property>
          <property
                name="preferenceCustomization"

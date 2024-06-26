@@ -3,13 +3,15 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
-Bundle-Version: 1.2.12.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-Vendor: EnFlex.IT
 Bundle-ClassPath: .
 Require-Bundle: de.enflexit.api,
+ de.enflexit.common.flatlaf,
+ com.sun.xml.bind.jaxb-impl,
  org.eclipse.osgi.services,
  org.eclipse.core.runtime,
  org.agentgui.lib.jade,
@@ -32,10 +34,18 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.featureEvaluation.featureXML,
  de.enflexit.common.http,
  de.enflexit.common.images,
- de.enflexit.common.ontology,
- de.enflexit.common.ontology.gui,
  de.enflexit.common.linearization,
  de.enflexit.common.linearization.ui,
+ de.enflexit.common.ontology;uses:="javax.swing.table,javax.swing.tree,jade.content.onto",
+ de.enflexit.common.ontology.gui;
+  uses:="agentgui.core.project,
+   javax.swing.table,
+   agentgui.core.environment,
+   javax.swing.tree,
+   jade.content.onto,
+   agentgui.core.ontologies,
+   de.enflexit.common.swing,
+   javax.swing",
  de.enflexit.common.p2,
  de.enflexit.common.performance,
  de.enflexit.common.properties,
@@ -43,6 +53,6 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.swing.fileSelection,
  de.enflexit.common.swing.imageFileSelection,
  de.enflexit.common.transfer
-Import-Package: jakarta.xml.bind,
- jakarta.xml.bind.annotation,
- jakarta.xml.bind.annotation.adapters
+Import-Package: javax.xml.bind,
+ javax.xml.bind.annotation,
+ javax.xml.bind.annotation.adapters

@@ -110,6 +110,8 @@ public interface SimulationServiceSlice extends Service.Slice {
 	/** The Constant SIM_SET_ENVIRONMENT_NEXT_PART. */
 	static final String SIM_SET_ENVIRONMENT_NEXT_PART = "set-environment-next-part";
 	/** The Constant SIM_GET_ENVIRONMENT_NEXT_PARTS. */
+	static final String SIM_GET_ENVIRONMENT_NEXT_PARTS_FROM_MAIN = "get-environment-next-parts-from-main";
+	/** The Constant SIM_GET_ENVIRONMENT_NEXT_PARTS. */
 	static final String SIM_GET_ENVIRONMENT_NEXT_PARTS = "get-environment-next-parts";
 	/** The Constant SIM_RESET_ENVIRONMENT_NEXT_PARTS. */
 	static final String SIM_RESET_ENVIRONMENT_NEXT_PARTS = "reset-environment-next-parts";
@@ -196,6 +198,14 @@ public interface SimulationServiceSlice extends Service.Slice {
 	
 	/**
 	 * This method returns the complete environment-model-changes from the Main-Container.
+	 *
+	 * @return the environment instance next parts
+	 * @throws IMTPException the IMTPException
+	 */
+	public Hashtable<AID, Object> getEnvironmentInstanceNextPartsFromMain() throws IMTPException;
+	
+	/**
+	 * This method returns the environment-model-changes from the current container.
 	 *
 	 * @return the environment instance next parts
 	 * @throws IMTPException the IMTPException

@@ -28,8 +28,8 @@
  */
 package de.enflexit.common.transfer;
 
-import java.awt.Frame;
 import java.awt.Image;
+import java.awt.Window;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -67,7 +67,7 @@ import de.enflexit.common.SystemEnvironmentHelper;
  */
 public class Zipper extends Thread {
 
-	private Frame owner;
+	private Window owner;
 	
 	private String applicationName;
 	private Image iconImage;
@@ -103,7 +103,7 @@ public class Zipper extends Thread {
 	 * Instantiates a new Zipper.
 	 * @param owner the owner frame of the zipper
 	 */
-	public Zipper(Frame owner) {
+	public Zipper(Window owner) {
 		this.owner = owner;
 		this.setName("Zipper");
 	}

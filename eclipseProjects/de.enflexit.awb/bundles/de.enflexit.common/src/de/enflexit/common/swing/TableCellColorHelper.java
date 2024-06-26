@@ -17,18 +17,34 @@ public final class TableCellColorHelper {
 	private static boolean debug = false;
 	private static boolean colorPropertiesAlreadyPrinted = false;
 	
+	private static boolean isEnabledTableCellColorHelper = true;
+	
 	/** The Constant TB_BACKGROUND. */
 	public final static Color TB_BACKGROUND = Color.WHITE;
 	/** The Constant TB_ALTERNATEROWCOLOR. */
 	public final static Color TB_ALTERNATEROWCOLOR = new Color(242, 242, 242);
 	/** The Constant TB_HIGHLIGHT. */
-	public final static Color TB_HIGHLIGHT = new Color(57, 105, 138);
- 
+	public static Color TB_HIGHLIGHT = new Color(57, 105, 138);
+	
 	/** The Constant TB_TEXTFOREGROUND. */
 	public final static Color TB_TEXTFOREGROUND = new Color(35, 35, 36);
 	/** The Constant TB_TEXTFOREGROUND_SELECTED. */
 	public final static Color TB_TEXTFOREGROUND_SELECTED = Color.WHITE;
 
+	
+	
+	/**
+	 * Sets the table highlight color.
+	 * @param newColor the new table highlight color; set <code>null</code> for system default value
+	 */
+	public static void setTableHighlightColor(Color newColor) {
+		if (newColor==null) {
+			TB_HIGHLIGHT = new Color(57, 105, 138);
+		} else {
+			TB_HIGHLIGHT = newColor;
+		}
+	}
+	
 	
 	/**
 	 * Sets the color for a component that is located in a cell of a JTable.
@@ -38,6 +54,7 @@ public final class TableCellColorHelper {
 	 * @param isSelected the indicator, if the row is selected
 	 */
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected) {
+		if (isEnabledTableCellColorHelper==false) return;
 		setTableCellRendererColors(comp, row, isSelected, TableCellColorHelper.TB_BACKGROUND);
 	}
 	
@@ -51,6 +68,7 @@ public final class TableCellColorHelper {
 	 */
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected, Color tableBgColor) {
 
+		if (isEnabledTableCellColorHelper==false) return;
 		// --- do the settings --------------
 		comp.setOpaque(true);
 		if (isSelected == true) {

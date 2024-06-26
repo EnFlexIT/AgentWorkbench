@@ -16,10 +16,11 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+import javax.validation.constraints.*;
+import javax.validation.Valid;
 
 /**
  * PasswordChange
@@ -28,7 +29,7 @@ import jakarta.validation.Valid;
   PasswordChange.JSON_PROPERTY_PASSWORD_OLD,
   PasswordChange.JSON_PROPERTY_PASSWORD_NEW
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class PasswordChange   {
   public static final String JSON_PROPERTY_PASSWORD_OLD = "password_old";
   @JsonProperty(JSON_PROPERTY_PASSWORD_OLD)
@@ -48,7 +49,7 @@ public class PasswordChange   {
    * @return passwordOld
    **/
   @JsonProperty(value = "password_old")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getPasswordOld() {
     return passwordOld;
@@ -68,7 +69,7 @@ public class PasswordChange   {
    * @return passwordNew
    **/
   @JsonProperty(value = "password_new")
-  @Schema(required = true, description = "")
+  @ApiModelProperty(required = true, value = "")
   @NotNull 
   public String getPasswordNew() {
     return passwordNew;
@@ -97,13 +98,14 @@ public class PasswordChange   {
     return Objects.hash(passwordOld, passwordNew);
   }
 
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PasswordChange {\n");
     
-    sb.append("    passwordOld: ").append("*").append("\n");
-    sb.append("    passwordNew: ").append("*").append("\n");
+    sb.append("    passwordOld: ").append(toIndentedString(passwordOld)).append("\n");
+    sb.append("    passwordNew: ").append(toIndentedString(passwordNew)).append("\n");
     sb.append("}");
     return sb.toString();
   }

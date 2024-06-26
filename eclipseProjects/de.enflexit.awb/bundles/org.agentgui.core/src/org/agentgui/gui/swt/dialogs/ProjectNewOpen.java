@@ -349,7 +349,7 @@ public class ProjectNewOpen extends Dialog implements AwbProjectNewOpenDialog {
 					if (elementFile==projectsRootDir) {
 						image = GlobalInfo.getInternalSWTImage("MBopen.png");
 					} else {
-						image = GlobalInfo.getInternalSWTImage("AgentGUIGreen32.png");
+						image = GlobalInfo.getInternalSWTImage("AWB-Green32.png");
 					}
 					return image;
 				}

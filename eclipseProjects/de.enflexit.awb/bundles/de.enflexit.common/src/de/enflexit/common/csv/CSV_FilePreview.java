@@ -13,9 +13,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.WindowConstants;
 
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class CSV_FilePreview represents a dialog that is used for debugging /
@@ -82,7 +81,7 @@ public class CSV_FilePreview extends JDialog {
 		// --- Size and center dialog -------------------------------
 		Rectangle screenSize = this.getGraphicsConfiguration().getBounds();
 		this.setSize((int) (screenSize.getWidth() * 0.5), (int) (screenSize.getHeight() * 0.7));
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
 		this.setVisible(true);
 	}
@@ -90,7 +89,6 @@ public class CSV_FilePreview extends JDialog {
 	private JTabbedPane getJTabbedPaneImport() {
 		if (jTabbedPaneImport == null) {
 			jTabbedPaneImport = new JTabbedPane(JTabbedPane.TOP);
-			jTabbedPaneImport.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPaneImport.setFont(new Font("Dialog", Font.BOLD, 13));
 		}
 		return jTabbedPaneImport;

@@ -3,6 +3,7 @@ package de.enflexit.awb.ws.core.security;
 import java.io.IOException;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
+import java.util.TreeMap;
 
 import javax.security.auth.Subject;
 import jakarta.servlet.ServletRequest;
@@ -20,6 +21,7 @@ import org.eclipse.jetty.server.UserIdentity;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
 
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 import de.enflexit.awb.ws.core.util.ServletHelper;
 
 /**
@@ -30,39 +32,55 @@ import de.enflexit.awb.ws.core.util.ServletHelper;
  */
 public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 
-	private final String login;
-	private final String password;
+	private TreeMap<String, String> securityHandlerConfiguration;
 	
 	/**
 	 * Instantiates a new SingleUserSecurityHandler that enables an unprotected access
 	 * to the underlying resources (no login and no password is required).
 	 */
 	public SingleUserSecurityHandler() {
-		this(null, null);
+		this(null);
 	}
+	
 	/**
 	 * Instantiates a new SingleUserSecurityHandler where access is granted, if the login
 	 * information matching the specified login and password.
 	 *
-	 * @param login the login
-	 * @param password the password
+	 * @param securityHandlerConfiguration the security handler configuration
 	 */
-	public SingleUserSecurityHandler(String login, String password) {
-		this.login = login;
-		this.password = password;
-		
+	public SingleUserSecurityHandler(TreeMap<String, String> securityHandlerConfiguration) {
+		this.securityHandlerConfiguration = securityHandlerConfiguration;
 		this.setAuthenticator(new BasicAuthenticator());
 		this.setIdentityService(new DefaultIdentityService());
 		this.setLoginService(new SingleUserLoginService());
 	}
 
 	/**
+	 * Return the current user name.
+	 * @return the user name
+	 */
+	private String getUserName() {
+		return securityHandlerConfiguration!=null ? securityHandlerConfiguration.get(JwtParameter.UserName.getKey()) : null;
+	}
+	/**
+	 * Returns the current password.
+	 * @return the password
+	 */
+	private String getPassword() {
+		return securityHandlerConfiguration!=null ? securityHandlerConfiguration.get(JwtParameter.Password.getKey()) : null;
+	}
+	
+	/**
 	 * Checks if is secured.
 	 * @return true, if is secured
 	 */
 	private boolean isSecured() {
-		boolean isSecuredLogin    = this.login!=null && this.login.isBlank()==false;
-		boolean isSecuredPassword = this.password!=null && this.password.isBlank()==false;
+		
+		String login = this.getUserName();
+		String password = this.getPassword();
+		
+		boolean isSecuredLogin    = login!=null && login.isBlank()==false;
+		boolean isSecuredPassword = password!=null && password.isBlank()==false;
 		return isSecuredLogin & isSecuredPassword;
 	}
 	
@@ -96,7 +114,7 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 	 */
 	@Override
 	protected boolean checkWebResourcePermissions(String pathInContext, Request request, Response response, Object constraintInfo, UserIdentity userIdentity) throws IOException {
-		return userIdentity!=null && StringUtils.equals(login, userIdentity.getUserPrincipal().getName());
+		return userIdentity!=null && StringUtils.equals(this.getUserName(), userIdentity.getUserPrincipal().getName());
 	}
 	
 	
@@ -126,7 +144,7 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 		@Override
 		public UserIdentity login(String username, Object credentials, ServletRequest request) {
 			
-			if (StringUtils.equals(SingleUserSecurityHandler.this.login, username) && StringUtils.equals(SingleUserSecurityHandler.this.password, String.valueOf(credentials))) {
+			if (StringUtils.equals(SingleUserSecurityHandler.this.getUserName(), username) && StringUtils.equals(SingleUserSecurityHandler.this.getPassword(), String.valueOf(credentials))) {
 				
 				final Credential credential = new Password(String.valueOf(credentials));
 				final Principal principal   = new KnownUser(username, credential);

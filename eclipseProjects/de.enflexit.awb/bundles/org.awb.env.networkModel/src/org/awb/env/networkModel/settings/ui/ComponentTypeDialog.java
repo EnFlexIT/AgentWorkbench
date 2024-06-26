@@ -71,9 +71,8 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.project.Project;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.imageFileSelection.MissingIcon;
 import jade.core.Agent;
 
@@ -160,7 +159,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	    int width  = (int) (screenSize.getWidth() * 0.7);
 	    int height = (int) (screenSize.getHeight() * 0.7);
 	    this.setSize(width, height);
-	    JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+	    WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	    this.setContentPane(this.getJContentPane());
 	    this.setGeneralConfiguration();
@@ -310,7 +309,6 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	public JTabbedPane getJTabbedPane() {
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane();
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab("Teilnetze", null, getJPanelDomains(), null);
 			jTabbedPane.addTab("Netzwerk-Komponenten", null, getJPanelComponents(), null);

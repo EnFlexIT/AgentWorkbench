@@ -31,11 +31,11 @@ package de.enflexit.common.transfer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -50,8 +50,8 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import de.enflexit.common.Language;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The ZipperMonitor class will be used within the Zipper-class of this package.<br>
@@ -90,7 +90,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 	 * @param iconImage the icon image that can be used as a decorator for the ZipperMonitor
 	 * @param lookAndFeelClassName the look and feel class name or reference
 	 */
-	public ZipperMonitor(Frame owner, String applicationName, Image iconImage, String lookAndFeelClassName) {
+	public ZipperMonitor(Window owner, String applicationName, Image iconImage, String lookAndFeelClassName) {
 		super(owner);
 		this.appName = applicationName;
 		this.iconImage = iconImage;
@@ -116,7 +116,7 @@ public class ZipperMonitor extends JDialog implements ActionListener {
 		
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.getContentPane().setPreferredSize(this.getSize());
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		
 		
 		// --- Translate ----

@@ -54,8 +54,8 @@ import org.agentgui.gui.AwbProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import de.enflexit.common.Language;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 
 /**
@@ -141,7 +141,7 @@ public class ProgressMonitor implements ActionListener, AwbProgressMonitor, IPro
 				
 				this.progressMonitorContainer = jDialog; 
 				this.setLookAndFeel();
-				JDialogSizeAndPostionController.setJDialogPositionOnScreen(jDialog, JDialogPosition.ParentCenter);
+				WindowSizeAndPostionController.setJDialogPositionOnScreen(jDialog, JDialogPosition.ParentCenter);
 					
 			} else {
 				JInternalFrame jInternalFrame = new JInternalFrame();

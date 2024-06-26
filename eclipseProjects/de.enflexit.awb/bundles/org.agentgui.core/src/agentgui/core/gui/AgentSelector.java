@@ -54,8 +54,8 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.classSelection.JListClassSearcher;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import jade.core.Agent;
 
 /**
@@ -123,7 +123,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 			}
 		});
 		
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);	
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);	
 	 
 	    // --- Translate -----------------------------
 		this.setTitle(Language.translate("Auswahl - Agenten"));

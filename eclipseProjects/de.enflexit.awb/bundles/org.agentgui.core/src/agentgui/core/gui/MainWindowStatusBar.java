@@ -46,6 +46,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
@@ -114,14 +116,14 @@ public class MainWindowStatusBar extends JPanel {
 	 */
 	private void initialize() {
 		
-		this.setPreferredSize(new Dimension(1000, 22));
+		this.setPreferredSize(new Dimension(1000, 24));
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{300, 0, 300, 200, 0};
 		gridBagLayout.rowHeights = new int[]{22, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelStatusText = new GridBagConstraints();
 		gbc_jLabelStatusText.anchor = GridBagConstraints.WEST;
@@ -134,7 +136,7 @@ public class MainWindowStatusBar extends JPanel {
 		gbc_jPanelSystemLoad.fill = GridBagConstraints.BOTH;
 		gbc_jPanelSystemLoad.gridx = 1;
 		gbc_jPanelSystemLoad.gridy = 0;
-		add(this.getJToolBarSystemLoad(), gbc_jPanelSystemLoad);
+		this.add(this.getJToolBarSystemLoad(), gbc_jPanelSystemLoad);
 		
 		GridBagConstraints gbc_jPanelCenter = new GridBagConstraints();
 		gbc_jPanelCenter.fill = GridBagConstraints.BOTH;
@@ -149,6 +151,7 @@ public class MainWindowStatusBar extends JPanel {
 		gbc_jLabelJadeState.gridy = 0;
 		this.add(this.getJLabelJadeState(), gbc_jLabelJadeState);
 		
+		this.setBorder(new MatteBorder(1, 0, 0, 0, UIManager.getColor("controlDkShadow")));
 		this.setJadeStatusColor(JadeStatusColor.Red);
 		this.addSessionFactoryStates();
 	}

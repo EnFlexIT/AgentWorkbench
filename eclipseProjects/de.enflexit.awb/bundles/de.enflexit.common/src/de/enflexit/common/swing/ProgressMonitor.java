@@ -26,7 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import de.enflexit.common.Language;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 
 /**
@@ -142,7 +142,7 @@ public class ProgressMonitor implements ActionListener {
 				}
 				jDialog.setContentPane(this.getJContentPane());
 				jDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-				JDialogSizeAndPostionController.setJDialogPositionOnScreen(jDialog, JDialogPosition.ParentCenter);
+				WindowSizeAndPostionController.setJDialogPositionOnScreen(jDialog, JDialogPosition.ParentCenter);
 				
 				this.progressMonitorContainer = jDialog; 
 				this.setLookAndFeel();	

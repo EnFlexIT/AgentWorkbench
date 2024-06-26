@@ -11,6 +11,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import de.enflexit.common.SerialClone;
 import de.enflexit.common.properties.PropertiesEvent.Action;
 
 /**
@@ -199,7 +200,15 @@ public class Properties implements Serializable {
 		return true;
 	}
 
-	
+	/**
+	 * Returns a copy of the current Properties without listener.
+	 * @return the copy of the current instance
+	 */
+	public Properties getCopy() {
+		Properties copy = new Properties();
+		copy.getPropertyMap().putAll(SerialClone.clone(this.getPropertyMap()));
+		return copy;
+	}
 	
 	// ------------------------------------------------------------------------
 	// --- From methods for the Properties listener ---------------------------

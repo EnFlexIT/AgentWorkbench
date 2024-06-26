@@ -25,7 +25,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.geography.BundleHelper;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
@@ -160,7 +159,6 @@ public class GeoCoordinatePanel extends JPanel implements ActionListener, Docume
 		if (jTabbedPane == null) {
 			jTabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			jTabbedPane.setBorder(null);
-			jTabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			jTabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
 			jTabbedPane.addTab("WGS84", null, getJPanelWGS84(), null);
 			jTabbedPane.addTab("UTM", null, getJPanelUTM(), null);

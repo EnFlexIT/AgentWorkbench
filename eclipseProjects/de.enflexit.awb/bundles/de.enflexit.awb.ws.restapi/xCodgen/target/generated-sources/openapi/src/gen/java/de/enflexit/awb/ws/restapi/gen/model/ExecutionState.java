@@ -17,20 +17,23 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+import javax.validation.constraints.*;
+import javax.validation.Valid;
 
 /**
- * The Agent.Workbench execution state
+ * The Agent.Workbench execution state with its open project and the selected setup
  */
-@Schema(description = "The Agent.Workbench execution state")
+@ApiModel(description = "The Agent.Workbench execution state with its open project and the selected setup")
 @JsonPropertyOrder({
   ExecutionState.JSON_PROPERTY_EXECUTION_MODE,
-  ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE
+  ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE,
+  ExecutionState.JSON_PROPERTY_PROJECT,
+  ExecutionState.JSON_PROPERTY_SETUP
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-04-02T17:38:36.020041800+02:00[Europe/Berlin]", comments = "Generator version: 7.4.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
 public class ExecutionState   {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
@@ -108,6 +111,14 @@ public class ExecutionState   {
   @JsonProperty(JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE)
   private DeviceSystemExecutionModeEnum deviceSystemExecutionMode;
 
+  public static final String JSON_PROPERTY_PROJECT = "project";
+  @JsonProperty(JSON_PROPERTY_PROJECT)
+  private String project;
+
+  public static final String JSON_PROPERTY_SETUP = "setup";
+  @JsonProperty(JSON_PROPERTY_SETUP)
+  private String setup;
+
   public ExecutionState executionMode(ExecutionModeEnum executionMode) {
     this.executionMode = executionMode;
     return this;
@@ -118,7 +129,7 @@ public class ExecutionState   {
    * @return executionMode
    **/
   @JsonProperty(value = "executionMode")
-  @Schema(description = "* 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects ")
+  @ApiModelProperty(value = "* 'APPLICATION' - Runs as end user application in an desktop environment * 'SERVER' - Runs as Background server-system * 'SERVER_MASTER' - Runs as central 'server. master' system and manages all 'server.slave' systems * 'SERVER_SLAVE' - Runs as central 'server. slave' system and wait for start order from the 'server.master' * 'DEVICE_SYSTEM' - Runs as system that directly executes single agents or projects ")
   
   public ExecutionModeEnum getExecutionMode() {
     return executionMode;
@@ -138,7 +149,7 @@ public class ExecutionState   {
    * @return deviceSystemExecutionMode
    **/
   @JsonProperty(value = "deviceSystemExecutionMode")
-  @Schema(description = "* 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project ")
+  @ApiModelProperty(value = "* 'SETUP' - Runs the selected setup of an AWB projekt * 'AGENT' - Runs one or more agents from an AWB project ")
   
   public DeviceSystemExecutionModeEnum getDeviceSystemExecutionMode() {
     return deviceSystemExecutionMode;
@@ -146,6 +157,46 @@ public class ExecutionState   {
 
   public void setDeviceSystemExecutionMode(DeviceSystemExecutionModeEnum deviceSystemExecutionMode) {
     this.deviceSystemExecutionMode = deviceSystemExecutionMode;
+  }
+
+  public ExecutionState project(String project) {
+    this.project = project;
+    return this;
+  }
+
+  /**
+   * The currently open project
+   * @return project
+   **/
+  @JsonProperty(value = "project")
+  @ApiModelProperty(value = "The currently open project")
+  
+  public String getProject() {
+    return project;
+  }
+
+  public void setProject(String project) {
+    this.project = project;
+  }
+
+  public ExecutionState setup(String setup) {
+    this.setup = setup;
+    return this;
+  }
+
+  /**
+   * The currently open project-setup
+   * @return setup
+   **/
+  @JsonProperty(value = "setup")
+  @ApiModelProperty(value = "The currently open project-setup")
+  
+  public String getSetup() {
+    return setup;
+  }
+
+  public void setSetup(String setup) {
+    this.setup = setup;
   }
 
 
@@ -159,13 +210,16 @@ public class ExecutionState   {
     }
     ExecutionState executionState = (ExecutionState) o;
     return Objects.equals(this.executionMode, executionState.executionMode) &&
-        Objects.equals(this.deviceSystemExecutionMode, executionState.deviceSystemExecutionMode);
+        Objects.equals(this.deviceSystemExecutionMode, executionState.deviceSystemExecutionMode) &&
+        Objects.equals(this.project, executionState.project) &&
+        Objects.equals(this.setup, executionState.setup);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(executionMode, deviceSystemExecutionMode);
+    return Objects.hash(executionMode, deviceSystemExecutionMode, project, setup);
   }
+
 
   @Override
   public String toString() {
@@ -174,6 +228,8 @@ public class ExecutionState   {
     
     sb.append("    executionMode: ").append(toIndentedString(executionMode)).append("\n");
     sb.append("    deviceSystemExecutionMode: ").append(toIndentedString(deviceSystemExecutionMode)).append("\n");
+    sb.append("    project: ").append(toIndentedString(project)).append("\n");
+    sb.append("    setup: ").append(toIndentedString(setup)).append("\n");
     sb.append("}");
     return sb.toString();
   }

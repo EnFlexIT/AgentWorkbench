@@ -44,7 +44,6 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 import agentgui.simulationService.load.threading.ThreadProtocolVector;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
-import de.enflexit.common.swing.AwbBasicTabbedPaneUI;
 
 /**
  * The Class SingleThreadMonitor.
@@ -129,7 +128,6 @@ public class ThreadMonitor extends JFrame {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.setFont(new Font("Dialog", Font.BOLD, 13));
-			tabbedPane.setUI(new AwbBasicTabbedPaneUI());
 			tabbedPane.addTab("Thread Protocol", null, getJPanelMeasureProtocol(), null);
 			tabbedPane.addTab("Thread Details", null, getJPanelMeasureTreeDetail(), null);
 			tabbedPane.addTab("Thread Metrics", null, getJPanelMeasureMetrics(), null);

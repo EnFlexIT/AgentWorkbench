@@ -30,9 +30,12 @@ package agentgui.simulationService.environment;
 
 import java.io.Serializable;
 
+import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetup;
 import agentgui.simulationService.SimulationService;
 import agentgui.simulationService.SimulationServiceHelper;
 import agentgui.simulationService.time.TimeModel;
+import de.enflexit.common.properties.Properties;
 
 /**
  * This is the generalized environment model to use with the SimulationService
@@ -54,6 +57,9 @@ public class EnvironmentModel implements Serializable {
 	private AbstractEnvironmentModel abstractEnvironment;
 	private DisplaytEnvironmentModel displayEnvironment;	
 
+	private Properties projectProperties;
+	private Properties setupProperties;
+	
 	
 	/**
 	 * Returns true if nothing is set yet (e.g. timeModel, abstractEnvironment or displayEnvironment)
@@ -113,6 +119,39 @@ public class EnvironmentModel implements Serializable {
 	}
 
 	/**
+	 * Returns the available project {@link Properties}.
+	 * @return the project properties
+	 * @see Project#getProperties()
+	 */
+	public Properties getProjectProperties() {
+		return projectProperties;
+	}
+	/**
+	 * Sets project {@link Properties} to the environment model.
+	 * @param projectProperties the new project properties
+	 */
+	public void setProjectProperties(Properties projectProperties) {
+		this.projectProperties = projectProperties;
+	}
+	
+	/**
+	 * Returns the available setup Properties.
+	 * @return the setup properties
+	 * @see SimulationSetup#getProperties()
+	 */
+	public Properties getSetupProperties() {
+		return setupProperties;
+	}
+	/**
+	 * Sets setup {@link Properties} to the environment model.
+	 * @param projectProperties the new project properties
+	 */
+	public void setSetupProperties(Properties setupProperties) {
+		this.setupProperties = setupProperties;
+	}
+	
+	
+	/**
 	 * Returns a copy of the current environment model.
 	 * @return the copied instance of the current object
 	 */
@@ -131,6 +170,12 @@ public class EnvironmentModel implements Serializable {
 		}
 		if (this.abstractEnvironment!=null) {
 			copy.setAbstractEnvironment(this.abstractEnvironment.getCopy());
+		}
+		if (this.projectProperties!=null) {
+			copy.setProjectProperties(this.projectProperties.getCopy());
+		}
+		if (this.setupProperties!=null) {
+			copy.setSetupProperties(this.setupProperties.getCopy());
 		}
 		return copy;
 	}

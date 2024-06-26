@@ -26,7 +26,7 @@ public class JettyServerInstances {
 	 */
 	public JettyServerInstances(Server server, Sequence handlerCollection) { 
 		if (server==null) {
-			throw new NullPointerException("The server instance is not allowed to null!");
+			throw new NullPointerException("The server instance is not allowed to be null!");
 		}
 		this.setServer(server);
 		this.setHandlerCollection(handlerCollection);

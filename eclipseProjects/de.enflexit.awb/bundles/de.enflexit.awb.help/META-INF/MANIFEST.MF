@@ -2,9 +2,8 @@ Automatic-Module-Name: de.enflexit.awb.help
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - API Help
-Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.awb.help;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 2.4.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.agentgui.core,
  de.enflexit.api,
@@ -15,3 +14,4 @@ Require-Bundle: org.agentgui.core,
  de.enflexit.db.mySQL,
  de.enflexit.oidc,
  org.eclipse.help
+Bundle-Vendor: EnFlex.IT

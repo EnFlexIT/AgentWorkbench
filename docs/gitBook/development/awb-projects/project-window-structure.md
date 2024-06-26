@@ -6,13 +6,13 @@ First up, Agent.Workbench provides different options regarding the project windo
 
 ![](../../.gitbook/assets/viewmenu.jpg)
 
-When working with projects, we can distinguish two groups of people, the [project developers and the end-users](../../overview/#who-uses-agent-workbench). Agent.Workbench provides separate views for each group. The developer view with specific configuration options and a reduced end-user view. 
+When working with projects, we can distinguish two groups of people, the [project developers and the end-users](../../overview/#who-uses-agent-workbench). Agent.Workbench provides separate views for each group. The developer view with specific configuration options and a reduced end-user view.
 
 ![](../../.gitbook/assets/projectviewscomparison.png)
 
 ## Info
 
-Common to every project is the Info page. The Info page defines the Project Title, provides space for a description of the project and lets you configure some general settings regarding the project. Additionally, it shows where the project is saved and which tab \(node from the project tree\) is used as the initial view when the project opens. Further, a project version and an update-site can be configured, if a project is opened in the so-called 'Developer View'. The project version and the update-site are related to the import and export capabilities of AWB-projects [that are explained here](project-import-and-export.md).
+Common to every project is the Info page. The Info page defines the Project Title, provides space for a description of the project and lets you configure some general settings regarding the project. Additionally, it shows where the project is saved and which tab (node from the project tree) is used as the initial view when the project opens. Further, a project version and an update-site can be configured, if a project is opened in the so-called 'Developer View'. The project version and the update-site are related to the import and export capabilities of AWB-projects [that are explained here](project-import-and-export.md).
 
 ![](../../.gitbook/assets/epinfopage.jpg)
 
@@ -22,7 +22,7 @@ The child nodes and tabs in the _Configuration_ group are intended to give proje
 
 ### Resources
 
-The Resources-tab provides the opportunity to specify which Agent.Workbench Features are required. Further, it shows which OSGI- bundles were found in the projects directory \(those bundles will be loaded and started automatically\). Based on this resources \(feature- and project OSGI-bundles\), the AWB Project-Plugins to be loaded can be configured here. Last but not least, an environment type and a time model can be chosen for the Multi-Agent System to be exectuted in the further course. 
+The Resources-tab provides the opportunity to specify which Agent.Workbench Features are required. Further, it shows which OSGI- bundles were found in the projects directory (those bundles will be loaded and started automatically). Based on this resources (feature- and project OSGI-bundles), the AWB Project-Plugins to be loaded can be configured here. Last but not least, an environment type and a time model can be chosen for the Multi-Agent System to be exectuted in the further course.
 
 A developer has the option to either use existing AWB-extensions or create and include individual components, since each component that can be added to a project can be self-extended or customized by developers. The image below shows the Resources-tab from the energy-agent example project, which can be imported to the Agent.Workbench application.
 
@@ -32,7 +32,7 @@ A developer has the option to either use existing AWB-extensions or create and i
 
 In the Ontologies-tab, ontologies can be selected and integrated into the project. Agent.Workbench supports Protégé designed ontologies and provides a reflective access to them. When an ontology is selected in the explorer, the window also provides information about the ontology, such as the name of the entities, cardinalities, types and other facets.
 
-With ![](../../.gitbook/assets/addontologybutton.jpg) the button, the desired ontologies can be selected from a list.
+With ![](../../.gitbook/assets/addagentbutton.jpg) the button, the desired ontologies can be selected from a list.
 
 ![](../../.gitbook/assets/epontologiestab.jpg)
 
@@ -72,11 +72,10 @@ In the Setup section, a project setup can be configured. The Agent-Start tab is 
 
 ### Agent-Start
 
-The Agent-Start window defines the agent start-list. The agents listed in the agent start-list are executed when the project is started. Via the ![](../../.gitbook/assets/addontologybutton.jpg) and ![](../../.gitbook/assets/deleteagentfromlistbutton.jpg) buttons, agents can be added or removed from the agent start-list. The concrete values for the agent ontologies can also be assigned in this window. 
+The Agent-Start window defines the agent start-list. The agents listed in the agent start-list are executed when the project is started. Via the ![](../../.gitbook/assets/addagentbutton.jpg) and ![](../../.gitbook/assets/deleteagentfromlistbutton.jpg) buttons, agents can be added or removed from the agent start-list. The concrete values for the agent ontologies can also be assigned in this window.
 
 ![](../../.gitbook/assets/agent-starttab.jpg)
 
 ## Project Desktop
 
-The project desktop provides space for project specific views. The project developer has the opportunity to create frames, that visualize certain project data. Those frames can be displayed in the project desktop window. 
-
+The project desktop provides space for project specific views. The project developer has the opportunity to create frames, that visualize certain project data. Those frames can be displayed in the project desktop window.

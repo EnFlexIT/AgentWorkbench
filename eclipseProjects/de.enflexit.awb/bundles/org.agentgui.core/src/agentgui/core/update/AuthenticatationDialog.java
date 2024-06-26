@@ -57,8 +57,8 @@ import de.enflexit.api.Translator.SourceLanguage;
 import de.enflexit.common.Language;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
-import de.enflexit.common.swing.JDialogSizeAndPostionController;
-import de.enflexit.common.swing.JDialogSizeAndPostionController.JDialogPosition;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
  * The Class AuthenticatationDialog.
@@ -119,7 +119,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 		this.setModal(true);
 
 		this.setSize(580, 240);
-		JDialogSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	    
 	    this.initialize();
 		if (authorization != null && authorization.getType() == AuthorizationType.BASIC) {

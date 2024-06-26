@@ -51,7 +51,6 @@ import org.agentgui.bundle.evaluation.BundleClassFilterCollector;
 import org.agentgui.gui.AwbConsole;
 import org.agentgui.gui.AwbTrayIcon;
 import org.agentgui.gui.UiBridge;
-import org.agentgui.gui.swing.AwbLookAndFeelAdjustments;
 import org.eclipse.equinox.app.IApplication;
 
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
@@ -82,6 +81,7 @@ import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.gui.AwbDatabaseDialog;
 import de.enflexit.oidc.OIDCAuthorization;
