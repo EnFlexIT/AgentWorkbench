@@ -6,7 +6,7 @@
 			<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.rcp.feature.group" version="0.0.0"/>
-			<repository location="https://download.eclipse.org/releases/2024-03/"/>
+			<repository location="https://download.eclipse.org/releases/2024-06/"/>
 			<!--  Space for older versions (as reminder) 
 			<repository location="https://download.eclipse.org/releases/2023-06/"/> <= Latest for Java 11
 			<repository location="https://download.eclipse.org/releases/2023-03/"/>
@@ -37,11 +37,7 @@
 			<unit id="ch.qos.logback.slf4j.source" version="0.0.0"/>
 			<unit id="org.slf4j.api" version="0.0.0"/>
 			<unit id="org.slf4j.api.source" version="0.0.0"/>
-			<unit id="org.bouncycastle.bcpkix" version="0.0.0"/>
-			<unit id="org.bouncycastle.bcpkix.source" version="0.0.0"/>
-			<unit id="org.bouncycastle.bcprov" version="0.0.0"/>
-			<unit id="org.bouncycastle.bcprov.source" version="0.0.0"/>
-<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20230531010532/repository"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20230531010532/repository"/>
 			<!--  Space for older versions (as reminder)
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20230302014618/repository"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20221123021534/repository"/>
@@ -62,14 +58,68 @@
 		-->
 		</location>
 
-		<!-- 
+
+		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-alpn-client</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-alpn-conscrypt-client</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty.ee10</groupId>
+					<artifactId>jetty-ee10-plus</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty.ee10</groupId>
+					<artifactId>jetty-ee10-apache-jsp</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty.ee10</groupId>
+					<artifactId>jetty-ee10-jaspi</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty.ee10.websocket</groupId>
+					<artifactId>jetty-ee10-websocket-jakarta-common</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+
+				<dependency>
+					<groupId>org.eclipse.jetty.ee8.websocket</groupId>
+					<artifactId>jetty-ee8-websocket-javax-client</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty.ee9</groupId>
+					<artifactId>jetty-ee9-jaspi</artifactId>
+					<version>12.0.9</version>
+					<type>jar</type>
+				</dependency>
+
+			</dependencies>
+		</location>
+		
 		<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<unit id="org.eclipse.orbit.maven.jetty.all.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.orbit.maven.jetty.all.source.feature.group" version="0.0.0"/>
-			<repository location="https://download.eclipse.org/tools/orbit/simrel/maven-jetty/release/12.0.6"/>
+			<repository location="https://download.eclipse.org/tools/orbit/simrel/maven-jetty/release/12.0.9"/>
 		</location>
-		-->
 		
+
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, dependencies for the AWB-Core                -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -119,28 +169,24 @@
 				</dependency>
 			</dependencies>
 		</location>
-		
+
 		<!-- OAuth 2 -->
 		<location includeDependencyDepth="direct" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
 				<dependency>
 					<groupId>com.nimbusds</groupId>
 					<artifactId>oauth2-oidc-sdk</artifactId>
-					<version>10.13</version>
+					<version>11.13</version>
 					<type>jar</type>
 				</dependency>
-				<dependency>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcutil-jdk18on</artifactId>
-					<version>1.76</version>
-					<type>jar</type>
-				</dependency>
+		<!--
 				<dependency>
 					<groupId>net.minidev</groupId>
 					<artifactId>json-smart</artifactId>
 					<version>2.5.0</version>
 					<type>jar</type>
 				</dependency>
+		-->
 			</dependencies>
 		</location>
 		
@@ -169,9 +215,7 @@
 					<type>jar</type>
 				</dependency>
 			</dependencies>
-		</location>	
-		
-		
+		</location>
 
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, dependencies for the AWB-WS part             -->
@@ -180,6 +224,7 @@
 		<!-- Integration of latest Jersey version compatible to Jetty -->
 		<location includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
+				<!-- 
 				<dependency>
 					<groupId>jakarta.servlet</groupId>
 					<artifactId>jakarta.servlet-api</artifactId>
@@ -187,7 +232,6 @@
 					<type>jar</type>
 				</dependency>
 				
-				<!-- 
 				<dependency>
 					<groupId>org.eclipse.jetty</groupId>
 					<artifactId>jetty-server</artifactId>
@@ -244,7 +288,7 @@
 					<type>jar</type>
 				</dependency>
 				-->
-				
+
 				<dependency>
 					<groupId>org.glassfish.jersey.containers</groupId>
 					<artifactId>jersey-container-servlet</artifactId>
@@ -269,7 +313,7 @@
 					<version>3.1.3</version>
 					<type>jar</type>
 				</dependency>
-				
+
 				<dependency>
 					<groupId>com.fasterxml.jackson.jakarta.rs</groupId>
 					<artifactId>jackson-jakarta-rs-base</artifactId>
@@ -294,18 +338,18 @@
 					<version>2.15.1</version>
 					<type>jar</type>
 				</dependency>
-				
+
 				<dependency>
 					<groupId>com.brsanthu</groupId>
 					<artifactId>migbase64</artifactId>
 					<version>2.2</version>
 					<type>jar</type>
 				</dependency>
-				
-				
+
+
 			</dependencies>
 		</location>
-		
+
 		<!-- OpenApi tools -->
 		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
@@ -317,8 +361,8 @@
 				</dependency>
 			</dependencies>
 		</location>
-		
-		
+
+
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, JJWT-dependencies 				             -->
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -344,7 +388,7 @@
 				</dependency>
 			</dependencies>
 		</location>
-		
+
 	</locations>
 
 </target>
