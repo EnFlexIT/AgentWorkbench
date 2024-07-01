@@ -16,23 +16,22 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * Object that holds Version Information.
  */
-@ApiModel(description = "Object that holds Version Information.")
+@Schema(description = "Object that holds Version Information.")
 @JsonPropertyOrder({
   Version.JSON_PROPERTY_MAJOR,
   Version.JSON_PROPERTY_MINOR,
   Version.JSON_PROPERTY_MICRO,
   Version.JSON_PROPERTY_QUALIFIER
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-07-01T09:05:28.373135400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class Version   {
   public static final String JSON_PROPERTY_MAJOR = "major";
   @JsonProperty(JSON_PROPERTY_MAJOR)
@@ -60,7 +59,7 @@ public class Version   {
    * @return major
    **/
   @JsonProperty(value = "major")
-  @ApiModelProperty(required = true, value = "the major version number")
+  @Schema(required = true, description = "the major version number")
   @NotNull 
   public Integer getMajor() {
     return major;
@@ -80,7 +79,7 @@ public class Version   {
    * @return minor
    **/
   @JsonProperty(value = "minor")
-  @ApiModelProperty(required = true, value = "the minor version number")
+  @Schema(required = true, description = "the minor version number")
   @NotNull 
   public Integer getMinor() {
     return minor;
@@ -100,7 +99,7 @@ public class Version   {
    * @return micro
    **/
   @JsonProperty(value = "micro")
-  @ApiModelProperty(required = true, value = "the micro version number")
+  @Schema(required = true, description = "the micro version number")
   @NotNull 
   public Integer getMicro() {
     return micro;
@@ -120,7 +119,7 @@ public class Version   {
    * @return qualifier
    **/
   @JsonProperty(value = "qualifier")
-  @ApiModelProperty(required = true, value = "the version qualifier")
+  @Schema(required = true, description = "the version qualifier")
   @NotNull 
   public String getQualifier() {
     return qualifier;
@@ -150,7 +149,6 @@ public class Version   {
   public int hashCode() {
     return Objects.hash(major, minor, micro, qualifier);
   }
-
 
   @Override
   public String toString() {

@@ -16,7 +16,7 @@ import de.enflexit.awb.ws.restapi.gen.model.ExecutionState.ExecutionModeEnum;
  * The individual implementation class for the {@link StateApi}.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T22:50:45.497388700+02:00[Europe/Berlin]")
 public class ExecutionStateApiImpl extends ExecutionStateApiService {
 	
     /* (non-Javadoc)

@@ -16,16 +16,15 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 /**
  * Describes a single network connection.
  */
-@ApiModel(description = "Describes a single network connection.")
+@Schema(description = "Describes a single network connection.")
 @JsonPropertyOrder({
   NetworkConnection.JSON_PROPERTY_NAME,
   NetworkConnection.JSON_PROPERTY_DISPLAY_NAME,
@@ -35,7 +34,7 @@ import javax.validation.Valid;
   NetworkConnection.JSON_PROPERTY_TRAFFIC_SEND_IN_M_B,
   NetworkConnection.JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-07-01T09:05:28.373135400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class NetworkConnection   {
   public static final String JSON_PROPERTY_NAME = "name";
   @JsonProperty(JSON_PROPERTY_NAME)
@@ -75,7 +74,7 @@ public class NetworkConnection   {
    * @return name
    **/
   @JsonProperty(value = "name")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public String getName() {
     return name;
@@ -95,7 +94,7 @@ public class NetworkConnection   {
    * @return displayName
    **/
   @JsonProperty(value = "displayName")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public String getDisplayName() {
     return displayName;
@@ -115,7 +114,7 @@ public class NetworkConnection   {
    * @return macAddress
    **/
   @JsonProperty(value = "macAddress")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public String getMacAddress() {
     return macAddress;
@@ -135,7 +134,7 @@ public class NetworkConnection   {
    * @return ip4Addresses
    **/
   @JsonProperty(value = "ip4Addresses")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public String getIp4Addresses() {
     return ip4Addresses;
@@ -155,7 +154,7 @@ public class NetworkConnection   {
    * @return ip6Addresses
    **/
   @JsonProperty(value = "ip6Addresses")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public String getIp6Addresses() {
     return ip6Addresses;
@@ -175,7 +174,7 @@ public class NetworkConnection   {
    * @return trafficSendInMB
    **/
   @JsonProperty(value = "trafficSendInMB")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public Double getTrafficSendInMB() {
     return trafficSendInMB;
@@ -195,7 +194,7 @@ public class NetworkConnection   {
    * @return trafficReceivedInMB
    **/
   @JsonProperty(value = "trafficReceivedInMB")
-  @ApiModelProperty(required = true, value = "")
+  @Schema(required = true, description = "")
   @NotNull 
   public Double getTrafficReceivedInMB() {
     return trafficReceivedInMB;
@@ -228,7 +227,6 @@ public class NetworkConnection   {
   public int hashCode() {
     return Objects.hash(name, displayName, macAddress, ip4Addresses, ip6Addresses, trafficSendInMB, trafficReceivedInMB);
   }
-
 
   @Override
   public String toString() {

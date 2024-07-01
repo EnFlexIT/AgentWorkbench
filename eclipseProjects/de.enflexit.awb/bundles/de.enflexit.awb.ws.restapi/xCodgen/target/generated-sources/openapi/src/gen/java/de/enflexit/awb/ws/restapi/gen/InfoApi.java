@@ -1,11 +1,15 @@
 package de.enflexit.awb.ws.restapi.gen;
 
-import de.enflexit.awb.ws.restapi.gen.model.*;
 import de.enflexit.awb.ws.restapi.gen.InfoApiService;
 import de.enflexit.awb.ws.restapi.gen.factories.InfoApiServiceFactory;
 
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.ws.restapi.gen.model.SystemInformation;
 
@@ -18,30 +22,31 @@ import java.io.InputStream;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.servlet.ServletConfig;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 @Path("/info")
 
 
-@io.swagger.annotations.Api(description = "the info API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
+@Tag(description = "the info API", name = "")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-07-01T09:05:28.373135400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class InfoApi  {
+
    private final InfoApiService delegate;
 
    public InfoApi(@Context ServletConfig servletContext) {
-      InfoApiService delegate = null;
 
+      InfoApiService delegate = null;
       if (servletContext != null) {
          String implClass = servletContext.getInitParameter("InfoApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (InfoApiService) Class.forName(implClass).newInstance();
+               delegate = (InfoApiService) Class.forName(implClass).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -51,20 +56,18 @@ public class InfoApi  {
       if (delegate == null) {
          delegate = InfoApiServiceFactory.getInfoApi();
       }
-
       this.delegate = delegate;
    }
 
-    @GET
-    
-    
+
+    @jakarta.ws.rs.GET
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  information. ", response = SystemInformation.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "bearerAuth")
-    }, tags={ "admins", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
-    })
+    @Operation(summary = "Returns system information", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "AWB-State", content = 
+                @Content(schema = @Schema(implementation = SystemInformation.class))),
+            },security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }, tags={ "admins", }) 
     public Response infoGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.infoGet(securityContext);

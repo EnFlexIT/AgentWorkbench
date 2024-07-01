@@ -2,9 +2,9 @@ package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.SecurityContext;
 
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
@@ -23,7 +23,7 @@ import de.enflexit.common.StringHelper;
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-30T22:47:52.734099700+01:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-30T22:47:52.734099700+01:00[Europe/Berlin]")
 public class UserApiImpl extends UserApiService {
     
 	

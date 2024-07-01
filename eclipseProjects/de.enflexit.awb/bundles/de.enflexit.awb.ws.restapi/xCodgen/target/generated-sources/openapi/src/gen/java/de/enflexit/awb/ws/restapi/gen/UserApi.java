@@ -1,11 +1,15 @@
 package de.enflexit.awb.ws.restapi.gen;
 
-import de.enflexit.awb.ws.restapi.gen.model.*;
 import de.enflexit.awb.ws.restapi.gen.UserApiService;
 import de.enflexit.awb.ws.restapi.gen.factories.UserApiServiceFactory;
 
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.ws.restapi.gen.model.PasswordChange;
 
@@ -18,30 +22,31 @@ import java.io.InputStream;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.servlet.ServletConfig;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 @Path("/user")
 
 
-@io.swagger.annotations.Api(description = "the user API")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-05-06T23:49:08.451118100+02:00[Europe/Berlin]")
+@Tag(description = "the user API", name = "")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-07-01T09:05:28.373135400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class UserApi  {
+
    private final UserApiService delegate;
 
    public UserApi(@Context ServletConfig servletContext) {
-      UserApiService delegate = null;
 
+      UserApiService delegate = null;
       if (servletContext != null) {
          String implClass = servletContext.getInitParameter("UserApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (UserApiService) Class.forName(implClass).newInstance();
+               delegate = (UserApiService) Class.forName(implClass).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -51,50 +56,51 @@ public class UserApi  {
       if (delegate == null) {
          delegate = UserApiServiceFactory.getUserApi();
       }
-
       this.delegate = delegate;
    }
 
-    @POST
+
+    @jakarta.ws.rs.POST
     @Path("/pswd-change")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Changes the user password", notes = "", response = Void.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "bearerAuth")
-    }, tags={ "user", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully change password", response = Void.class),
-        @io.swagger.annotations.ApiResponse(code = 200, message = "invalid parameters supplied", response = Void.class)
-    })
-    public Response changePassword(@ApiParam(value = "The credentials to login.") @Valid  PasswordChange passwordChange,@Context SecurityContext securityContext)
+    @Operation(summary = "Changes the user password", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "successfully change password", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "200", description = "invalid parameters supplied", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            },security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }, tags={ "user", }) 
+    public Response changePassword(@Schema(description = "The credentials to login.") @Valid  PasswordChange passwordChange,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.changePassword(passwordChange, securityContext);
     }
-    @GET
+
+    @jakarta.ws.rs.GET
     @Path("/login")
-    
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Logs user into the system", notes = "Does NOT use Bearer Auth like whole other application. Only Endpoint that uses Basic Authentication. Expects previously configured Credentials and returns appropriate Bearer Token", response = String.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "basicAuth")
-    }, tags={ "user", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully logged-in", response = String.class),
-        @io.swagger.annotations.ApiResponse(code = 200, message = "Invalid username/password supplied", response = Void.class)
-    })
+    @Operation(summary = "Logs user into the system", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "successfully logged-in", content = 
+                @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "200", description = "Invalid username/password supplied", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            },security = {
+            @SecurityRequirement(name = "basicAuth")
+        }, tags={ "user", }) 
     public Response loginUser(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.loginUser(securityContext);
     }
-    @GET
+
+    @jakarta.ws.rs.GET
     @Path("/logout")
-    
-    
-    @io.swagger.annotations.ApiOperation(value = "Logs out the user from the system", notes = "Effectively logs-out the user from the System ", response = Void.class, authorizations = {
-        @io.swagger.annotations.Authorization(value = "bearerAuth")
-    }, tags={ "user", })
-    @io.swagger.annotations.ApiResponses(value = {
-        @io.swagger.annotations.ApiResponse(code = 200, message = "successfully logged the user out", response = Void.class)
-    })
+    @Operation(summary = "Logs out the user from the system", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "successfully logged the user out", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            },security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }, tags={ "user", }) 
     public Response logout(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.logout(securityContext);

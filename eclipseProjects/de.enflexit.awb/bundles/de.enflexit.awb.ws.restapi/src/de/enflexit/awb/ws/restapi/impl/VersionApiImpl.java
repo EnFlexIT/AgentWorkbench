@@ -1,7 +1,7 @@
 package de.enflexit.awb.ws.restapi.impl;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import agentgui.core.application.Application;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
