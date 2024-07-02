@@ -25,7 +25,7 @@ import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import org.eclipse.jetty.ee10.servlet.FilterMapping;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlets.CrossOriginFilter;
+import org.eclipse.jetty.server.handler.CrossOriginHandler;
 import org.eclipse.jetty.util.component.AttributeContainerMap;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -39,7 +39,6 @@ import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.security.NoSecurityHandler;
-import de.enflexit.awb.ws.core.security.OpenIDSecurityHandler;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 
 /**
@@ -568,10 +567,10 @@ public class JettyServerManager {
 				
 			} else {
 				// --- TODO: Improve OpenIDSecurityHandler --------------------
-				String issuer = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
-				String clientId = "testclient";
-				String clientSecret = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
-				serCtxHandler.setSecurityHandler(new OpenIDSecurityHandler(issuer, clientId, clientSecret, true));
+//				String issuer = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
+//				String clientId = "testclient";
+//				String clientSecret = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
+//				serCtxHandler.setSecurityHandler(new OpenIDSecurityHandler(issuer, clientId, clientSecret, true));
 			}
 			
 		} catch (Exception ex) {
@@ -603,7 +602,7 @@ public class JettyServerManager {
 		ServletContextHandler servContHandler = (ServletContextHandler) handler;
 		
 		// --- Define filter ------------------------------
-		FilterHolder cors = servContHandler.addFilter(CrossOriginFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+		FilterHolder cors = servContHandler.addFilter(CrossOriginHandler.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 		// --- Get CORS-settings --------------------------
 		for (JettyConstants jettyConstant : JettyConstants.values()) {
 			
@@ -762,7 +761,7 @@ public class JettyServerManager {
 			// --- Check the FilterMappings -------------------------
 			FilterMapping[] fmArray = servletContextHandler.getServletHandler().getFilterMappings();
 			for (FilterMapping fm : fmArray) {
-				if (fm.getFilterName().contains(CrossOriginFilter.class.getName())==true) {
+				if (fm.getFilterName().contains(CrossOriginHandler.class.getName())==true) {
 					servletContextHandler.getServletHandler().removeFilterMapping(fm);
 				}
 			}
@@ -770,11 +769,11 @@ public class JettyServerManager {
 			// --- Check the FilterHolder ---------------------------
 			FilterHolder[] fhArray = servletContextHandler.getServletHandler().getFilters();
 			for (FilterHolder fh : fhArray) {
-				if (fh.getClassName().equals(CrossOriginFilter.class.getName())==true) {
+				if (fh.getClassName().equals(CrossOriginHandler.class.getName())==true) {
 					servletContextHandler.getServletHandler().removeFilterHolder(fh);
 					continue;
 				}
-				if (fh.getHeldClass()!=null && fh.getHeldClass().equals(CrossOriginFilter.class)==true) {
+				if (fh.getHeldClass()!=null && fh.getHeldClass().equals(CrossOriginHandler.class)==true) {
 					servletContextHandler.getServletHandler().removeFilterHolder(fh);
 					continue;
 				}

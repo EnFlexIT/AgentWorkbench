@@ -2,11 +2,11 @@ package de.enflexit.awb.ws.core.security;
 
 import java.io.IOException;
 
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.RoleInfo;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.server.UserIdentity;
+import org.eclipse.jetty.security.UserIdentity;
 
 /**
  * The Class NoSecurityHandler does no security checks and is internally only used 

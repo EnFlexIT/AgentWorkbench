@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.server;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.eclipse.jetty.server.Handler;
@@ -8,6 +10,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceFactory;
+import org.eclipse.jetty.util.resource.Resources;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -72,9 +77,24 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 
 		// --- Define ResourceHandler for static content ------------
 		ResourceHandler resHandler = new ResourceHandler();
-        resHandler.setDirectoriesListed(true);
+        resHandler.setDirAllowed(true);
         resHandler.setWelcomeFiles(new String[]{ "index.html" });
-        resHandler.setResourceBase(BundleHelper.getWebRootDirectory(true).getAbsolutePath());
+        
+        // --- Get base Path ----------
+        Path pathResBase = Path.of(BundleHelper.getWebRootDirectory(true).getAbsolutePath());
+        if (Files.isDirectory(pathResBase)==false) {
+        	System.err.println("[" + this.getClass().getSimpleName() + "] Path is not a directory: " + pathResBase);
+        }
+        if (Files.isReadable(pathResBase)==false) {
+        	System.err.println("[" + this.getClass().getSimpleName() + "] Path is not readable: " + pathResBase);
+        }
+        // --- Create Resource --------
+        Resource resBase = ResourceFactory.of(resHandler).newResource(pathResBase);
+        if (Resources.isReadableDirectory(resBase)==false) {
+        	System.err.println("[" + this.getClass().getSimpleName() + "] Resource is not a readable directory");
+        }
+        resHandler.setBaseResource(resBase);
+
         
         // --- Wrap ResourceHandler into ContextHandler -------------
         ContextHandler ctxHandler = new ContextHandler();

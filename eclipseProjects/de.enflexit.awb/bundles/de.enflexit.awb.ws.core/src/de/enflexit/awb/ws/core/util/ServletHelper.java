@@ -37,7 +37,7 @@ public class ServletHelper {
 	 * @return true, if is login path request
 	 */
 	public static boolean isLoginPathRequest(Request request) {
-		return request.getPathInContext().endsWith(lOGIN_PATH);
+		return Request.getPathInContext(request).endsWith(lOGIN_PATH);
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class ServletHelper {
 	 * @return true, if is logout path request
 	 */
 	public static boolean isLogoutPathRequest(Request request) {
-		return request.getPathInContext().endsWith(lOGOUT_PATH);
+		return Request.getPathInContext(request).endsWith(lOGOUT_PATH);
 	}
 	
 }

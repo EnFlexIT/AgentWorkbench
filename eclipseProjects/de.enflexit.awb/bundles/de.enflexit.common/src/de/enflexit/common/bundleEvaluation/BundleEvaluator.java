@@ -1324,7 +1324,7 @@ public class BundleEvaluator {
 			Vector<ClassRequest> classRequests = new Vector<>(this.getClassRequestHash().values());
 			for (int i = 0; i < classRequests.size(); i++) {
 				ClassRequest classRequest = classRequests.get(i);
-				if (System.currentTimeMillis()>=classRequest.getRequestTime() + this.requestMaxStayTime) {
+				if (classRequest!=null && System.currentTimeMillis()>=classRequest.getRequestTime() + this.requestMaxStayTime) {
 					this.getClassRequestHash().remove(classRequest.getRequestID());
 				}
 			}
