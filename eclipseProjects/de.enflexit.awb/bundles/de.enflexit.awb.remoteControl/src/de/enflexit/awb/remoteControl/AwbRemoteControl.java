@@ -1,15 +1,104 @@
 package de.enflexit.awb.remoteControl;
 
+import agentgui.core.application.Application;
+import agentgui.core.application.ApplicationListener;
+import agentgui.core.jade.Platform.SystemAgent;
+import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import agentgui.simulationService.agents.LoadExecutionAgent;
+
 /**
- * This interface defines the functions that must be provided to control an AWB simulation from remote.  
+ * This class implements the basic control functions, that should be provided by a remote control implementation.
+ * To implement a remote control, create a subclass that receives and interprets the incoming command messages
+ * from your chosen communication protocol, and calls the corresponding method from this class to execute them.    
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public interface AwbRemoteControl {
-	public boolean loadProject(String projectName);
-	public boolean selectSetup(String setupName);
-	public boolean configureSimulation(AwbSimulationSettings simulationSettings);
-	public boolean startMultiAgentSystem();
-	public boolean stopMultiAgentSystem();
-	public void discreteSimulationNextStep();
-	public void sendStatusUpdate(AwbStatusUpdate statusUpdate);
+public abstract class AwbRemoteControl implements ApplicationListener {
+	
+	/**
+	 * Loads the project with the specified name.
+	 * @param projectName the project name
+	 * @return true, if successful
+	 */
+	public boolean loadProject(String projectName) {
+		
+		int projectIndex = Application.getProjectsLoaded().getIndexByFolderName(projectName);
+		
+		if (projectIndex==-1) {
+			// --- Not loaded yet -> load ---------------------------
+			Project project = Application.getProjectsLoaded().add(projectName);
+			return project!=null;
+		} else {
+			// --- Already loaded -> set the focus to the project ---
+			Project project = Application.getProjectsLoaded().get(projectIndex);
+			if (Application.getProjectFocused()!=project) {
+				project.setFocus(false);
+			}
+			return true;
+		}
+	}
+	
+	/**
+	 * Selects the simulation setup with the specified name.
+	 * @param setupName the setup name
+	 * @return true, if successful
+	 */
+	public boolean selectSetup(String setupName) {
+		if (Application.getProjectFocused().getSimulationSetupCurrent().equals(setupName)) {
+			// --- Already selected -> nothing to do ----------------
+			return true;
+		} else {
+			// --- Not selected yet -> try to select ----------------
+			return Application.getProjectFocused().getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, setupName, false);
+		}
+	}
+	
+	/**
+	 * Applies the provided {@link AwbSimulationSettings} to the currently selected setup.
+	 * @param simulationSettings the simulation settings
+	 * @return true, if successful
+	 */
+	public boolean configureSimulation(AwbSimulationSettings simulationSettings) {
+		return false;
+	}
+	
+	/**
+	 * Starts the multi agent system.
+	 * @return true, if successful
+	 */
+	public boolean startMultiAgentSystem() {
+		Object[] startWith = new Object[1];
+		startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
+		Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith, true);
+		Application.getMainWindow().setEnableSimStart(false);
+		return true;
+	}
+	
+	/**
+	 * Stops the multi agent system.
+	 * @return true, if successful
+	 */
+	public boolean stopMultiAgentSystem() {
+		Application.getJadePlatform().stop(true);
+		return true;
+	}
+	
+	/**
+	 * Triggers the next step of a discrete simulation.
+	 */
+	public void discreteSimulationNextStep() {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
+	 */
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
 }

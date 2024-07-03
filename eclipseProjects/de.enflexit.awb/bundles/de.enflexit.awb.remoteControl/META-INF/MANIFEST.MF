@@ -4,6 +4,7 @@ Bundle-Name: RemoteControl
 Bundle-SymbolicName: de.enflexit.awb.remoteControl
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.awb.remoteControl
-Require-Bundle: com.google.gson
+Require-Bundle: com.google.gson,
+ org.agentgui.core
 Automatic-Module-Name: de.enflexit.awb.remoteControl
 Bundle-RequiredExecutionEnvironment: JavaSE-11
