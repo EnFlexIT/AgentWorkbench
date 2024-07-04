@@ -226,7 +226,7 @@ public class PlatformJadeConfig implements Serializable {
 	 * @param profile the new file directory
 	 */
 	private void setFileDir(ProfileImpl profile) {
-		String baseDir = Application.getGlobalInfo().getPathBaseDir();
+		String baseDir = Application.getGlobalInfo().getPathBaseDir().toString();
 		profile.setParameter(Profile.FILE_DIR, baseDir);
 	}
 	/**

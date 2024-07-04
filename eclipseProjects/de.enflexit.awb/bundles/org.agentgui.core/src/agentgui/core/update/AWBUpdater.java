@@ -37,9 +37,9 @@ import org.eclipse.equinox.p2.operations.UpdateOperation;
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.options.UpdateOptions;
+import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.p2.P2OperationsHandler;
 
 /**

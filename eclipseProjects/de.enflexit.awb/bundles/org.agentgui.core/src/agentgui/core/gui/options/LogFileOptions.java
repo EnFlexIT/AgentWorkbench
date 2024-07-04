@@ -51,6 +51,7 @@ import agentgui.core.application.Application;
 import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.common.PathHandling;
 
 /**
  * The Class LogFileOptions extends an {@link AbstractOptionTab} and is
@@ -247,7 +248,7 @@ public class LogFileOptions extends AbstractOptionTab implements ActionListener 
 	
 	private JLabel getJLabelDefaultLogLocation() {
 		if (jLabelDefaultLogLocation == null) {
-			String displayText = "<html><b>" + Language.translate("Standard Log-Verzeichnis:") + ":</b> '" + GlobalInfo.getLoggingBasePathDefault() + File.separator + "[MONTH]'</html>";
+			String displayText = "<html><b>" + Language.translate("Standard Log-Verzeichnis:") + ":</b> '" + PathHandling.getLoggingFilesBasePathDefault() + File.separator + "[MONTH]'</html>";
 			jLabelDefaultLogLocation = new JLabel(displayText);
 			jLabelDefaultLogLocation.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
@@ -310,7 +311,7 @@ public class LogFileOptions extends AbstractOptionTab implements ActionListener 
 	 */
 	private void setGlobalData2Form() {
 		String logBasePath = Application.getGlobalInfo().getLoggingBasePath();
-		if (logBasePath.equals(GlobalInfo.getLoggingBasePathDefault())) {
+		if (logBasePath.equals(PathHandling.getLoggingFilesBasePathDefault())) {
 			this.getJTextLoggingBasePath().setText(null);
 		} else {
 			this.getJTextLoggingBasePath().setText(logBasePath);

@@ -1,7 +1,7 @@
 package de.enflexit.expression;
 
 import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
+import de.enflexit.common.ExecutionEnvironment;
 
 /**
  * The static Class DevelopmentSwitch enables to switch between 

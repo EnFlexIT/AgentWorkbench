@@ -35,6 +35,7 @@
 		<module>de.enflexit.jaxb.impl.binding</module>
 		<module>de.enflexit.oidc</module>
 		<module>de.enflexit.oshi</module>
+		<module>de.enflexit.logging</module>
 		<module>org.agentgui.core</module>
 		<module>org.agentgui.lib.jade</module>
 		<module>org.agentgui.lib.jung</module>

@@ -68,7 +68,7 @@ public class ShutdownThread extends Thread {
 	private void createShutDownFile() {
 		
 		// --- Get the root path to the file --------------
-		String agentGuiRoot = Application.getGlobalInfo().getPathBaseDir();
+		String agentGuiRoot = Application.getGlobalInfo().getPathBaseDir().toString();
 
 		// --- Determine the local process ID (PID) -------
 		String localProcessName = ManagementFactory.getRuntimeMXBean().getName();

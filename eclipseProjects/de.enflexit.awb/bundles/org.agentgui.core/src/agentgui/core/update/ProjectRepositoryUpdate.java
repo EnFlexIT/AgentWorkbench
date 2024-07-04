@@ -36,7 +36,6 @@ import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.DefaultProjectExportController;
@@ -45,6 +44,7 @@ import agentgui.core.project.transfer.ProjectImportController;
 import agentgui.core.project.transfer.ProjectImportSettings;
 import agentgui.core.update.repositoryModel.ProjectRepository;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.transfer.Download;
 import de.enflexit.common.transfer.FileCopier;

@@ -53,7 +53,7 @@ private static final String imagePackage = "/icons/";
 	 * @return the path reference to the property folder with an ending file separator
 	 */
 	public static String getPathProperties() {
-		String propPathAbs = Application.getGlobalInfo().getPathProperty(true);
+		String propPathAbs = Application.getGlobalInfo().getPathProperty(true).toString();
 		propPathAbs += propPathAbs.endsWith(File.separator)==false ? File.separator : ""; 
 		return propPathAbs;
 	}
@@ -113,7 +113,7 @@ private static final String imagePackage = "/icons/";
 			// ------------------------------------------------------
 			// --- For the product runtime environment --------------
 			// ------------------------------------------------------
-			String webRootPath = Application.getGlobalInfo().getPathBaseDir();
+			String webRootPath = Application.getGlobalInfo().getPathBaseDir().toString();
 			webRootPath += webRootPath.endsWith(File.separator) ? AwbServer.AWB_SERVER_ROOT_PATH : File.separator + AwbServer.AWB_SERVER_ROOT_PATH;
 			webRootDir = new File(webRootPath);
 			break;

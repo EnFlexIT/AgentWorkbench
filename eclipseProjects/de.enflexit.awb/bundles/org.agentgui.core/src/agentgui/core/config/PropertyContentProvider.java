@@ -34,11 +34,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import agentgui.core.application.Application;
+import de.enflexit.common.PathHandling;
 
 /**
  * The Class PropertyContentProvider unpacks required files from 
@@ -54,8 +56,7 @@ public class PropertyContentProvider {
 	public enum FileToProvide {
 		DICTIONARY_BIN("dictionary.bin"),
 		DICTIONARY_CSV("dictionary.csv"),
-		OIDC_TRUST_STORE_JKS("oidcTrustStore.jks"),
-		LOGBACK_CONFIGURATION("logback.xml");
+		OIDC_TRUST_STORE_JKS("oidcTrustStore.jks");
 		
 		private final String fileName;
 		
@@ -89,7 +90,7 @@ public class PropertyContentProvider {
 	 */
 	private String getPropertyDirectoryInBundle() {
 		if (propertyDirectoryInBundle==null) {
-			propertyDirectoryInBundle = "/" + GlobalInfo.getPathProperty();
+			propertyDirectoryInBundle = "/" + PathHandling.SUB_PATH_PROPERTIES;
 			propertyDirectoryInBundle = propertyDirectoryInBundle.replace("\\", "/");
 		}
 		return propertyDirectoryInBundle;
@@ -150,8 +151,8 @@ public class PropertyContentProvider {
 	private void extractFromBundle(FileToProvide fileToProvide) {
 
 		String fileName = fileToProvide.toString();
-		String pathProperties = Application.getGlobalInfo().getPathProperty(true);
-		String newfilePath = pathProperties + fileName;
+		Path pathProperties = Application.getGlobalInfo().getPathProperty(true);
+		String newfilePath = pathProperties.resolve(fileName).toString();
 		
 		if (this.debug) {
 			System.out.println("Extract '" + fileName + "' to " + newfilePath);

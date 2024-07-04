@@ -74,7 +74,6 @@ import agentgui.core.project.ProjectsLoaded;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.update.AWBUpdater;
 import agentgui.logging.logfile.LogFileWriter;
-import agentgui.logging.logfile.LogbackConfigurationReader;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import agentgui.simulationService.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -367,9 +366,6 @@ public class Application {
 		
 		// --- Read the start arguments and react on it?! -----------
 		String[] remainingArgs = proceedStartArguments(org.eclipse.core.runtime.Platform.getApplicationArgs());
-		
-		// --- Configure slf4j --------------------------------------
-		LogbackConfigurationReader.readConfiguration();
 		
 		// --- Start log file writer, if needed ---------------------
 		if (isOperatingHeadless()==true) startLogFileWriter();
@@ -967,7 +963,7 @@ public class Application {
 		
 			OIDCAuthorization.getInstance().setIssuerURI(Application.getGlobalInfo().getOIDCIssuerURI());
 			OIDCAuthorization.getInstance().setTranslator(Language.getInstance());
-			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true) + Trust.OIDC_TRUST_STORE));
+			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true).toString() + File.separator + Trust.OIDC_TRUST_STORE));
 			OIDCAuthorization.getInstance().setAvailabilityHandler( new OIDCResourceAvailabilityHandler() {
 				
 				/* (non-Javadoc)

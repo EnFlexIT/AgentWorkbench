@@ -53,6 +53,7 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.swing.fileSelection,
  de.enflexit.common.swing.imageFileSelection,
  de.enflexit.common.transfer
-Import-Package: jakarta.xml.bind,
+Import-Package: de.enflexit.logging,
+ jakarta.xml.bind,
  jakarta.xml.bind.annotation,
  jakarta.xml.bind.annotation.adapters

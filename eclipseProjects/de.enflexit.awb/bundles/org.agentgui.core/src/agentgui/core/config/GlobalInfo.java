@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package agentgui.core.config;
 
 import java.awt.Color;
@@ -36,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -72,7 +45,8 @@ import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.api.LastSelectedFolderReminder;
-import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.ExecutionEnvironment;
+import de.enflexit.common.PathHandling;
 import de.enflexit.common.VersionInfo;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
@@ -110,15 +84,13 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private JadeUrlConfiguration urlConfigurationForMaster;
 	
 	// --- Variables ------------------------------------------------
-	private static ExecutionEnvironment localExecutionEnvironment = ExecutionEnvironment.ExecutedOverIDE;
+	private static ExecutionEnvironment localExecutionEnvironment;
 	
 	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = AwbLookAndFeelAdjustments.DEFAUL_LOOK_AND_FEEL_CLASS;
 	private static String localAppLnF = DEFAUL_LOOK_AND_FEEL_CLASS;
 	private static Class<?> localAppLnFClass;
 	
-	private static String localBaseDir = "";
-	private static String localPathAgentGUI	 = "bin";
-	private static String localPathProperty  = "properties" + File.separator;
+	private static Path localBaseDir;
 	
 	private static String localFileDictionary  = "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
@@ -127,7 +99,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileNameProjectUserObjectXmlFile = "agentgui-UserObject.xml";
 	private static String localFileEndProjectZip = "agui";
 	
-	// --- Known EnvironmentTypes of Agent.GUI ----------------------
+	// --- Known EnvironmentTypes of Agent.Workbench ----------------
 	private EnvironmentTypes knownEnvironmentTypes;
 	
 	// --- PropertyContentProvider ----------------------------------
@@ -191,13 +163,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	// --- Time series chart configuration --------------------------
 	private TimeSeriesLengthRestriction timeSeriesLengthRestriction;
 	
-	/**
-	 * The Enumeration that contains the descriptors of the ExecutionEnvironment.
-	 */
-	public enum ExecutionEnvironment {
-		ExecutedOverIDE,
-		ExecutedOverProduct
-	}
 
 	/**
 	 * The Enumeration of possible ExecutionModes.
@@ -242,62 +207,8 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public GlobalInfo() {
 
 		boolean debug = false;
-		try {
-			// ----------------------------------------------------------------			
-			// --- Get initial base directory by checking this class location -
-			// ----------------------------------------------------------------
-			File thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-			if (thisFile.getAbsolutePath().contains("%20")==true) {
-				try {
-					thisFile = new File(GlobalInfo.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-				} catch (URISyntaxException uriEx) {
-					uriEx.printStackTrace();
-				}
-			}
-			
-			// ----------------------------------------------------------------
-			// --- Examine the path reference found --------------------------
-			// ----------------------------------------------------------------
-			String pathFound = thisFile.getAbsolutePath();
-			String baseDir = null;
-			if (pathFound.endsWith(".jar") && pathFound.contains(File.separator + "plugins" + File.separator)) {
-				// ------------------------------------------------------------
-				// --- Can be product or IDE with Target platform -------------
-				// ------------------------------------------------------------
-				
-				// --- Get the eclipse configuration location -----------------
-				String configurationFile = Platform.getConfigurationLocation().getURL().getFile();
-				if (configurationFile.contains("plugins/org.eclipse.pde.core/")==true) {
-					// --- This is an IDE environment -------------------------
-					this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverIDE);
-				} else {
-					// --- Product OSGI environment ---------------------------
-					this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverProduct);
-				}
-				// --- Set base directory -------------------------------------
-				int cutAt = pathFound.indexOf("plugins" + File.separator);
-				baseDir = pathFound.substring(0, cutAt);
-				
-			} else {
-				// --- IDE environment ----------------------------------------
-				this.setExecutionEnvironment(ExecutionEnvironment.ExecutedOverIDE);
-				baseDir = thisFile + File.separator;
-				if (thisFile.getAbsolutePath().endsWith(GlobalInfo.localPathAgentGUI)) {
-					baseDir = thisFile.getParent() + File.separator;
-				}
-			}
-			
-			// --- Convert path to a canonical one ----------------------------
-			File baseDirFile = new File(baseDir);
-			GlobalInfo.localBaseDir = baseDirFile.getCanonicalPath() + File.separator;
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		// --------------------------------------------------------------------
-
 		if (debug==true) {
-			System.err.println(localAppTitle + " execution directory is '" + localBaseDir + "'");
+			System.out.println(localAppTitle + " => BasePath: " + this.getPathBaseDir().toString() + ", ExecEnv: " + this.getExecutionEnvironment().name());
 			GlobalInfo.printPlatformLocations();
 			GlobalInfo.println4SysProps();
 			GlobalInfo.println4EnvProps();
@@ -430,7 +341,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		sysInfo.append("ExecutionMode: 	" + this.getExecutionModeDescription() + newLineSeparator);
 		sysInfo.append("Executed Over: 	" + this.getExecutionEnvironment() + newLineSeparator);
 		sysInfo.append("AWB Base Directory: 	" + this.getPathBaseDir() + newLineSeparator);
-		sysInfo.append("Property Directory: 	" + this.getPathProperty(true) + newLineSeparator);
+		sysInfo.append("Property Directory: 	" + this.getPathProperty(true).toString() + newLineSeparator);
 		sysInfo.append("Project Directory: 	" + this.getPathProjects() + newLineSeparator);
 		
 		return sysInfo.toString();
@@ -610,14 +521,10 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * - 'Executable', if Agent.GUI is running as executable jar-File
 	 */
 	public ExecutionEnvironment getExecutionEnvironment() {
+		if (localExecutionEnvironment==null) {
+			localExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment(this.getClass());
+		}
 		return localExecutionEnvironment;
-	}
-	/**
-	 * Sets the execution environment.
-	 * @param executionEnvironment the new execution environment
-	 */
-	private void setExecutionEnvironment(ExecutionEnvironment executionEnvironment ) {
-		localExecutionEnvironment = executionEnvironment;
 	}
 	
 	/**
@@ -646,25 +553,22 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * This method returns the base path of the application (e. g. 'C:\Program Files\Agent.Workbench\')
 	 * @return the base path of the application
 	 */
-	public String getPathBaseDir( ) {
+	public Path getPathBaseDir( ) {
+		if (localBaseDir==null) {
+			localBaseDir = PathHandling.getApplicationBasePath(this.getClass());
+		}
 		return localBaseDir;
 	}	
-	/**
-	 * This method returns the base path of the application, when Agent.GUI is running
-	 * in its development environment / IDE (e. g. 'C:\Java_Workspace\AgentGUI\bin\')
-	 * @return the binary- or bin- base path of the application
-	 */
-	public String getPathBaseDirIDE_BIN( ) {
-		return localBaseDir + localPathAgentGUI + File.separator;
-	}	
 	
+	
+
 	/**
 	 * Creates the directory if not already there and thus required.
-	 * @param path the path
+	 * @param pathString the path string
 	 */
-	private void createDirectoryIfRequired(String path) {
+	private void createDirectoryIfRequired(String pathString) {
 		// --- Check, if the folder exists. If not create -----------
-		File testDirectory = new File(path);
+		File testDirectory = new File(pathString);
 		//System.err.println(testDirectory.getAbsolutePath());
 		if (testDirectory.exists()==false) {
 			testDirectory.mkdir();
@@ -672,30 +576,16 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	
 	/**
-	 * Returns the relative path to the properties. For a more sophisticated method use {@link #getPathProperty(boolean)} !
-	 * @return the path property
-	 */
-	public static String getPathProperty(){
-		return localPathProperty;
-	}
-	/**
 	 * This method can be invoked in order to get the path to the property folder 'properties\'.
 	 * @param absolute set true if you want to get the full path to this 
 	 * @return the path reference to the property folder
 	 */
-	public String getPathProperty(boolean absolute){
-		String propPath = null;
-		if (absolute==true) { 
-			propPath =  this.getFilePathAbsolute(localPathProperty);
-		} else {
-			propPath = localPathProperty;	
-		}
-		// --- Create directory, if not already there -----
-		this.createDirectoryIfRequired(propPath);
+	public Path getPathProperty(boolean absolute){
+		
+		Path pathProperties = PathHandling.getPropertiesPath(this.getClass(), absolute);
 		// --- Do check with PropertyContentProvider ------
-		this.getPropertyContentProvider(propPath);
-
-		return propPath;
+		this.getPropertyContentProvider(pathProperties.toFile());
+		return pathProperties;
 	}
 	/**
 	 * Returns the property content provider.
@@ -703,21 +593,22 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public PropertyContentProvider getPropertyContentProvider() {
 		if (propertyContentProvider==null) {
-			propertyContentProvider = this.getPropertyContentProvider(this.getPathProperty(true));
+			propertyContentProvider = this.getPropertyContentProvider(this.getPathProperty(true).toFile());
 		}
 		return propertyContentProvider;
 	}
+	
 	/**
 	 * Returns the property content provider.
-	 * @param pathToProperties the path to properties. May be <code>null</code> in case that PropertyContentProvider is already initiated. 
+	 *
+	 * @param propertiesFile the properties file
 	 * @return the property content provider
 	 */
-	private PropertyContentProvider getPropertyContentProvider(String pathToProperties) {
+	private PropertyContentProvider getPropertyContentProvider(File propertiesFile) {
 		if (propertyContentProvider==null) {
-			propertyContentProvider = new PropertyContentProvider(new File(pathToProperties));
+			propertyContentProvider = new PropertyContentProvider(propertiesFile);
 			try {
 				propertyContentProvider.checkAndProvideFullPropertyContent();
-				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -731,7 +622,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return the path reference to the property file agentgui.ini
 	 */
 	public String getPathConfigFile(boolean absolute) {
-		return this.getPathProperty(absolute) + localFileProperties;
+		return this.getPathProperty(absolute).resolve(localFileProperties).toString();
 	}
 	
 	
@@ -796,7 +687,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public String getDefaultProjectsDirectory() {
 		
-		String baseDir = this.getPathBaseDir();
+		String baseDir = this.getPathBaseDir().toString();
 		if (this.getExecutionEnvironment()==ExecutionEnvironment.ExecutedOverIDE) {
 			// --- If in the IDE environment, the git structure has to be considered ----
 			String relPathFromBaseDirGit = "../../../../awbProjects";
@@ -1036,9 +927,9 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		// --- TXT-Version or Base64-encoded dictionary ---
 		String fileName = null;
 		if (defaultBase64==true) {
-			fileName = getPathProperty(absolute) + localFileDictionary + ".bin";
+			fileName = getPathProperty(absolute).resolve(localFileDictionary + ".bin").toString();
 		} else {
-			fileName = getPathProperty(absolute) + localFileDictionary + ".csv";
+			fileName = getPathProperty(absolute).resolve(localFileDictionary + ".csv").toString();
 		}
 		return fileName;
 	}
@@ -1083,7 +974,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * @return The absolute path of the given relative one 
 	 */
 	private String getFilePathAbsolute(String filePathRelative){
-		return localBaseDir + filePathRelative;		
+		return this.getPathBaseDir() + filePathRelative;		
 	}
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
@@ -1367,7 +1258,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	}
 	/**
 	 * Returns if the {@link MainWindow} has to be maximized at start up.
-	 * @return true, if the main window is to be maximzed 
+	 * @return true, if the main window is to be maximized 
 	 */
 	public boolean isMaximzeMainWindow() {
 		return maximizeMainWindow;
@@ -1411,33 +1302,12 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 */
 	public String getLoggingBasePath(boolean forcePathCreation) {
 		if (filePropLoggingBasePath==null) {
-			filePropLoggingBasePath = getLoggingBasePathDefault();
+			filePropLoggingBasePath = PathHandling.getLoggingFilesBasePathDefault().toString();
 		}
 		if (forcePathCreation==true) {
 			this.createDirectoryIfRequired(filePropLoggingBasePath);
 		}
 		return filePropLoggingBasePath;
-	}
-	/**
-	 * Returns the default logging base path.
-	 * @return the default logging base path
-	 */
-	public static String getLoggingBasePathDefault() {
-		
-		String basePath = Application.getGlobalInfo().getPathBaseDir();
-		String defaultLoggingBasePath = basePath + "log";
-		if (SystemEnvironmentHelper.isWindowsOperatingSystem()==true) {
-			// --- Nothing to do here yet -----------------
-		} else if (SystemEnvironmentHelper.isLinuxOperatingSystem()==true) {
-			String linuxLoggingBasePath = "/var/log/awb";
-			// --- Check write permission -----------------
-			if (new File(linuxLoggingBasePath).canWrite()==true) {
-				defaultLoggingBasePath = linuxLoggingBasePath;
-			}
-		} else if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
-			// --- Nothing to do here yet -----------------
-		}
-		return defaultLoggingBasePath.replace("/", File.separator);
 	}
 	
 	/**
@@ -1666,7 +1536,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	@Override
 	public File getLastSelectedFolder() {
 		if (lastSelectedFolder==null) {
-			lastSelectedFolder = new File(this.getPathBaseDir());
+			lastSelectedFolder = this.getPathBaseDir().toFile();
 		} 
 		return lastSelectedFolder;	
 	}

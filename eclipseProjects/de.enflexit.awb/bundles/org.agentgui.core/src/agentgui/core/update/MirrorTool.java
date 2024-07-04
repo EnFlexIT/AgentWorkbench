@@ -222,7 +222,7 @@ public class MirrorTool implements MirrorToolListener {
 						String[] arguments = execute.split(" ");
 						ProcessBuilder proBui = new ProcessBuilder(arguments);
 						proBui.redirectErrorStream(true);
-						proBui.directory(new File(Application.getGlobalInfo().getPathBaseDir()));
+						proBui.directory(Application.getGlobalInfo().getPathBaseDir().toFile());
 						
 						Process process = proBui.start();
 						

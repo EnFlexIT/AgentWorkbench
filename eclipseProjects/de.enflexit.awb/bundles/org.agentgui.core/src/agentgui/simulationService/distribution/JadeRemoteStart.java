@@ -33,10 +33,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo.ExecutionEnvironment;
 import agentgui.core.project.Project;
 import agentgui.simulationService.agents.ServerSlaveAgent;
 import agentgui.simulationService.ontology.RemoteContainerConfig;
+import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.transfer.ArchiveFileHandler;
 import de.enflexit.common.transfer.ArchiveFileHandler.ArchiveFormat;
@@ -280,7 +280,7 @@ public class JadeRemoteStart {
 			String[] arg = execute.split(" ");
 			ProcessBuilder proBui = new ProcessBuilder(arg);
 			proBui.redirectErrorStream(true);
-			proBui.directory(new File(Application.getGlobalInfo().getPathBaseDir()));
+			proBui.directory(Application.getGlobalInfo().getPathBaseDir().toFile());
 			
 			Process process = proBui.start();
 			
