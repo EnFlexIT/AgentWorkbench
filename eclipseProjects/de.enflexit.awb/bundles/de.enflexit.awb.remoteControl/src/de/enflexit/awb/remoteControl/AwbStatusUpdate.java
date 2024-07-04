@@ -14,7 +14,7 @@ public class AwbStatusUpdate {
 	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
 	 */
 	public enum AwbState {
-		AWB_READY, PROJECT_READY, SETUP_READY, SIMULATION_READY, SIMULATION_STEP_DONE, SIMULATION_FINISHED, AWB_ERROR;
+		AWB_READY, PROJECT_LOADED, SETUP_READY, SIMULATION_READY, SIMULATION_STEP_DONE, SIMULATION_FINISHED, AWB_ERROR;
 	}
 	
 	private AwbState awbState;

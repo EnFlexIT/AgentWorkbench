@@ -1,11 +1,18 @@
 package de.enflexit.awb.remoteControl;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
 import agentgui.core.jade.Platform.SystemAgent;
+import agentgui.core.jade.PlatformStateInformation.PlatformState;
 import agentgui.core.project.Project;
+import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 
 /**
  * This class implements the basic control functions, that should be provided by a remote control implementation.
@@ -13,7 +20,7 @@ import agentgui.simulationService.agents.LoadExecutionAgent;
  * from your chosen communication protocol, and calls the corresponding method from this class to execute them.    
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public abstract class AwbRemoteControl implements ApplicationListener {
+public abstract class AwbRemoteControl implements ApplicationListener, PropertyChangeListener, Observer {
 	
 	/**
 	 * Loads the project with the specified name.
@@ -27,6 +34,9 @@ public abstract class AwbRemoteControl implements ApplicationListener {
 		if (projectIndex==-1) {
 			// --- Not loaded yet -> load ---------------------------
 			Project project = Application.getProjectsLoaded().add(projectName);
+			if (project!=null) {
+				project.addObserver(this);
+			}
 			return project!=null;
 		} else {
 			// --- Already loaded -> set the focus to the project ---
@@ -94,11 +104,58 @@ public abstract class AwbRemoteControl implements ApplicationListener {
 	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
 	 */
 	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void onApplicationEvent(ApplicationEvent ae) {
+		if (ae.getApplicationEvent()==ApplicationEvent.PROJECT_LOADED) {
+			Project project = (Project) ae.getEventObject();
+			if (project!=null) {
+				project.addObserver(this);
+				this.projectLoaded(project.getProjectName());
+			}
+		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.Observer#update(de.enflexit.common.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		if (arg instanceof SimulationSetupNotification) {
+			SimulationSetupNotification setupNotification = (SimulationSetupNotification) arg;
+			if (setupNotification.getUpdateReason()==SimNoteReason.SIMULATION_SETUP_DETAILS_LOADED) {
+				this.setupReady(Application.getProjectFocused().getSimulationSetupCurrent());
+			}
+		}
+	}
 	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+//		System.out.println("[" + this.getClass().getSimpleName() + "] Received property change event " + pce.getPropertyName());
+		if (pce.getPropertyName().equals("PlatformState")) {
+			PlatformState newState = (PlatformState) pce.getNewValue();
+			if (newState==PlatformState.RunningMAS) {
+				
+			}
+		}
+	}
 	
+	/**
+	 * This method is called when the simulation is ready. Override it if you want to react on this event.
+	 */
+	public abstract void simulationReady();
+
+	/**
+	 * This method is called when a project was loaded. Override it if you want to react on this event.
+	 * @param projectName the project name
+	 */
+	public abstract void projectLoaded(String projectName);
+	
+	/**
+	 * This method is called when a selected setup is ready. Override it if you want to react on this event.
+	 * @param setupName the setup name
+	 */
+	public abstract void setupReady(String setupName);
+
 }
