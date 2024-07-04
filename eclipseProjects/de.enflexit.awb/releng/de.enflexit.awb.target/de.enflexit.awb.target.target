@@ -28,6 +28,7 @@
 			-->
 		</location>
 
+		<!-- 
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<unit id="ch.qos.logback.classic" version="0.0.0"/>
 			<unit id="ch.qos.logback.classic.source" version="0.0.0"/>
@@ -38,6 +39,7 @@
 			<unit id="org.slf4j.api" version="0.0.0"/>
 			<unit id="org.slf4j.api.source" version="0.0.0"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20230531010532/repository"/>
+			-->
 			<!--  Space for older versions (as reminder)
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20230302014618/repository"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20221123021534/repository"/>
@@ -55,8 +57,8 @@
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20181128170323/repository"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180905201904/repository"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
-		-->
 		</location>
+		-->
 
 		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 		<!-- From here, dependencies for the AWB-Core                -->
