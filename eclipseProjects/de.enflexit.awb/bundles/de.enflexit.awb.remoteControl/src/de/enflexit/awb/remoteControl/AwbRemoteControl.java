@@ -2,15 +2,19 @@ package de.enflexit.awb.remoteControl;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
+import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.jade.Platform.SystemAgent;
 import agentgui.core.jade.PlatformStateInformation.PlatformState;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.simulationService.agents.LoadExecutionAgent;
+import agentgui.simulationService.time.TimeModelDateBased;
+import agentgui.simulationService.time.TimeModelDiscrete;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 
@@ -22,6 +26,17 @@ import de.enflexit.common.Observer;
  */
 public abstract class AwbRemoteControl implements ApplicationListener, PropertyChangeListener, Observer {
 	
+	private AwbState awbState;
+
+	/**
+	 * Instantiates a new awb remote control.
+	 */
+	public AwbRemoteControl() {
+		Application.addApplicationListener(this);
+		Application.getJadePlatform().addPropertyChangeListener(this);
+		this.setAwbState(AwbState.AWB_READY);
+	}
+
 	/**
 	 * Loads the project with the specified name.
 	 * @param projectName the project name
@@ -32,12 +47,21 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 		int projectIndex = Application.getProjectsLoaded().getIndexByFolderName(projectName);
 		
 		if (projectIndex==-1) {
+			
 			// --- Not loaded yet -> load ---------------------------
-			Project project = Application.getProjectsLoaded().add(projectName);
-			if (project!=null) {
-				project.addObserver(this);
-			}
-			return project!=null;
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					Project project = Application.getProjectsLoaded().add(projectName);
+					if (project!=null) {
+						project.addObserver(AwbRemoteControl.this);
+					}
+					
+				}
+			});
+			return true;
+			
 		} else {
 			// --- Already loaded -> set the focus to the project ---
 			Project project = Application.getProjectsLoaded().get(projectIndex);
@@ -69,7 +93,25 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 	 * @return true, if successful
 	 */
 	public boolean configureSimulation(AwbSimulationSettings simulationSettings) {
-		return false;
+		
+		TimeModelController timeModelController = Application.getProjectFocused().getTimeModelController();
+		
+		if (timeModelController.getTimeModel() instanceof TimeModelDateBased) {
+			TimeModelDateBased tmdb = (TimeModelDateBased) timeModelController.getTimeModel();
+			tmdb.setTimeStart(simulationSettings.getSimulationStartTime());
+			tmdb.setTimeStop(simulationSettings.getSimulationEndTime());
+			
+			if (tmdb instanceof TimeModelDiscrete) {
+				((TimeModelDiscrete)tmdb).setStep(simulationSettings.getSimulationStepSeconds()*1000);
+			}
+			
+			timeModelController.saveTimeModelToSimulationSetup();
+			
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 	
 	/**
@@ -97,7 +139,7 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 	 * Triggers the next step of a discrete simulation.
 	 */
 	public void discreteSimulationNextStep() {
-		
+		//TODO implement
 	}
 
 	/* (non-Javadoc)
@@ -109,7 +151,7 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 			Project project = (Project) ae.getEventObject();
 			if (project!=null) {
 				project.addObserver(this);
-				this.projectLoaded(project.getProjectName());
+				this.setAwbState(AwbState.PROJECT_LOADED);
 			}
 		}
 	}
@@ -122,7 +164,7 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 		if (arg instanceof SimulationSetupNotification) {
 			SimulationSetupNotification setupNotification = (SimulationSetupNotification) arg;
 			if (setupNotification.getUpdateReason()==SimNoteReason.SIMULATION_SETUP_DETAILS_LOADED) {
-				this.setupReady(Application.getProjectFocused().getSimulationSetupCurrent());
+				this.setAwbState(AwbState.SETUP_READY);
 			}
 		}
 	}
@@ -136,26 +178,26 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 		if (pce.getPropertyName().equals("PlatformState")) {
 			PlatformState newState = (PlatformState) pce.getNewValue();
 			if (newState==PlatformState.RunningMAS) {
-				
+				this.setAwbState(AwbState.MAS_STARTED);
+			} else if (newState==PlatformState.TerminatingMAS) {
+				this.setAwbState(AwbState.MAS_STOPPED);
 			}
 		}
 	}
-	
-	/**
-	 * This method is called when the simulation is ready. Override it if you want to react on this event.
-	 */
-	public abstract void simulationReady();
 
 	/**
-	 * This method is called when a project was loaded. Override it if you want to react on this event.
-	 * @param projectName the project name
+	 * Gets the current awb state.
+	 * @return the awb state
 	 */
-	public abstract void projectLoaded(String projectName);
-	
-	/**
-	 * This method is called when a selected setup is ready. Override it if you want to react on this event.
-	 * @param setupName the setup name
-	 */
-	public abstract void setupReady(String setupName);
+	public AwbState getAwbState() {
+		return awbState;
+	}
 
+	/**
+	 * Sets the current awb state.
+	 * @param awbState the new awb state
+	 */
+	public void setAwbState(AwbState awbState) {
+		this.awbState = awbState;
+	}	
 }
