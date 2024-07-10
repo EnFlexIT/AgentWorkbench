@@ -2,30 +2,30 @@ package de.enflexit.awb.ws.core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.EnumSet;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
-import jakarta.servlet.DispatcherType;
-
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.FilterMapping;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Handler.Sequence;
+import org.eclipse.jetty.server.Handler.Wrapper;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.server.Handler.Sequence;
-import org.eclipse.jetty.server.Handler.Wrapper;
-import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
-import org.eclipse.jetty.ee10.servlet.FilterHolder;
-import org.eclipse.jetty.ee10.servlet.FilterMapping;
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.handler.CrossOriginHandler;
+import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.util.component.AttributeContainerMap;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -316,10 +316,10 @@ public class JettyServerManager {
 		if (isStartHTTPS==true) this.configureHTTPS(server);
 		
 		// ----------------------------------------------------------
-		// --- Set the Handler according to the configuration -------
+		// --- Set Handler according to configuration and services --
 		Handler initialHandler = serverConfig.getHandler();
-		Sequence hCollection = serverConfig.isMutableHandlerCollection()==true ? new Sequence(true, null) : null;
-		if (hCollection==null) {
+		Sequence hCollection = null;
+		if (serverConfig.isMutableHandlerCollection()==false) {
 			// --- NO handler collection ----------------------------
 			if (initialHandler==null) {
 				// --- Notify about the error -----------------------
@@ -328,27 +328,22 @@ public class JettyServerManager {
 				return false;
 			} else {
 				// --- Add the initial/single handler ---------------
-				server.setHandler(serverConfig.getHandler());
+				server.setHandler(initialHandler);
 			}
+			
 		} else {
+			List<Handler> handlerList = new ArrayList<>();
 			// --- USE Handler collection ---------------------------
-			if (initialHandler!=null) {
-				hCollection.addHandler(initialHandler);
-			}
+			if (initialHandler!=null) handlerList.add(initialHandler);
+			// --- Check for handler services -----------------------
+			List<AwbWebHandlerService> handlerServiceList = this.getAwbWebRegistry().getAwbWebHandlerService(serverConfig.getServerName());
+			handlerServiceList.forEach(hService -> handlerList.add(hService.getHandler()));
+			// --- Add handler collection ---------------------------
+			hCollection = new Sequence(true, handlerList);
 			server.setHandler(hCollection);
+			
 		}
-
-		// ----------------------------------------------------------
-		// --- Check to add further handler -------------------------
-		if (hCollection!=null) {
-			List<AwbWebHandlerService> handlerList = this.getAwbWebRegistry().getAwbWebHandlerService(serverConfig.getServerName());
-			if (handlerList.size()>0) {
-				for (int i = 0; i < handlerList.size(); i++) {
-					AwbWebHandlerService handlerService = handlerList.get(i);
-					hCollection.addHandler(handlerService.getHandler());
-				}
-			}
-		}
+		
 		
 		// ----------------------------------------------------------
 		// --- Check for a customizer -------------------------------
@@ -367,6 +362,13 @@ public class JettyServerManager {
 		}
 		
 		// ----------------------------------------------------------
+		// --- Enable CrossOriginFilter ? ---------------------------
+		boolean isCorsEnabled = (boolean) server.getAttribute(JettyConstants.CORS_ENABLED.getJettyKey());
+		if (isCorsEnabled==true) {
+			this.enableCrossOriginHandler(server);
+		}
+		
+		// ----------------------------------------------------------
 		// --- Secure the server ------------------------------------
 		JettySecuritySettings securitySettings = serverConfig.getSecuritySettings();
 		if (hCollection==null) {
@@ -375,17 +377,6 @@ public class JettyServerManager {
 			this.secureHandler(hCollection, securitySettings);
 		}
 
-		// ----------------------------------------------------------
-		// --- Enable CrossOriginFilter ? ---------------------------
-		boolean isCorsEnabled = (boolean) server.getAttribute(JettyConstants.CORS_ENABLED.getJettyKey());
-		if (isCorsEnabled==true) {
-			if (hCollection==null) {
-				this.enableCrossOriginFilter(server, initialHandler);
-			} else {
-				this.enableCrossOriginFilter(server, hCollection);
-			}
-		}
-		
 		// ----------------------------------------------------------
 		// --- Always redirect HTTP to HTTPS? -----------------------
 		boolean isRedirectToHTTPS = (boolean) server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());;
@@ -579,42 +570,60 @@ public class JettyServerManager {
 		}
 	}
 	
-	
 	/**
-	 * Wraps a cross origin filter around the specified collection of Handler.
-	 * @param hCollection the h collection
+	 * Wraps a CrossOriginHandler around the specified server handler.
+	 *
+	 * @param server the current server instance to configure
 	 * @return the handler collection that wraps the original handler
 	 */
-	private void enableCrossOriginFilter(Server server, Sequence hCollection) {
-		for (Handler handler : hCollection.getHandlers()) {
-			this.enableCrossOriginFilter(server, handler);
-		}
-	}
-	/**
-	 * Enable cross origin filter.
-	 * @param handler the handler
-	 */
-	private void enableCrossOriginFilter(Server server, Handler handler) {
+	private void enableCrossOriginHandler(Server server) {
 		
-		if (handler instanceof ServletContextHandler == false) return;
+		// --- Create CORS handler instance ---------------
+		CrossOriginHandler corsHandler = new CrossOriginHandler();
 		
-		// --- Wrap the current handler -------------------
-		ServletContextHandler servContHandler = (ServletContextHandler) handler;
-		
-		// --- Define filter ------------------------------
-		FilterHolder cors = servContHandler.addFilter(CrossOriginHandler.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 		// --- Get CORS-settings --------------------------
 		for (JettyConstants jettyConstant : JettyConstants.values()) {
 			
 			if (jettyConstant.getJettyKey().startsWith("cors.")==false) continue;
 			if (jettyConstant.getJettyKey().startsWith("cors.filter")==true) continue;
 			
-			String crossOriginParam = jettyConstant.getJettyKey().split("\\.")[1];
-			String crossOriginValue = server.getAttribute(jettyConstant.getJettyKey()).toString();
-			cors.setInitParameter(crossOriginParam, crossOriginValue);
+			String corsValue = server.getAttribute(jettyConstant.getJettyKey()).toString();
+			
+			switch (jettyConstant) {
+			case CORS_ALLOWED_ORIGINS_PARAM:
+				corsHandler.setAllowedOriginPatterns(Set.of(corsValue.split(",")));
+				break;
+			case CORS_ALLOWED_TIMING_ORIGINS_PARAM:
+				corsHandler.setAllowedTimingOriginPatterns(Set.of(corsValue.split(",")));
+				break;
+			case CORS_ALLOWED_METHODS_PARAM:
+				corsHandler.setAllowedMethods(Set.of(corsValue.split(",")));
+				break;
+			case CORS_ALLOWED_HEADERS_PARAM:
+				corsHandler.setAllowedHeaders(Set.of(corsValue.split(",")));
+				break;
+			case CORS_PREFLIGHT_MAX_AGE_PARAM:
+				corsHandler.setPreflightMaxAge(Duration.ofSeconds(Long.valueOf(corsValue)));
+				break;
+			case CORS_ALLOW_CREDENTIALS_PARAM:
+				corsHandler.setAllowCredentials(Boolean.valueOf(corsValue));
+				break;
+			case CORS_EXPOSED_HEADERS_PARAM:
+				corsHandler.setExposedHeaders(Set.of(corsValue.split(",")));
+				break;
+			case CORS_CHAIN_PREFLIGHT_PARAM:
+				corsHandler.setDeliverPreflightRequests(Boolean.valueOf(corsValue));
+				break;
+				
+			default:
+				break;
+			}
 		}
+		// --- Set server handler as cors child handler ---
+		corsHandler.setHandler(server.getHandler());
+		// --- Set Cors as server handler -----------------
+		server.setHandler(corsHandler);
 	}
-	
 	
 	/**
 	 * Start configured server.

@@ -1,8 +1,5 @@
 package de.enflexit.awb.ws.core;
 
-import org.eclipse.jetty.server.handler.CrossOriginHandler;
-import org.eclipse.jetty.ee10.servlets.CrossOriginFilter;
-
 import de.enflexit.common.crypto.KeyStoreType;
 
 /**
@@ -42,14 +39,14 @@ public enum JettyConstants {
 	
 	
 	CORS_ENABLED("cors.filter.enabled", 30, Boolean.class, false, new Boolean[] {true, false}),
-	CORS_ALLOWED_ORIGINS_PARAM("cors." + CrossOriginFilter.ALLOWED_ORIGINS_PARAM, 31, String.class, "*", null),
-	CORS_ALLOWED_TIMING_ORIGINS_PARAM("cors." + CrossOriginFilter.ALLOWED_TIMING_ORIGINS_PARAM, 32, String.class, "", null),
-	CORS_ALLOWED_METHODS_PARAM("cors." + CrossOriginFilter.ALLOWED_METHODS_PARAM, 33, String.class, "GET,POST,HEAD", null),
-	CORS_ALLOWED_HEADERS_PARAM("cors." + CrossOriginFilter.ALLOWED_HEADERS_PARAM, 34, String.class, "X-Requested-With,Content-Type,Accept,Origin", null),
-	CORS_PREFLIGHT_MAX_AGE_PARAM("cors." + CrossOriginFilter.PREFLIGHT_MAX_AGE_PARAM, 35, Integer.class, 1800, null),
-	CORS_ALLOW_CREDENTIALS_PARAM("cors." + CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, 36, Boolean.class, true, new Boolean[] {true, false}),
-	CORS_EXPOSED_HEADERS_PARAM("cors." + CrossOriginFilter.EXPOSED_HEADERS_PARAM, 37, String.class, "*", null),
-	CORS_CHAIN_PREFLIGHT_PARAM("cors." + CrossOriginFilter.CHAIN_PREFLIGHT_PARAM, 38, Boolean.class, true,  new Boolean[] {true, false});
+	CORS_ALLOWED_ORIGINS_PARAM("cors.allowedOrigins", 31, String.class, "*", null),
+	CORS_ALLOWED_TIMING_ORIGINS_PARAM("cors.allowedTimingOrigins", 32, String.class, "", null),
+	CORS_ALLOWED_METHODS_PARAM("cors.allowedMethods", 33, String.class, "GET,POST,HEAD", null),
+	CORS_ALLOWED_HEADERS_PARAM("cors.allowedHeaders", 34, String.class, "X-Requested-With,Content-Type,Accept,Origin", null),
+	CORS_PREFLIGHT_MAX_AGE_PARAM("cors.preflightMaxAge", 35, Integer.class, 1800, null),
+	CORS_ALLOW_CREDENTIALS_PARAM("cors.allowCredentials", 36, Boolean.class, true, new Boolean[] {true, false}),
+	CORS_EXPOSED_HEADERS_PARAM("cors.exposedHeaders", 37, String.class, "*", null),
+	CORS_CHAIN_PREFLIGHT_PARAM("cors.chainPreflight", 38, Boolean.class, true,  new Boolean[] {true, false});
 	
 	
 	private String jettyKey;
