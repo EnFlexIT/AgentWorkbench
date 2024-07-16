@@ -4,20 +4,22 @@ import java.io.IOException;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import javax.security.auth.Subject;
 import jakarta.servlet.ServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintMapping;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
 import org.eclipse.jetty.security.LoginService;
-import org.eclipse.jetty.security.RoleInfo;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.server.UserIdentity;
+import org.eclipse.jetty.server.Session;
+import org.eclipse.jetty.security.UserIdentity;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
 
@@ -84,38 +86,33 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 		return isSecuredLogin & isSecuredPassword;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#prepareConstraintInfo(java.lang.String, org.eclipse.jetty.server.Request)
-	 */
-	@Override
-	protected RoleInfo prepareConstraintInfo(String pathInContext, Request request) {
-		return null;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#checkUserDataPermissions(java.lang.String, org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, org.eclipse.jetty.security.RoleInfo)
-	 */
-	@Override
-	protected boolean checkUserDataPermissions(String pathInContext, Request request, Response response, RoleInfo constraintInfo) throws IOException {
-		return this.isSecured();
-	}
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.jetty.security.SecurityHandler#checkUserDataPermissions(java.lang.String, org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, org.eclipse.jetty.security.RoleInfo)
+//	 */
+//	@Override
+//	protected boolean checkUserDataPermissions(String pathInContext, Request request, Response response, RoleInfo constraintInfo) throws IOException {
+//		return this.isSecured();
+//	}
+//	
+//	
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.jetty.security.SecurityHandler#isAuthMandatory(org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, java.lang.Object)
+//	 */
+//	@Override
+//	protected boolean isAuthMandatory(Request request, Response base_response, Object constraintInfo) {
+//		if (ServletHelper.isPreflightRequest(request)==true) return false;
+//		return this.isSecured();
+//	}
+//	
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.jetty.security.SecurityHandler#checkWebResourcePermissions(java.lang.String, org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, java.lang.Object, org.eclipse.jetty.server.UserIdentity)
+//	 */
+//	@Override
+//	protected boolean checkWebResourcePermissions(String pathInContext, Request request, Response response, Object constraintInfo, UserIdentity userIdentity) throws IOException {
+//		return userIdentity!=null && StringUtils.equals(this.getUserName(), userIdentity.getUserPrincipal().getName());
+//	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#isAuthMandatory(org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, java.lang.Object)
-	 */
-	@Override
-	protected boolean isAuthMandatory(Request request, Response base_response, Object constraintInfo) {
-		if (ServletHelper.isPreflightRequest(request)==true) return false;
-		return this.isSecured();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#checkWebResourcePermissions(java.lang.String, org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, java.lang.Object, org.eclipse.jetty.server.UserIdentity)
-	 */
-	@Override
-	protected boolean checkWebResourcePermissions(String pathInContext, Request request, Response response, Object constraintInfo, UserIdentity userIdentity) throws IOException {
-		return userIdentity!=null && StringUtils.equals(this.getUserName(), userIdentity.getUserPrincipal().getName());
-	}
 	
 	
 	// --------------------------------------------------------------
@@ -138,11 +135,8 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 			return this.getClass().getSimpleName();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jetty.security.LoginService#login(java.lang.String, java.lang.Object, javax.servlet.ServletRequest)
-		 */
 		@Override
-		public UserIdentity login(String username, Object credentials, ServletRequest request) {
+		public UserIdentity login(String username, Object credentials, Request request, Function<Boolean, Session> getOrCreateSession) {
 			
 			if (StringUtils.equals(SingleUserSecurityHandler.this.getUserName(), username) && StringUtils.equals(SingleUserSecurityHandler.this.getPassword(), String.valueOf(credentials))) {
 				
@@ -165,7 +159,7 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 					}
 
 					@Override
-					public boolean isUserInRole(String role, Scope scope) {
+					public boolean isUserInRole(String role) {
 						return true;
 					}
 				};
@@ -203,7 +197,7 @@ public class SingleUserSecurityHandler extends ConstraintSecurityHandler {
 		public void setIdentityService(IdentityService service) {
 			this.identityService = service;
 		}
-		
+
 	}
 
 	// --------------------------------------------------------------
