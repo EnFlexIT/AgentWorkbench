@@ -4,7 +4,8 @@ Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
 Bundle-Version: 2.2.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17,
+ JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-Vendor: EnFlex.IT
@@ -15,8 +16,8 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.osgi.services,
  org.eclipse.core.runtime,
  org.agentgui.lib.jade,
- bcpkix-jdk18on,
- bcprov-jdk18on,
+ bcpkix;bundle-version="1.78.1",
+ bcprov;bundle-version="1.78.1",
  org.apache.commons.commons-compress,
  org.eclipse.equinox.p2.core,
  org.eclipse.equinox.p2.engine,

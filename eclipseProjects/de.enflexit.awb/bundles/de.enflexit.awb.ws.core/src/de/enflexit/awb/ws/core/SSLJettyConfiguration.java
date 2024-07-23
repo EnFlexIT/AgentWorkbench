@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
@@ -26,7 +27,6 @@ import org.bouncycastle.cert.X509ExtensionUtils;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.internal.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DigestCalculator;
@@ -204,7 +204,8 @@ public class SSLJettyConfiguration {
 	 */
 	private static SubjectKeyIdentifier createSubjectKeyId(final PublicKey publicKey) throws OperatorCreationException {
 		final SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-		final DigestCalculator digCalc = new BcDigestCalculatorProvider().get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
+		//final DigestCalculator digCalc = new BcDigestCalculatorProvider().get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
+		final DigestCalculator digCalc = new BcDigestCalculatorProvider().get(new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.14.3.2.26")));
 		return new X509ExtensionUtils(digCalc).createSubjectKeyIdentifier(publicKeyInfo);
 	}
 
@@ -217,7 +218,8 @@ public class SSLJettyConfiguration {
 	 */
 	private static AuthorityKeyIdentifier createAuthorityKeyId(final PublicKey publicKey) throws OperatorCreationException {
 		final SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-		final DigestCalculator digCalc = new BcDigestCalculatorProvider() .get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
+		//final DigestCalculator digCalc = new BcDigestCalculatorProvider() .get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
+		final DigestCalculator digCalc = new BcDigestCalculatorProvider() .get(new AlgorithmIdentifier(new ASN1ObjectIdentifier("1.3.14.3.2.26")));
 		return new X509ExtensionUtils(digCalc).createAuthorityKeyIdentifier(publicKeyInfo);
 	}
 
