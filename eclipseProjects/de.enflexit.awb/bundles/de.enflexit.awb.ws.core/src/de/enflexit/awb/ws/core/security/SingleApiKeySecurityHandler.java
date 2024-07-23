@@ -1,21 +1,18 @@
 package de.enflexit.awb.ws.core.security;
 
 import java.util.TreeMap;
-import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.Authenticator;
 import org.eclipse.jetty.security.Constraint;
-import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.ServerAuthException;
 import org.eclipse.jetty.security.UserIdentity;
 import org.eclipse.jetty.security.authentication.LoginAuthenticator.UserAuthenticationSucceeded;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.server.Session;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.util.Fields.Field;
@@ -25,7 +22,7 @@ import org.eclipse.jetty.util.Fields.Field;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class SingleApiKeySecurityHandler extends SecurityHandler.PathMapped implements LoginService, Authenticator {
+public class SingleApiKeySecurityHandler extends SecurityHandler.PathMapped implements Authenticator {
 
 	private TreeMap<String, String> securityHandlerConfiguration;
 	
@@ -46,7 +43,6 @@ public class SingleApiKeySecurityHandler extends SecurityHandler.PathMapped impl
 		this.securityHandlerConfiguration = securityHandlerConfiguration;
 		
 		this.setAuthenticator(this);
-		this.setLoginService(this);
 		
 		if (this.isSecured()==true) {
 			this.put("/*", Constraint.ANY_USER);
@@ -115,46 +111,8 @@ public class SingleApiKeySecurityHandler extends SecurityHandler.PathMapped impl
 
 	
 	// ------------------------------------------------------------------------
-	// --- From here, the methods of the LoginService -------------------------
-	// ------------------------------------------------------------------------	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.LoginService#getName()
-	 */
-	@Override
-	public String getName() {
-		return this.getClass().getSimpleName();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.LoginService#login(java.lang.String, java.lang.Object, javax.servlet.ServletRequest)
-	 */
-	@Override
-	public UserIdentity login(String username, Object credentials, Request request, Function<Boolean, Session> getOrCreateSession) {
-		
-		if (this.isAuthorizedAccess(request)==true) {
-			return new AwbUserIdentity(username, credentials, true);		
-		}
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.LoginService#validate(org.eclipse.jetty.server.UserIdentity)
-	 */
-	@Override
-	public boolean validate(UserIdentity user) {
-		return false;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.LoginService#logout(org.eclipse.jetty.server.UserIdentity)
-	 */
-	@Override
-	public void logout(UserIdentity user) {
-		// --- Nothing to do here ----
-	}
-	
-	
-	// ------------------------------------------------------------------------
 	// --- From here, the methods of the Authenticator ------------------------
 	// ------------------------------------------------------------------------	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jetty.security.Authenticator#setConfiguration(org.eclipse.jetty.security.Authenticator.Configuration)
 	 */
