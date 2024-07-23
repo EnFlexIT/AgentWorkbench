@@ -2,9 +2,7 @@ package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
 
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
-import jakarta.ws.rs.core.SecurityContext;
+import org.eclipse.jetty.security.UserPrincipal;
 
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
@@ -17,6 +15,9 @@ import de.enflexit.awb.ws.restapi.gen.UserApi;
 import de.enflexit.awb.ws.restapi.gen.UserApiService;
 import de.enflexit.awb.ws.restapi.gen.model.PasswordChange;
 import de.enflexit.common.StringHelper;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.SecurityContext;
 
 /**
  * The individual implementation class for the {@link UserApi}.
@@ -34,14 +35,18 @@ public class UserApiImpl extends UserApiService {
 	public Response loginUser(SecurityContext securityContext) throws NotFoundException {
 		
 		Principal principal = securityContext.getUserPrincipal();
-		if (principal instanceof JwtPrincipal) {
+		if (principal==null) {
+			String errMsg = "Could not find any principal information.";
+			return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
+		}
+		
+		if (principal instanceof JwtPrincipal jwtPrincipal) {
 			// --- Get the JWT String from principal ----------------
-			JwtPrincipal jwtPrincipal = (JwtPrincipal) principal;
 			String bearerString = "Bearer " + jwtPrincipal.getJwtToken();
 			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(bearerString).build();
 		}
 		// --- Fallback return that does make no sense  -------------
-		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(principal.getName()).build();
+		return Response.status(Status.ACCEPTED).entity(new ApiResponseMessage(ApiResponseMessage.OK, principal.getName())).build();
 	}
 	
 	
@@ -53,43 +58,52 @@ public class UserApiImpl extends UserApiService {
     	
     	String errMsg = "";
     	Principal principal = securityContext.getUserPrincipal();
-		if (principal instanceof JwtPrincipal) {
-			// --- Get the JWT String from principal ----------------
-			JwtPrincipal jwtPrincipal = (JwtPrincipal) principal;
-			String userName = jwtPrincipal.getName();
-			String pswdOld = passwordChange.getPasswordOld();
-			String pswdNew = passwordChange.getPasswordNew();
-			
-			ServletSecurityConfiguration secConfig = AwbWebServerAccess.getServletSecurityConfiguration();
+    	if (principal==null) {
+    		errMsg = "Could not find any principal information.";
+    		
+    	} else {
+    		// --- Get new settings ---------------------------------
+    		String userName = principal.getName();
+        	String pswdOld = passwordChange.getPasswordOld();
+        	String pswdNew = passwordChange.getPasswordNew();
+    		
+        	ServletSecurityConfiguration secConfig = AwbWebServerAccess.getServletSecurityConfiguration();
 			if (secConfig!=null) {
 				// --- Get current user name & password -------------
 				String userNameSec = secConfig.getSecurityHandlerConfiguration().get(JwtParameter.UserName.getKey());
 				String pswdSec = secConfig.getSecurityHandlerConfiguration().get(JwtParameter.Password.getKey()); 
 				// --- Check against current credentials ------------
 				if (StringHelper.isEqualString(userName, userNameSec)==true && StringHelper.isEqualString(pswdOld, pswdSec)==true) {
-					// --- Check if the new password is valid -------
 					boolean isValidNewPassword = pswdNew!=null && pswdNew.isBlank()==false && pswdNew.length()>=4 && StringHelper.isEqualString(pswdOld, pswdNew)==false;
 					if (isValidNewPassword==true) {
 						// --- Change password is allowed -----------
 						secConfig.getSecurityHandlerConfiguration().put(JwtParameter.Password.getKey(), pswdNew);
 						AwbWebServerAccess.saveJettyConfiguration();
-						// --- Return success message ---------------
-						String bearerString = "Bearer " + jwtPrincipal.getJwtToken();
-						return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(bearerString).build();
+						// --- Return success message -----------
+						String okMessage = null;
+						if (principal instanceof UserPrincipal uPrincipal) {
+							okMessage = "BASIC Password Changed for " + uPrincipal.getName();
+							
+						} else if (principal instanceof JwtPrincipal jwtPrincipal) {
+							okMessage = "Bearer " + jwtPrincipal.getJwtToken();
+							
+						} else {
+							System.err.println("[" + this.getClass().getSimpleName() + "] Unknown principal type '" + principal.getClass().getName() + "'");
+						}
+						return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(okMessage).build();
 						
 					} else {
 						errMsg = "The new password is invalid!";
 					}
-				
+					
 				} else {
-					errMsg = "The current credentials provided are incorrect!";
+					errMsg = "The credentials currently provided are incorrect!";	
 				}
+				
 			} else {
 				errMsg = "No security configuration could be found!";
 			}
-		} else {
-			errMsg = "Could not find any principal information.";
-		}
+    	}
 
 		// --- Return error message -----------------------------
         return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
@@ -102,6 +116,9 @@ public class UserApiImpl extends UserApiService {
 	@Override
 	public Response logout(SecurityContext securityContext) throws NotFoundException {
 		// --- Nothing to do here ! ---
+		
+		
+		
 		return null;
 	}
     

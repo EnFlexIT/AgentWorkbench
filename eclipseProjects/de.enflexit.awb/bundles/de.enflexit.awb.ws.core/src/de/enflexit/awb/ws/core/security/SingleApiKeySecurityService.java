@@ -14,7 +14,7 @@ import de.enflexit.awb.ws.AwbSecurityHandlerService;
  */
 public class SingleApiKeySecurityService implements AwbSecurityHandlerService {
 
-	private final String[] configParameterKeys = new String[]{"API-Key Name", "API-Key Value"};
+	final static String[] configParameterKeys = new String[]{"API-Key Name", "API-Key Value"};
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#getSecurityHandlerName()
@@ -29,7 +29,7 @@ public class SingleApiKeySecurityService implements AwbSecurityHandlerService {
 	 */
 	@Override
 	public String[] getConfigurationKeys() {
-		return this.configParameterKeys;
+		return configParameterKeys;
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#getKeyType(java.lang.String)
@@ -44,12 +44,7 @@ public class SingleApiKeySecurityService implements AwbSecurityHandlerService {
 	 */
 	@Override
 	public SecurityHandler getNewSecurityHandler(TreeMap<String, String> securityHandlerConfiguration) {
-		// --- Get the required parameter ---------------------------
-		String apiKeyName  = securityHandlerConfiguration.get(this.configParameterKeys[0]);
-		String apiKeyValue = securityHandlerConfiguration.get(this.configParameterKeys[1]);
-		// --- Return the new instance of the SecurtiyHandler -------
-		return new SingleApiKeySecurityHandler(apiKeyName, apiKeyValue);
+		return new SingleApiKeySecurityHandler(securityHandlerConfiguration);
 	}
-
 
 }

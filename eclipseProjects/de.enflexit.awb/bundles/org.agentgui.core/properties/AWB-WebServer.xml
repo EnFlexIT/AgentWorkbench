@@ -15,7 +15,7 @@
             <key>cors.allowedHeaders</key>
             <value>
                 <key>cors.allowedHeaders</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">*</value>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">X-Requested-With,Content-Type,Accept,Origin</value>
             </value>
         </entry>
         <entry>
@@ -57,7 +57,7 @@
             <key>cors.filter.enabled</key>
             <value>
                 <key>cors.filter.enabled</key>
-                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
             </value>
         </entry>
         <entry>
@@ -183,16 +183,16 @@
                 <key>_ServerWideSecurityConfiguration</key>
                 <value>
                     <contextPath>_ServerWideSecurityConfiguration</contextPath>
-                    <securityHandlerName>SingleUserSecurityHandler</securityHandlerName>
+                    <securityHandlerName>SingleApiKeySecurityHandler</securityHandlerName>
                     <securityHandlerActivated>true</securityHandlerActivated>
                     <securityHandlerConfiguration>
                         <entry>
-                            <key>Password</key>
-                            <value>test</value>
+                            <key>API-Key Name</key>
+                            <value>apiKey</value>
                         </entry>
                         <entry>
-                            <key>User Name</key>
-                            <value>test</value>
+                            <key>API-Key Value</key>
+                            <value>DerToasterIstKaputt</value>
                         </entry>
                     </securityHandlerConfiguration>
                 </value>
