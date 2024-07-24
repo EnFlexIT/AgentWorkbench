@@ -47,6 +47,7 @@ import agentgui.simulationService.sensoring.ServiceActuator;
 import agentgui.simulationService.sensoring.ServiceActuatorManager;
 import agentgui.simulationService.sensoring.ServiceSensor;
 import agentgui.simulationService.sensoring.ServiceSensorManager;
+import agentgui.simulationService.transaction.DiscreteSimulationStepControllerHandler;
 import agentgui.simulationService.transaction.EnvironmentManagerDescription;
 import agentgui.simulationService.transaction.EnvironmentNotification;
 import jade.core.AID;
@@ -749,6 +750,9 @@ public class SimulationService extends BaseService {
 	 * @see EnvironmentModel
 	 */
 	private void broadcastStepSimulation(EnvironmentModel envModel, boolean aSynchron, Service.Slice[] slices) throws ServiceException {
+
+		// --- Check if the simulation should wait for registered discrete simulation step controllers 
+		DiscreteSimulationStepControllerHandler.checkDiscreteSimulationStepControllers(envModel);
 		
 		if (myLogger.isLoggable(Logger.CONFIG)) {
 			myLogger.log(Logger.CONFIG, "Sending new EnvironmentModel + step simulation!");

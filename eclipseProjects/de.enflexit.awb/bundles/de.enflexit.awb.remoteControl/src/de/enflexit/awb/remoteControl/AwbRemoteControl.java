@@ -1,14 +1,11 @@
 package de.enflexit.awb.remoteControl;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.jade.Platform.SystemAgent;
-import agentgui.core.jade.PlatformStateInformation.PlatformState;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
@@ -24,7 +21,7 @@ import de.enflexit.common.Observer;
  * from your chosen communication protocol, and calls the corresponding method from this class to execute them.    
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public abstract class AwbRemoteControl implements ApplicationListener, PropertyChangeListener, Observer {
+public abstract class AwbRemoteControl implements ApplicationListener, Observer {
 	
 	private AwbState awbState;
 
@@ -33,7 +30,6 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 	 */
 	public AwbRemoteControl() {
 		Application.addApplicationListener(this);
-		Application.getJadePlatform().addPropertyChangeListener(this);
 		this.setAwbState(AwbState.AWB_READY);
 	}
 
@@ -135,24 +131,22 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 		return true;
 	}
 	
-	/**
-	 * Triggers the next step of a discrete simulation.
-	 */
-	public void discreteSimulationNextStep() {
-		//TODO implement
-	}
-
 	/* (non-Javadoc)
 	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
 	 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent ae) {
-		if (ae.getApplicationEvent()==ApplicationEvent.PROJECT_LOADED) {
+		
+		if (ae.getApplicationEvent().equals(ApplicationEvent.PROJECT_LOADED)) {
 			Project project = (Project) ae.getEventObject();
 			if (project!=null) {
 				project.addObserver(this);
 				this.setAwbState(AwbState.PROJECT_LOADED);
 			}
+		} else if (ae.getApplicationEvent().equals(ApplicationEvent.JADE_START)) {
+			this.setAwbState(AwbState.MAS_STARTED);
+		} else if (ae.getApplicationEvent().equals(ApplicationEvent.JADE_STOP)) {
+			this.setAwbState(AwbState.MAS_STOPPED);
 		}
 	}
 	
@@ -169,22 +163,6 @@ public abstract class AwbRemoteControl implements ApplicationListener, PropertyC
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 */
-	@Override
-	public void propertyChange(PropertyChangeEvent pce) {
-//		System.out.println("[" + this.getClass().getSimpleName() + "] Received property change event " + pce.getPropertyName());
-		if (pce.getPropertyName().equals("PlatformState")) {
-			PlatformState newState = (PlatformState) pce.getNewValue();
-			if (newState==PlatformState.RunningMAS) {
-				this.setAwbState(AwbState.MAS_STARTED);
-			} else if (newState==PlatformState.TerminatingMAS) {
-				this.setAwbState(AwbState.MAS_STOPPED);
-			}
-		}
-	}
-
 	/**
 	 * Gets the current awb state.
 	 * @return the awb state
