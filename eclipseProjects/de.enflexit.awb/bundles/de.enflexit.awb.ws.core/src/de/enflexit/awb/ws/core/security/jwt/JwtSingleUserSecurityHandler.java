@@ -1,33 +1,28 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
-import java.io.IOException;
-import java.security.Principal;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.security.auth.Subject;
-import jakarta.servlet.ServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
 import org.eclipse.jetty.security.LoginService;
-import org.eclipse.jetty.security.RoleInfo;
+import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.UserIdentity;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.server.UserIdentity;
+import org.eclipse.jetty.server.Session;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
-
-import de.enflexit.awb.ws.core.util.ServletHelper;
-
 
 /**
  * The Class JwtSingleUserSecurityHandler.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JwtSingleUserSecurityHandler extends ConstraintSecurityHandler {
+public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 	
 	private final String login;
 	private final String password;
@@ -54,41 +49,24 @@ public class JwtSingleUserSecurityHandler extends ConstraintSecurityHandler {
 		if (jwtConfig!=null) this.setAuthenticator(new JwtAuthenticator(jwtConfig));
 		this.setIdentityService(new DefaultIdentityService());
 		this.setLoginService(new JwtLoginService()); // TODO
+		
+		if (this.isSecured()==true) {
+			this.put("/*", Constraint.ANY_USER);
+		} else {
+			this.put("/*", Constraint.ALLOWED);
+		}
+		
 	}
 	
 	/**
 	 * Checks if is secured.
 	 * @return true, if is secured
 	 */
-	private boolean isSecuredByPassword() {
+	private boolean isSecured() {
 		boolean isSecuredLogin    = this.login!=null && this.login.isBlank()==false;
 		boolean isSecuredPassword = this.password!=null && this.password.isBlank()==false;
 		return isSecuredLogin & isSecuredPassword;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#checkUserDataPermissions(java.lang.String, org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, org.eclipse.jetty.security.RoleInfo)
-	 */
-	@Override
-	protected boolean checkUserDataPermissions(String pathInContext, Request request, Response response, RoleInfo roleInfo) throws IOException {
-		return this.isSecuredByPassword();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#isAuthMandatory(org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, java.lang.Object)
-	 */
-	@Override
-	protected boolean isAuthMandatory(Request baseRequest, Response base_response, Object constraintInfo) {
-		if (ServletHelper.isPreflightRequest(baseRequest)==true) return false;
-		return this.isSecuredByPassword();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.SecurityHandler#checkWebResourcePermissions(java.lang.String, org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, java.lang.Object, org.eclipse.jetty.server.UserIdentity)
-	 */
-	@Override
-	protected boolean checkWebResourcePermissions(String pathInContext, Request request, Response response, Object constraintInfo, UserIdentity userIdentity) throws IOException {
-		return userIdentity!=null && StringUtils.equals(login, userIdentity.getUserPrincipal().getName());
-	}
-	
 
 	
 	// --------------------------------------------------------------
@@ -110,37 +88,18 @@ public class JwtSingleUserSecurityHandler extends ConstraintSecurityHandler {
 			return this.getClass().getSimpleName();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jetty.security.LoginService#login(java.lang.String, java.lang.Object, javax.servlet.ServletRequest)
-		 */
 		@Override
-		public UserIdentity login(String username, Object credentials, ServletRequest request) {
-			
+		public UserIdentity login(String username, Object credentials, Request request, Function<Boolean, Session> getOrCreateSession) {
+		
 			if (StringUtils.equals(JwtSingleUserSecurityHandler.this.login, username) && StringUtils.equals(JwtSingleUserSecurityHandler.this.password, String.valueOf(credentials))) {
 				
 				final Credential credential = new Password(String.valueOf(credentials));
-				final Principal principal   = new JwtPrincipal(username);
+				final JwtPrincipal principal   = new JwtPrincipal(username);
 				final Subject subject = new Subject();
 				subject.getPrincipals().add(principal);
 				subject.getPrivateCredentials().add(credential);
 				
-				return new UserIdentity() {
-
-					@Override
-					public Subject getSubject() {
-						return subject;
-					}
-
-					@Override
-					public Principal getUserPrincipal() {
-						return principal;
-					}
-
-					@Override
-					public boolean isUserInRole(String role, Scope scope) {
-						return true;
-					}
-				};
+				return new JwtUserIdentity(principal);
 				
 			} else {
 				return null;

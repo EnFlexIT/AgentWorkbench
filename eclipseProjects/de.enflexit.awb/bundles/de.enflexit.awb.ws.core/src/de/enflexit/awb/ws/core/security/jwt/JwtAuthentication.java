@@ -2,14 +2,14 @@ package de.enflexit.awb.ws.core.security.jwt;
 
 import java.util.List;
 
-import org.eclipse.jetty.security.UserAuthentication;
+import org.eclipse.jetty.security.authentication.LoginAuthenticator.UserAuthenticationSucceeded;
 
 /**
  * The Class JwtAuthentication.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JwtAuthentication extends UserAuthentication {
+public class JwtAuthentication extends UserAuthenticationSucceeded {
 
 	private static final long serialVersionUID = 6670353102691509897L;
 
@@ -20,8 +20,8 @@ public class JwtAuthentication extends UserAuthentication {
      * @param jwtTokwn The passed JWT token
      * @param principle The user principle extracted from the JWT token.
      */
-    public JwtAuthentication(JwtAuthenticator authenticator, final JwtPrincipal principle) {
-        super(authenticator.getAuthMethod(), new JwtUserIdentity(principle));
+    public JwtAuthentication(JwtAuthenticator authenticator, JwtUserIdentity jwtUserIdentity) {
+        super(authenticator.getAuthenticationType(), jwtUserIdentity);
     }
     
     /**
@@ -61,6 +61,5 @@ public class JwtAuthentication extends UserAuthentication {
     public String toString() {
     	return super.toString();
     }
-
 
 }

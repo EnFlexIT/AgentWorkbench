@@ -1,12 +1,12 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
-import org.eclipse.jetty.server.UserIdentity;
+import org.eclipse.jetty.security.UserIdentity;
 
 import javax.security.auth.Subject;
 import java.security.Principal;
 
 
-public class JwtUserIdentity  implements UserIdentity {
+public class JwtUserIdentity implements UserIdentity {
 
 	private JwtPrincipal principal;
 
@@ -41,7 +41,7 @@ public class JwtUserIdentity  implements UserIdentity {
      * @see org.eclipse.jetty.server.UserIdentity#isUserInRole(java.lang.String, org.eclipse.jetty.server.UserIdentity.Scope)
      */
     @Override
-    public boolean isUserInRole(final String role, final Scope scope) {
+    public boolean isUserInRole(final String role) {
 		if (role.equals(this.principal.getRole()) == true) {
 			return true;
 		}

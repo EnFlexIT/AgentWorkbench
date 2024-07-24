@@ -1,24 +1,20 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.ServerAuthException;
-import org.eclipse.jetty.security.authentication.DeferredAuthentication;
+import org.eclipse.jetty.security.UserIdentity;
 import org.eclipse.jetty.security.authentication.LoginAuthenticator;
-import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.UserIdentity;
+import org.eclipse.jetty.server.Response;
+import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,13 +74,13 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		this.getJwtSessionStore();
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.Authenticator#getAuthMethod()
+	 * @see org.eclipse.jetty.security.Authenticator#getAuthenticationType()
 	 */
 	@Override
-	public String getAuthMethod() {
+	public String getAuthenticationType() {
 		return AUTH_METHOD;
 	}
-
+	
 	/**
 	 * Applies the configuration based on the specified map.
 	 * @param configMap the configuration map to apply
@@ -182,25 +178,18 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		return jwtSessionStore;
 	}
 
+	
 	/**
 	 * Validates a login request.
 	 *
-	 * @param servletRequest the servlet request
-	 * @param servletResponse the servlet response
-	 * @param mandatory the mandatory
+	 * @param req the servlet request
+	 * @param resp the servlet response
+	 * @param callback the callback
 	 * @return the authentication
-	 * @throws ServerAuthException the server auth exception
 	 */
-	public Authentication validateLoginRequest(final ServletRequest servletRequest, final ServletResponse servletResponse, final boolean mandatory) {
+	public AuthenticationState validateLoginRequest(Request req, Response resp, Callback callback) {
 		
-		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		HttpServletResponse response = (HttpServletResponse) servletResponse;
-    	
-		if (!mandatory) {
-			return new DeferredAuthentication(this);
-		}
-		
-		String credentials = request.getHeader(HttpHeader.AUTHORIZATION.asString());
+		String credentials = req.getHeaders().get(HttpHeader.AUTHORIZATION);
 		if (credentials != null && credentials.isBlank()==false) {
             int space = credentials.indexOf(' ');
             if (space > 0) {
@@ -212,15 +201,18 @@ public class JwtAuthenticator extends LoginAuthenticator {
                     if (i > 0) {
                         String username = credentials.substring(0, i);
                         String password = credentials.substring(i + 1);
-                        UserIdentity user = this.login(username, password, request);
+                        UserIdentity user = this.login(username, password, req, resp);
                         if (user!=null) {
-                        	// --- Create JWT for the user ------
+                        	// --- Create JWT for the user ----------
                         	String jwtToken = this.getJwtHandler().createJwsToken(DEFAULT_JWT_CLAIM_SUBJECT, username, DEFAULT_JWT_CLAIM_ROLE);
                         	JwtPrincipal jwtPrincipal = (JwtPrincipal) user.getUserPrincipal();
                         	jwtPrincipal.addJwtToken(jwtToken);
+                        	// --- Create JwtUserIdentity -----------
+                        	JwtUserIdentity jwtIdentity = new JwtUserIdentity(jwtPrincipal);
                         	
-                            response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), AUTH_HEADER_VALUE_PREFIX + jwtToken);
-                        	return new JwtAuthentication(this, jwtPrincipal);
+                            //response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), AUTH_HEADER_VALUE_PREFIX + jwtToken);
+                            resp.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, AUTH_HEADER_VALUE_PREFIX + jwtToken);
+                        	return new JwtAuthentication(this, jwtIdentity);
                         }
                     }
                 }
@@ -229,40 +221,34 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		// ------------------------------------------------------
 		// --- No JWT, no credentials ---------------------------
 		// ------------------------------------------------------
-        if (DeferredAuthentication.isDeferred(response)) {
-        	return Authentication.UNAUTHENTICATED;
+        if (AuthenticationState.Deferred.isDeferred(resp)) {
+        	return AuthenticationState.SEND_FAILURE;
         }
 
         String value = "basic realm=\"" + _loginService.getName() + "\"";
         value += ", charset=\"" + this.getCharset().name() + "\"";
         
-        response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), value);
-        try {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		}
-        return Authentication.SEND_CONTINUE;
+        resp.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, value);
+        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+        return AuthenticationState.CHALLENGE;
 		
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.Authenticator#validateRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse, boolean)
+	 * @see org.eclipse.jetty.security.Authenticator#validateRequest(org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, org.eclipse.jetty.util.Callback)
 	 */
 	@Override
-	public Authentication validateRequest(final ServletRequest servletRequest, final ServletResponse servletResponse, final boolean mandatory) throws ServerAuthException {
+	public AuthenticationState validateRequest(Request req, Response resp, Callback callback) throws ServerAuthException {
 
-		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		
 		// ----------------------------------------------------------
 		// --- Check if a Bearer token is available -----------------
 		// ----------------------------------------------------------
-		String jwtInput = this.getBearerToken(request);
-		if (jwtInput==null && ServletHelper.isLoginPathRequest((Request) servletRequest)==true) {
+		String jwtInput = this.getBearerToken(req);
+		if (jwtInput==null && ServletHelper.isLoginPathRequest((Request) req)==true) {
 			// ------------------------------------------------------
 			// --- No JWT token available, check credentials --------
 			// ------------------------------------------------------
-			Authentication authentication = this.validateLoginRequest(servletRequest, servletResponse, mandatory); 
+			AuthenticationState authentication = this.validateLoginRequest(req, resp, callback); 
 			if (authentication!=null && authentication instanceof JwtAuthentication) {
 				// --- Cache the JwtAuthentication created ---------- 
 				this.getJwtSessionStore().cacheAuthentication((JwtAuthentication) authentication);
@@ -282,7 +268,8 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (jwtParsed.hasExceptions()==true || jwtParsed.getJwsClaims()==null) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("unable to decode jwt, returning unauthenticated");
-					return Authentication.UNAUTHENTICATED;
+			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					return AuthenticationState.SEND_FAILURE;
 				}
 				
 				// --- Test user name and role ----------------------
@@ -291,7 +278,8 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (username==null || username.isBlank()==true) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("no username provided in jwt, returning unauthenticated");
-					return Authentication.UNAUTHENTICATED;
+			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					return AuthenticationState.SEND_FAILURE;
 				}
 				if (verbose) logger.info("jwt username={} role={}", username, role);
 				
@@ -300,7 +288,8 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (authentication==null) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("jwt token not found in local cache, returning unauthenticated");
-					return Authentication.UNAUTHENTICATED;
+			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					return AuthenticationState.SEND_FAILURE;
 				}
 				
 				// --- Check the user name again -------------------- 
@@ -308,13 +297,15 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (username.equals(prevUsername)==false) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("user name differs, returning unauthenticated");
-					return Authentication.UNAUTHENTICATED;
+			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					return AuthenticationState.SEND_FAILURE;
 				}
 				
 				// --- Logout the current user? ---------------------
-				if (ServletHelper.isLogoutPathRequest((Request) request)==true) {
+				if (ServletHelper.isLogoutPathRequest((Request) req)==true) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
-					return Authentication.UNAUTHENTICATED;
+			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					return AuthenticationState.SEND_FAILURE;
 				}
 				
 				// --- Renew JWT token with each call? --------------
@@ -325,8 +316,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
                 	jwtPrincipal.addJwtToken(jwtToken);
                 	
                 	// --- Adjust response header -------------------
-                	HttpServletResponse response = (HttpServletResponse) servletResponse;
-                	response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), AUTH_HEADER_VALUE_PREFIX + jwtToken);
+                	resp.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, AUTH_HEADER_VALUE_PREFIX + jwtToken);
 
                 	// --- Save to session store --------------------
                 	this.getJwtSessionStore().cacheAuthentication(authentication);
@@ -348,22 +338,16 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		if (authentication != null) {
 			return authentication;
 		}
-		return Authentication.UNAUTHENTICATED;
+        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+		return AuthenticationState.SEND_FAILURE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jetty.security.Authenticator#secureResponse(javax.servlet.ServletRequest, javax.servlet.ServletResponse, boolean, org.eclipse.jetty.server.Authentication.User)
-	 */
-	@Override
-	public boolean secureResponse(final ServletRequest request, final ServletResponse response, final boolean mandatory, final Authentication.User user) throws ServerAuthException {
-		return true;
-	}
-	/**
+	/**
 	 * Get the bearer token from the HTTP request. The token is in the HTTP request
 	 * "Authorization" header in the form of: "Bearer [token]"
 	 */
-	private String getBearerToken(HttpServletRequest request) {
-		String authHeader = request.getHeader(HttpHeader.AUTHORIZATION.asString());
+	private String getBearerToken(Request request) {
+		String authHeader = request.getHeaders().get(HttpHeader.AUTHORIZATION);
 		if (authHeader != null && authHeader.startsWith(AUTH_HEADER_VALUE_PREFIX)) {
 			return authHeader.substring(AUTH_HEADER_VALUE_PREFIX.length());
 		}
