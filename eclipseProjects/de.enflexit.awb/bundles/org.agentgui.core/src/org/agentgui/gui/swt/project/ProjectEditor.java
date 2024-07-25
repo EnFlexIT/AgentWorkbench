@@ -28,7 +28,7 @@
  */
 package org.agentgui.gui.swt.project;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 
 import org.agentgui.gui.AwbProjectEditorWindow;

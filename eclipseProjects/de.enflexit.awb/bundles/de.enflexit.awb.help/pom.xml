@@ -80,6 +80,7 @@
 								</includes>
 								<excludes>
 									<exclude>org.agentgui.sample.*</exclude>
+									<exclude>org.jxmapviewer.*</exclude>
 								</excludes>
 								<additionalArguments>
 									<additionalArgument>-windowtitle "Agent.Workbench - API"</additionalArgument>
@@ -96,12 +97,11 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- 
+			The maven resource-plugin is needed to copy the search.js, which is generated incorrectly for our purposes 
+			(See this link for further information https://github.com/jimu/vassal/wiki/Javadoc-v11-Search-Bug).
+			The bug could be resolved in a higher version of OpenJDK (12 and above).
 			<plugin>
-				<!-- 
-				The maven resource-plugin is needed to copy the search.js, which is generated incorrectly for our purposes 
-			    (See this link for further information https://github.com/jimu/vassal/wiki/Javadoc-v11-Search-Bug).
-			    The bug could be resolved in a higher version of OpenJDK (12 and above).
-			    -->
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.0.2</version>
 				<executions>
@@ -126,6 +126,7 @@
 					</execution>
 				</executions>
 			</plugin> 	
+			-->
 		</plugins>
 		
 		<pluginManagement>

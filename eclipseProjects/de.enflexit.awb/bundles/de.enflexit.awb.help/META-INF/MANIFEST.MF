@@ -4,7 +4,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - API Help
 Bundle-SymbolicName: de.enflexit.awb.help;singleton:=true
 Bundle-Version: 2.4.2.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17,
+ JavaSE-11
 Require-Bundle: org.agentgui.core,
  de.enflexit.api,
  de.enflexit.awb.bgSystem,
