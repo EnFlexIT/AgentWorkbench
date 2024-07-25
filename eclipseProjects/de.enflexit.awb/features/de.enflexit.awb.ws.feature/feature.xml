@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.feature"
       label="Agent.Workbench WS-Feature"
-      version="1.1.0.qualifier"
+      version="12.0.9.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.awb.ws.core"
       os="linux,macosx,win32"
@@ -62,10 +62,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.jetty.servlet"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.jetty.util.ajax"
          version="0.0.0"/>
 
@@ -91,6 +87,514 @@
 
    <plugin
          id="de.enflexit.awb.ws.jetty"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.alpn.conscrypt.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.alpn.conscrypt.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.alpn.java.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.alpn.java.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.alpn.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.deploy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.annotations"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.apache-jsp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.cdi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.fcgi.proxy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.glassfish.jstl"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.jndi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.osgi.alpn.fragment"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.osgi.boot"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.osgi.boot.jsp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.plus"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.proxy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.quickstart"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.security.jaspi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.servlets"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.websocket.client.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.websocket.jakarta.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.websocket.jakarta.client.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.websocket.jakarta.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.websocket.jakarta.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.websocket.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee10.websocket.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.annotations"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.apache-jsp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.glassfish.jstl"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.jndi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.openid"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.osgi.boot"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.osgi.boot.jsp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.plus"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.proxy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.quickstart"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.security"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.servlets"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.api"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.client.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.javax.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.javax.client.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.javax.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.javax.common.source"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.javax.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee8.websocket.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.annotations"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.apache-jsp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.cdi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.fcgi.proxy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.glassfish.jstl"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.jndi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.openid"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.osgi.boot"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.osgi.boot.jsp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.plus"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.proxy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.quickstart"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.security"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.security.jaspi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.servlets"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.api"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.client.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.jakarta.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.jakarta.client.webapp"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.jakarta.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.jakarta.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.ee9.websocket.servlet"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.fcgi.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.fcgi.proxy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.fcgi.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http.spi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http2.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http2.client.http"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http2.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http2.hpack"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http2.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http3.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http3.client.http"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http3.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http3.qpack"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.http3.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.jmx"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.jndi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.keystore"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.logging"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.openid"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.osgi"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.plus"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.proxy"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.quic.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.quic.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.quic.quic-quiche-common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.quic.quic-quiche-jna"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.quic.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.rewrite"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.servlet-api"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.servlet-api"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.session"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.start"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.unixdomain.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket-api"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket.api"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket.core.client"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket.core.common"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket.core.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.websocket.server"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.jetty.xml"
          version="0.0.0"/>
 
 </feature>

@@ -147,7 +147,7 @@ public class PropertyContentProvider {
 
 		String fileName = fileToProvide.toString();
 		Path pathProperties = PathHandling.getPropertiesPath(true);
-		String newfilePath = pathProperties.toString() + fileName;
+		String newfilePath = pathProperties.resolve(fileName).toString();
 		
 		if (this.debug) {
 			System.out.println("Extract '" + fileName + "' to " + newfilePath);
@@ -157,7 +157,7 @@ public class PropertyContentProvider {
 		FileOutputStream fos = null;
 		try {
 			Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-			URL fileURL = bundle.getResource(this.getPropertyDirectoryInBundle() + fileName);
+			URL fileURL = bundle.getResource(this.getPropertyDirectoryInBundle() + "/" + fileName);
 			if (fileURL!=null) {
 				// --- Write file to directory ------------
 				is = fileURL.openStream();

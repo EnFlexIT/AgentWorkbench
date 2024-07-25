@@ -63,7 +63,7 @@
 							If the path of the javadoc or search.js changes, the path must also be changed 
 							in the config of the maven resource plugin that is located in the parent pom
 							-->
-							<outputDirectory>${project.basedir}/help/api-docs/javadoc</outputDirectory>
+							<outputDirectory>${project.basedir}/help/api-docs/javadoc/</outputDirectory>
 							<tocFile>${project.basedir}/help/api_docs.xml</tocFile>
 							<tocOptions>
 								<mainLabel>Agent.Workbench API</mainLabel>

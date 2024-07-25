@@ -8,11 +8,11 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>4.0.7</tycho-version>
+		<tycho-version>4.0.8</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<target-platform-version>4.28.0-SNAPSHOT</target-platform-version>
+		<target-platform-version>4.32.0-SNAPSHOT</target-platform-version>
 		
 		<url.repository.snapshotDomain>https://p2.enflex.it</url.repository.snapshotDomain>
 		<url.repository.snapshotDir>/awb/snapshots/</url.repository.snapshotDir>
@@ -162,11 +162,11 @@
 		<url>http://www.enflex.it/</url>
 	</organization>
 	<name>Agent.Workbench</name>
-	<url>http://www.agentgui.org/</url>
+	<url>https://github.com/EnFlexIT/AgentWorkbench/</url>
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/EnFlexIT/AgentWorkbench/issues</url>
 	</issueManagement>
 	<inceptionYear>2012</inceptionYear>
-	<description>Agent.Workbench is a framework, which addresses the utilization of Multi-Agent systems (MAS) and Multi-Agent based simulations (MABS) for end users of different domains than computer science. As the suffix of the name indicates, Agent.Workbench provides a predefined Graphical User Interface which can be extended by developers in order to address the needs of engineers, economists or (of course) computer specialists.</description>
+	<description>Agent.Workbench is a framework that addresses the utilization of Multi-Agent systems (MAS) and Multi-Agent based simulations (MABS) for end users of different domains than computer science. As the suffix of the name indicates, Agent.Workbench provides a predefined Graphical User Interface which can be extended by developers in order to address the needs of engineers, economists or (of course) computer specialists.</description>
 </project>

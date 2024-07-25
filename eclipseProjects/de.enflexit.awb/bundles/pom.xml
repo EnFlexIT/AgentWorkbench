@@ -16,7 +16,7 @@
 	<modules>
 		<module>de.enflexit.api</module>
 		<module>de.enflexit.awb.bgSystem</module>
-		<module>de.enflexit.awb.help</module>
+		<!--<module>de.enflexit.awb.help</module> -->
 		<module>de.enflexit.awb.ws.client</module>
 		<module>de.enflexit.awb.ws.core</module>
 		<module>de.enflexit.awb.ws.core.ui</module>

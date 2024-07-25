@@ -162,7 +162,7 @@ public class PropertyContentProvider {
 		FileOutputStream fos = null;
 		try {
 			Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-			URL fileURL = bundle.getResource(this.getPropertyDirectoryInBundle() + fileName);
+			URL fileURL = bundle.getResource(this.getPropertyDirectoryInBundle() + "/" + fileName);
 			if (fileURL!=null) {
 				// --- Write file to directory ------------
 				is = fileURL.openStream();
