@@ -121,16 +121,23 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 	protected boolean readCsvFiles(File graphFile, boolean isAllowIncompleteFileList) {
 
 		boolean successful = true;
-		if (this.getFileNameExtension(graphFile).equals(".zip")) {
+		String fileExt = this.getFileNameExtension(graphFile);
+		if (fileExt.equals(".zip")) {
 			// --- Read the zip files ---------------------
 			successful = this.readFilesFromZip(graphFile);
 
-		} else if (this.getFileNameExtension(graphFile).equals(".csv")) {
+		} else if (fileExt.equals(".csv")) {
 			// --- Read the specified csv files -----------
 			File folder = graphFile.getParentFile();
 			if (folder != null) {
 				successful = this.readFilesFromFolder(folder);
 			}
+			
+		} else {
+			// --- Unknown file format --------------------
+			this.errTitle = "Unknown File Format:";
+			this.errMessage = "Missing standard csv files within the selection (found " + this.getCsvDataController().size() + " of " + this.getValidFileNames().size() + " required files)!";
+			successful = false;
 		}
 
 		// ---- Some final error handling here ------------
@@ -142,7 +149,13 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 		return successful;
 	}
 	
-	private String getFileNameExtension(File file) {
+	/**
+	 * Returns the current file extension.
+	 *
+	 * @param file the file
+	 * @return the file name extension
+	 */
+	protected String getFileNameExtension(File file) {
 		int lastPointIndex = file.getName().lastIndexOf(".");
 		if (lastPointIndex>0) {
 			return file.getName().substring(lastPointIndex, file.getName().length());
