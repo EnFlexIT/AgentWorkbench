@@ -184,6 +184,14 @@ public class Application {
 	}
 	
 	/**
+	 * Checks if this application instance is providing a remote container for a JADE platform hosted elsewhere.  
+	 * @return true, if is remote container application
+	 */
+	public static boolean isRemoteContainerApplication() {
+		return justStartJade;
+	}
+	
+	/**
 	 * Checks if the application is connected to a network.
 	 * @return true, if so. 
 	 */
