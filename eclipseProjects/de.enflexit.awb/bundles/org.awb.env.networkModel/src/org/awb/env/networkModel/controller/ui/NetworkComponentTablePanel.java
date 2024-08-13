@@ -35,8 +35,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
+import org.awb.env.networkModel.GraphElement;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.NetworkComponent;
+import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
 
@@ -427,14 +429,37 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     					int searchTo = entry.getValueCount();
     					if (NetworkComponentTablePanel.this.editingEnabled==true) searchTo--;
     					
+    					// --- Get NetworkComponent information ---------------
+    					NetworkModel networkModel = NetworkComponentTablePanel.this.graphController.getNetworkModel();
+    					String ncID = entry.getStringValue(0);
+    					NetworkComponent nc = networkModel.getNetworkComponent(ncID);
+    					if (nc!=null) {
+    						// --- Check alternative ID's ---------------------
+    						String descString = nc.getAlternativeIDsDescription("\n");
+    						if (this.isMatchingSearchPhrase(descString, searchPhrase)==true) return true;
+    						// --- Check GraphElmements ----------------------- 
+    						for (GraphElement ge : networkModel.getGraphElementsFromNetworkComponent(nc)) {
+    							if (this.isMatchingSearchPhrase(ge.getId(), searchPhrase)) return true;
+    						}
+    					}
+    					
+    					// --- Check row values -------------------------------
     					for (int i = 0; i < searchTo; i++) {
-    						String value = entry.getStringValue(i);
-    						boolean matchsSearchPhrase = value.matches("(?i).*(" + searchPhrase + ").*");
-    						if (matchsSearchPhrase==true) return true;
+    						if (this.isMatchingSearchPhrase(entry.getStringValue(i), searchPhrase)==true) return true;
 						}
     					return false;
     				}
-    				
+    			}
+    			/**
+			     * Checks if the specified search string is matching the specified search phrase.
+			     *
+			     * @param checkString the check string
+			     * @param searchPhrase the search phrase
+			     * @return true, if is matching search phrase
+			     */
+			    private boolean isMatchingSearchPhrase(String checkString, String searchPhrase) {
+			    	if (checkString==null) return false;
+    				return checkString.matches("(?i).*(" + searchPhrase + ").*");
     			}
     		};
     	}

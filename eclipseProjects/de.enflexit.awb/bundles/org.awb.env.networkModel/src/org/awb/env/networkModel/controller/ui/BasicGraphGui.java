@@ -573,8 +573,15 @@ public class BasicGraphGui extends JPanel implements Observer {
 								isAgent = "Yes";
 							}
 						}
+						// --- Get alternative ID's ---------------------------
+						String altIDDescription = netCompDisNode.getAlternativeIDsDescription("<br>");
+						if (altIDDescription!=null) {
+							altIDDescription = "<br><b>Alternative ID's:</b><br>" + altIDDescription;
+						} else {
+							altIDDescription = "";
+						}
 						// --- Define the ToolTip -----------------------------
-						toolTip += "<br><b>NetworkComponent: " + netCompDisNode.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
+						toolTip += "<br><b>NetworkComponent: " + netCompDisNode.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")" + altIDDescription;  
 					}
 					
 					// --- Show position in edit mode only --------------------
@@ -605,9 +612,16 @@ public class BasicGraphGui extends JPanel implements Observer {
 								isAgent = "Yes";
 							}
 						}
+						// --- Get alternative ID's ---------------------------
+						String altIDDescription = netComp.getAlternativeIDsDescription("<br>");
+						if (altIDDescription!=null) {
+							altIDDescription = "<br><b>Alternative ID's:</b><br>" + altIDDescription;
+						} else {
+							altIDDescription = "";
+						}
 						// --- Define the ToolTip -----------------------------
 						toolTip = "<html>";
-						toolTip += "<b>NetworkComponent: " + netComp.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")";  
+						toolTip += "<b>NetworkComponent: " + netComp.getId() + "</b><br>(Domain: " + domain + ", Type: " + type + ", isAgent: " + isAgent + ")" + altIDDescription;  
 						toolTip += "</html>";
 					}
 					return toolTip;

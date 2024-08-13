@@ -1,6 +1,5 @@
 package org.awb.env.networkModel.persistence;
 
-import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.JOptionPane;
+
 import org.awb.env.networkModel.NetworkModel;
 
 import agentgui.core.application.Application;
@@ -244,20 +244,30 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 	/**
 	 * Shows the import preview, if the local variable debug is set to true.
 	 */
-	protected void showImportPreview() {
+	public void showImportPreview() {
+		this.showImportPreview(true);
+	}
+	/**
+	 * Show import preview.
+	 * @param isReCreateIfAlreadyOpen the is re create if already open
+	 */
+	public void showImportPreview(boolean isReCreateIfAlreadyOpen) {
 		if (this.isDebug() == true) {
 			// --- Close preview if still open --
-			if (csvFilePreview != null) {
+			if (csvFilePreview!=null && (csvFilePreview.isDisplayable()==false || isReCreateIfAlreadyOpen==true) ) {
 				csvFilePreview.setVisible(false);
 				csvFilePreview.dispose();
 				csvFilePreview = null;
+			} 
+			
+			if (csvFilePreview==null) {
+				csvFilePreview = new CSV_FilePreview(Application.getMainWindow(), this.getCsvDataController());
+			} else {
+				csvFilePreview.requestFocus();
 			}
-			// --- Get the owner frame ----------
-			Frame owner = Application.getMainWindow();
-			// --- Open the import preview ------
-			csvFilePreview = new CSV_FilePreview(owner, this.getCsvDataController());
 		}
 	}
+
 	
 	/**
 	 * Return the current CSV_FilePreview (if open)  .
