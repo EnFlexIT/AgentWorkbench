@@ -85,7 +85,6 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.io.GraphIOException;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Environment Network Model. This class encapsulates a JUNG graph representing a grid, with edges representing the grid components.
  * 
@@ -95,7 +94,6 @@ import edu.uci.ics.jung.io.GraphIOException;
  */
 public class NetworkModel extends DisplaytEnvironmentModel {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5712689010090750522L;
 
 	/** This attribute stores layout settings like the DomainSettings and the ComponentTypeSettings. */
@@ -114,6 +112,8 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	private HashMap<String, GraphElement> graphElements;
 	/** A list of all NetworkComponents in the NetworkModel, accessible by ID. */
 	private TreeMap<String, NetworkComponent> networkComponents;
+	
+	private HashMap<String, NetworkComponent> alternativeIDToNetworkComponentHashMap;
 	
 	/**  A list of {@link GraphElement} (that are {@link GraphNode} or {@link GraphEdge}) mapped to one or more {@link NetworkComponent}'s. */
 	private transient HashMap<GraphElement, List<NetworkComponent>> graphElementToNetworkComponents;  
@@ -452,6 +452,144 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 	}
 
+	// ----------------------------------------------------------------------------------
+	// --- From here, handling of alternative IDs of NetworkComponents -------- Start ---
+	// ----------------------------------------------------------------------------------	
+	/**
+	 * Puts an alternative ID to the specified NetworkComponent.
+	 *
+	 * @param ncID the NetworkComponent-ID
+	 * @param idKey the id of the key
+	 * @param idValue the id value
+	 * @return the string, possibly overwritten
+	 */
+	public String putAlternativeID(String ncID, String idKey, String idValue) {
+		if (ncID==null || idKey==null || idValue==null) return null;
+		NetworkComponent nc = this.getNetworkComponent(ncID);
+		if (nc==null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] put alternative ID: NetworkComponent with ID '" + ncID + "' could not be found!");
+			return null;
+		}
+		return nc.getAlternativeIDs().put(idKey, idValue);
+	}
+	/**
+	 * Return the alternative ID for the specified key.
+	 *
+	 * @param ncID the NetworkComponent-ID
+	 * @param idKey the id key
+	 * @return the alternative ID
+	 */
+	public String getAlternativeID(String ncID, String idKey) {
+		if (ncID==null || idKey==null) return null;
+		NetworkComponent nc = this.getNetworkComponent(ncID);
+		if (nc==null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] get alternative ID:  NetworkComponent with ID '" + ncID + "' could not be found!");
+			return null;
+		}
+		return nc.getAlternativeIDs().get(idKey);
+	}
+	/**
+	 * Removes the alternative ID for the specified key.
+	 *
+	 * @param ncID the NetworkComponent-ID
+	 * @param idKey the id key
+	 * @return the removed alternative ID
+	 */
+	public String removeAlternativeID(String ncID, String idKey) {
+		if (ncID==null || idKey==null) return null;
+		NetworkComponent nc = this.getNetworkComponent(ncID);
+		if (nc==null) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] remove alternative ID: NetworkComponent with ID '" + ncID + "' could not be found!");
+			return null;
+		}
+		return nc.getAlternativeIDs().remove(idKey);
+	}
+	
+	/**
+	 * Return a list of NetworkComponents by the specified ID. Differently to a simple search for a 
+	 * NetworkComponent-ID, the method also considers alternative ID's or ID's of {@link GraphElement}s  
+	 * (that are {@link GraphNode}s or {@link GraphEdge}s).
+	 *
+	 * @param searchID the id to search for
+	 * @param isSortAscending the indicator to sort the list of NetworkComponents (null for not sorting, true for ascending, false for descending)
+	 * @return the unique list of NetworkComponent that matches the specified ID
+	 * @see NetworkComponent#getId()
+	 * @see NetworkComponent#getAlternativeIDs()
+	 * @see GraphElement#getId()
+	 * @see GraphNode#getId()
+	 * @see GraphEdge#getId()
+	 */
+	public List<NetworkComponent> getNetworkComponentByID(String searchID, Boolean isSortAscending) {
+		
+		if (searchID==null || searchID.isBlank()) return null;
+		
+		// --- Define a HashSet to unify the result ---------------------------
+		HashSet<NetworkComponent> ncFoundHS = new HashSet<>();
+		
+		// --- Search by NetworkComponent-ID ---------------------------------- 
+		this.addToNetworkComponentHashSet(ncFoundHS, this.getNetworkComponent(searchID));
+		
+		// --- Search by alternative ID'a -------------------------------------
+		this.addToNetworkComponentHashSet(ncFoundHS, this.getAlternativeIDToNetworkComponentHashMap().get(searchID));
+		
+		// --- Search by GraphElements ----------------------------------------
+		GraphElement graphElement = this.getGraphElement(searchID);
+		if (graphElement!=null) {
+			if (graphElement instanceof GraphNode) {
+				this.getNetworkComponents((GraphNode)graphElement).forEach(nc -> this.addToNetworkComponentHashSet(ncFoundHS, nc));
+			} else if (graphElement instanceof GraphEdge) {
+				this.addToNetworkComponentHashSet(ncFoundHS, this.getNetworkComponent((GraphEdge)graphElement));
+			}
+		}
+
+		// --------------------------------------------------------------------
+		// --- Prepare return value -------------------------------------------
+		List<NetworkComponent> ncFoundList = new ArrayList<>(ncFoundHS); 
+		if (isSortAscending!=null) {
+			if (isSortAscending==true) {
+				Collections.sort(ncFoundList);
+			} else {
+				Collections.sort(ncFoundList, Collections.reverseOrder());
+			}
+		}
+		return ncFoundList;
+	}
+	/**
+	 * Adds a NetworkComponent to the specified HashSet.
+	 *
+	 * @param netCompHS the NetworkComponent-HashSet
+	 * @param netComp the NetworkComponent to add
+	 */
+	private void addToNetworkComponentHashSet(HashSet<NetworkComponent> netCompHS, NetworkComponent netComp) {
+		if (netCompHS==null || netComp==null) return;
+		netCompHS.add(netComp);
+	}
+	
+	/**
+	 * Returns the alternative ID to NetworkComponent HashMap.
+	 * @return the alternative ID to network component hash map
+	 */
+	private HashMap<String, NetworkComponent> getAlternativeIDToNetworkComponentHashMap() {
+		if (alternativeIDToNetworkComponentHashMap==null) {
+			alternativeIDToNetworkComponentHashMap = new HashMap<>();
+			// --- Add all relations to that HashMap ------
+			for (NetworkComponent netComp : this.getNetworkComponents().values()) {
+				// --- Get all alternative IDs ------------ 
+				for (String altID : netComp.getAlternativeIDList()) {
+					NetworkComponent netCompPrevAssigend = alternativeIDToNetworkComponentHashMap.put(altID, netComp);
+					if (netCompPrevAssigend!=null) {
+						System.err.println("[" + this.getClass().getSimpleName() + "]: The alternative ID '" + altID + "' was assigned to the NetowrkComponents '" + netComp.getId() + "' and '" + netCompPrevAssigend.getId() + "'!");
+					}
+				}
+			}
+		}
+		return alternativeIDToNetworkComponentHashMap;
+	}
+	
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, handling of alternative IDs of NetworkComponents -------- End -----
+	// ----------------------------------------------------------------------------------
 	
 	/**
 	 * Returns the graph element to network component hash.
@@ -621,9 +759,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 					}
 				}
 				// --- Start the copy processes -------------------------------
-				synchronized (this.getNetworkComponentCopierThreads()) {
-					this.getNetworkComponentCopierThreads().forEach(ncCopier -> ncCopier.start());
-				}
+				this.getNetworkComponentCopierThreads().forEach(ncCopier -> ncCopier.start());
 				
 				// --- Wait for the termination of the copier threads ---------
 				this.waitForNetworkComponentCopierThreads();
@@ -1133,10 +1269,10 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	}
 
 	/**
-	 * Returns the neighbour NetworkComponent's based on a Vector of NetworkComponent's.
+	 * Returns the neighbor NetworkComponent's based on a Vector of NetworkComponent's.
 	 *
 	 * @param networkComponents the network components
-	 * @return the neighbour network components
+	 * @return the neighbor network components
 	 */
 	public Vector<NetworkComponent> getNeighbourNetworkComponents(Vector<NetworkComponent> networkComponents) {
 		Vector<NetworkComponent> neighbourNetworkComponents = new Vector<NetworkComponent>();
