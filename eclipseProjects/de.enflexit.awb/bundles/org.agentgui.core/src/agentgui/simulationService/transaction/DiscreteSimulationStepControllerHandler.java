@@ -19,6 +19,8 @@ public class DiscreteSimulationStepControllerHandler {
 	private static List<AbstractDiscreteSimulationStepController> registeredControllers;
 	private static List<AbstractDiscreteSimulationStepController> controllersToWaitFor;
 	
+	private static boolean isInitialStep = true;
+	
 	/**
 	 * Gets the registered controllers.
 	 * @return the registered controllers
@@ -65,6 +67,12 @@ public class DiscreteSimulationStepControllerHandler {
 		if (getRegisteredControllers().size()==0) return;
 		if (isControllerRelevantTimeModel(envModel.getTimeModel())==false) return;
 		
+		// --- Don't wait for the initial simulation step -----------
+		if (isInitialStep==true) {
+			isInitialStep=false;
+			return;
+		}
+		
 		// --- Check all registered controllers ---------------------
 		for (AbstractDiscreteSimulationStepController stepController : getRegisteredControllers()) {
 			try {
@@ -89,9 +97,9 @@ public class DiscreteSimulationStepControllerHandler {
 				try {
 					getControllersToWaitFor().wait();
 				} catch (InterruptedException e) {
-					System.err.println("[" + DiscreteSimulationStepControllerHandler.class.getSimpleName() + "] Weiting interrupted!");
-					e.printStackTrace();
-					break;	// Leave the surrounding while loop
+					// --- The simulation was stopped, reset --------
+					getControllersToWaitFor().clear();
+					isInitialStep = true;
 				}
 			}
 		}

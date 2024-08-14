@@ -29,8 +29,10 @@
 package org.awb.env.networkModel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -56,6 +58,7 @@ import de.enflexit.common.SerialClone;
  */
 @XmlType(name = "NetworkComponent", propOrder = {
     "id",
+    "alternativeIDs",
     "type",
     "graphElementIDs",
     "edgeDirections",
@@ -68,6 +71,12 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 
 	/** The NetworkComponent's ID. */
 	protected String id;
+	
+	/** Alternative ID's, freely to be used depending on the application context */
+	@XmlElementWrapper(name = "alternativeIDs")
+	@XmlElement(name="alternativeID")
+	protected TreeMap<String, String> alternativeIDs;
+	
 	/** The NetworkComponent's type. */
 	protected String type;
 	/** The IDs of the nodes and edges that are part of this NetworkComponent. */
@@ -124,6 +133,101 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 		this.id = id;
 	}
 
+	/**
+	 * Returns the TreeMap of alternative ID's.
+	 * @return the alternative ID's
+	 */
+	@XmlTransient
+	public TreeMap<String, String> getAlternativeIDs() {
+		if (alternativeIDs==null) {
+			alternativeIDs = new TreeMap<>();
+		}
+		return alternativeIDs;
+	}
+	/**
+	 * Sets the alternative ID's. TreeMap
+	 * @param alternativeIDs the alternative ID's
+	 */
+	public void setAlternativeIDs(TreeMap<String, String> alternativeIDs) {
+		this.alternativeIDs = alternativeIDs;
+	}
+	/**
+	 * Returns a string description of the alternative IDs .
+	 *
+	 * @param lineSeparator the line separator to be used
+	 * @return the description of alternative IDs
+	 */
+	public String getAlternativeIDsDescription(String lineSeparator) {
+		
+		if (this.alternativeIDs==null || this.alternativeIDs.size()==0) return null;
+		
+		String altIDDesc = "";
+		
+		String lineSeparatorToUse = lineSeparator;
+		if (lineSeparatorToUse==null || lineSeparatorToUse.isBlank()) lineSeparatorToUse = ", ";
+		
+		List<String> altIDKeyList = new ArrayList<>(this.alternativeIDs.keySet());
+		for (int i = 0; i < altIDKeyList.size(); i++) {
+			String altIDKey = altIDKeyList.get(i);
+			String altIDValue = this.alternativeIDs.get(altIDKey);
+			altIDDesc += altIDKey + ": " + altIDValue;
+			if (i < (altIDKeyList.size()-1)) {
+				altIDDesc += lineSeparatorToUse;
+			}
+		}
+		return altIDDesc;
+	}
+	
+	/**
+	 * Puts an alternative ID to the current NetworkComponent.
+	 *
+	 * @param idKey the id of the key
+	 * @param idValue the id value
+	 * @return the string, possibly overwritten 
+	 */
+	public String putAlternativeID(String idKey, String idValue) {
+		if (idKey==null) return null;
+		return this.getAlternativeIDs().put(idKey, idValue);
+	}
+	/**
+	 * Return the alternative ID for the specified key.
+	 *
+	 * @param idKey the id key
+	 * @return the alternative ID
+	 */
+	public String getAlternativeID(String idKey) {
+		if (idKey==null) return null;
+		return this.getAlternativeIDs().get(idKey);
+	}
+	/**
+	 * Removes the alternative ID for the specified key.
+	 *
+	 * @param idKey the id key
+	 * @return the removed alternative ID
+	 */
+	public String removeAlternativeID(String idKey) {
+		if (idKey==null) return null;
+		return this.getAlternativeIDs().remove(idKey);
+	}
+	
+	/**
+	 * Returns all alternative ID's (the values) as a list.
+	 * @return the alternative ID list
+	 */
+	public List<String> getAlternativeIDList() {
+		return new ArrayList<>(this.getAlternativeIDs().values());
+	}
+	/**
+	 * Removes the all alternative IDs.
+	 * @return the removed tree map of alternative ID's
+	 */
+	public TreeMap<String, String> removeAllAlternativeIDs() {
+		TreeMap<String, String> oldAltIDs = this.getAlternativeIDs();
+		this.setAlternativeIDs(null);
+		return oldAltIDs;
+	}
+	
+	
 	/**
 	 * Gets the type.
 	 * @return the type
