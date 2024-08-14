@@ -113,7 +113,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	/** A list of all NetworkComponents in the NetworkModel, accessible by ID. */
 	private TreeMap<String, NetworkComponent> networkComponents;
 	
-	private HashMap<String, NetworkComponent> alternativeIDToNetworkComponentHashMap;
+	private transient HashMap<String, NetworkComponent> alternativeIDToNetworkComponentHashMap;
 	
 	/**  A list of {@link GraphElement} (that are {@link GraphNode} or {@link GraphEdge}) mapped to one or more {@link NetworkComponent}'s. */
 	private transient HashMap<GraphElement, List<NetworkComponent>> graphElementToNetworkComponents;  
@@ -585,6 +585,12 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		}
 		return alternativeIDToNetworkComponentHashMap;
 	}
+	/**
+	 * Resets the HashMap of alternative ID to NetworkComponent.
+	 */
+	private void clearAlternativeIDToNetworkComponentHashMap() {
+		this.alternativeIDToNetworkComponentHashMap = null;
+	}
 	
 	
 	// ----------------------------------------------------------------------------------
@@ -994,6 +1000,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public NetworkComponent addNetworkComponent(NetworkComponent networkComponent, boolean refreshGraphElements) {
 		this.getNetworkComponents().put(networkComponent.getId(), networkComponent);
+		this.clearAlternativeIDToNetworkComponentHashMap();
 		if (refreshGraphElements==true) {
 			this.refreshGraphElements();
 		}
@@ -1093,6 +1100,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			networkComponent.setId(newCompID);
 			this.getNetworkComponents().remove(oldCompID);
 			this.getNetworkComponents().put(newCompID, networkComponent);
+			this.clearAlternativeIDToNetworkComponentHashMap();
 			
 			// --- Update the NetworkComponent-Layout -----------------------------------
 			for (String graphElementID : networkComponent.getGraphElementIDs()) {
@@ -1162,6 +1170,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		
 		// --- Remove the NetworkComponent --------------------------
 		this.getNetworkComponents().remove(networkComponent.getId());
+		this.clearAlternativeIDToNetworkComponentHashMap();
 		
 		// --- Re-Merge the previously split nodes, if needed ------- 
 		for (GraphNodePairs graphNodePairs : graphNodePairsToReMerge) {
@@ -1231,6 +1240,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			
 		}
 		
+		this.clearAlternativeIDToNetworkComponentHashMap();
 		this.refreshGraphElements();
 		return networkComponents;
 	}
@@ -1252,12 +1262,12 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	
 	
 	/**
-	 * Gets the a node from network component.
+	 * Returns the a GraphNodes of the specified NetworkComponent.
 	 * 
 	 * @param networkComponent the network component
 	 * @return the a node from network component
 	 */
-	public Vector<GraphNode> getNodesFromNetworkComponent(NetworkComponent networkComponent) {
+	public Vector<GraphNode> getGraphNodesOfNetworkComponent(NetworkComponent networkComponent) {
 		Vector<GraphNode> nodeList = new Vector<GraphNode>();
 		for (String graphElementID : networkComponent.getGraphElementIDs()) {
 			GraphElement graphElement = getGraphElements().get(graphElementID);
@@ -1297,7 +1307,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 		Vector<NetworkComponent> comps = null;
 		if (networkComponent!=null) {
 			comps = new Vector<NetworkComponent>();
-			for (GraphNode node : this.getNodesFromNetworkComponent(networkComponent)) {
+			for (GraphNode node : this.getGraphNodesOfNetworkComponent(networkComponent)) {
 				List<NetworkComponent> componetsFound = this.getGraphElementToNetworkComponentHash().get(node);
 				for (int i = 0; i < componetsFound.size(); i++) {
 					NetworkComponent nc = componetsFound.get(i);
@@ -1750,7 +1760,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	 */
 	public void mergeClusters(ClusterNetworkComponent clusterNC, ClusterNetworkComponent supplementNC) {
 		GraphNode centerOfCluster = null;
-		for (GraphNode graphNode : getNodesFromNetworkComponent(clusterNC)) {
+		for (GraphNode graphNode : getGraphNodesOfNetworkComponent(clusterNC)) {
 			if (isCenterNodeOfStar(graphNode, clusterNC)) {
 				centerOfCluster = graphNode;
 			}
@@ -1802,7 +1812,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge) {
 		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, true, true);	
 	}
-	
 	/**
 	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
 	 *
@@ -1814,7 +1823,6 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 	public GraphNodePairs mergeNetworkModel(NetworkModel supplementNetworkModel, GraphNodePairs nodes2Merge, boolean adjustNameDefinitions) {
 		return this.mergeNetworkModel(supplementNetworkModel, nodes2Merge, adjustNameDefinitions, adjustNameDefinitions);
 	}
-
 	/**
 	 * Merges the current NetworkModel with an incoming NetworkModel as supplement.
 	 * @param supplementNetworkModel the supplement network model
@@ -1872,7 +1880,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 					}
 				}	
 			} 
-			// --- Add this network component 
+			// --- Locally, add this network component ---------------------------------- 
 			this.addNetworkComponent(srcNM.getNetworkComponents().get(netCompName), false);
 		}
 		
@@ -2680,7 +2688,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 			for (int i = 0; i < netCompList.size(); i++) {
 				NetworkComponent networkComponent = netCompList.get(i);
 				if (!(networkComponent instanceof ClusterNetworkComponent)) {
-					int nodes = getNodesFromNetworkComponent(networkComponent).size() - 1;
+					int nodes = getGraphNodesOfNetworkComponent(networkComponent).size() - 1;
 					if (nodes > connectionsOfBiggestBranch) {
 						connectionsOfBiggestBranch = nodes;
 					}
