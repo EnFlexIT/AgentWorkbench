@@ -361,9 +361,13 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 		// --- In case of available numbers -----------------
 		if (n1NumberString==null || n1NumberString.isEmpty()==true) n1NumberString = "0";		
 		if (n2NumberString==null || n2NumberString.isEmpty()==true) n2NumberString = "0";
-		Long n1 = Long.parseLong(n1NumberString);
-		Long n2 = Long.parseLong(n2NumberString);
-		return n1.compareTo(n2);
+		try {
+			Long n1 = Long.parseLong(n1NumberString);
+			Long n2 = Long.parseLong(n2NumberString);
+			return n1.compareTo(n2);
+		} catch (Exception ex) { }
+		
+		return this.getId().compareTo(ncToComp.getId());
 	}
 
 	/**
