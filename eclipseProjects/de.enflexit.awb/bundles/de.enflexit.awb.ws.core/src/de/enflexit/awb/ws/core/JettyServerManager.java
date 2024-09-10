@@ -378,22 +378,28 @@ public class JettyServerManager {
 
 		// ----------------------------------------------------------
 		// --- Enable CrossOriginFilter ? ---------------------------
-		boolean isCorsEnabled = (boolean) server.getAttribute(JettyConstants.CORS_ENABLED.getJettyKey());
-		if (isCorsEnabled==true) {
-			if (hCollection==null) {
-				this.enableCrossOriginFilter(server, initialHandler);
-			} else {
-				this.enableCrossOriginFilter(server, hCollection);
+		Object corsEnabled = server.getAttribute(JettyConstants.CORS_ENABLED.getJettyKey());
+		if (corsEnabled!=null) {
+			boolean isCorsEnabled = (boolean) corsEnabled;
+			if (isCorsEnabled==true) {
+				if (hCollection==null) {
+					this.enableCrossOriginFilter(server, initialHandler);
+				} else {
+					this.enableCrossOriginFilter(server, hCollection);
+				}
 			}
 		}
 		
 		// ----------------------------------------------------------
 		// --- Always redirect HTTP to HTTPS? -----------------------
-		boolean isRedirectToHTTPS = (boolean) server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());;
-		if (isStartHTTPS==true && isRedirectToHTTPS==true) {
-			SecuredRedirectHandler secRedirHandler = new SecuredRedirectHandler();
-			secRedirHandler.setHandler(server.getHandler());
-			server.setHandler(secRedirHandler);
+		Object redirect = server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());
+		if (redirect!=null) {
+			boolean isRedirectToHTTPS = (boolean) redirect;
+			if (isStartHTTPS==true && isRedirectToHTTPS==true) {
+				SecuredRedirectHandler secRedirHandler = new SecuredRedirectHandler();
+				secRedirHandler.setHandler(server.getHandler());
+				server.setHandler(secRedirHandler);
+			}
 		}
 		
 		// ----------------------------------------------------------
