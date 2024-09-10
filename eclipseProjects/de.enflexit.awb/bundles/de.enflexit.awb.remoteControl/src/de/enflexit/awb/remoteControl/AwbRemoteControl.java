@@ -24,6 +24,8 @@ import de.enflexit.common.Observer;
 public abstract class AwbRemoteControl implements ApplicationListener, Observer {
 	
 	private AwbState awbState;
+	
+	private boolean loadSuccess;
 
 	/**
 	 * Instantiates a new awb remote control.
@@ -44,6 +46,8 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 		
 		if (projectIndex==-1) {
 			
+			Object syncObject = new Object();
+			
 			// --- Not loaded yet -> load ---------------------------
 			SwingUtilities.invokeLater(new Runnable() {
 				
@@ -52,11 +56,28 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 					Project project = Application.getProjectsLoaded().add(projectName);
 					if (project!=null) {
 						project.addObserver(AwbRemoteControl.this);
+						loadSuccess = true;
+					} else {
+						loadSuccess = false;
+					}
+					synchronized (syncObject) {
+						syncObject.notify();
 					}
 					
 				}
 			});
-			return true;
+			
+			try {
+				synchronized (syncObject) {
+					syncObject.wait();
+				}
+				return this.loadSuccess;
+			} catch (InterruptedException e) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Interrupted while waiting for project to be loaded!");
+				e.printStackTrace();
+				return false;
+			}
+			
 			
 		} else {
 			// --- Already loaded -> set the focus to the project ---
