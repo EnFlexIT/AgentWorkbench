@@ -361,7 +361,7 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 		
 		n1NumberString = this.ensureValidLongValueString(n1NumberString);
 		n2NumberString = this.ensureValidLongValueString(n2NumberString);
-				
+		
 		// --- In case of available numbers -----------------
 		if (n1NumberString==null || n1NumberString.isEmpty()==true) n1NumberString = "0";		
 		if (n2NumberString==null || n2NumberString.isEmpty()==true) n2NumberString = "0";
@@ -369,32 +369,27 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 			Long n1 = Long.parseLong(n1NumberString);
 			Long n2 = Long.parseLong(n2NumberString);
 			return n1.compareTo(n2);
-		} catch (Exception ex) { 
-			System.err.println("[" + this.getClass().getSimpleName() + "] Exception during comparison of " + n1NumberString + " and " + n2NumberString + ", Long.maxValue is " + Long.MAX_VALUE);
-		}
+		} catch (Exception ex) {}
 		
 		return this.getId().compareTo(ncToComp.getId());
 	}
 	
 	/**
-	 * This method makes sure the provided numeric String is actually a valid long value, by
-	 * removing leading zeroes, and making sure it has no more than 18 places.
+	 * This method makes sure the provided numeric String is actually a valid long value, 
+	 * by and making sure it has no more than 18 places (Long.MAX_VALUE has 19).
 	 * @param numberString the number string
 	 * @return the string
 	 */
 	private String ensureValidLongValueString(String numberString) {
-		if (numberString.length()>1 && numberString.startsWith("0")) {
-			// --- Remove leading zeroes 
-			numberString = numberString.replaceAll("^0+", "");
-		}
 		
 		if (numberString.length()>18) {
-			// Limit length to at most 18 chars (Long.MAX_VALUE has 19 places) 
+			// If longer than 18 chars, only use the last 18 
 			int endIndex = numberString.length();
 			int startIndex = endIndex-18;
-			numberString = numberString.substring(startIndex, endIndex);
+			return numberString.substring(startIndex, endIndex);
+		} else {
+			return numberString;
 		}
-		return numberString;
 	}
 
 	/**
