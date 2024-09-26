@@ -4,7 +4,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/guava-19.0.jar" sourcepath="C:/Users/Christian/.m2/repository/com/google/guava/guava/19.0/guava-19.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-algorithms-2.2.0.jar" sourcepath="lib/jung-algorithms-2.2.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-api-2.2.0.jar" sourcepath="C:/Users/Christian/.m2/repository/com/northdata/jung/jung-api/2.2.0/jung-api-2.2.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jung-graph-impl-2.2.0.jar" sourcepath="lib/jung-graph-2.2.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jung-graph-impl-2.2.0.jar" sourcepath="lib/jung-graph-impl-2.2.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-io-2.2.0.jar" sourcepath="lib/jung-io-2.2.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-visualization-2.2.0.jar" sourcepath="lib/jung-visualization-2.2.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>

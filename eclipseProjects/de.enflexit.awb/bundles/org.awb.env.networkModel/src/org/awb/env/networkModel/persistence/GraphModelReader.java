@@ -114,7 +114,7 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 
 				// --- Create GraphNode instance and set ID ---------
 				GraphNode graphNode = new GraphNode();
-				graphNode.setId(StringEscapeUtils.unescapeHtml4(nmd.getId()));
+				graphNode.setId(StringEscapeUtils.unescapeXml(nmd.getId()));
 
 				// --- Load the individual data model ---------------
 				String dmBase64StringSaved = nmd.getProperty(GraphModelWriter.KEY_DATA_MODEL_BASE64_PROPERTY);
@@ -166,7 +166,7 @@ public class GraphModelReader extends GraphMLReader2<Graph<GraphNode, GraphEdge>
 			public GraphEdge apply(EdgeMetadata emd) {
 
 				// --- Create GraphEdge and set ID and type ---------
-				GraphEdge graphEdge = new GraphEdge(StringEscapeUtils.unescapeHtml4(emd.getId()), emd.getDescription());
+				GraphEdge graphEdge = new GraphEdge(StringEscapeUtils.unescapeXml(emd.getId()), emd.getDescription());
 				
 				// --- Get the edge shape configuration -------------
 				String shapeConfigString = emd.getProperty(GraphModelWriter.KEY_EDGE_SHAPE_CONFIGUARATION);
