@@ -891,6 +891,8 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 			
 		case PropertyRemoved:
 			// --- Handled above already ---
+			this.filterPropertiesTableModel();
+			this.getJTableProperties().clearSelection();
 			break;
 			
 		case PropertiesCleared:
