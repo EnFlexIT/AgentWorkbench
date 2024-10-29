@@ -244,6 +244,24 @@ public class Properties implements Serializable {
 		}
 	}
 	/**
+	 * Removes all listener of the specified type from the current Properties.
+	 * @param listener the listener type to remove
+	 */
+	public void removePropertiesListener(Class<?> listenerClass) {
+		if (listenerClass!=null) {
+			// --- Find listener to remove ------
+			List<PropertiesListener> listToRemove = new ArrayList<>();
+			for (PropertiesListener listener : this.getPropertiesListener()) {
+				if (listener.getClass().equals(listenerClass)==true) {
+					listToRemove.add(listener);
+				}
+			}
+			// --- Remove all listeners found --- 
+			listToRemove.forEach(listenerToRemove -> this.getPropertiesListener().remove(listenerToRemove));
+		}
+	}
+	
+	/**
 	 * Notify listener about events.
 	 * @param propertiesEvent the properties event
 	 */
