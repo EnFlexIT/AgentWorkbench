@@ -36,23 +36,40 @@ import javax.swing.JTextField;
 /**
  * This class controls the input fields for number formats. 
  * For integer values just numbers are allowed. 
- * For floats numbers and just one separator character "," or "." is allowed.
+ * For decimal numbers and just one separator character "," or "." is allowed.
  * The class can be used by adding this as a KeyListener
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class KeyAdapter4Numbers extends KeyAdapter {
 
-	private boolean isFloatValue = false;
+	private boolean isForDecimalValue = false;
 	
 	/**
 	 * Instantiates a new number KeyAdapter4Numbers 
-	 * @param isFloatValue indicates, if this key listener is used for Float values. If not Integer values are assumed.
+	 * @param isForDecimalValue indicates, if this key listener is used for decimal values. If not, Integer values are assumed.
 	 */
-	public KeyAdapter4Numbers(boolean isFloatValue) {
-		this.isFloatValue = isFloatValue;
+	public KeyAdapter4Numbers(boolean isForDecimalValue) {
+		this.isForDecimalValue = isForDecimalValue;
 	}
 
+	
+	/**
+	 * Sets that the current KeyListener is used for a decimal value (or not).
+	 * @param isForDecimalValue the indicator to be for a decimal value
+	 */
+	public void setForDecimalValue(boolean isDecimalValue) {
+		this.isForDecimalValue = isDecimalValue;
+	}
+	/**
+	 * Checks if the current KeyListener is for a decimal value.
+	 * @return true, if is decimal value
+	 */
+	public boolean isForDecimalValue() {
+		return isForDecimalValue;
+	}
+	
+	
 	/**
 	 * Count occurrences of a character in a given search string.
 	 * @param searchString the String to search in
@@ -82,21 +99,21 @@ public class KeyAdapter4Numbers extends KeyAdapter {
 		String currValue = displayField.getText();
 		int caretPosition = displayField.getCaretPosition();
 
-		// --- Allow negative values ------------------
-		if (this.isFloatValue==true) {
-			// --- Float values -----------------------
+		// --- Allow negative values ----------------------
+		if (this.isForDecimalValue==true) {
+			// --- Float values ---------------------------
 			if (singleChar.equals("-") && countCharsInString(currValue, charackter)<2) {
 				return;
 			}
 		} else {
-			// --- Integer values ---------------------
+			// --- Integer values -------------------------
 			if (singleChar.equals("-") && caretPosition==0 && currValue.startsWith("-")==false) {
 				return;
 			}
 		}
 		
-		if (this.isFloatValue==true) {
-			// --- Float values -----------------------
+		if (this.isForDecimalValue==true) {
+			// --- Decimal values -------------------------
 			if (singleChar.equals(".") || singleChar.equals(",")) {
 				if (currValue!=null) {
 					if (currValue.contains(".") || currValue.contains("," )) {
@@ -117,13 +134,13 @@ public class KeyAdapter4Numbers extends KeyAdapter {
 			}
 			
 		} else {
-			// --- Integer or Long values ---------------------
+			// --- Integer or Long values -----------------
 			if ( singleChar.matches( "[0-9]" ) == false ) {
 				kT.consume();	
 				return;
 			}
 			
-		} // --- end if -------------------------------
+		} // --- end if -----------------------------------
 		
 	 }	
 	
