@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -67,8 +68,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
+import agentgui.core.application.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.common.AbstractUserObject;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -318,8 +319,7 @@ import de.enflexit.common.properties.PropertiesListener;
 	 * @return the project
 	 */
 	public static Project load(String projectSubDirectory) {
-		String projectFolder = Application.getGlobalInfo().getPathProjects() + projectSubDirectory + File.separator;
-		return load(new File(projectFolder));
+		return Project.load(projectSubDirectory, true);
 	}
 
 	/**
@@ -330,8 +330,32 @@ import de.enflexit.common.properties.PropertiesListener;
 	 * @param loadResources load external jar resources?
 	 * @return the project
 	 */
-	public static Project load(String projectSubDirectory, boolean loadResources) {
-		String projectFolder = Application.getGlobalInfo().getPathProjects() + projectSubDirectory + File.separator;
+	public static Project load(final String projectSubDirectory, boolean loadResources) {
+		
+		// ----------------------------------------------------------
+		// --- Check for the correct sub directory path -------------
+		// ----------------------------------------------------------
+		// --- If nothing will be found, error handling will be   ---
+		// --- done in the later load()-method.                   ---
+		// --- Thus, parameter can be used as default!            ---
+		// ----------------------------------------------------------
+		String projectSubDirectoryCaseSensitive = projectSubDirectory;
+		
+		// --- Check all sub directories of project base dir --------
+		File projectsDir = new File(Application.getGlobalInfo().getPathProjects());
+		File [] filesFound = projectsDir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return (dir.isDirectory()==true && name.equalsIgnoreCase(projectSubDirectory)==true);
+			}
+		});
+		// --- Substitute start argument with directory found -------
+		if (filesFound!=null && filesFound.length > 0) {
+			projectSubDirectoryCaseSensitive = filesFound[0].getName();
+		}
+		
+		// --- Define projects directory and load project -----------
+		String projectFolder = Application.getGlobalInfo().getPathProjects() + projectSubDirectoryCaseSensitive + File.separator;
 		return load(new File(projectFolder), loadResources);
 	}
 

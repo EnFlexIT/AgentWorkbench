@@ -358,12 +358,38 @@ public class NetworkComponent implements DataModelNetworkElement, Serializable, 
 		if (n1NumberString.isEmpty() && n2NumberString.isEmpty()) {
 			return this.getId().compareTo(ncToComp.getId());
 		}
+		
+		n1NumberString = this.ensureValidLongValueString(n1NumberString);
+		n2NumberString = this.ensureValidLongValueString(n2NumberString);
+		
 		// --- In case of available numbers -----------------
 		if (n1NumberString==null || n1NumberString.isEmpty()==true) n1NumberString = "0";		
 		if (n2NumberString==null || n2NumberString.isEmpty()==true) n2NumberString = "0";
-		Long n1 = Long.parseLong(n1NumberString);
-		Long n2 = Long.parseLong(n2NumberString);
-		return n1.compareTo(n2);
+		try {
+			Long n1 = Long.parseLong(n1NumberString);
+			Long n2 = Long.parseLong(n2NumberString);
+			return n1.compareTo(n2);
+		} catch (Exception ex) {}
+		
+		return this.getId().compareTo(ncToComp.getId());
+	}
+	
+	/**
+	 * This method makes sure the provided numeric String is actually a valid long value, 
+	 * by and making sure it has no more than 18 places (Long.MAX_VALUE has 19).
+	 * @param numberString the number string
+	 * @return the string
+	 */
+	private String ensureValidLongValueString(String numberString) {
+		
+		if (numberString.length()>18) {
+			// If longer than 18 chars, only use the last 18 
+			int endIndex = numberString.length();
+			int startIndex = endIndex-18;
+			return numberString.substring(startIndex, endIndex);
+		} else {
+			return numberString;
+		}
 	}
 
 	/**

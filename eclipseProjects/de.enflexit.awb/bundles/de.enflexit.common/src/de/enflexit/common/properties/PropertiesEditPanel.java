@@ -8,6 +8,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -51,6 +53,8 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 	private JButton jButtonOk;
 	
 	private int[] tbColumnWidth;
+	
+	private ArrayList<String> readOnlyProperties;
 	
 	
 	/**
@@ -221,6 +225,14 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 		this.getJTextFieldName().setText(this.identifier);
 		PropertyValue pValue = this.getProperties()!=null ? this.getProperties().getPropertyValue(this.identifier) : null; 
 		this.setPropertyValue(pValue);
+		
+		// --- Check if the property is read only ---------
+		if (this.isReadOnlyProperty(identifier)==true) {
+			this.setEditorComponentsEnabled(false);
+		} else {
+			this.setEditorComponentsEnabled(true);
+		}
+		
 	}
 	/**
 	 * Sets the current property value to the UI.
@@ -437,6 +449,64 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 			return null;
 		}
 		return pValue;
+	}
+
+	/**
+	 * Gets the list of read only properties.
+	 * @return the read only properties
+	 */
+	private ArrayList<String> getReadOnlyProperties() {
+		if (readOnlyProperties==null) {
+			readOnlyProperties = new ArrayList<>();
+		}
+		return readOnlyProperties;
+	}
+	
+	/**
+	 * Adds a property to the read only list, editor components will be disabled for that property then.
+	 * @param propertyKey the property key
+	 */
+	public void addReadOnlyProperty(String propertyKey) {
+		this.getReadOnlyProperties().add(propertyKey);
+	}
+	
+	/**
+	 * Removes a property from the read only list.
+	 * @param propertyKey the property key
+	 */
+	public void removeReadOnyProperty(String propertyKey) {
+		this.getReadOnlyProperties().remove(propertyKey);
+	}
+	
+	/**
+	 * Adds several properties to the read only list, editor components will be disabled for these properties then.
+	 * @param propertyKeys the property keys
+	 */
+	public void addReadOnlyProperties(List<String> propertyKeys) {
+		this.getReadOnlyProperties().addAll(propertyKeys);
+	}
+	
+	/**
+	 * Checks if a property is configured to be read only..
+	 * @param propertyKey the property key
+	 * @return true, if is read only property
+	 */
+	public boolean isReadOnlyProperty(String propertyKey) {
+		return this.getReadOnlyProperties().contains(propertyKey);
+	}
+	
+	/**
+	 * Enables or disables the guy components for modifying the current property.
+	 * @param enabled the new editor components enabled
+	 */
+	private void setEditorComponentsEnabled(boolean enabled) {
+		this.getJTextFieldName().setEnabled(enabled);
+		this.getJComboBoxType().setEnabled(enabled);
+		this.getJTextFieldValue().setEnabled(enabled);
+		this.getJCheckBoxValue().setEnabled(enabled);
+		this.getJButtonOk().setEnabled(enabled);
+		
+		this.getJButtonOk().setToolTipText((enabled==true) ? null : "This property is can't be modified.");
 	}
 	
 }

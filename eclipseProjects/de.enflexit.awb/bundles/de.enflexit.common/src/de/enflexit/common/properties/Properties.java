@@ -93,8 +93,10 @@ public class Properties implements Serializable {
 		} else {
 			newPropValue = newValue==null ? null : new PropertyValue(newValue); 
 		}
-		PropertyValue prevPropValue = this.getPropertyMap().put(identifier, newPropValue);
+		PropertyValue prevPropValue = this.getPropertyMap().get(identifier);
+		if (newPropValue!=null && newPropValue.equals(prevPropValue)==true) return prevPropValue;
 		
+		prevPropValue = this.getPropertyMap().put(identifier, newPropValue);
 		// --- Notify listener ----------------------------
 		this.notifyListener(new PropertiesEvent(action, identifier, newPropValue));
 		return prevPropValue;
@@ -241,6 +243,24 @@ public class Properties implements Serializable {
 			this.getPropertiesListener().remove(listener);
 		}
 	}
+	/**
+	 * Removes all listener of the specified type from the current Properties.
+	 * @param listener the listener type to remove
+	 */
+	public void removePropertiesListener(Class<?> listenerClass) {
+		if (listenerClass!=null) {
+			// --- Find listener to remove ------
+			List<PropertiesListener> listToRemove = new ArrayList<>();
+			for (PropertiesListener listener : this.getPropertiesListener()) {
+				if (listener.getClass().equals(listenerClass)==true) {
+					listToRemove.add(listener);
+				}
+			}
+			// --- Remove all listeners found --- 
+			listToRemove.forEach(listenerToRemove -> this.getPropertiesListener().remove(listenerToRemove));
+		}
+	}
+	
 	/**
 	 * Notify listener about events.
 	 * @param propertiesEvent the properties event

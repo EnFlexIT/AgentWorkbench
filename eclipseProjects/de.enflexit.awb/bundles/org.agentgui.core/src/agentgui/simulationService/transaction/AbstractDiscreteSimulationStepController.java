@@ -6,12 +6,12 @@ package agentgui.simulationService.transaction;
  */
 public abstract class AbstractDiscreteSimulationStepController {
 	
-	public AbstractDiscreteSimulationStepController() {
-		this.init();
+	public void enable() {
+		DiscreteSimulationStepControllerHandler.addDiscreteSimulationStepController(this);
 	}
 	
-	private void init() {
-		DiscreteSimulationStepControllerHandler.addDiscreteSimulationStepController(this);
+	public void disable() {
+		DiscreteSimulationStepControllerHandler.removeDiscreteSimulationStepController(this);
 	}
 	
 	/**

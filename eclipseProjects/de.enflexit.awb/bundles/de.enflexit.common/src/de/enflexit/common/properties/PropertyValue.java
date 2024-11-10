@@ -301,9 +301,7 @@ public class PropertyValue implements Serializable {
 			if (pTypeComp.equals(pTypeThis)==false) return false;
 		}
 		
-		if (propValueComp.getValue()!=this.getValue()) return false;
-		
-		return true;
+		return propValueComp.getValue().equals(this.getValue());
 	}
 	
 

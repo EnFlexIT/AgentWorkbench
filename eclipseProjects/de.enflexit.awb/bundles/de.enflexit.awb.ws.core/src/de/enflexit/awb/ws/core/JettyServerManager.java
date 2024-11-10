@@ -379,11 +379,14 @@ public class JettyServerManager {
 
 		// ----------------------------------------------------------
 		// --- Always redirect HTTP to HTTPS? -----------------------
-		boolean isRedirectToHTTPS = (boolean) server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());;
-		if (isStartHTTPS==true && isRedirectToHTTPS==true) {
-			SecuredRedirectHandler secRedirHandler = new SecuredRedirectHandler();
-			secRedirHandler.setHandler(server.getHandler());
-			server.setHandler(secRedirHandler);
+		Object redirect = server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());
+		if (redirect!=null) {
+			boolean isRedirectToHTTPS = (boolean) redirect;
+			if (isStartHTTPS==true && isRedirectToHTTPS==true) {
+				SecuredRedirectHandler secRedirHandler = new SecuredRedirectHandler();
+				secRedirHandler.setHandler(server.getHandler());
+				server.setHandler(secRedirHandler);
+			}
 		}
 		
 		// ----------------------------------------------------------

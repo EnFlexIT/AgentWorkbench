@@ -78,7 +78,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.setVertexIDs(new Function<GraphNode, String>() {
 			@Override
 			public String apply(GraphNode graphNode) {
-				return StringEscapeUtils.escapeHtml4(graphNode.getId());
+				return StringEscapeUtils.escapeXml11(graphNode.getId());
 			}
 		});
 		this.addVertexData(KEY_POSITION_PROPERTY, "position", "", new Function<GraphNode, String>() {
@@ -124,7 +124,7 @@ public class GraphModelWriter extends GraphMLWriter<GraphNode, GraphEdge>{
 		this.setEdgeIDs(new Function<GraphEdge, String>() {
 			@Override
 			public String apply(GraphEdge graphEdge) {
-				return StringEscapeUtils.escapeHtml4(graphEdge.getId());
+				return StringEscapeUtils.escapeXml11(graphEdge.getId());
 			}
 		});
 		this.setEdgeDescriptions(new Function<GraphEdge, String>() {

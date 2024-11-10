@@ -24,6 +24,8 @@ import de.enflexit.common.Observer;
 public abstract class AwbRemoteControl implements ApplicationListener, Observer {
 	
 	private AwbState awbState;
+	
+	private boolean loadSuccess;
 
 	/**
 	 * Instantiates a new awb remote control.
@@ -35,28 +37,47 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 
 	/**
 	 * Loads the project with the specified name.
-	 * @param projectName the project name
+	 * @param projectFolderName the project folder name
 	 * @return true, if successful
 	 */
-	public boolean loadProject(String projectName) {
+	public boolean loadProject(String projectFolderName) {
 		
-		int projectIndex = Application.getProjectsLoaded().getIndexByFolderName(projectName);
+		int projectIndex = Application.getProjectsLoaded().getIndexByFolderName(projectFolderName);
 		
 		if (projectIndex==-1) {
+			
+			Object syncObject = new Object();
 			
 			// --- Not loaded yet -> load ---------------------------
 			SwingUtilities.invokeLater(new Runnable() {
 				
 				@Override
 				public void run() {
-					Project project = Application.getProjectsLoaded().add(projectName);
+					Project project = Application.getProjectsLoaded().add(projectFolderName);
 					if (project!=null) {
 						project.addObserver(AwbRemoteControl.this);
+						loadSuccess = true;
+					} else {
+						loadSuccess = false;
+					}
+					synchronized (syncObject) {
+						syncObject.notify();
 					}
 					
 				}
 			});
-			return true;
+			
+			try {
+				synchronized (syncObject) {
+					syncObject.wait();
+				}
+				return this.loadSuccess;
+			} catch (InterruptedException e) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Interrupted while waiting for project to be loaded!");
+				e.printStackTrace();
+				return false;
+			}
+			
 			
 		} else {
 			// --- Already loaded -> set the focus to the project ---
@@ -64,6 +85,8 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 			if (Application.getProjectFocused()!=project) {
 				project.setFocus(false);
 			}
+			this.setAwbState(AwbState.PROJECT_LOADED);
+			this.setAwbState(AwbState.SETUP_READY);
 			return true;
 		}
 	}
@@ -76,6 +99,7 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 	public boolean selectSetup(String setupName) {
 		if (Application.getProjectFocused().getSimulationSetupCurrent().equals(setupName)) {
 			// --- Already selected -> nothing to do ----------------
+			this.setAwbState(AwbState.SETUP_READY);
 			return true;
 		} else {
 			// --- Not selected yet -> try to select ----------------
@@ -147,6 +171,8 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 			this.setAwbState(AwbState.MAS_STARTED);
 		} else if (ae.getApplicationEvent().equals(ApplicationEvent.JADE_STOP)) {
 			this.setAwbState(AwbState.MAS_STOPPED);
+		} else if (ae.getApplicationEvent().equals(ApplicationEvent.AWB_STOP)) {
+			this.setAwbState(AwbState.AWB_TERMINATED);
 		}
 	}
 	

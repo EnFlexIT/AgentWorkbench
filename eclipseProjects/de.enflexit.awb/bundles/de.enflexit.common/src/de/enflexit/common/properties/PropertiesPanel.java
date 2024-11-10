@@ -98,6 +98,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	private JTree jTreeProperties;
 	private JSeparator jSeparatorTop;
 	
+	private ArrayList<String> requiredProperties;
 	
 	/**
 	 * Instantiates a new properties panel.
@@ -535,6 +536,13 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		        	}
 		        	// --- Update view of properties editor -------------------
 		        	PropertiesPanel.this.getJPanelPropertiesEdit().setIdentifier(identifier);
+		        	
+		        	// --- Required properties can't be removed ---------------
+		        	if (PropertiesPanel.this.isRequiredProperty(identifier)) {
+		        		PropertiesPanel.this.setRemoveButtonEnabled(false);
+		        	} else {
+		        		PropertiesPanel.this.setRemoveButtonEnabled(true);
+		        	}
 		        }
 		    });
 			
@@ -883,6 +891,8 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 			
 		case PropertyRemoved:
 			// --- Handled above already ---
+			this.filterPropertiesTableModel();
+			this.getJTableProperties().clearSelection();
 			break;
 			
 		case PropertiesCleared:
@@ -918,6 +928,87 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 				this.filterPropertiesTableModel();
 			}
 		}
+	}
+	
+	/**
+	 * Adds a property to the read only list, editor components will be disabled for that property then.
+	 * Read only properties are also added to the required list.
+	 * @param propertyKey the property key
+	 */
+	public void addReadOnlyProperty(String propertyKey) {
+		this.getJPanelPropertiesEdit().addReadOnlyProperty(propertyKey);
+		this.getRequiredProperties().add(propertyKey);
+	}
+	
+	/**
+	 * Removes a property from the read only list.
+	 * @param propertyKey the property key
+	 */
+	public void removeReadOnyProperty(String propertyKey) {
+		this.getJPanelPropertiesEdit().removeReadOnyProperty(propertyKey);
+		this.getRequiredProperties().remove(propertyKey);
+	}
+	
+	/**
+	 * Adds several properties to the read only list, editor components will be disabled for these properties then.
+	 * Read only properties are also added to the required list.
+	 * @param propertyKeys the property keys
+	 */
+	public void addReadOnlyProperties(List<String> propertyKeys) {
+		this.getJPanelPropertiesEdit().addReadOnlyProperties(propertyKeys);
+		this.getRequiredProperties().addAll(propertyKeys);
+	}
+	
+	private ArrayList<String> getRequiredProperties() {
+		
+		if (requiredProperties==null) {
+			requiredProperties = new ArrayList<>();
+		}
+		return requiredProperties;
+	}
+	
+	/**
+	 * Adds a property to the required properties list, it can't be deleted then.
+	 * Read only properties are also added to the required list automatically, you don't have to do that separately. 
+	 * @param propertyKey the property key
+	 */
+	public void addRequiredProperty(String propertyKey) {
+		this.getRequiredProperties().add(propertyKey);
+	}
+	
+	/**
+	 * Removes a property from the required properties list.
+	 * @param propertyKey the property key
+	 */
+	public void removeRequiredProperty(String propertyKey) {
+		this.getRequiredProperties().remove(propertyKey);
+	}
+	
+	/**
+	 * Adds a list of properties to the required properties list, they can't be deleted then.
+	 * Read only properties are also added to the required list automatically, you don't have to do that separately.
+	 * @param propertyKeys the property keys
+	 */
+	public void addRequiredProperties(List<String> propertyKeys) {
+		this.getRequiredProperties().addAll(propertyKeys);
+	}
+	
+	/**
+	 * Checks if a property is required.
+	 * @param propertyKey the property key
+	 * @return true, if is required property
+	 */
+	public boolean isRequiredProperty(String propertyKey) {
+		return this.getRequiredProperties().contains(propertyKey);
+	}
+	
+	/**
+	 * Enables or disables the remove button.
+	 * @param enabled the new removes the button enabled
+	 */
+	private void setRemoveButtonEnabled(boolean enabled) {
+		this.getJButtonRemoveProperty().setEnabled(enabled);
+		PropertiesPanel.this.getJButtonRemoveProperty().setToolTipText((enabled==true) ? null : "This property is required, and can't be removed");
 	}
 	
 }
