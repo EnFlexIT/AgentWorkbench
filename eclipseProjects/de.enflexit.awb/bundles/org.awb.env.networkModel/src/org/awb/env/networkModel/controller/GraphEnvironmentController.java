@@ -890,25 +890,33 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 		// --------------------------------------------------------------------
 		// --- Run through the network components and validate agent list -----
-		Collection<String> compNameCollection = this.getNetworkModel().getNetworkComponents().keySet();
-		String[] compNames = compNameCollection.toArray(new String[compNameCollection.size()]);
-		for (int i = 0; i < compNames.length; i++) {
-			// --- Current component ------------------------------------------
-			String compName = compNames[i];
+		for (String compName : this.getNetworkModel().getNetworkComponents().keySet()) {
 			NetworkComponent comp = this.getNetworkModel().getNetworkComponent(compName);
+			
+			if (comp==null) {
+				System.err.println("[" + this.getClass().getSimpleName() +"] Netowrk component for compName " + compName + " not found!");
+				continue;
+			}
 
 			if (!(comp instanceof ClusterNetworkComponent)) {
 				// ----------------------------------------------------------------
 				// --- Validate current component against ComponentTypeSettings ---
-				ComponentTypeSettings ctsSingle = cts.get(comp.getType());
-				if (ctsSingle == null) {
-					// --- remove this component ---
-					this.getNetworkModel().removeNetworkComponent(comp);
-					comp = null;
-
-				} else {
-					// --- Component settings here? -----------
-					// Empty after revision of NetworkComponent  
+				
+				try {
+					ComponentTypeSettings ctsSingle = cts.get(comp.getType());
+					if (ctsSingle == null) {
+						// --- remove this component ---
+						this.getNetworkModel().removeNetworkComponent(comp);
+						comp = null;
+						
+					} else {
+						// --- Component settings here? -----------
+						// Empty after revision of NetworkComponent  
+					}
+					
+				} catch (NullPointerException npe) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] Null Pointer Exception!");
+					npe.printStackTrace();
 				}
 
 				// ----------------------------------------------------------------
