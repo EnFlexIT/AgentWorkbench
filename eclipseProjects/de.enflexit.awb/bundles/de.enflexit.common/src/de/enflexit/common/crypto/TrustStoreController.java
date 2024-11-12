@@ -28,7 +28,6 @@
  */
 package de.enflexit.common.crypto;
 
-//import java.awt.Dialog;
 import java.awt.Window;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -51,7 +50,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import de.enflexit.common.Language;
+import de.enflexit.language.Language;
 
 /**
  * This class allows the user to manage a Java TrustStore.

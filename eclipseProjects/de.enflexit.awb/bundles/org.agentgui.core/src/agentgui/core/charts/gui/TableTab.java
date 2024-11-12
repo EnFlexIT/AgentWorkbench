@@ -41,9 +41,9 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionListener;
 
-import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.language.Language;
 
 /**
  * Generic superclass for a Swing component showing the table representation of chart data and 

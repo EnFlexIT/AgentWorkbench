@@ -58,7 +58,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.osgi.framework.Version;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.project.Project;
 import agentgui.core.update.ProjectRepositoryUpdateAuthorizationException;
 import agentgui.core.update.ProjectRepositoryUpdateException;

@@ -31,7 +31,7 @@ package agentgui.simulationService.time;
 import java.io.Serializable;
 import java.util.Vector;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The Class TimeUnitVector is a Vector that holds different TimeUnits with

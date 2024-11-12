@@ -37,7 +37,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.helper.GraphNodePairs;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 
 /**

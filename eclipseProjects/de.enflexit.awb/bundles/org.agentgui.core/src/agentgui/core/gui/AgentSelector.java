@@ -51,11 +51,11 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.classSelection.JListClassSearcher;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.language.Language;
 import jade.core.Agent;
 
 /**

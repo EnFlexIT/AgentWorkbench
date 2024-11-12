@@ -83,6 +83,7 @@ import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.gui.AwbDatabaseDialog;
+import de.enflexit.language.Language;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
 import de.enflexit.oidc.OIDCPanel;
@@ -970,7 +971,6 @@ public class Application {
 		try {
 		
 			OIDCAuthorization.getInstance().setIssuerURI(Application.getGlobalInfo().getOIDCIssuerURI());
-			OIDCAuthorization.getInstance().setTranslator(Language.getInstance());
 			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true).toString() + File.separator + Trust.OIDC_TRUST_STORE));
 			OIDCAuthorization.getInstance().setAvailabilityHandler( new OIDCResourceAvailabilityHandler() {
 				
@@ -1169,14 +1169,12 @@ public class Application {
 	 */
 	public static void setLanguage(String newLang, boolean askUser) {
 
-		String newLine = getGlobalInfo().getNewLineSeparator();
-		
+		// --- Do we have identical Languages -----------------------
+		if (newLang==null || newLang.isBlank()==true || newLang.equals(Language.getLanguage())==true) return;
+
 		if (askUser==true) {
-			// --- Do we have identical Languages -------------------
-			Integer newLangIndex = Language.getIndexOfLanguage(newLang);
-			if ( newLangIndex == Language.currLanguageIndex ) return; 
-			
 			// --- Ask user -----------------------------------------
+			String newLine = getGlobalInfo().getNewLineSeparator();
 			String MsgHead = Language.translate("Anzeigesprache wechseln?");
 			String MsgText = Language.translate(
 							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 

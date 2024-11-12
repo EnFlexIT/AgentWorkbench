@@ -19,5 +19,6 @@ Export-Package: gol.acl.agents,
  gol.plugin,
  gol.SimService.agents,
  gol.SimService.balancing
-Import-Package: jakarta.xml.bind,
+Import-Package: de.enflexit.language,
+ jakarta.xml.bind,
  jakarta.xml.bind.annotation

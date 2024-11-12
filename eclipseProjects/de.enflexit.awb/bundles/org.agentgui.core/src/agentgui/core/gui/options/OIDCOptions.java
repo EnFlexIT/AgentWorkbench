@@ -45,7 +45,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 
 /**

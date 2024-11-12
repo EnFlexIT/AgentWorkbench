@@ -55,7 +55,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The Class MessagingJInternalFrame represents the host for the visualization of UI messages.

@@ -70,7 +70,7 @@ import javax.swing.tree.TreePath;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IRequirement;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.swing.WindowSizeAndPostionController;

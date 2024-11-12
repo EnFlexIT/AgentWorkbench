@@ -35,7 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.project.Project;
 import agentgui.core.project.transfer.DefaultProjectExportController;

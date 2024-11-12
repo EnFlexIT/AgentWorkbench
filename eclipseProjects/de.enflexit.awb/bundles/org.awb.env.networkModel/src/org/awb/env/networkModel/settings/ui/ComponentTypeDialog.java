@@ -69,7 +69,7 @@ import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorti
 import org.awb.env.networkModel.settings.LayoutSettings;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;

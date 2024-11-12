@@ -40,11 +40,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.ontology.gui.DynForm;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.language.Language;
+
 /**
  * Abstract super class for dialogs for chart viewing and editing. 
  * ChartEditorDialogs are containers for ChartEditorJPanel implementations for 

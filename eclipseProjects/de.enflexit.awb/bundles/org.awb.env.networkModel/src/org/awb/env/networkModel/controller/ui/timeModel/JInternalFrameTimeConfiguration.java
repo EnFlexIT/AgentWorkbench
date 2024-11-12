@@ -21,7 +21,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelContinuous;

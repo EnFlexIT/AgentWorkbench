@@ -31,7 +31,7 @@ package agentgui.simulationService.time;
 import java.awt.Color;
 import java.awt.Dimension;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The Class TimeModelStrokeExecutionElements.

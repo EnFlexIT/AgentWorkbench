@@ -37,7 +37,7 @@ import javax.swing.JTabbedPane;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;

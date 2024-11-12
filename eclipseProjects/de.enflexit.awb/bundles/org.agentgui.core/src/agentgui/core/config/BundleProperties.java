@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import agentgui.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
@@ -65,7 +64,6 @@ public class BundleProperties {
 	public static final String DEF_BENCH_EXEC_ON = "03_BENCH_EXEC_ON";
 	public static final String DEF_BENCH_SKIP_ALLWAYS = "04_BENCH_SKIP_ALLWAYS";
 
-	public static final String DEF_LANGUAGE = "05_LANGUAGE";
 	public static final String DEF_MAXIMiZE_MAIN_WINDOW = "06_MAXIMiZE_MAIN_WINDOW";
 	
 	public static final String DEF_LOOK_AND_FEEL = "07_LOOK_AND_FEEL";
@@ -237,11 +235,6 @@ public class BundleProperties {
 		this.globalInfo.setBenchAlwaysSkip(booleanPrefValue);
 
 
-		// --- this.DEF_LANGUAGE ---------------------
-		stringPrefValue = eclipsePreferences.get(DEF_LANGUAGE, Language.EN);
-		this.globalInfo.setLanguage(stringPrefValue);
-
-
 		// --- this.DEF_MAXIMiZE_MAIN_WINDOW ---------
 		booleanPrefValue = eclipsePreferences.getBoolean(DEF_MAXIMiZE_MAIN_WINDOW, false);
 		this.globalInfo.setMaximzeMainWindow(booleanPrefValue);
@@ -375,10 +368,6 @@ public class BundleProperties {
 		// --- this.DEF_BENCH_SKIP_ALLWAYS -----------
 		eclipsePreferences.putBoolean(DEF_BENCH_SKIP_ALLWAYS, this.globalInfo.isBenchAlwaysSkip());
 		
-		
-		// --- this.DEF_LANGUAGE ---------------------
-		if (this.globalInfo.getLanguage()!=null) eclipsePreferences.put(DEF_LANGUAGE, this.globalInfo.getLanguage());
-
 		
 		// --- this.DEF_MAXIMiZE_MAIN_WINDOW ---------
 		eclipsePreferences.putBoolean(DEF_MAXIMiZE_MAIN_WINDOW, this.globalInfo.isMaximzeMainWindow());			

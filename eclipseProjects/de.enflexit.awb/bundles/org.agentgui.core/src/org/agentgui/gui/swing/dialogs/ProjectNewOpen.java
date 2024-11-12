@@ -71,7 +71,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.agentgui.gui.AwbProjectNewOpenDialog;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 

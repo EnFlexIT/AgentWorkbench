@@ -43,7 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;
 

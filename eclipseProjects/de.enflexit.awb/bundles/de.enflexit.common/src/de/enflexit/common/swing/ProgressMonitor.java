@@ -25,7 +25,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import de.enflexit.common.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 

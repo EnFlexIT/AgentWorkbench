@@ -82,11 +82,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.config.PropertyContentProvider.FileToProvide;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.language.Language;
 
 /**
  * The JDialog is used in order to allow the translations between all defined languages
@@ -179,7 +178,7 @@ private static final long serialVersionUID = 1L;
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					Application.setLanguage(Application.getGlobalInfo().getLanguage(), false);
+					Application.setLanguage(Language.getLanguage(), false);
 				}
 			});
 		}
@@ -214,7 +213,7 @@ private static final long serialVersionUID = 1L;
 		this.getJPopupMenuDictionary();
 		
 		// --- Set Selection in combos ------------------------------
-		String currLang = Application.getGlobalInfo().getLanguage();
+		String currLang = Language.getLanguage();
 		int currLangIndex = Language.getIndexOfLanguage(currLang)-1;
 		if (currLang.equalsIgnoreCase("de") || currLang.equalsIgnoreCase("en") ) {
 			jComboBoxSourceLang.setSelectedIndex(Language.getIndexOfLanguage("de")-1);
@@ -1213,8 +1212,7 @@ private static final long serialVersionUID = 1L;
 			int answer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) {
 				this.setVisible(false);
-				Application.getGlobalInfo().getPropertyContentProvider().checkAndProvidePropertyContent(FileToProvide.DICTIONARY_CSV, true);
-				Application.getGlobalInfo().getPropertyContentProvider().checkAndProvidePropertyContent(FileToProvide.DICTIONARY_BIN, true);
+				Language.checkAndProvideDictionaryFiles(true);
 				Language.reStartDictionary();
 				Application.showTranslationDialog();
 				this.forceApplicationRestart = true;

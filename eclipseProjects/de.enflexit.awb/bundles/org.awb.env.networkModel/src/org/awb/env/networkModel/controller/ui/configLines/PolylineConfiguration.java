@@ -21,7 +21,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.environment.EnvironmentController;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.AbstractGeoCoordinate;

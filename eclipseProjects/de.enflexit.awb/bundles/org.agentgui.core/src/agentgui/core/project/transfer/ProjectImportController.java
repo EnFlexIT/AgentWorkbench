@@ -34,7 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.common.CommonComponentFactory;
 import de.enflexit.common.transfer.Zipper;
 

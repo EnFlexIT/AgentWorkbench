@@ -2,7 +2,7 @@ package org.awb.env.networkModel.controller;
 
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import jade.core.Agent;

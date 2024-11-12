@@ -61,7 +61,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.charts.DataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.gui.TimeFormatImportConfiguration;
@@ -76,6 +75,7 @@ import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
 import de.enflexit.common.swing.imageFileSelection.ImageUtils;
+import de.enflexit.language.Language;
 
 /**
  * General superclass for OntologyClassEditorJPanel implementations for charts.

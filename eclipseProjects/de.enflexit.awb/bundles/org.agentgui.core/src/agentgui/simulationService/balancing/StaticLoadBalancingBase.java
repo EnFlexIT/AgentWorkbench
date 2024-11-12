@@ -37,7 +37,7 @@ import java.util.Iterator;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.project.RemoteContainerConfiguration;

@@ -59,7 +59,7 @@ import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.DataModelOpenViewNotification;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.environment.EnvironmentPanel;
 
 /**

@@ -45,7 +45,7 @@ import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;

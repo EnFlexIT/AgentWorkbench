@@ -38,7 +38,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 
-import agentgui.core.application.Language;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.TableModel;
 import agentgui.core.charts.TableModelDataVector;
@@ -46,6 +45,7 @@ import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XyValuePair;
+import de.enflexit.language.Language;
 
 
 /**

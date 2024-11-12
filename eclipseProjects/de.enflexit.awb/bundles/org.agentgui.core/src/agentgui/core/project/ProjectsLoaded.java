@@ -52,7 +52,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;

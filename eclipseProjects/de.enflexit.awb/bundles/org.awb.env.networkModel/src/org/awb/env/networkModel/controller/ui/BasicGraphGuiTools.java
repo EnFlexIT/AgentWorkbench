@@ -76,7 +76,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;

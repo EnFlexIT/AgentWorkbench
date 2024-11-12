@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.gui.MainWindow;
 import de.enflexit.common.SystemEnvironmentHelper;
 

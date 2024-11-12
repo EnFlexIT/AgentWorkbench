@@ -29,7 +29,7 @@
 package agentgui.simulationService.load.monitoring;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.simulationService.load.LoadMeasureThread;
 
 /**

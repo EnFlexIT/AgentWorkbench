@@ -6,12 +6,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
+import de.enflexit.language.Language;
 
 import java.awt.Color;
 import java.awt.Dimension;

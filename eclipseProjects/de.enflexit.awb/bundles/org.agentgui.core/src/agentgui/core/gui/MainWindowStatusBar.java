@@ -50,7 +50,6 @@ import javax.swing.UIManager;
 import javax.swing.border.MatteBorder;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.load.LoadMeasureThread;
@@ -59,6 +58,7 @@ import agentgui.simulationService.load.monitoring.AbstractMonitoringTask;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
+import de.enflexit.language.Language;
 
 /**
  * The MainWindowStatusBar.

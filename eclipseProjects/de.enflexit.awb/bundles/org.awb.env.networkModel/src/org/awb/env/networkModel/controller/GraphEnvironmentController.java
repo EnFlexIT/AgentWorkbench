@@ -65,7 +65,7 @@ import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;

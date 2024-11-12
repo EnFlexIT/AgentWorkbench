@@ -12,4 +12,5 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.jetty.openid;bundle-version="12.0.9"
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc
-Import-Package: de.enflexit.common.swing
+Import-Package: de.enflexit.common.swing,
+ de.enflexit.language

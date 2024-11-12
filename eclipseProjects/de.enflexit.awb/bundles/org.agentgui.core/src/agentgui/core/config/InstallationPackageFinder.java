@@ -33,7 +33,7 @@ import java.io.FileFilter;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The Class InstallationPackageFinder can be used to evaluate a directory in order to.

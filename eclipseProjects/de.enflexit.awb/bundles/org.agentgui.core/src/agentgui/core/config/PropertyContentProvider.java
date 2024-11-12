@@ -54,8 +54,6 @@ public class PropertyContentProvider {
 	 * The enumeration that describes the FileToProvide.
 	 */
 	public enum FileToProvide {
-		DICTIONARY_BIN("dictionary.bin"),
-		DICTIONARY_CSV("dictionary.csv"),
 		OIDC_TRUST_STORE_JKS("oidcTrustStore.jks");
 		
 		private final String fileName;

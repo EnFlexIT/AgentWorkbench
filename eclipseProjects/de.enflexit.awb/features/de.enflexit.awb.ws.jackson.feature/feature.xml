@@ -53,8 +53,4 @@
          id="com.fasterxml.jackson.module.jackson-module-jakarta-xmlbind-annotations"
          version="0.0.0"/>
 
-   <plugin
-         id="com.fasterxml.jackson.datatype.jackson-datatype-joda"
-         version="0.0.0"/>
-
 </feature>

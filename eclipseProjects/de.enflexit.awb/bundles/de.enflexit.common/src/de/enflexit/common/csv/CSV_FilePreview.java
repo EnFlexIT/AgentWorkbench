@@ -26,12 +26,12 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
-import de.enflexit.common.Language;
 import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.language.Language;
 
 /**
  * The Class CSV_FilePreview represents a dialog that is used for debugging /

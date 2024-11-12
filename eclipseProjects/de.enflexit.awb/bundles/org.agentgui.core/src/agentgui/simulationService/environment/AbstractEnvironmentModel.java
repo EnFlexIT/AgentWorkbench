@@ -28,8 +28,8 @@
  */
 package agentgui.simulationService.environment;
 
-import agentgui.core.common.AbstractUserObject;
 import agentgui.core.environment.EnvironmentController;
+import de.enflexit.common.AbstractUserObject;
 
 
 /**

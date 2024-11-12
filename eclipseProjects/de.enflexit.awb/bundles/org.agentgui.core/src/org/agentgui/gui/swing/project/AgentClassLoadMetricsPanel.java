@@ -38,7 +38,7 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.project.AgentClassMetricDescription;
 import agentgui.core.project.Project;
 

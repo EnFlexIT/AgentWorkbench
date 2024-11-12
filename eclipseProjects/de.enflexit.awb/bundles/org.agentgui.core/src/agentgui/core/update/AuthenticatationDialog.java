@@ -51,10 +51,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.update.repositoryModel.ProjectRepository;
-import de.enflexit.api.Translator.SourceLanguage;
-import de.enflexit.common.Language;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
@@ -247,7 +246,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 			jLabelUsername.setLabelFor(getJTextFieldUsername());
 			jLabelUsername.setFont(new Font("Dialog", Font.BOLD, 12));
 			jLabelUsername.setHorizontalAlignment(SwingConstants.LEFT);
-			jLabelUsername.setText(de.enflexit.common.Language.translate("Benutzername"));
+			jLabelUsername.setText(Language.translate("Benutzername"));
 		}
 		return jLabelUsername;
 	}
@@ -271,7 +270,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	}
 	private JButton getJButtonSave() {
 		if (jButtonSave == null) {
-			jButtonSave = new JButton(Language.translate(this.getConfirmButtonText(), SourceLanguage.EN));
+			jButtonSave = new JButton(Language.translate(this.getConfirmButtonText(), Language.EN));
 			jButtonSave.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonSave.setForeground(new Color(0, 153, 0));
 			jButtonSave.setPreferredSize(new Dimension(120, 26));
@@ -339,8 +338,8 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 				this.saveAuthorizationSettings();
 				this.dispose();
 			} else {
-				String title = Language.translate("Save Credentials", SourceLanguage.EN);
-				String msg = Language.translate("Errors occurred during the connection. Save anyway?", SourceLanguage.EN);
+				String title = Language.translate("Save Credentials", Language.EN);
+				String msg = Language.translate("Errors occurred during the connection. Save anyway?", Language.EN);
 				int userAnswer = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
 				if (userAnswer==JOptionPane.YES_OPTION) {
 					this.saveAuthorizationSettings();
@@ -412,7 +411,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 		this.getJLabelStatusMessage().setVisible(true);
 
 		try {
-			this.setStatusMessage(Language.translate("Connecting...", SourceLanguage.EN));
+			this.setStatusMessage(Language.translate("Connecting...", Language.EN));
 			ProjectRepository.openConnectionToUpdateSite(updateSite, authorizationSettings);
 			this.setStatusMessageType(StatusMessageType.SUCCESSFUL);
 			this.setStatusMessage(Language.translate("Verbindung erfolgreich"));

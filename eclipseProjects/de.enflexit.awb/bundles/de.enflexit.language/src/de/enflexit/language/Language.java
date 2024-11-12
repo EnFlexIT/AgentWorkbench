@@ -1,32 +1,4 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
-package agentgui.core.application;
+package de.enflexit.language;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,10 +14,17 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
-import de.enflexit.api.Translator;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.Version;
+import org.osgi.service.prefs.BackingStoreException;
 
-import agentgui.core.config.GlobalInfo;
+import de.enflexit.language.PropertyContentProvider.FileToProvide;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * This is the static singleton class for the use of the dictionary by the 
@@ -68,7 +47,7 @@ import agentgui.core.config.GlobalInfo;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class Language implements Translator {
+public class Language {
 	
 	public enum DictionarySourceFile {
 		DefaultFile64,
@@ -96,8 +75,6 @@ public class Language implements Translator {
 
 	private static String[] dictLangHeaderArray;
 
-	private static Language thisSingleton = new Language(); 
-	private static GlobalInfo globalInfo;
 	
 	private static String newLine;
 	private static String newLineReplacer;
@@ -112,51 +89,16 @@ public class Language implements Translator {
 	private static Hashtable<String, Integer> dictionaryHashtabel; 
 	
 	/** The currently selected language index of the dictionary-file, which is used in the application */
-	public static Integer currLanguageIndex;
+	private static String currLanguage;
+	private static Integer currLanguageIndex;
 	
-
-	
-	// --- Singleton-Constructor ---
-	private Language() {
-		de.enflexit.common.Language.setTranslator(this);
-	}
-	/**
-	 * Returns the instance of this Singleton-Class
-	 * @return this class instance
-	 */
-	public static Language getInstance() {
-		return thisSingleton;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String)
-	 */
-	@Override
-	public String dynamicTranslate(String expression) {
-		return translate(expression, Language.DE);
-	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.api.Translator#dynamicTranslate(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public String dynamicTranslate(String expression, SourceLanguage sourceLanguage) {
-		return translate(expression, sourceLanguage.toString());
-	}
+	/** The local bundle properties */
+	private static IEclipsePreferences eclipsePreferences;
+	private static Boolean isUpdatedDictionaryBundle;
 	
 	
 	/**
-	 * Gets access to the {@link GlobalInfo}.
-	 * @return the global info
-	 */
-	private static GlobalInfo getGlobalInfo() {
-		if (globalInfo==null) {
-			globalInfo = Application.getGlobalInfo();	
-		}
-		return globalInfo;
-	}
-	
-	/**
-	 * Gets the dictionary hashtabel.
+	 * Returns the dictionary Hashtable.
 	 * @return the dictionary hashtabel
 	 */
 	private static Hashtable<String, Integer> getDictionaryHashtabel() {
@@ -170,7 +112,7 @@ public class Language implements Translator {
 	 * Restarts the dictionary.
 	 */
 	public static void reStartDictionary() {
-		loadDictionaryFromDefaultFile();
+		Language.loadDictionaryFromDefaultFile();
 	}
 	
 	/**
@@ -179,8 +121,8 @@ public class Language implements Translator {
 	 */
 	public static void changeApplicationLanguageTo(String newLang){
 		String newLangShort = newLang.toLowerCase().replace("lang_", "");
-		Application.getGlobalInfo().setLanguage(newLangShort);
 		currLanguageIndex = getIndexOfLanguage(newLangShort);
+		Language.setLanguage(newLangShort);
 	}
 		
 	/**
@@ -203,12 +145,10 @@ public class Language implements Translator {
 	 */
 	public static String translate(String expression, String language)  {
 		
-		if (getGlobalInfo()==null) return expression;
-		
 		// --- In case that the dictionary was not loaded yet -----------------
-		if (getDictionaryLines().size()==0) {
-			loadDictionaryFromDefaultFile();
-			if (getDictionaryLines().size()==0) return expression;
+		if (Language.getDictionaryLines().size()==0) {
+			Language.loadDictionaryFromDefaultFile();
+			if (Language.getDictionaryLines().size()==0) return expression;
 		}
 		
 		// --- Check if the expression exists ---------------------------------
@@ -330,6 +270,7 @@ public class Language implements Translator {
 	 * Returns the index of the dictionary column which provides the language 
 	 * given by the parameter language. To specify this language, use the
 	 * final Strings from the head of this class (e. g. Language.IT) 
+	 * 
 	 * @param language (e. g. Language.IT)
 	 * @return the index of the language in the dictionary 
 	 */
@@ -339,7 +280,7 @@ public class Language implements Translator {
 		String langWork = language;
 		if (langWork==null || langWork.isEmpty()==true) {
 			langWork = Language.EN;
-			Application.getGlobalInfo().setLanguage(Language.EN);
+			Language.setLanguage(language);
 		}
 		langWork = langWork.toLowerCase();
 		
@@ -441,12 +382,13 @@ public class Language implements Translator {
 	 * Reading the dictionary files to the memory 
 	 */
 	private static void loadDictionaryFromDefaultFile() {
-		getDictionaryLines().clear();
-		getDictionaryLines().addAll(loadDictionaryFile(DictionarySourceFile.DefaultFile64));
-		proceedLoadedDictionaryLines();
+		Language.getDictionaryLines().clear();
+		Language.checkAndProvideDictionaryFiles(false);
+		Language.getDictionaryLines().addAll(Language.loadDictionaryFile(DictionarySourceFile.DefaultFile64));
+		Language.proceedLoadedDictionaryLines();
 		// --- Update dictionary using the dictionary within the bundle? ------  
-		if (getGlobalInfo()!=null && getGlobalInfo().isUpdatedAwbCoreBundle()==true) {
-			updateDictionaryFromBundleDictionary();
+		if (Language.isUpdatedDictionaryBundle()==true) {
+			Language.updateDictionaryFromBundleDictionary();
 		}
 	}
 	/**
@@ -455,9 +397,9 @@ public class Language implements Translator {
 	 * The idea is to translate also in different applications, as for example in MS Excel.
 	 */
 	public static void loadDictionaryFromCSVFile() {
-		getDictionaryLines().clear();
-		getDictionaryLines().addAll(loadDictionaryFile(DictionarySourceFile.CsvFile));
-		proceedLoadedDictionaryLines();
+		Language.getDictionaryLines().clear();
+		Language.getDictionaryLines().addAll(loadDictionaryFile(DictionarySourceFile.CsvFile));
+		Language.proceedLoadedDictionaryLines();
 	}
 	
 	/**
@@ -474,21 +416,21 @@ public class Language implements Translator {
 			// --- Create buffered reader to load the dictionary ----
 			switch (sourceFile) {
 			case DefaultFile64:
-				File fileDefault = new File(getDictionaryFileNameDefault64());
+				File fileDefault = new File(Language.getDictionaryFileNameDefault64());
 				if (fileDefault.exists()==true) {
 					bReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileDefault)));
 				}
 				break;
 
 			case CsvFile:
-				File fileCSV = new File(getDictionaryFileNameCSV());
+				File fileCSV = new File(Language.getDictionaryFileNameCSV());
 				if (fileCSV.exists()==true) {
 					bReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileCSV)));
 				}
 				break;
 				
 			case BundleFile:
-				String bundleFileName = getDictionaryFileNameBundle();
+				String bundleFileName = Language.getDictionaryFileNameBundle();
 				if (bundleFileName!=null) {
 					InputStream inStream = Language.class.getResourceAsStream(bundleFileName);
 					if (inStream!=null) {
@@ -548,7 +490,7 @@ public class Language implements Translator {
 		// --------------------------------------------------------------------		
 		if (getDictionaryLines().size()!=0) {
 			
-			getDictionaryHashtabel().clear(); 
+			Language.getDictionaryHashtabel().clear(); 
 
 			for (int i=0; i < getDictionaryLines().size(); i++) {
 				
@@ -563,7 +505,7 @@ public class Language implements Translator {
 							// --- Remind this header -------------------------
 							dictLangHeaderArray = valueArray;
 							// --- Which Language has to be used --------------
-							currLanguageIndex = getIndexOfLanguage(getGlobalInfo().getLanguage());	
+							currLanguageIndex = getIndexOfLanguage(Language.getLanguage());	
 							// --- index the Header ---------------------------
 							getDictionaryHashtabel().put( valueArray[0], i);
 							
@@ -590,10 +532,10 @@ public class Language implements Translator {
 			getDictionaryHashtabel().put(Language.SOURCE_LANG, 0);
 			dictLangHeaderArray = dictLangHeaderDefault.split(VALUE_SEPERATOR, -1);
 			// --- Reload dictionary ------------------------------------------
-			if (saveDictionaryFile()==true) {
-				getDictionaryLines().clear();
-				getDictionaryHashtabel().clear(); 
-				loadDictionaryFromDefaultFile();
+			if (Language.saveDictionaryFile()==true) {
+				Language.getDictionaryLines().clear();
+				Language.getDictionaryHashtabel().clear(); 
+				Language.loadDictionaryFromDefaultFile();
 			}
 		}
 		
@@ -672,12 +614,7 @@ public class Language implements Translator {
 	 */
 	private static String getNewLine() {
 		if (newLine==null) {
-			GlobalInfo gInfo = getGlobalInfo();
-			if (gInfo!=null) {
-				newLine = gInfo.getNewLineSeparator();
-			} else {
-				newLine = System.getProperty("line.separator");
-			}
+			newLine = System.getProperty("line.separator");
 		}
 		return newLine;
 	}
@@ -687,12 +624,7 @@ public class Language implements Translator {
 	 */
 	private static String getNewLineReplacer() {
 		if (newLineReplacer==null) {
-			GlobalInfo gInfo = getGlobalInfo();
-			if (gInfo!=null) {
-				newLineReplacer = gInfo.getNewLineSeparatorReplacer();
-			} else {
-				newLineReplacer = "<br>";
-			}
+			newLineReplacer = "<br>";
 		}
 		return newLineReplacer;
 	}
@@ -702,10 +634,7 @@ public class Language implements Translator {
 	 */
 	private static String getDictionaryFileNameDefault64() {
 		if (dictFileNameDefault64==null) {
-			GlobalInfo gInfo = getGlobalInfo();
-			if (gInfo!=null) {
-				dictFileNameDefault64 = gInfo.getFileDictionary(true, true);
-			}
+			dictFileNameDefault64 = PathHandling.getFileDictionary(true, true);
 		}
 		return dictFileNameDefault64;
 	}
@@ -715,10 +644,7 @@ public class Language implements Translator {
 	 */
 	private static String getDictionaryFileNameCSV() {
 		if (dictFileNameCSV==null) {
-			GlobalInfo gInfo = getGlobalInfo();
-			if (gInfo!=null) {
-				dictFileNameCSV = gInfo.getFileDictionary(false, true);
-			}
+			dictFileNameCSV = PathHandling.getFileDictionary(false, true);
 		}
 		return dictFileNameCSV;
 	}
@@ -728,22 +654,108 @@ public class Language implements Translator {
 	 */
 	private static String getDictionaryFileNameBundle() {
 		if (dictFileNameBundle==null) {
-			GlobalInfo gInfo = getGlobalInfo();
-			if (gInfo!=null) {
-				dictFileNameBundle = gInfo.getFileDictionary(true, false);
-				dictFileNameBundle = dictFileNameBundle.replace("\\", "/");
-				if (dictFileNameBundle.startsWith("/")==false) {
-					dictFileNameBundle = "/" + dictFileNameBundle;
-				}
+			dictFileNameBundle = PathHandling.getFileDictionary(true, false);
+			dictFileNameBundle = dictFileNameBundle.replace("\\", "/");
+			if (dictFileNameBundle.startsWith("/")==false) {
+				dictFileNameBundle = "/" + dictFileNameBundle;
 			}
 		}
 		return dictFileNameBundle;
 	}
 	
-
+	/**
+	 * Check and provide dictionary files.
+	 * @param overwriteExistingFile the indicator to overwrite existing file
+	 */
+	public static void checkAndProvideDictionaryFiles(boolean overwriteExistingFile) {
+		File propFile = PathHandling.getPropertiesPath(true).toFile();
+		PropertyContentProvider pcProvider = new PropertyContentProvider(propFile);
+		pcProvider.checkAndProvidePropertyContent(FileToProvide.DICTIONARY_CSV, overwriteExistingFile);
+		pcProvider.checkAndProvidePropertyContent(FileToProvide.DICTIONARY_BIN, overwriteExistingFile);
+	}
+	
 	// -------------------------------------------------------------------------
 	// --- From here, the dictionary update from bundle is implemented ---------
 	// -------------------------------------------------------------------------
+	/**
+	 * Returns the local bundle.
+	 * @return the bundle
+	 */
+	private static Bundle getBundle() {
+		return FrameworkUtil.getBundle(Language.class);
+	}
+	/**
+	 * Returns the current eclipse preferences.
+	 * @return the eclipse preferences
+	 */
+	public static IEclipsePreferences getEclipsePreferences() {
+		if (eclipsePreferences==null) {
+			IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+			eclipsePreferences = iScopeContext.getNode(Language.getBundle().getSymbolicName());
+		}
+		return eclipsePreferences;
+	}
+	
+	/**
+	 * Sets the language.
+	 * @param newLanguage the new language
+	 */
+	public static void setLanguage(String newLanguage) {
+		if (newLanguage==null || newLanguage.isBlank()==true || newLanguage.equals(getLanguage())==true) return;
+		try {
+			currLanguage = newLanguage;
+			Language.getEclipsePreferences().put("ApplicationLanguage", newLanguage);
+			Language.getEclipsePreferences().flush();
+		} catch (BackingStoreException bsEx) {
+			bsEx.printStackTrace();
+		}
+	}
+	/**
+	 * Returns the current language.
+	 * @return the language
+	 */
+	public  static String getLanguage() {
+		if (currLanguage==null) {
+			currLanguage = Language.getEclipsePreferences().get("ApplicationLanguage", Language.EN);
+		}
+		return currLanguage;
+	}
+	
+	/**
+	 * Checks if the currently running bundle is an updated version in comparison 
+	 * to the previously executed version.
+	 * 
+	 * @return true, if the current core bundle version is different to the previous execution
+	 */
+	private static boolean isUpdatedDictionaryBundle() {
+		if (isUpdatedDictionaryBundle==null) {
+			// --- Get the current bundle version -------------------
+			Bundle bundle = Language.getBundle();
+			if (bundle==null) return false;
+			
+			String bundleVersionProperty = bundle.getSymbolicName() + "." + "version";
+			Version version = bundle.getVersion();
+			String bundleVersionString = version.toString();
+			
+			String propsVersionString = Language.getEclipsePreferences().get(bundleVersionProperty, null);
+			if (propsVersionString==null || propsVersionString.isEmpty()==true || propsVersionString.equals(bundleVersionString)==false) {
+				// --- A different language bundle was executed -----
+				try {
+					Language.getEclipsePreferences().put(bundleVersionProperty, bundleVersionString);
+					Language.getEclipsePreferences().flush();
+					isUpdatedDictionaryBundle = true;
+				} catch (BackingStoreException bsEx) {
+					bsEx.printStackTrace();
+					isUpdatedDictionaryBundle = false;
+				}
+				
+			} else {
+				isUpdatedDictionaryBundle = false;
+			}
+		}
+		return isUpdatedDictionaryBundle;
+	}
+	
 	/**
 	 * Updates the current dictionary from the dictionary located in the bundle. This 
 	 * is especially used after an AWB update, were a dictionary is already located
@@ -754,7 +766,7 @@ public class Language implements Translator {
 		try {
 			
 			// --- Ensure that the regular dictionary is loaded -----
-			if (getDictionaryLines().size()==0) loadDictionaryFromDefaultFile();
+			if (Language.getDictionaryLines().size()==0) Language.loadDictionaryFromDefaultFile();
 
 			// --- Load dictionary from within bundle ---------------
 			List<String> bundleDictLines = loadDictionaryFile(DictionarySourceFile.BundleFile);

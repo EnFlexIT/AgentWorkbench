@@ -44,7 +44,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.agentgui.gui.AwbProjectEditorWindow;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.gui.MainWindow;

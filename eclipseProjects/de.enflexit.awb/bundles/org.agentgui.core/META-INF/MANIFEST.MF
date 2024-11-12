@@ -10,7 +10,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/classLoadService.xml, 
  OSGI-INF/dbStateVisualService.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: jakarta.annotation,
+Import-Package: de.enflexit.language,
+ jakarta.annotation,
  jakarta.inject,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,

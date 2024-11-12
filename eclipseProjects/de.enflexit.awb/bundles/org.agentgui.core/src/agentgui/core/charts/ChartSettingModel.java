@@ -30,11 +30,12 @@ package agentgui.core.charts;
 
 import java.awt.Color;
 import de.enflexit.common.Observable;
+import de.enflexit.language.Language;
+
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
-import agentgui.core.application.Language;
 import agentgui.ontology.ChartSettingsGeneral;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.TimeSeries;

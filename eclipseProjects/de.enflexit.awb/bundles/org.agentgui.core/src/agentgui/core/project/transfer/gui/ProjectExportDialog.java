@@ -63,7 +63,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.InstallationPackageFinder;
 import agentgui.core.config.InstallationPackageFinder.InstallationPackageDescription;

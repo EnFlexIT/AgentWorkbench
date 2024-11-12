@@ -66,7 +66,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.update.repositoryModel.ProjectRepository;

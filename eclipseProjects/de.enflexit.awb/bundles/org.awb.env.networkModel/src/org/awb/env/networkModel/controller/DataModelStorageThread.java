@@ -49,7 +49,7 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;

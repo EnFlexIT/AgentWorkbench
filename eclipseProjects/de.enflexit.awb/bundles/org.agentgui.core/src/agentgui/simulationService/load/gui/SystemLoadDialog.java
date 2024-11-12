@@ -35,7 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 

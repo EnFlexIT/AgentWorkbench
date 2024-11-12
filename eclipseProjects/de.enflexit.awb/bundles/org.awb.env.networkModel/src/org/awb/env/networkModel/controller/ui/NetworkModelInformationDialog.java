@@ -58,7 +58,7 @@ import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.helper.NetworkModelAnalyzer;
 import org.awb.env.networkModel.helper.NetworkModelAnalyzerListener;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 
 /**

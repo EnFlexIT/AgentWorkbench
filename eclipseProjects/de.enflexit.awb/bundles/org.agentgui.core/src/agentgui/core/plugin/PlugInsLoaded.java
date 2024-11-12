@@ -31,7 +31,7 @@ package agentgui.core.plugin;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.project.Project;
 import jade.core.ProfileImpl;

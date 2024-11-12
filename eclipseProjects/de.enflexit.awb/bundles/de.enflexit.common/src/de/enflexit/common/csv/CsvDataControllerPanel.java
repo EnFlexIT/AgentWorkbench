@@ -34,8 +34,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import de.enflexit.common.Observable;
-import de.enflexit.common.Observer;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -52,10 +50,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import de.enflexit.api.LastSelectedFolderReminder;
-import de.enflexit.api.Translator.SourceLanguage;
-import de.enflexit.common.Language;
+import de.enflexit.common.Observable;
+import de.enflexit.common.Observer;
 import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
+import de.enflexit.language.Language;
 
 /**
  * The CSV Controller Panel that can be used with a customized CSV-Importer 
@@ -165,7 +164,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 
 	private JLabel getJLabelSeparator() {
 		if (jLabelSeparator == null) {
-			jLabelSeparator = new JLabel(Language.translate("Separator:", SourceLanguage.EN));
+			jLabelSeparator = new JLabel(Language.translate("Separator:", Language.EN));
 			jLabelSeparator.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelSeparator;
@@ -173,7 +172,7 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 
 	private JCheckBox getJCheckBoxHasHeadlines() {
 		if (jCheckBoxHasHeadlines == null) {
-			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Column Headers:", SourceLanguage.EN));
+			jCheckBoxHasHeadlines = new JCheckBox(Language.translate("Column Headers:", Language.EN));
 			jCheckBoxHasHeadlines.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jCheckBoxHasHeadlines.setSelected(this.getCsvDataController().hasHeadlines());
 			jCheckBoxHasHeadlines.addActionListener(this);
@@ -232,8 +231,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		if(ae.getSource() == this.getJButtonImport()) {
 			// --- Import data from CSV
 			JFileChooser jFileChooserImportCSV = new JFileChooser(this.getLastSelectedFolder());
-			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Files", SourceLanguage.EN), "csv"));
-			jFileChooserImportCSV.setDialogTitle(Language.translate("Import CSV File", SourceLanguage.EN));
+			jFileChooserImportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Files", Language.EN), "csv"));
+			jFileChooserImportCSV.setDialogTitle(Language.translate("Import CSV File", Language.EN));
 			
 			if(jFileChooserImportCSV.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
 				this.setLastSelectedFolder(jFileChooserImportCSV.getCurrentDirectory());
@@ -248,8 +247,8 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		} else if(ae.getSource() == this.getJButtonExport()) {
 			// --- Export data to CSV
 			JFileChooser jFileChooserExportCSV = new JFileChooser(this.getLastSelectedFolder());
-			jFileChooserExportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Files", SourceLanguage.EN), "csv"));
-			jFileChooserExportCSV.setDialogTitle(Language.translate("Export CSV File", SourceLanguage.EN));
+			jFileChooserExportCSV.setFileFilter(new FileNameExtensionFilter(Language.translate("CSV-Files", Language.EN), "csv"));
+			jFileChooserExportCSV.setDialogTitle(Language.translate("Export CSV File", Language.EN));
 			
 			if(jFileChooserExportCSV.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
 				this.setLastSelectedFolder(jFileChooserExportCSV.getCurrentDirectory());

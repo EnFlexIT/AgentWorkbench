@@ -46,7 +46,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;

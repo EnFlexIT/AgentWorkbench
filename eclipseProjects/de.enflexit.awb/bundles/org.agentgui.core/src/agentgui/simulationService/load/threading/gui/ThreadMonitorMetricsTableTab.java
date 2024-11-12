@@ -50,7 +50,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorage;
 import agentgui.simulationService.load.threading.storage.ThreadInfoStorageAgent;
 

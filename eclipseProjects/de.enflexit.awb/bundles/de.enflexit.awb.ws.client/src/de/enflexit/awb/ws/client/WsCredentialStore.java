@@ -27,13 +27,13 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener;
-import agentgui.core.common.AbstractUserObject;
 import agentgui.core.project.Project;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.credential.ApiKeyCredential;
 import de.enflexit.awb.ws.credential.BearerTokenCredential;
 import de.enflexit.awb.ws.credential.UserPasswordCredential;
+import de.enflexit.common.AbstractUserObject;
 import de.enflexit.common.ServiceFinder;
 
 /**

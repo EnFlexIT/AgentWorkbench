@@ -49,7 +49,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import de.enflexit.common.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;

@@ -37,7 +37,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The AbstractUndoableEdit 'ClearNetworkModel' clears the current NetworkModel.

@@ -57,7 +57,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.JSpinnerDateTime;

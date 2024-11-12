@@ -50,7 +50,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.commons.codec.binary.Base64;
 
-import de.enflexit.common.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
 import de.enflexit.common.ontology.AgentStartConfiguration;

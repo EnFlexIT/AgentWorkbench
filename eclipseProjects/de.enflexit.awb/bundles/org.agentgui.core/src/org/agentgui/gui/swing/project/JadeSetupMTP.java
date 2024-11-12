@@ -54,7 +54,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.MtpProtocol;
 import agentgui.core.gui.components.JComboBoxMtpProtocol;

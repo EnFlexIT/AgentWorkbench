@@ -30,8 +30,8 @@ package agentgui.core.environment;
 
 import jade.core.Agent;
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.language.Language;
 
 /**
  * This class has to be used in order to hand over a predefined environment model

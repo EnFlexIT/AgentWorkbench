@@ -30,7 +30,7 @@ package agentgui.simulationService.time;
 
 import java.awt.Color;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The Class TimeModelDiscreteExecutionElements.

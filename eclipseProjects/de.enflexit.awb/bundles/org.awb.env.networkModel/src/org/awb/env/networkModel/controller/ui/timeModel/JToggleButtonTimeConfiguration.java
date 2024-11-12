@@ -12,7 +12,7 @@ import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiTools;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;

@@ -35,7 +35,7 @@ import javax.swing.undo.CannotUndoException;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 
 /**

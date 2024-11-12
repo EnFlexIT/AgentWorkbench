@@ -52,7 +52,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.toolbar.CustomToolbarComponentDescription;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import jade.util.leap.Serializable;
 
 /**

@@ -57,7 +57,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;

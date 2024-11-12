@@ -49,6 +49,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import de.enflexit.language.Language;
+
 /**
  * The Class OIDCPanel.
  */
@@ -155,7 +157,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		if (jLabelHeader==null) {
 			jLabelHeader = new JLabel();
 			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelHeader.setText("Agent.Workbench & EOM: " + owner.translate(this, "Web Service Authentifizierung"));
+			jLabelHeader.setText("Agent.Workbench & EOM: " + Language.translate("Web Service Authentifizierung"));
 		}
 		return jLabelHeader;
 	}
@@ -165,7 +167,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelUsername() {
 		if (jLabelUsername == null) {
-			jLabelUsername = new JLabel(owner.translate(this, "Benutzername"));
+			jLabelUsername = new JLabel(Language.translate("Benutzername"));
 			jLabelUsername.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelUsername;
@@ -189,7 +191,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 */
 	private JLabel getJLabelPassword() {
 		if (jLabelPassword == null) {
-			jLabelPassword = new JLabel(owner.translate(this, "Passwort"));
+			jLabelPassword = new JLabel(Language.translate("Passwort"));
 			jLabelPassword.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelPassword;
@@ -213,7 +215,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	 */
 	private JButton getJButtonConnect() {
 		if (jButtonConnect == null) {
-			jButtonConnect = new JButton(owner.translate(this, "Verbinden"));
+			jButtonConnect = new JButton(Language.translate("Verbinden"));
 			jButtonConnect.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonConnect.setForeground(new Color(0, 0, 153));
 			jButtonConnect.addActionListener(this);
@@ -242,11 +244,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 	public void displayResult(boolean successful, String message) {
 		this.getJLabelResult().setVisible(true);
 		if (successful==true) {
-			this.getJLabelResult().setText(owner.translate(this, "Erfolgreich"));
+			this.getJLabelResult().setText(Language.translate("Erfolgreich"));
 			this.getJLabelResult().setForeground(new Color(0, 153, 0));
 			this.getParent().getParent().getParent().setVisible(false);
 		} else {
-			this.getJLabelResult().setText(owner.translate(this, "Fehlgeschlagen") + ": "+message);
+			this.getJLabelResult().setText(Language.translate("Fehlgeschlagen") + ": "+message);
 			this.getJLabelResult().setForeground(new Color(153, 0, 0));
 		}
 	}
@@ -298,12 +300,12 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		
 		boolean isValid = true;
 		if (userName==null || userName.isEmpty()==true) {
-			this.displayResult(false, owner.translate(this, "Fehlender Benutzer"));
+			this.displayResult(false, Language.translate("Fehlender Benutzer"));
 			isValid = false;
 		}
 		
 		if (isValid==true && pswd.length==0) {
-			this.displayResult(false, owner.translate(this, "Fehlendes Passwort"));
+			this.displayResult(false, Language.translate("Fehlendes Passwort"));
 			isValid = false;
 		}
 		return isValid;

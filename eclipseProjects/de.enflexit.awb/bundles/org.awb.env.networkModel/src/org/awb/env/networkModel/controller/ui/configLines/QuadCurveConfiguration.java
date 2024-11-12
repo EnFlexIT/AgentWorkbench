@@ -15,7 +15,7 @@ import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The Class QuadCurveConfiguration.

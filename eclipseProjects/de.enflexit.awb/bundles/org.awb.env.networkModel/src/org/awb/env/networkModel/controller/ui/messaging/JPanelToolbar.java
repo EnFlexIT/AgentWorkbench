@@ -42,7 +42,7 @@ import javax.swing.JToolBar;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.controller.ui.messaging.MessagingJInternalFrame.WidgetOrientation;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 
 /**

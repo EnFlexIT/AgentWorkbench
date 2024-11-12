@@ -17,7 +17,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.NetworkModelOperationalDataImportService;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.simulationService.environment.AbstractEnvironmentModel;
 import de.enflexit.common.ServiceFinder;
 

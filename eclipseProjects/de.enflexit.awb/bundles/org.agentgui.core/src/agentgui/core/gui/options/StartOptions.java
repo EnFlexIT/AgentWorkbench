@@ -27,7 +27,7 @@ import javax.swing.JSeparator;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.config.GlobalInfo.MtpProtocol;

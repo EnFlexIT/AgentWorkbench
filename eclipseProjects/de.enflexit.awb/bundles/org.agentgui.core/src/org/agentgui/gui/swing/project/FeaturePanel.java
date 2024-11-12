@@ -55,7 +55,7 @@ import javax.swing.table.TableColumnModel;
 import org.agentgui.gui.swing.dialogs.FeatureSelectionDialog;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;

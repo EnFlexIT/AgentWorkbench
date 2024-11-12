@@ -21,7 +21,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodeGeoPosition;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 

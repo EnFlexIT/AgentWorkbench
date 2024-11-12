@@ -35,7 +35,7 @@ import javax.swing.undo.CannotUndoException;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The class SwitchLayoutAction represents the undoable action to switch between different graph layouts.

@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Vector;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.jade.PlatformStateInformation.PlatformState;
 import agentgui.core.project.DistributionSetup;

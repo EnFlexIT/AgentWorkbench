@@ -69,9 +69,8 @@ import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.common.AbstractUserObject;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
@@ -91,6 +90,7 @@ import agentgui.core.project.transfer.ProjectExportControllerProvider;
 import agentgui.core.project.transfer.ProjectExportSettingsController;
 import agentgui.core.update.ProjectRepositoryExport;
 import agentgui.core.update.ProjectRepositoryUpdate;
+import de.enflexit.common.AbstractUserObject;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.Observable;
 import de.enflexit.common.PathHandling;

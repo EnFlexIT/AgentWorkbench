@@ -37,6 +37,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -86,7 +87,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
@@ -98,11 +98,11 @@ import agentgui.logging.components.SysOutBoard;
 import agentgui.simulationService.agents.LoadExecutionAgent;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
-import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
-import java.awt.GridBagConstraints;
+import de.enflexit.language.Language;
 
 /**
  * This class represents the main user-interface of the application AgentGUI.

@@ -56,12 +56,12 @@ import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.common.swing.JHyperLink;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
-import de.enflexit.common.swing.JHyperLink;
+import de.enflexit.language.Language;
 
 /**
  * The GUI of the AboutDialog.

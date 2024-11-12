@@ -52,7 +52,6 @@ import javax.swing.JDialog;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 
-import de.enflexit.api.Translator;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -80,10 +79,6 @@ public class OIDCAuthorization {
 	/** The URLProcessor used for the network communication. */
 	private URLProcessor urlProcessor;
 	
-	
-	/** The authorization dialog. */
-	private Translator translator;
-
 	private JDialog authDialog;
 	private Window owner;
 
@@ -420,27 +415,6 @@ public class OIDCAuthorization {
 	public boolean accessResource(String url, String presetUsername, Window owner) throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		this.setResourceURI(url);
 		return accessResource(presetUsername, owner);
-	}
-
-	/**
-	 * Sets the translator.
-	 * @param translator the new translator
-	 */
-	public void setTranslator(Translator translator) {
-		this.translator = translator;
-	}
-	/**
-	 * Translate.
-	 *
-	 * @param oidcPanel the oidc panel
-	 * @param input the input
-	 * @return the string
-	 */
-	String translate(OIDCPanel oidcPanel, String input){
-		if (translator!=null) {
-			return translator.dynamicTranslate(input);
-		}
-		return input;
 	}
 
 	/**

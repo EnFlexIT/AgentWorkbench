@@ -28,7 +28,6 @@ import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.BenchmarkMeasurement;
-import agentgui.core.application.Language;
 import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
@@ -50,6 +49,7 @@ import de.enflexit.common.PathHandling;
 import de.enflexit.common.VersionInfo;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.language.Language;
 import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -74,7 +74,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public static final String DEFAULT_OIDC_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 
 	private final static String newLineSeparator = System.getProperty("line.separator");
-	private final static String newLineSeparatorReplacer = "<br>";
 	
 	private static Color localColorMenuHighLight;
 	
@@ -92,7 +91,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	
 	private static Path localBaseDir;
 	
-	private static String localFileDictionary  = "dictionary";
 	private static String localFileProperties  = "agentgui.ini";
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectUserObjectBinFile = "agentgui.bin";
@@ -117,7 +115,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private String filePropBenchExecOn;
 	private boolean filePropBenchAlwaysSkip; 
 	
-	private String filePropLanguage;
 	private boolean maximizeMainWindow = false;
 	
 	private boolean filePropLoggingEnabled;
@@ -534,17 +531,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	public String getNewLineSeparator(){
 		return newLineSeparator;
 	}
-	/**
-	 * This method will return a substitute String for the new line String.
-	 * It is used, for example, in the dictionary, so that it is possible
-	 * to write text with several lines in a single one.<br>
-	 * Basically, the HTML-tag &lt;br&gt; is used here.
-	 * 
-	 * @return a substitute String for a new line
-	 */
-	public String getNewLineSeparatorReplacer(){
-		return newLineSeparatorReplacer;
-	}
 
 	// ----------------------------------------------------
 	// --- General Directory information ------------------
@@ -913,26 +899,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		}
 	}
 	
-	/**
-	 * This method can be use in order to get the path to one of the dictionary files (Base64: '*.bin' | CSV-version: '*.csv'). 
-	 * 
-	 * @param defaultBase64 if set true, the method will return the path to the default
-	 * Base64-encoded dictionary file, otherwise the path to the csv-version of the dictionary 
-	 * 
-	 * @param absolute set true if you want to get the full path to this
-	 * @return path to the designated dictionary file
-	 */
-	public String getFileDictionary(boolean defaultBase64, boolean absolute ){
-		
-		// --- TXT-Version or Base64-encoded dictionary ---
-		String fileName = null;
-		if (defaultBase64==true) {
-			fileName = getPathProperty(absolute).resolve(localFileDictionary + ".bin").toString();
-		} else {
-			fileName = getPathProperty(absolute).resolve(localFileDictionary + ".csv").toString();
-		}
-		return fileName;
-	}
 	
 	/**
 	 * Returns the file name of the xml-file, which contains the project configuration (file: 'agentgui.xml')
@@ -1228,27 +1194,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		this.filePropBenchAlwaysSkip = benchAlwaysSkip;
 	}
 
-	// ---- Currently used language ------------------------------------
-	/**
-	 * This method can be used in order to set the current application language
-	 * to the property file. 
-	 * @param currentLanguage the filePropLanguage to set
-	 * @see BenchmarkMeasurement
-	 * @see BundleProperties
-	 */
-	public void setLanguage(String currentLanguage) {
-		this.filePropLanguage = currentLanguage;
-	}
-	/**
-	 * Returns the currently configured language of the file properties
-	 * @return the filePropLanguage
-	 * @see BenchmarkMeasurement
-	 * @see BundleProperties
-	 */
-	public String getLanguage() {
-		return filePropLanguage;
-	}
-
+	
 	/**
 	 * Sets to initially maximize the {@link MainWindow}.
 	 * @param isMaximzeMainWindow the new maximze indicator

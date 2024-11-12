@@ -69,7 +69,7 @@ import org.awb.env.networkModel.visualisation.notifications.DataModelNotificatio
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeries;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeriesException;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 import de.enflexit.eom.api.EomVisualizationHostContainer;
 import jade.core.AID;

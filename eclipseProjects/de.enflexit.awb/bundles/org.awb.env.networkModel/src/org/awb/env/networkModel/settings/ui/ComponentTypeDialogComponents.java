@@ -69,7 +69,7 @@ import org.awb.env.networkModel.controller.ui.AddComponentDialog;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.swing.JComboBoxWide;
 import de.enflexit.common.swing.TableCellEditor4Color;
 import de.enflexit.common.swing.TableCellRenderer4Color;

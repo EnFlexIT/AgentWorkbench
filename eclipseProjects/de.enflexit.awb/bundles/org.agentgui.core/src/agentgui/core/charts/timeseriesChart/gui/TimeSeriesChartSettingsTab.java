@@ -37,11 +37,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 
-import agentgui.core.application.Language;
 import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.gui.ChartSettingsTab;
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartSettingModel;
 import agentgui.simulationService.time.TimeFormatSelection;
+import de.enflexit.language.Language;
 
 /**
  * ChartSettingsTab-implementation for time series charts, adding the possibility 

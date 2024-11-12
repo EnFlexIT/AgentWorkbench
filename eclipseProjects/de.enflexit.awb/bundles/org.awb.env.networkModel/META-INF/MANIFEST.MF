@@ -41,5 +41,6 @@ Require-Bundle: de.enflexit.api,
  org.eclipse.osgi.services,
  org.apache.commons.text
 Bundle-ActivationPolicy: lazy
-Import-Package: jakarta.xml.bind,
+Import-Package: de.enflexit.language,
+ jakarta.xml.bind,
  jakarta.xml.bind.annotation

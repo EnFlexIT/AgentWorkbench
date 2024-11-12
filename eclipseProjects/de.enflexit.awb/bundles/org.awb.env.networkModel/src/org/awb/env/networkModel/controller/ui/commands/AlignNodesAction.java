@@ -47,7 +47,7 @@ import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirection;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**

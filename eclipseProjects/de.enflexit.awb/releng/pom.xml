@@ -14,8 +14,9 @@
 
     <modules>
         <module>de.enflexit.awb.configuration</module>
-        <module>de.enflexit.awb.update</module>
         <module>de.enflexit.awb.product</module>
+        <module>de.enflexit.awb.ws.product</module>
+        <module>de.enflexit.awb.update</module>
         <module>de.enflexit.awb.target</module>
     </modules>
 </project>

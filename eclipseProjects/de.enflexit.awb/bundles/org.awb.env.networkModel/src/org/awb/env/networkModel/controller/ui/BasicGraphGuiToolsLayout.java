@@ -57,7 +57,7 @@ import org.awb.env.networkModel.controller.ui.configLines.QuadCurveConfiguration
 import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.settings.LayoutSettings.EdgeShape;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;

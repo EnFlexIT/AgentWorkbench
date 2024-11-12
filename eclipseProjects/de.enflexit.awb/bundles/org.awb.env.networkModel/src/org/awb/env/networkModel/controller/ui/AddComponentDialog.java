@@ -101,7 +101,7 @@ import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
 import com.google.common.base.Function;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.swing.JComboBoxWide;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;

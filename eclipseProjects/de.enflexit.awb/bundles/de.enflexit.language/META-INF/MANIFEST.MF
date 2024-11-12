@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Language & Translation Bundle
+Bundle-SymbolicName: de.enflexit.language
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.enflexit.language
+Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: de.enflexit.awb.language
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: org.apache.commons.codec.binary,
+ org.eclipse.core.runtime.preferences,
+ org.osgi.framework,
+ org.osgi.service.prefs

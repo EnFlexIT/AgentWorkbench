@@ -24,8 +24,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
-import agentgui.core.common.AbstractUserObject;
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.common.AbstractUserObject;
 import de.enflexit.common.SerialClone;
 
 /**

@@ -71,7 +71,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.simulationService.time.TimeFormatSelection;
 import agentgui.simulationService.time.TimeModel;
@@ -80,6 +79,7 @@ import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.ExceptionHandling;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.language.Language;
 
 /**
  * The Dialog TimeFormatImportConfiguration is used to set the 

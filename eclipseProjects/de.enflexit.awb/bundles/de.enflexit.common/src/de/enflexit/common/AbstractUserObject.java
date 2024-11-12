@@ -1,4 +1,4 @@
-package agentgui.core.common;
+package de.enflexit.common;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -38,7 +38,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-import agentgui.core.application.Language;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.TableModel;
 import agentgui.core.charts.TableModelDataVector;
@@ -51,6 +50,7 @@ import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesTableModel;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
+import de.enflexit.language.Language;
 
 /**
  * TableTab-implementation for time series charts.

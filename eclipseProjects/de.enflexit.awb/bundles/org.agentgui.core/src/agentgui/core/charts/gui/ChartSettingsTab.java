@@ -50,12 +50,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import agentgui.core.application.Language;
 import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.ChartSettingModelListener;
 import agentgui.core.charts.NoSuchSeriesException;
 import de.enflexit.common.swing.TableCellEditor4Color;
 import de.enflexit.common.swing.TableCellRenderer4Color;
+import de.enflexit.language.Language;
 
 /**
  * GUI component for editing the settings for a chart. This component provides means to edit 

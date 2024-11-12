@@ -44,7 +44,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.project.Project;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;

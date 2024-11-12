@@ -36,7 +36,7 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * This action can be used in order to rename a NetworkComponent.

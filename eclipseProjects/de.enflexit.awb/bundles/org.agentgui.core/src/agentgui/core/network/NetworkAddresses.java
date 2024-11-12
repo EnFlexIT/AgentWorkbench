@@ -46,7 +46,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.project.PlatformJadeConfig;
 
 

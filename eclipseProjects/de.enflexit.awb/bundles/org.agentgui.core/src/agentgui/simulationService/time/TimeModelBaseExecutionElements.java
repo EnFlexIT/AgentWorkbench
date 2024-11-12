@@ -43,7 +43,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.swing.TimeZoneDateFormat;
 
 /**

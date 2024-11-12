@@ -36,7 +36,7 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 import javax.swing.event.ChangeListener;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 

@@ -49,7 +49,7 @@ import org.agentgui.gui.AwbProgressMonitor;
 import org.agentgui.gui.UiBridge;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.common.CommonComponentFactory;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetup;

@@ -48,7 +48,7 @@ import javax.swing.SwingConstants;
 import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.project.Project;
 import agentgui.core.update.ProjectRepositoryExport;

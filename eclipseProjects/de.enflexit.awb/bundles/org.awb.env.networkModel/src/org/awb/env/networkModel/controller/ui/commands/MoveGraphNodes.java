@@ -47,7 +47,7 @@ import org.awb.env.networkModel.controller.ui.GraphEnvironmentControllerGUI;
 import org.awb.env.networkModel.controller.ui.TransformerForGraphNodePosition;
 import org.awb.env.networkModel.controller.ui.configLines.PolylineConfiguration;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.SerialClone;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 import edu.uci.ics.jung.visualization.VisualizationViewer;

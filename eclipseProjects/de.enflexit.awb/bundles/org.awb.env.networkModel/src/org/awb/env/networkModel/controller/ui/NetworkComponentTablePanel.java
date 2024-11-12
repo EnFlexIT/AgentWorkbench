@@ -42,7 +42,7 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.ServiceFinder;
 
 /**

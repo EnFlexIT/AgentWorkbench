@@ -49,7 +49,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 
-import de.enflexit.common.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
 

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;

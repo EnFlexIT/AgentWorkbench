@@ -49,7 +49,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableRowSorter;
 
-import agentgui.core.application.Language;
 import agentgui.core.charts.NoSuchSeriesException;
 import agentgui.core.charts.TableModel;
 import agentgui.core.charts.gui.ChartEditorJPanel;
@@ -62,6 +61,7 @@ import agentgui.core.config.GlobalInfo;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyDataSeries;
+import de.enflexit.language.Language;
 
 /**
  * TableTab-implementation for XY-charts.

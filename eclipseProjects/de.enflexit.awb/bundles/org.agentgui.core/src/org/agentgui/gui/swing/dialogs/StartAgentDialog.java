@@ -55,7 +55,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.gui.AgentSelector;
 import de.enflexit.common.classSelection.ClassElement2Display;

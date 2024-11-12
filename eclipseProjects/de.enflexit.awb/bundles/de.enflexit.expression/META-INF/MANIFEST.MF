@@ -16,7 +16,8 @@ Export-Package: com.expression.parser,
  de.enflexit.expression.gui,
  de.enflexit.expression.math
 Import-Package: de.enflexit.common,
- de.enflexit.common.swing
+ de.enflexit.common.swing,
+ de.enflexit.language
 Require-Bundle: org.agentgui.core
 Bundle-ClassPath: .,
  lib/com.expression.parser-3.3.0.jar

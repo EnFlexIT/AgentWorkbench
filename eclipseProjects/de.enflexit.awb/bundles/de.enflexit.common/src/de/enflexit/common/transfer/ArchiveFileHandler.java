@@ -82,7 +82,7 @@ public class ArchiveFileHandler {
 		
 		this.archiveFormat = archiveFormat;
 
-		ArchiveOutputStream outputStream = null;
+		ArchiveOutputStream<?> outputStream = null;
 		
 		try {
 			outputStream = this.createArchiveOutputStream(targetFile);
@@ -147,7 +147,7 @@ public class ArchiveFileHandler {
 		this.archiveFormat = archiveFormat;
 		boolean success;
 
-		ArchiveInputStream inputStream = null;
+		ArchiveInputStream<?> inputStream = null;
 		try {
 
 			// --- Get an input stream for the current archive format
@@ -264,7 +264,7 @@ public class ArchiveFileHandler {
 		this.archiveFormat = archiveFormat;
 
 		boolean success;
-		ArchiveOutputStream outputStream = null;
+		ArchiveOutputStream<?> outputStream = null;
 		try {
 
 			outputStream = this.createArchiveOutputStream(targetFile);
@@ -319,7 +319,7 @@ public class ArchiveFileHandler {
 		this.archiveFormat = archiveFormat;
 
 		boolean success;
-		ArchiveOutputStream outputStream = null;
+		ArchiveOutputStream<?> outputStream = null;
 		try {
 			
 			RecursiveFolderDeleter deleter = null;
@@ -385,11 +385,12 @@ public class ArchiveFileHandler {
 	 * @return the archive input stream
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	private ArchiveInputStream createArchiveInputStream(File archiveFile) throws IOException {
+	private ArchiveInputStream<?> createArchiveInputStream(File archiveFile) throws IOException {
+		
 		FileInputStream fileInputStream = new FileInputStream(archiveFile);
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 
-		ArchiveInputStream archiveInputStream = null;
+		ArchiveInputStream<?> archiveInputStream = null;
 		if (this.archiveFormat == ArchiveFormat.ZIP) {
 			archiveInputStream = new ZipArchiveInputStream(bufferedInputStream);
 		} else if (this.archiveFormat == ArchiveFormat.TAR_GZ) {
@@ -406,12 +407,12 @@ public class ArchiveFileHandler {
 	 * @return the archive output stream
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	private ArchiveOutputStream createArchiveOutputStream(File archiveFile) throws IOException {
+	private ArchiveOutputStream<?> createArchiveOutputStream(File archiveFile) throws IOException {
 
 		FileOutputStream fileOutputStream = new FileOutputStream(archiveFile);
 		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 
-		ArchiveOutputStream archiveOutputStream = null;
+		ArchiveOutputStream<?> archiveOutputStream = null;
 		if (this.archiveFormat == ArchiveFormat.ZIP) {
 			archiveOutputStream = new ZipArchiveOutputStream(bufferedOutputStream);
 		} else if (this.archiveFormat == ArchiveFormat.TAR_GZ) {
@@ -461,6 +462,7 @@ public class ArchiveFileHandler {
 	 * @param archiveOutputStream the archive output stream
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
+	@SuppressWarnings({  "rawtypes", "unchecked" })
 	private void addFileToArchive(File baseDir, File file, String pathInsideArchive, ArchiveOutputStream archiveOutputStream) throws IOException {
 
 		if (file.isDirectory() == true) {
@@ -508,9 +510,10 @@ public class ArchiveFileHandler {
 	 * @param outputStream the output stream
 	 * @throws IOException error copying the archive contents
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void copyArchiveContents(File archiveFile, ArchiveOutputStream outputStream) throws IOException {
-		ArchiveInputStream inputStream = this.createArchiveInputStream(archiveFile);
-
+		
+		ArchiveInputStream<?> inputStream = this.createArchiveInputStream(archiveFile);
 		ArchiveEntry entry;
 		byte[] buffer = new byte[this.bufferSize];
 

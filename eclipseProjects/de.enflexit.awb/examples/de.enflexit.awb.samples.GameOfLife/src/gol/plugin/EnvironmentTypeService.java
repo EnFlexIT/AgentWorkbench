@@ -1,6 +1,6 @@
 package gol.plugin;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
 import gol.environment.DisplayAgent;

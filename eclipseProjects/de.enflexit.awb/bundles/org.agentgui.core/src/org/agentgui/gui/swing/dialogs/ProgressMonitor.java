@@ -53,7 +53,7 @@ import javax.swing.UIManager;
 import org.agentgui.gui.AwbProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import de.enflexit.common.Language;
+import de.enflexit.language.Language;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 

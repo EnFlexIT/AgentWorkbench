@@ -37,7 +37,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The Class JPanelBackgroundSystem is used to set the Background System settings.

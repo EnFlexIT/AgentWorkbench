@@ -48,11 +48,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import agentgui.core.application.Application;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentType;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
-import de.enflexit.common.Language;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 
 /**

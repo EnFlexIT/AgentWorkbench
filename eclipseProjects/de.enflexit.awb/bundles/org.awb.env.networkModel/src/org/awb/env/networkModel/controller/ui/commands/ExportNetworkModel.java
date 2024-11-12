@@ -46,7 +46,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.NetworkModelExportService;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 
 /**
  * The AbstractUndoableEdit 'ImportNetworkModel' imports a selected file.

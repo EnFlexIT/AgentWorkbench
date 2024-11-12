@@ -28,7 +28,7 @@
  */
 package org.awb.env.networkModel.settings;
 
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import jade.util.leap.Serializable;
 
 /**

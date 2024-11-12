@@ -48,7 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import agentgui.core.application.Application;
-import agentgui.core.application.Language;
+import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInError;
