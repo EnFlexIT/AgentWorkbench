@@ -10,8 +10,7 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-Vendor: EnFlex.IT
 Bundle-ClassPath: .
-Require-Bundle: de.enflexit.api,
- de.enflexit.common.flatlaf,
+Require-Bundle: de.enflexit.common.flatlaf,
  com.sun.xml.bind.jaxb-impl,
  org.eclipse.osgi.services,
  org.eclipse.core.runtime,

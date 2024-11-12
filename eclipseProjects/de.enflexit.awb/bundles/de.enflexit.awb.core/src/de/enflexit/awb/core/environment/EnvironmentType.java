@@ -1,9 +1,9 @@
 package de.enflexit.awb.core.environment;
 
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.language.Language;
 import jade.core.Agent;
-import agentgui.core.application.Application;
-import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
 
 /**
  * This class has to be used in order to hand over a predefined environment model

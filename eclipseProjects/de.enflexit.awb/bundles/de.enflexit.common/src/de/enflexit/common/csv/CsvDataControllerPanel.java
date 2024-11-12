@@ -49,7 +49,7 @@ import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import de.enflexit.api.LastSelectedFolderReminder;
+import de.enflexit.common.LastSelectedFolderReminder;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.images.ImageProvider;

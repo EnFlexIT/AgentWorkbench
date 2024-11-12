@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.enflexit.oidc
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.oidc;uses:="de.enflexit.api,javax.net.ssl,javax.swing"
-Require-Bundle: de.enflexit.api,
- oauth2-oidc-sdk,
+Require-Bundle: oauth2-oidc-sdk,
  com.nimbusds.nimbus-jose-jwt,
  net.minidev.json-smart,
  org.eclipse.jetty.openid;bundle-version="12.0.9"

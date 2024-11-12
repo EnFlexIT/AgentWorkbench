@@ -19,6 +19,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.border.EtchedBorder;
 
 import de.enflexit.awb.core.project.PlatformJadeConfig;
+import de.enflexit.language.Language;
 
 
 /**

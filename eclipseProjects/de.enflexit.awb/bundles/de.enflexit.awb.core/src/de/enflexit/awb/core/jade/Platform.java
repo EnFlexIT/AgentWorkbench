@@ -30,6 +30,7 @@ import de.enflexit.awb.core.config.DeviceAgentDescription;
 import de.enflexit.awb.core.jade.PlatformStateInformation.PlatformState;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
+import de.enflexit.language.Language;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.Profile;
@@ -662,7 +663,7 @@ public class Platform {
 					
 				} catch (UnknownHostException uhe) {
 					System.out.println("UnknownHostException for '" + masterURL + "' => Delaying JADE start ...");
-//					uhe.printStackTrace();
+					//uhe.printStackTrace();
 				}
 				
 				// --- Exit if URL could be resolved ----------

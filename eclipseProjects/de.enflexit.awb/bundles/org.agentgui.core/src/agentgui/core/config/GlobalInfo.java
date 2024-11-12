@@ -43,8 +43,8 @@ import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
-import de.enflexit.api.LastSelectedFolderReminder;
 import de.enflexit.common.ExecutionEnvironment;
+import de.enflexit.common.LastSelectedFolderReminder;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.VersionInfo;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
@@ -95,7 +95,7 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private static String localFileNameProject = "agentgui.xml";
 	private static String localFileNameProjectUserObjectBinFile = "agentgui.bin";
 	private static String localFileNameProjectUserObjectXmlFile = "agentgui-UserObject.xml";
-	private static String localFileEndProjectZip = "agui";
+	private static String localFileEndProjectZip = "awb";
 	
 	// --- Known EnvironmentTypes of Agent.Workbench ----------------
 	private EnvironmentTypes knownEnvironmentTypes;

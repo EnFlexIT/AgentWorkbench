@@ -36,6 +36,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.enflexit.common.EomVisualizationHostContainer;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import java.util.TreeMap;
@@ -71,7 +73,6 @@ import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeriesExce
 
 import de.enflexit.language.Language;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
-import de.enflexit.eom.api.EomVisualizationHostContainer;
 import jade.core.AID;
 
 /**

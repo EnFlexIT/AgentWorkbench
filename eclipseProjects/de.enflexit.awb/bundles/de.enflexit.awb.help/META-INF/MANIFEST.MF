@@ -6,7 +6,6 @@ Bundle-SymbolicName: de.enflexit.awb.help;singleton:=true
 Bundle-Version: 2.4.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.agentgui.core,
- de.enflexit.api,
  de.enflexit.awb.bgSystem,
  de.enflexit.common,
  org.awb.env.networkModel,

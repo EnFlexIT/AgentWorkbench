@@ -8,8 +8,7 @@ Automatic-Module-Name: de.enflexit.awb.samples.SimService
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.enflexit.awb.samples.simulationService,
  de.enflexit.awb.samples.simulationService.classLoadService
-Require-Bundle: de.enflexit.api;bundle-version="1.0.0",
- de.enflexit.common;bundle-version="1.2.3",
+Require-Bundle: de.enflexit.common;bundle-version="1.2.3",
  org.agentgui.lib.jade;bundle-version="4.5.1",
  org.agentgui.core;bundle-version="2.1.16"
 Service-Component: OSGI-INF/awbClassLoadService.xml

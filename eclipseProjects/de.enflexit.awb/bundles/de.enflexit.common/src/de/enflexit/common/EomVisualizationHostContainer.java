@@ -1,4 +1,4 @@
-package de.enflexit.eom.api;
+package de.enflexit.common;
 
 import javax.swing.JPanel;
 
