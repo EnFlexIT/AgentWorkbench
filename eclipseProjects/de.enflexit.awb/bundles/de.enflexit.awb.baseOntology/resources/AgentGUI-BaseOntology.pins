@@ -1,0 +1,102 @@
+; Fri Sep 27 17:26:48 CEST 2019
+; 
+;+ (version "3.3.1")
+;+ (build "Build 430")
+
+([Chart] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([ChartSettingsGeneral] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([DataSeries] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Formula] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([project+annotation] of  %3APROJECT-ANNOTATION
+
+	(%3ALOCATION "D:\\git\\AgentWorkbench\\eclipseProjects\\org.agentgui\\bundles\\org.agentgui.core\\src")
+	(%3AONTOLOGYNAME "AgentGUI_Base")
+	(%3APACKAGE "agentgui.ontology")
+	(%3ASUPPORT "j2se"))
+
+([Simple_Boolean] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_Double] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public Double getDoubleValue() {\n	   try {\n		   return Double.parseDouble(this.getStringDoubleValue());\n	   } catch(NumberFormatException ex){\n		   return null;\n	   }\n   }\n   public void setDoubleValue(double doubleValue) {\n	   this.setStringDoubleValue(\"\" + doubleValue);;\n   }\n   public void setDoubleValue(Double doubleValue) {\n	   this.setStringDoubleValue(doubleValue.toString());\n   }"))
+
+([Simple_Float] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_Integer] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_Long] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public Long getLongValue(){\n	   try{\n		   return Long.parseLong(getStringLongValue());\n	   }catch(NumberFormatException ex){\n		   return null;\n	   }\n   }\n   public void setLongValue(long value){\n	   setStringLongValue(\"\"+value);\n   }\n   public void setLongValue(Long value){\n	   setStringLongValue(value.toString());\n   }"))
+
+([Simple_Object] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([Simple_String] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TimeSeries] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getTimeSeriesValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }else{\n		   if(getTimeSeriesValuePairs().size() == 1){\n			   TimeSeriesValuePair vp = (TimeSeriesValuePair) getTimeSeriesValuePairs().get(0);\n			   noValuePairs = vp.isEmpty();\n		   }\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n	}\n\npublic void sort() {\n	java.util.List<TimeSeriesValuePair> newTimeSeriesValuePairs = new java.util.ArrayList<TimeSeriesValuePair>();\n	for (int i=0; i<this.timeSeriesValuePairs.size(); i++) {\n		newTimeSeriesValuePairs.add((TimeSeriesValuePair) this.timeSeriesValuePairs.get(i));\n	}\n	java.util.Collections.sort(newTimeSeriesValuePairs, new java.util.Comparator<TimeSeriesValuePair>() {\n		@Override\n		public int compare(TimeSeriesValuePair vp1, TimeSeriesValuePair vp2) {\n			Long t1 = vp1.getTimestamp().getLongValue();\n			Long t2 = vp2.getTimestamp().getLongValue();\n			return t1.compareTo(t2);\n		}\n	});\n	this.timeSeriesValuePairs.clear();\n	for (int i=0; i<newTimeSeriesValuePairs.size(); i++) {\n		this.timeSeriesValuePairs.add(newTimeSeriesValuePairs.get(i));\n	}\n}"))
+
+([TimeSeriesChart] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n boolean wrongChartTitle = false;\n if (this.getTimeSeriesVisualisationSettings().getChartTitle() == null|| this.getTimeSeriesVisualisationSettings().getChartTitle().length()==0) {\n  wrongChartTitle = true;\n }\n boolean wrongXAxisLabel = false;\n if (this.getTimeSeriesVisualisationSettings().getXAxisLabel()==null || this.getTimeSeriesVisualisationSettings().getXAxisLabel().length()==0) {\n  wrongXAxisLabel = true;\n }\n boolean wrongYAxisLabel = false;\n if (this.getTimeSeriesVisualisationSettings().getYAxisLabel()==null || this.getTimeSeriesVisualisationSettings().getYAxisLabel().length()==0) {\n  wrongYAxisLabel= true;\n }\n\n if (wrongChartTitle && wrongXAxisLabel && wrongYAxisLabel) {\n  return true;\n } else {\n  return false;\n }\n}"))
+
+([TimeSeriesChartSettings] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([TimeSeriesValuePair] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   if(this.getValue().getFloatValue() == 0.0f && this.getTimestamp().getStringLongValue().length() == 0){\n		   return  true;\n	   } else {\n		   return false;\n	   }\n   }"))
+
+([ValuePair] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([VisualizationSettings] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([XyChart] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n boolean wrongChartTitle = false;\n if (this.getXySeriesVisualisationSettings().getChartTitle() == null|| this.getXySeriesVisualisationSettings().getChartTitle().length()==0) {\n  wrongChartTitle = true;\n }\n boolean wrongXAxisLabel = false;\n if (this.getXySeriesVisualisationSettings().getXAxisLabel()==null || this.getXySeriesVisualisationSettings().getXAxisLabel().length()==0) {\n  wrongXAxisLabel = true;\n }\n boolean wrongYAxisLabel = false;\n if (this.getXySeriesVisualisationSettings().getYAxisLabel()==null || this.getXySeriesVisualisationSettings().getYAxisLabel().length()==0) {\n  wrongYAxisLabel= true;\n }\n\n if (wrongChartTitle && wrongXAxisLabel && wrongYAxisLabel) {\n  return true;\n } else {\n  return false;\n }\n}"))
+
+([XyDataSeries] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE)
+	(%3AJADE-JAVA-CODE "public boolean isEmpty() {\n	   boolean wrongLabel = false;\n	   if(this.getLabel() == null || this.getLabel().length() == 0){\n		   wrongLabel = true;\n	   }\n	   boolean noValuePairs = false;\n	   if(getXyValuePairs().size() == 0){\n		   noValuePairs = true;\n	   }\n	   \n	   return wrongLabel && noValuePairs;\n}\n\npublic void sort() {\n	\n	java.util.List<XyValuePair> newXyValuePairs = new java.util.ArrayList<XyValuePair>();\n	for (int i=0; i<this.xyValuePairs.size(); i++) {\n		newXyValuePairs.add((XyValuePair) this.xyValuePairs.get(i));\n	}\n	java.util.Collections.sort(newXyValuePairs, new java.util.Comparator<XyValuePair>() {\n		@Override\n		public int compare(XyValuePair vp1, XyValuePair vp2) {\n			Float x1 = vp1.getXValue().getFloatValue();\n			Float x2 = vp2.getXValue().getFloatValue();\n			if (vp1.getXValue().getFloatValue()==vp2.getXValue().getFloatValue()) {\n				Float y1 = vp1.getYValue().getFloatValue();\n				Float y2 = vp2.getYValue().getFloatValue();\n				return y1.compareTo(y2);\n			}\n			return x1.compareTo(x2);\n		}\n	});\n	this.xyValuePairs.clear();\n	for (int i=0; i<newXyValuePairs.size(); i++) {\n		this.xyValuePairs.add(newXyValuePairs.get(i));\n	}\n}"))
+
+([XySeriesChartSettings] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))
+
+([XyValuePair] of  %3AJADE-CLASS
+
+	(%3AJADE-IGNORE FALSE))

@@ -47,9 +47,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import de.enflexit.common.swing.TimeSelection;
 import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.TimeSelection;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 
 /**

@@ -44,7 +44,6 @@ import de.enflexit.common.transfer.Zipper;
  */
 public class CommonComponentFactory {
 
-
 	/**
 	 * Returns a new pre-configured {@link Zipper}.
 	 * @return the new {@link Zipper} instance
@@ -70,18 +69,14 @@ public class CommonComponentFactory {
 
 	/**
 	 * Returns a new pre-configured {@link CsvDataControllerPanel}.
-	 * 
 	 * @return the new {@link CsvDataControllerPanel}
 	 */
 	public static CsvDataControllerPanel getNewCsvDataControllerPanel() {
-		CsvDataControllerPanel csvPanel = new CsvDataControllerPanel();
-		csvPanel.setLastSelectedFolderReminder(Application.getGlobalInfo());
-		return csvPanel;
+		return new CsvDataControllerPanel();
 	}
 
 	/**
 	 * Returns a new {@link RecursiveFolderCopier}
-	 * 
 	 * @return the new {@link RecursiveFolderCopier}
 	 */
 	public static RecursiveFolderCopier getNewRecursiveFolderCopier() {
@@ -90,7 +85,6 @@ public class CommonComponentFactory {
 
 	/**
 	 * Returns a new {@link RecursiveFolderDeleter}
-	 * 
 	 * @return the new {@link RecursiveFolderDeleter}
 	 */
 	public static RecursiveFolderDeleter getNewRecursiveFolderDeleter() {

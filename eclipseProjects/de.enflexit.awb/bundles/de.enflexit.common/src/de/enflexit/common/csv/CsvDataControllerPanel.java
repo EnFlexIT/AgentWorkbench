@@ -49,7 +49,7 @@ import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import de.enflexit.common.LastSelectedFolderReminder;
+import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.images.ImageProvider;
@@ -64,8 +64,6 @@ import de.enflexit.language.Language;
 public class CsvDataControllerPanel extends JPanel implements ActionListener, Observer{
 
 	private static final long serialVersionUID = -8553767098312965499L;
-	
-	private LastSelectedFolderReminder folderReminder;
 	
 	private JToolBar jToolBarCsvHandling;
 	
@@ -194,32 +192,19 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 	
 	
 	/**
-	 * Sets the last selected folder reminder.
-	 * @param folderReminder the new last selected folder reminder
-	 */
-	public void setLastSelectedFolderReminder(LastSelectedFolderReminder folderReminder) {
-		this.folderReminder = folderReminder;
-	}
-	/**
 	 * Returns the last selected folder.
 	 * @return the last selected folder
 	 */
 	private File getLastSelectedFolder() {
-		if (this.folderReminder!=null) {
-			return this.folderReminder.getLastSelectedFolder();
-		}
-		return null;
+		return GlobalRuntimeValues.getLastSelectedDirectory();
 	}
 	/**
 	 * Reminds the last selected folder.
 	 * @param lastSelectedFolder the new last selected folder
 	 */
 	private void setLastSelectedFolder(File lastSelectedFolder) {
-		if (this.folderReminder!=null) {
-			this.folderReminder.setLastSelectedFolder(lastSelectedFolder);
-		}
+		GlobalRuntimeValues.setLastSelectedDirectory(lastSelectedFolder);
 	}
-	
 	
 	
 	/* (non-Javadoc)

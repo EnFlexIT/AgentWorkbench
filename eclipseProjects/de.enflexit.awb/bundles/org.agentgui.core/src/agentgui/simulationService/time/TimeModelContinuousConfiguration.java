@@ -55,6 +55,7 @@ import de.enflexit.language.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import de.enflexit.common.swing.JSpinnerDateTime;
+import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.common.swing.TimeZoneWidget;
 
 /**

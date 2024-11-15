@@ -37,7 +37,6 @@ import java.util.List;
 
 import agentgui.core.application.Application;
 import agentgui.core.update.AWBUpdater;
-import agentgui.simulationService.distribution.PlatformStore;
 import agentgui.simulationService.ontology.AWB_DistributionOntology;
 import agentgui.simulationService.ontology.Version;
 import agentgui.simulationService.ontology.BenchmarkResult;
@@ -61,6 +60,7 @@ import agentgui.simulationService.ontology.SlaveRegister;
 import agentgui.simulationService.ontology.SlaveTrigger;
 import agentgui.simulationService.ontology.SlaveUnregister;
 import de.enflexit.awb.bgSystem.db.dataModel.BgSystemPlatform;
+import de.enflexit.awb.bgSystem.db.dataModel.PlatformStore;
 import jade.content.Concept;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;

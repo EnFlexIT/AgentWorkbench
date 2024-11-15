@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" factory="de.enflexit.common.classLoadService" name="agentgui.classLoadService.BaseClassLoadServiceImpl">
+   <implementation class="agentgui.classLoadService.BaseClassLoadServiceImpl"/>
+   <service>ice"/>
+      <provide interface="de.enflexit.common.classLoadService.BaseClassLoadService"/>
+   </service>
+</scr:component>

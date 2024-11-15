@@ -290,7 +290,6 @@ public class Application {
 			synchronized (globalInfoSynchronizerForInitialization) {
 				if (Application.globalInfo==null) {
 					Application.globalInfo = new GlobalInfo();
-					Application.globalInfo.initialize();
 					if (Application.globalInfo.isLoggingEnabled()==true) {
 						startLogFileWriter();
 					}

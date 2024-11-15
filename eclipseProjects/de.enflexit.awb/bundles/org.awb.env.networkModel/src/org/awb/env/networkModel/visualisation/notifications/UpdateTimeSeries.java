@@ -40,7 +40,7 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
-import agentgui.core.application.Application;
+import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.TimeSeriesChartRealTimeWrapper;
 import agentgui.core.charts.timeseriesChart.TimeSeriesDataModel;
 import agentgui.core.charts.timeseriesChart.TimeSeriesHelper;
@@ -350,7 +350,7 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 		// ------------------------------------------------
 		case TimeSeriesChartAddOrExchangeDataRow:
 
-			TimeSeriesChartRealTimeWrapper wrapper = new TimeSeriesChartRealTimeWrapper(timeSeriesChart, Application.getGlobalInfo().getTimeSeriesLengthRestriction());
+			TimeSeriesChartRealTimeWrapper wrapper = new TimeSeriesChartRealTimeWrapper(timeSeriesChart, StaticTimeSeriesChartConfiguration.getTimeSeriesLengthRestriction());
 			for (int i = 0; i < this.getValueVector().size(); i++) {
 				// -- Get the new value for the Time Series i -------
 				Float newFloatValue = this.getValueVector().get(i);

@@ -37,9 +37,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
+import de.enflexit.common.swing.TimeSelection;
 import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.TimeSelection;
 import agentgui.simulationService.agents.LoadMeasureAgent;
 
 /**

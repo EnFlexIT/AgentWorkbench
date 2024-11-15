@@ -32,6 +32,7 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.enflexit.common.GlobalDefaultValues;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 
 
@@ -44,7 +45,7 @@ public abstract class TimeModelDateBased extends TimeModel {
 
 	private static final long serialVersionUID = 6116787943288451141L;
 
-	public static final String DEFAULT_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss.SSS";
+	public static final String DEFAULT_TIME_FORMAT = GlobalDefaultValues.DEFAULT_TIME_FORMAT;
 	
 	protected long timeStart = System.currentTimeMillis();
 	protected long timeStop = System.currentTimeMillis() + 1000 * 60 * 60 * 24;

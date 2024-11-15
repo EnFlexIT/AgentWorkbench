@@ -2,6 +2,12 @@ package de.enflexit.common;
 
 import javax.swing.ImageIcon;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
 
 /**
  * The Class BundleHelper provides some static help methods to be used within the bundle.
@@ -35,6 +41,23 @@ public class BundleHelper {
 			err.printStackTrace();
 		}	
 		return imageIcon;
+	}
+	
+	
+
+	private static IEclipsePreferences eclipsePreferences;
+	
+	/**
+	 * Returns the eclipse preferences.
+	 * @return the eclipse preferences
+	 */
+	public static IEclipsePreferences getEclipsePreferences() {
+		if (eclipsePreferences==null) {
+			Bundle bundle = FrameworkUtil.getBundle(BundleHelper.class);
+			IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+			eclipsePreferences = iScopeContext.getNode(bundle.getSymbolicName());
+		}
+		return eclipsePreferences;
 	}
 	
 }

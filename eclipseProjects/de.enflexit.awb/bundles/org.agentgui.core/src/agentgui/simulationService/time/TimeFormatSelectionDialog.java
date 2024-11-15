@@ -51,6 +51,7 @@ import javax.swing.WindowConstants;
 
 import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
+import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 

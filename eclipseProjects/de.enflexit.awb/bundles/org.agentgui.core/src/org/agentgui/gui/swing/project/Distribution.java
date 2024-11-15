@@ -59,7 +59,6 @@ import javax.swing.text.Document;
 import agentgui.core.application.Application;
 import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.components.TimeSelection;
 import agentgui.core.project.DistributionSetup;
 import agentgui.core.project.Project;
 import agentgui.core.project.RemoteContainerConfiguration;
@@ -75,6 +74,7 @@ import de.enflexit.common.Observer;
 import de.enflexit.common.classSelection.ClassSelectionDialog;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.common.swing.TimeSelection;
 
 /**
  * Represents the JPanel/Tab to configure the Distribution mechanisms for

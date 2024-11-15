@@ -40,6 +40,12 @@ Require-Bundle: de.enflexit.common,
  org.eclipse.osgi.services,
  org.apache.commons.text
 Bundle-ActivationPolicy: lazy
-Import-Package: de.enflexit.language,
+Import-Package: agentgui.core.charts,
+ agentgui.core.charts.timeseriesChart,
+ agentgui.core.charts.timeseriesChart.gui,
+ agentgui.core.charts.xyChart,
+ agentgui.core.charts.xyChart.gui,
+ agentgui.ontology,
+ de.enflexit.language,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation

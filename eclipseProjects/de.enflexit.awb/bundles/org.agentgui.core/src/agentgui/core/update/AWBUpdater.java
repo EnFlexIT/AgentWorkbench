@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package agentgui.core.update;
 
 import javax.swing.JOptionPane;
@@ -34,13 +6,13 @@ import org.agentgui.gui.AwbProgressMonitor;
 import org.agentgui.gui.UiBridge;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
+
 import agentgui.core.application.Application;
-import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.gui.options.UpdateOptions;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.p2.P2OperationsHandler;
+import de.enflexit.language.Language;
 
 /**
  * The Class AWBUpdater provides a thread that can be used to update
@@ -52,6 +24,10 @@ import de.enflexit.common.p2.P2OperationsHandler;
 public class AWBUpdater extends Thread {
 
 	public static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
+	
+	public static final int UPDATE_MODE_AUTOMATIC = 0;
+	public static final int UPDATE_MODE_ASK = 1;
+	public static final int UPDATE_MODE_DISABLED = 2;
 	
 	// --- For the debugging of this class set true -------------
 	private boolean debuggingInIDE = false;
@@ -139,10 +115,10 @@ public class AWBUpdater extends Thread {
 		case APPLICATION:
 			// --------------------------------------------
 			switch (this.updateAutoConfiguration) {
-			case UpdateOptions.UPDATE_MODE_AUTOMATIC:
+			case AWBUpdater.UPDATE_MODE_AUTOMATIC:
 				this.askBeforeDownload = false;
 				break;
-			case UpdateOptions.UPDATE_MODE_ASK:
+			case AWBUpdater.UPDATE_MODE_ASK:
 				this.askBeforeDownload = true;
 				break;
 			default:
@@ -158,7 +134,7 @@ public class AWBUpdater extends Thread {
 		case DEVICE_SYSTEM:
 			// --------------------------------------------
 			switch (this.updateAutoConfiguration) {
-			case UpdateOptions.UPDATE_MODE_AUTOMATIC:
+			case AWBUpdater.UPDATE_MODE_AUTOMATIC:
 				this.askBeforeDownload = false;
 				break;
 			default:

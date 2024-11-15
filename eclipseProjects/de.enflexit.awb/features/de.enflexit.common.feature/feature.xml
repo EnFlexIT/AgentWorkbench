@@ -84,4 +84,12 @@
          id="de.enflexit.logging"
          version="0.0.0"/>
 
+   <plugin
+         id="de.enflexit.language"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.awb.baseOntology"
+         version="0.0.0"/>
+
 </feature>

@@ -64,13 +64,13 @@ import de.enflexit.language.Language;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.project.Project;
 import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
-import agentgui.simulationService.time.TimeFormatSelection;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDiscrete;
 import agentgui.simulationService.time.TimeModelStroke;
 import agentgui.simulationService.time.TimeUnit;
 import agentgui.simulationService.time.TimeUnitVector;
 import de.enflexit.common.swing.JSpinnerDateTime;
+import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.common.swing.TimeZoneWidget;
 
 /**

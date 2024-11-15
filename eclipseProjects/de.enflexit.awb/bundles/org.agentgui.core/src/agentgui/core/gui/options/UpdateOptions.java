@@ -49,6 +49,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.EtchedBorder;
 
 import agentgui.core.application.Application;
+import agentgui.core.update.AWBUpdater;
 import de.enflexit.language.Language;
 
 
@@ -62,9 +63,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	public static final int UPDATE_MODE_AUTOMATIC = 0;
-	public static final int UPDATE_MODE_ASK = 1;
-	public static final int UPDATE_MODE_DISABLED = 2;
 	private JPanel jPanelDummy;
 	
 	private JRadioButton jRadioButtonUpdateAutomated;
@@ -77,7 +75,6 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 	private JLabel jLabelUpdateDictionary;
 
 	private JCheckBox jCheckBoxUpdateKeepDictionary;
-	
 
 	/**
 	 * This is the default constructor
@@ -212,7 +209,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jRadioButtonUpdateAutomated == null) {
 			jRadioButtonUpdateAutomated = new JRadioButton();
 			jRadioButtonUpdateAutomated.setText("Updates automatisch installieren");
-			jRadioButtonUpdateAutomated.setActionCommand("" + UPDATE_MODE_AUTOMATIC);
+			jRadioButtonUpdateAutomated.setActionCommand("" + AWBUpdater.UPDATE_MODE_AUTOMATIC);
 		}
 		return jRadioButtonUpdateAutomated;
 	}
@@ -224,7 +221,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jRadioButtonUpdateDownloadAndAsk == null) {
 			jRadioButtonUpdateDownloadAndAsk = new JRadioButton();
 			jRadioButtonUpdateDownloadAndAsk.setText("Update automatisch herunterladen, Installationszeitpunkt manuell festlegen");
-			jRadioButtonUpdateDownloadAndAsk.setActionCommand("" + UPDATE_MODE_ASK);
+			jRadioButtonUpdateDownloadAndAsk.setActionCommand("" + AWBUpdater.UPDATE_MODE_ASK);
 		}
 		return jRadioButtonUpdateDownloadAndAsk;
 	}
@@ -236,7 +233,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 		if (jRadioButtonUpdateDisabled == null) {
 			jRadioButtonUpdateDisabled = new JRadioButton();
 			jRadioButtonUpdateDisabled.setText("Updates nicht automatisch herunterladen oder installieren");
-			jRadioButtonUpdateDisabled.setActionCommand("" + UPDATE_MODE_DISABLED);
+			jRadioButtonUpdateDisabled.setActionCommand("" + AWBUpdater.UPDATE_MODE_DISABLED);
 		}
 		return jRadioButtonUpdateDisabled;
 	}

@@ -28,7 +28,7 @@ import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.BenchmarkMeasurement;
-import agentgui.core.charts.timeseriesChart.TimeSeriesLengthRestriction;
+import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentType;
@@ -36,7 +36,6 @@ import agentgui.core.environment.EnvironmentTypeServiceFinder;
 import agentgui.core.environment.EnvironmentTypes;
 import agentgui.core.gui.AboutDialog;
 import agentgui.core.gui.MainWindow;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.project.PlatformJadeConfig;
 import agentgui.core.project.PlatformJadeConfig.MTP_Creation;
@@ -44,9 +43,10 @@ import agentgui.core.project.Project;
 import agentgui.simulationService.time.TimeModel;
 import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.common.ExecutionEnvironment;
-import de.enflexit.common.LastSelectedFolderReminder;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.VersionInfo;
+import de.enflexit.common.ZoneIdResolver;
+import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.language.Language;
@@ -62,7 +62,7 @@ import jade.wrapper.AgentContainer;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class GlobalInfo implements LastSelectedFolderReminder {
+public class GlobalInfo implements ZoneIdResolver {
 
 	// --- Constant values ------------------------------------------ 
 	private static String localAppTitle = "Agent.Workbench";
@@ -149,18 +149,11 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	private String oidcUsername;
 	private String oidcIssuerURI;
 
-	// --- Reminder information for file dialogs --------------------
-	private File lastSelectedFolder; 
-	
 	// --- BundleProperties and VersionInfo -------------------------
 	private BundleProperties bundleProperties;
 	private VersionInfo versionInfo;
 	
 	
-	// --- Time series chart configuration --------------------------
-	private TimeSeriesLengthRestriction timeSeriesLengthRestriction;
-	
-
 	/**
 	 * The Enumeration of possible ExecutionModes.
 	 * In order to get the current execution mode use  
@@ -202,23 +195,30 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * Constructor of this class. 
 	 */
 	public GlobalInfo() {
-
-		boolean debug = false;
-		if (debug==true) {
-			System.out.println(localAppTitle + " => BasePath: " + this.getPathBaseDir().toString() + ", ExecEnv: " + this.getExecutionEnvironment().name());
-			GlobalInfo.printPlatformLocations();
-			GlobalInfo.println4SysProps();
-			GlobalInfo.println4EnvProps();
-		}
+		this.initialize();
 	}
 	/**
 	 * Initializes this class by reading the file properties and the current version information.
 	 */
-	public void initialize() {
+	private void initialize() {
+
 		try {
+			// --- Do the necessary things ----------------
+			GlobalRuntimeValues.setZoneIdResolver(this);
+			StaticTimeSeriesChartConfiguration.setStaticTimeSeriesSettingEvaluator(new TimeSeriesSettingEvaluator());
+			
 			this.getVersionInfo();
 			this.getBundleProperties();
 			this.setApplicationsLookAndFeel();
+			
+			// --- Some debug stuff -----------------------
+			boolean debug = false;
+			if (debug==true) {
+				System.out.println(localAppTitle + " => BasePath: " + this.getPathBaseDir().toString() + ", ExecEnv: " + this.getExecutionEnvironment().name());
+				GlobalInfo.printPlatformLocations();
+				GlobalInfo.println4SysProps();
+				GlobalInfo.println4EnvProps();
+			}
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -1281,23 +1281,6 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return "DAY_" + sdf.format(new Date(timeStamp));
 	}
 	
-	// --- Time series chart configuration --------------------------
-	/**
-	 * Gets the time series length restriction.
-	 * @return the time series length restriction
-	 */
-	public TimeSeriesLengthRestriction getTimeSeriesLengthRestriction() {
-		return timeSeriesLengthRestriction;
-	}
-	
-	/**
-	 * Sets the time series length restriction.
-	 * @param timeSeriesLengthRestriction the new time series length restriction
-	 */
-	public void setTimeSeriesLengthRestriction(TimeSeriesLengthRestriction timeSeriesLengthRestriction) {
-		this.timeSeriesLengthRestriction = timeSeriesLengthRestriction;
-	}
-
 	
 	// ---- Connection to the Master-Server -------------------------
 	/**
@@ -1471,16 +1454,15 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 	 * in which a file was selected (e. g. while using a JFileChooser) 
 	 * @param lastSelectedFolder the lastSelectedFolder to set
 	 */
-	@Override
 	public void setLastSelectedFolder(File lastSelectedFolder) {
-		this.lastSelectedFolder = lastSelectedFolder;
+		GlobalRuntimeValues.setLastSelectedDirectory(lastSelectedFolder);
 	}
 	/**
 	 * Returns the reminder value of the last selected folder as File object 
 	 * @return the lastSelectedFolder
 	 */
-	@Override
 	public File getLastSelectedFolder() {
+		File lastSelectedFolder = GlobalRuntimeValues.getLastSelectedDirectory();
 		if (lastSelectedFolder==null) {
 			lastSelectedFolder = this.getPathBaseDir().toFile();
 		} 
@@ -1971,18 +1953,13 @@ public class GlobalInfo implements LastSelectedFolderReminder {
 		return encryptedPSWD;
 	}
 
-	
 	/**
-	 * Returns the current/active {@link ZoneId} that is either configured 
-	 * in the current {@link Project} or the systems default ZoneId.
-	 * @return the current zone id
-	 * 
-	 * @see Project#getTimeModelController()
-	 * @see TimeModelController#getTimeModel()
-	 * @see TimeModelDateBased#getZoneId()
+	 * Returns the current ZoneId by also checking open Projects settings.
+	 * @return the ZoneId currently to use
 	 */
-	public static ZoneId getCurrentZoneId() {
-		
+	@Override
+	public ZoneId getZoneId() {
+
 		// --- Check for an open project ----------------------------
 		Project project = Application.getProjectFocused();
 		if (project!=null) {
