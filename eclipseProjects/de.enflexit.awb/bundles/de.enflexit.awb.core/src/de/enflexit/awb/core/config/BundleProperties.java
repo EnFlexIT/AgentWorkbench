@@ -5,6 +5,8 @@ import java.util.Vector;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
@@ -25,8 +27,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 public class BundleProperties {
 
 	private boolean debug = false;
-	
-	public static final String PLUGIN_ID = PlugInActivator.PLUGIN_ID;
 	
 	public static final String DEF_AWG_CORE_BUNLDE_VERSION = "00_AWB_CORE_BUNDLE_VERSION";
 	public static final String DEF_PROJECTS_DIRECTORY = "00_PROJECTS_DIRECTORY";
@@ -123,8 +123,9 @@ public class BundleProperties {
 	 */
 	public IEclipsePreferences getEclipsePreferences() {
 		if (eclipsePreferences==null) {
+			Bundle bundle = FrameworkUtil.getBundle(this.getClass());
 			IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
-			eclipsePreferences = iScopeContext.getNode(PlugInActivator.PLUGIN_ID);
+			eclipsePreferences = iScopeContext.getNode(bundle.getSymbolicName());
 			eclipsePreferences.addPreferenceChangeListener(this.getChangeListener());
 		}
 		return eclipsePreferences;
@@ -208,10 +209,6 @@ public class BundleProperties {
 		booleanPrefValue = eclipsePreferences.getBoolean(DEF_BENCH_SKIP_ALLWAYS, true);
 		this.globalInfo.setBenchAlwaysSkip(booleanPrefValue);
 
-
-		// --- this.DEF_LANGUAGE ---------------------
-		stringPrefValue = eclipsePreferences.get(DEF_LANGUAGE, Language.EN);
-		this.globalInfo.setLanguage(stringPrefValue);
 
 
 		// --- this.DEF_MAXIMiZE_MAIN_WINDOW ---------
@@ -348,9 +345,6 @@ public class BundleProperties {
 		eclipsePreferences.putBoolean(DEF_BENCH_SKIP_ALLWAYS, this.globalInfo.isBenchAlwaysSkip());
 		
 		
-		// --- this.DEF_LANGUAGE ---------------------
-		if (this.globalInfo.getLanguage()!=null) eclipsePreferences.put(DEF_LANGUAGE, this.globalInfo.getLanguage());
-
 		
 		// --- this.DEF_MAXIMiZE_MAIN_WINDOW ---------
 		eclipsePreferences.putBoolean(DEF_MAXIMiZE_MAIN_WINDOW, this.globalInfo.isMaximzeMainWindow());			

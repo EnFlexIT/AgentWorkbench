@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Agent-Environment Bundle
+Bundle-SymbolicName: de.enflexit.awb.environment
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: de.enflexit.awb.environment
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: de.enflexit.common,
+ de.enflexit.common.classLoadService,
+ de.enflexit.common.properties,
+ de.enflexit.common.swing,
+ de.enflexit.language,
+ jade.content,
+ jade.content.lang,
+ jade.content.lang.sl,
+ jade.content.onto,
+ jade.content.onto.basic,
+ jade.core,
+ jade.core.management,
+ jade.core.messaging,
+ jade.core.mobility,
+ jade.lang.acl,
+ jade.util,
+ jade.util.leap
+Export-Package: de.enflexit.awb.environment,
+ de.enflexit.awb.environment.time
