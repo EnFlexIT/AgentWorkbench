@@ -40,6 +40,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
@@ -50,7 +51,6 @@ import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.DeviceAgentDescription;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.jade.PlatformStateInformation.PlatformState;
 import agentgui.core.network.JadeUrlConfiguration;
 import agentgui.core.network.NetworkAddresses;
@@ -91,6 +91,33 @@ import jade.wrapper.StaleProxyException;
  */
 public class Platform {
 
+	/**
+	 * The Enumeration JadeStatusColor.
+	 */
+	public enum JadeStatusColor {
+		Green("JADE wurde lokal gestartet.",	"StatGreen.png"),
+		Yellow("JADE wird gestartet ... ", 		"StatYellow.png"),
+		Red("JADE wurde noch nicht gestartet.", "StatRed.png");
+		
+		private String deDescription;
+		private String imageName; 
+		
+		private ImageIcon icon;
+		private JadeStatusColor(String deDescription, String imageName) {
+			this.deDescription = deDescription;
+			this.imageName   = imageName;
+		}
+		public String getDescription() {
+			return Language.translate(this.deDescription);
+		}
+		public ImageIcon getImageIcon() {
+			if (icon==null) {
+				icon = GlobalInfo.getInternalImageIcon(this.imageName);
+			}
+			return icon;
+		}
+	}
+	
 	/**
 	 * The enumeration that names the system agents like the RMA and other.
 	 */
@@ -275,7 +302,7 @@ public class Platform {
 			
 			try {
 				// --- Set JADE status to yellow --------------------
-				Application.setJadeStatusColor(JadeStatusColor.Yellow);
+				Application.setJadeStatusColor(Platform.JadeStatusColor.Yellow);
 				// --------------------------------------------------
 				// --- In case of execution as Service, check -------
 				// --- Master-URL and maybe delay the JADE start ----
@@ -316,7 +343,7 @@ public class Platform {
 						
 						Platform.this.jadeMainContainer = null;
 						Platform.this.getAgentContainerList().clear();
-						Application.setJadeStatusColor(JadeStatusColor.Red);
+						Application.setJadeStatusColor(Platform.JadeStatusColor.Red);
 						Platform.this.setPlatformState(PlatformState.Standby);
 						if (Application.getMainWindow()!=null){
 							Application.getMainWindow().setSimulationReady2Start();
@@ -358,7 +385,7 @@ public class Platform {
 		// --- Start the Application Background-Agents ---------------
 		if (startSucceeded==true) {
 			if (this.startBackgroundAgents(showRMA)==false) return false;
-			Application.setJadeStatusColor(JadeStatusColor.Green);
+			Application.setJadeStatusColor(Platform.JadeStatusColor.Green);
 		}
 		return startSucceeded;
 	}
@@ -497,7 +524,7 @@ public class Platform {
 		this.jadeMainContainer = null;
 		this.projectResourcesPackagingTime = null;
 		
-		Application.setJadeStatusColor(JadeStatusColor.Red);
+		Application.setJadeStatusColor(Platform.JadeStatusColor.Red);
 		this.setPlatformState(PlatformState.Standby);
 		if (Application.getMainWindow()!=null) {
 			Application.getMainWindow().setSimulationReady2Start();

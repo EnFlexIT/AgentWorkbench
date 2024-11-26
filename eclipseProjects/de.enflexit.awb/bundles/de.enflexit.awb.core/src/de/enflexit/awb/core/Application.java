@@ -15,17 +15,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.eclipse.equinox.app.IApplication;
 
-import agentgui.core.application.Application;
+import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
+import agentgui.core.charts.xyChart.XyChartVisualisation;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import de.enflexit.awb.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.jade.NetworkAddresses;
+import de.enflexit.awb.core.jade.NetworkAddresses.NetworkAddress;
 import de.enflexit.awb.core.jade.Platform;
+import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.awb.core.ui.AwbConsole;
+import de.enflexit.awb.core.ui.AwbMainWindow;
+import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.language.Language;
 
 
@@ -45,7 +57,7 @@ public class Application {
 	private static Boolean headlessOperation;
 	
 	/** The eclipse IApplication */
-	private static IApplication plugInApplication;
+	private static IApplication iApplication;
 	
 	/** The quit application. */
 	private static boolean quitJVM = false;
@@ -53,6 +65,9 @@ public class Application {
 	/** This attribute holds the current state of the configurable runtime informations */
 	private static GlobalInfo globalInfo;
 	private static Object globalInfoSynchronizerForInitialization = new Object();
+	
+	private static AwbMainWindow mainWindow;
+	
 	/** Here the tray icon of the application can be accessed */
 	private static AwbTrayIcon trayIcon;
 	/** This is the instance of the main application window */
@@ -228,7 +243,6 @@ public class Application {
 			synchronized (globalInfoSynchronizerForInitialization) {
 				if (Application.globalInfo==null) {
 					Application.globalInfo = new GlobalInfo();
-					Application.globalInfo.initialize();
 					if (Application.globalInfo.isLoggingEnabled()==true) {
 						startLogFileWriter();
 					}
@@ -272,25 +286,28 @@ public class Application {
 	 * Gets the main window.
 	 * @return the main window
 	 */
-	public static MainWindow getMainWindow() {
-		return getIApplication()==null ? null : getIApplication().getSwingMainWindow();
+	public static AwbMainWindow getMainWindow() {
+		if (Application.mainWindow==null) {
+			Application.mainWindow = AgentWorkbenchUiManager.getInstance().getMainWindow();
+		}
+		return Application.mainWindow;
 	}
 	/**
 	 * Starts the main application window (JFrame).
 	 * @param postWindowOpenRunnable the post window open runnable
 	 */
 	public static void startMainWindow(Runnable postWindowOpenRunnable) {
-		getIApplication().startEndUserApplication(postWindowOpenRunnable);
+		// TODO getIApplication().startEndUserApplication(postWindowOpenRunnable);
 	}
 	/**
 	 * Sets the main window.
 	 * @param newMainWindow the new main window
 	 */
-	public static void setMainWindow(MainWindow newMainWindow) {
-		if (getIApplication().getSwingMainWindow()!=null && newMainWindow==null) {
-			getIApplication().getSwingMainWindow().dispose();
+	public static void setMainWindow(AwbMainWindow newMainWindow) {
+		if (newMainWindow!=mainWindow) {
+			mainWindow.dispose();
 		}
-		getIApplication().setSwingMainWindow(newMainWindow);	
+		mainWindow = newMainWindow;
 	}
 	
 		
@@ -298,18 +315,18 @@ public class Application {
 	 * Returns the lApplication.
 	 * @return the l application
 	 */
-	public static PlugInApplication getIApplication() {
-		return plugInApplication;
+	public static IApplication getIApplication() {
+		return iApplication;
 	}
 	
 	/**
 	 * Main method for the start of the application running as end user application or server-tool.
-	 * @param piApp the current {@link PlugInApplication} instance 
+	 * @param iApp the current {@link IApplication} instance 
 	 */
-	public static void start(PlugInApplication piApp) {
+	public static void start(IApplication iApp) {
 
 		// --- Remind the IApplication of the eclipse framework -----
-		plugInApplication = piApp;
+		iApplication = iApp;
 		
 		// --- Read the start arguments and react on it?! -----------
 		String[] remainingArgs = proceedStartArguments(org.eclipse.core.runtime.Platform.getApplicationArgs());
@@ -1119,7 +1136,7 @@ public class Application {
 							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
 							 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
 							 "von Ihnen neu geöffnet werden.");
-			Integer MsgAnswer = JOptionPane.showConfirmDialog( Application.getMainWindow().getContentPane(), MsgText, MsgHead, JOptionPane.YES_NO_OPTION);
+			Integer MsgAnswer = AwbOptionPane.showConfirmDialog( Application.getMainWindow(), MsgText, MsgHead, AwbOptionPane.YES_NO_OPTION);
 			if (MsgAnswer==1) return;
 			
 		}

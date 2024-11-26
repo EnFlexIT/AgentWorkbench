@@ -513,8 +513,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	public void setFocusOnTab (String titleOfTab) {
 		for (int i=0; i<jTabbedPaneRight.getComponentCount();  i++ ) {
-			Component Comp = jTabbedPaneRight.getComponent(i);
-			if ( Comp.getName().equalsIgnoreCase( Language.translate(titleOfTab) ) ) {
+			Component comp = jTabbedPaneRight.getComponent(i);
+			if ( comp.getName().equalsIgnoreCase( Language.translate(titleOfTab) ) ) {
 				jTabbedPaneRight.setSelectedIndex(i);		
 			}
 		}	

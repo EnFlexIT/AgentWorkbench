@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import agentgui.core.application.Application;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.awb.simulation.ontology.RemoteContainerConfig;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 

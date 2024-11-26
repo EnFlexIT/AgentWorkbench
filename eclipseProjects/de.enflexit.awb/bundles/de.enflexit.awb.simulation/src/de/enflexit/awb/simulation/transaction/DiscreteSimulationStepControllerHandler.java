@@ -3,10 +3,10 @@ package de.enflexit.awb.simulation.transaction;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.enflexit.awb.environment.EnvironmentModel;
-import de.enflexit.awb.environment.time.TimeModel;
-import de.enflexit.awb.environment.time.TimeModelDiscrete;
-import de.enflexit.awb.environment.time.TimeModelStroke;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
+import de.enflexit.awb.simulation.environment.time.TimeModelStroke;
 
 /**
  * The Class DiscreteSimulationStepControllerHandler.

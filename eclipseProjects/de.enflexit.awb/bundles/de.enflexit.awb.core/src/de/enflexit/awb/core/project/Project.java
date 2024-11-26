@@ -42,6 +42,7 @@ import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentController.PersistenceStrategy;
 import de.enflexit.awb.core.environment.EnvironmentPanel;
 import de.enflexit.awb.core.environment.EnvironmentType;
+import de.enflexit.awb.core.environment.time.TimeModelController;
 import de.enflexit.awb.core.project.plugins.PlugIn;
 import de.enflexit.awb.core.project.plugins.PlugInLoadException;
 import de.enflexit.awb.core.project.plugins.PlugInNotification;

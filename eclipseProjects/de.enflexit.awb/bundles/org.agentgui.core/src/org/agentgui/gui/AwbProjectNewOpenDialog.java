@@ -41,16 +41,6 @@ package org.agentgui.gui;
 public interface AwbProjectNewOpenDialog {
 	
 	/**
-	 * The enumeration describing the ProjectAction.
-	 */
-	public enum ProjectAction {
-		NewProject,
-		OpenProject,
-		ExportProject,
-		DeleteProject
-	}
-
-	/**
 	 * Sets the dialog visible.
 	 * @param b the new visible
 	 */

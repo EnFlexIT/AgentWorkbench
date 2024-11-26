@@ -42,10 +42,10 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 import java.util.Vector;
 
-import de.enflexit.awb.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.SimulationService;
 import de.enflexit.awb.simulation.SimulationServiceHelper;
 import de.enflexit.awb.simulation.agents.SimulationAgent;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.sensoring.ServiceActuator;
 import de.enflexit.awb.simulation.sensoring.ServiceSensor;
 import de.enflexit.awb.simulation.sensoring.ServiceSensorInterface;

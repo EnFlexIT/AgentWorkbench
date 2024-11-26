@@ -35,10 +35,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 
-import de.enflexit.awb.core.simulation.agents.AbstractDisplayAgent;
-import de.enflexit.awb.core.simulation.agents.SimulationManagerAgent;
-import de.enflexit.awb.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.agents.SimulationAgent;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.load.LoadAgentMap.AID_Container;
 import de.enflexit.awb.simulation.sensoring.ServiceActuator;
 import de.enflexit.awb.simulation.sensoring.ServiceActuatorManager;

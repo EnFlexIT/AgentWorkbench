@@ -6,11 +6,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.agentgui.gui.swing.project.Distribution;
-
-import agentgui.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
 import de.enflexit.awb.core.simulation.agents.LoadExecutionAgent;
-import de.enflexit.awb.simulation.balancing.BaseLoadBalancing;
 
 /**
  * This class is the default class for the start of an agency of <b>Agent.Workbench</b>. 

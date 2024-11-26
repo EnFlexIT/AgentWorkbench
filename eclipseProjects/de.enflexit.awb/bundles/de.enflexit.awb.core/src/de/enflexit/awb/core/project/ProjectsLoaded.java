@@ -20,16 +20,35 @@ import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
 import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentController.PersistenceStrategy;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
-
+import de.enflexit.awb.core.project.transfer.DefaultProjectExportController;
+import de.enflexit.awb.core.project.transfer.ProjectExportController;
+import de.enflexit.awb.core.project.transfer.ProjectExportControllerProvider;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
+import de.enflexit.awb.core.project.transfer.ProjectImportController;
+import de.enflexit.awb.core.project.transfer.ProjectImportSettings;
+import de.enflexit.awb.core.update.ProjectRepositoryExport;
+import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.language.Language;
 
 /**
  * This class holds the list of the projects, that are currently open
- * within Agent.GUI and offers methods to deal with them.  
+ * within Agent.Workbench and offers methods to deal with them.  
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ProjectsLoaded {
 
+	/**
+	 * The enumeration describing the ProjectAction.
+	 */
+	public enum ProjectAction {
+		NewProject,
+		OpenProject,
+		ExportProject,
+		DeleteProject
+	}
+	
+	
 	// --- Listing of the open projects -------------------
 	private ArrayList<Project> projectsOpen;
 	

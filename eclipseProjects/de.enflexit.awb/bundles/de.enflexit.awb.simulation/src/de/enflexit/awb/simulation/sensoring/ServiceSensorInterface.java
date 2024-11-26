@@ -1,9 +1,9 @@
 package de.enflexit.awb.simulation.sensoring;
 
-import de.enflexit.awb.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.SimulationService;
 import de.enflexit.awb.simulation.agents.SimulationAgent;
 import de.enflexit.awb.simulation.behaviour.SimulationServiceBehaviour;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import jade.core.AID;
 import jade.core.Location;

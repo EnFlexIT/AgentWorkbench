@@ -2,13 +2,14 @@ package de.enflexit.awb.core.update;
 
 import javax.swing.JOptionPane;
 
-import org.agentgui.gui.AwbProgressMonitor;
-import org.agentgui.gui.UiBridge;
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.equinox.p2.operations.UpdateOperation;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.p2.P2OperationsHandler;
 import de.enflexit.language.Language;
@@ -216,14 +217,14 @@ public class AWBUpdater extends Thread {
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			
 			if (Application.isOperatingHeadless()==false) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "Updates available", JOptionPane.WARNING_MESSAGE);
+				AwbOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "Updates available", AwbOptionPane.WARNING_MESSAGE);
 			}
 		} else {
 			String infoString = "Your target platform is up to date!";
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			
 			if (this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", JOptionPane.INFORMATION_MESSAGE);
+				AwbOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 		
@@ -338,8 +339,8 @@ public class AWBUpdater extends Thread {
 		if (this.progressMonitor == null) {
 			String title = Language.translate("Aktualisierung");
 			String header = Language.translate("Suche nach Updates");
-			String progress = Language.translate("Suche") + "...";
-			this.progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
+			String progressText = Language.translate("Suche") + "...";
+			this.progressMonitor = AgentWorkbenchUiManager.getInstance().getProgressMonitor(title, header, progressText);
 		}
 		return this.progressMonitor;
 	}

@@ -39,7 +39,6 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -51,14 +50,13 @@ import javax.swing.border.MatteBorder;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.BundleProperties;
-import agentgui.core.config.GlobalInfo;
+import agentgui.core.jade.Platform;
 import agentgui.simulationService.load.LoadMeasureThread;
 import agentgui.simulationService.load.LoadUnits;
 import agentgui.simulationService.load.monitoring.AbstractMonitoringTask;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
-import de.enflexit.language.Language;
 
 /**
  * The MainWindowStatusBar.
@@ -68,30 +66,6 @@ import de.enflexit.language.Language;
 public class MainWindowStatusBar extends JPanel {
 
 	private static final long serialVersionUID = -575684753041100082L;
-	
-	public enum JadeStatusColor {
-		Green("JADE wurde lokal gestartet.",	"StatGreen.png"),
-		Yellow("JADE wird gestartet ... ", 		"StatYellow.png"),
-		Red("JADE wurde noch nicht gestartet.", "StatRed.png");
-		
-		private String deDescription;
-		private String imageName; 
-		
-		private ImageIcon icon;
-		private JadeStatusColor(String deDescription, String imageName) {
-			this.deDescription = deDescription;
-			this.imageName   = imageName;
-		}
-		public String getDescription() {
-			return Language.translate(this.deDescription);
-		}
-		public ImageIcon getImageIcon() {
-			if (icon==null) {
-				icon = GlobalInfo.getInternalImageIcon(this.imageName);
-			}
-			return icon;
-		}
-	}
 	
 	private JLabel jLabelStatusText;
 
@@ -152,7 +126,7 @@ public class MainWindowStatusBar extends JPanel {
 		this.add(this.getJLabelJadeState(), gbc_jLabelJadeState);
 		
 		this.setBorder(new MatteBorder(1, 0, 0, 0, UIManager.getColor("controlDkShadow")));
-		this.setJadeStatusColor(JadeStatusColor.Red);
+		this.setJadeStatusColor(Platform.JadeStatusColor.Red);
 		this.addSessionFactoryStates();
 	}
 	
@@ -446,7 +420,7 @@ public class MainWindowStatusBar extends JPanel {
 	 * Sets the jade color status.
 	 * @param jadeStatus the new jade color status
 	 */
-	public void setJadeStatusColor(JadeStatusColor jadeStatus) {
+	public void setJadeStatusColor(Platform.JadeStatusColor jadeStatus) {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

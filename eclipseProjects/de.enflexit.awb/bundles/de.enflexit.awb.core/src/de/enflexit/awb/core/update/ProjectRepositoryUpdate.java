@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.awb.core.update;
 
 import java.io.File;
@@ -34,16 +6,16 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import agentgui.core.application.Application;
 import de.enflexit.language.Language;
-import agentgui.core.config.GlobalInfo.ExecutionMode;
-import agentgui.core.project.Project;
-import agentgui.core.project.transfer.DefaultProjectExportController;
-import agentgui.core.project.transfer.ProjectExportSettingsController;
-import agentgui.core.project.transfer.ProjectImportController;
-import agentgui.core.project.transfer.ProjectImportSettings;
-import agentgui.core.update.repositoryModel.ProjectRepository;
-import agentgui.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.transfer.DefaultProjectExportController;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettingsController;
+import de.enflexit.awb.core.project.transfer.ProjectImportController;
+import de.enflexit.awb.core.project.transfer.ProjectImportSettings;
+import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
+import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.transfer.Download;

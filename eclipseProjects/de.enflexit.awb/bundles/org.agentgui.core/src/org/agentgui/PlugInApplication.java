@@ -30,6 +30,8 @@ package org.agentgui;
 
 import javax.swing.SwingUtilities;
 
+import org.agentgui.gui.UiBridge;
+import org.agentgui.gui.UiBridge.ApplicationVisualizationBy;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -49,14 +51,6 @@ import de.enflexit.common.SystemEnvironmentHelper;
  */
 public class PlugInApplication implements IApplication {
 
-	/**
-	 * The Enumeration ApplicationVisualizationBy.
-	 */
-	public enum ApplicationVisualizationBy {
-		AgentWorkbenchSwing,
-		EclipseFramework
-	}
-	
 	/** Set this variable to switch the visualization */
 	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentWorkbenchSwing;
 	
@@ -71,7 +65,7 @@ public class PlugInApplication implements IApplication {
 	 * Returns the visualization platform that is either swing or the Eclipse UI.
 	 * @return the visualization by
 	 */
-	public ApplicationVisualizationBy getVisualisationPlatform() {
+	public UiBridge.ApplicationVisualizationBy getVisualisationPlatform() {
 		return visualisationBy;
 	}
 	/**
@@ -105,7 +99,7 @@ public class PlugInApplication implements IApplication {
 	 */
 	private boolean isSpecialStartOnMac() {
 		boolean isMac = SystemEnvironmentHelper.isMacOperatingSystem();
-		boolean isSwingVisualiszation = this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentWorkbenchSwing;
+		boolean isSwingVisualiszation = this.getVisualisationPlatform()==UiBridge.ApplicationVisualizationBy.AgentWorkbenchSwing;
 		return isMac & isSwingVisualiszation;
 	}
 	
@@ -246,7 +240,7 @@ public class PlugInApplication implements IApplication {
 	@Override
 	public void stop() {
 		
-		if (this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentWorkbenchSwing) {
+		if (this.getVisualisationPlatform()==UiBridge.ApplicationVisualizationBy.AgentWorkbenchSwing) {
 			// --- Check for open projects ------
 			if (Application.stopAgentWorkbench()==false) return;
 			// --- Stop LogFileWriter -----------
@@ -342,7 +336,7 @@ public class PlugInApplication implements IApplication {
 			display.dispose();
 			// --- Just in case of the Eclipse UI ---------
 			// --- usage or after an update + restart -----
-			if (this.getVisualisationPlatform()==ApplicationVisualizationBy.EclipseFramework || eclipseReturnValue==IApplication.EXIT_RESTART) {
+			if (this.getVisualisationPlatform()==UiBridge.ApplicationVisualizationBy.EclipseFramework || eclipseReturnValue==IApplication.EXIT_RESTART) {
 				appReturnValue = eclipseReturnValue;
 				Application.setQuitJVM(true);
 			}

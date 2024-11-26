@@ -15,6 +15,7 @@ import de.enflexit.awb.core.project.DistributionSetup;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
 import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.utillity.UtilityAgent.UtilityAgentJob;
 import de.enflexit.awb.simulation.LoadService;
 import de.enflexit.awb.simulation.LoadServiceHelper;
 import de.enflexit.awb.simulation.SimulationService;

@@ -2,6 +2,7 @@ package de.enflexit.awb.core.project;
 
 import java.io.Serializable;
 
+import de.enflexit.awb.simulation.load.LoadThresholdLevels;
 
 /**
  * This class represents the model data for the distribution of an agency, which
@@ -15,8 +16,8 @@ public class DistributionSetup implements Serializable {
 	
 	private static final long serialVersionUID = -3727386932566490036L;
 	
-	public final static String DEFAULT_StaticLoadBalancingClass = agentgui.simulationService.balancing.PredictiveStaticLoadBalancing.class.getName();
-	public final static String DEFAULT_DynamicLoadBalancingClass = agentgui.simulationService.balancing.DynamicLoadBalancing.class.getName();
+	public final static String DEFAULT_StaticLoadBalancingClass = de.enflexit.awb.core.simulation.balancing.PredictiveStaticLoadBalancing.class.getName();
+	public final static String DEFAULT_DynamicLoadBalancingClass = de.enflexit.awb.core.simulation.balancing.DynamicLoadBalancing.class.getName();
 	
 	private boolean doStaticLoadBalancing = true;
 	private String staticLoadBalancingClass = DEFAULT_StaticLoadBalancingClass;

@@ -4,7 +4,6 @@ import jade.core.AID;
 
 import java.util.Hashtable;
 
-import de.enflexit.awb.core.simulation.agents.SimulationManagerAgent;
 import de.enflexit.awb.simulation.agents.SimulationAgent;
 import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 

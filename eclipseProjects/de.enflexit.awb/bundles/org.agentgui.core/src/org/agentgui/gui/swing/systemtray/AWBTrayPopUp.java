@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package org.agentgui.gui.swing.systemtray;
 
 import java.awt.Font;
@@ -252,7 +224,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemUpdate() {
 		if (itemUpdate==null) {
 			itemUpdate = new MenuItem(Language.translate("Nach Update suchen ..."));
-			itemUpdate.setActionCommand("Update");
 			itemUpdate.addActionListener(this);
 		}
 		return itemUpdate;
@@ -260,7 +231,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemAbout() {
 		if (itemAbout==null) {
 			itemAbout = new MenuItem(Language.translate("Über..."));
-			itemAbout.setActionCommand("About");
 			itemAbout.addActionListener(this);
 		}
 		return itemAbout;
@@ -268,7 +238,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemServiceStart() {
 		if (itemServiceStart==null) {
 			itemServiceStart = new MenuItem(Language.translate("Starte AWB-Service"));
-			itemServiceStart.setActionCommand("startAgentGUIService");
 			itemServiceStart.addActionListener(this);
 		}
 		return itemServiceStart;
@@ -276,7 +245,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemServiceStop() {
 		if (itemServiceStop==null) {
 			itemServiceStop = new MenuItem(Language.translate("Stop AWB-Service"));
-			itemServiceStop.setActionCommand("stoptAgentGUIService");
 			itemServiceStop.addActionListener(this);
 		}
 		return itemServiceStop;
@@ -284,7 +252,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemOpenRMA() {
 		if (itemOpenRMA==null) {
 			itemOpenRMA = new MenuItem(Language.translate("RMA (Remote Monitoring Agent) öffnen"));
-			itemOpenRMA.setActionCommand("openRMA");
 			itemOpenRMA.addActionListener(this);
 		}
 		return itemOpenRMA;
@@ -292,7 +259,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemConsole() {
 		if (itemConsole==null) {
 			itemConsole = new MenuItem(Language.translate("Konsole"));
-			itemConsole.setActionCommand("Konsole");
 			itemConsole.addActionListener(this);
 		}
 		return itemConsole;
@@ -300,7 +266,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemConfig() {
 		if (itemConfig==null) {
 			itemConfig = new MenuItem(Language.translate("Optionen"));
-			itemConfig.setActionCommand("Config");
 			itemConfig.addActionListener(this);
 		}
 		return itemConfig;
@@ -308,7 +273,6 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	private MenuItem getMenuItemExit() {
 		if (itemExit==null) {
 			itemExit = new MenuItem(Language.translate("Beenden"));
-			itemExit.setActionCommand("quit");
 			itemExit.addActionListener(this);
 		}
 		return itemExit;
@@ -360,6 +324,7 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	 * Start jade.
 	 */
 	private void startJade() {
+		
 		ExecutionMode appExecMode = Application.getGlobalInfo().getExecutionMode();
 		DeviceSystemExecutionMode deviceSysExecMode = Application.getGlobalInfo().getDeviceServiceExecutionMode(); 
 		if (appExecMode==ExecutionMode.DEVICE_SYSTEM && deviceSysExecMode==DeviceSystemExecutionMode.AGENT) {
@@ -376,30 +341,36 @@ public class AWBTrayPopUp extends PopupMenu implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		String ActCMD = ae.getActionCommand();
-		if ( ActCMD.equalsIgnoreCase("Update")) {
+		String actionCommand = ae.getActionCommand();
+		if ( ae.getSource()==this.getMenuItemUpdate()) {
 			new AWBUpdater(true).start();
-		} else if ( ActCMD.equalsIgnoreCase("About")) {
+			
+		} else if ( ae.getSource()==this.getMenuItemAbout()) {
 			Application.showAboutDialog();
-		}else if ( ActCMD.equalsIgnoreCase("startAgentGUIService")) {
+			
+		} else if (ae.getSource()==this.getMenuItemServiceStart()) {
 			this.startJade();
 			this.refreshView();
-		} else if ( ActCMD.equalsIgnoreCase("stoptAgentGUIService")) {
+			
+		} else if (ae.getSource()==this.getMenuItemServiceStop()) {
 			Application.getJadePlatform().stop(true);
 			this.refreshView();
-		} else if ( ActCMD.equalsIgnoreCase("openRMA")) {
+			
+		} else if (ae.getSource()==this.getMenuItemOpenRMA()) {
 			Application.getJadePlatform().startSystemAgent(SystemAgent.RMA, null);
-		} else if ( ActCMD.equalsIgnoreCase("Config")) {
+			
+		} else if (ae.getSource()==this.getMenuItemConfig() || actionCommand.equalsIgnoreCase("Config")) {
 			Application.showOptionDialog();
-		} else if ( ActCMD.equalsIgnoreCase("Konsole")) {
-			Application.showOptionDialog(ActCMD);
-		} else if ( ActCMD.equalsIgnoreCase("quit")) {
+			
+		} else if (ae.getSource()==this.getMenuItemConsole()) {
+			Application.showOptionDialog("Konsole");
+			
+		} else if (ae.getSource()==this.getMenuItemExit()) {
 			Application.stop();				
+			
 		} else { 
-			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ActCMD);
-		};
-		
+			System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + ae.getActionCommand());
+		}
 	}
-	
 	
 }

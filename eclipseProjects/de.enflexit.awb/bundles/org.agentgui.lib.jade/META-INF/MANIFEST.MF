@@ -92,6 +92,9 @@ Export-Package: FIPA,
  org.apache.commons.codec.net,
  samples,
  samples.mobilegui
+Require-Bundle: junit-jupiter-api
+Import-Package: org.osgi.framework,
+ org.osgi.util.tracker
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: EnFlex.IT
 DynamicImport-Package: *

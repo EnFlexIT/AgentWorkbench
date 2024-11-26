@@ -10,12 +10,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.agentgui.gui.swing.project.Distribution;
-
-import agentgui.core.project.AgentClassMetricDescription;
-import agentgui.core.project.setup.AgentClassElement4SimStart;
+import de.enflexit.awb.core.project.AgentClassMetricDescription;
+import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
 import de.enflexit.awb.core.simulation.agents.LoadExecutionAgent;
-import de.enflexit.awb.simulation.balancing.BaseLoadBalancing;
 import de.enflexit.awb.simulation.load.LoadInformation.NodeDescription;
 import de.enflexit.awb.simulation.ontology.ClientAvailableMachinesReply;
 import de.enflexit.awb.simulation.ontology.MachineDescription;

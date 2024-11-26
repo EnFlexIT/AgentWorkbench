@@ -26,9 +26,6 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 
 import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
-import agentgui.core.config.TimeSeriesSettingEvaluator;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelDateBased;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.awb.core.environment.EnvironmentController;
@@ -38,6 +35,8 @@ import de.enflexit.awb.core.environment.EnvironmentTypes;
 import de.enflexit.awb.core.jade.JadeUrlConfiguration;
 import de.enflexit.awb.core.project.PlatformJadeConfig;
 import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.GlobalRuntimeValues;
@@ -1872,15 +1871,7 @@ public class GlobalInfo implements ZoneIdResolver {
 		}
 		return null;
 	}
-	/**
-	 * Returns one of the internal images as an´SWT image instance.
-	 *
-	 * @param imageFileName the image file name
-	 * @return the internal SWT image
-	 */
-	public static org.eclipse.swt.graphics.Image getInternalSWTImage(String imageFileName) {
-		return SWTResourceManager.getImage(GlobalInfo.class, getPathImageIntern() + imageFileName);
-	}
+	
 	
 	/**
 	 * Returns the specified bytes in a human readable byte count.
@@ -1947,10 +1938,8 @@ public class GlobalInfo implements ZoneIdResolver {
 		return encryptedPSWD;
 	}
 
-	
-	/**
-	 * Returns the current ZoneId by also checking open Projects settings.
-	 * @return the ZoneId currently to use
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.ZoneIdResolver#getZoneId()
 	 */
 	@Override
 	public ZoneId getZoneId() {

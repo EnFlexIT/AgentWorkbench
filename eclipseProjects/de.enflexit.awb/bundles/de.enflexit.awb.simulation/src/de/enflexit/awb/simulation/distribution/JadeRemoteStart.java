@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
-import de.enflexit.awb.core.bgSystem.ServerSlaveAgent;
 import de.enflexit.awb.simulation.ontology.RemoteContainerConfig;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.SystemEnvironmentHelper;

@@ -1,48 +1,18 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.awb.core.update;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.JOptionPane;
-
-import agentgui.core.application.Application;
-import agentgui.core.config.BundleProperties;
-import agentgui.core.gui.options.DirectoryOptions;
-import agentgui.core.project.Project;
-import agentgui.core.project.transfer.ProjectExportController;
-import agentgui.core.project.transfer.ProjectExportControllerProvider;
-import agentgui.core.project.transfer.ProjectExportSettings;
-import agentgui.core.update.repositoryModel.ProjectRepository;
-import agentgui.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.BundleProperties;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.transfer.ProjectExportController;
+import de.enflexit.awb.core.project.transfer.ProjectExportControllerProvider;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
+import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
+import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 
 /**
  * The Class ProjectRepositoryExport manages the export 
@@ -151,7 +121,7 @@ public class ProjectRepositoryExport extends Thread {
 		if (configError!=null) {
 			String errMsg = configError + " - Cancel repository export.";
 			if (this.isShowUserDialogs()==true) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), errMsg, "Repository Export Error", JOptionPane.ERROR_MESSAGE);
+				AwbOptionPane.showMessageDialog(Application.getMainWindow(), errMsg, "Repository Export Error", AwbOptionPane.ERROR_MESSAGE);
 				if (this.getRepositoryLocationDirectoryPath()==null) {
 					// --- Special case: missing repository path ----
 					Application.showOptionDialog(DirectoryOptions.TAB_TITLE);

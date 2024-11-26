@@ -13,6 +13,10 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.core.jade.NetworkAddresses;
+import de.enflexit.awb.core.jade.NetworkAddresses.NetworkAddress;
+import de.enflexit.awb.core.jade.PortChecker;
+import de.enflexit.language.Language;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -74,8 +78,8 @@ public class PlatformJadeConfig implements Serializable {
 	
 	// --- Agent.GUI-Services -------------------------------------------------
 	public static final String SERVICE_DebugService = agentgui.logging.DebugService.class.getName();
-	public static final String SERVICE_AgentGUI_LoadService = agentgui.simulationService.LoadService.class.getName();
-	public static final String SERVICE_AgentGUI_SimulationService = agentgui.simulationService.SimulationService.class.getName();
+	public static final String SERVICE_AgentGUI_LoadService = de.enflexit.awb.simulation.LoadService.class.getName();
+	public static final String SERVICE_AgentGUI_SimulationService = de.enflexit.awb.simulation.SimulationService.class.getName();
 	
 	// --- Add-On-Services ----------------------------------------------------
 	public static final String SERVICE_InterPlatformMobilityService = jade.core.migration.InterPlatformMobilityService.class.getName();

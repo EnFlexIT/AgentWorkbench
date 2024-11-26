@@ -12,23 +12,27 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
 
-
-import agentgui.simulationService.distribution.HTTPServer;
-import agentgui.simulationService.distribution.HTTPServer.ContextHandler;
-import agentgui.simulationService.distribution.HTTPServer.FileContextHandler;
-import agentgui.simulationService.distribution.HTTPServer.Request;
-import agentgui.simulationService.distribution.HTTPServer.Response;
-import agentgui.simulationService.distribution.HTTPServer.VirtualHost;
-import agentgui.simulationService.load.LoadMeasureThread;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
 import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.awb.core.config.DeviceAgentDescription;
+import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.jade.PlatformStateInformation.PlatformState;
 import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.utillity.UtilityAgent.UtilityAgentJob;
+import de.enflexit.awb.simulation.LoadService;
+import de.enflexit.awb.simulation.SimulationService;
+import de.enflexit.awb.simulation.distribution.HTTPServer;
+import de.enflexit.awb.simulation.distribution.HTTPServer.ContextHandler;
+import de.enflexit.awb.simulation.distribution.HTTPServer.FileContextHandler;
+import de.enflexit.awb.simulation.distribution.HTTPServer.Request;
+import de.enflexit.awb.simulation.distribution.HTTPServer.Response;
+import de.enflexit.awb.simulation.distribution.HTTPServer.VirtualHost;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
 import de.enflexit.language.Language;
 import jade.core.AID;
@@ -52,6 +56,33 @@ import jade.wrapper.StaleProxyException;
  */
 public class Platform {
 
+	/**
+	 * The Enumeration JadeStatusColor.
+	 */
+	public enum JadeStatusColor {
+		Green("JADE wurde lokal gestartet.",	"StatGreen.png"),
+		Yellow("JADE wird gestartet ... ", 		"StatYellow.png"),
+		Red("JADE wurde noch nicht gestartet.", "StatRed.png");
+		
+		private String deDescription;
+		private String imageName; 
+		
+		private ImageIcon icon;
+		private JadeStatusColor(String deDescription, String imageName) {
+			this.deDescription = deDescription;
+			this.imageName   = imageName;
+		}
+		public String getDescription() {
+			return Language.translate(this.deDescription);
+		}
+		public ImageIcon getImageIcon() {
+			if (icon==null) {
+				icon = GlobalInfo.getInternalImageIcon(this.imageName);
+			}
+			return icon;
+		}
+	}
+	
 	/**
 	 * The enumeration that names the system agents like the RMA and other.
 	 */
@@ -333,8 +364,8 @@ public class Platform {
 		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null && Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
 			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
 			String message = Language.translate("Möchten Sie JADE nun beenden?");
-			Integer answer =  JOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), message, title, JOptionPane.YES_NO_OPTION);
-			if (answer==JOptionPane.NO_OPTION) return false; // --- NO, just exit 
+			Integer answer =  AwbOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, AwbOptionPane.YES_NO_OPTION);
+			if (answer==AwbOptionPane.NO_OPTION) return false; // --- NO, just exit 
 			// --- Stop the JADE-Platform -------------------
 			this.stop(false);
 		}
@@ -547,8 +578,8 @@ public class Platform {
 				} else {
 					String msgQuestion = Language.translate("Möchten Sie die Konfiguration nun vornehmen?");
 					msgText += newLine + newLine + msgQuestion;
-					int answer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION) {
+					int answer = AwbOptionPane.showConfirmDialog(null, msgText, msgHead, AwbOptionPane.YES_NO_OPTION);
+					if (answer == AwbOptionPane.YES_OPTION) {
 						Application.showOptionDialog();
 					}	
 				}
@@ -903,7 +934,7 @@ public class Platform {
 			if (Application.getProjectFocused()==null) {
 				String msgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
 				String msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
-				JOptionPane.showMessageDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.OK_OPTION);
+				AwbOptionPane.showMessageDialog(Application.getMainWindow(), msgText, msgHead, AwbOptionPane.OK_OPTION);
 				// --- Since the simulation was not started, enable the start button again
 				Application.getMainWindow().setEnableSimStart(true);
 				return;	
@@ -946,8 +977,8 @@ public class Platform {
 					dialogContent[1] = jCheckBoxDoNotAskAgain;
 				}
 				 
-				int msgAnswer = JOptionPane.showConfirmDialog(Application.getMainWindow(), dialogContent, msgHead, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO, just exit
+				int msgAnswer = AwbOptionPane.showConfirmDialog(Application.getMainWindow(), dialogContent, msgHead, AwbOptionPane.YES_NO_OPTION, AwbOptionPane.QUESTION_MESSAGE);
+				if (msgAnswer==AwbOptionPane.NO_OPTION) return; // --- NO, just exit
 				// --- Remind CheckBox value if selected ------------
 				if (currProject!=null && jCheckBoxDoNotAskAgain.isSelected()==true) {
 					currProject.getJadeConfiguration().setSkipUserRequestForJadeStart(true);
@@ -974,9 +1005,9 @@ public class Platform {
 			String msgHead = Language.translate("Der Agent '") + agentName +  Language.translate("' ist bereits geöffnet!");
 			String msgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
 			if (Application.getMainWindow()==null) {
-				msgAnswer = JOptionPane.showConfirmDialog(null, msgText, msgHead, JOptionPane.YES_NO_OPTION);				
+				msgAnswer = AwbOptionPane.showConfirmDialog(null, msgText, msgHead, AwbOptionPane.YES_NO_OPTION);				
 			} else {
-				msgAnswer = JOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);	
+				msgAnswer = AwbOptionPane.showConfirmDialog(Application.getMainWindow(), msgText, msgHead, AwbOptionPane.YES_NO_OPTION);	
 			}
 			if (msgAnswer==0) {
 				// --- YES - Start another agent of this kind --------
@@ -1030,9 +1061,9 @@ public class Platform {
 			systemAgentsClasses.put(SystemAgent.Log, jade.tools.logging.LogManagerAgent.class.getName());
 
 			// --- Agent.Workbench - Background system agents -----------
-			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentApplication, agentgui.simulationService.agents.ServerClientAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerMaster, agentgui.simulationService.agents.ServerMasterAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerSlave, agentgui.simulationService.agents.ServerSlaveAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentApplication, de.enflexit.awb.core.bgSystem.ServerClientAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerMaster, de.enflexit.awb.core.bgSystem.ServerMasterAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerSlave, de.enflexit.awb.core.bgSystem.ServerSlaveAgent.class.getName());
 			
 			// --- Agent.Workbench - agents -----------------------------
 			systemAgentsClasses.put(SystemAgent.Utility, agentgui.core.utillity.UtilityAgent.class.getName());
@@ -1531,8 +1562,8 @@ public class Platform {
 		if (this.isMainContainerRunning()==false) {
 			String msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			String msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
-			int msgAnswer = JOptionPane.showConfirmDialog( Application.getMainWindow().getContentPane(), msgText, msgHead, JOptionPane.YES_NO_OPTION);
-			if (msgAnswer==JOptionPane.NO_OPTION) return; // --- NO,just exit 
+			int msgAnswer = AwbOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), msgText, msgHead, AwbOptionPane.YES_NO_OPTION);
+			if (msgAnswer==AwbOptionPane.NO_OPTION) return; // --- NO, just exit 
 			
 			// --- Start the JADE-Platform -------------------------------
 			if (this.start() == false) {

@@ -42,14 +42,14 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentPanel;
-import de.enflexit.awb.environment.EnvironmentModel;
-import de.enflexit.awb.environment.time.TimeModel;
-import de.enflexit.awb.environment.time.TimeModelBaseExecutionElements;
-import de.enflexit.awb.environment.time.TimeModelContinuous;
-import de.enflexit.awb.environment.time.TimeModelContinuousExecutionElements;
 import de.enflexit.awb.simulation.SimulationService;
 import de.enflexit.awb.simulation.SimulationServiceHelper;
 import de.enflexit.awb.simulation.agents.SimulationAgent;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelBaseExecutionElements;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuousExecutionElements;
 import jade.core.ServiceException;
 
 /**

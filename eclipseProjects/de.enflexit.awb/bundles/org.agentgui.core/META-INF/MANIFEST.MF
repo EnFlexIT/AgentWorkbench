@@ -100,5 +100,4 @@ Export-Package: agentgui.core.application,
  org.agentgui.gui.swt.handler,
  org.agentgui.gui.swt.parts,
  org.agentgui.gui.swt.preferences.pages,
- org.agentgui.gui.swt.project,
- org.agentgui.gui.swt.systemtray
+ org.agentgui.gui.swt.project

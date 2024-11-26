@@ -18,7 +18,6 @@ import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
-
 /**
  * The Class BundleProperties organizes the storage of application configuration data.
  * 

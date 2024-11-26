@@ -88,8 +88,8 @@ import org.eclipse.core.runtime.Platform;
 
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
-import agentgui.core.gui.MainWindowStatusBar.JadeStatusColor;
 import agentgui.core.gui.projectwindow.simsetup.SetupSelectorToolbar;
+import agentgui.core.jade.Platform.JadeStatusColor;
 import agentgui.core.jade.Platform.SystemAgent;
 import agentgui.core.project.Project;
 import agentgui.core.update.AWBUpdater;
@@ -509,7 +509,7 @@ public class MainWindow extends JFrame {
 	 * Sets the jade status color.
 	 * @param jadeStatus the new jade status color
 	 */
-	public void setJadeStatusColor(JadeStatusColor jadeStatus) {
+	public void setJadeStatusColor(agentgui.core.jade.Platform.JadeStatusColor jadeStatus) {
 		this.getStatusBar().setJadeStatusColor(jadeStatus);
 	}
 

@@ -6,9 +6,9 @@ import jade.core.Location;
 import java.util.HashMap;
 import java.util.Vector;
 
-import de.enflexit.awb.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.SimulationService;
 import de.enflexit.awb.simulation.agents.SimulationAgent;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
 import de.enflexit.awb.simulation.load.LoadAgentMap.AID_Container;
 import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 

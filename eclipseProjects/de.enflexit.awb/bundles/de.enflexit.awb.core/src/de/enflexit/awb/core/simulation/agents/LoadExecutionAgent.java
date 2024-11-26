@@ -31,14 +31,9 @@ package de.enflexit.awb.core.simulation.agents;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.OneShotBehaviour;
-
-import agentgui.core.application.Application;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.core.gui.MainWindow;
-import agentgui.core.jade.Platform;
-import agentgui.core.jade.PlatformStateInformation.PlatformState;
-import agentgui.core.project.DistributionSetup;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.project.DistributionSetup;
 import de.enflexit.awb.core.simulation.balancing.StaticLoadBalancing;
 import de.enflexit.awb.core.simulation.balancing.StaticLoadBalancingBase;
 import de.enflexit.awb.simulation.SimulationService;

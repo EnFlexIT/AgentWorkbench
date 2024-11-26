@@ -8,4 +8,4 @@ Require-Bundle: com.google.gson,
  org.agentgui.core,
  de.enflexit.common
 Automatic-Module-Name: de.enflexit.awb.remoteControl
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17

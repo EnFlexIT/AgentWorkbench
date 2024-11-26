@@ -4,8 +4,8 @@ import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import agentgui.core.charts.timeseriesChart.StaticTimeSeriesSettingEvaluator;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
-import de.enflexit.awb.environment.time.TimeModel;
-import de.enflexit.awb.environment.time.TimeModelDateBased;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 
 /**
  * The Class TimeSeriesSettingEvaluator enables to read settings from a current, date based {@link TimeModel} 
