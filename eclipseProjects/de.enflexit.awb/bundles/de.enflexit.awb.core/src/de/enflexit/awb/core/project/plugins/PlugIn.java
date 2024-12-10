@@ -14,6 +14,7 @@ import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
 import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.core.ui.AwbProjectWindowTab;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
@@ -42,7 +43,7 @@ public abstract class PlugIn implements Observer {
 	protected String classReference = null;
 
 	private Vector<JComponent> customJComponent = new Vector<JComponent>();
-	private Vector<ProjectWindowTab> customProjectWindowTab = new Vector<ProjectWindowTab>();
+	private Vector<AwbProjectWindowTab> customProjectWindowTab = new Vector<>();
 	private Vector<OntologyClassVisualisation> customOntologyClassVisualisation = new Vector<OntologyClassVisualisation>();
 	
 	
@@ -181,7 +182,7 @@ public abstract class PlugIn implements Observer {
 	 *
 	 * @param projectWindowTab the project window tab
 	 */
-	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab) {
+	protected void addProjectWindowTab(AwbProjectWindowTab projectWindowTab) {
 		projectWindowTab.add();
 		customProjectWindowTab.add(projectWindowTab);
 	}
@@ -194,7 +195,7 @@ public abstract class PlugIn implements Observer {
 	 * @param projectWindowTab the project window tab
 	 * @param indexPosition the index position (greater one)
 	 */
-	protected void addProjectWindowTab(ProjectWindowTab projectWindowTab, int indexPosition) {
+	protected void addProjectWindowTab(AwbProjectWindowTab projectWindowTab, int indexPosition) {
 		projectWindowTab.add(indexPosition);
 		customProjectWindowTab.add(projectWindowTab);
 	}
@@ -244,10 +245,10 @@ public abstract class PlugIn implements Observer {
 		
 		// --- Remove custom tab elements -----------------
 		for (int i = customProjectWindowTab.size()-1; i>-1; i--) {
-			ProjectWindowTab pwt = customProjectWindowTab.get(i);
+			AwbProjectWindowTab pwt = customProjectWindowTab.get(i);
 			pwt.remove();
 		}
-		customProjectWindowTab = new Vector<ProjectWindowTab>();
+		customProjectWindowTab = new Vector<>();
 		
 		// --- Remove custom ontology visualizations ------
 		for (int i = customOntologyClassVisualisation.size()-1; i>-1; i--) {
@@ -258,8 +259,7 @@ public abstract class PlugIn implements Observer {
 		
 		// --- Refresh the main window --------------------
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().validate();
-			Application.getMainWindow().repaint();
+			Application.getMainWindow().refreshView();
 		}
 		
 	}

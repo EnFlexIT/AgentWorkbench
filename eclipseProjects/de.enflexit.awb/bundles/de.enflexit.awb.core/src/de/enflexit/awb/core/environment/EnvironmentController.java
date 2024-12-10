@@ -9,7 +9,7 @@ import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
 import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
-import de.enflexit.awb.core.simulation.agents.AbstractDisplayAgent;
+import de.enflexit.awb.simulation.agents.AbstractDisplayAgent;
 import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
 import de.enflexit.awb.simulation.environment.DisplaytEnvironmentModel;
 import de.enflexit.awb.simulation.environment.EnvironmentModel;

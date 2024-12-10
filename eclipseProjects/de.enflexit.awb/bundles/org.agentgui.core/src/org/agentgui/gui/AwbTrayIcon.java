@@ -38,7 +38,7 @@ public interface AwbTrayIcon {
 	/**
 	 * Has to remove the Tray Icon of the application.
 	 */
-	public void remove();
+	public void dispose();
 	
 	/**
 	 * Refreshes the appearance of the tray icon.

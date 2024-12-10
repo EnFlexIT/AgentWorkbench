@@ -10,7 +10,7 @@ import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
 import de.enflexit.awb.core.project.transfer.ProjectExportControllerProvider;
 import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
-import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 
@@ -121,10 +121,10 @@ public class ProjectRepositoryExport extends Thread {
 		if (configError!=null) {
 			String errMsg = configError + " - Cancel repository export.";
 			if (this.isShowUserDialogs()==true) {
-				AwbOptionPane.showMessageDialog(Application.getMainWindow(), errMsg, "Repository Export Error", AwbOptionPane.ERROR_MESSAGE);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), errMsg, "Repository Export Error", AwbMessageDialog.ERROR_MESSAGE);
 				if (this.getRepositoryLocationDirectoryPath()==null) {
 					// --- Special case: missing repository path ----
-					Application.showOptionDialog(DirectoryOptions.TAB_TITLE);
+					Application.showOptionsDialog(DirectoryOptions.TAB_TITLE);
 					return;
 				}
 			}

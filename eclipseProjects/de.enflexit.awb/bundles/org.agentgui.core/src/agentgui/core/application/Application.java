@@ -1,6 +1,5 @@
 package agentgui.core.application;
 
-import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Window;
 import java.io.File;
@@ -295,7 +294,7 @@ public class Application {
 	 */
 	public static void removeTrayIcon() {
 		if (trayIcon!=null) {
-			trayIcon.remove();
+			trayIcon.dispose();
 			trayIcon=null;
 		}
 	}
@@ -1098,15 +1097,6 @@ public class Application {
 	public static void setStatusBarMessageReady() {
 		if (getMainWindow()!=null) {
 			getMainWindow().setStatusBarMessage(Language.translate("Fertig"));
-		}
-	}
-	/**
-	 * Sets the cursor for the application.
-	 * @param cursor the new application cursor
-	 */
-	public static void setCursor(Cursor cursor) {
-		if (getMainWindow()!=null) {
-			getMainWindow().setCursor(cursor);
 		}
 	}
 	

@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import de.enflexit.awb.core.simulation.agents.LoadMeasureAgent;
+import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 import de.enflexit.awb.simulation.balancing.BaseLoadBalancingInterface;
 import de.enflexit.awb.simulation.load.LoadMerger;
 import de.enflexit.awb.simulation.load.LoadAgentMap.AID_Container;

@@ -100,7 +100,7 @@ public interface AwbProjectEditorWindow {
 	 *
 	 * @param projectWindowTab the project window tab
 	 */
-	public void removeProjectTab(ProjectWindowTab projectWindowTab);	
+	public void removeProjectTab(AwbProjectWindowTab projectWindowTab);	
 	
 	/**
 	 * Disposes the AwbProjectEditorWindow.
@@ -147,7 +147,7 @@ public interface AwbProjectEditorWindow {
 	 * @param superPanelName the super panel name
 	 * @return the tab for sub panels
 	 */
-	public ProjectWindowTab getTabForSubPanels(String superPanelName);
+	public AwbProjectWindowTab getTabForSubPanels(String superPanelName);
 
 	/**
 	 * Has to validates the current start tab settings that could be 

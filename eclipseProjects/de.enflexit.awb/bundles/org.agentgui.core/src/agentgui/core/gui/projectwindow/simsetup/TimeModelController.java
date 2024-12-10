@@ -34,6 +34,7 @@ import java.util.HashMap;
 
 import javax.swing.JTabbedPane;
 
+import org.agentgui.gui.AwbProjectWindowTab;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 
 import agentgui.core.application.Application;
@@ -65,7 +66,7 @@ public class TimeModelController implements Observer {
 	
 	private TimeModel timeModel;
 	
-	private ProjectWindowTab pwt;
+	private AwbProjectWindowTab pwt;
 	private JPanel4TimeModelConfiguration jPanel4TimeModel;
 	private int indexPositionOfTimeModelTab = 0;
 	
@@ -160,7 +161,7 @@ public class TimeModelController implements Observer {
 		// --- Add the new time model visualization -------
 		JPanel4TimeModelConfiguration configPanel = this.getJPanel4TimeModelConfiguration();
 		if (configPanel!=null) {
-			this.pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+			this.pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Zeit-Konfiguration"), null, null, configPanel, Language.translate(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup));
 			this.pwt.add(this.indexPositionOfTimeModelTab);
 		}
 	}
@@ -180,13 +181,6 @@ public class TimeModelController implements Observer {
 	}
 
 	
-	/**
-	 * Gets the index position of time model tab.
-	 * @return the index position of time model tab
-	 */
-	public int getIndexPositionOfTimeModelTab() {
-		return indexPositionOfTimeModelTab;
-	}
 	/**
 	 * Sets the index position of time model tab.
 	 * @param newIndexPosistion the new index position of time model tab

@@ -11,12 +11,12 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
+import de.enflexit.awb.core.config.BundleProperties;
 import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentController.PersistenceStrategy;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
@@ -26,6 +26,10 @@ import de.enflexit.awb.core.project.transfer.ProjectExportControllerProvider;
 import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
 import de.enflexit.awb.core.project.transfer.ProjectImportController;
 import de.enflexit.awb.core.project.transfer.ProjectImportSettings;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.awb.core.ui.AwbMainWindow;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
 import de.enflexit.awb.core.update.ProjectRepositoryExport;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.language.Language;
@@ -69,7 +73,7 @@ public class ProjectsLoaded {
 	 * @return The Project-instance that was added or <code>null</code>.
 	 */
 	public Project add(boolean addNew) {
-		return this.add(addNew, null, null, null, null);
+		return this.add(addNew, null);
 	}
 	/**
 	 * Open a project corresponding to specified project folder.
@@ -78,20 +82,16 @@ public class ProjectsLoaded {
 	 * @return the Project-instance that was added here
 	 */
 	public Project add(String selectedProjectFolder) {
-		return this.add(false, selectedProjectFolder, null, null, null);
+		return this.add(false, selectedProjectFolder);
 	}
-	
 	/**
 	 * Adding (Creating or Opening) a new Project to the Application.
 	 *
 	 * @param addNew the add new
 	 * @param selectedProjectFolder the selected project folder
-	 * @param mApplication the eclipse MApplication
-	 * @param ePartService the eclipse EPpartService
-	 * @param eModelService the eclipse EMmodelService
 	 * @return The Project-instance that was added here
 	 */
-	public Project add(boolean addNew, String selectedProjectFolder, MApplication mApplication, EPartService ePartService, EModelService eModelService) {
+	public Project add(boolean addNew, String selectedProjectFolder) {
 
 		ProjectAction action = null;
 		String actionTitel = null;
@@ -127,7 +127,7 @@ public class ProjectsLoaded {
 		
 		if (selectedProjectFolder==null) {
 			// --- Open user dialog -------------------------------------------
-			AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
+			AwbProjectInteractionDialog newProDia = AgentWorkbenchUiManager.getInstance().getProjectInteractionDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, action);
 			newProDia.setProjectName(projectNameTest);
 			newProDia.setProjectDirectory(projectFolderTest);
 			newProDia.setVisible(true);
@@ -168,12 +168,6 @@ public class ProjectsLoaded {
 			}
 		}
 		
-		// --------------------------------------------------------------------
-		// --- Set required Eclipse instances ---------------------------------
-		newProject.setEclipseMApplication(mApplication);
-		newProject.setEclipseEPartService(ePartService);
-		newProject.setEclipseEModelService(eModelService);
-		
 		// --- Possibly, set the AWB default JADE configuration ---------------
 		if (addNew==true) {
 			newProject.setJadeConfiguration(Application.getGlobalInfo().getJadeDefaultPlatformConfig());
@@ -207,7 +201,7 @@ public class ProjectsLoaded {
 		Application.setProjectFocused(newProject);
 
 		// --- Configure the project in the main window -----------------------
-		if (Application.getMainWindow()!=null || UiBridge.getInstance().isWorkbenchRunning()==true) {
+		if (Application.getMainWindow()!=null) {
 
 			// --- Initiate project-window and the default tabs ---------------
 			newProject.setMaximized();
@@ -244,7 +238,7 @@ public class ProjectsLoaded {
 	}
 	/**
 	 * This method will try to close all open projects.
-	 * @param parentComponent the parent component (for messages by using the {@link JOptionPane})
+	 * @param parentComponent the parent component (for messages by using the {@link AwbMessageDialog})
 	 * @return Returns true on success
 	 */
 	public boolean closeAll(Component parentComponent) {
@@ -252,7 +246,7 @@ public class ProjectsLoaded {
 	}
 	/**
 	 * This method will try to close all open projects.
-	 * @param parentComponent the parent component (for messages by using the {@link JOptionPane})
+	 * @param parentComponent the parent component (for messages by using the {@link AwbMessageDialog})
 	 * @param isSkipSaving set true, if you want to skip user interactions for saving a project
 	 * @return Returns true on success
 	 */
@@ -355,128 +349,11 @@ public class ProjectsLoaded {
 	 */
 	public void setProjectView() {
 		if (Application.getMainWindow()!=null) {
-			// --- 1. Set Setup-Selector and Tools --------------------------------
-			Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.getProjectFocused());
-			Application.getMainWindow().configureJToggleButtonProjectTree(Application.getProjectFocused());
-			// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
-			this.setProjectMenuItems();
-			// --- 3. Set the right value to the MenueBar 'View' ------------------
-			this.setProjectView4DevOrUser();
-			// --- 4. Set project tabs visible or not -----------------------------
-			this.setProjectTabHeaderInVisible();
-		}
-	}
-	
-	/**
-	 * According to the current project settings, sets the project tab header visible or invisible.
-	 */
-	private void setProjectTabHeaderInVisible() {
-		
-		Project project = Application.getProjectFocused();
-		if (project==null) return;
-
-		project.getProjectEditorWindow().setProjectTabHeaderVisible(project.isProjectTabHeaderVisible());
-	}
-	
-	/**
-	 * Configures the View for menue 'view' -> 'Developer' or 'End user' 
-	 */
-	private void setProjectView4DevOrUser() {
-		
-		MainWindow mainWindow = Application.getMainWindow();
-		
-		JRadioButtonMenuItem viewDeveloper = mainWindow.getJRadioButtonMenuItemViewDeveloper(); 
-		JRadioButtonMenuItem viewEndUser = mainWindow.getJRadioButtonMenuItemViewEndUser(); 
-		JMenuItem viewProjectTree = mainWindow.getJMenuItemViewTree();
-		JMenuItem viewProjectTabHeader = mainWindow.getJMenuItemViewTabHeader();
-		
-		boolean isEnabled = this.count()>0;
-		viewDeveloper.setEnabled(isEnabled);
-		viewEndUser.setEnabled(isEnabled);
-		viewProjectTree.setEnabled(isEnabled);
-		viewProjectTabHeader.setEnabled(isEnabled); 
-		
-		if (isEnabled==true) {
-			// --- Select the right item in relation  to the project ----------
-			String viewConfigured = Application.getProjectFocused().getProjectView();
-			if (viewConfigured.equalsIgnoreCase(Project.VIEW_User)) {
-				viewDeveloper.setSelected(false);
-				viewEndUser.setSelected(true);
-			} else {
-				viewEndUser.setSelected(false);
-				viewDeveloper.setSelected(true);
-			}
-			Application.getProjectFocused().getProjectEditorWindow().setViewForDeveloperOrEndUser();
+			Application.getMainWindow().setProjectView();
 		}
 	}
 	
 	
-	/**
-	 * Create's the Window=>MenuItems depending on the open projects 
-	 */
-	private void setProjectMenuItems() {
-		
-		boolean setFontBold = true;
-		
-		JMenu WindowMenu = Application.getMainWindow().getJMenuMainWindow();
-		WindowMenu.removeAll();
-		if (this.count()==0 ){
-			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
-		} else {
-			for(int i=0; i<this.count(); i++) {
-				String projectName = this.getProjectsOpen().get(i).getProjectName();
-				if ( projectName.equalsIgnoreCase( Application.getProjectFocused().getProjectName() ) ) {
-					setFontBold = true;
-				} else {
-					setFontBold = false;
-				}
-				WindowMenu.add( new JMenuItmen_Window( projectName, i, setFontBold) );
-			}		
-		}
-	}	
-	
-	/**
-	 * Creates a single MenueItem for the Window-Menu depending on the open projects  
-	 * @author derksen
-	 */
-	private class JMenuItmen_Window extends JMenuItem  {
- 
-		private static final long serialVersionUID = 1L;
-		
-		private JMenuItmen_Window( String ProjectName, int windowIndex, boolean setBold  ) {
-			
-			final int winIndex = windowIndex;
-			int winNo = windowIndex + 1;
-			
-			if ( winNo <= 0 ) {
-				this.setText(ProjectName);
-			} else {
-				this.setText( winNo + ": " + ProjectName );
-			}
-			
-			if ( setBold ) {
-				Font cfont = this.getFont();
-				if ( cfont.isBold() == true ) {
-					this.setForeground( Application.getGlobalInfo().ColorMenuHighLight() );	
-				}
-				else {
-					this.setFont( cfont.deriveFont(Font.BOLD) );
-				}
-			}
-			this.addActionListener( new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					Application.getProjectsLoaded().setFocus( winIndex );							
-				}
-			});		
-		}
-	}
-	/**
-	 * Sets the focus to the project identified with the index number
-	 * @param Index
-	 */
-	private void setFocus(int Index) {
-		this.get(Index).setFocus(true);		
-	}
 	
 	/**
 	 * Imports a project, which is packed in Agent.GUI project file (*.agui)
@@ -485,7 +362,7 @@ public class ProjectsLoaded {
 		
 		// --- Select a *.agui file -----------------------
 		String fileEnd = Application.getGlobalInfo().getFileEndProjectZip();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + fileEnd + ")", fileEnd);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(Language.translate("Agent.Workbench Projekt-Datei") + " (*." + fileEnd + ")", fileEnd);
 		
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(filter);
@@ -539,7 +416,7 @@ public class ProjectsLoaded {
 	 */
 	private Project selectProjectForExport() {
 		String actionTitle = Language.translate("Projekt zum Export auswählen");
-		AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitle, ProjectAction.ExportProject);
+		AwbProjectInteractionDialog newProDia = AgentWorkbenchUiManager.getInstance().getProjectInteractionDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitle, ProjectAction.ExportProject);
 		newProDia.setVisible(true);
 		if (newProDia.isCanceled() == true) {
 			return null;
@@ -617,7 +494,7 @@ public class ProjectsLoaded {
 		
 		// ----------------------------------------------------------
 		// --- Open project selection dialog ------------------------
-		AwbProjectNewOpenDialog newProDia = UiBridge.getInstance().getProjectNewOpenDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.DeleteProject);
+		AwbProjectInteractionDialog newProDia = AgentWorkbenchUiManager.getInstance().getProjectInteractionDialog(Application.getGlobalInfo().getApplicationTitle() + ": " + actionTitel, ProjectAction.DeleteProject);
 		newProDia.setVisible(true);
 		// === Waiting for closing dialog ===
 		if (newProDia.isCanceled()==true || newProDia.getProjectDirectory()==null || newProDia.getProjectDirectory().isEmpty()==true) {
@@ -642,8 +519,8 @@ public class ProjectsLoaded {
 				Project currProject = this.get(iProject);	
 				optionTitle = "" + currProject.getProjectName() + " - " + Language.translate("Projekt schließen");
 				optionMsg = currProject.getProjectName() + ": " + Language.translate("Das Projekt wird nun geschlossen!");
-				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.OK_CANCEL_OPTION);
-				if (answer==JOptionPane.CANCEL_OPTION) {
+				int answer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), optionMsg, optionTitle, AwbMessageDialog.OK_CANCEL_OPTION);
+				if (answer==AwbMessageDialog.CANCEL_OPTION) {
 					Application.setStatusBarMessageReady();
 					return;
 				}

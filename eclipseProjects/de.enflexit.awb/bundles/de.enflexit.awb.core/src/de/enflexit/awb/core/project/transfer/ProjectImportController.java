@@ -2,11 +2,11 @@ package de.enflexit.awb.core.project.transfer;
 
 import java.io.File;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.transfer.Zipper;
 
 /**
@@ -77,7 +77,7 @@ public class ProjectImportController {
 			String optionTitle = rootFolder2Extract + ": " + Language.translate("Verzeichnis bereits vorhanden!");
 			String optionMsg = Language.translate("Verzeichnis") + ": " + testFolder + newLine;
 			optionMsg+= Language.translate("Das Verzeichnis existiert bereits. Der Import wird unterbrochen.");
-			JOptionPane.showMessageDialog(Application.getMainWindow(), optionMsg, optionTitle, JOptionPane.WARNING_MESSAGE);
+			AwbMessageDialog.showMessageDialog(Application.getMainWindow(), optionMsg, optionTitle, AwbMessageDialog.WARNING_MESSAGE);
 			return false;
 		}
 		

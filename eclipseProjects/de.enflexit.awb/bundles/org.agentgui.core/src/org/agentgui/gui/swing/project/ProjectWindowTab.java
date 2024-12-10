@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package org.agentgui.gui.swing.project;
 
 import java.awt.Container;
@@ -35,6 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
+import org.agentgui.gui.AwbProjectWindowTab;
 
 import agentgui.core.project.Project;
 
@@ -45,18 +18,10 @@ import agentgui.core.project.Project;
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectWindowTab {
+public class ProjectWindowTab implements AwbProjectWindowTab {
 	
-	public final static int DISPLAY_4_END_USER = 0;
-	public final static int DISPLAY_4_END_USER_VISUALIZATION = 1;
-	public final static int DISPLAY_4_DEVELOPER = 10;
 	private int displayType = 0;
 
-	public final static String TAB_4_SUB_PANES_Configuration = "Configuration";
-	public final static String TAB_4_SUB_PANES_Setup ="Setup";
-	public final static String TAB_4_RUNTIME_VISUALIZATION = "Laufzeit-Visualisierung";
-	
-	
 	private Project currProject;
 	
 	private String title;
@@ -108,16 +73,17 @@ public class ProjectWindowTab {
 		
 	}
 	
-	/**
-	 * Returns the current instance of the {@link ProjectWindow}.
-	 * @return the project window
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getProjectWindow()
 	 */
+	@Override
 	public AwbProjectEditorWindow getProjectWindow() {
 		return this.currProject.getProjectEditorWindow();
 	}
-	/**
-	 * Adds the current Tab-object to the project window.
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#add()
 	 */
+	@Override
 	public void add() {
 		try {
 			this.getProjectWindow().addProjectTab(this);
@@ -126,150 +92,149 @@ public class ProjectWindowTab {
 		}
 	}
 	
-	/**
-	 * Adds the current Tab-object to the project window
-	 * at the given index position.
-	 *
-	 * @param indexPosition the index position greater one
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#add(int)
 	 */
+	@Override
 	public void add(int indexPosition) {
 		this.setIndexPosition(indexPosition);
 		this.getProjectWindow().addProjectTab(this, indexPosition);	
 	}
 	
-	/**
-	 * This removes the current Tab from the project window.
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#remove()
 	 */
+	@Override
 	public void remove() {
 		this.getProjectWindow().removeProjectTab(this);
 	}
 	
-	/**
-	 * To string.
-	 * @return the title of the component
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#toString()
 	 */
+	@Override
 	public String toString() {
 		return this.title;
 	}
 	
-	/**
-	 * Sets the display type.
-	 * @param displayType the displayType to set
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setDisplayType(int)
 	 */
+	@Override
 	public void setDisplayType(int displayType) {
 		this.displayType = displayType;
 	}
-	/**
-	 * Gets the display type.
-	 * @return the displayType
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getDisplayType()
 	 */
+	@Override
 	public int getDisplayType() {
 		return displayType;
 	}
 	
-	/**
-	 * Gets the title.
-	 * @return the title
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getTitle()
 	 */
+	@Override
 	public String getTitle() {
 		return title;
 	}
-	/**
-	 * Sets the title.
-	 * @param title the title to set
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setTitle(java.lang.String)
 	 */
+	@Override
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
-	/**
-	 * Gets the icon.
-	 * @return the icon
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getIcon()
 	 */
+	@Override
 	public Icon getIcon() {
 		return icon;
 	}
-	/**
-	 * Sets the icon.
-	 * @param icon the icon to set
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setIcon(javax.swing.Icon)
 	 */
+	@Override
 	public void setIcon(Icon icon) {
 		this.icon = icon;
 	}
 	
-	/**
-	 * Gets the tip text.
-	 * @return the tipText
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getTipText()
 	 */
+	@Override
 	public String getTipText() {
 		return tipText;
 	}
-	/**
-	 * Sets the tip text.
-	 * @param tipText the tipText to set
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setTipText(java.lang.String)
 	 */
+	@Override
 	public void setTipText(String tipText) {
 		this.tipText = tipText;
 	}
 	
-	/**
-	 * Gets the parent name.
-	 * @return the parentName
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getParentName()
 	 */
+	@Override
 	public String getParentName() {
 		return parentName;
 	}
-	/**
-	 * Sets the parent name.
-	 * @param parentName the parentName to set
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setParentName(java.lang.String)
 	 */
+	@Override
 	public void setParentName(String parentName) {
 		this.parentName = parentName;
 	}
 	
 	
-	/**
-	 * Returns the JComponent for the visualization.
-	 * @return the JComponent
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getJComponentForVisualization()
 	 */
+	@Override
 	public JComponent getJComponentForVisualization() {
 		return comp;
 	}
-	/**
-	 * Sets the JComponent for the visualization.
-	 * @param comp the new JComponent for the visualization
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setJComponentForVisualization(javax.swing.JComponent)
 	 */
+	@Override
 	public void setJComponentForVisualization(JComponent comp) {
 		this.comp = comp;
 	}
 
-	/**
-	 * Sets the JTabbedPane for possible child components.
-	 * @param jTabbedPane4ChildComponents the new JTabbedPane for child components
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setCompForChildComp(javax.swing.JTabbedPane)
 	 */
+	@Override
 	public void setCompForChildComp(JTabbedPane jTabbedPane4ChildComponents) {
 		this.compForChildComp = jTabbedPane4ChildComponents;
 	}
-	/**
-	 * Gets the comp for child comp.
-	 * @return the comp4childcomp
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getCompForChildComp()
 	 */
+	@Override
 	public JTabbedPane getCompForChildComp() {
 		return compForChildComp;
 	}
 
 	
-	/**
-	 * Sets the index position.
-	 * @param indexPosition the indexPosition to set
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#setIndexPosition(int)
 	 */
+	@Override
 	public void setIndexPosition(int indexPosition) {
 		this.indexPosition = indexPosition;
 	}
-	/**
-	 * Gets the index position.
-	 * @return the indexPosition
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#getIndexPosition()
 	 */
+	@Override
 	public Integer getIndexPosition() {
 		if (this.getJComponentForVisualization()!=null) {
 			Container container = this.getJComponentForVisualization().getParent();
@@ -280,9 +245,10 @@ public class ProjectWindowTab {
 		}
 		return indexPosition;
 	}
-	/**
-	 * Updates the index position.
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.swing.project.AwbProjectWindowTab#updateIndexPosition()
 	 */
+	@Override
 	public void updateIndexPosition() {
 		this.getIndexPosition();
 	}

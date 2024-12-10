@@ -1,4 +1,3 @@
-
 package de.enflexit.common.http;
 
 import java.nio.charset.StandardCharsets;

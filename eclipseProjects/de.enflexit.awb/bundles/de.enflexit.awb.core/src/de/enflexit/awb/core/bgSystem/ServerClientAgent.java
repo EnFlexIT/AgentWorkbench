@@ -158,7 +158,7 @@ public class ServerClientAgent extends Agent {
 		
 		// --- Finally start the LoadAgent ----------------
 		try {
-			this.getContainerController().createNewAgent("server.load", de.enflexit.awb.core.simulation.agents.LoadMeasureAgent.class.getName(), null).start();
+			this.getContainerController().createNewAgent("server.load", de.enflexit.awb.simulation.agents.LoadMeasureAgent.class.getName(), null).start();
 		} catch (StaleProxyException agentErr) {
 			agentErr.printStackTrace();
 		}

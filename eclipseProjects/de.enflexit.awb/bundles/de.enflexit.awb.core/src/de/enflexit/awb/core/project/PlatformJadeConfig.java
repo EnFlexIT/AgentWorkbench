@@ -23,7 +23,6 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import jade.core.Profile;
 import jade.core.ProfileImpl;
-import jade.mtp.http.ProxiedHTTPS;
 
 /**
  * With this class, the Profile of a new JADE-Container can be configured.
@@ -76,14 +75,12 @@ public class PlatformJadeConfig implements Serializable {
 	public static final String SERVICE_UDPNodeMonitoringServ = jade.core.nodeMonitoring.UDPNodeMonitoringService.class.getName();
 	public static final String SERVICE_BEManagementService = jade.imtp.leap.nio.BEManagementService.class.getName();
 	
-	// --- Agent.GUI-Services -------------------------------------------------
-	public static final String SERVICE_DebugService = agentgui.logging.DebugService.class.getName();
+	// --- Agent.Workbench-Services -------------------------------------------
+	public static final String SERVICE_DebugService = de.enflexit.awb.simulation.logging.DebugService.class.getName();
 	public static final String SERVICE_AgentGUI_LoadService = de.enflexit.awb.simulation.LoadService.class.getName();
 	public static final String SERVICE_AgentGUI_SimulationService = de.enflexit.awb.simulation.SimulationService.class.getName();
 	
-	// --- Add-On-Services ----------------------------------------------------
-	public static final String SERVICE_InterPlatformMobilityService = jade.core.migration.InterPlatformMobilityService.class.getName();
-	
+		
 	/** Array of services, which will be started with JADE in every case */
 	private static final String[] autoServices = {SERVICE_MessagingService, SERVICE_AgentManagementService};
 	private static final String AUTOSERVICE_TextAddition = "Startet automatisch !";
@@ -304,29 +301,6 @@ public class PlatformJadeConfig implements Serializable {
 					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
 				
-				} else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS) {
-					// --- A secured proxy HTTPS using NGINX ------------------ 
-					profile.setParameter(Profile.MTPS, ProxiedHTTPS.class.getName());
-					
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTP);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_ADDRESS, ProxiedHTTPS.LOOPBACK_ADDRESS);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PORT, 7778+"");
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PATH, ProxiedHTTPS.DEFAULT_PATH);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTPS);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_ADDRESS, ipAddress);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PORT, mtpPort+"");
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PATH, "/agentgui");
-					
-					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile); // needed as dummy
-					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
-					profile.setParameter("jade_mtp_http_https_trustManagerClass", jade.mtp.http.https.FriendListAuthentication.class.getName());
-					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
-					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
-					
-					// reset LOCAL_HOST and set it to to loopback to not open the RMI ports (1099) on the public interfaces
-					profile.setParameter(Profile.LOCAL_HOST, null);
-					profile.setParameter(Profile.LOCAL_HOST, ProxiedHTTPS.LOOPBACK_ADDRESS);
-					profile.setParameter(Profile.PLATFORM_ID, "agentgui");
 				}
 			}
 		}

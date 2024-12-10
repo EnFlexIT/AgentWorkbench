@@ -371,10 +371,6 @@ public class JPanelMTPConfig extends AbstractJPanelForOptions implements ActionL
 						this.hideCertificateSettings();
 					}
 				}
-				
-			} else if (currentMTP == MtpProtocol.PROXIEDHTTPS){
-				System.err.println("NOT YET IMPLEMENTED");
-				
 			}
 		}
 	}

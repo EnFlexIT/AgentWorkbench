@@ -6,7 +6,7 @@ import jade.core.ServiceException;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import de.enflexit.awb.core.simulation.agents.LoadMeasureAgent;
+import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 import de.enflexit.awb.simulation.load.LoadAgentMap;
 import de.enflexit.awb.simulation.load.LoadMerger;
 import de.enflexit.awb.simulation.load.LoadInformation.NodeDescription;
