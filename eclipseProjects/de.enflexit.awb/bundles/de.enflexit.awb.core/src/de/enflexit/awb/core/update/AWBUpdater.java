@@ -1,14 +1,12 @@
 package de.enflexit.awb.core.update;
 
-import javax.swing.JOptionPane;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
-import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.p2.P2OperationsHandler;
@@ -217,14 +215,14 @@ public class AWBUpdater extends Thread {
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			
 			if (Application.isOperatingHeadless()==false) {
-				AwbOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "Updates available", AwbOptionPane.WARNING_MESSAGE);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "Updates available", AwbMessageDialog.WARNING_MESSAGE);
 			}
 		} else {
 			String infoString = "Your target platform is up to date!";
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			
 			if (this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
-				AwbOptionPane.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbOptionPane.INFORMATION_MESSAGE);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbMessageDialog.INFORMATION_MESSAGE);
 			}
 		}
 		
@@ -273,7 +271,7 @@ public class AWBUpdater extends Thread {
 				}
 				
 				if (Application.isOperatingHeadless()==false && this.manualyExecutedByUser==true) {
-					JOptionPane.showMessageDialog(null, Language.translate("Keine Updates gefunden") + "!", Language.translate("Keine Updates gefunden"), JOptionPane.INFORMATION_MESSAGE);
+					AwbMessageDialog.showMessageDialog(null, Language.translate("Keine Updates gefunden") + "!", Language.translate("Keine Updates gefunden"), AwbMessageDialog.INFORMATION_MESSAGE);
 				}
 
 			} else {
@@ -288,8 +286,8 @@ public class AWBUpdater extends Thread {
 					}
 					
 					// --- Show confirmation dialog ----------
-					int userAnswer = JOptionPane.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), Application.getGlobalInfo().getApplicationTitle() + " Update", JOptionPane.YES_NO_OPTION);
-					if (userAnswer == JOptionPane.NO_OPTION) {
+					int userAnswer = AwbMessageDialog.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), Application.getGlobalInfo().getApplicationTitle() + " Update", AwbMessageDialog.YES_NO_OPTION);
+					if (userAnswer == AwbMessageDialog.NO_OPTION) {
 						installUpdates = false;
 						System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Update canceled by user.");
 						if (Application.isOperatingHeadless() == false) {

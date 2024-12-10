@@ -218,7 +218,7 @@ public class AWBTrayIcon implements ActionListener, AwbTrayIcon {
 	/**
 	 * Removes the tray icon out off the system tray.
 	 */
-	public void remove() {
+	public void dispose() {
 		if (this.getTrayIcon()!=null) {
 			this.getSystemTray().remove(this.getTrayIcon());
 		}

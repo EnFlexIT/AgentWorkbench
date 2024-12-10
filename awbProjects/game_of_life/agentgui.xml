@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Game of Life</projectName>
-    <projectStartTab>2|2</projectStartTab>
+    <projectStartTab>2|3</projectStartTab>
     <projectView>Developer</projectView>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>true</projectTabHeaderVisible>
@@ -9,7 +9,7 @@
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1657268047371</updateDateLastChecked>
+    <updateDateLastChecked>1733820185724</updateDateLastChecked>
     <updateAuthorization>
         <authorizationType>NONE</authorizationType>
     </updateAuthorization>
@@ -34,7 +34,7 @@
         <skipUserRequestForJadeStart>true</skipUserRequestForJadeStart>
         <useLocalPort>1099</useLocalPort>
         <useLocalMtpPort>7778</useLocalMtpPort>
-        <mtpCreation>ConfiguredByIPandPort</mtpCreation>
+        <mtpCreation>ConfiguredByJADE</mtpCreation>
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
@@ -46,7 +46,9 @@
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <additionalRemoteContainerTimeOutInSeconds>0</additionalRemoteContainerTimeOutInSeconds>
         <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
+        <distributeAllProjectResources>false</distributeAllProjectResources>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
@@ -96,7 +98,10 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>4050 Agents</simulationSetupCurrent>
+    <projectProperties>
+        <propertyMap/>
+    </projectProperties>
+    <simulationSetupCurrent>0128 Agents</simulationSetupCurrent>
     <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
     <simulationSetups>
         <entry>

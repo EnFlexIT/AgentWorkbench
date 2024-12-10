@@ -22,5 +22,7 @@
             <value>0</value>
         </entry>
     </timeModelSettings>
-    <environmentFileName>0722 Agents.xml</environmentFileName>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
 </simulationSetup>

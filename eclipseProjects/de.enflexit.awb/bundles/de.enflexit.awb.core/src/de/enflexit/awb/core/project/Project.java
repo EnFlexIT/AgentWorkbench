@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JDesktopPane;
-import javax.swing.JOptionPane;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -28,9 +27,6 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
@@ -42,12 +38,23 @@ import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentController.PersistenceStrategy;
 import de.enflexit.awb.core.environment.EnvironmentPanel;
 import de.enflexit.awb.core.environment.EnvironmentType;
-import de.enflexit.awb.core.environment.time.TimeModelController;
+import de.enflexit.awb.core.environment.TimeModelController;
 import de.enflexit.awb.core.project.plugins.PlugIn;
 import de.enflexit.awb.core.project.plugins.PlugInLoadException;
 import de.enflexit.awb.core.project.plugins.PlugInNotification;
 import de.enflexit.awb.core.project.plugins.PlugInsLoaded;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.awb.core.project.setup.SimulationSetups;
+import de.enflexit.awb.core.project.transfer.ProjectExportController;
+import de.enflexit.awb.core.project.transfer.ProjectExportControllerProvider;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettingsController;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.awb.core.ui.AwbProjectWindow;
+import de.enflexit.awb.core.ui.AwbProjectWindow.ProjectCloseUserFeedback;
+import de.enflexit.awb.core.update.ProjectRepositoryExport;
+import de.enflexit.awb.core.update.ProjectRepositoryUpdate;
 import de.enflexit.common.AbstractUserObject;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.Observable;
@@ -133,7 +140,7 @@ import de.enflexit.language.Language;
 	@XmlTransient private ProjectBundleLoader projectBundleLoader;
 
 	/** This is the 'view' in the context of the mentioned MVC pattern */
-	@XmlTransient private AwbProjectEditorWindow projectEditorWindow;
+	@XmlTransient private AwbProjectWindow projectEditorWindow;
 	/** This panel holds the instance of environment model display */
 	@XmlTransient private JPanel4Visualization visualizationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
@@ -258,11 +265,6 @@ import de.enflexit.language.Language;
 	/** The TimeModelController controls the display of the selected TimModel. */
 	@XmlTransient private TimeModelController timeModelController;
 
-
-	@XmlTransient private MApplication eclipseMApplication;
-	@XmlTransient private EPartService eclipseEPartService;
-	@XmlTransient private EModelService eclipseEModelService;
-	
 	
 
 	/**
@@ -407,7 +409,7 @@ import de.enflexit.language.Language;
 			String message = Language.translate("Datei oder Verzeichnis wurde nicht gefunden:") + "\n";
 			message += xmlFileName;
 			if (Application.getGlobalInfo().getExecutionMode() == ExecutionMode.APPLICATION){
-				JOptionPane.showMessageDialog(Application.getMainWindow(), message, title, JOptionPane.WARNING_MESSAGE);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), message, title, AwbMessageDialog.WARNING_MESSAGE);
 			}
 			return null;
 		}
@@ -1322,10 +1324,10 @@ import de.enflexit.language.Language;
 	}
 
 	/**
-	 * Maximizes the AwbProjectEditorWindow within the Application
+	 * Maximizes the AwbProjectWindow within the Application
 	 */
 	public void setMaximized() {
-		AwbProjectEditorWindow pew = this.getProjectEditorWindow();
+		AwbProjectWindow pew = this.getProjectEditorWindow();
 		if (pew != null) {
 			pew.setMaximized();
 		}
@@ -1713,9 +1715,9 @@ import de.enflexit.language.Language;
 	 * @return the project editor window for the current project
 	 */
 	@XmlTransient
-	public synchronized AwbProjectEditorWindow getProjectEditorWindow() {
+	public synchronized AwbProjectWindow getProjectEditorWindow() {
 		if (this.projectEditorWindow == null) {
-			this.projectEditorWindow = UiBridge.getInstance().getProjectEditorWindow(this);
+			this.projectEditorWindow = AgentWorkbenchUiManager.getInstance().getProjectWindow(this);
 			if (this.projectEditorWindow!=null) {
 				this.projectEditorWindow.addDefaultTabs();
 			}
@@ -1748,7 +1750,7 @@ import de.enflexit.language.Language;
 	 */
 	@XmlTransient
 	public void setProjectView(String newProjectView) {
-		AwbProjectEditorWindow pew = this.getProjectEditorWindow();
+		AwbProjectWindow pew = this.getProjectEditorWindow();
 		if (pew!=null && newProjectView.equals(this.projectView)==false) {
 
 			// --- Change view ----------------------------
@@ -2241,57 +2243,5 @@ import de.enflexit.language.Language;
 		}
 		return this.visualizationTab4SetupExecution;
 	}
-
-	/**
-	 * Sets the eclipse MApplication.
-	 * @param eclipseMApplication the current eclipse M application
-	 */
-	public void setEclipseMApplication(MApplication eclipseMApplication) {
-		this.eclipseMApplication = eclipseMApplication;
-	}
-
-	/**
-	 * Gets the eclipse MApplication.
-	 * @return the eclipse MApplication
-	 */
-	@XmlTransient
-	public MApplication getEclipseMApplication() {
-		return eclipseMApplication;
-	}
-
-	/**
-	 * Sets the eclipse EPartService.
-	 * @param eclipseEPartService the current eclipse EPartService
-	 */
-	public void setEclipseEPartService(EPartService eclipseEPartService) {
-		this.eclipseEPartService = eclipseEPartService;
-	}
-
-	/**
-	 * Gets the eclipse EPartService.
-	 * @return the eclipse EPartService
-	 */
-	@XmlTransient
-	public EPartService getEclipseEPartService() {
-		return eclipseEPartService;
-	}
-
-	/**
-	 * Sets the eclipse EModelService.
-	 * @param eclipseEModelService the current eclipse EModelService
-	 */
-	public void setEclipseEModelService(EModelService eclipseEModelService) {
-		this.eclipseEModelService = eclipseEModelService;
-	}
-
-	/**
-	 * Gets the eclipse EModelService.
-	 * @return the eclipse EModelService
-	 */
-	@XmlTransient
-	public EModelService getEclipseEModelService() {
-		return eclipseEModelService;
-	}
-
 
 }

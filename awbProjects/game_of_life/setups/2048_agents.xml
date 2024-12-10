@@ -22,4 +22,7 @@
             <value>0</value>
         </entry>
     </timeModelSettings>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
 </simulationSetup>

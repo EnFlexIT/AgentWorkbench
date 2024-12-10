@@ -23,7 +23,7 @@ import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.jade.PlatformStateInformation.PlatformState;
 import de.enflexit.awb.core.project.Project;
-import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.utillity.UtilityAgent.UtilityAgentJob;
 import de.enflexit.awb.simulation.LoadService;
 import de.enflexit.awb.simulation.SimulationService;
@@ -33,6 +33,8 @@ import de.enflexit.awb.simulation.distribution.HTTPServer.FileContextHandler;
 import de.enflexit.awb.simulation.distribution.HTTPServer.Request;
 import de.enflexit.awb.simulation.distribution.HTTPServer.Response;
 import de.enflexit.awb.simulation.distribution.HTTPServer.VirtualHost;
+import de.enflexit.awb.simulation.load.LoadMeasureThread;
+import de.enflexit.awb.simulation.logging.DebugService;
 import de.enflexit.common.transfer.RecursiveFolderDeleter;
 import de.enflexit.language.Language;
 import jade.core.AID;
@@ -103,7 +105,6 @@ public class Platform {
 		// --- Further Agent.Workbench agents --- 
 		SimStarter("simstarter"),
 		Utility("utility"),
-		ProjectFileManager("file.manager"),
 		LoadMonitor("loadmonitor"), 
 		ThreadMonitor("threadmonitor"); 
 		
@@ -364,8 +365,8 @@ public class Platform {
 		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null && Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
 			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
 			String message = Language.translate("Möchten Sie JADE nun beenden?");
-			Integer answer =  AwbOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, AwbOptionPane.YES_NO_OPTION);
-			if (answer==AwbOptionPane.NO_OPTION) return false; // --- NO, just exit 
+			Integer answer =  AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), message, title, AwbMessageDialog.YES_NO_OPTION);
+			if (answer==AwbMessageDialog.NO_OPTION) return false; // --- NO, just exit 
 			// --- Stop the JADE-Platform -------------------
 			this.stop(false);
 		}
@@ -578,9 +579,9 @@ public class Platform {
 				} else {
 					String msgQuestion = Language.translate("Möchten Sie die Konfiguration nun vornehmen?");
 					msgText += newLine + newLine + msgQuestion;
-					int answer = AwbOptionPane.showConfirmDialog(null, msgText, msgHead, AwbOptionPane.YES_NO_OPTION);
-					if (answer == AwbOptionPane.YES_OPTION) {
-						Application.showOptionDialog();
+					int answer = AwbMessageDialog.showConfirmDialog(null, msgText, msgHead, AwbMessageDialog.YES_NO_OPTION);
+					if (answer == AwbMessageDialog.YES_OPTION) {
+						Application.showOptionsDialog();
 					}	
 				}
 				return false;
@@ -934,7 +935,7 @@ public class Platform {
 			if (Application.getProjectFocused()==null) {
 				String msgHead = Language.translate("Abbruch: Kein Projekt geöffnet!");
 				String msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
-				AwbOptionPane.showMessageDialog(Application.getMainWindow(), msgText, msgHead, AwbOptionPane.OK_OPTION);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), msgText, msgHead, AwbMessageDialog.OK_OPTION);
 				// --- Since the simulation was not started, enable the start button again
 				Application.getMainWindow().setEnableSimStart(true);
 				return;	
@@ -977,8 +978,8 @@ public class Platform {
 					dialogContent[1] = jCheckBoxDoNotAskAgain;
 				}
 				 
-				int msgAnswer = AwbOptionPane.showConfirmDialog(Application.getMainWindow(), dialogContent, msgHead, AwbOptionPane.YES_NO_OPTION, AwbOptionPane.QUESTION_MESSAGE);
-				if (msgAnswer==AwbOptionPane.NO_OPTION) return; // --- NO, just exit
+				int msgAnswer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), dialogContent, msgHead, AwbMessageDialog.YES_NO_OPTION, AwbMessageDialog.QUESTION_MESSAGE);
+				if (msgAnswer==AwbMessageDialog.NO_OPTION) return; // --- NO, just exit
 				// --- Remind CheckBox value if selected ------------
 				if (currProject!=null && jCheckBoxDoNotAskAgain.isSelected()==true) {
 					currProject.getJadeConfiguration().setSkipUserRequestForJadeStart(true);
@@ -1005,9 +1006,9 @@ public class Platform {
 			String msgHead = Language.translate("Der Agent '") + agentName +  Language.translate("' ist bereits geöffnet!");
 			String msgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
 			if (Application.getMainWindow()==null) {
-				msgAnswer = AwbOptionPane.showConfirmDialog(null, msgText, msgHead, AwbOptionPane.YES_NO_OPTION);				
+				msgAnswer = AwbMessageDialog.showConfirmDialog(null, msgText, msgHead, AwbMessageDialog.YES_NO_OPTION);				
 			} else {
-				msgAnswer = AwbOptionPane.showConfirmDialog(Application.getMainWindow(), msgText, msgHead, AwbOptionPane.YES_NO_OPTION);	
+				msgAnswer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), msgText, msgHead, AwbMessageDialog.YES_NO_OPTION);	
 			}
 			if (msgAnswer==0) {
 				// --- YES - Start another agent of this kind --------
@@ -1066,11 +1067,10 @@ public class Platform {
 			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerSlave, de.enflexit.awb.core.bgSystem.ServerSlaveAgent.class.getName());
 			
 			// --- Agent.Workbench - agents -----------------------------
-			systemAgentsClasses.put(SystemAgent.Utility, agentgui.core.utillity.UtilityAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.ProjectFileManager, agentgui.core.jade.ProjectFileManagerAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.SimStarter, agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.LoadMonitor, agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.ThreadMonitor, agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.Utility, de.enflexit.awb.core.utillity.UtilityAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.SimStarter, de.enflexit.awb.simulation.agents.LoadExecutionAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.LoadMonitor, de.enflexit.awb.simulation.agents.LoadMeasureAgent.class.getName());
+			systemAgentsClasses.put(SystemAgent.ThreadMonitor, de.enflexit.awb.simulation.agents.LoadMeasureAgent.class.getName());
 			
 		}
 		return systemAgentsClasses;
@@ -1562,8 +1562,8 @@ public class Platform {
 		if (this.isMainContainerRunning()==false) {
 			String msgHead = Language.translate("JADE wurde noch nicht gestartet!");
 			String msgText = Language.translate("Möchten Sie JADE nun starten und fortfahren?");
-			int msgAnswer = AwbOptionPane.showConfirmDialog(Application.getMainWindow().getContentPane(), msgText, msgHead, AwbOptionPane.YES_NO_OPTION);
-			if (msgAnswer==AwbOptionPane.NO_OPTION) return; // --- NO, just exit 
+			int msgAnswer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), msgText, msgHead, AwbMessageDialog.YES_NO_OPTION);
+			if (msgAnswer==AwbMessageDialog.NO_OPTION) return; // --- NO, just exit 
 			
 			// --- Start the JADE-Platform -------------------------------
 			if (this.start() == false) {

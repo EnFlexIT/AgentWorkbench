@@ -10,17 +10,19 @@
     </agentSetup>
     <timeModelSettings>
         <entry>
-            <key>CounterCurrent</key>
-            <value>0</value>
+            <key>CounterStart</key>
+            <value>1</value>
         </entry>
         <entry>
             <key>CounterStop</key>
             <value>9999</value>
         </entry>
         <entry>
-            <key>CounterStart</key>
-            <value>1</value>
+            <key>CounterCurrent</key>
+            <value>0</value>
         </entry>
     </timeModelSettings>
-    <environmentFileName>0242 Agents.xml</environmentFileName>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
 </simulationSetup>

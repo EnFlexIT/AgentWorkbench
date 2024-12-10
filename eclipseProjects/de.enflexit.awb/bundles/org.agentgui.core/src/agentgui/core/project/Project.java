@@ -57,10 +57,10 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
+import org.agentgui.gui.AwbProjectWindowTab;
 import org.agentgui.gui.AwbProjectEditorWindow.ProjectCloseUserFeedback;
 import org.agentgui.gui.UiBridge;
 import org.agentgui.gui.swing.project.ProjectWindow;
-import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -2278,7 +2278,7 @@ import de.enflexit.common.properties.PropertiesListener;
 	@XmlTransient
 	public JPanel4Visualization getVisualizationTab4SetupExecution() {
 		if (this.visualizationTab4SetupExecution == null) {
-			this.visualizationTab4SetupExecution = new JPanel4Visualization(this, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
+			this.visualizationTab4SetupExecution = new JPanel4Visualization(this, Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
 		}
 		return this.visualizationTab4SetupExecution;
 	}

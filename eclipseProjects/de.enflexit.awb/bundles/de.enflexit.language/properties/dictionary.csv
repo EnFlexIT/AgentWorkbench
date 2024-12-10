@@ -13,6 +13,8 @@ de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of
 de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing selected!;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
+de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
 de;AWB auf GitBook;AWB on GitBook;;;
 de;AWB auf GitHub;AWB on GitHub;;;
@@ -302,6 +304,7 @@ de;Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese
 de;Gegenwarts-Zeit.;Present Time;;;
 de;Geräte-Agent;Embedded System Agent;;;
 de;Gesamtes Projekt verteilen;Distribute entire project;;;
+de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;;;;
 de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
 de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
 de;Google - Übersetzung;Google translation;;;

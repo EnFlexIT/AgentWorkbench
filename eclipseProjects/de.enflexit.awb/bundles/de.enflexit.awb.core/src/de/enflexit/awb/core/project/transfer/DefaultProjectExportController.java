@@ -10,19 +10,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
-import org.agentgui.gui.AwbProgressMonitor;
-import org.agentgui.gui.UiBridge;
-
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetup;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.transfer.ArchiveFileHandler;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
@@ -113,8 +113,8 @@ public class DefaultProjectExportController implements ProjectExportController{
 				if (targetFile.exists() == true) {
 					String optionTitle = targetFile.getName() + ": " + Language.translate("Datei überschreiben?");
 					String optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
-					int answer = JOptionPane.showConfirmDialog(projectExportDialog, optionMsg, optionTitle, JOptionPane.YES_NO_OPTION);
-					if (answer == JOptionPane.YES_OPTION) {
+					int answer = AwbMessageDialog.showConfirmDialog(projectExportDialog, optionMsg, optionTitle, AwbMessageDialog.YES_NO_OPTION);
+					if (answer == AwbMessageDialog.YES_OPTION) {
 						targetFile.delete();
 					} else {
 						return null;
@@ -395,13 +395,13 @@ public class DefaultProjectExportController implements ProjectExportController{
 			if (this.showUserDialogs == true && this.confirmationDialogDisabled == false) {
 				String messageTitle = Language.translate("Export erfolgreich");
 				String messageContent = Language.translate("Projekt") + " " + project.getProjectName() + " " + Language.translate("erfolgreich exportiert!");
-				JOptionPane.showMessageDialog(null, messageContent, messageTitle, JOptionPane.INFORMATION_MESSAGE);
+				AwbMessageDialog.showMessageDialog(null, messageContent, messageTitle, AwbMessageDialog.INFORMATION_MESSAGE);
 			}
 		} else {
 			if (this.getMessageFailure().isEmpty()==false) System.err.println(this.getMessageFailure());
 			if (this.showUserDialogs == true && this.confirmationDialogDisabled == false) {
 				String message = Language.translate("Export fehlgeschlagen");
-				JOptionPane.showMessageDialog(null, message, message, JOptionPane.ERROR_MESSAGE);
+				AwbMessageDialog.showMessageDialog(null, message, message, AwbMessageDialog.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -533,7 +533,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 			String title = Language.translate("Projekt-Export");
 			String header = Language.translate("Exportiere Projekt") + " " + project.getProjectName();
 			String progress = Language.translate("Exportiere") + "...";
-			this.progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
+			this.progressMonitor = AgentWorkbenchUiManager.getInstance().getProgressMonitor(title, header, progress);
 		}
 		return this.progressMonitor;
 	}

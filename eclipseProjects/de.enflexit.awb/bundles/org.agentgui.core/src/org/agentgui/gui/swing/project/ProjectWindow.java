@@ -42,6 +42,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
+import org.agentgui.gui.AwbProjectWindowTab;
 
 import agentgui.core.application.Application;
 import de.enflexit.language.Language;
@@ -463,7 +464,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 					if (pauseTabSelectionListener) return;
 
-					ProjectWindowTab pwt = getProjectWindowTabSelected();
+					AwbProjectWindowTab pwt = getProjectWindowTabSelected();
 					if (pwt != null) {
 						DefaultMutableTreeNode selectedNode = getTreeNode(pwt.getTitle());
 						DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) jTreeProject.getLastSelectedPathComponent();
@@ -668,68 +669,68 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		ProjectWindowTab pwt = null;
 		// ------------------------------------------------
 		// --- General Informations -----------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this.currProject), null);
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Info"), null, null, new ProjectInfo(this.currProject), null);
 		pwt.add();
 
 		
 		// ------------------------------------------------
 		// --- Configuration ------------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this.currProject), null);
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Konfiguration"), null, null, new TabForSubPanels(this.currProject), null);
 		pwt.add();
-		this.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
+		this.registerTabForSubPanels(AwbProjectWindowTab.TAB_4_SUB_PANES_Configuration, pwt);
 
 		// --- External Resources ---------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ressourcen"), null, null, new ProjectResources(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- Used Ontologies ------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Ontologien"), null, null, new OntologyTab(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- Project Agents -------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten"), null, null, new BaseAgents(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- JADE-Services --------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Services", null, null, new JadeSetupServices(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Services", null, null, new JadeSetupServices(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- JADE-MTP configuration -----------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Settings", null, null, new JadeSetupMTP(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, "JADE-Settings", null, null, new JadeSetupMTP(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- Distribution + Thresholds --------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Verteilung + Grenzwerte"), null, null, new Distribution(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- Agent Load Metrics ---------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this.currProject), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Agenten-Lastmetrik"), null, null, new AgentClassLoadMetricsPanel(this.currProject), Language.translate("Konfiguration"));
 		pwt.add();
 		// --- Project Properties ---------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Projekt-Eigenschaften"), null, null, new ProjectPropertiesPanel(this.currProject, Language.translate("Projekt-Eigenschaften")), Language.translate("Konfiguration"));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Projekt-Eigenschaften"), null, null, new ProjectPropertiesPanel(this.currProject, Language.translate("Projekt-Eigenschaften")), Language.translate("Konfiguration"));
 		pwt.add();
 		
 		
 		// ------------------------------------------------
 		// --- Simulations-Setup --------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this.currProject), null);
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER, Language.translate(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup), null, null, new TabForSubPanels(this.currProject), null);
 		pwt.add();
-		this.registerTabForSubPanels(ProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
+		this.registerTabForSubPanels(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup, pwt);
 
 		// --- Setup Properties -----------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Setup-Eigenschaften"), null, null, new SetupPropertiesPanel(this.currProject, Language.translate("Setup-Eigenschaften")), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_DEVELOPER, Language.translate("Setup-Eigenschaften"), null, null, new SetupPropertiesPanel(this.currProject, Language.translate("Setup-Eigenschaften")), Language.translate(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
 		// --- start configuration for agents ---------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Agenten-Start"), null, null, new StartSetup(this.currProject), Language.translate(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
 		// --- simulation environment -----------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this.currProject), Language.translate(ProjectWindowTab.TAB_4_SUB_PANES_Setup));
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate("Umgebungsmodell"), null, null, new EnvironmentModelSetup(this.currProject), Language.translate(AwbProjectWindowTab.TAB_4_SUB_PANES_Setup));
 		pwt.add();
 		
 		
 		// ------------------------------------------------
 		// --- Visualization ------------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION), null, null, this.currProject.getVisualizationTab4SetupExecution(), null);
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION), null, null, this.currProject.getVisualizationTab4SetupExecution(), null);
 		pwt.add();
 
 		
 		// ------------------------------------------------
 		// --- Project Desktop ----------------------------
-		pwt = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this.currProject), null);
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER, Language.translate("Projekt-Desktop"), null, null, new ProjectDesktop(this.currProject), null);
 		pwt.add();
 
 		this.projectTreeExpand2Level(3, true);
@@ -766,7 +767,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			newIndexPos = this.getJTabbedPaneProjectWindowTabs().getTabCount(); // Default
 			String parentName = projectWindowTab.getParentName();
 			if (parentName != null) {
-				ProjectWindowTab parentPWT = this.getProjectWindowTab(parentName);
+				AwbProjectWindowTab parentPWT = this.getProjectWindowTab(parentName);
 				newIndexPos = parentPWT.getCompForChildComp().getTabCount();
 			}
 		}
@@ -784,7 +785,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * @param projectWindowTab the project window tab
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode addProjectTabInternal(ProjectWindowTab projectWindowTab) {
+	private DefaultMutableTreeNode addProjectTabInternal(AwbProjectWindowTab projectWindowTab) {
 
 		// --- create Node ------------------------------------------
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(projectWindowTab);
@@ -800,7 +801,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 			if (pareNode==null) return null;
 			
 			// --- Add to the parent --------------------------------
-			ProjectWindowTab pareNodePWT = (ProjectWindowTab) pareNode.getUserObject();
+			AwbProjectWindowTab pareNodePWT = (AwbProjectWindowTab) pareNode.getUserObject();
 			tabbedPaneParent = pareNodePWT.getCompForChildComp();
 			// --- add ChangeListener -------------------------------
 			this.addChangeListener(tabbedPaneParent);
@@ -855,7 +856,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * @see org.agentgui.gui.AwbProjectEditorWindow#removeProjectTab(agentgui.core.gui.projectwindow.ProjectWindowTab)
 	 */
 	@Override
-	public void removeProjectTab(ProjectWindowTab projectWindowTab) {
+	public void removeProjectTab(AwbProjectWindowTab projectWindowTab) {
 
 		DefaultMutableTreeNode node = this.getTreeNode(projectWindowTab.getTitle());
 		if (node != null) {
@@ -881,7 +882,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 
 		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.getProjectWindowTabVector());
 		for (int i = 0; i < pwtVector.size(); i++) {
-			ProjectWindowTab pwt = pwtVector.get(i);
+			AwbProjectWindowTab pwt = pwtVector.get(i);
 			if (pwt.getCompForChildComp()!=null) {
 				pwt.getCompForChildComp().removeAll();
 			}
@@ -917,7 +918,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * Sets the focus to a specified Tab of the project Window.
 	 * @param pwt the new focus2 tab
 	 */
-	public void setFocus2Tab(ProjectWindowTab pwt) {
+	public void setFocus2Tab(AwbProjectWindowTab pwt) {
 		String tabCaption = pwt.getTitle();
 		this.setFocus2Tab(tabCaption);
 	}
@@ -952,7 +953,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		for (int i = nodeVector.size() - 1; i > -1; i--) {
 			currNode = nodeVector.get(i);
 			if (currNode.getUserObject() instanceof ProjectWindowTab) {
-				ProjectWindowTab pwt = (ProjectWindowTab) currNode.getUserObject();
+				AwbProjectWindowTab pwt = (AwbProjectWindowTab) currNode.getUserObject();
 				if (pwt!=null && pwt.getJComponentForVisualization()!=null) {
 					Component displayElement = pwt.getJComponentForVisualization();
 					if (displayElement.getParent()!=null) {
@@ -1100,9 +1101,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		// --- Which view should be displayed ? ---------------------
 		int viewToSet = 0;
 		if (this.currProject.getProjectView().equals(Project.VIEW_User)) {
-			viewToSet = ProjectWindowTab.DISPLAY_4_END_USER;
+			viewToSet = AwbProjectWindowTab.DISPLAY_4_END_USER;
 		} else {
-			viewToSet = ProjectWindowTab.DISPLAY_4_DEVELOPER;
+			viewToSet = AwbProjectWindowTab.DISPLAY_4_DEVELOPER;
 		}
 
 		// --- Remind the current selection -------------------------
@@ -1123,17 +1124,17 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		Vector<ProjectWindowTab> pwtVector = new Vector<ProjectWindowTab>(this.getProjectWindowTabVector());
 		for (int i = 0; i < pwtVector.size(); i++) {
 			
-			ProjectWindowTab pwt = pwtVector.get(i);
+			AwbProjectWindowTab pwt = pwtVector.get(i);
 			int displayType = pwt.getDisplayType();
 
 			// --- Which view to the project is needed ? ------------
-			if (viewToSet == ProjectWindowTab.DISPLAY_4_DEVELOPER) {
+			if (viewToSet == AwbProjectWindowTab.DISPLAY_4_DEVELOPER) {
 				// --- show everything ------------------------------
 				this.addProjectTabInternalCheckVisualization(pwt, envController);
 
-			} else if (viewToSet == ProjectWindowTab.DISPLAY_4_END_USER) {
+			} else if (viewToSet == AwbProjectWindowTab.DISPLAY_4_END_USER) {
 				// --- show only the end user displays --------------
-				if (displayType < ProjectWindowTab.DISPLAY_4_DEVELOPER) {
+				if (displayType < AwbProjectWindowTab.DISPLAY_4_DEVELOPER) {
 					this.addProjectTabInternalCheckVisualization(pwt, envController);
 				}
 			}
@@ -1167,10 +1168,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * @param envControllerClass the EnvironmentController class
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode addProjectTabInternalCheckVisualization(ProjectWindowTab pwt, Class<? extends EnvironmentController> envControllerClass) {
+	private DefaultMutableTreeNode addProjectTabInternalCheckVisualization(AwbProjectWindowTab pwt, Class<? extends EnvironmentController> envControllerClass) {
 
 		DefaultMutableTreeNode newNode = null;
-		if (pwt.getDisplayType()==ProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION) {
+		if (pwt.getDisplayType()==AwbProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION) {
 			// --- Show Visualization-Tab only in case of ----------
 			// --- an available defined Visualization-Panel ---------
 			if (envControllerClass!=null) {
@@ -1197,7 +1198,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 * @see org.agentgui.gui.AwbProjectEditorWindow#getTabForSubPanels(java.lang.String)
 	 */
 	@Override
-	public ProjectWindowTab getTabForSubPanels(String name) {
+	public AwbProjectWindowTab getTabForSubPanels(String name) {
 		return this.getProjectWindowTabForSubPanelHash().get(name);
 	}
 	
@@ -1272,7 +1273,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	 */
 	private void updateProjectDesktopChilds() {
 		
-		ProjectWindowTab desktopTab = this.getProjectWindowTab(Language.translate("Projekt-Desktop"));
+		AwbProjectWindowTab desktopTab = this.getProjectWindowTab(Language.translate("Projekt-Desktop"));
 		DefaultMutableTreeNode pdTreeNode = this.getTreeNode(desktopTab.toString());
 		if (pdTreeNode!=null) {
 			// --- Create temporary vector for removed internal frames -------- 
@@ -1309,7 +1310,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		this.getProjectDesktopFrameVector().add(intFrameToAdd);
 
 		String reducedTitle = this.getReducedTitleForInternalFrame(intFrameToAdd);
-		ProjectWindowTab pwtInternal = new ProjectWindowTab(this.currProject, ProjectWindowTab.DISPLAY_4_END_USER, reducedTitle, intFrameToAdd.getTitle(), null, intFrameToAdd, null);
+		AwbProjectWindowTab pwtInternal = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER, reducedTitle, intFrameToAdd.getTitle(), null, intFrameToAdd, null);
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(pwtInternal);
 		pdTreeNode.add(newNode);
 		this.getTreeModel().reload();
@@ -1327,7 +1328,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		
 		for (int i = 0; i < pdTreeNode.getChildCount(); i++) {
 			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) pdTreeNode.getChildAt(i);
-			ProjectWindowTab pwt = (ProjectWindowTab) childNode.getUserObject();
+			AwbProjectWindowTab pwt = (AwbProjectWindowTab) childNode.getUserObject();
 			if (pwt.getJComponentForVisualization()==intFrameToRemoved) {
 				pdTreeNode.remove(i);
 				this.getTreeModel().reload();

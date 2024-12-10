@@ -50,7 +50,6 @@ import agentgui.core.network.NetworkAddresses.NetworkAddress;
 import agentgui.core.network.PortChecker;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
-import jade.mtp.http.ProxiedHTTPS;
 
 /**
  * With this class, the Profile of a new JADE-Container can be configured.
@@ -331,29 +330,6 @@ public class PlatformJadeConfig implements Serializable {
 					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
 					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
 				
-				} else if(mtpProtocol==MtpProtocol.PROXIEDHTTPS) {
-					// --- A secured proxy HTTPS using NGINX ------------------ 
-					profile.setParameter(Profile.MTPS, ProxiedHTTPS.class.getName());
-					
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTP);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_ADDRESS, ProxiedHTTPS.LOOPBACK_ADDRESS);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PORT, 7778+"");
-					profile.setParameter(ProxiedHTTPS.PROFILE_PRIVATE_PATH, ProxiedHTTPS.DEFAULT_PATH);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PROTOCOL, ProxiedHTTPS.PROTOCOL_HTTPS);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_ADDRESS, ipAddress);
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PORT, mtpPort+"");
-					profile.setParameter(ProxiedHTTPS.PROFILE_PUBLIC_PATH, "/agentgui");
-					
-					profile.setParameter("jade_mtp_http_https_keyStoreFile", keyStoreFile); // needed as dummy
-					profile.setParameter("jade_mtp_http_https_keyStorePass", keyStorePassword);
-					profile.setParameter("jade_mtp_http_https_trustManagerClass", jade.mtp.http.https.FriendListAuthentication.class.getName());
-					profile.setParameter("jade_mtp_http_https_friendListFile", trustStoreFile);
-					profile.setParameter("jade_mtp_http_https_friendListFilePass", trustStorePassword);
-					
-					// reset LOCAL_HOST and set it to to loopback to not open the RMI ports (1099) on the public interfaces
-					profile.setParameter(Profile.LOCAL_HOST, null);
-					profile.setParameter(Profile.LOCAL_HOST, ProxiedHTTPS.LOOPBACK_ADDRESS);
-					profile.setParameter(Profile.PLATFORM_ID, "agentgui");
 				}
 			}
 		}

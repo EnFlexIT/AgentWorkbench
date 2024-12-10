@@ -963,7 +963,6 @@ public class JadeSetupMTP extends JPanel implements ActionListener, Observer, It
 				this.currProject.getJadeConfiguration().setMtpProtocol(protocolSelected);
 				break;
 			case HTTPS:
-			case PROXIEDHTTPS:
 				// ---- Switch to HTTPS ------------------------------
 				this.currProject.getJadeConfiguration().setMtpProtocol(protocolSelected);
 				this.editHTTPSsettings(protocolSelected);

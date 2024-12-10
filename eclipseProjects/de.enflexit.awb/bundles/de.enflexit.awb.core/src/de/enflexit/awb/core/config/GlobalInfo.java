@@ -184,7 +184,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * for the message exchange between agent platforms/container
 	 */
 	public enum MtpProtocol {
-		HTTP, HTTPS, PROXIEDHTTPS
+		HTTP, HTTPS
 	}
 	
 	/**

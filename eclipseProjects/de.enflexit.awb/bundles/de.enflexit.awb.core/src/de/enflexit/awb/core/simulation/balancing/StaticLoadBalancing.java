@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
-import de.enflexit.awb.core.simulation.agents.LoadExecutionAgent;
+import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 
 /**
  * This class is the default class for the start of an agency of <b>Agent.Workbench</b>. 

@@ -500,7 +500,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 					// --- Set application status text --------------------------------------------
 					if (Application.getMainWindow()!=null) {
-						Application.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + GraphEnvironmentController.this.getFileXML().getAbsolutePath() + " ...");
 						// --- Reset Undo-Manager -------------------------------------------------
 						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
@@ -568,7 +568,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 					// --- => Reset the NetworkModel instance in the GraphNodePositionFactory -----
 					GraphNodePositionFactory.setLoadingNetworkModel(null);
 					GraphEnvironmentController.this.isTemporaryPreventSaving = false;
-					Application.setCursor(Cursor.getDefaultCursor());
+					Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
 					Application.setStatusBarMessageReady();
 				}
 				

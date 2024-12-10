@@ -3,7 +3,6 @@ package de.enflexit.awb.core.update;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import de.enflexit.language.Language;
@@ -14,6 +13,7 @@ import de.enflexit.awb.core.project.transfer.DefaultProjectExportController;
 import de.enflexit.awb.core.project.transfer.ProjectExportSettingsController;
 import de.enflexit.awb.core.project.transfer.ProjectImportController;
 import de.enflexit.awb.core.project.transfer.ProjectImportSettings;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.common.ExecutionEnvironment;
@@ -127,8 +127,8 @@ public class ProjectRepositoryUpdate extends Thread {
 				String message = this.getUpdateAsText(update) + " ";
 				message += Language.translate("is available.", Language.EN) + "\n";
 				message += Language.translate("Would you like to download and install this update?", Language.EN); 
-				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (answer==JOptionPane.NO_OPTION) {
+				int answer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), message, title, AwbMessageDialog.YES_NO_OPTION, AwbMessageDialog.QUESTION_MESSAGE);
+				if (answer==AwbMessageDialog.NO_OPTION) {
 					confirmed = false;
 				}
 			}
@@ -165,8 +165,8 @@ public class ProjectRepositoryUpdate extends Thread {
 				String message = this.getUpdateAsText(update) + " ";
 				message += Language.translate("was downloaded.", Language.EN) + "\n";
 				message += Language.translate("Would you like to install this update now?", Language.EN);
-				int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (answer==JOptionPane.NO_OPTION) {
+				int answer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), message, title, AwbMessageDialog.YES_NO_OPTION, AwbMessageDialog.QUESTION_MESSAGE);
+				if (answer==AwbMessageDialog.NO_OPTION) {
 					confirmed = false;
 				}
 			}
@@ -293,7 +293,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 			String message = Language.translate("No project updates are available in the IDE environment.", Language.EN);
 			if (this.isHeadlessUpdate()==false && this.isExecutedByUser()==true) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), message, "IDE - Environment", JOptionPane.INFORMATION_MESSAGE);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), message, "IDE - Environment", AwbMessageDialog.INFORMATION_MESSAGE);
 			} else {
 				this.printSystemOutput(message, false);
 			}
@@ -369,18 +369,18 @@ public class ProjectRepositoryUpdate extends Thread {
 					if (this.updateProject(updateFilename)==true) {
 						updateTitle = Language.translate("Updated successful", Language.EN);
 						updateMessage = Language.translate("The project was updated successfully!", Language.EN);
-						updateMessageType = JOptionPane.INFORMATION_MESSAGE;
+						updateMessageType = AwbMessageDialog.INFORMATION_MESSAGE;
 						this.setSuccessfulUpdate(true);
 					} else {
 						updateTitle = Language.translate("Update failed", Language.EN);
 						updateMessage = Language.translate("The project update failed!", Language.EN);
-						updateMessageType = JOptionPane.ERROR_MESSAGE;
+						updateMessageType = AwbMessageDialog.ERROR_MESSAGE;
 					}
 					// --- Give some feedback to the user ---------------
 					if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
-						JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
+						AwbMessageDialog.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
 					} else {
-						this.printSystemOutput(updateMessage, (updateMessageType!=JOptionPane.INFORMATION_MESSAGE));
+						this.printSystemOutput(updateMessage, (updateMessageType!=AwbMessageDialog.INFORMATION_MESSAGE));
 					}
 				}
 				
@@ -396,9 +396,9 @@ public class ProjectRepositoryUpdate extends Thread {
 				// --- No Update found ----------------------------------
 				updateTitle = Language.translate("Updated check for", Language.EN) + " '" + this.currProject.getProjectName() + "'";
 				updateMessage = Language.translate("No update could be found for the current project!", Language.EN);
-				updateMessageType = JOptionPane.INFORMATION_MESSAGE;
+				updateMessageType = AwbMessageDialog.INFORMATION_MESSAGE;
 				if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
-					JOptionPane.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
+					AwbMessageDialog.showMessageDialog(Application.getMainWindow(), updateMessage, updateTitle, updateMessageType);
 				} else {
 					this.printSystemOutput(updateMessage, false);
 				}
@@ -407,10 +407,10 @@ public class ProjectRepositoryUpdate extends Thread {
 		} catch(ProjectRepositoryUpdateException | IllegalArgumentException ex) {
 			updateTitle = Language.translate("Update failed", Language.EN);
 			updateMessage = ex.getLocalizedMessage();
-			updateMessageType = JOptionPane.ERROR_MESSAGE;
+			updateMessageType = AwbMessageDialog.ERROR_MESSAGE;
 
 			if (this.isHeadlessUpdate()==false && this.isShowFinalUserMessage()==true) {
-				JOptionPane.showMessageDialog(Application.getMainWindow(), ex.getMessage(), updateTitle, updateMessageType);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), ex.getMessage(), updateTitle, updateMessageType);
 			} else {
 				this.printSystemOutput(updateMessage, true);
 			}

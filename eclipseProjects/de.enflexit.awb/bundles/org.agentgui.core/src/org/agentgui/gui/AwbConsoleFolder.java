@@ -29,7 +29,7 @@
 package org.agentgui.gui;
 
 /**
- * The Interface AwbConsoleFolder corresponds to a JTabedPane (or similar) that.
+ * The Interface AwbConsoleFolder corresponds to a JTabedPane (or similar) that
  * enables to host several {@link AwbConsole} panels or parts.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen

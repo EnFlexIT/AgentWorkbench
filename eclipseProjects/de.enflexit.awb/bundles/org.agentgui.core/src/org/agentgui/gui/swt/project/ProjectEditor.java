@@ -32,6 +32,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
+import org.agentgui.gui.AwbProjectWindowTab;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 import org.agentgui.gui.swt.AppModelId;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -240,7 +241,7 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 	}
 
 	@Override
-	public ProjectWindowTab getTabForSubPanels(String superPanelName) {
+	public AwbProjectWindowTab getTabForSubPanels(String superPanelName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -266,7 +267,7 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 	}
 
 	@Override
-	public void removeProjectTab(ProjectWindowTab projectWindowTab) {
+	public void removeProjectTab(AwbProjectWindowTab projectWindowTab) {
 		// TODO Auto-generated method stub
 	}
 

@@ -11,7 +11,8 @@ import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentType;
 import de.enflexit.awb.core.project.RemoteContainerConfiguration;
 import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
-import de.enflexit.awb.core.simulation.agents.LoadExecutionAgent;
+import de.enflexit.awb.core.ui.AwbProjectWindowTab;
+import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.ontology.RemoteContainerConfig;
 import de.enflexit.language.Language;
 
@@ -166,7 +167,7 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				
 				// --- Set the focus on Visualisation-Tab ---------------------
-				currProject.getProjectEditorWindow().setFocus2Tab(Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
+				currProject.getProjectEditorWindow().setFocus2Tab(Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
 			}
 			// ----------------------------------------------------------------
 		}

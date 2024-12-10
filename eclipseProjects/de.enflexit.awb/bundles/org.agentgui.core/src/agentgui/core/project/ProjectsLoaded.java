@@ -1,18 +1,12 @@
 package agentgui.core.project;
 
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.agentgui.gui.AwbProjectNewOpenDialog;
@@ -23,11 +17,9 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
-import de.enflexit.language.Language;
 import agentgui.core.config.BundleProperties;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
-import agentgui.core.gui.MainWindow;
 import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import agentgui.core.project.transfer.DefaultProjectExportController;
 import agentgui.core.project.transfer.ProjectExportController;
@@ -38,6 +30,7 @@ import agentgui.core.project.transfer.ProjectImportSettings;
 import agentgui.core.project.transfer.gui.ProjectExportDialog;
 import agentgui.core.update.ProjectRepositoryExport;
 import agentgui.core.update.repositoryModel.RepositoryEntry;
+import de.enflexit.language.Language;
 
 /**
  * This class holds the list of the projects, that are currently open
@@ -364,128 +357,11 @@ public class ProjectsLoaded {
 	 */
 	public void setProjectView() {
 		if (Application.getMainWindow()!=null) {
-			// --- 1. Set Setup-Selector and Tools --------------------------------
-			Application.getMainWindow().getSetupSelectorToolbar().setProject(Application.getProjectFocused());
-			Application.getMainWindow().configureJToggleButtonProjectTree(Application.getProjectFocused());
-			// --- 2. Rebuild the view to the Items in MenuBar 'Window' -----------
-			this.setProjectMenuItems();
-			// --- 3. Set the right value to the MenueBar 'View' ------------------
-			this.setProjectView4DevOrUser();
-			// --- 4. Set project tabs visible or not -----------------------------
-			this.setProjectTabHeaderInVisible();
-		}
-	}
-	
-	/**
-	 * According to the current project settings, sets the project tab header visible or invisible.
-	 */
-	private void setProjectTabHeaderInVisible() {
-		
-		Project project = Application.getProjectFocused();
-		if (project==null) return;
-
-		project.getProjectEditorWindow().setProjectTabHeaderVisible(project.isProjectTabHeaderVisible());
-	}
-	
-	/**
-	 * Configures the View for menue 'view' -> 'Developer' or 'End user' 
-	 */
-	private void setProjectView4DevOrUser() {
-		
-		MainWindow mainWindow = Application.getMainWindow();
-		
-		JRadioButtonMenuItem viewDeveloper = mainWindow.getJRadioButtonMenuItemViewDeveloper(); 
-		JRadioButtonMenuItem viewEndUser = mainWindow.getJRadioButtonMenuItemViewEndUser(); 
-		JMenuItem viewProjectTree = mainWindow.getJMenuItemViewTree();
-		JMenuItem viewProjectTabHeader = mainWindow.getJMenuItemViewTabHeader();
-		
-		boolean isEnabled = this.count()>0;
-		viewDeveloper.setEnabled(isEnabled);
-		viewEndUser.setEnabled(isEnabled);
-		viewProjectTree.setEnabled(isEnabled);
-		viewProjectTabHeader.setEnabled(isEnabled); 
-		
-		if (isEnabled==true) {
-			// --- Select the right item in relation  to the project ----------
-			String viewConfigured = Application.getProjectFocused().getProjectView();
-			if (viewConfigured.equalsIgnoreCase(Project.VIEW_User)) {
-				viewDeveloper.setSelected(false);
-				viewEndUser.setSelected(true);
-			} else {
-				viewEndUser.setSelected(false);
-				viewDeveloper.setSelected(true);
-			}
-			Application.getProjectFocused().getProjectEditorWindow().setViewForDeveloperOrEndUser();
+			Application.getMainWindow().setProjectView();
 		}
 	}
 	
 	
-	/**
-	 * Create's the Window=>MenuItems depending on the open projects 
-	 */
-	private void setProjectMenuItems() {
-		
-		boolean setFontBold = true;
-		
-		JMenu WindowMenu = Application.getMainWindow().getJMenuMainWindow();
-		WindowMenu.removeAll();
-		if (this.count()==0 ){
-			WindowMenu.add( new JMenuItmen_Window( Language.translate("Kein Projekt geöffnet !"), -1, setFontBold ) );
-		} else {
-			for(int i=0; i<this.count(); i++) {
-				String projectName = this.getProjectsOpen().get(i).getProjectName();
-				if ( projectName.equalsIgnoreCase( Application.getProjectFocused().getProjectName() ) ) {
-					setFontBold = true;
-				} else {
-					setFontBold = false;
-				}
-				WindowMenu.add( new JMenuItmen_Window( projectName, i, setFontBold) );
-			}		
-		}
-	}	
-	
-	/**
-	 * Creates a single MenueItem for the Window-Menu depending on the open projects  
-	 * @author derksen
-	 */
-	private class JMenuItmen_Window extends JMenuItem  {
- 
-		private static final long serialVersionUID = 1L;
-		
-		private JMenuItmen_Window( String ProjectName, int windowIndex, boolean setBold  ) {
-			
-			final int winIndex = windowIndex;
-			int winNo = windowIndex + 1;
-			
-			if ( winNo <= 0 ) {
-				this.setText(ProjectName);
-			} else {
-				this.setText( winNo + ": " + ProjectName );
-			}
-			
-			if ( setBold ) {
-				Font cfont = this.getFont();
-				if ( cfont.isBold() == true ) {
-					this.setForeground( Application.getGlobalInfo().ColorMenuHighLight() );	
-				}
-				else {
-					this.setFont( cfont.deriveFont(Font.BOLD) );
-				}
-			}
-			this.addActionListener( new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					Application.getProjectsLoaded().setFocus( winIndex );							
-				}
-			});		
-		}
-	}
-	/**
-	 * Sets the focus to the project identified with the index number
-	 * @param Index
-	 */
-	private void setFocus(int Index) {
-		this.get(Index).setFocus(true);		
-	}
 	
 	/**
 	 * Imports a project, which is packed in Agent.GUI project file (*.agui)

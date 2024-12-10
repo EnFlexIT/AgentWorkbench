@@ -2,6 +2,9 @@ package de.enflexit.awb.core.ui;
 
 import javax.swing.Icon;
 
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
+
 /**
  * The Interface definition for an UI of AgentWorkbench.
  *
@@ -22,6 +25,12 @@ public interface AgentWorkbenchUI {
 	public void initialize();
 
 	/**
+	 * May initiate and return an OS tray icon.
+	 * @return the tray icon
+	 */
+	public AwbTrayIcon getTrayIcon();
+	
+	/**
 	 * Has to return the AwbMainWindow instance.
 	 * @return the main window
 	 */
@@ -29,10 +38,49 @@ public interface AgentWorkbenchUI {
 
 	/**
 	 * Has to return the AwbConsole instance.
+	 *
+	 * @param isForLocalConsoleOutput the indicator if it is for local console output
 	 * @return the console
 	 */
-	public AwbConsole getConsole();
+	public AwbConsole getConsole(boolean isForLocalConsoleOutput);
 
+	/**
+	 * Has to return a dialog console for consoles.
+	 * @return the console dialog
+	 */
+	public AwbConsoleDialog getConsoleDialog();
+	
+	/**
+	 * Has to open a project interaction dialog for open, create, export or delete a project.
+	 *
+	 * @param actionTitel the action title 
+	 * @param action the action
+	 * @return the project interaction dialog
+	 */
+	public AwbProjectInteractionDialog getProjectInteractionDialog(String actionTitel, ProjectAction action);
+	
+	/**
+	 * Has to return the project editor window.
+	 *
+	 * @param project the project
+	 * @return the project editor window
+	 */
+	public AwbProjectWindow getProjectWindow(Project project);
+	
+	/**
+	 * Should creates a project window tab for the .
+	 *
+	 * @param currProject the current project instance
+	 * @param displayType_DEV_or_USER the display type DE V or USER
+	 * @param tabTitle the tab title
+	 * @param toolTipText the tool tip text
+	 * @param icon the icon to be used for the project window tab
+	 * @param displayComponent the display component
+	 * @param parentsName the parents component name
+	 * @return the AwbProjectWindowTab
+	 */
+	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName);
+	
 	/**
 	 * Has to return a progress monitor .
 	 *
@@ -42,6 +90,38 @@ public interface AgentWorkbenchUI {
 	 * @return the progress monitor
 	 */
 	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText);
+	
+	/**
+	 * Has to return a monitor UI to visualize the running system benchmark.
+	 * @return the benchmark monitor
+	 */
+	public AwbBenchmarkMonitor getBenchmarkMonitor();
+	
+	
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should open a modal or a standalone about dialog.
+	 */
+	public AwbAboutDialog showModalAboutDialog();
+
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a standalone options dialog.
+	 *
+	 * @param categoryToFocus the category to focus
+	 * @return the awb database dialog
+	 */
+	public AwbOptionsDialog showModalOptionsDialog(String categoryToFocus);
+
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a  standalon translation dialog.
+	 * @return the awb translation dialog
+	 */
+	public AwbTranslationDialog showModalTranslationDialog();
+	
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should open a modal or a standalone database configuration dialog.
+	 * @param factoryID the Hibernate factory ID to focus 
+	 */
+	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID);
 	
 	
 	 /**

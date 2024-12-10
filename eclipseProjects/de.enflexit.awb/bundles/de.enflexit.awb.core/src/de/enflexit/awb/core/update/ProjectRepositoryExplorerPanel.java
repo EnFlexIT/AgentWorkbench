@@ -22,7 +22,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -41,6 +40,7 @@ import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.BundleProperties;
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepositoryEntries;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
@@ -481,7 +481,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		try {
 			repo = ProjectRepository.loadProjectRepository(link, lastUsedAuthorization);
 			
-		} catch(ProjectRepositoryUpdateAuthorizationException ex) {
+		} catch (ProjectRepositoryUpdateAuthorizationException ex) {
 			// --- Open UpdateSettingsDialog if previous request returned an unauthorized response
 			Frame owner = OwnerDetection.getOwnerFrameForComponent(this);
 			AuthenticatationDialog dialog = new AuthenticatationDialog(owner, lastUsedAuthorization, link);
@@ -692,7 +692,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 					}
 					
 				} else {
-					JOptionPane.showMessageDialog(this, Language.translate("The installation of the project '",Language.EN) + this.repositoryEntrySelected.getProjectName() + Language.translate("' failed ", Language.EN), Language.translate("Installation failed", Language.EN), JOptionPane.ERROR_MESSAGE);
+					AwbMessageDialog.showMessageDialog(this, Language.translate("The installation of the project '",Language.EN) + this.repositoryEntrySelected.getProjectName() + Language.translate("' failed ", Language.EN), Language.translate("Installation failed", Language.EN), AwbMessageDialog.ERROR_MESSAGE);
 					
 				}
 				
@@ -704,7 +704,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 				
 			}
 		} catch (HeadlessException | ProjectRepositoryUpdateException e) {
-			JOptionPane.showMessageDialog(this, Language.translate("The installation of the project '",Language.EN) + this.repositoryEntrySelected.getProjectName() + Language.translate("' failed ", Language.EN)+System.getProperty("line.separator") + Language.translate("Error: ",Language.EN) + e.getLocalizedMessage(), Language.translate("Installation failed", Language.EN), JOptionPane.ERROR_MESSAGE);
+			AwbMessageDialog.showMessageDialog(this, Language.translate("The installation of the project '",Language.EN) + this.repositoryEntrySelected.getProjectName() + Language.translate("' failed ", Language.EN)+System.getProperty("line.separator") + Language.translate("Error: ",Language.EN) + e.getLocalizedMessage(), Language.translate("Installation failed", Language.EN), AwbMessageDialog.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 	}

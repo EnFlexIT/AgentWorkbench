@@ -37,6 +37,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 
+import org.agentgui.gui.AwbProjectWindowTab;
 import org.agentgui.gui.swing.project.ProjectWindowTab;
 
 import agentgui.core.application.Application;
@@ -275,7 +276,7 @@ public abstract class PlugIn implements Observer {
 		
 		// --- Remove custom tab elements -----------------
 		for (int i = customProjectWindowTab.size()-1; i>-1; i--) {
-			ProjectWindowTab pwt = customProjectWindowTab.get(i);
+			AwbProjectWindowTab pwt = customProjectWindowTab.get(i);
 			pwt.remove();
 		}
 		customProjectWindowTab = new Vector<ProjectWindowTab>();
@@ -289,8 +290,7 @@ public abstract class PlugIn implements Observer {
 		
 		// --- Refresh the main window --------------------
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().validate();
-			Application.getMainWindow().repaint();
+			Application.getMainWindow().refreshView();
 		}
 		
 	}

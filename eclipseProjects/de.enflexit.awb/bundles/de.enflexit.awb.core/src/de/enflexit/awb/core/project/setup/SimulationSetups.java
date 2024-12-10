@@ -9,8 +9,6 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import javax.swing.JOptionPane;
-
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
 import de.enflexit.awb.core.environment.EnvironmentController;
@@ -18,6 +16,7 @@ import de.enflexit.awb.core.environment.EnvironmentController.PersistenceStrateg
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.SimulationSetup.SetupFileType;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.transfer.FileCopier;
 import de.enflexit.language.Language;
@@ -249,6 +248,7 @@ public class SimulationSetups extends TreeMap<String, String> {
 		
 		File setupXmlFile = new File(currSimXMLFile);
 		if (setupXmlFile.exists()==true) {
+			// --- Load the setup -------------------------
 			this.currSimSetup = SimulationSetup.load(setupXmlFile, true);
 			if (this.currSimSetup!=null) {
 				this.currSimSetup.setProject(this.currProject);
@@ -267,12 +267,13 @@ public class SimulationSetups extends TreeMap<String, String> {
 			}
 			
 		} else {
+			// --- Show that setup could not be found -----
 			String head = Language.translate("Setup-Datei nicht gefunden!");
 			String msg  = Language.translate("Die Datei") + " '" + this.get(currSimSetupName) + "' " + Language.translate("für das Setup") + " '" + currSimSetupName + "' " + Language.translate("wurde nicht gefunden.");
 			msg += Language.translate("<br>Kann der Name aus der Liste der Setups entfernt werden?");
 			msg += Language.translate("<br>Falls nicht, wird eine neue Setup-Datei erzeugt.");
-			int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(), msg, head, JOptionPane.YES_NO_OPTION);
-			if (answer==JOptionPane.YES_OPTION) {
+			int answer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), msg, head, AwbMessageDialog.YES_NO_OPTION);
+			if (answer==AwbMessageDialog.YES_OPTION) {
 				this.setupRemove(currSimSetupName);
 			}
 		}

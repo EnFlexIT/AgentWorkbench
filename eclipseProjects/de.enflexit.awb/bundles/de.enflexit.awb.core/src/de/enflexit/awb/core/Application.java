@@ -1,26 +1,17 @@
 package de.enflexit.awb.core;
 
-import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.Window;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.SwingUtilities;
 import org.eclipse.equinox.app.IApplication;
 
-import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
-import agentgui.core.charts.xyChart.XyChartVisualisation;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
+import de.enflexit.awb.core.bundleEvaluation.BundleClassFilterCollector;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
@@ -29,16 +20,25 @@ import de.enflexit.awb.core.jade.NetworkAddresses;
 import de.enflexit.awb.core.jade.NetworkAddresses.NetworkAddress;
 import de.enflexit.awb.core.jade.Platform;
 import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
+import de.enflexit.awb.core.jade.Platform.SystemAgent;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbConsole;
+import de.enflexit.awb.core.ui.AwbDatabaseDialog;
 import de.enflexit.awb.core.ui.AwbMainWindow;
-import de.enflexit.awb.core.ui.AwbOptionPane;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.awb.core.ui.AwbTrayIcon;
 import de.enflexit.awb.core.update.AWBUpdater;
+import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
+import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
-import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
+import de.enflexit.common.bundleEvaluation.BundleEvaluator;
+import de.enflexit.common.featureEvaluation.FeatureEvaluator;
+import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.language.Language;
+import de.enflexit.logging.LoggingWriter;
 
 
 /**
@@ -57,7 +57,7 @@ public class Application {
 	private static Boolean headlessOperation;
 	
 	/** The eclipse IApplication */
-	private static IApplication iApplication;
+	private static AwbIApplication iApplication;
 	
 	/** The quit application. */
 	private static boolean quitJVM = false;
@@ -73,15 +73,7 @@ public class Application {
 	/** This is the instance of the main application window */
 	private static AwbConsole console;
 	/** In case that a log file has to be written */
-	private static LogFileWriter logFileWriter;
-	/** In case of headless operation */
 	private static ShutdownThread shutdownThread;
-	/** The About dialog of the main application window. */
-	private static AboutDialog aboutDialog;
-	/** The Database dialog for the main application window */
-	private static AwbDatabaseDialog awbDatabaseDialog;
-	/** The About dialog of the application.*/
-	private static OptionDialog optionDialog;
 	/** With this attribute/class the agent platform (JADE) will be controlled. */
 	private static Platform jadePlatform;
 		
@@ -195,42 +187,34 @@ public class Application {
 	 */
 	public static AwbConsole getConsole() {
 		if (console==null && isOperatingHeadless()==false) {
-			console = UiBridge.getInstance().getConsole(true);
+			console = AgentWorkbenchUiManager.getInstance().getConsole(true);
 		}
 		return Application.console;
 	}
 	
+	
 	/**
-	 * Creates the log file writer.
-	 * @return the log file writer
+	 * Starts the logging file writer.
+	 * @return the logging file writer
 	 */
-	public static LogFileWriter startLogFileWriter() {
-		if (Application.getGlobalInfo().isLoggingEnabled() && logFileWriter==null) {
-			logFileWriter = new LogFileWriter();
-		}
-		return logFileWriter;
+	public static void startLoggingWriter() {
+		LoggingWriter.getInstance().setWriteToLoggingStorage(true);
 	}
 	/**
-	 * Returns the current LogFileWriter of the application.
+	 * Stops the logging file writer.
+	 * @return the logging file writer
+	 */
+	public static void stopLoggingWriter() {
+		LoggingWriter.getInstance().setWriteToLoggingStorage(false);
+	}
+	/**
+	 * Returns the current {@link LoggingWriter} of the application.
 	 * @return the LogFileWriter
 	 */
-	public static LogFileWriter getLogFileWriter() {
-		return logFileWriter;
+	public static boolean isStartedLoggingWriter() {
+		return LoggingWriter.getInstance().isWriteToLoggingStorage();
 	}
-	/**
-	 * Sets the LogFileWriter for the application. Set null in order  
-	 * to stop the currently running {@link LogFileWriter}.
-	 * @param newLogFileWriter the new LogFileWriter
-	 */
-	public static void setLogFileWriter(LogFileWriter newLogFileWriter) {
-		if (newLogFileWriter==null && logFileWriter!=null) {
-			logFileWriter.stopFileWriter();
-		}
-		if (newLogFileWriter!=null && newLogFileWriter!=logFileWriter) {
-			logFileWriter.stopFileWriter();
-		} 
-		logFileWriter = newLogFileWriter;
-	}
+	
 	
 	
 	/**
@@ -244,7 +228,7 @@ public class Application {
 				if (Application.globalInfo==null) {
 					Application.globalInfo = new GlobalInfo();
 					if (Application.globalInfo.isLoggingEnabled()==true) {
-						startLogFileWriter();
+						Application.startLoggingWriter();
 					}
 				}
 			}
@@ -268,7 +252,7 @@ public class Application {
 	 */
 	public static AwbTrayIcon getTrayIcon() {
 		if (trayIcon==null && isOperatingHeadless()==false) {
-			trayIcon = UiBridge.getInstance().getTrayIcon();
+			trayIcon = AgentWorkbenchUiManager.getInstance().getTrayIcon();
 		}
 		return trayIcon;
 	}
@@ -277,7 +261,7 @@ public class Application {
 	 */
 	public static void removeTrayIcon() {
 		if (trayIcon!=null) {
-			trayIcon.remove();
+			trayIcon.dispose();
 			trayIcon=null;
 		}
 	}
@@ -297,7 +281,7 @@ public class Application {
 	 * @param postWindowOpenRunnable the post window open runnable
 	 */
 	public static void startMainWindow(Runnable postWindowOpenRunnable) {
-		// TODO getIApplication().startEndUserApplication(postWindowOpenRunnable);
+		getAwbIApplication().startEndUserApplication(postWindowOpenRunnable);
 	}
 	/**
 	 * Sets the main window.
@@ -309,13 +293,54 @@ public class Application {
 		}
 		mainWindow = newMainWindow;
 	}
+	/**
+	 * Adds a supplement to the application title.
+	 * @param add2BasicTitle the addition for the basic title 
+	 */
+	public static void setTitleAddition(String add2BasicTitle) {
+		if (getMainWindow()!=null) {
+			getMainWindow().setTitelAddition(add2BasicTitle);
+		}
+	}
+
+	
+	/**
+	 * Sets the jade status color.
+	 * @param jadeStatus the new jade status color
+	 */
+	public static void setJadeStatusColor(JadeStatusColor jadeStatus) {
+		if (getMainWindow()!=null) {
+			getMainWindow().setJadeStatusColor(jadeStatus);
+		}
+		if (trayIcon!=null) {
+			trayIcon.refreshView();	
+		}
+	}
+	
+	/**
+	 * Sets the status bar message text.
+	 * @param statusText the new status bar message
+	 */
+	public static void setStatusBarMessage(String statusText) {
+		if (getMainWindow()!=null) {
+			getMainWindow().setStatusBarMessage(statusText);	
+		}
+	}
+	/**
+	 * Sets the status bar text message to 'Ready'.
+	 */
+	public static void setStatusBarMessageReady() {
+		if (getMainWindow()!=null) {
+			getMainWindow().setStatusBarMessage(Language.translate("Fertig"));
+		}
+	}
 	
 		
 	/**
 	 * Returns the lApplication.
 	 * @return the l application
 	 */
-	public static IApplication getIApplication() {
+	public static AwbIApplication getAwbIApplication() {
 		return iApplication;
 	}
 	
@@ -323,7 +348,7 @@ public class Application {
 	 * Main method for the start of the application running as end user application or server-tool.
 	 * @param iApp the current {@link IApplication} instance 
 	 */
-	public static void start(IApplication iApp) {
+	public static void start(AwbIApplication iApp) {
 
 		// --- Remind the IApplication of the eclipse framework -----
 		iApplication = iApp;
@@ -332,7 +357,7 @@ public class Application {
 		String[] remainingArgs = proceedStartArguments(org.eclipse.core.runtime.Platform.getApplicationArgs());
 		
 		// --- Start log file writer, if needed ---------------------
-		if (isOperatingHeadless()==true) startLogFileWriter();
+		if (isOperatingHeadless()==true) startLoggingWriter();
 		
 		// --- Start the HibernateUtilities -------------------------
 		HibernateUtilities.start();
@@ -368,7 +393,7 @@ public class Application {
 			}
 			
 			System.out.println("Starting JADE ...");
-			getIApplication().startJadeStandalone(remainingArgs);
+			getAwbIApplication().startJadeStandalone(remainingArgs);
 		
 		}
 		
@@ -426,7 +451,7 @@ public class Application {
 					// --------------------------------------------------------
 					// --- Start log file writing -----------------------------
 					remainingArgsVector.removeElement(args[i]);
-					startLogFileWriter();
+					startLoggingWriter();
 
 				} else if (args[i].equalsIgnoreCase("-help")) {
 					// --------------------------------------------------------
@@ -501,17 +526,10 @@ public class Application {
 	private static void proceedStartArgumentOpenProject() {
 		
 		if (isRunningAsServer()==false && project2OpenAfterStart!=null) {
-
 			// --- Open the project -----------------------
 			Application.setStatusBarMessage(Language.translate("Öffne Projekt") + " '" + project2OpenAfterStart + "'...");
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					getProjectsLoaded().add(project2OpenAfterStart);
-					Application.setStatusBarMessageReady();
-				}
-			});
+			Application.getProjectsLoaded().add(project2OpenAfterStart);
+			Application.setStatusBarMessageReady();
 		}
 	}
 	
@@ -584,7 +602,7 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
 			// --- In the Server-Case, start the benchmark now ! ----
-			getIApplication().setApplicationIsRunning();
+			getAwbIApplication().setApplicationIsRunning();
 			getTrayIcon();
 			doBenchmark(false);
 			startServer();
@@ -598,7 +616,7 @@ public class Application {
 			updater.waitForUpdate();
 
 			// --- Set application as executed ----------------------
-			getIApplication().setApplicationIsRunning();
+			getAwbIApplication().setApplicationIsRunning();
 			
 			// --- Start Service / Embedded System Agent ------------
 			System.out.println("Starting the service/agent");
@@ -665,21 +683,17 @@ public class Application {
 						final Project projectOpened = getProjectsLoaded().add(projectFolder);
 						if (projectOpened!=null) {
 							// --- Execute the simulation setup -------------------------
-							SwingUtilities.invokeLater(new Runnable() {
-								@Override
-								public void run() {
-									// --- Select the specified simulation setup --------
-									boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
-									if (setupLoaded==true) {
-										if (getJadePlatform().start(false)==true) {
-											// --- Start Setup --------------------------
-											Object[] startWith = new Object[1];
-											startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-											getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
-										}
-									}
-								} // end run method
-							});// end Runnable 2
+							boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
+							if (setupLoaded==true) {
+								if (getJadePlatform().start(false)==true) {
+									// --- Start Setup --------------------------
+									Object[] startWith = new Object[1];
+									startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
+									getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
+								}
+							}
+						
+							
 						}// end project opened
 					}// end run 
 				});// end Runnable 1
@@ -696,8 +710,8 @@ public class Application {
 					
 				case NONE:
 					// --- Start writing a LogFile, if not already executed -------------
-					if (getLogFileWriter()==null) {
-						startLogFileWriter();
+					if (Application.isStartedLoggingWriter()==false) {
+						Application.startLoggingWriter();
 						// --- Create some initial output for the log file --------------
 						getGlobalInfo().getVersionInfo().printVersionInfo();
 						System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
@@ -767,13 +781,13 @@ public class Application {
 	 * Stops Agent.Workbench in each execution mode ('Application', 'Server' (Master or Slave), 'Service' or 'Embedded System Agent')
 	 */
 	public static void stop() {
-		getIApplication().stop();
+		getAwbIApplication().stop();
 	}
 	/**
 	 * Restarts Agent.Workbench as configured in each execution mode ('Application', 'Server' (Master or Slave), 'Service' or 'Embedded System Agent')
 	 */
 	public static void restart() {
-		getIApplication().stop(IApplication.EXIT_RESTART);
+		getAwbIApplication().stop(IApplication.EXIT_RESTART);
 	}
 	
 	/**
@@ -786,7 +800,7 @@ public class Application {
 
 		// --- Relaunch the application with the additional arguments ---- 
 		System.setProperty("eclipse.exitdata", exitData);
-		getIApplication().stop(IApplication.EXIT_RELAUNCH);
+		getAwbIApplication().stop(IApplication.EXIT_RELAUNCH);
 	}
 	
 	/**
@@ -901,130 +915,78 @@ public class Application {
 	}
 	
 	
-	/**
-	 * Opens the translation dialog of the application
-	 */
-	public static void showTranslationDialog() {
-		Translation trans = new Translation(Application.getMainWindow());
-		trans.setVisible(true);
-	}
-	
-	/**
-	 * Opens the Configuration-Dialog for the 
-	 * AgentGUI-Application without a specific
-	 * Tab to show
-	 */
-	public static void showOptionDialog() {
-		showOptionDialog(null);
-	}
 	
 	/**
 	 * Opens the OpenID Connect dialog 
 	 */
 	public static void showAuthenticationDialog() {
 		
-		try {
-		
-			OIDCAuthorization.getInstance().setIssuerURI(Application.getGlobalInfo().getOIDCIssuerURI());
-			OIDCAuthorization.getInstance().setTranslator(Language.getInstance());
-			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true).toString() + File.separator + Trust.OIDC_TRUST_STORE));
-			OIDCAuthorization.getInstance().setAvailabilityHandler( new OIDCResourceAvailabilityHandler() {
-				
-				/* (non-Javadoc)
-				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onResourceAvailable(de.enflexit.oidc.OIDCAuthorization.URLProcessor)
-				 */
-				@Override
-				public void onResourceAvailable(URLProcessor urlProcessor) {
-					Application.getGlobalInfo().setOIDCUsername(OIDCAuthorization.getInstance().getLastSuccessfulUser());
-				}
-				/* (non-Javadoc)
-				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onAuthorizationNecessary(de.enflexit.oidc.OIDCAuthorization)
-				 */
-				@Override
-				public boolean onAuthorizationNecessary(OIDCAuthorization oidcAuthorization) {
-					return true; // show the login panel
-				}
-			});
-			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI, getGlobalInfo().getOIDCUsername(), getMainWindow());
-			
-		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException ex) {
-			//ex.printStackTrace();
-			System.err.println("Authentication failed: "+ex.getClass()+": "+ex.getMessage());
-		}
+//		try {
+//		
+//			OIDCAuthorization.getInstance().setIssuerURI(Application.getGlobalInfo().getOIDCIssuerURI());
+//			OIDCAuthorization.getInstance().setTranslator(Language.getInstance());
+//			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true).toString() + File.separator + Trust.OIDC_TRUST_STORE));
+//			OIDCAuthorization.getInstance().setAvailabilityHandler( new OIDCResourceAvailabilityHandler() {
+//				
+//				/* (non-Javadoc)
+//				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onResourceAvailable(de.enflexit.oidc.OIDCAuthorization.URLProcessor)
+//				 */
+//				@Override
+//				public void onResourceAvailable(URLProcessor urlProcessor) {
+//					Application.getGlobalInfo().setOIDCUsername(OIDCAuthorization.getInstance().getLastSuccessfulUser());
+//				}
+//				/* (non-Javadoc)
+//				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onAuthorizationNecessary(de.enflexit.oidc.OIDCAuthorization)
+//				 */
+//				@Override
+//				public boolean onAuthorizationNecessary(OIDCAuthorization oidcAuthorization) {
+//					return true; // show the login panel
+//				}
+//			});
+//			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI, getGlobalInfo().getOIDCUsername(), getMainWindow());
+//			
+//		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException ex) {
+//			//ex.printStackTrace();
+//			System.err.println("Authentication failed: "+ ex.getClass()+": "+ ex.getMessage());
+//		}
 	}
 	
+	
 	/**
-	 * Opens the Option-Dialog of the application with a specified TabName
-	 * @param focusOnTab Can be used to set the focus directly to a Tab specified by its name 
+	 * Opens the options dialog without a specific category or tab to show
 	 */
-	public static void showOptionDialog(String focusOnTab) {
-		
-		if (optionDialog!=null) {
-			if (optionDialog.isVisible()==true) {
-				// --- Set focus again ----------
-				optionDialog.requestFocus();
-				return;
-			} else {
-				// --- dispose it first --------- 
-				optionDialog.dispose();
-				optionDialog = null;
-			}
-		}
-		
-		if (isRunningAsServer()==true) {
-			optionDialog = new OptionDialog(null);
-		} else {
-			optionDialog = new OptionDialog(getMainWindow());
-		}
-		if (focusOnTab!=null) {
-			optionDialog.setFocusOnTab(focusOnTab);
-		}
-		optionDialog.setVisible(true);
-		// - - - - - - - - - - - - - - - - - - - -
-		if (optionDialog!=null) {
-			optionDialog.dispose();
-		}
-		optionDialog = null;
-		
+	public static void showOptionsDialog() {
+		Application.showOptionsDialog(null);
+	}
+	/**
+	 * Opens the options dialog of the application with a specified TabName
+	 * @param focusOnTab can be used to set the focus directly to a specific category 
+	 */
+	public static void showOptionsDialog(String focusOnTab) {
+		AgentWorkbenchUiManager.getInstance().showModalOptionsDialog(focusOnTab);
 	}
 
 	/**
 	 * Will show the About-Dialog of the application
 	 */
 	public static void showAboutDialog() {
-		
-		if (aboutDialog!=null) return;
-		if (isRunningAsServer()==true) {
-			aboutDialog = new AboutDialog(null);
-		} else {
-			aboutDialog = new AboutDialog(getMainWindow());
-		}
-		aboutDialog.setVisible(true);
-		// - - - Wait for user - - - - - - - - -  
-		aboutDialog.dispose();
-		aboutDialog = null;		
+		AgentWorkbenchUiManager.getInstance().showModalAboutDialog();
+	}
+	/**
+	 * Opens the central {@link AwbDatabaseDialog} of the application with a specified factoryID.
+	 * @param factoryID the factory ID to configure or <code>null</code>
+	 */
+	public static void showDatabaseDialog(String factoryID) {
+		AgentWorkbenchUiManager.getInstance().showModalDatabaseDialog(factoryID);
 	}
 	
 	/**
-	 * Opens the central {@link AwbDatabaseDialog} of the application with a specified factoryID.
-	 *
-	 * @param ownerWindow the owner window
-	 * @param factoryID the factory ID to configure or <code>null</code>
+	 * Opens the translation dialog of the application
 	 */
-	public static void showDatabaseDialog(Window ownerWindow, String factoryID) {
-		
-		if (awbDatabaseDialog!=null) return;
-		
-		if (ownerWindow!=null) {
-			awbDatabaseDialog = new AwbDatabaseDialog(ownerWindow, factoryID);
-		} else {
-			awbDatabaseDialog = new AwbDatabaseDialog(getMainWindow(), factoryID);
-		}
-		awbDatabaseDialog.setVisible(true);
-		// - - - Wait for user - - - - - - - - -  
-		awbDatabaseDialog.dispose();
-		awbDatabaseDialog = null;
+	public static void showTranslationDialog() {
+		AgentWorkbenchUiManager.getInstance().showModalTranslationDialog();
 	}
+	
 	
 	/**
 	 * Will try to browse to the URI specified by the string (e.g. https://www.enflex.it).
@@ -1039,75 +1001,6 @@ public class Application {
 		}
 	}
 
-	/**
-	 * Shows the eclipse workbench.
-	 */
-	public static void showEclipseWorkbench() {
-		getIApplication().startEclipseUiThroughThread(null);
-	}
-	
-	/**
-	 * Adds a supplement to the application title.
-	 * @param add2BasicTitle the addition for the basic title 
-	 */
-	public static void setTitleAddition(String add2BasicTitle) {
-		if (getMainWindow()!=null) {
-			getMainWindow().setTitelAddition(add2BasicTitle);
-		}
-	}
-
-	/**
-	 * Sets the jade status color.
-	 * @param jadeStatus the new jade status color
-	 */
-	public static void setJadeStatusColor(JadeStatusColor jadeStatus) {
-		if (getMainWindow()!=null) {
-			getMainWindow().setJadeStatusColor(jadeStatus);
-		}
-		if (trayIcon!=null) {
-			trayIcon.refreshView();	
-		}
-	}
-	
-	/**
-	 * Sets the status bar message text.
-	 * @param statusText the new status bar message
-	 */
-	public static void setStatusBarMessage(String statusText) {
-		if (getMainWindow()!=null) {
-			getMainWindow().setStatusBarMessage(statusText);	
-		}
-	}
-	/**
-	 * Sets the status bar text message to 'Ready'.
-	 */
-	public static void setStatusBarMessageReady() {
-		if (getMainWindow()!=null) {
-			getMainWindow().setStatusBarMessage(Language.translate("Fertig"));
-		}
-	}
-	/**
-	 * Sets the cursor for the application.
-	 * @param cursor the new application cursor
-	 */
-	public static void setCursor(Cursor cursor) {
-		if (getMainWindow()!=null) {
-			getMainWindow().setCursor(cursor);
-		}
-	}
-	
-	/**
-	 * Set's the Look and feel of the application.
-	 * @param newLnF the new look and feel
-	 */
-	public static void setLookAndFeel(String newLnF) {
-		if (getMainWindow()!=null) {
-			getGlobalInfo().setAppLookAndFeelClassName(newLnF);
-			AwbLookAndFeelAdjustments.setLookAndFeel(newLnF, getMainWindow());
-			getMainWindow().resetAfterLookAndFeelUpdate();
-			getProjectsLoaded().setProjectView();
-		}
-	}	
 	
 	/**
 	 * Enables to change the user language of the application   .
@@ -1136,7 +1029,7 @@ public class Application {
 							 "Möchten Sie die Anzeigesprache wirklich umstellen?" + newLine + 
 							 "Die Anwendung muss hierzu neu gestartet und Projekte" + newLine +
 							 "von Ihnen neu geöffnet werden.");
-			Integer MsgAnswer = AwbOptionPane.showConfirmDialog( Application.getMainWindow(), MsgText, MsgHead, AwbOptionPane.YES_NO_OPTION);
+			Integer MsgAnswer = AwbMessageDialog.showConfirmDialog( Application.getMainWindow(), MsgText, MsgHead, AwbMessageDialog.YES_NO_OPTION);
 			if (MsgAnswer==1) return;
 			
 		}
@@ -1147,7 +1040,7 @@ public class Application {
 		System.out.println("=> " + Language.translate("Sprachumstellung zu") + " '" + newLang + "'.");
 		Language.changeApplicationLanguageTo(newLang);
 		// --- Restart application ----------------------------------
-		startAgentWorkbench();
+		Application.startAgentWorkbench();
 	}	
 	
 	/**
@@ -1279,14 +1172,14 @@ public class Application {
 	 */
 	public static void setOntologyVisualisationConfigurationToCommonBundle() {
 		
-		// --- Add the known OntologyClassVisualisation's of Agent.Workbench --
-		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
-		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new XyChartVisualisation());
-		
-		// --- Set the current main window ------------------------------------
-		OntologyVisualisationConfiguration.setApplicationTitle(Application.getGlobalInfo().getApplicationTitle());
-		OntologyVisualisationConfiguration.setOwnerWindow(Application.getMainWindow());
-		OntologyVisualisationConfiguration.setApplicationIconImage(GlobalInfo.getInternalImageAwbIcon16());
+//		// --- Add the known OntologyClassVisualisation's of Agent.Workbench --
+//		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
+//		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new XyChartVisualisation());
+//		
+//		// --- Set the current main window ------------------------------------
+//		OntologyVisualisationConfiguration.setApplicationTitle(Application.getGlobalInfo().getApplicationTitle());
+//		OntologyVisualisationConfiguration.setOwnerWindow(Application.getMainWindow());
+//		OntologyVisualisationConfiguration.setApplicationIconImage(GlobalInfo.getInternalImageAwbIcon16());
 	}
 
 	
