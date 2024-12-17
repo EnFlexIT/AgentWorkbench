@@ -3,7 +3,7 @@ package de.enflexit.awb.simulation.load.threading;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
+import org.jfree.data.xy.XYSeries;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.AgentClassLoadMetricsTable;
 import de.enflexit.awb.core.project.AgentClassMetricDescription;

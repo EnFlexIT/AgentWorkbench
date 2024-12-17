@@ -98,7 +98,7 @@ public class PlugInsLoaded extends Vector<PlugIn> {
 	 *
 	 * @param plugIn the plug-in
 	 */
-	public void removePlugIn(PlugIn plugIn) {
+	public void removePlugIn(AwbPlugIn plugIn) {
 		try {
 			// --- Call the onPlugOut()method -----------------------
 			plugIn.onPlugOut();

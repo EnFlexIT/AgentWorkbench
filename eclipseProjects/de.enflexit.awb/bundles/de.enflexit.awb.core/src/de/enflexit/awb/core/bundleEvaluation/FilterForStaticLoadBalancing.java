@@ -2,7 +2,7 @@ package de.enflexit.awb.core.bundleEvaluation;
 
 import java.lang.reflect.Modifier;
 
-import de.enflexit.awb.core.simulation.balancing.StaticLoadBalancingBase;
+import de.enflexit.awb.simulation.balancing.StaticLoadBalancingBase;
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 
 /**

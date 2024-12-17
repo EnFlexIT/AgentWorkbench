@@ -50,6 +50,7 @@ import javax.swing.JSeparator;
 import agentgui.core.application.Application;
 import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
+import agentgui.core.plugin.AwbPlugIn;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInError;
 import agentgui.core.plugin.PlugInListElement;
@@ -371,7 +372,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * This methods adds a Plugin to the plugInListModel, so that it is displayed
 	 * @param plugIn
 	 */
-	private void addPlugInElement2List(PlugIn plugIn) {
+	private void addPlugInElement2List(AwbPlugIn plugIn) {
 		PlugInListElement pile = new PlugInListElement(plugIn.getName(), plugIn.getClassReference());
 		// --- In case of a PlugInError instance ----------
 		if (plugIn instanceof PlugInError) {
@@ -386,7 +387,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 	 * This methods removes a Plugin from the plugInListModel
 	 * @param plugIn
 	 */
-	private void removePlugInElement2List(PlugIn plugIn) {
+	private void removePlugInElement2List(AwbPlugIn plugIn) {
 		String plugInRef = plugIn.getClassReference();
 		for (int i = 0; i < this.getListModelPlugIns().size(); i++) {
 			PlugInListElement pile = this.getListModelPlugIns().get(i);
@@ -485,7 +486,7 @@ public class ProjectResources extends JScrollPane implements Observer {
 					if (pile == null) return;
 
 					// --- Get the PlugIn -----------------
-					PlugIn pi = currProject.getPlugInsLoaded().getPlugIn(pile.getPlugInName());
+					AwbPlugIn pi = currProject.getPlugInsLoaded().getPlugIn(pile.getPlugInName());
 
 					// --- Remove the PlugIn --------------
 					currProject.plugInRemove(pi, true);
@@ -544,13 +545,13 @@ public class ProjectResources extends JScrollPane implements Observer {
 	@Override
 	public void update(Observable observable, Object updated) {
 
-		if (updated.toString().equals(PlugIn.CHANGED)) {
+		if (updated.toString().equals(AwbPlugIn.CHANGED)) {
 			// --- Something happened with a plugIn -------
 			PlugInNotification pin = (PlugInNotification) updated;
 			int updateReason = pin.getUpdateReason();
-			if (updateReason == PlugIn.ADDED) {
+			if (updateReason == AwbPlugIn.ADDED) {
 				this.addPlugInElement2List(pin.getPlugIn());
-			} else if (updateReason == PlugIn.REMOVED) {
+			} else if (updateReason == AwbPlugIn.REMOVED) {
 				this.removePlugInElement2List(pin.getPlugIn());
 			}
 

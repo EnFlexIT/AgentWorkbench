@@ -34,8 +34,8 @@ import java.lang.reflect.Method;
 
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.plugins.PlugIn;
-import de.enflexit.awb.core.simulation.balancing.DynamicLoadBalancingBase;
-import de.enflexit.awb.core.simulation.balancing.StaticLoadBalancingBase;
+import de.enflexit.awb.simulation.balancing.DynamicLoadBalancingBase;
+import de.enflexit.awb.simulation.balancing.StaticLoadBalancingBase;
 import de.enflexit.awb.simulation.environment.time.TimeModel;
 import jade.content.onto.Ontology;
 import jade.core.Agent;

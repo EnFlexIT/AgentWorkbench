@@ -16,8 +16,8 @@ public class DistributionSetup implements Serializable {
 	
 	private static final long serialVersionUID = -3727386932566490036L;
 	
-	public final static String DEFAULT_StaticLoadBalancingClass = de.enflexit.awb.core.simulation.balancing.PredictiveStaticLoadBalancing.class.getName();
-	public final static String DEFAULT_DynamicLoadBalancingClass = de.enflexit.awb.core.simulation.balancing.DynamicLoadBalancing.class.getName();
+	public final static String DEFAULT_StaticLoadBalancingClass = de.enflexit.awb.simulation.balancing.PredictiveStaticLoadBalancing.class.getName();
+	public final static String DEFAULT_DynamicLoadBalancingClass = de.enflexit.awb.simulation.balancing.DynamicLoadBalancing.class.getName();
 	
 	private boolean doStaticLoadBalancing = true;
 	private String staticLoadBalancingClass = DEFAULT_StaticLoadBalancingClass;

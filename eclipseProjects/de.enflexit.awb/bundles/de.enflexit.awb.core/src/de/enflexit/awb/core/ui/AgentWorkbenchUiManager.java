@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
+import de.enflexit.awb.core.project.transfer.ProjectExportController;
+import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.language.Language;
 
@@ -44,6 +46,8 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	// ----------------------------------------------------
 	// --- The internal handling area ---------------------
 	// ----------------------------------------------------
+	private boolean isMissingAwbUIService;
+	
 	private List<AgentWorkbenchUI> uiServices;
 	
 	/**
@@ -54,9 +58,19 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		// --- Do initial UI service checks ---------------
 		if (this.getAgentWorkbenchUiList().size()==0) {
 			LOGGER.warn(Language.translate("Could not find any service that implements the AgentWorkbench-UI!", Language.EN));
+			this.isMissingAwbUIService = true;
 			return;
 		} else if (this.getAgentWorkbenchUiList().size()>1) {
 			LOGGER.warn(Language.translate(uiServices.size() + " services were found that implement the AgentWorkbench-UI!", Language.EN));
+		}
+
+		// --- Initialize UI-Services --------------------- 
+		for (AgentWorkbenchUI uiService : this.getAgentWorkbenchUiList()) {
+			try {
+				uiService.initialize();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	/**
@@ -81,8 +95,8 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	 * Checks if is missing UI.
 	 * @return true, if is missing UI
 	 */
-	private boolean isMissingUI() {
-		return this.getNumberOfUiImplementations()==0;
+	private boolean isMissingAwbUIServce() {
+		return this.isMissingAwbUIService;
 	}
 	// ----------------------------------------------------
 	
@@ -119,7 +133,9 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public void initialize() {
 		
-		if (this.isMissingUI()==true) LOGGER.error("Could not find any UI-implementation to initialize!");
+		if (this.isMissingAwbUIServce()==true) {
+			LOGGER.error("Could not find any UI-implementation to initialize!");
+		}
 		// --- Call to initialize the UI implementation ---  
 		this.getAgentWorkbenchUiList().forEach(awbUI -> awbUI.initialize());
 	}
@@ -129,10 +145,11 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	 */
 	@Override
 	public AwbTrayIcon getTrayIcon() {
+		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbTrayIcon!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getTrayIcon();
@@ -144,12 +161,12 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
 	 */
 	@Override
-	public AwbMainWindow getMainWindow() {
+	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
+		
+		if (this.isMissingAwbUIServce()==true) return null;
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMainWindow!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getMainWindow();
@@ -163,10 +180,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbConsole getConsole(boolean isForLocalConsoleOutput) {
 
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbConsole!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getConsole(isForLocalConsoleOutput);
@@ -179,10 +196,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbConsoleDialog getConsoleDialog() {
 		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbConsoleDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getConsoleDialog();
@@ -196,10 +213,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	 */
 	public AwbProjectInteractionDialog getProjectInteractionDialog(String title, ProjectAction action) {
 		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectInteractionDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getProjectInteractionDialog(title, action);
@@ -212,10 +229,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbProjectWindow getProjectWindow(Project project) {
 		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectWindow!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getProjectWindow(project);
@@ -228,10 +245,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName) {
 		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectWindowTab!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).createProjectWindowTab(currProject, displayType_DEV_or_USER, tabTitle, toolTipText, icon, displayComponent, parentsName);
@@ -245,10 +262,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
 		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProgressMonitor!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getProgressMonitor(windowTitle, headerText, progressText);
@@ -261,10 +278,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
 
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProgressMonitor!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getBenchmarkMonitor();
@@ -278,10 +295,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbAboutDialog showModalAboutDialog() {
 
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbAboutDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showModalAboutDialog();
@@ -294,10 +311,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbOptionsDialog showModalOptionsDialog(String categoryToFocus) {
 
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbOptionsDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showModalOptionsDialog(categoryToFocus);
@@ -310,10 +327,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbTranslationDialog showModalTranslationDialog() {
 
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbOptionsDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showModalTranslationDialog();
@@ -326,13 +343,63 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID) {
 
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbDatabaseDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showModalDatabaseDialog(factoryID);
+		}
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalProjectExportDialog(de.enflexit.awb.core.project.Project, de.enflexit.awb.core.project.transfer.ProjectExportController)
+	 */
+	@Override
+	public AwbProjectExportDialog showModalProjectExportDialog(Project project, ProjectExportController projectExportController) {
+
+		if (this.isMissingAwbUIServce()==true) return null;
+		
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectExportDialog!");
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).showModalProjectExportDialog(project, projectExportController);
+		}
+		return null;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getAwbMonitoringDialogSystemLoad(de.enflexit.awb.simulation.agents.LoadMeasureAgent)
+	 */
+	@Override
+	public AwbMonitoringDialogSystemLoad getAwbMonitoringDialogSystemLoad(LoadMeasureAgent lmAgent) {
+
+		if (this.isMissingAwbUIServce()==true) return null;
+		
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMonitoringDialogSystemLoad!");
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).getAwbMonitoringDialogSystemLoad(lmAgent);
+		}
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getAwbMonitoringDialogThreading(de.enflexit.awb.simulation.agents.LoadMeasureAgent)
+	 */
+	@Override
+	public AwbMonitoringDialogThreading getAwbMonitoringDialogThreading(LoadMeasureAgent lmAgent) {
+
+		if (this.isMissingAwbUIServce()==true) return null;
+		
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMonitoringDialogThreading!");
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).getAwbMonitoringDialogThreading(lmAgent);
 		}
 		return null;
 	}
@@ -344,10 +411,7 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public void showMessageDialog(Object parentComponent, Object message, String title, int messageType, Icon icon) {
 		
-		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} 
+		if (this.isMissingAwbUIServce()==true) return;
 		this.getAgentWorkbenchUiList().forEach(awbUI -> awbUI.showMessageDialog(parentComponent, message, title, messageType, icon));
 	}
 	
@@ -357,10 +421,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public int showOptionDialog(Object parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 		
+		if (this.isMissingAwbUIServce()==true) return AwbMessageDialog.DEFAULT_OPTION;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously show an OptionDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showOptionDialog(parentComponent, message, title, optionType, messageType, icon, options, initialValue);
@@ -374,10 +438,10 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	@Override
 	public Object showInputDialog(Object parentComponent, Object message, String title, int messageType, Icon icon, Object[] selectionValues, Object initialSelectionValue) {
 
+		if (this.isMissingAwbUIServce()==true) return null;
+		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls==0) {
-			LOGGER.error("Could not find any UI-implementation to request!");
-		} else if (noOfUiImpls > 1) {
+		if (noOfUiImpls > 1) {
 			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously show an InputDialog!");
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showInputDialog(parentComponent, message, title, messageType, icon, selectionValues, initialSelectionValue);

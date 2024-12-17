@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.agentgui.gui.AwbProjectExportDialog;
 import org.agentgui.gui.AwbProjectNewOpenDialog;
 import org.agentgui.gui.UiBridge;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -464,7 +465,7 @@ public class ProjectsLoaded {
 		ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
 		
 		// --- Show the ProjectExportDialog -----------------------------------
-		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project, projectExportController);
+		AwbProjectExportDialog projectExportDialog = new ProjectExportDialog(project, projectExportController);
 		projectExportDialog.setAllowInstallationPackageConfiguration(false);
 		projectExportDialog.setVisible(true);
 		// - - Does the user action here - - - - - - - - - - - - - - - - - - -

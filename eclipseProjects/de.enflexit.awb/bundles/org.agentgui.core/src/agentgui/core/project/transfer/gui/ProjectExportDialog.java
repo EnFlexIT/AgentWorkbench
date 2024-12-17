@@ -63,6 +63,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.agentgui.gui.AwbProjectExportDialog;
+
 import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.config.InstallationPackageFinder;
@@ -84,7 +86,7 @@ import de.enflexit.common.swing.fileSelection.FileTreeAdapter;
 /**
  * The Class ProjectExportDialog.
  */
-public class ProjectExportDialog extends JDialog implements ActionListener, DirectoryEvaluatorListener {
+public class ProjectExportDialog extends JDialog implements AwbProjectExportDialog, ActionListener, DirectoryEvaluatorListener {
 
 	private static final long serialVersionUID = 7642101726572826993L;
 
@@ -121,6 +123,13 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	private FileDescriptor fdSecurity;
 	private List<FileDescriptor> fdGitIgnoreList;
 	
+
+	/**
+	 * Instantiates a new project export dialog.
+	 */
+	public ProjectExportDialog() {
+		this.initialize();
+	}
 	/**
 	 * Instantiates a new project export dialog.
 	 *
@@ -128,11 +137,30 @@ public class ProjectExportDialog extends JDialog implements ActionListener, Dire
 	 * @param projectExportController the current project export controller
 	 */
 	public ProjectExportDialog(Project project, ProjectExportController projectExportController) {
-		this.project = project;
-		this.projectExportSettingsController = new ProjectExportSettingsController(project, projectExportController);
+		this.setProject(project);
+		this.setProjectExportController(projectExportController);
 		this.initialize();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectExportDialog#setProject(agentgui.core.project.Project)
+	 */
+	@Override
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectExportDialog#setProjectExportController(agentgui.core.project.transfer.ProjectExportController)
+	 */
+	@Override
+	public void setProjectExportController(ProjectExportController projectExportController) {
+		if (this.project==null) {
+			throw new NullPointerException("The project to export is not yet specified! - Please, specify the project first!");
+		}
+		if (projectExportController!=null) {
+			this.projectExportSettingsController = new ProjectExportSettingsController(this.project, projectExportController);
+		}
+	}
 	/**
 	 * Initialize.
 	 */

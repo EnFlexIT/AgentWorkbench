@@ -4,6 +4,9 @@ import javax.swing.Icon;
 
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
+import de.enflexit.awb.core.project.transfer.ProjectExportController;
+import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
+import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 
 /**
  * The Interface definition for an UI of AgentWorkbench.
@@ -34,7 +37,7 @@ public interface AgentWorkbenchUI {
 	 * Has to return the AwbMainWindow instance.
 	 * @return the main window
 	 */
-	public AwbMainWindow getMainWindow();
+	public AwbMainWindow<?, ?, ?, ?> getMainWindow();
 
 	/**
 	 * Has to return the AwbConsole instance.
@@ -122,6 +125,33 @@ public interface AgentWorkbenchUI {
 	 * @param factoryID the Hibernate factory ID to focus 
 	 */
 	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID);
+	
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should open a modal or a standalone project export dialog, where
+	 * the {@link ProjectExportSettings} are to be configured.
+	 *
+	 * @param project the project to export
+	 * @param projectExportController the project export controller to use
+	 * @return the AwbProjectExportDialog to work in
+	 */
+	public AwbProjectExportDialog showModalProjectExportDialog(Project project, ProjectExportController projectExportController);
+	
+	
+	/**
+	 * Has to return the instance of a monitoring dialog to show the current system load.
+	 *
+	 * @param lmAgent the current {@link LoadMeasureAgent}
+	 * @return the awb monitoring dialog system load
+	 */
+	public AwbMonitoringDialogSystemLoad getAwbMonitoringDialogSystemLoad(LoadMeasureAgent lmAgent);
+	
+	/**
+	 * Has to return the instance of a monitoring dialog to show the current JVM threading.
+	 *
+	 * @param lmAgent the current {@link LoadMeasureAgent}
+	 * @return the awb monitoring dialog system load
+	 */
+	public AwbMonitoringDialogThreading getAwbMonitoringDialogThreading(LoadMeasureAgent lmAgent);
 	
 	
 	 /**

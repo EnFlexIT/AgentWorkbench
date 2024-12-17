@@ -66,7 +66,7 @@ public class Application {
 	private static GlobalInfo globalInfo;
 	private static Object globalInfoSynchronizerForInitialization = new Object();
 	
-	private static AwbMainWindow mainWindow;
+	private static AwbMainWindow<?, ?, ?, ?> mainWindow;
 	
 	/** Here the tray icon of the application can be accessed */
 	private static AwbTrayIcon trayIcon;
@@ -270,7 +270,7 @@ public class Application {
 	 * Gets the main window.
 	 * @return the main window
 	 */
-	public static AwbMainWindow getMainWindow() {
+	public static AwbMainWindow<?, ?, ?, ?> getMainWindow() {
 		if (Application.mainWindow==null) {
 			Application.mainWindow = AgentWorkbenchUiManager.getInstance().getMainWindow();
 		}
@@ -287,7 +287,7 @@ public class Application {
 	 * Sets the main window.
 	 * @param newMainWindow the new main window
 	 */
-	public static void setMainWindow(AwbMainWindow newMainWindow) {
+	public static void setMainWindow(AwbMainWindow<?, ?, ?, ?> newMainWindow) {
 		if (newMainWindow!=mainWindow) {
 			mainWindow.dispose();
 		}

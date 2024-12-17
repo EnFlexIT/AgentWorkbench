@@ -1,13 +1,15 @@
 package de.enflexit.awb.core.project.transfer;
 
+import java.awt.Window;
 import java.io.File;
 
 import javax.swing.SwingUtilities;
 
-import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.transfer.Zipper;
+import de.enflexit.language.Language;
 
 /**
  * The Class ProjectImportController can be used to configure and 
@@ -63,7 +65,12 @@ public class ProjectImportController {
 		String zipFolder = projectFile.getAbsolutePath();
 		
 		// --- Define the Zipper instance ---------------------------
-		Zipper zipper = CommonComponentFactory.getNewZipper(Application.getMainWindow());
+		Window owner = Application.getMainWindow()!=null ? (Window)Application.getMainWindow() : null;
+		Zipper zipper = new Zipper(owner);
+		zipper.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
+		zipper.setLookAndFeelClassName(Application.getGlobalInfo().getAppLookAndFeelClassName());
+		zipper.setApplicationName(Application.getGlobalInfo().getApplicationTitle());
+		
 		zipper.setUnzipZipFolder(zipFolder);
 		zipper.setUnzipDestinationFolder(destFolder);
 		zipper.setRunInThread(this.getProjectImportSettings().isExtractInThread());

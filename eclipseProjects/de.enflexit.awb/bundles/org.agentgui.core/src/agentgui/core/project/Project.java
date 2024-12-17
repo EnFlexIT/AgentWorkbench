@@ -47,17 +47,8 @@ import java.util.Vector;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.agentgui.gui.AwbProjectEditorWindow;
-import org.agentgui.gui.AwbProjectWindowTab;
 import org.agentgui.gui.AwbProjectEditorWindow.ProjectCloseUserFeedback;
 import org.agentgui.gui.UiBridge;
 import org.agentgui.gui.swing.project.ProjectWindow;
@@ -69,15 +60,14 @@ import org.osgi.framework.Version;
 
 import agentgui.core.application.Application;
 import agentgui.core.application.ApplicationListener.ApplicationEvent;
-import de.enflexit.language.Language;
 import agentgui.core.classLoadService.ClassLoadServiceUtility;
 import agentgui.core.config.GlobalInfo.ExecutionMode;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.environment.EnvironmentController.PersistenceStrategy;
 import agentgui.core.environment.EnvironmentPanel;
 import agentgui.core.environment.EnvironmentType;
-import agentgui.core.gui.components.JPanel4Visualization;
 import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
+import agentgui.core.plugin.AwbPlugIn;
 import agentgui.core.plugin.PlugIn;
 import agentgui.core.plugin.PlugInLoadException;
 import agentgui.core.plugin.PlugInNotification;
@@ -104,6 +94,15 @@ import de.enflexit.common.p2.P2OperationsHandler;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.PropertiesEvent;
 import de.enflexit.common.properties.PropertiesListener;
+import de.enflexit.language.Language;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br>
@@ -175,8 +174,6 @@ import de.enflexit.common.properties.PropertiesListener;
 
 	/** This is the 'view' in the context of the mentioned MVC pattern */
 	@XmlTransient private AwbProjectEditorWindow projectEditorWindow;
-	/** This panel holds the instance of environment model display */
-	@XmlTransient private JPanel4Visualization visualizationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
 	@XmlTransient private JDesktopPane projectDesktop;
 
@@ -1181,7 +1178,7 @@ import de.enflexit.common.properties.PropertiesListener;
 		try {
 			if (this.getPlugInsLoaded().isLoaded(pluginReference) == true) {
 				// --- PlugIn can't be loaded because it's already there ------
-				PlugIn ppi = getPlugInsLoaded().getPlugIn(pluginReference);
+				AwbPlugIn ppi = getPlugInsLoaded().getPlugIn(pluginReference);
 
 				String msgHead = Language.translate("Fehler - PlugIn: ") + " " + ppi.getClassReference() + " !";
 				String msgText = Language.translate("Das PlugIn wurde bereits in das Projekt integriert und kann deshalb nicht erneut hinzugefügt werden!");
@@ -1190,8 +1187,8 @@ import de.enflexit.common.properties.PropertiesListener;
 
 			} else {
 				// --- PlugIn can be loaded -----------------------------------
-				PlugIn ppi = this.getPlugInsLoaded().loadPlugin(this, pluginReference);
-				this.setNotChangedButNotify(new PlugInNotification(PlugIn.ADDED, ppi));
+				AwbPlugIn ppi = this.getPlugInsLoaded().loadPlugin(this, pluginReference);
+				this.setNotChangedButNotify(new PlugInNotification(AwbPlugIn.ADDED, ppi));
 				if (add2PlugInReferenceVector==true) {
 					this.getPluginClassNames().add(pluginReference);
 				}
@@ -1212,9 +1209,9 @@ import de.enflexit.common.properties.PropertiesListener;
 	 * @param plugIn The PlugIn instance to be removed
 	 * @param removeFromProjectReferenceVector the indicator to remove the references also from project reference vector
 	 */
-	public void plugInRemove(PlugIn plugIn, boolean removeFromProjectReferenceVector) {
+	public void plugInRemove(AwbPlugIn plugIn, boolean removeFromProjectReferenceVector) {
 		this.getPlugInsLoaded().removePlugIn(plugIn);
-		this.setNotChangedButNotify(new PlugInNotification(PlugIn.REMOVED, plugIn));
+		this.setNotChangedButNotify(new PlugInNotification(AwbPlugIn.REMOVED, plugIn));
 		if (removeFromProjectReferenceVector) {
 			this.getPluginClassNames().remove(plugIn.getClassReference());
 		}
@@ -1243,7 +1240,7 @@ import de.enflexit.common.properties.PropertiesListener;
 	 */
 	public void removePlugInClassReference(String classReference) {
 		// --- Check if the PlugIn is currently loaded --------------
-		PlugIn plugIn = this.getPlugInsLoaded().getPlugIn(classReference);
+		AwbPlugIn plugIn = this.getPlugInsLoaded().getPlugIn(classReference);
 		
 		if (plugIn!=null) {
 			// --- If it is, unload it and remove it from the class reference vector ----
@@ -2263,25 +2260,6 @@ import de.enflexit.common.properties.PropertiesListener;
 		this.getEnvironmentController();
 	}
 
-	/**
-	 * Sets the visualization tab of the {@link ProjectWindow} for an executed setup.
-	 * @param visualizationTab4SetupExecution the new visualization tab4 setup execution
-	 */
-	public void setVisualizationTab4SetupExecution(JPanel4Visualization visualizationTab4SetupExecution) {
-		this.visualizationTab4SetupExecution = visualizationTab4SetupExecution;
-	}
-
-	/**
-	 * Returns the visualization tab of the {@link ProjectWindow} for an executed setup.
-	 * @return the visualization tab4 setup execution
-	 */
-	@XmlTransient
-	public JPanel4Visualization getVisualizationTab4SetupExecution() {
-		if (this.visualizationTab4SetupExecution == null) {
-			this.visualizationTab4SetupExecution = new JPanel4Visualization(this, Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
-		}
-		return this.visualizationTab4SetupExecution;
-	}
 
 	/**
 	 * Sets the eclipse MApplication.

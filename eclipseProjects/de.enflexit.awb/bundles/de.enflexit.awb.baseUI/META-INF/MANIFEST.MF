@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Automatic-Module-Name: de.enflexit.awb.baseUI
+Bundle-ActivationPolicy: lazy
+Bundle-Name: Agent.Workbench - Swing Base-UI
+Bundle-SymbolicName: de.enflexit.awb.baseUI
+Bundle-Version: 3.0.0.qualifier
+Export-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.agents,
+ de.enflexit.awb.baseUI.monitor.load,
+ de.enflexit.awb.baseUI.monitor.threading
+Require-Bundle: de.enflexit.awb.core
+Bundle-Vendor: EnFlex.IT
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Service-Component: OSGI-INF/classLoadService.xml,
+ OSGI-INF/baseUiService.xml
+Import-Package: de.enflexit.common,
+ de.enflexit.common.swing,
+ de.enflexit.language,
+ jade.core,
+ org.jfree.chart,
+ org.jfree.chart.axis,
+ org.jfree.chart.plot,
+ org.jfree.chart.renderer,
+ org.jfree.chart.renderer.xy,
+ org.jfree.chart.title,
+ org.jfree.chart.ui,
+ org.jfree.data.general,
+ org.jfree.data.xy
+

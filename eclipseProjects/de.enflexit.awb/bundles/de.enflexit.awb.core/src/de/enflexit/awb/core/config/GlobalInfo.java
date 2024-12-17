@@ -1466,7 +1466,11 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * @return the lastSelectedFolder as String
 	 */
 	public String getLastSelectedFolderAsString() {
-		String returnFolder = this.getLastSelectedFolder().getAbsolutePath();
+		File lastSelectedFolder = this.getLastSelectedFolder();
+		if (lastSelectedFolder==null) {
+			lastSelectedFolder = this.getPathBaseDir().toFile();
+		}
+		String returnFolder = lastSelectedFolder.getAbsolutePath();
 		if (returnFolder.endsWith(File.separator)==false) {
 			returnFolder+=File.separator;
 		}

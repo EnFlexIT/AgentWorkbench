@@ -50,7 +50,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	private Project currProject;
 
 	/** The {@link AbstractDisplayAgent} that is currently using this EnvironmentController. */
-	private AbstractDisplayAgent myDisplayAgent;
+	private AbstractDisplayAgent<?> myDisplayAgent;
 
 	/** The current environment panel. */
 	private EnvironmentPanel myEnvironmentPanel;
@@ -477,7 +477,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * 
 	 * @param newDisplayAgent the new, extended {@link AbstractDisplayAgent}
 	 */
-	public void setDisplayAgent(AbstractDisplayAgent newDisplayAgent) {
+	public void setDisplayAgent(AbstractDisplayAgent<?> newDisplayAgent) {
 		this.myDisplayAgent = newDisplayAgent;
 	}
 	/**
@@ -488,7 +488,7 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * 
 	 * @return the environment controller agent
 	 */
-	public AbstractDisplayAgent getDisplayAgent() {
+	public AbstractDisplayAgent<?> getDisplayAgent() {
 		return myDisplayAgent;
 	}
 	

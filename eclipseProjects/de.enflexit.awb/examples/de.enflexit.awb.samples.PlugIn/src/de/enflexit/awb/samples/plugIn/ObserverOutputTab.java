@@ -19,7 +19,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import agentgui.core.application.Application;
-import agentgui.core.plugin.PlugIn;
+import agentgui.core.plugin.AwbPlugIn;
 import agentgui.core.plugin.PlugInNotification;
 import agentgui.core.project.Project;
 import agentgui.core.project.setup.SimulationSetupNotification;
@@ -190,17 +190,17 @@ public class ObserverOutputTab extends JPanel implements Observer {
 		// ----------------------------------------------------------
 		// --- Changes with the Project-PlugIns ---------------------			
 		// ----------------------------------------------------------
-		} else if (updateObject.toString().equals(PlugIn.CHANGED)) {
+		} else if (updateObject.toString().equals(AwbPlugIn.CHANGED)) {
 			
-			appendText = PlugIn.CHANGED + ": PlugIn configuration changed:";
+			appendText = AwbPlugIn.CHANGED + ": PlugIn configuration changed:";
 			
 			PlugInNotification pin = (PlugInNotification) updateObject;
 			int pinUpdate = pin.getUpdateReason();
-			PlugIn plugIn = pin.getPlugIn();
-			if (pinUpdate == PlugIn.ADDED) {
-				appendText += newLine + "=> " + PlugIn.ADDED + ": PlugIn added - " + plugIn.getName() + " [" + plugIn.getClassReference() + "]";
-			} else if (pinUpdate == PlugIn.REMOVED) {
-				appendText += newLine + "=> " + PlugIn.REMOVED + ": PlugIn removed - " + plugIn.getName() + " [" + plugIn.getClassReference() + "]";
+			AwbPlugIn plugIn = pin.getPlugIn();
+			if (pinUpdate == AwbPlugIn.ADDED) {
+				appendText += newLine + "=> " + AwbPlugIn.ADDED + ": PlugIn added - " + plugIn.getName() + " [" + plugIn.getClassReference() + "]";
+			} else if (pinUpdate == AwbPlugIn.REMOVED) {
+				appendText += newLine + "=> " + AwbPlugIn.REMOVED + ": PlugIn removed - " + plugIn.getName() + " [" + plugIn.getClassReference() + "]";
 			}			
 			
 		} else {

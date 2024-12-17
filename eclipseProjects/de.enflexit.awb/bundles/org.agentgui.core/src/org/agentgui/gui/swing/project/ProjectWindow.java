@@ -45,10 +45,10 @@ import org.agentgui.gui.AwbProjectEditorWindow;
 import org.agentgui.gui.AwbProjectWindowTab;
 
 import agentgui.core.application.Application;
-import de.enflexit.language.Language;
 import agentgui.core.config.GlobalInfo;
 import agentgui.core.environment.EnvironmentController;
 import agentgui.core.gui.MainWindow;
+import agentgui.core.gui.components.JPanel4Visualization;
 import agentgui.core.gui.projectwindow.simsetup.EnvironmentModelSetup;
 import agentgui.core.gui.projectwindow.simsetup.SetupPropertiesPanel;
 import agentgui.core.gui.projectwindow.simsetup.StartSetup;
@@ -56,6 +56,7 @@ import agentgui.core.project.Project;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.swing.AwbTabbedPaneHeaderPainter;
+import de.enflexit.language.Language;
 
 /**
  * This extended JInternalFrame graphically encapsulates the the project in the main window (class CoreWindow)
@@ -98,6 +99,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 	private boolean isMaximizedTab;
 	private MaximizedTab maxTab;
 	private ProjectWindowTab maxProjectWindowTab;
+
+
+	/** This panel holds the instance of environment model display */
+	private JPanel4Visualization visualizationTab4SetupExecution;
 
 	
 	/**
@@ -724,7 +729,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		
 		// ------------------------------------------------
 		// --- Visualization ------------------------------
-		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION), null, null, this.currProject.getVisualizationTab4SetupExecution(), null);
+		pwt = new ProjectWindowTab(this.currProject, AwbProjectWindowTab.DISPLAY_4_END_USER_VISUALIZATION, Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION), null, null, this.getRuntimeVisualizationContainer(), null);
 		pwt.add();
 
 		
@@ -1401,4 +1406,17 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectEditorWin
 		JOptionPane.showMessageDialog(this, msgText, msgHead, JOptionPane.ERROR_MESSAGE);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.agentgui.gui.AwbProjectEditorWindow#getRuntimeVisualizationContainer()
+	 */
+	@Override
+	public JPanel4Visualization getRuntimeVisualizationContainer() {
+		if (this.visualizationTab4SetupExecution == null) {
+			this.visualizationTab4SetupExecution = new JPanel4Visualization(this.currProject, Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
+		}
+		return this.visualizationTab4SetupExecution;
+	}
+	
+	
 }
