@@ -1,5 +1,6 @@
 package de.enflexit.awb.core.project.transfer;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
+import de.enflexit.awb.core.ui.AwbProjectExportDialog;
 import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.transfer.ArchiveFileHandler;
 import de.enflexit.common.transfer.RecursiveFolderCopier;
@@ -94,7 +96,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 		this.project = project;
 		
 		// --- Show a dialog to configure the export ----------------
-		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project, this);
+		AwbProjectExportDialog projectExportDialog = AgentWorkbenchUiManager.getInstance().showModalProjectExportDialog(project, this);
 		projectExportDialog.setVisible(true);
 		// - - Does the user action here - - - - - - - - - - - - - --
 		if (projectExportDialog.isCanceled() == false) {
@@ -104,7 +106,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 			
 			// --- Select the export destination --------------------
 			JFileChooser chooser = this.getJFileChooser(project);
-			if (chooser.showSaveDialog(Application.getMainWindow()) == JFileChooser.APPROVE_OPTION) {
+			if (chooser.showSaveDialog((Component) Application.getMainWindow()) == JFileChooser.APPROVE_OPTION) {
 				
 				File targetFile = chooser.getSelectedFile();
 				Application.getGlobalInfo().setLastSelectedFolder(targetFile.getParentFile());
@@ -261,7 +263,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 			
 			try {
 				Files.createDirectories(destinPath);
-				RecursiveFolderCopier rfc = CommonComponentFactory.getNewRecursiveFolderCopier();
+				RecursiveFolderCopier rfc = new RecursiveFolderCopier();
 				rfc.copyFolder(sourcePath, destinPath, this.getFolderCopySkipList(sourcePath));
 			} catch (IOException e) {
 				System.err.println("Error copying project data!");

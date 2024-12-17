@@ -271,4 +271,11 @@ public class ProjectEditor extends EditorPart implements AwbProjectEditorWindow 
 		// TODO Auto-generated method stub
 	}
 
+	
+	@Override
+	public Object getRuntimeVisualizationContainer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

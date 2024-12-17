@@ -285,7 +285,7 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 * @param displayAgent the instance of the display agent
 	 * @throws ServiceException the service exception
 	 */
-	public void displayAgentRegister(AbstractDisplayAgent displayAgent) throws ServiceException;
+	public void displayAgentRegister(AbstractDisplayAgent<?> displayAgent) throws ServiceException;
 
 	/**
 	 * Unregisters a DisplayAgent at the SimulationService.
@@ -296,7 +296,7 @@ public interface SimulationServiceHelper extends ServiceHelper {
 	 * @param displayAgent the instance of the display agent
 	 * @throws ServiceException the service exception
 	 */
-	public void displayAgentUnregister(AbstractDisplayAgent displayAgent) throws ServiceException;
+	public void displayAgentUnregister(AbstractDisplayAgent<?> displayAgent) throws ServiceException;
 	
 	/**
 	 * Notifies all registered DisplayAgents about a new EnvironmentModel.

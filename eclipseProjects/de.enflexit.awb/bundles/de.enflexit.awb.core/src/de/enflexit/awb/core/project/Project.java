@@ -141,8 +141,6 @@ import de.enflexit.language.Language;
 
 	/** This is the 'view' in the context of the mentioned MVC pattern */
 	@XmlTransient private AwbProjectWindow projectEditorWindow;
-	/** This panel holds the instance of environment model display */
-	@XmlTransient private JPanel4Visualization visualizationTab4SetupExecution;
 	/** This JDesktopPane that can be used as project desktop. */
 	@XmlTransient private JDesktopPane projectDesktop;
 
@@ -809,7 +807,7 @@ import de.enflexit.language.Language;
 			Application.setProjectFocused(null);
 			Application.setTitleAddition("");
 			if (Application.getMainWindow() != null) {
-				Application.getMainWindow().setCloseButtonPosition(false);
+				Application.getMainWindow().setCloseProjectButtonVisible(false);
 			}
 		}
 		Application.setStatusBarMessage("");
@@ -2223,25 +2221,5 @@ import de.enflexit.language.Language;
 		this.environmentController = null;
 		this.getEnvironmentController();
 	}
-
-	/**
-	 * Sets the visualization tab of the {@link ProjectWindow} for an executed setup.
-	 * @param visualizationTab4SetupExecution the new visualization tab4 setup execution
-	 */
-	public void setVisualizationTab4SetupExecution(JPanel4Visualization visualizationTab4SetupExecution) {
-		this.visualizationTab4SetupExecution = visualizationTab4SetupExecution;
-	}
-
-	/**
-	 * Returns the visualization tab of the {@link ProjectWindow} for an executed setup.
-	 * @return the visualization tab4 setup execution
-	 */
-	@XmlTransient
-	public JPanel4Visualization getVisualizationTab4SetupExecution() {
-		if (this.visualizationTab4SetupExecution == null) {
-			this.visualizationTab4SetupExecution = new JPanel4Visualization(this, Language.translate(ProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
-		}
-		return this.visualizationTab4SetupExecution;
-	}
-
+	
 }

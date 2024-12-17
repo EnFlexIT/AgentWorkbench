@@ -1,17 +1,11 @@
 package de.enflexit.awb.core.project;
 
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.enflexit.awb.core.Application;
@@ -27,8 +21,8 @@ import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
 import de.enflexit.awb.core.project.transfer.ProjectImportController;
 import de.enflexit.awb.core.project.transfer.ProjectImportSettings;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
-import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.awb.core.ui.AwbProjectExportDialog;
 import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
 import de.enflexit.awb.core.update.ProjectRepositoryExport;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
@@ -356,7 +350,7 @@ public class ProjectsLoaded {
 	
 	
 	/**
-	 * Imports a project, which is packed in Agent.GUI project file (*.agui)
+	 * Imports a project, which is packed in Agent.Workbench project file (*.agui)
 	 */
 	public void projectImport() {
 		
@@ -371,7 +365,7 @@ public class ProjectsLoaded {
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		
-		int answerChooser = fileChooser.showDialog(Application.getMainWindow(), Language.translate("Projekt importieren"));
+		int answerChooser = fileChooser.showDialog((Component)Application.getMainWindow(), Language.translate("Projekt importieren"));
 		if (answerChooser==JFileChooser.CANCEL_OPTION) return;
 		Application.getGlobalInfo().setLastSelectedFolder(fileChooser.getCurrentDirectory());
 		
@@ -385,9 +379,8 @@ public class ProjectsLoaded {
 			ProjectImportController pic = new ProjectImportController(pims);
 			pic.doProjectImport();
 		}
-		
 	}
-
+	
 	/**
 	 * Exports a project to a file
 	 */
@@ -456,7 +449,7 @@ public class ProjectsLoaded {
 		ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
 		
 		// --- Show the ProjectExportDialog -----------------------------------
-		ProjectExportDialog projectExportDialog = new ProjectExportDialog(project, projectExportController);
+		AwbProjectExportDialog projectExportDialog = AgentWorkbenchUiManager.getInstance().showModalProjectExportDialog(project, projectExportController);
 		projectExportDialog.setAllowInstallationPackageConfiguration(false);
 		projectExportDialog.setVisible(true);
 		// - - Does the user action here - - - - - - - - - - - - - - - - - - -

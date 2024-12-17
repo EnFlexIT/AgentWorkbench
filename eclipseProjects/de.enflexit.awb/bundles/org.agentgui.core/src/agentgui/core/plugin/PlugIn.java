@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package agentgui.core.plugin;
 
 import java.awt.Container;
@@ -64,12 +36,8 @@ import jade.core.ProfileImpl;
  *   
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class PlugIn implements Observer {
+public abstract class PlugIn implements AwbPlugIn {
 
-	public static final String CHANGED = "PlugIns";
-	public static final int ADDED = 1;
-	public static final int REMOVED = 2;
-	
 	protected Project project = null;
 	protected String classReference = null;
 
@@ -416,10 +384,10 @@ public abstract class PlugIn implements Observer {
 
 				PlugInNotification pin = (PlugInNotification) updateObject;
 				int pinUpdate = pin.getUpdateReason();
-				PlugIn plugIn = pin.getPlugIn();
-				if (pinUpdate == PlugIn.ADDED) {
+				AwbPlugIn plugIn = pin.getPlugIn();
+				if (pinUpdate == ADDED) {
 					this.onPlugInAdded(plugIn);
-				} else if (pinUpdate == PlugIn.REMOVED) {
+				} else if (pinUpdate == REMOVED) {
 					this.onPlugInRemoved(plugIn);
 				}			
 				
@@ -569,13 +537,13 @@ public abstract class PlugIn implements Observer {
 	 * On plug in removed.
 	 * @param plugIn the plug in
 	 */
-	protected void onPlugInRemoved(PlugIn plugIn) { }
+	protected void onPlugInRemoved(AwbPlugIn plugIn) { }
 	
 	/**
 	 * On plug in added.
 	 * @param plugIn the plug in
 	 */
-	protected void onPlugInAdded(PlugIn plugIn) { }
+	protected void onPlugInAdded(AwbPlugIn plugIn) { }
 
 	/**
 	 * Overriding his method allows to extend/change the currently 

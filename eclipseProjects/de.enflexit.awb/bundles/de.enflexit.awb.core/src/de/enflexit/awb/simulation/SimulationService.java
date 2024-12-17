@@ -87,7 +87,7 @@ public class SimulationService extends BaseService {
 	/** --- The Agent who is the Manager / Controller of the Simulation -------- */
 	private EnvironmentManagerDescription environmentManagerDescription;
 	/** --- Agents which have registered as display agents for the environment - */
-	private Vector<AbstractDisplayAgent> displayAgents;
+	private Vector<AbstractDisplayAgent<?>> displayAgents;
 	private HashMap<String, Integer> displayAgentDistribution;
 	
 	/** --- The List of Agents, which are registered to this service ----------- */ 
@@ -119,7 +119,7 @@ public class SimulationService extends BaseService {
 		this.myContainer = ac;
 		this.myMainContainer = ac.getMain();	
 		// --- Initialize local attributes ----------------  
-		this.displayAgents = new Vector<AbstractDisplayAgent>();
+		this.displayAgents = new Vector<>();
 		this.displayAgentDistribution = new HashMap<String, Integer>();
 		this.agentList = new Hashtable<String, AID>();
 		this.localServiceActuator4Manager = new ServiceActuatorManager();
@@ -482,7 +482,7 @@ public class SimulationService extends BaseService {
 		 * @see de.enflexit.awb.simulation.SimulationServiceHelper#displayAgentRegister(de.enflexit.awb.simulation.agents.AbstractDisplayAgent)
 		 */
 		@Override
-		public void displayAgentRegister(AbstractDisplayAgent displayAgent) throws ServiceException {
+		public void displayAgentRegister(AbstractDisplayAgent<?> displayAgent) throws ServiceException {
 			synchronized (displayAgents) {
 				displayAgents.add(displayAgent);
 				broadcastDisplayAgentContainerUnRegistration(true);
@@ -492,7 +492,7 @@ public class SimulationService extends BaseService {
 		 * @see de.enflexit.awb.simulation.SimulationServiceHelper#displayAgentUnregister(jade.core.AID)
 		 */
 		@Override
-		public void displayAgentUnregister(AbstractDisplayAgent displayAgent) throws ServiceException {
+		public void displayAgentUnregister(AbstractDisplayAgent<?> displayAgent) throws ServiceException {
 			synchronized (displayAgents) {
 				displayAgents.remove(displayAgent);
 				broadcastDisplayAgentContainerUnRegistration(false);
@@ -1510,7 +1510,7 @@ public class SimulationService extends BaseService {
 		public void displayAgentSetEnvironmentModel(EnvironmentModel envModel) {
 			synchronized (displayAgents) {
 				if (displayAgents!=null) {
-					for (AbstractDisplayAgent displayAgent : displayAgents) {
+					for (AbstractDisplayAgent<?> displayAgent : displayAgents) {
 						getServiceActuator().notifySensor(envModel, displayAgent.getAID());
 					}
 				}
@@ -1522,7 +1522,7 @@ public class SimulationService extends BaseService {
 		 */
 		public void displayAgentNotification(EnvironmentNotification notification) {
 			synchronized (displayAgents) {
-				for (AbstractDisplayAgent displayAgent : displayAgents) {
+				for (AbstractDisplayAgent<?> displayAgent : displayAgents) {
 					getServiceActuator().notifySensorAgent(displayAgent.getAID(), notification);
 				}
 			}

@@ -34,6 +34,7 @@ import jade.core.ServiceException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.agentgui.gui.AwbProjectEditorWindow;
 import org.agentgui.gui.AwbProjectWindowTab;
 
 import agentgui.core.application.Application;
@@ -166,14 +167,14 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 	}
 
 	/**
-	 * This method will start the agent that will show the visualisation of the current environment model.
+	 * This method will start the agent that will show the visualization of the current environment model.
 	 * In case of an headless operation of Agent.GUI, this method will do nothing.
 	 * 
 	 * @see Application#isOperatingHeadless()
 	 */
 	protected void startVisualizationAgent() {
 		
-		// --- Visualisation is only needed in case of a none headless operation
+		// --- Visualization is only needed in case of a none-headless operation --------
 		if (Application.isOperatingHeadless()==true) return;
 		
 		EnvironmentController envController = currProject.getEnvironmentController();
@@ -181,24 +182,30 @@ public abstract class StaticLoadBalancingBase extends BaseLoadBalancing {
 			
 			EnvironmentType envType = currProject.getEnvironmentModelType();
 			String envTypeInternalKey = envType.getInternalKey();
+
+			Object runtimeVisualizationContainer = null;
+			AwbProjectEditorWindow projectEditorWindow = this.currProject.getProjectEditorWindow();
+			if (projectEditorWindow!=null) {
+				runtimeVisualizationContainer = projectEditorWindow.getRuntimeVisualizationContainer(); 
+			}
 			
-			// ----------------------------------------------------------------
-			// --- Start visualisation, if an visualised environment is used --
-			// ----------------------------------------------------------------
+			// --------------------------------------------------------------------------
+			// --- Start visualization, if an visualized environment is used ------------
+			// --------------------------------------------------------------------------
 			if (envTypeInternalKey.equalsIgnoreCase("none")==false) {
 
 				// --- Get the Agent which has to be started for ---
 				Class<? extends Agent> displayAgentClass = envType.getDisplayAgentClass();
 				
 				Object[] startArg = new Object[3];
-				startArg[0] = currProject.getVisualizationTab4SetupExecution();
+				startArg[0] = runtimeVisualizationContainer;
 				startArg[1] = envController;
 				this.startAgent("DisplayAgent", displayAgentClass, startArg);
 				
-				// --- Set the focus on Visualisation-Tab ---------------------
+				// --- Set the focus on Visualisation-Tab -------------------------------
 				currProject.getProjectEditorWindow().setFocus2Tab(Language.translate(AwbProjectWindowTab.TAB_4_RUNTIME_VISUALIZATION));
 			}
-			// ----------------------------------------------------------------
+			// --------------------------------------------------------------------------
 		}
 	}
 	

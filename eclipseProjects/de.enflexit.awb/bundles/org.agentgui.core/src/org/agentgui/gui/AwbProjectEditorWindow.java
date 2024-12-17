@@ -155,6 +155,11 @@ public interface AwbProjectEditorWindow {
 	 */
 	public void validateStartTab();
 
+	/**
+	 * Has to return the visualization container for the agents runtime.
+	 * @return the runtime visualization container
+	 */
+	public Object getRuntimeVisualizationContainer();
 
 
 }

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Automatic-Module-Name: de.enflexit.awb.desktop
+Bundle-ActivationPolicy: lazy
+Bundle-Name: Agent.Workbench - Desktop
+Bundle-SymbolicName: de.enflexit.awb.desktop
+Bundle-Version: 3.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.transfer,
+ de.enflexit.awb.core.ui,
+ de.enflexit.awb.simulation.agents
+Service-Component: OSGI-INF/desktopUiService.xml
+

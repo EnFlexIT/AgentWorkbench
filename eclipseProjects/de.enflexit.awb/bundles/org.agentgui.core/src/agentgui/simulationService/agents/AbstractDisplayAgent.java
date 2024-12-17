@@ -85,7 +85,7 @@ public abstract class AbstractDisplayAgent extends SimulationAgent {
 	 * Instantiates a new visualisation agent for an EnvironmentModel.
 	 */
 	public AbstractDisplayAgent() {
-		// --- Initialise this agent as a passive ---------
+		// --- Initialize this agent as a passive ---------
 		// --- SimulationAgent (or observing agent) ------- 
 		super(true);
 	}

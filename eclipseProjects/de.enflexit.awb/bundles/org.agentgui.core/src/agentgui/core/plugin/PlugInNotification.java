@@ -45,7 +45,7 @@ import agentgui.core.project.Project;
  */
 public class PlugInNotification {
 
-	private PlugIn plugIn = null;
+	private AwbPlugIn plugIn = null;
 	private int updateReason = 0; 
 	
 	/**
@@ -54,23 +54,20 @@ public class PlugInNotification {
 	 * @param reason the reason
 	 * @param plugIn the plug in
 	 */
-	public PlugInNotification(int reason, PlugIn plugIn) {
+	public PlugInNotification(int reason, AwbPlugIn plugIn) {
 		this.setUpdateReason(reason);
 		this.setPlugIn(plugIn);
 	}
 	
 	/**
 	 * Sets the update reason.
-	 *
 	 * @param updateReason the new update reason
 	 */
 	public void setUpdateReason(int updateReason) {
 		this.updateReason = updateReason;
 	}
-	
 	/**
 	 * Gets the update reason.
-	 *
 	 * @return the update reason
 	 */
 	public int getUpdateReason() {
@@ -79,19 +76,16 @@ public class PlugInNotification {
 	
 	/**
 	 * Sets the plug in.
-	 *
 	 * @param plugIn the new plug in
 	 */
-	public void setPlugIn(PlugIn plugIn) {
+	public void setPlugIn(AwbPlugIn plugIn) {
 		this.plugIn = plugIn;
 	}
-	
 	/**
 	 * Gets the plug in.
-	 *
 	 * @return the plug in
 	 */
-	public PlugIn getPlugIn() {
+	public AwbPlugIn getPlugIn() {
 		return plugIn;
 	}
 	

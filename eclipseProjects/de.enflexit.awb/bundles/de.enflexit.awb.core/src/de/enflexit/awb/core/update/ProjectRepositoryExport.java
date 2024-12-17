@@ -11,6 +11,7 @@ import de.enflexit.awb.core.project.transfer.ProjectExportController;
 import de.enflexit.awb.core.project.transfer.ProjectExportControllerProvider;
 import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.awb.core.ui.AwbOptionsDialog;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 
@@ -124,7 +125,7 @@ public class ProjectRepositoryExport extends Thread {
 				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), errMsg, "Repository Export Error", AwbMessageDialog.ERROR_MESSAGE);
 				if (this.getRepositoryLocationDirectoryPath()==null) {
 					// --- Special case: missing repository path ----
-					Application.showOptionsDialog(DirectoryOptions.TAB_TITLE);
+					Application.showOptionsDialog(AwbOptionsDialog.TAB_DIRECTORIES);
 					return;
 				}
 			}

@@ -26,6 +26,8 @@ public class BenchmarkMeasurement extends Thread {
 	private boolean forceBenchmark = false;
 	private boolean isHeadlessOperation = Application.isOperatingHeadless();
 
+	private boolean uiManagerReturnedNull = false; 
+	
 	private float benchValueOld = Application.getGlobalInfo().getBenchValue();
 	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAlwaysSkip();
 	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
@@ -127,7 +129,7 @@ public class BenchmarkMeasurement extends Thread {
 			Application.getGlobalInfo().doSaveConfiguration();
 			
 			// --- Progress Display --- OFF -------------------------
-			if (this.isHeadlessOperation==false) {
+			if (this.isHeadlessOperation==false && this.getBenchmarkMonitor()!=null) {
 				this.getBenchmarkMonitor().setBenchmarkValue(result);
 				Thread.sleep(1000);
 				this.closeGUI();
@@ -145,9 +147,14 @@ public class BenchmarkMeasurement extends Thread {
 	 * @return the benchmark monitor
 	 */
 	private AwbBenchmarkMonitor getBenchmarkMonitor() {
-		if (monitor==null && this.isHeadlessOperation==false) {
+		if (monitor==null && this.isHeadlessOperation==false && this.uiManagerReturnedNull==false) {
 			// --- Initialize BenchmarkMonitor ------------ 
 			monitor = AgentWorkbenchUiManager.getInstance().getBenchmarkMonitor();
+			if (monitor==null) {
+				uiManagerReturnedNull = true;
+				return null;
+			}
+			
 			// --- Set user buttons -----------------------
 			if (this.benchValueOld>0 && this.getLocalSystemID().equalsIgnoreCase(benchExecOn)) {
 				monitor.setEnableSkipButton(true);

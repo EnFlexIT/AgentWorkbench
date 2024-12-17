@@ -1,7 +1,5 @@
 package de.enflexit.awb.simulation.agents;
 
-import java.awt.Color;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,22 +20,21 @@ import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.project.DistributionSetup;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.SimulationSetup;
-import de.enflexit.awb.core.simulation.balancing.DynamicLoadBalancing;
-import de.enflexit.awb.core.simulation.balancing.DynamicLoadBalancingBase;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.awb.core.ui.AwbMonitoringDialogSystemLoad;
+import de.enflexit.awb.core.ui.AwbMonitoringDialogThreading;
 import de.enflexit.awb.simulation.LoadService;
 import de.enflexit.awb.simulation.LoadServiceHelper;
+import de.enflexit.awb.simulation.balancing.DynamicLoadBalancing;
+import de.enflexit.awb.simulation.balancing.DynamicLoadBalancingBase;
 import de.enflexit.awb.simulation.load.LoadAgentMap;
+import de.enflexit.awb.simulation.load.LoadInformation.NodeDescription;
 import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.awb.simulation.load.LoadMerger;
 import de.enflexit.awb.simulation.load.LoadThresholdLevels;
-import de.enflexit.awb.simulation.load.LoadInformation.NodeDescription;
-import de.enflexit.awb.simulation.load.gui.SystemLoadDialog;
-import de.enflexit.awb.simulation.load.gui.SystemLoadPanel;
-import de.enflexit.awb.simulation.load.gui.SystemLoadSingle;
 import de.enflexit.awb.simulation.load.threading.ThreadMeasureBehaviour;
 import de.enflexit.awb.simulation.load.threading.ThreadProtocol;
 import de.enflexit.awb.simulation.load.threading.ThreadProtocolVector;
-import de.enflexit.awb.simulation.load.threading.gui.ThreadMonitor;
 import de.enflexit.awb.simulation.load.threading.storage.ThreadInfoStorage;
 import de.enflexit.awb.simulation.ontology.OSInfo;
 import de.enflexit.awb.simulation.ontology.PlatformLoad;
@@ -84,9 +81,7 @@ public class LoadMeasureAgent extends Agent {
 	
 	// --------------------------------------------------------------
 	// --- Display-elements of the Monitoring system ---------------- 
-	private SystemLoadDialog loadDialog;
-	// --- Remember container Informations/Instances (Display) ------
-	private Hashtable<String, SystemLoadSingle> containerLoadDialogs = new Hashtable<String, SystemLoadSingle>(); 
+	private AwbMonitoringDialogSystemLoad loadDialog;
 	// --------------------------------------------------------------
 
 	// --------------------------------------------------------------
@@ -98,7 +93,7 @@ public class LoadMeasureAgent extends Agent {
 
 	// --------------------------------------------------------------
 	// --- Display-elements of the Threading ------------------------ 
-	private ThreadMonitor threadDialog;
+	private AwbMonitoringDialogThreading threadDialog;
 	private long threadMeasurementTickingPeriod = 5000L;
 	// --------------------------------------------------------------
 	
@@ -256,27 +251,20 @@ public class LoadMeasureAgent extends Agent {
 	 * Sets the system load dialog.
 	 * @param newLoadDialog the new system load dialog
 	 */
-	private void setSystemLoadDialog(SystemLoadDialog newLoadDialog) {
+	private void setSystemLoadDialog(AwbMonitoringDialogSystemLoad newLoadDialog) {
 		this.loadDialog = newLoadDialog;
 	}
 	/**
 	 * Returns the {@link SystemLoadDialog}.
 	 * @return the system load dialog
 	 */
-	private SystemLoadDialog getSystemLoadDialog() {
+	private AwbMonitoringDialogSystemLoad getSystemLoadDialog() {
 		if (loadDialog==null && Application.isOperatingHeadless()==false) {
-			loadDialog = new SystemLoadDialog(this);
+			loadDialog = AgentWorkbenchUiManager.getInstance().getAwbMonitoringDialogSystemLoad(this);
 		}
 		return loadDialog;
 	}
-	/**
-	 * Gets the system load panel.
-	 * @return the system load panel
-	 */
-	private SystemLoadPanel getSystemLoadPanel() {
-		if (this.getSystemLoadDialog()==null) return null;
-		return this.getSystemLoadDialog().getSystemLoadPanel();
-	}
+	
 
 	/**
 	 * Returns the current {@link Project}.
@@ -396,8 +384,6 @@ public class LoadMeasureAgent extends Agent {
 		private static final long serialVersionUID = -5802791218164507242L;
 		
 		private boolean initiatedLoadRecordingOnce = false;
-		private int dialogTitleHeight = 38;
-		private int dialogHeight = 0;
 		
 		/**
 		 * Instantiates a new monitor behaviour.
@@ -415,7 +401,6 @@ public class LoadMeasureAgent extends Agent {
 		@Override
 		protected void onTick() {
 			
-			int layoutNodesVisible = 0;
 			try {
 
 				// --- Get the PlatformLoad and the Agents at their locations -----------
@@ -426,13 +411,14 @@ public class LoadMeasureAgent extends Agent {
 				setLoadContainerLoactions(getLoadServiceHelper().getContainerLocations());
 				
 				// --- Display number of agents -----------------------------------------
-				if (getSystemLoadPanel()!=null) {
-					getSystemLoadPanel().setNumberOfAgents(getLoadContainerAgentMap().noAgentsAtPlatform);
-					getSystemLoadPanel().setNumberOfContainer(getLoadContainer().size());
-					getSystemLoadPanel().setCycleTime(getLoadCycleTime());
+				if (getSystemLoadDialog()!=null) {
+					getSystemLoadDialog().setNumberOfAgents(getLoadContainerAgentMap().noAgentsAtPlatform);
+					getSystemLoadDialog().setNumberOfContainer(getLoadContainer().size());
+					getSystemLoadDialog().setCycleTime(getLoadCycleTime());
 				}
 				loadThresholdLevels = LoadMeasureThread.getThresholdLevels();				
-				// Initialise variables JVM-balancing -----------------------------------
+
+				// Initialize variables JVM-balancing -----------------------------------
 				loadThresholdExceededOverAll = 0;
 				loadMachines4Balancing = new Hashtable<String, LoadMerger>();
 				loadJVM4Balancing = new Hashtable<String, LoadMerger>();
@@ -478,60 +464,26 @@ public class LoadMeasureAgent extends Agent {
 					}
 					// ------------------------------------------------------------------					
 					
-					// --- Get the Container-Load-Panel ---------------------------------
-					SystemLoadSingle dialogSingle = containerLoadDialogs.get(containerName);
-					if (dialogSingle==null) {
-						dialogSingle = new SystemLoadSingle();
-						if (getSystemLoadPanel()!=null) {
-							getSystemLoadPanel().getJPanelForLoadDisplays().add(dialogSingle, null);	
-						}
-						containerLoadDialogs.put(containerName, dialogSingle);
-					}
-					
-					// --- Display the current values -----------------------------------
-					if (getSystemLoadPanel()!=null) {
-						if (containerLoad==null) {
-							dialogSingle.setVisibleAWTsafe(false);								
-						} else {
-							dialogSingle.setVisibleAWTsafe(true);
-							dialogSingle.updateViewAWTsafe(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
-							layoutNodesVisible++;
-						}
-					}
+					// --- Update container-Load ----------------------------------------
+					getSystemLoadDialog().updateContainerLoad(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
 					// --- If wanted, save the current values to file -------------------
 					if (monitorSaveLoad==true) {
 						buildDatasetPart(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
 					}
 					
-				} // --- End while ----
+				} // --- End for ----
 				
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
 
 			// --- Refresh View ---------------------------------------------------------
-			if (getSystemLoadPanel()!=null) {
-				int newloadDialogHeightMax = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-				int newloadDialogHeight = (SystemLoadSingle.loadPanelHeight * layoutNodesVisible) + (getSystemLoadPanel().getJToolBarLoad().getHeight() + this.dialogTitleHeight);
-				if (newloadDialogHeight>newloadDialogHeightMax) {
-					newloadDialogHeight=newloadDialogHeightMax;
-				}
-				if (this.dialogHeight!=newloadDialogHeight) {
-					this.dialogHeight = newloadDialogHeight;
-					getSystemLoadDialog().setSize(getSystemLoadDialog().getWidth(), newloadDialogHeight);						
-				}		
-			}
+			if (getSystemLoadDialog()!=null) getSystemLoadDialog().refreshViewAfterContainerLoadUpdate();
 
 			// --- If wanted, save the current values to file ---------------------------
 			if (monitorSaveLoad==true) {
 				buildAndSaveDataSet();
-				if (getSystemLoadPanel()!=null) {
-					if (getSystemLoadPanel().jLabelRecord.getForeground().equals(Color.gray) ) {
-						getSystemLoadPanel().jLabelRecord.setForeground(Color.red);
-					} else {
-						getSystemLoadPanel().jLabelRecord.setForeground(Color.gray);
-					}	
-				}
+				if (getSystemLoadDialog()!=null) getSystemLoadDialog().alternateRecordingIndicator(); 
 			}
 			
 			// --------------------------------------------------------------------------
@@ -540,8 +492,7 @@ public class LoadMeasureAgent extends Agent {
 
 			// --- Check if load recording has to be started directly -------------------
 			if (this.initiatedLoadRecordingOnce==false && getDistributionSetup()!=null && getDistributionSetup().isImmediatelyStartLoadRecording()==true) {
-				getSystemLoadPanel().setRecordingInterval(getDistributionSetup().getLoadRecordingInterval());
-				getSystemLoadPanel().setDoLoadRecording(true);
+				getSystemLoadDialog().setLoadRecordingAtSystemStart(true, getDistributionSetup().getLoadRecordingInterval());
 				// --- Make sure that this is done only once, in order to allow stop ---
 				this.initiatedLoadRecordingOnce = true;
 			}
@@ -1038,16 +989,16 @@ public class LoadMeasureAgent extends Agent {
 	 * Sets the thread dialog.
 	 * @param threadDialog the new thread dialog
 	 */
-	public void setThreadDialog(ThreadMonitor threadDialog) {
+	public void setThreadDialog(AwbMonitoringDialogThreading threadDialog) {
 		this.threadDialog = threadDialog;
 	}
 	/**
 	 * Gets the thread dialog.
 	 * @return the thread dialog
 	 */
-	public ThreadMonitor getThreadDialog() {
+	public AwbMonitoringDialogThreading getThreadDialog() {
 		if (threadDialog==null) {
-			threadDialog = new ThreadMonitor(this);
+			threadDialog = AgentWorkbenchUiManager.getInstance().getAwbMonitoringDialogThreading(this);
 		}
 		return threadDialog;
 	}

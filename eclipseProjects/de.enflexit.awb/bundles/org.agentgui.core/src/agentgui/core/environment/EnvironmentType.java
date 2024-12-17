@@ -48,11 +48,11 @@ import de.enflexit.language.Language;
  */
 public class EnvironmentType {
 
-	private String internalKey = null;
-	private String displayName = null;
-	private String displayNameLanguage = null;
-	private Class<? extends EnvironmentController> environmentController = null;
-	private Class<? extends Agent> displayAgentClass = null;
+	private String internalKey;
+	private String displayName;
+	private String displayNameLanguage;
+	private Class<? extends EnvironmentController> environmentController;
+	private Class<? extends Agent> displayAgentClass;
 	
 	/**
 	 * Constructor for this class.
