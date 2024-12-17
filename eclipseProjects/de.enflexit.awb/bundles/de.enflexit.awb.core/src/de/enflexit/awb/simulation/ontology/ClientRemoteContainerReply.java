@@ -2,8 +2,6 @@ package de.enflexit.awb.simulation.ontology;
 
 
 import jade.content.*;
-import jade.util.leap.*;
-import jade.core.*;
 
 /**
 * Protege name: ClientRemoteContainerReply
