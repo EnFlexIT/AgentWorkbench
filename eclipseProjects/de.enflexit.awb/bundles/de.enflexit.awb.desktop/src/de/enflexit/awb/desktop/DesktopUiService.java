@@ -44,7 +44,7 @@ public class DesktopUiService implements AgentWorkbenchUI {
 
 	@Override
 	public void initialize() {
-		System.out.println("Initializing " + this.getImplementationName());
+		LOGGER.info("Initializing " + this.getImplementationName());
 	}
 
 	@Override

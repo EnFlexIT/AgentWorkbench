@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import de.enflexit.awb.baseUI.monitor.load.SystemLoadDialog;
 import de.enflexit.awb.baseUI.monitor.threading.ThreadMonitorDialog;
+import de.enflexit.awb.baseUI.systemtray.AwbTrayIcon;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
@@ -26,7 +27,6 @@ import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
 import de.enflexit.awb.core.ui.AwbTranslationDialog;
-import de.enflexit.awb.core.ui.AwbTrayIcon;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 
 /**
@@ -44,20 +44,27 @@ public class BaseUiService implements AgentWorkbenchUI {
 		return "Base UI";
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#initialize()
+	 */
 	@Override
 	public void initialize() {
-		System.out.println("Initializing " + this.getImplementationName());
+		LOGGER.info("Initializing " + this.getImplementationName());
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getTrayIcon()
+	 */
 	@Override
 	public AwbTrayIcon getTrayIcon() {
-		// TODO Auto-generated method stub
-		return null;
+		return new AwbTrayIcon();
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
+	 */
 	@Override
 	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

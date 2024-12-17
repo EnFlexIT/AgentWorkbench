@@ -16,16 +16,16 @@ public class LoggingWriter extends DBAppender {
 	 * @return single instance of LoggingWriter
 	 */
 	public static LoggingWriter getInstance() {
+		if (thisInstance==null) {
+			thisInstance = new LoggingWriter();
+		}
 		return thisInstance;
 	}
-	
-	
 	/**
 	 * Instantiates a new logging file writer.
 	 */
-	public LoggingWriter() {
-		LoggingWriter.thisInstance = this;
-	}
+	private LoggingWriter() { }
+
 	
 	/**
 	 * Checks if is write to logging storage.

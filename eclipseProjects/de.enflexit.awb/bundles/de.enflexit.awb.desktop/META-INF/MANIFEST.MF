@@ -10,6 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: de.enflexit.awb.core.project,
  de.enflexit.awb.core.project.transfer,
  de.enflexit.awb.core.ui,
- de.enflexit.awb.simulation.agents
+ de.enflexit.awb.simulation.agents,
+ org.slf4j
 Service-Component: OSGI-INF/desktopUiService.xml
 

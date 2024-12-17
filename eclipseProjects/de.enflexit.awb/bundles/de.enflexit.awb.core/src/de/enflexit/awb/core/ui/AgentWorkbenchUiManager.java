@@ -1,5 +1,6 @@
 package de.enflexit.awb.core.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -150,7 +151,22 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbTrayIcon!");
+			// --- Check instances ----------------------------------
+			List<AwbTrayIcon> trayIconList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbTrayIcon trayIcon = awbUI.getTrayIcon();
+				if (trayIcon!=null) trayIconList.add(trayIcon);
+			}
+			
+			// --- Write Error or return TrayIcon -------------------
+			if (trayIconList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbTrayIcon!");
+			} else if (trayIconList.size()==1) {
+				return trayIconList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbTrayIcon!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getTrayIcon();
 		}

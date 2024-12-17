@@ -835,6 +835,7 @@ de;Übersichtsfenster ein- und ausblenden;Show and hide overview window;;;
 de;Überspringen;Skip
 en;;... depending on delta watts (percent);;;
 en;;... depending on watts (absolute);;;
+en;;2 services were found that implement the AgentWorkbench-UI!;;;
 en;;A geographical layout has to be defined with X = 'North' and Y = 'Clockwise to X';;;
 en;;A geographical layout has to be defined with X = 'North', Y = 'Clockwise to X';;;
 en;;Alias:;;;

@@ -27,6 +27,9 @@ public interface AwbMainWindow<MenueType, MenuItemType, ToolBarType, ToolBarComp
 
 	
 	public ToolBarType getApplicationToolbar();
+		
+	
+	public void restoreFocus();
 	
 	
 	/**
@@ -79,6 +82,5 @@ public interface AwbMainWindow<MenueType, MenuItemType, ToolBarType, ToolBarComp
 
 
 	public void removePlugInComponent(Object component);
-
 	
 }

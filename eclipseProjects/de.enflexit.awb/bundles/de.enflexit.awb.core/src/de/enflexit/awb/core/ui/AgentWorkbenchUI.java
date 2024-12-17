@@ -2,6 +2,9 @@ package de.enflexit.awb.core.ui;
 
 import javax.swing.Icon;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
@@ -15,6 +18,8 @@ import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
  */
 public interface AgentWorkbenchUI {
 
+	public static Logger LOGGER = LoggerFactory.getLogger(AgentWorkbenchUI.class);
+	
 	/**
 	 * Has to return the name of the implementation.
 	 * @return the implementation name

@@ -5,15 +5,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-Name: Agent.Workbench - Swing Base-UI
 Bundle-SymbolicName: de.enflexit.awb.baseUI
 Bundle-Version: 3.0.0.qualifier
-Export-Package: de.enflexit.awb.baseUI,
- de.enflexit.awb.baseUI.agents,
- de.enflexit.awb.baseUI.monitor.load,
- de.enflexit.awb.baseUI.monitor.threading
 Require-Bundle: de.enflexit.awb.core
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Service-Component: OSGI-INF/classLoadService.xml,
- OSGI-INF/baseUiService.xml
+Service-Component: OSGI-INF/baseUiService.xml
 Import-Package: de.enflexit.common,
  de.enflexit.common.swing,
  de.enflexit.language,
@@ -26,5 +21,10 @@ Import-Package: de.enflexit.common,
  org.jfree.chart.title,
  org.jfree.chart.ui,
  org.jfree.data.general,
- org.jfree.data.xy
-
+ org.jfree.data.xy,
+ org.slf4j
+Export-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.agents,
+ de.enflexit.awb.baseUI.monitor.load,
+ de.enflexit.awb.baseUI.monitor.threading,
+ de.enflexit.awb.baseUI.systemtray
