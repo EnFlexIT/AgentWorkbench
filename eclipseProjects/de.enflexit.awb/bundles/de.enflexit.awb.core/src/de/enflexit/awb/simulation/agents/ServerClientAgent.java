@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.bgSystem;
+package de.enflexit.awb.simulation.agents;
 
 import jade.content.Concept;
 import jade.content.ContentElement;

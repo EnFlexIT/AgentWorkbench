@@ -1053,7 +1053,7 @@ public class Platform {
 		if (systemAgentsClasses==null) {
 			systemAgentsClasses = new Hashtable<>();
 			
-			// --- Table of the known Jade System-Agents ----------------
+			// --- Table of the known Jade System-Agents ----------------------
 			systemAgentsClasses.put(SystemAgent.RMA, jade.tools.rma.rma.class.getName());
 			systemAgentsClasses.put(SystemAgent.Sniffer, jade.tools.sniffer.Sniffer.class.getName());
 			systemAgentsClasses.put(SystemAgent.Dummy, jade.tools.DummyAgent.DummyAgent.class.getName());
@@ -1061,12 +1061,13 @@ public class Platform {
 			systemAgentsClasses.put(SystemAgent.Introspector, jade.tools.introspector.Introspector.class.getName());
 			systemAgentsClasses.put(SystemAgent.Log, jade.tools.logging.LogManagerAgent.class.getName());
 
-			// --- Agent.Workbench - Background system agents -----------
-			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentApplication, de.enflexit.awb.core.bgSystem.ServerClientAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerMaster, de.enflexit.awb.core.bgSystem.ServerMasterAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerSlave, de.enflexit.awb.core.bgSystem.ServerSlaveAgent.class.getName());
+			// --- Agent.Workbench - Background system agents -----------------
+			systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentApplication, de.enflexit.awb.simulation.agents.ServerClientAgent.class.getName());
+			// --- Will be registered in the bgSystem-Bundle activator --------
+			//systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerMaster, de.enflexit.awb.bgSystem.agents.ServerMasterAgent.class.getName());
+			//systemAgentsClasses.put(SystemAgent.BackgroundSystemAgentServerSlave,  de.enflexit.awb.bgSystem.agents.ServerSlaveAgent.class.getName());
 			
-			// --- Agent.Workbench - agents -----------------------------
+			// --- Agent.Workbench - agents -----------------------------------
 			systemAgentsClasses.put(SystemAgent.Utility, de.enflexit.awb.core.utillity.UtilityAgent.class.getName());
 			systemAgentsClasses.put(SystemAgent.SimStarter, de.enflexit.awb.simulation.agents.LoadExecutionAgent.class.getName());
 			systemAgentsClasses.put(SystemAgent.LoadMonitor, de.enflexit.awb.simulation.agents.LoadMeasureAgent.class.getName());

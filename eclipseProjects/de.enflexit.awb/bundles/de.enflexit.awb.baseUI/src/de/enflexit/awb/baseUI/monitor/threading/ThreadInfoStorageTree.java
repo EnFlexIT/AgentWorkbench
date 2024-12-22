@@ -160,28 +160,27 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		
 		if ((ae.getSource()==viewSingle) ||(ae.getSource()==viewAgentClass)){
 			//--- right-click Menu ---
-			
 			XYSeriesCollection popupXYSeriesCollectionTotal = new XYSeriesCollection();
     	    XYSeriesCollection popupXYSeriesCollectionDelta = new XYSeriesCollection();
+    	    
     	    XYSeries series = null;
 			String className = "";
 			String folderNamePrefix = "";
             Iterator<String> iteratorClass = null;
             Object obj = null;
             
-            if(lastNode != null) {
+            if (lastNode != null) {
         	    obj = lastNode.getUserObject();
-        	    
-        	    if(obj.getClass().toString().endsWith("ThreadInfoStorageAgent")){
+        	    if (obj.getClass().toString().endsWith("ThreadInfoStorageAgent")) {
         	    	ThreadInfoStorageAgent tia = (ThreadInfoStorageAgent)obj;
-        	    	if(ae.getSource()==viewSingle){
+        	    	if (ae.getSource()==viewSingle) {
         	    		folderNamePrefix = "Thread: ";
         	    		className = tia.getName();
         	    		iteratorClass = threadInfoStorage.getMapAgent().get(className).getXYSeriesMap().keySet().iterator();
-        	    	}else{
-        	    		if(ae.getSource()==viewAgentClass){
+        	    	} else {
+        	    		if (ae.getSource()==viewAgentClass) {
         	    			className =  tia.getClassName();	
-        	    		}else{
+        	    		} else {
 	        	    		className =  ThreadDetail.UNKNOWN_AGENT_CLASSNAME;
 	        	    	}
         	    		folderNamePrefix = "Class: ";
@@ -190,18 +189,17 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
         	    }
             }
     	    
-			if(iteratorClass != null){
-	    	    while(iteratorClass.hasNext()){
+			if (iteratorClass!=null) {
+				while (iteratorClass.hasNext()){
 	    	    	String next = iteratorClass.next();
-	    	    	
-		    		if(ae.getSource()==viewSingle){
-		    			series = threadInfoStorage.getMapAgent().get(className).getXYSeriesMap().get(next);
-		    		}else if(ae.getSource()==viewAgentClass){
-		    			series = threadInfoStorage.getMapAgentClass().get(className).getXYSeriesMap().get(next);
+		    		if (ae.getSource()==viewSingle) {
+		    			series = ThreadXYSeriesConverter.toXYSeries(threadInfoStorage.getMapAgent().get(className).getXYSeriesMap().get(next));
+		    		} else if(ae.getSource()==viewAgentClass) {
+		    			series = ThreadXYSeriesConverter.toXYSeries(threadInfoStorage.getMapAgentClass().get(className).getXYSeriesMap().get(next));
 		    		}
-	    	    	if(next.contains("TOTAL")){
+	    	    	if (next.contains("TOTAL")) {
 	    	    		popupXYSeriesCollectionTotal.addSeries(series);
-	    	    	}else if(next.contains("DELTA")){
+	    	    	} else if(next.contains("DELTA")) {
 	    	    		popupXYSeriesCollectionDelta.addSeries(series);
 	    	    	}
 	    	    	
@@ -490,7 +488,6 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
         public void mousePressed (MouseEvent e){
 			
 			path =  getPathForLocation (e.getX(), e.getY());
-            
             if (path != null) {
             	
             	node = (DefaultMutableTreeNode) path.getLastPathComponent();
@@ -499,9 +496,9 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
                 nodeName = "";
                 
                 //--- determine class of user object-> Agent/Thread ? ---
-        	    if(userObject.getClass().toString().endsWith("ThreadInfoStorageAgent")){
+        	    if (userObject.getClass().toString().endsWith("ThreadInfoStorageAgent")) {
         	    	
-	    	    	if (SwingUtilities.isRightMouseButton(e)){
+	    	    	if (SwingUtilities.isRightMouseButton(e)) {
 		            	// --- show rightClickMenu on right-click on agents ---
 		            	if (path != null) {
 			                //--- determine class of user object ---
@@ -512,33 +509,33 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 				                }
 		            	    }
 		            	}
-		            }else if (e.getClickCount() == 2){
+		            	
+		            } else if (e.getClickCount() == 2) {
 		            	// --- toggle thread/agent chart visibility on main chart ---
 	        	    	ThreadInfoStorageAgent tis = (ThreadInfoStorageAgent)userObject;
 	        	    	boolean isSelected = leafSelected.get(tis.getName()).booleanValue();
 	        	    	leafSelected.put(tis.getName(), Boolean.valueOf(!isSelected));
 	        	    	nodeName = tis.getName();
-	        	    	
-		                iterator = threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().keySet().iterator();
 		                
-		                if(threadInfoStorage.getMapAgent().get(nodeName) != null){
+		                if (threadInfoStorage.getMapAgent().get(nodeName) != null) {
 		                	
-	                	    while(iterator.hasNext()){
+		                	iterator = threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().keySet().iterator();
+	                	    while (iterator.hasNext()) {
 	                	    	String next = iterator.next();
-	                	    	XYSeries series = threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().get(next);
-	                	    	
-	                	    	if(next.contains("TOTAL")){
+	                	    	XYSeries series = ThreadXYSeriesConverter.toXYSeries(threadInfoStorage.getMapAgent().get(nodeName).getXYSeriesMap().get(next));
+	                	    	if (next.contains("TOTAL")) {
 	                	    		//---toggle ---
-	                    	    	if(getSeriesChartsTotal().indexOf(series.getKey()) == -1){
+	                    	    	if (getSeriesChartsTotal().indexOf(series.getKey()) == -1) {
 	                    	    		getSeriesChartsTotal().addSeries(series);
-	                    	    	}else{
+	                    	    	} else {
 	                    	    		getSeriesChartsTotal().removeSeries(series);
 	                    	    	}
-	                	    	}else if(next.contains("DELTA")){
+	                    	    	
+	                	    	} else if(next.contains("DELTA")) {
 	                	    		//---toggle ---
-	                    	    	if(getSeriesChartsDelta().indexOf(series.getKey()) == -1){
+	                    	    	if (getSeriesChartsDelta().indexOf(series.getKey()) == -1) {
 	                    	    		getSeriesChartsDelta().addSeries(series);
-	                    	    	}else{
+	                    	    	} else {
 	                    	    		getSeriesChartsDelta().removeSeries(series);
 	                    	    	}
 	                    	    }
@@ -554,40 +551,40 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 	    	    
 	    	    Object extraObject = null;
 	
-	    	    if(userObject.getClass().toString().endsWith("ThreadInfoStorageCluster")){
+	    	    if (userObject.getClass().toString().endsWith("ThreadInfoStorageCluster")) {
+	    	    	
 	    	    	ThreadInfoStorageCluster tis = (ThreadInfoStorageCluster)userObject;
 	    	    	nodeName = tis.getName();
 	    	    	folderNamePrefix = "";
-		    		
-		            iterator = threadInfoStorage.getMapCluster().get(nodeName).getXYSeriesMap().keySet().iterator();
-		            
-		            if(threadInfoStorage.getMapCluster().get(nodeName) != null){
+		            if (threadInfoStorage.getMapCluster().get(nodeName) != null){
 		            	
+		            	iterator = threadInfoStorage.getMapCluster().get(nodeName).getXYSeriesMap().keySet().iterator();
 		        	    while(iterator.hasNext()){
 		        	    	String next = iterator.next();
-		        	    	XYSeries series = threadInfoStorage.getMapCluster().get(nodeName).getXYSeriesMap().get(next);
-		        	    	if(next.contains("TOTAL")){
+		        	    	XYSeries series = ThreadXYSeriesConverter.toXYSeries(threadInfoStorage.getMapCluster().get(nodeName).getXYSeriesMap().get(next));
+		        	    	if(next.contains("TOTAL")) {
 		        	    		popupXYSeriesCollectionTotal.addSeries(series);
-		        	    	}else if(next.contains("DELTA")){
+		        	    	} else if(next.contains("DELTA")) {
 		        	    		popupXYSeriesCollectionDelta.addSeries(series);		    	                    	    		
-		        	    	}else if(next.contains("LOAD")){
+		        	    	} else if(next.contains("LOAD")) {
 		        	    		popupXYSeriesCollectionLoad.addSeries(series);		    	                    	    		
 		        	    	}
 		        	    }
 		            }	
-			    }else if(userObject.getClass().toString().endsWith("ThreadInfoStorageMachine")){
+		            
+			    } else if (userObject.getClass().toString().endsWith("ThreadInfoStorageMachine")) {
+			    	
 	    	    	//---display series for container, JVM, machine or cluster in new window ---
 			    	ThreadInfoStorageMachine tis = (ThreadInfoStorageMachine)userObject;
 	    	    	nodeName = tis.getName();
 		    		folderNamePrefix = "Machine: ";
 		    		extraObject = threadInfoStorage.getMapMachine().get(nodeName);
-		            iterator = threadInfoStorage.getMapMachine().get(nodeName).getXYSeriesMap().keySet().iterator();
-		            
-		            if(threadInfoStorage.getMapMachine().get(nodeName) != null){
+		            if (threadInfoStorage.getMapMachine().get(nodeName) != null){
 		            	
-		        	    while(iterator.hasNext()){
+		            	iterator = threadInfoStorage.getMapMachine().get(nodeName).getXYSeriesMap().keySet().iterator();
+		        	    while (iterator.hasNext()) {
 		        	    	String next = iterator.next();
-		        	    	XYSeries series = threadInfoStorage.getMapMachine().get(nodeName).getXYSeriesMap().get(next);
+		        	    	XYSeries series = ThreadXYSeriesConverter.toXYSeries(threadInfoStorage.getMapMachine().get(nodeName).getXYSeriesMap().get(next));
 		        	    	if(next.contains("TOTAL")){
 		        	    		popupXYSeriesCollectionTotal.addSeries(series);
 		        	    	}else if(next.contains("DELTA")){
@@ -597,44 +594,44 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
 		        	    	}
 		        	    }
 		            }
-				}else if(userObject.getClass().toString().endsWith("ThreadInfoStorageJVM")){
+		            
+				} else if (userObject.getClass().toString().endsWith("ThreadInfoStorageJVM")) {
+					
 					ThreadInfoStorageJVM tis = (ThreadInfoStorageJVM)userObject;
 	    	    	nodeName = tis.getName();
 		    		folderNamePrefix = "JVM: ";
-		    		
-		            iterator = threadInfoStorage.getMapJVM().get(nodeName).getXYSeriesMap().keySet().iterator();
-		            
-		            if(threadInfoStorage.getMapJVM().get(nodeName) != null){
+		            if (threadInfoStorage.getMapJVM().get(nodeName) != null){
 		            	
+		            	iterator = threadInfoStorage.getMapJVM().get(nodeName).getXYSeriesMap().keySet().iterator();
 		        	    while(iterator.hasNext()){
 		        	    	String next = iterator.next();
-		        	    	XYSeries series = threadInfoStorage.getMapJVM().get(nodeName).getXYSeriesMap().get(next);
-		        	    	if(next.contains("TOTAL")){
+		        	    	XYSeries series = ThreadXYSeriesConverter.toXYSeries(threadInfoStorage.getMapJVM().get(nodeName).getXYSeriesMap().get(next));
+		        	    	if (next.contains("TOTAL")){
 		        	    		popupXYSeriesCollectionTotal.addSeries(series);
-		        	    	}else if(next.contains("DELTA")){
+		        	    	} else if (next.contains("DELTA")){
 		        	    		popupXYSeriesCollectionDelta.addSeries(series);		    	                    	    		
-		        	    	}else if(next.contains("LOAD")){
+		        	    	} else if (next.contains("LOAD")){
 		        	    		popupXYSeriesCollectionLoad.addSeries(series);		    	                    	    		
 		        	    	}
 		        	    }
 		        	}	
-			    }else if(userObject.getClass().toString().endsWith("ThreadInfoStorageContainer")){
+		            
+			    } else if (userObject.getClass().toString().endsWith("ThreadInfoStorageContainer")){
+			    	
 			    	ThreadInfoStorageContainer tis = (ThreadInfoStorageContainer)userObject;
 	    	    	nodeName = tis.getName();
 		    		folderNamePrefix = "Container: ";
-		    		
-		            iterator = threadInfoStorage.getMapContainer().get(nodeName).getXYSeriesMap().keySet().iterator();
-		            
-		            if(threadInfoStorage.getMapContainer().get(nodeName) != null){
+		            if (threadInfoStorage.getMapContainer().get(nodeName) != null) {
 		            	
-		        	    while(iterator.hasNext()){
+		            	iterator = threadInfoStorage.getMapContainer().get(nodeName).getXYSeriesMap().keySet().iterator();
+		        	    while (iterator.hasNext()) {
 		        	    	String next = iterator.next();
-		        	    	XYSeries series = threadInfoStorage.getMapContainer().get(nodeName).getXYSeriesMap().get(next);
-		        	    	if(next.contains("TOTAL")){
+		        	    	XYSeries series = ThreadXYSeriesConverter.toXYSeries(threadInfoStorage.getMapContainer().get(nodeName).getXYSeriesMap().get(next));
+		        	    	if (next.contains("TOTAL")) {
 		        	    		popupXYSeriesCollectionTotal.addSeries(series);
-		        	    	}else if(next.contains("DELTA")){
+		        	    	} else if (next.contains("DELTA")) {
 		        	    		popupXYSeriesCollectionDelta.addSeries(series);		    	                    	    		
-		        	    	}else if(next.contains("LOAD")){
+		        	    	} else if (next.contains("LOAD")) {
 		        	    		popupXYSeriesCollectionLoad.addSeries(series);		    	                    	    		
 		        	    	}
 		        	    }

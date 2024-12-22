@@ -3,7 +3,6 @@ package de.enflexit.awb.simulation.load.threading;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import org.jfree.data.xy.XYSeries;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.AgentClassLoadMetricsTable;
 import de.enflexit.awb.core.project.AgentClassMetricDescription;
@@ -11,6 +10,7 @@ import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.simulation.load.threading.storage.ThreadInfoStorage;
 import de.enflexit.awb.simulation.load.threading.storage.ThreadInfoStorageAgent;
 import de.enflexit.awb.simulation.load.threading.storage.ThreadInfoStorageMachine;
+import de.enflexit.awb.simulation.load.threading.storage.ThreadXYSeries;
 
 /**
  * The Class ThreadCalculateMetrics.
@@ -91,7 +91,7 @@ public class ThreadCalculateMetrics {
 		while (iteratorMachine.hasNext()){			
 			
 			ThreadInfoStorageMachine actualMachine = iteratorMachine.next().getValue();
-			XYSeries series = actualMachine.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
+			ThreadXYSeries series = actualMachine.getXYSeriesMap().get(threadInfoStorage.TOTAL_CPU_SYSTEM_TIME);
 			
 			samplingIntervalOffsetStart = 0; //(t0 start)
 			samplingIntervalOffsetEnd = series.getItemCount()-1; //(t1 end)
@@ -206,8 +206,9 @@ public class ThreadCalculateMetrics {
 	 * @param offsetTo the sampling interval offset end value
 	 * @return the metric for agent
 	 */
-	private double getMetricForAgent(ThreadInfoStorageAgent agent,ThreadInfoStorageMachine machine, int offsetFrom, int offsetTo){
-		XYSeries series = new XYSeries("");
+	private double getMetricForAgent(ThreadInfoStorageAgent agent,ThreadInfoStorageMachine machine, int offsetFrom, int offsetTo) {
+		
+		ThreadXYSeries series = new ThreadXYSeries("");
 		double actualValue = 0.0d;
 		
 		if (getMetricBase().equals(METRIC_BASE_INDIVIDUAL)) {
@@ -253,7 +254,7 @@ public class ThreadCalculateMetrics {
 	 * @return the CPU total CPU utilization of machine
 	 */
 	private double getCPUTotal(ThreadInfoStorageMachine machine){
-		XYSeries series = machine.getXYSeriesMap().get(threadInfoStorage.LOAD_CPU);
+		ThreadXYSeries series = machine.getXYSeriesMap().get(threadInfoStorage.LOAD_CPU);
 		return getIntegralForTimeSeries(series, samplingIntervalOffsetStart, samplingIntervalOffsetEnd);
 	}
 	
@@ -307,7 +308,8 @@ public class ThreadCalculateMetrics {
 	 * @param to the end
 	 * @return the integral for time series
 	 */
-	private double getIntegralForTimeSeries(XYSeries series, int from, int to){
+	private double getIntegralForTimeSeries(ThreadXYSeries series, int from, int to){
+
 		//hint: all Values are stored in milliseconds
 		double integral = 0.0d;
 		
@@ -393,9 +395,9 @@ public class ThreadCalculateMetrics {
 	 * @return the simulationDuration
 	 */
 	public double getSimulationDurationMilliSeconds() {
-		double simulationDuration = 0;
 		
-		if(this.threadInfoStorage != null){
+		double simulationDuration = 0;
+		if (this.threadInfoStorage != null) {
 			//get the first series and its CPU data
 			Iterator<Entry<String, ThreadInfoStorageMachine>> iteratorMachine = threadInfoStorage.getMapMachine().entrySet().iterator();
 			String machineName = iteratorMachine.next().getValue().getName();
@@ -414,7 +416,7 @@ public class ThreadCalculateMetrics {
 	 * @param to the the sampling interval offset end value
 	 * @return the sampling interval
 	 */
-	private double getSamplingIntervalMilliSeconds(XYSeries series, int from, int to){
+	private double getSamplingIntervalMilliSeconds(ThreadXYSeries series, int from, int to){
 		double samplingInterval = this.getSimulationDurationMilliSeconds();
 		
 		if(to > series.getItemCount()-1 || to < 0){

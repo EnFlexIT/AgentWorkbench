@@ -1,5 +1,4 @@
-package de.enflexit.awb.core.bgSystem;
-
+package de.enflexit.awb.bgSystem.agents;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.jade.JadeUrlConfiguration;

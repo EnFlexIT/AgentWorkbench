@@ -6,11 +6,35 @@ Automatic-Module-Name: de.enflexit.awb.bgSystem
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.enflexit.awb.bgSystem.BundleActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Export-Package: de.enflexit.awb.bgSystem,
+ de.enflexit.awb.bgSystem.agents,
+ de.enflexit.awb.bgSystem.classLoadService,
  de.enflexit.awb.bgSystem.db,
  de.enflexit.awb.bgSystem.db.dataModel
-Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
+Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml,
+ OSGI-INF/baseClassLoadService.xml
 Require-Bundle: de.enflexit.db.hibernate,
  org.eclipse.osgi
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.jade,
+ de.enflexit.awb.core.update,
+ de.enflexit.awb.simulation,
+ de.enflexit.awb.simulation.agents,
+ de.enflexit.awb.simulation.distribution,
+ de.enflexit.awb.simulation.load,
+ de.enflexit.awb.simulation.ontology,
+ de.enflexit.common,
+ de.enflexit.common.classLoadService,
+ jade.content,
+ jade.content.lang,
+ jade.content.lang.sl,
+ jade.content.onto,
+ jade.content.onto.basic,
+ jade.core,
+ jade.core.behaviours,
+ jade.lang.acl,
+ jade.util.leap

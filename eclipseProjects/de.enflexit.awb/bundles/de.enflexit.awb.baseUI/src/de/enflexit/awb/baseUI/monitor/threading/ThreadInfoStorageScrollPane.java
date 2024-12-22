@@ -399,7 +399,7 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 			 
 			if (userSelection == JFileChooser.APPROVE_OPTION) {
 			    File fileToSave = fileChooser.getSelectedFile();
-			    System.out.println("Export XYSeries as file: " + fileToSave.getAbsolutePath());
+			    System.out.println("Export ThreadXYSeries as file: " + fileToSave.getAbsolutePath());
 			    exportCsvFile(fileToSave.getAbsolutePath(), deltaCollection, totalCollection, loadCollection);
 			    
 			}
@@ -518,7 +518,7 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 	private ChartPanel getJFreeChartPanel() {
 		if (jFreeChartPanel == null) {
 			
-			jFreeChartPanel = new ChartPanel(getJFreeChart());
+			jFreeChartPanel = new ChartPanel(this.getJFreeChart());
 			
 			jFreeChartPanel.setMinimumDrawWidth( 0 );
 			jFreeChartPanel.setMinimumDrawHeight( 0 );

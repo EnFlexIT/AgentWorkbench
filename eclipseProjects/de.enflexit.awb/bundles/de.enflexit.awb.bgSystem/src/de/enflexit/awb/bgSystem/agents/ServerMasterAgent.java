@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.bgSystem;
+package de.enflexit.awb.bgSystem.agents;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,10 +6,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
 import de.enflexit.awb.bgSystem.db.dataModel.BgSystemPlatform;
 import de.enflexit.awb.bgSystem.db.dataModel.PlatformStore;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.update.AWBUpdater;
+import de.enflexit.awb.simulation.agents.ServerClientAgent;
 import de.enflexit.awb.simulation.ontology.AWB_DistributionOntology;
 import de.enflexit.awb.simulation.ontology.BenchmarkResult;
 import de.enflexit.awb.simulation.ontology.ClientAvailableMachinesReply;

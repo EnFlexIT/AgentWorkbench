@@ -2,8 +2,6 @@ package de.enflexit.awb.simulation.load.threading.storage;
 
 import java.util.HashMap;
 
-import org.jfree.data.xy.XYSeries;
-
 /**
  * Base class for storing Thread-Load data series
  * 
@@ -15,7 +13,7 @@ public class ThreadInfoStorageXYSeries {
 	private String name;
 	
 	/** The XY series hash map that Contains multiple data-series  */
-	private HashMap<String, XYSeries> xySeriesMap;
+	private HashMap<String, ThreadXYSeries> xySeriesMap;
 
 	/**
 	 * Instantiates a new thread info storage series.
@@ -30,11 +28,12 @@ public class ThreadInfoStorageXYSeries {
 	 * @param series the series
 	 * @return the last delta for XY series
 	 */
-	public double getLastDeltaForXYSeries(XYSeries series) {
+	public double getLastDeltaForXYSeries(ThreadXYSeries series) {
+		
 		double from, to;
 		int itemIndex = series.getItemCount()-1;
 		
-		if(itemIndex >=1){
+		if (itemIndex >=1) {
 			from = (Double) series.getDataItem(itemIndex-1).getY();
 			to = (Double) series.getDataItem(itemIndex).getY();
 			return  Math.abs(to - from);
@@ -74,9 +73,9 @@ public class ThreadInfoStorageXYSeries {
 	 * Gets the XY series map.
 	 * @return the xySeriesMap
 	 */
-	public HashMap<String, XYSeries> getXYSeriesMap() {
-		if(xySeriesMap == null){
-			xySeriesMap = new HashMap<String, XYSeries>();
+	public HashMap<String, ThreadXYSeries> getXYSeriesMap() {
+		if (xySeriesMap == null){
+			xySeriesMap = new HashMap<>();
 		}
 		return xySeriesMap;
 	}
@@ -85,7 +84,7 @@ public class ThreadInfoStorageXYSeries {
 	 * Sets the XY series map.
 	 * @param xySeriesMap the xySeriesMap to set
 	 */
-	public void setXYSeriesMap(HashMap<String, XYSeries> xySeriesMap) {
+	public void setXYSeriesMap(HashMap<String, ThreadXYSeries> xySeriesMap) {
 		this.xySeriesMap = xySeriesMap;
 	}
 }
