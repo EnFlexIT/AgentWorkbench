@@ -47,9 +47,8 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	// ----------------------------------------------------
 	// --- The internal handling area ---------------------
 	// ----------------------------------------------------
-	private boolean isMissingAwbUIService;
-	
 	private List<AgentWorkbenchUI> uiServices;
+	private boolean isMissingAwbUIService;
 	
 	/**
 	 * Initializes this manager.
@@ -133,12 +132,7 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	 */
 	@Override
 	public void initialize() {
-		
-		if (this.isMissingAwbUIServce()==true) {
-			LOGGER.error("Could not find any UI-implementation to initialize!");
-		}
-		// --- Call to initialize the UI implementation ---  
-		this.getAgentWorkbenchUiList().forEach(awbUI -> awbUI.initialize());
+		// --- Nothing to do here: Will be done in the local initializeManager() method above ----
 	}
 	
 	/* (non-Javadoc)
@@ -174,23 +168,6 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
-	 */
-	@Override
-	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
-		
-		if (this.isMissingAwbUIServce()==true) return null;
-		
-		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMainWindow!");
-		} else {
-			return this.getAgentWorkbenchUiList().get(0).getMainWindow();
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getConsole(boolean)
 	 */
 	@Override
@@ -200,7 +177,22 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbConsole!");
+			// --- Check instances ----------------------------------
+			List<AwbConsole> consoleList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbConsole console = awbUI.getConsole(isForLocalConsoleOutput);
+				if (console!=null) consoleList.add(console);
+			}
+			
+			// --- Write Error or return AwbConsole -----------------
+			if (consoleList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbConsole!");
+			} else if (consoleList.size()==1) {
+				return consoleList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbConsole!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getConsole(isForLocalConsoleOutput);
 		}
@@ -216,13 +208,72 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbConsoleDialog!");
+			// --- Check instances ----------------------------------
+			List<AwbConsoleDialog> consoleDialogList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbConsoleDialog consoleDialog = awbUI.getConsoleDialog();
+				if (consoleDialog!=null) consoleDialogList.add(consoleDialog);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (consoleDialogList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbConsoleDialog!");
+			} else if (consoleDialogList.size()==1) {
+				return consoleDialogList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbConsoleDialog!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getConsoleDialog();
 		}
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalAboutDialog()
+	 */
+	@Override
+	public boolean showModalAboutDialog() {
+
+		if (this.isMissingAwbUIServce()==true) return false;
+		
+		boolean dialogWasShown = false;
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			// --- Check service instances --------------------------
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				dialogWasShown = dialogWasShown | awbUI.showModalAboutDialog();
+			}
+			// --- Write error if nothing was shown -----------------
+			if (dialogWasShown==false) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbAboutDialog was shown!");
+			}
+			
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).showModalAboutDialog();
+		}
+		return dialogWasShown;
+	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
+	 */
+	@Override
+	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
+		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMainWindow!");
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).getMainWindow();
+		}
+		return null;
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProjectInteractionDialog(java.lang.String, de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction)
@@ -305,22 +356,7 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalAboutDialog()
-	 */
-	@Override
-	public AwbAboutDialog showModalAboutDialog() {
-
-		if (this.isMissingAwbUIServce()==true) return null;
-		
-		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbAboutDialog!");
-		} else {
-			return this.getAgentWorkbenchUiList().get(0).showModalAboutDialog();
-		}
-		return null;
-	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalOptionsDialog(java.lang.String)
 	 */
@@ -441,7 +477,16 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously show an OptionDialog!");
+			// --- Check service instances --------------------------
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				int singleServiceAnswer = awbUI.showOptionDialog(parentComponent, message, title, optionType, messageType, icon, options, initialValue);
+				if (singleServiceAnswer!=NOT_IMPLEMENTED) {
+					return singleServiceAnswer;
+				}
+			}
+			// --- Write error if nothing was shown -----------------
+			LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no implementation for method showOptionDialog( ... )!");
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showOptionDialog(parentComponent, message, title, optionType, messageType, icon, options, initialValue);
 		}
@@ -458,7 +503,16 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously show an InputDialog!");
+			// --- Check service instances --------------------------
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				Object singleServiceAnswer = awbUI.showInputDialog(parentComponent, message, title, messageType, icon, selectionValues, initialSelectionValue);
+				if (singleServiceAnswer!=null) {
+					return singleServiceAnswer;
+				}
+			}
+			// --- Write error if nothing was shown -----------------
+			LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no implementation for method showInputDialog( ... )!");
+
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).showInputDialog(parentComponent, message, title, messageType, icon, selectionValues, initialSelectionValue);
 		}

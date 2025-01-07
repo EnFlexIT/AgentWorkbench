@@ -9,8 +9,8 @@ import ch.qos.logback.classic.db.DBAppender;
  */
 public class LoggingWriter extends DBAppender {
 
-
 	private static LoggingWriter thisInstance;
+
 	/**
 	 * Returns the single instance of LoggingWriter if available.
 	 * @return single instance of LoggingWriter

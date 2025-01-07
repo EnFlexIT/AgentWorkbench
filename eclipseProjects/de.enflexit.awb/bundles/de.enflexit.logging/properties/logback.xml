@@ -3,15 +3,14 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     	<encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{48} - %msg%n</pattern>
 		</encoder>
 	</appender>
 	
 	<root level="error">
         <appender-ref ref="STDOUT" />
     </root>
-    
-	<logger name="de.enflexit.oshi" level="error" />
+	
 	<logger name="de.enflexit.db" level="error" />
 	<logger name="de.enflexit.db.hibernate" level="error" />
 	<logger name="de.enflexit.db.mySQL" level="error" />
@@ -26,6 +25,8 @@
 	<logger name="org.hibernate.hql.internal.ast.AST" level="error" />
 	<logger name="org.hibernate.tool.hbm2ddl" level="error" />
 	
+	<logger name="de.enflexit.oshi" level="error" />
+
 	<logger name="com.mchange.v2" level="error" />
 	
 

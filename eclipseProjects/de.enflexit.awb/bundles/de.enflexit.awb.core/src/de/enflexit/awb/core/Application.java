@@ -186,10 +186,10 @@ public class Application {
 	 * @return the console
 	 */
 	public static AwbConsole getConsole() {
-		if (console==null && isOperatingHeadless()==false) {
+		if (console==null && Application.isOperatingHeadless()==false) {
 			console = AgentWorkbenchUiManager.getInstance().getConsole(true);
 		}
-		return Application.console;
+		return console;
 	}
 	
 	

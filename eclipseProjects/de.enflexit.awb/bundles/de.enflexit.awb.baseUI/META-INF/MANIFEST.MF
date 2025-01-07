@@ -25,6 +25,8 @@ Import-Package: de.enflexit.common,
  org.slf4j
 Export-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.agents,
+ de.enflexit.awb.baseUI.console,
+ de.enflexit.awb.baseUI.dialogs,
  de.enflexit.awb.baseUI.monitor.load,
  de.enflexit.awb.baseUI.monitor.threading,
  de.enflexit.awb.baseUI.systemtray

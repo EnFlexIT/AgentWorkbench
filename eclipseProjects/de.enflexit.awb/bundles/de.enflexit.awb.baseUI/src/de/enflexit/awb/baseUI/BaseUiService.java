@@ -1,18 +1,23 @@
 package de.enflexit.awb.baseUI;
 
 import java.awt.Component;
+import java.awt.Window;
 
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
+import de.enflexit.awb.baseUI.console.JFrame4Consoles;
+import de.enflexit.awb.baseUI.console.JPanelConsole;
+import de.enflexit.awb.baseUI.dialogs.AboutDialog;
 import de.enflexit.awb.baseUI.monitor.load.SystemLoadDialog;
 import de.enflexit.awb.baseUI.monitor.threading.ThreadMonitorDialog;
 import de.enflexit.awb.baseUI.systemtray.AwbTrayIcon;
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
 import de.enflexit.awb.core.ui.AgentWorkbenchUI;
-import de.enflexit.awb.core.ui.AwbAboutDialog;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbBenchmarkMonitor;
 import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
@@ -36,6 +41,8 @@ import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
  */
 public class BaseUiService implements AgentWorkbenchUI {
 
+	private AboutDialog aboutDialog;
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getImplementationName()
 	 */
@@ -61,25 +68,55 @@ public class BaseUiService implements AgentWorkbenchUI {
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getConsole(boolean)
+	 */
+	@Override
+	public AwbConsole getConsole(boolean isForLocalConsoleOutput) {
+		return new JPanelConsole(isForLocalConsoleOutput);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getConsoleDialog()
+	 */
+	@Override
+	public AwbConsoleDialog getConsoleDialog() {
+		return new JFrame4Consoles();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalAboutDialog()
+	 */
+	@Override
+	public boolean showModalAboutDialog() {
+
+		if (aboutDialog!=null) return false;
+		
+		if (Application.isRunningAsServer()==true) {
+			aboutDialog = new AboutDialog(null);
+		} else {
+			// --- In case a MainWindow is available ... -------
+			AwbMainWindow<?, ?, ?, ?> mainWindow = AgentWorkbenchUiManager.getInstance().getMainWindow();
+			if (mainWindow instanceof Window) {
+				aboutDialog = new AboutDialog((Window) mainWindow);
+			} else {
+				aboutDialog = new AboutDialog(null);
+			}
+		}
+		aboutDialog.setVisible(true);
+		// - - - Wait for user - - - - - - - - -  
+		aboutDialog.dispose();
+		aboutDialog = null;		
+		
+		return true;
+	}
+
+	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
 	 */
 	@Override
 	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
 		return null;
 	}
-
-	@Override
-	public AwbConsole getConsole(boolean isForLocalConsoleOutput) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AwbConsoleDialog getConsoleDialog() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public AwbProjectInteractionDialog getProjectInteractionDialog(String actionTitel, ProjectAction action) {
 		// TODO Auto-generated method stub
@@ -106,12 +143,6 @@ public class BaseUiService implements AgentWorkbenchUI {
 
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AwbAboutDialog showModalAboutDialog() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -158,13 +189,6 @@ public class BaseUiService implements AgentWorkbenchUI {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showInputDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon, java.lang.Object[], java.lang.Object)
-	 */
-	@Override
-	public Object showInputDialog(Object parentComponent, Object message, String title, int messageType, Icon icon, Object[] selectionValues, Object initialSelectionValue) {
-		return JOptionPane.showInputDialog((Component)parentComponent, message, title, messageType);
-	}
-	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showMessageDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon)
 	 */
 	@Override
@@ -177,6 +201,13 @@ public class BaseUiService implements AgentWorkbenchUI {
 	@Override
 	public int showOptionDialog(Object parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 		return JOptionPane.showOptionDialog((Component)parentComponent, message, title, optionType, messageType, icon, options, initialValue);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showInputDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon, java.lang.Object[], java.lang.Object)
+	 */
+	@Override
+	public Object showInputDialog(Object parentComponent, Object message, String title, int messageType, Icon icon, Object[] selectionValues, Object initialSelectionValue) {
+		return JOptionPane.showInputDialog((Component)parentComponent, message, title, messageType);
 	}
 
 }

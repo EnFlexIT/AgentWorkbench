@@ -1,15 +1,11 @@
 package de.enflexit.awb.desktop;
 
-import java.awt.Component;
-
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
 import de.enflexit.awb.core.ui.AgentWorkbenchUI;
-import de.enflexit.awb.core.ui.AwbAboutDialog;
 import de.enflexit.awb.core.ui.AwbBenchmarkMonitor;
 import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
@@ -41,36 +37,55 @@ public class DesktopUiService implements AgentWorkbenchUI {
 	public String getImplementationName() {
 		return "Desktop UI";
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#initialize()
+	 */
 	@Override
 	public void initialize() {
 		LOGGER.info("Initializing " + this.getImplementationName());
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getTrayIcon()
+	 */
 	@Override
 	public AwbTrayIcon getTrayIcon() {
-		// TODO Auto-generated method stub
+		// --- Nothing to do here, since BaseUiService will create the component ----
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getConsole(boolean)
+	 */
+	@Override
+	public AwbConsole getConsole(boolean isForLocalConsoleOutput) {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getConsoleDialog()
+	 */
+	@Override
+	public AwbConsoleDialog getConsoleDialog() {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalAboutDialog()
+	 */
+	@Override
+	public boolean showModalAboutDialog() {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return false;
+	}
+	
+	
 	@Override
 	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public AwbConsole getConsole(boolean isForLocalConsoleOutput) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AwbConsoleDialog getConsoleDialog() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public AwbProjectInteractionDialog getProjectInteractionDialog(String actionTitel, ProjectAction action) {
 		// TODO Auto-generated method stub
@@ -101,11 +116,7 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		return null;
 	}
 
-	@Override
-	public AwbAboutDialog showModalAboutDialog() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public AwbOptionsDialog showModalOptionsDialog(String categoryToFocus) {
@@ -143,25 +154,27 @@ public class DesktopUiService implements AgentWorkbenchUI {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showInputDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon, java.lang.Object[], java.lang.Object)
-	 */
-	@Override
-	public Object showInputDialog(Object parentComponent, Object message, String title, int messageType, Icon icon, Object[] selectionValues, Object initialSelectionValue) {
-		return JOptionPane.showInputDialog((Component)parentComponent, message, title, messageType);
-	}
-	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showMessageDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon)
 	 */
 	@Override
 	public void showMessageDialog(Object parentComponent, Object message, String title, int messageType, Icon icon) {
-		JOptionPane.showMessageDialog((Component)parentComponent, message, title, messageType, icon);
+		// --- Nothing to do here, since BaseUiService will create the component ----
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showOptionDialog(java.lang.Object, java.lang.Object, java.lang.String, int, int, javax.swing.Icon, java.lang.Object[], java.lang.Object)
 	 */
 	@Override
 	public int showOptionDialog(Object parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
-		return JOptionPane.showOptionDialog((Component)parentComponent, message, title, optionType, messageType, icon, options, initialValue);
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return NOT_IMPLEMENTED;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showInputDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon, java.lang.Object[], java.lang.Object)
+	 */
+	@Override
+	public Object showInputDialog(Object parentComponent, Object message, String title, int messageType, Icon icon, Object[] selectionValues, Object initialSelectionValue) {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return null;
 	}
 
 }

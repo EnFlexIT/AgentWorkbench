@@ -99,6 +99,7 @@ Export-Package: de.enflexit.awb.core,
  de.enflexit.awb.simulation.load.monitoring,
  de.enflexit.awb.simulation.load.threading,
  de.enflexit.awb.simulation.load.threading.storage,
+ de.enflexit.awb.simulation.logging,
  de.enflexit.awb.simulation.ontology,
  de.enflexit.awb.simulation.sensoring,
  de.enflexit.awb.simulation.transaction
