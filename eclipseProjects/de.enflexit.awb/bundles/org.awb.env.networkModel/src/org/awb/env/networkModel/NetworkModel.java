@@ -765,7 +765,7 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 					}
 				}
 				// --- Start the copy processes -------------------------------
-				this.getNetworkComponentCopierThreads().forEach(ncCopier -> ncCopier.start());
+				new ArrayList<>(this.getNetworkComponentCopierThreads()).forEach(ncCopier -> ncCopier.start());
 				
 				// --- Wait for the termination of the copier threads ---------
 				this.waitForNetworkComponentCopierThreads();
