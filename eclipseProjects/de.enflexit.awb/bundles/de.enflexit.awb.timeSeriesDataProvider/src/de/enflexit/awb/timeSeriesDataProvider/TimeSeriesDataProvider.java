@@ -11,7 +11,7 @@ import java.util.List;
 import agentgui.core.application.Application;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
 
 /**
  * The {@link TimeSeriesDataProvider} can be used to provide time series based data, like 
@@ -146,13 +146,20 @@ public class TimeSeriesDataProvider implements PropertyChangeListener{
 	 * @return the configuration file
 	 */
 	public File getConfigurationFile() {
-		Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
-		Path configFilePath = projectFolderPath.resolve(DATA_DIRECTORY).resolve(CONFIG_FILE_NAME);
-		configFile = configFilePath.toFile();
-		if (configFile.getParentFile().exists()==false) {
-			configFile.getParentFile().mkdir();
+		
+		if (Application.getProjectFocused()!=null) {
+
+			// --- Determine the name and location for the config file from the project
+			Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
+			Path configFilePath = projectFolderPath.resolve(DATA_DIRECTORY).resolve(CONFIG_FILE_NAME);
+			configFile = configFilePath.toFile();
+			
+			return configFile;
+			
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No project loaded, unable load project-specific time series configuration.");
+			return null;
 		}
-		return configFile;
 	}
 
 	/**
@@ -231,8 +238,8 @@ public class TimeSeriesDataProvider implements PropertyChangeListener{
 	 */
 	private AbstractDataSource initializeDataSource(AbstractDataSourceConfiguration sourceConfig) {
 		AbstractDataSource dataSource = null;
-		if (sourceConfig instanceof CsvSourceConfiguration) {
-			dataSource = new CsvDataSource((CsvSourceConfiguration) sourceConfig);
+		if (sourceConfig instanceof CsvDataSourceConfiguration) {
+			dataSource = new CsvDataSource((CsvDataSourceConfiguration) sourceConfig);
 		}
 		return dataSource;
 	}

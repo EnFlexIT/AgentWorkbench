@@ -24,4 +24,5 @@ public abstract class AbstractDataSource {
 	 * @return the data series values
 	 */
 	public abstract List<Double> getDataSeriesValues(String seriesName);
+	
 }

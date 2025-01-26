@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
 
 @XmlRootElement
 public class TimeSeriesDataProviderConfiguration implements Serializable {
@@ -57,6 +57,12 @@ public class TimeSeriesDataProviderConfiguration implements Serializable {
 	 */
 	public void storeDataSourceConfigurationsList(File configurationFile) {
 		try {
+			
+			// --- Make sure the parent directory exists, if saving for the first time -- 
+			if (configurationFile.getParentFile().exists()==false) {
+				configurationFile.getParentFile().mkdir();
+			}
+			
 			JAXBContext context = JAXBContext.newInstance(getContextClasses());
 			Marshaller marshaller = context.createMarshaller(); 
 			marshaller.setProperty( Marshaller.JAXB_ENCODING, "UTF-8" );
@@ -159,7 +165,7 @@ public class TimeSeriesDataProviderConfiguration implements Serializable {
 			ArrayList<Class<?>>contextClassesList = new ArrayList<>();
 			contextClassesList.add(TimeSeriesDataProviderConfiguration.class);
 			contextClassesList.add(AbstractDataSourceConfiguration.class);
-			contextClassesList.add(CsvSourceConfiguration.class);
+			contextClassesList.add(CsvDataSourceConfiguration.class);
 			contextClassesList.add(AbstractDataSeriesConfiguration.class);
 			contextClassesList.add(CsvDataSeriesConfiguration.class);
 			contextClasses = contextClassesList.toArray(new Class<?>[contextClassesList.size()]);

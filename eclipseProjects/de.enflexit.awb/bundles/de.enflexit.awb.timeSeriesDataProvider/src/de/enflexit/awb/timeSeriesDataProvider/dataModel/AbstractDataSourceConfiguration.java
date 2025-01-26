@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
@@ -155,4 +156,11 @@ public abstract class AbstractDataSourceConfiguration implements Serializable, P
 			this.notifyListeners(evt);
 		}
 	}
+	
+	/**
+	 * Override this method to provide a custom icon for the data source tree. If returning null, the default icons will be used.
+	 * @param isSelected specifies if the data source is currently selected
+	 * @return the image icon
+	 */
+	public abstract ImageIcon getImageIcon(boolean isSelected);
 }

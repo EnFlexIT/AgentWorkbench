@@ -33,12 +33,14 @@ import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProviderConfiguratio
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.JSplitPane;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 /**
  * GUI panel for the configuration of the weather data provider
@@ -49,9 +51,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private static final long serialVersionUID = -7240796684633097667L;
 	
 	private static final Dimension buttonSize = new Dimension(26, 26);
-	private static final String ICON_PATH_LOAD_FILE = "/icons/LoadFromFile.png";
-	private static final String ICON_PATH_LOAD_DB = "/icons/LoadFromDB.png";
-	private static final String ICON_PATH_LOAD_WEB = "/icons/LoadFromWeb.png";
+	private static final String ICON_PATH_NEW_CSV_SOURCE = "/icons/CSVFileNew.png";
+	private static final String ICON_PATH_NEW_DB_SOURCE = "/icons/DataBaseNew.png";
+	private static final String ICON_PATH_NEW_WEB_SOURCE = "/icons/WebNew.png";
 	private static final String ICON_PATH_REMOVE = "/icons/Delete.png";
 	private static final String ICON_PATH_ADD_SERIES = "/icons/ListPlus.png";
 	private static final String ICON_PATH_REMOVE_SERIES = "/icons/ListMinus.png";
@@ -74,6 +76,8 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private DefaultMutableTreeNode selectedNode;
 	private AbstractDataSourceConfiguration selectedDataSource;
 	private JSplitPane jSplitPaneMainPanel;
+	private JLabel jLabelDataSources;
+	private JLabel jLabelDataSeries;
 	
 	/**
 	 * Instantiates a new weather data provider configuration panel.
@@ -114,11 +118,13 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		if (toolBar == null) {
 			toolBar = new JToolBar();
 			toolBar.setFloatable(false);
+			toolBar.add(getJLabelDataSources());
 			toolBar.add(getJButtonAddCsvDataSource());
 			toolBar.add(getJButtonAddDbDataSource());
-			toolBar.add(getJButtonAddWebDataSource());
+//			toolBar.add(getJButtonAddWebDataSource());
 			toolBar.add(getJButtonDeleteDataSource());
 			toolBar.add(getSeparator());
+			toolBar.add(getJLabelDataSeries());
 			toolBar.add(getJButtonAddSeries());
 			toolBar.add(getJButtonRemoveSeries());
 			
@@ -128,8 +134,8 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private JButton getJButtonAddCsvDataSource() {
 		if (jButtonAddCsvDataSource == null) {
 			jButtonAddCsvDataSource = new JButton();
-			jButtonAddCsvDataSource.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_LOAD_FILE)));
-			jButtonAddCsvDataSource.setToolTipText("Load Weather Data from CSV ile");
+			jButtonAddCsvDataSource.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_NEW_CSV_SOURCE)));
+			jButtonAddCsvDataSource.setToolTipText("Create a new data source based on a CSV file");
 			jButtonAddCsvDataSource.setPreferredSize(buttonSize);
 			jButtonAddCsvDataSource.addActionListener(this);
 		}
@@ -138,8 +144,8 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private JButton getJButtonAddDbDataSource() {
 		if (jButtonAddDbDataSource == null) {
 			jButtonAddDbDataSource = new JButton();
-			jButtonAddDbDataSource.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_LOAD_DB)));
-			jButtonAddDbDataSource.setToolTipText("Load Weather Data from Database");
+			jButtonAddDbDataSource.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_NEW_DB_SOURCE)));
+			jButtonAddDbDataSource.setToolTipText("Create a new data source based on a database query");
 			jButtonAddDbDataSource.setPreferredSize(buttonSize);
 			jButtonAddDbDataSource.setEnabled(false);
 			jButtonAddDbDataSource.addActionListener(this);
@@ -149,8 +155,8 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private JButton getJButtonAddWebDataSource() {
 		if (jButtonAddWebDataSource == null) {
 			jButtonAddWebDataSource = new JButton();
-			jButtonAddWebDataSource.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_LOAD_WEB)));
-			jButtonAddWebDataSource.setToolTipText("Load Weather Data from Web Service");
+			jButtonAddWebDataSource.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_NEW_WEB_SOURCE)));
+			jButtonAddWebDataSource.setToolTipText("Create a new data source based on a web service");
 			jButtonAddWebDataSource.setPreferredSize(buttonSize);
 			jButtonAddWebDataSource.setEnabled(false);
 			jButtonAddWebDataSource.addActionListener(this);
@@ -161,8 +167,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		if (jButtonDeleteDataSource == null) {
 			jButtonDeleteDataSource = new JButton();
 			jButtonDeleteDataSource.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_REMOVE)));
-			jButtonDeleteDataSource.setToolTipText("Remove the selected data source");
+			jButtonDeleteDataSource.setToolTipText("Remove the currently selected data source");
 			jButtonDeleteDataSource.setPreferredSize(buttonSize);
+			jButtonDeleteDataSource.setEnabled(false);
 			jButtonDeleteDataSource.addActionListener(this);
 		}
 		return jButtonDeleteDataSource;
@@ -211,6 +218,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			dataSourceTree = new JTree();
 			dataSourceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			dataSourceTree.setModel(this.getTreeModel());
+			dataSourceTree.setCellRenderer(new TimeSeriesConfigTreeCellRenderer());
 //			this.expandAllTreeNodes();
 			dataSourceTree.addTreeSelectionListener(this);
 		}
@@ -278,7 +286,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			} else {
 				if (csvFile!=null && csvFile.exists()) {
 					// --- Create an initial CSV data source configuration --------
-					CsvSourceConfiguration sourceConfig = new CsvSourceConfiguration();
+					CsvDataSourceConfiguration sourceConfig = new CsvDataSourceConfiguration();
 					sourceConfig.setName("New CSV data source");
 					sourceConfig.setCsvFilePath(csvFile.toPath());
 					sourceConfig.setHeadline(true);
@@ -360,7 +368,6 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			this.deleteDataSourceNode(treeNode);
 		}
 		this.getTreeModel().reload();
-//		this.expandAllTreeNodes();
 		
 		if (selectionIndex==this.getDataSourceTree().getRowCount()) {
 			selectionIndex--;
@@ -422,7 +429,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		}
 		
 		else if (ae.getSource()==this.getJButtonAddSeries()) {
-			if (this.getDataSourceConfigPanel().getCurrentDataSourceConfiguration() instanceof CsvSourceConfiguration) {
+			if (this.getDataSourceConfigPanel().getCurrentDataSourceConfiguration() instanceof CsvDataSourceConfiguration) {
 				this.addNewCsvDataSeries();
 			}
 		}
@@ -443,8 +450,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		} else if (selectedNode.getUserObject() instanceof AbstractDataSourceConfiguration) {
 			AbstractDataSourceConfiguration dataSourceConfiguration = (AbstractDataSourceConfiguration) selectedNode.getUserObject();
 			this.setSelectedDataSource(dataSourceConfiguration);
-			this.getJButtonRemoveSeries().setEnabled(true);
+			this.getJButtonDeleteDataSource().setEnabled(true);
 			this.getJButtonAddSeries().setEnabled(true);
+			this.getJButtonRemoveSeries().setEnabled(false);
 		} else if (selectedNode.getUserObject() instanceof AbstractDataSeriesConfiguration) {
 			AbstractDataSeriesConfiguration dataSeriesConfiguration = (AbstractDataSeriesConfiguration) selectedNode.getUserObject();
 			if (dataSeriesConfiguration instanceof CsvDataSeriesConfiguration) {
@@ -454,13 +462,14 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 				if (parentNode!=null && parentNode.getUserObject()!=this.selectedDataSource) {
 					AbstractDataSourceConfiguration dataSourceConfiguration = (AbstractDataSourceConfiguration) parentNode.getUserObject();
 					this.selectedDataSource = dataSourceConfiguration;
-					this.getDataSourceConfigPanel().setCurrentDataSourceConfiguration((CsvSourceConfiguration) dataSourceConfiguration);
+					this.getDataSourceConfigPanel().setCurrentDataSourceConfiguration((CsvDataSourceConfiguration) dataSourceConfiguration);
 				}
 				
 				// --- Set the series data to the config panel ------
 				this.getDataSourceConfigPanel().setDataSeriesConfiguration((CsvDataSeriesConfiguration) dataSeriesConfiguration);
 			}
 			
+			this.getJButtonDeleteDataSource().setEnabled(false);
 			this.getJButtonRemoveSeries().setEnabled(true);
 			this.getJButtonAddSeries().setEnabled(true);
 		}
@@ -474,8 +483,12 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SOURCE_RENAMED) || evt.getPropertyName().equals(AbstractDataSeriesConfiguration.DATA_SERIES_RENAMED)) {
 			TreePath selection = this.getDataSourceTree().getSelectionPath();
+			boolean wasExpanded = this.getDataSourceTree().isExpanded(selection);
 			this.getTreeModel().reload();
 			this.getDataSourceTree().setSelectionPath(selection);
+			if (wasExpanded==true) {
+				this.getDataSourceTree().expandPath(selection);
+			}
 		} else if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SERIES_ADDED)) {
 			AbstractDataSeriesConfiguration newSeries = (AbstractDataSeriesConfiguration) evt.getNewValue();
 			AbstractDataSourceConfiguration parentSource = (AbstractDataSourceConfiguration) evt.getOldValue(); 
@@ -483,8 +496,12 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			if (parentNode!=null) {
 				DefaultMutableTreeNode seriesNode = new DefaultMutableTreeNode(newSeries);
 				parentNode.add(seriesNode);
+				this.getTreeModel().reload(parentNode);
+				TreePath parentPath = new TreePath(parentNode.getPath());
+				if (this.getDataSourceTree().isCollapsed(parentPath)) {
+					this.getDataSourceTree().expandPath(parentPath);
+				}
 			}
-			this.getTreeModel().reload(parentNode);
 		}
 	}
 	
@@ -494,18 +511,8 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	 */
 	private void setSelectedDataSource(AbstractDataSourceConfiguration dataSourceConfiguration) {
 		this.selectedDataSource = dataSourceConfiguration;
-		this.getDataSourceConfigPanel().setCurrentDataSourceConfiguration((CsvSourceConfiguration) dataSourceConfiguration);
+		this.getDataSourceConfigPanel().setCurrentDataSourceConfiguration((CsvDataSourceConfiguration) dataSourceConfiguration);
 	}
-	
-//	/**
-//	 * Expands all tree nodes.
-//	 */
-//	private void expandAllTreeNodes() {
-//		// --- Expand all tree nodes ----------------------------
-//		for (int i=0; i<this.getDataSourceTree().getRowCount(); i++) {
-//			this.getDataSourceTree().expandRow(i);
-//		}
-//	}
 	
 	private DefaultMutableTreeNode findDataSourceNode(AbstractDataSourceConfiguration sourceConfiguration) {
 		for (int i=0; i<this.getRootNode().getChildCount(); i++) {
@@ -525,5 +532,18 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			jSplitPaneMainPanel.setDividerLocation(0.2);
 		}
 		return jSplitPaneMainPanel;
+	}
+	private JLabel getJLabelDataSources() {
+		if (jLabelDataSources == null) {
+			jLabelDataSources = new JLabel("Data Sources");
+			jLabelDataSources.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelDataSources;
+	}
+	private JLabel getJLabelDataSeries() {
+		if (jLabelDataSeries == null) {
+			jLabelDataSeries = new JLabel(" Data Series");
+		}
+		return jLabelDataSeries;
 	}
 }

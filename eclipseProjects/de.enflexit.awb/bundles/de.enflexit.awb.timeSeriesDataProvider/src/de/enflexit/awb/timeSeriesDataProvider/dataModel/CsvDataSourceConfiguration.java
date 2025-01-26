@@ -3,15 +3,20 @@ package de.enflexit.awb.timeSeriesDataProvider.dataModel;
 import java.io.File;
 import java.nio.file.Path;
 
+import javax.swing.ImageIcon;
+
 import agentgui.core.application.Application;
 
 /**
  * This class contains the configuration of a CSV-based data source. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class CsvSourceConfiguration extends AbstractDataSourceConfiguration {
+public class CsvDataSourceConfiguration extends AbstractDataSourceConfiguration {
 
 	private static final long serialVersionUID = 1236384812660513627L;
+	
+	private static final String ICON_PATH_SELECTED = "/icons/CSVFileWhite.png";
+	private static final String ICON_PATH_NOT_SELECTED = "/icons/CSVFileBlack.png";
 	
 	private String csvFilePath;
 	
@@ -119,6 +124,20 @@ public class CsvSourceConfiguration extends AbstractDataSourceConfiguration {
 	public File getCsvFile() {
 		Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
 		return projectFolderPath.resolve(this.getCsvFilePath()).toFile();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration#getImageIcon(boolean)
+	 */
+	@Override
+	public ImageIcon getImageIcon(boolean isSelected) {
+		String iconPath;
+		if (isSelected==true) {
+			iconPath = ICON_PATH_SELECTED;
+		} else {
+			iconPath = ICON_PATH_NOT_SELECTED;
+		}
+		return new ImageIcon(this.getClass().getResource(iconPath));
 	}
 	
 }

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -28,7 +29,7 @@ import javax.swing.table.DefaultTableModel;
 import agentgui.core.application.Application;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -81,7 +82,7 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	private JLabel jLabelColumnSeparator;
 	private JComboBox<String> jComboBoxColumnSeparator;
 
-	private CsvSourceConfiguration currentSourceConfiguration;
+	private CsvDataSourceConfiguration currentSourceConfiguration;
 	private DateTimeFormatter dateTimeFormatter;
 	
 	private File csvDataFile;
@@ -89,6 +90,9 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	private JLabel jLabelCsvDataSource;
 	private CsvDataSeriesConfigurationPanel seriesConfigurationPanel;
 	private JButton jButtonAutoGenerate;
+	
+	private boolean pauseReload;
+	
 	/**
 	 * Instantiates a new csv data source configuration panel.
 	 */
@@ -98,10 +102,10 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	
 	/**
 	 * Instantiates a new csv data source configuration panel, and 
-	 * initializes it with the provided {@link CsvSourceConfiguration}.
+	 * initializes it with the provided {@link CsvDataSourceConfiguration}.
 	 * @param dataSourceConfiguration the data source configuration
 	 */
-	public CsvDataSourceConfigurationPanel(CsvSourceConfiguration dataSourceConfiguration) {
+	public CsvDataSourceConfigurationPanel(CsvDataSourceConfiguration dataSourceConfiguration) {
 		this.initialize();
 		this.setCurrentDataSourceConfiguration(dataSourceConfiguration);
 	}
@@ -213,11 +217,13 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	 * Sets the data source configuration.
 	 * @param dataSourceConfiguration the new data source configuration
 	 */
-	public void setCurrentDataSourceConfiguration(CsvSourceConfiguration dataSourceConfiguration) {
+	public void setCurrentDataSourceConfiguration(CsvDataSourceConfiguration dataSourceConfiguration) {
 		this.currentSourceConfiguration = dataSourceConfiguration;
 		
 		if (dataSourceConfiguration!=null) {
-			this.setCsvDataFile(dataSourceConfiguration.getCsvFile());
+			if (this.pauseReload==false) {
+				this.setCsvDataFile(dataSourceConfiguration.getCsvFile());
+			}
 			
 			// --- Set values to GUI components ---------------
 			this.getJTextFieldDataSourceName().setText(dataSourceConfiguration.getName());
@@ -245,7 +251,7 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	 * Gets the series configuration.
 	 * @return the series configuration
 	 */
-	public CsvSourceConfiguration getCurrentDataSourceConfiguration() {
+	public CsvDataSourceConfiguration getCurrentDataSourceConfiguration() {
 		return currentSourceConfiguration;
 	}
 	
@@ -268,11 +274,61 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 		this.csvDataFile = csvDataFile;
 		if (csvDataFile!=null && csvDataFile.exists()) {
 			this.csvData = this.readCsvData(csvDataFile);
+			this.removeEmptyColumns();
 			this.rebuildTableModel();
 		} else {
 			this.csvData=null;
 			this.getJTableCsvData().setModel(new DefaultTableModel());
 		}
+	}
+	
+	private void removeEmptyColumns() {
+		
+		if (this.csvData!=null) {
+			
+			ArrayList<String> colsToRemove = new ArrayList<>();
+			
+			// --- Iterate over all columns -----------------------------------
+			for (int colIndex=0; colIndex<this.csvData.get(0).size(); colIndex++) {
+				boolean empty = true;
+				
+				for (int rowIndex=1; rowIndex<this.csvData.size(); rowIndex++) {
+					String entry = this.csvData.get(rowIndex).get(colIndex);
+					
+					if (entry!=null && entry.isBlank()==false) {
+						// --- One entry found -> not empty -------------------
+						empty=false;
+						break;
+					}
+				}
+				if (empty==true) {
+					// --- No entries found -> empty -> mark to remove --------
+					colsToRemove.add(this.csvData.get(0).get(colIndex));
+				}
+			}
+			
+			// --- Remove the previously marked columns -----------------------
+			for (String colToRemove : colsToRemove) {
+				int colIndex = this.getIndexForColumn(colToRemove);
+				if (colIndex>=0) {
+					for (Vector<String> row : this.csvData) {
+						row.remove(colIndex);
+					}
+				}
+			}
+			
+		}
+	}
+	
+	private int getIndexForColumn(String columnHeader) {
+		if (this.csvData!=null) {
+			for (int i=0; i<this.getCsvData().get(0).size();i++) {
+				if (this.getCsvData().get(0).get(i).equals(columnHeader)) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 
 	/**
@@ -495,6 +551,16 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 		return jComboBoxColumnSeparator;
 	}
 
+	private JButton getJButtonAutoGenerate() {
+		if (jButtonAutoGenerate == null) {
+			jButtonAutoGenerate = new JButton("Generate Series");
+			jButtonAutoGenerate.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonAutoGenerate.setToolTipText("Generates a new data series for each column of the file");
+			jButtonAutoGenerate.addActionListener(this);
+		}
+		return jButtonAutoGenerate;
+	}
+
 	private JScrollPane getJScrollPaneCsvDataTable() {
 		if (jScrollPaneCsvDataTable == null) {
 			jScrollPaneCsvDataTable = new JScrollPane();
@@ -634,10 +700,14 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	 * Rename the current data source.
 	 */
 	private void renameDataSource() {
+		
+		// --- Suppress unnecessary reloads of the CSV file.
+		this.pauseReload = true;
 		String textFieldContent = this.getJTextFieldDataSourceName().getText();
 		if (this.currentSourceConfiguration.getName().equals(textFieldContent)==false) {
 			this.currentSourceConfiguration.setName(this.getJTextFieldDataSourceName().getText());
 		}
+		this.pauseReload = false;
 	}
 
 	/**
@@ -667,6 +737,9 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 		this.firePropertyChange(TABLEMODEL_CHANGED, null, tableModel);
 	}
 	
+	/**
+	 * Generate a data series for every non-empty column of the CSV file.
+	 */
 	private void autoGenerateSeries() {
 		for (int i=1; i<this.getJTableCsvData().getColumnCount(); i++) {
 			String seriesName = this.getJTableCsvData().getColumnName(i);
@@ -675,14 +748,5 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 			seriesConfiguration.setDataColumn(i);
 			this.currentSourceConfiguration.addDataSeriesConfiguration(seriesConfiguration);
 		}
-	}
-	private JButton getJButtonAutoGenerate() {
-		if (jButtonAutoGenerate == null) {
-			jButtonAutoGenerate = new JButton("Generate Series");
-			jButtonAutoGenerate.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jButtonAutoGenerate.setToolTipText("Generates a new data series for each column");
-			jButtonAutoGenerate.addActionListener(this);
-		}
-		return jButtonAutoGenerate;
 	}
 }

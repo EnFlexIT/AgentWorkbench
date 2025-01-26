@@ -13,7 +13,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
 import de.enflexit.common.NumberHelper;
 
 /**
@@ -25,7 +25,7 @@ public class CsvDataSource extends AbstractDataSource {
 	private Vector<Vector<Number>> csvData;
 	private int lastUsedRowIndex;
 	
-	private CsvSourceConfiguration sourceConfiguration;
+	private CsvDataSourceConfiguration sourceConfiguration;
 	private DateTimeFormatter dateTimeFormatter;
 	
 	private HashMap<String, Integer> dataColumns;
@@ -36,7 +36,7 @@ public class CsvDataSource extends AbstractDataSource {
 	 * Instantiates a new csv data source.
 	 * @param sourceConfiguration the source configuration
 	 */
-	public CsvDataSource(CsvSourceConfiguration sourceConfiguration) {
+	public CsvDataSource(CsvDataSourceConfiguration sourceConfiguration) {
 		this.sourceConfiguration = sourceConfiguration;
 	}
 
