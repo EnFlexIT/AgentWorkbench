@@ -98,6 +98,7 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	 */
 	public CsvDataSourceConfigurationPanel() {
 		this.initialize();
+		this.setComponentsEnabled(false);
 	}
 	
 	/**
@@ -585,6 +586,7 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	private void setComponentsEnabled(boolean enabled) {
 		this.getJTextFieldDataSourceName().setEnabled(enabled);
 		this.getJTextFieldFileName().setEnabled(enabled);
+		this.getJButtonLoad().setEnabled(enabled);
 		this.getJTextFieldDateFormat().setEnabled(enabled);
 		this.getJButtonFormatCheck().setEnabled(enabled);
 		this.getJComboBoxColumnSeparator().setEnabled(enabled);
@@ -665,6 +667,8 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 		this.dateTimeFormatter = null;
 		
 		if (this.currentSourceConfiguration!=null) {
+			this.currentSourceConfiguration.setDateTimeFormat(this.getJTextFieldDateFormat().getText());
+			this.dateTimeFormatter = null;
 			// --- Try to parse the first date time entry -----
 			if (this.getJTableCsvData().getModel().getRowCount()>0) {
 				String firstTimeString = (String) this.getJTableCsvData().getValueAt(0, 0);

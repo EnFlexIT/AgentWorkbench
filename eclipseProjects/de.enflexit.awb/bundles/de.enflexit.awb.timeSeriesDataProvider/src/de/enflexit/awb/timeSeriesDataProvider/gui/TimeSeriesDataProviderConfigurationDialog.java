@@ -44,7 +44,7 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 	 * Initializes the GUI components.
 	 */
 	private void initialize() {
-		this.setTitle("Weather Data Provider Configuration");
+		this.setTitle("Time Series Data Provider Configuration");
 		this.setSize(1200, 800);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		getContentPane().add(getConfigurationPanel());

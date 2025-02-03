@@ -361,18 +361,11 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	 * @param treeNode the tree node to delete
 	 */
 	private void deleteNode(DefaultMutableTreeNode treeNode) {
-		int selectionIndex = this.getDataSourceTree().getMinSelectionRow();
 		if (treeNode.getUserObject() instanceof AbstractDataSeriesConfiguration) {
 			this.deleteDataSeriesNode(treeNode);
 		} else if (treeNode.getUserObject() instanceof AbstractDataSourceConfiguration) {
 			this.deleteDataSourceNode(treeNode);
 		}
-		this.getTreeModel().reload();
-		
-		if (selectionIndex==this.getDataSourceTree().getRowCount()) {
-			selectionIndex--;
-		}
-		this.getDataSourceTree().setSelectionRow(selectionIndex);
 	}
 	
 	/**
@@ -384,8 +377,13 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		DefaultMutableTreeNode parentSourceNode = (DefaultMutableTreeNode) dataSeriesNode.getParent();
 		AbstractDataSourceConfiguration parentSource = (AbstractDataSourceConfiguration) parentSourceNode.getUserObject();
 		
+		DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) dataSeriesNode.getParent();
+		
 		parentSourceNode.remove(dataSeriesNode);
 		parentSource.removeDataSeriesConfiguration(seriesToDelete);
+		
+		this.getTreeModel().reload(parentNode);
+		this.getDataSourceTree().setSelectionPath(new TreePath(parentNode.getPath()));
 	}
 	
 	/**
@@ -408,6 +406,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		if (doDelete==true) {
 			this.getRootNode().remove(dataSourceNode);
 			TimeSeriesDataProvider.getInstance().getConfiguration().remove(dataSourceToDelete);
+			this.getTreeModel().reload(this.getRootNode());
 		}
 	}
 
@@ -502,6 +501,10 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 					this.getDataSourceTree().expandPath(parentPath);
 				}
 			}
+		} else if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SERIES_REMOVED)) {
+			TreePath parentPath = this.getDataSourceTree().getSelectionPath().getParentPath();
+			this.getDataSourceTree().expandPath(parentPath);
+			System.out.println("Data series removed");
 		}
 	}
 	
@@ -529,7 +532,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			jSplitPaneMainPanel = new JSplitPane();
 			jSplitPaneMainPanel.setLeftComponent(this.getScrollPaneDataSourceTree());
 			jSplitPaneMainPanel.setRightComponent(this.getDataSourceConfigPanel());
-			jSplitPaneMainPanel.setDividerLocation(0.2);
+			jSplitPaneMainPanel.setDividerLocation(300);
 		}
 		return jSplitPaneMainPanel;
 	}
