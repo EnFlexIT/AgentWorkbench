@@ -2,20 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OSHI (OSGI-Bundle)
 Bundle-SymbolicName: de.enflexit.oshi
-Bundle-Version: 6.2.2.qualifier
+Bundle-Version: 6.6.6.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oshi
-Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: org.slf4j;version="1.7.30"
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: org.slf4j
 Bundle-ClassPath: .,
- lib/oshi-core-6.2.2.jar,
- lib/oshi-core-6.2.2-sources.jar,
- lib/jna-5.12.1.jar,
- lib/jna-5.12.1-sources.jar,
- lib/jna-platform-5.12.1.jar,
- lib/jna-platform-5.12.1-sources.jar
+ lib/jna-jpms-5.16.0.jar,
+ lib/jna-jpms-5.16.0-sources.jar,
+ lib/jna-platform-jpms-5.16.0.jar,
+ lib/jna-platform-jpms-5.16.0-sources.jar,
+ lib/oshi-core-java11-6.6.6.jar,
+ lib/oshi-core-java11-6.6.6-sources.jar
 Export-Package: de.enflexit.oshi,
  oshi,
+ oshi.annotation,
  oshi.annotation.concurrent,
  oshi.driver.linux,
  oshi.driver.linux.proc,
