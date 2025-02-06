@@ -29,14 +29,14 @@ public abstract class ChartModel extends Observable {
 	 * @param seriesIndex the series index
 	 * @return the series
 	 */
-	public abstract Series getSeries(int seriesIndex);
+	public abstract Series<String> getSeries(int seriesIndex);
 	
 	/**
 	 * Returns the jfreeChart series with the specified label.
 	 * @param seriesLabel The label
 	 * @return The series
 	 */
-	public abstract Series getSeries(String seriesLabel);
+	public abstract Series<String> getSeries(String seriesLabel);
 	
 	/**
 	 * Adds the series.

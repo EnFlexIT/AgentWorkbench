@@ -42,13 +42,15 @@ public class TimeSeriesChartTab extends ChartTab {
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.gui.ChartTab#replaceModel(agentgui.core.charts.DataModel)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void replaceModel(DataModel newModel) {
+		
 		this.dataModel = newModel;
 		
-		TimeSeriesCollection tsc = ((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection();
-		this.chartPanel.getChart().getXYPlot().setDataset(tsc);
-		dataModel.getChartModel().addObserver(this);
+		TimeSeriesCollection<String> tsc = ((TimeSeriesDataModel)this.dataModel).getTimeSeriesChartModel().getTimeSeriesCollection();
+		this.getXYPlot().setDataset(tsc);
+		this.dataModel.getChartModel().addObserver(this);
 	}
 
 	/* (non-Javadoc)
@@ -57,7 +59,7 @@ public class TimeSeriesChartTab extends ChartTab {
 	@Override
 	protected void applySettings() {
 		super.applySettings();
-		DateAxis da = (DateAxis) this.chartPanel.getChart().getXYPlot().getDomainAxis();
+		DateAxis da = (DateAxis) this.getXYPlot().getDomainAxis();
 		String formatString = ((TimeSeriesDataModel)dataModel).getTimeFormat();
 		TimeZoneDateFormat tzdf = new TimeZoneDateFormat(formatString, GlobalRuntimeValues.getZoneId());
 		da.setDateFormatOverride(tzdf);
@@ -69,7 +71,7 @@ public class TimeSeriesChartTab extends ChartTab {
 	 */
 	void setTimeFormat(String timeFormat){
 		TimeZoneDateFormat tzdf = new TimeZoneDateFormat(timeFormat, GlobalRuntimeValues.getZoneId());
-		DateAxis da = (DateAxis) this.chartPanel.getChart().getXYPlot().getDomainAxis();
+		DateAxis da = (DateAxis) this.getXYPlot().getDomainAxis();
 		da.setDateFormatOverride(tzdf);
 	}
 	

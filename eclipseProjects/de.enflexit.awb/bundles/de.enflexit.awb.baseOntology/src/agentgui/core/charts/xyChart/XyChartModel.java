@@ -15,11 +15,15 @@ import agentgui.ontology.XyDataSeries;
 import agentgui.ontology.XySeriesChartSettings;
 import agentgui.ontology.XyValuePair;
 
+/**
+ * The Class XyChartModel.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
 public class XyChartModel extends ChartModel {
 
 	private XyDataModel parent;
-	private XYSeriesCollection xySeriesCollection;
-
+	private XYSeriesCollection<String> xySeriesCollection;
 	
 	/**
 	 * Instantiates a new XYChartModel.
@@ -42,9 +46,9 @@ public class XyChartModel extends ChartModel {
 	 * @param xyDataSeries the XyDataSeries
 	 * @return the converted 
 	 */
-	public XYSeries getXYSeriesFromXyDataSeries(XyDataSeries xyDataSeries) {
+	public XYSeries<String> getXYSeriesFromXyDataSeries(XyDataSeries xyDataSeries) {
 	
-		XYSeries newSeries = new XYSeries(xyDataSeries.getLabel(), xyDataSeries.getAutoSort(), !xyDataSeries.getAvoidDuplicateXValues());
+		XYSeries<String> newSeries = new XYSeries<>(xyDataSeries.getLabel(), xyDataSeries.getAutoSort(), !xyDataSeries.getAvoidDuplicateXValues());
 		List valuePairs = xyDataSeries.getXyValuePairs();
 		for (int i = 0; i < valuePairs.size(); i++) {
 			XyValuePair valuePair = (XyValuePair) valuePairs.get(i);
@@ -58,8 +62,8 @@ public class XyChartModel extends ChartModel {
 	 */
 	@Override
 	public void addSeries(DataSeries series) {
-		this.getXySeriesCollection().addSeries(this.getXYSeriesFromXyDataSeries((XyDataSeries)series));
 		
+		this.getXySeriesCollection().addSeries(this.getXYSeriesFromXyDataSeries((XyDataSeries)series));
 		this.setChanged();
 		this.notifyObservers(ChartModel.EventType.SERIES_ADDED);
 	}
@@ -67,50 +71,41 @@ public class XyChartModel extends ChartModel {
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.ChartModel#exchangeSeries(int, agentgui.ontology.DataSeries)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	public void exchangeSeries(int seriesIndex, DataSeries series) throws NoSuchSeriesException {
 		
-		if(seriesIndex < this.getSeriesCount()){
-
-			XyDataSeries xyDataSeries = (XyDataSeries) series;
-			XYSeries editSeries = this.getSeries(seriesIndex);
-			// --- Are there configuration changes ? -------------------------- 
-			if (xyDataSeries.getAutoSort()==editSeries.getAutoSort() && xyDataSeries.getAvoidDuplicateXValues()==(!editSeries.getAllowDuplicateXValues())) {
-				// --- No configuration changes -------------------------------
-				editSeries.clear();
-				if (series.getLabel()!=null) {
-					editSeries.setKey(series.getLabel());
-				}
-				
-				List valuePairs = xyDataSeries.getXyValuePairs();
-				for (int i = 0; i < valuePairs.size(); i++) {
-					XyValuePair valuePair = (XyValuePair) valuePairs.get(i);
-					editSeries.add(valuePair.getXValue().getFloatValue(), valuePair.getYValue().getFloatValue());	
-				}
-				
-			} else {
-				// --- Configuration has changed ------------------------------
-				XYSeries newSeries = (XYSeries) this.getXYSeriesFromXyDataSeries(xyDataSeries);
-				// --- Replace the edit series with the new series ------------
-				Vector<XYSeries> currSerieses = new Vector<XYSeries>();
-				for (int i=0; i < this.getSeriesCount(); i++) {
-					currSerieses.add(this.getSeries(i));
-				}
-				currSerieses.set(seriesIndex, newSeries);
-
-				this.getXySeriesCollection().removeAllSeries();
-				for (int i = 0; i < currSerieses.size(); i++) {
-					this.getXySeriesCollection().addSeries(currSerieses.get(i));
-				}
-			}
-			
-		}else{
+		if (seriesIndex < 0 ||  seriesIndex >= this.getSeriesCount()) {
 			throw new NoSuchSeriesException();
 		}
+		// --- Create series that exchanges the specified series ----
+		this.exchangeSeries(seriesIndex, this.getXYSeriesFromXyDataSeries((XyDataSeries)series), true);
+	}
+	/**
+	 * Exchanges the specified TimeSeries in the local {@link #getTimeSeriesCollection()}.
+	 *
+	 * @param seriesIndex the series index to replace
+	 * @param tsExchange the time series to exchange
+	 * @param setDirtyAndNotify the set dirty and notify
+	 * @throws NoSuchSeriesException the no such series exception
+	 */
+	private void exchangeSeries(int seriesIndex, XYSeries<String> xyExchange, boolean setDirtyAndNotify) {
 		
-		this.setChanged();
-		this.notifyObservers(ChartModel.EventType.SERIES_ADDED);
+		// --- Replace the edit series with the new series ------------
+		Vector<XYSeries<String>> currSerieses = new Vector<>();
+		for (int i=0; i < this.getSeriesCount(); i++) {
+			currSerieses.add(this.getSeries(i));
+		}
+		currSerieses.set(seriesIndex, xyExchange);
+
+		this.getXySeriesCollection().removeAllSeries();
+		for (int i = 0; i < currSerieses.size(); i++) {
+			this.getXySeriesCollection().addSeries(currSerieses.get(i));
+		}
+		
+		if (setDirtyAndNotify==true) {
+			this.setChanged();
+			this.notifyObservers(ChartModel.EventType.SERIES_ADDED);
+		}
 	}
 	
 	/**
@@ -121,7 +116,7 @@ public class XyChartModel extends ChartModel {
 		
 		try {
 			List xyData = this.parent.getOntologyModel().getSeriesData(seriesIndex);
-			XYSeries xySeries = this.getSeries(seriesIndex);	
+			XYSeries<String> xySeries = this.getSeries(seriesIndex);	
 			xySeries.clear();
 			
 			for (int i=0; i<xyData.size()-1; i++) {
@@ -157,7 +152,7 @@ public class XyChartModel extends ChartModel {
 	 * @param newYValue the new y value
 	 */
 	public void addXyDataItem(int seriesIndex, int indexPosition, float newXValue, float newYValue) {
-		XYSeries xySeries = this.getSeries(seriesIndex);
+		XYSeries<String> xySeries = this.getSeries(seriesIndex);
 		if (xySeries.getAutoSort()==true) {
 			// --- Add new value ------------------------------------
 			xySeries.add(newXValue, newYValue);
@@ -167,20 +162,28 @@ public class XyChartModel extends ChartModel {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#getSeries(int)
+	 */
 	@Override
-	public XYSeries getSeries(int seriesIndex) {
+	public XYSeries<String> getSeries(int seriesIndex) {
 		return this.getXySeriesCollection().getSeries(seriesIndex);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#getSeries(java.lang.String)
+	 */
 	@Override
-	public XYSeries getSeries(String seriesLabel) {
+	public XYSeries<String> getSeries(String seriesLabel) {
 		return this.getXySeriesCollection().getSeries(seriesLabel);
 	}
 
+	/* (non-Javadoc)
+	 * @see agentgui.core.charts.ChartModel#removeSeries(int)
+	 */
 	@Override
 	public void removeSeries(int seriesIndex) {
 		this.getXySeriesCollection().removeSeries(seriesIndex);
-		
 		this.setChanged();
 		this.notifyObservers(ChartModel.EventType.SERIES_REMOVED);
 	}
@@ -189,9 +192,9 @@ public class XyChartModel extends ChartModel {
 	 * Gets the JFreeChart data model for this chart
 	 * @return The JFreeChart data model for this chart
 	 */
-	public XYSeriesCollection getXySeriesCollection(){
+	public XYSeriesCollection<String> getXySeriesCollection(){
 		if(this.xySeriesCollection == null){
-			this.xySeriesCollection = new XYSeriesCollection();
+			this.xySeriesCollection = new XYSeriesCollection<>();
 		}
 		return this.xySeriesCollection;
 	}
@@ -207,12 +210,23 @@ public class XyChartModel extends ChartModel {
 	/* (non-Javadoc)
 	 * @see agentgui.core.charts.ChartModel#setSeriesLabel(int, java.lang.String)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	public void setSeriesLabel(int seriesIndex, String newLabel) {
-		XYSeries series = this.getSeries(seriesIndex);
-		if (series!= null) series.setKey(newLabel);
 		
+		// --- Try getting the current series -------------
+		XYSeries<String> oldSeries = this.getSeries(seriesIndex);
+		if (oldSeries==null || oldSeries.getKey().equals(newLabel)==true) return;
+		
+		// --- Create a new series ------------------------
+		XYSeries<String> newSeries = new XYSeries<String>(newLabel);
+		for (int i = 0; i < oldSeries.getItemCount(); i++) {
+			newSeries.add(oldSeries.getDataItem(i));
+		}
+		
+		// --- Exchange the series ------------------------
+		this.exchangeSeries(seriesIndex, newSeries, false);
+		
+		// --- Notify -------------------------------------
 		this.setChanged();
 		this.notifyObservers(ChartModel.EventType.SERIES_RENAMED);
 	}

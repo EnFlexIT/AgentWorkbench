@@ -48,16 +48,16 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.jfree.chart.ChartPanel;
+import org.jfree.chart.swing.ChartPanel;
+import org.jfree.chart.text.TextAnchor;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.api.Layer;
+import org.jfree.chart.api.RectangleAnchor;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.ui.Layer;
-import org.jfree.chart.ui.RectangleAnchor;
-import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.general.DatasetChangeListener;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -105,7 +105,7 @@ public class ThreadInfoStorageScrollPane extends JPanel implements ActionListene
 	private ChartPanel jFreeChartPanel;
 	private JFreeChart chart;
 
-	private XYPlot plot;
+	private XYPlot<?> plot;
 	
 	private XYSeriesCollection deltaCollection;
 	private XYSeriesCollection totalCollection;

@@ -46,15 +46,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.legend.LegendTitle;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.swing.ChartPanel;
 import org.jfree.data.general.Series;
 
 import agentgui.core.charts.ChartModel;
@@ -93,6 +93,7 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 	
 	protected ChartEditorJPanel parent;
 	
+	private XYPlot<String> xyPlot;
 	
 	/**
 	 * Instantiates a new ChartTab.
@@ -107,9 +108,11 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 		// --- Create and configure the chart panel ---
 		this.chartPanel = new ChartPanel(chart);
 		this.chartPanel.setBackground(Color.WHITE);								// Component background
-		this.chartPanel.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
-		this.chartPanel.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		this.chartPanel.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+		
+		XYPlot<String> xyPlot = this.getXYPlot(); 
+		xyPlot.setBackgroundPaint(Color.WHITE);		// Chart background
+		xyPlot.setDomainGridlinePaint(Color.BLACK);
+		xyPlot.setRangeGridlinePaint(Color.BLACK);
 		
 		// --- Create the tool bar --------------------
 		this.rebuildVisibilityToolBar();
@@ -209,11 +212,9 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 			}
 			
 			// Set it as renderer for all plots
-			XYPlot plot = (XYPlot) this.chartPanel.getChart().getPlot();
-			plot.setRenderer(renderer);
-			
-			applyColorSettings();
-			applyLineWidthsSettings();
+			this.getXYPlot().setRenderer(renderer);
+			this.applyColorSettings();
+			this.applyLineWidthsSettings();
 		}
 		
 	}
@@ -223,7 +224,7 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 	 */
 	public void applyColorSettings(){
 		List colors = dataModel.getOntologyModel().getChartSettings().getYAxisColors();
-		XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
+		XYItemRenderer renderer = this.getXYPlot().getRenderer();
 		for(int i=0; i < colors.size(); i++){
 			String colorString = (String) colors.get(i);
 			if (colorString!=null && colorString.equals("")==false) {
@@ -238,7 +239,7 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 	 */
 	public void applyLineWidthsSettings(){
 		List lineWidths = dataModel.getOntologyModel().getChartSettings().getYAxisLineWidth();
-		XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
+		XYItemRenderer renderer = this.getXYPlot().getRenderer();
 		
 		for(int i = 0; i < lineWidths.size(); i++){
 			Stroke newStroke = new BasicStroke((Float) lineWidths.get(i));
@@ -248,16 +249,16 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 	}
 	
 	public void setXAxisLabel(String label){
-		this.chartPanel.getChart().getXYPlot().getDomainAxis().setLabel(label);
+		this.getXYPlot().getDomainAxis().setLabel(label);
 	}
 	
 	public void setYAxisLabel(String label){
-		this.chartPanel.getChart().getXYPlot().getRangeAxis().setLabel(label);
+		this.getXYPlot().getRangeAxis().setLabel(label);
 	}
 	
 	public void setSeriesColor(int seriesIndex, Color color) throws NoSuchSeriesException{
 		if(seriesIndex < dataModel.getSeriesCount()){
-			XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
+			XYItemRenderer renderer = this.getXYPlot().getRenderer();
 			renderer.setSeriesPaint(seriesIndex, color);
 		}else{
 			throw new NoSuchSeriesException();
@@ -266,7 +267,7 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 	
 	public void setSeriesLineWidth(int seriesIndex, float lineWidth) throws NoSuchSeriesException{
 		if(seriesIndex < dataModel.getSeriesCount()){
-			XYItemRenderer renderer = this.chartPanel.getChart().getXYPlot().getRenderer();
+			XYItemRenderer renderer = this.getXYPlot().getRenderer();
 			renderer.setSeriesStroke(seriesIndex, new BasicStroke(lineWidth));
 		}else{
 			throw new NoSuchSeriesException();
@@ -288,12 +289,12 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 			setRenderer(DEFAULT_RENDERER);
 		}
 		
-		applyColorSettings();
-		applyLineWidthsSettings();
+		this.applyColorSettings();
+		this.applyLineWidthsSettings();
 		
-		this.chartPanel.getChart().getPlot().setBackgroundPaint(Color.WHITE);		// Chart background
-		this.chartPanel.getChart().getXYPlot().setDomainGridlinePaint(Color.BLACK);
-		this.chartPanel.getChart().getXYPlot().setRangeGridlinePaint(Color.BLACK);
+		this.getXYPlot().setBackgroundPaint(Color.WHITE);		// Chart background
+		this.getXYPlot().setDomainGridlinePaint(Color.BLACK);
+		this.getXYPlot().setRangeGridlinePaint(Color.BLACK);
 		
 	}
 	
@@ -313,16 +314,16 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 		this.getJToolBarSeriesVisibility().removeAll();
 
 		// Iterate over all series
-		int seriesCount = this.getChart().getXYPlot().getDataset().getSeriesCount();
+		int seriesCount = this.getXYPlot().getDataset().getSeriesCount();
 		for(int i=0; i<seriesCount; i++){
 			
 			// Create JCheckBox for this series
-			Series series = parent.getDataModel().getChartModel().getSeries(i);
+			Series<String> series = parent.getDataModel().getChartModel().getSeries(i);
 			JCheckBox seriesCheckBox = new JCheckBox((String)series.getKey());
 			seriesCheckBox.addActionListener(this);
 			
 			// Set state according to current visibility
-			boolean currentlyVisible = this.getChart().getXYPlot().getRenderer().getItemVisible(i, 0);
+			boolean currentlyVisible = this.getXYPlot().getRenderer().getItemVisible(i, 0);
 			seriesCheckBox.setSelected(currentlyVisible);
 			
 			seriesCheckBox.setToolTipText(this.generateToolTipTextForVisibilityCheckBox(seriesCheckBox));
@@ -347,7 +348,7 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 			String seriesLabel = source.getText();
 
 			// Find the series
-			XYPlot plot = this.getChart().getXYPlot();
+			XYPlot<String> plot = this.getXYPlot();
 			for(int i=0; i<plot.getSeriesCount(); i++){
 				
 				// Toggle visibility
@@ -364,12 +365,17 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.Observer#update(de.enflexit.common.Observable, java.lang.Object)
+	 */
 	@Override
-	public void update(Observable o, Object arg) {
-		if(o instanceof ChartModel){
+	public void update(Observable observable, Object arg) {
+		
+		if (observable instanceof ChartModel){
 			// Rebuild the toolbar (all other changes are handled by the ChartPanel component from JFreeChart)
 			this.rebuildVisibilityToolBar();
-		}else if(o instanceof ChartSettingModel){
+			
+		} else if(observable instanceof ChartSettingModel){
 			
 			try {
 				ChartSettingsUpdateNotification notification = (ChartSettingsUpdateNotification) arg;
@@ -377,15 +383,15 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 				
 				switch(notification.getEventType()){
 					case TITLE_CHANGED:
-						this.chartPanel.getChart().getTitle().setText((String) notification.getNewValue());
+						this.chartPanel.getChart().setTitle((String) notification.getNewValue());
 						break;
 						
 					case X_AXIS_LABEL_CHANGED:
-						this.getChart().getXYPlot().getDomainAxis().setLabel((String) notification.getNewValue());
+						this.getXYPlot().getDomainAxis().setLabel((String) notification.getNewValue());
 						break;
 						
 					case Y_AXIS_LABEL_CHANGED:
-						this.getChart().getXYPlot().getRangeAxis().setLabel((String) notification.getNewValue());
+						this.getXYPlot().getRangeAxis().setLabel((String) notification.getNewValue());
 						break;
 						
 					case RENDERER_CHANGED:
@@ -423,5 +429,16 @@ public abstract class ChartTab extends JPanel implements ActionListener, Observe
 		}
 	}
 	
-
+	/**
+	 * Returns the current XY plot.
+	 * @return the XY plot
+	 */
+	@SuppressWarnings("unchecked")
+	protected XYPlot<String> getXYPlot() {
+		if (this.xyPlot==null || (this.getChart().getPlot()!=null && this.getChart().getPlot()!=this.xyPlot) ) {
+			this.xyPlot = (XYPlot<String>) this.getChart().getPlot();
+		}
+		return xyPlot;
+	}
+	
 }
