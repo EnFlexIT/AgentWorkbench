@@ -256,6 +256,31 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		return dialogWasShown;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalOptionsDialog(java.lang.String)
+	 */
+	@Override
+	public boolean showModalOptionsDialog(String categoryToFocus) {
+
+		if (this.isMissingAwbUIServce()==true) return false;
+		
+		boolean dialogWasShown = false;
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			// --- Check service instances --------------------------
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				dialogWasShown = dialogWasShown | awbUI.showModalOptionsDialog(categoryToFocus);
+			}
+			// --- Write error if nothing was shown -----------------
+			if (dialogWasShown==false) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbOptionsDialog was shown!");
+			}
+			
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).showModalOptionsDialog(categoryToFocus);
+		}
+		return dialogWasShown;
+	}
 	
 	
 	/* (non-Javadoc)
@@ -357,22 +382,7 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalOptionsDialog(java.lang.String)
-	 */
-	@Override
-	public AwbOptionsDialog showModalOptionsDialog(String categoryToFocus) {
-
-		if (this.isMissingAwbUIServce()==true) return null;
-		
-		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbOptionsDialog!");
-		} else {
-			return this.getAgentWorkbenchUiList().get(0).showModalOptionsDialog(categoryToFocus);
-		}
-		return null;
-	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalTranslationDialog()
 	 */

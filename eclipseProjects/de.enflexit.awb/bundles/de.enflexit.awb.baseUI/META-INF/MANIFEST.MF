@@ -9,8 +9,13 @@ Require-Bundle: de.enflexit.awb.core
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/baseUiService.xml
-Import-Package: de.enflexit.common,
+Import-Package: de.enflexit.awb.bgSystem.db,
+ de.enflexit.common,
+ de.enflexit.common.classSelection,
+ de.enflexit.common.crypto,
  de.enflexit.common.swing,
+ de.enflexit.db.hibernate,
+ de.enflexit.db.hibernate.gui,
  de.enflexit.language,
  jade.core,
  org.jfree.chart,
@@ -28,8 +33,10 @@ Import-Package: de.enflexit.common,
  org.slf4j
 Export-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.agents,
+ de.enflexit.awb.baseUI.components,
  de.enflexit.awb.baseUI.console,
  de.enflexit.awb.baseUI.dialogs,
  de.enflexit.awb.baseUI.monitor.load,
  de.enflexit.awb.baseUI.monitor.threading,
+ de.enflexit.awb.baseUI.options,
  de.enflexit.awb.baseUI.systemtray

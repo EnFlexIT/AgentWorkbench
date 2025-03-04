@@ -13,7 +13,6 @@ import de.enflexit.awb.core.ui.AwbDatabaseDialog;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogSystemLoad;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogThreading;
-import de.enflexit.awb.core.ui.AwbOptionsDialog;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.awb.core.ui.AwbProjectExportDialog;
 import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
@@ -79,6 +78,16 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalOptionsDialog(java.lang.String)
+	 */
+	@Override
+	public boolean showModalOptionsDialog(String categoryToFocus) {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return false;
+	}
+
+	
 	
 	@Override
 	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
@@ -112,14 +121,6 @@ public class DesktopUiService implements AgentWorkbenchUI {
 
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-
-	@Override
-	public AwbOptionsDialog showModalOptionsDialog(String categoryToFocus) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -16,7 +16,6 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.jade.Platform.SystemAgent;
-import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbOptionsDialog;
 import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.common.ServiceFinder;
@@ -351,10 +350,10 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 			Application.getJadePlatform().startSystemAgent(SystemAgent.RMA, null);
 			
 		} else if (ae.getSource()==this.getMenuItemConfig() || actionCommand.equalsIgnoreCase("Config")) {
-			AgentWorkbenchUiManager.getInstance().showModalOptionsDialog(null);
+			Application.showOptionsDialog();
 			
 		} else if (ae.getSource()==this.getMenuItemConsole()) {
-			AgentWorkbenchUiManager.getInstance().showModalOptionsDialog(AwbOptionsDialog.TAB_CONSOLE);
+			Application.showOptionsDialog(AwbOptionsDialog.TAB_CONSOLE);
 			
 		} else if (ae.getSource()==this.getMenuItemExit()) {
 			Application.stop();				

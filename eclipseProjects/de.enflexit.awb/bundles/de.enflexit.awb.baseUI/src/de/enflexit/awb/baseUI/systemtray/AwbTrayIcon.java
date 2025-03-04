@@ -11,7 +11,6 @@ import javax.swing.ImageIcon;
 
 import de.enflexit.awb.baseUI.BundleHelper;
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 
 /**
  * This class will show the tray icon and will prepare its context menu, if it is supported by the OS. 
@@ -229,7 +228,7 @@ public class AwbTrayIcon implements de.enflexit.awb.core.ui.AwbTrayIcon, ActionL
 	public void actionPerformed(ActionEvent e) {
 		
 		if (Application.isRunningAsServer()==true || Application.getMainWindow()==null) {
-			AgentWorkbenchUiManager.getInstance().showModalOptionsDialog(null);
+			Application.showOptionsDialog();
 		} else {
 			Application.getMainWindow().restoreFocus();
 		}

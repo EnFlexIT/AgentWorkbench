@@ -11,6 +11,7 @@ import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.dialogs.AboutDialog;
 import de.enflexit.awb.baseUI.monitor.load.SystemLoadDialog;
 import de.enflexit.awb.baseUI.monitor.threading.ThreadMonitorDialog;
+import de.enflexit.awb.baseUI.options.OptionDialog;
 import de.enflexit.awb.baseUI.systemtray.AwbTrayIcon;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
@@ -25,7 +26,6 @@ import de.enflexit.awb.core.ui.AwbDatabaseDialog;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogSystemLoad;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogThreading;
-import de.enflexit.awb.core.ui.AwbOptionsDialog;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.awb.core.ui.AwbProjectExportDialog;
 import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
@@ -42,6 +42,7 @@ import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 public class BaseUiService implements AgentWorkbenchUI {
 
 	private AboutDialog aboutDialog;
+	private OptionDialog optionDialog;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getImplementationName()
@@ -108,6 +109,41 @@ public class BaseUiService implements AgentWorkbenchUI {
 		
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalOptionsDialog(java.lang.String)
+	 */
+	@Override
+	public boolean showModalOptionsDialog(String categoryToFocus) {
+
+		if (optionDialog!=null) {
+			if (optionDialog.isVisible()==true) {
+				// --- Set focus again ----------
+				optionDialog.requestFocus();
+				return false;
+			} else {
+				// --- dispose it first --------- 
+				optionDialog.dispose();
+				optionDialog = null;
+			}
+		}
+		
+		if (Application.isRunningAsServer()==true) {
+			optionDialog = new OptionDialog(null);
+		} else {
+			optionDialog = new OptionDialog((Window) AgentWorkbenchUiManager.getInstance().getMainWindow());
+		}
+		if (categoryToFocus!=null) {
+			optionDialog.setFocusOnTab(categoryToFocus);
+		}
+		optionDialog.setVisible(true);
+		// - - - - - - - - - - - - - - - - - - - -
+		if (optionDialog!=null) {
+			optionDialog.dispose();
+		}
+		optionDialog = null;
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
@@ -143,12 +179,6 @@ public class BaseUiService implements AgentWorkbenchUI {
 
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AwbOptionsDialog showModalOptionsDialog(String categoryToFocus) {
 		// TODO Auto-generated method stub
 		return null;
 	}

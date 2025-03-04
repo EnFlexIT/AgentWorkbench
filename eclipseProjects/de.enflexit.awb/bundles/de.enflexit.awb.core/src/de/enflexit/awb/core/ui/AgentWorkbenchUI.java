@@ -62,6 +62,14 @@ public interface AgentWorkbenchUI {
 	 */
 	public boolean showModalAboutDialog();
 
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a standalone options dialog.
+	 *
+	 * @param categoryToFocus the category to focus
+	 * @return true, if an options dialog was shown 
+	 */
+	public boolean showModalOptionsDialog(String categoryToFocus);
+
 	
 	
 	/**
@@ -118,14 +126,6 @@ public interface AgentWorkbenchUI {
 	public AwbBenchmarkMonitor getBenchmarkMonitor();
 	
 	
-	/**
-	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a standalone options dialog.
-	 *
-	 * @param categoryToFocus the category to focus
-	 * @return the awb database dialog
-	 */
-	public AwbOptionsDialog showModalOptionsDialog(String categoryToFocus);
-
 	/**
 	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a  standalon translation dialog.
 	 * @return the awb translation dialog
