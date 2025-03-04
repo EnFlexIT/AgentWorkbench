@@ -6,7 +6,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<logback.version>1.5.6</logback.version>
+		<logback.version>1.5.17</logback.version>
 		<logback.db.version>1.2.11.1</logback.db.version>
 	</properties>
 
