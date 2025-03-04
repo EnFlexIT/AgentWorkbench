@@ -38,6 +38,25 @@ public class BaseClassLoadServiceUtility {
 	}
 
 	/**
+	 * Checks if the specified string represents a class name.
+	 *
+	 * @param classNameString the class name string
+	 * @return true, if is class name
+	 */
+	public static boolean isClassAvailable(String classNameString) {
+		
+		if (classNameString==null || classNameString.isBlank()==true) return false;
+		
+		try {
+			BaseClassLoadServiceUtility.forName(classNameString);
+			return true;
+		} catch (ClassNotFoundException | NoClassDefFoundError cnfEx) {
+			//cnfEx.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
 	 * Returns the class for the specified class name or reference.
 	 *
 	 * @param className the class name
