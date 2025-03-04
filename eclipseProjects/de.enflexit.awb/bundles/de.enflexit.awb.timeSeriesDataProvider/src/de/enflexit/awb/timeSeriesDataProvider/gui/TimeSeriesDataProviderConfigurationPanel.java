@@ -27,7 +27,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProviderConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration;

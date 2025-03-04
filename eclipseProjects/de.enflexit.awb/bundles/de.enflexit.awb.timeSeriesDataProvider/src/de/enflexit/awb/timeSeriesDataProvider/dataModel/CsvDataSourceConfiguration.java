@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import javax.swing.ImageIcon;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 
 /**
  * This class contains the configuration of a CSV-based data source. 

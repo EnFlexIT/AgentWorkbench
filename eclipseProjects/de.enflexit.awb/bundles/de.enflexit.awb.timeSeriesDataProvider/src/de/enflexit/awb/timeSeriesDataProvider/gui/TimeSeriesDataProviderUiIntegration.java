@@ -1,5 +1,6 @@
 package de.enflexit.awb.timeSeriesDataProvider.gui;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,8 +9,8 @@ import javax.swing.JButton;
 
 import org.agentgui.gui.swing.MainWindowExtension;
 
-import agentgui.core.application.Application;
-import agentgui.core.application.ApplicationListener;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationListener;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 
 /**
@@ -18,7 +19,7 @@ import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
  */
 public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension implements ActionListener, ApplicationListener {
 	
-private static final String ICON_PATH = "/icons/TSDProvider.png";
+	private static final String ICON_PATH = "/icons/TSDProvider.png";
 	
 	private ImageIcon imageIcon;
 	private JButton toolbarButton;
@@ -66,7 +67,11 @@ private static final String ICON_PATH = "/icons/TSDProvider.png";
 	 */
 	private TimeSeriesDataProviderConfigurationDialog getConfigurationDialog() {
 		if (configurationDialog==null) {
-			configurationDialog = new TimeSeriesDataProviderConfigurationDialog();
+			if (Application.getMainWindow()!=null) {
+				configurationDialog = new TimeSeriesDataProviderConfigurationDialog((Window) Application.getMainWindow());
+			} else {
+				configurationDialog = new TimeSeriesDataProviderConfigurationDialog(null);
+			}
 		}
 		return configurationDialog;
 	}

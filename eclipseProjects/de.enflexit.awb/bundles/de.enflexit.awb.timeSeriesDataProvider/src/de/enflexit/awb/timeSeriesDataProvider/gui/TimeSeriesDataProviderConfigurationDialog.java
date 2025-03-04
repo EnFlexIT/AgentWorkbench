@@ -4,7 +4,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import agentgui.core.application.Application;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
@@ -15,6 +14,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
@@ -35,8 +35,8 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 	/**
 	 * Instantiates a new weather data provider configuration dialog.
 	 */
-	public TimeSeriesDataProviderConfigurationDialog() {
-		super(Application.getMainWindow());
+	public TimeSeriesDataProviderConfigurationDialog(Window owner) {
+		super(owner);
 		this.initialize();
 	}
 	

@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * Abstract superclass for the configuration of a data source, which can provide data for multiple data series.

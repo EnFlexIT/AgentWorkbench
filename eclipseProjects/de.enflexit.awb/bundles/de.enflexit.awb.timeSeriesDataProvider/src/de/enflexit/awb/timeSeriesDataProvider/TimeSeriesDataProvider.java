@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;

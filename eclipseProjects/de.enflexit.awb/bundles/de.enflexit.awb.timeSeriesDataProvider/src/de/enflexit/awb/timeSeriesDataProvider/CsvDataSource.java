@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import agentgui.core.config.GlobalInfo;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
+import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.NumberHelper;
 
 /**
@@ -197,7 +197,7 @@ public class CsvDataSource extends AbstractDataSource {
 	 */
 	private DateTimeFormatter getDateTimeFormatter() {
 		if (dateTimeFormatter==null) {
-			dateTimeFormatter = DateTimeFormatter.ofPattern(this.sourceConfiguration.getDateTimeFormat()).withZone(GlobalInfo.getCurrentZoneId());
+			dateTimeFormatter = DateTimeFormatter.ofPattern(this.sourceConfiguration.getDateTimeFormat()).withZone(GlobalRuntimeValues.getZoneId());
 		}
 		return dateTimeFormatter;
 	}

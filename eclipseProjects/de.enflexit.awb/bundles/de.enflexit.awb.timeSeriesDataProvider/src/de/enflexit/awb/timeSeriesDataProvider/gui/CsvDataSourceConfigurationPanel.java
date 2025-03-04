@@ -26,10 +26,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo;
+
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
+import de.enflexit.common.GlobalRuntimeValues;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -654,7 +655,7 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	 */
 	private DateTimeFormatter getDateTimeFormatter() {
 		if (dateTimeFormatter==null) {
-			dateTimeFormatter = DateTimeFormatter.ofPattern(this.getCurrentDataSourceConfiguration().getDateTimeFormat()).withZone(GlobalInfo.getCurrentZoneId());
+			dateTimeFormatter = DateTimeFormatter.ofPattern(this.getCurrentDataSourceConfiguration().getDateTimeFormat()).withZone(GlobalRuntimeValues.getZoneId());
 		}
 		return dateTimeFormatter;
 	}
