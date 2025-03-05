@@ -6,17 +6,17 @@ import java.util.Vector;
 import de.enflexit.awb.baseUI.SeparatorPosition;
 
 /**
- * The Class DefaultTrayIconExtension can be extended to define individual menus, menu items
+ * The Class TrayIconMenuExtension can be extended to define individual menus, menu items
  * and toolbar components to the Swing main window of Agent.Workbench.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class DefaultTrayIconExtension implements AwbTrayIconExtension {
+public abstract class TrayIconMenuExtension implements AwbTrayIconMenuExtension {
 
 	private Vector<TrayIconMenuItem> trayIconMenuItemVector;
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.baseUI.systemtray.AwbTrayIconExtension#getTrayIconMenuItemVector()
+	 * @see de.enflexit.awb.baseUI.systemtray.AwbTrayIconMenuExtension#getTrayIconMenuItemVector()
 	 */
 	@Override
 	public Vector<TrayIconMenuItem> getTrayIconMenuItemVector() {
@@ -27,7 +27,7 @@ public abstract class DefaultTrayIconExtension implements AwbTrayIconExtension {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.baseUI.systemtray.AwbTrayIconExtension#addTrayIconMenuItem(java.awt.MenuItem, java.lang.Integer, de.enflexit.awb.baseUI.SeparatorPosition)
+	 * @see de.enflexit.awb.baseUI.systemtray.AwbTrayIconMenuExtension#addTrayIconMenuItem(java.awt.MenuItem, java.lang.Integer, de.enflexit.awb.baseUI.SeparatorPosition)
 	 */
 	@Override
 	public void addTrayIconMenuItem(MenuItem tryIconMenuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {

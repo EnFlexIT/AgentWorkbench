@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Automatic-Module-Name: de.enflexit.awb.baseUI
 Bundle-ActivationPolicy: lazy
 Bundle-Name: Agent.Workbench - Swing Base-UI
-Bundle-SymbolicName: de.enflexit.awb.baseUI
+Bundle-SymbolicName: de.enflexit.awb.baseUI;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Require-Bundle: de.enflexit.awb.core
 Bundle-Vendor: EnFlex.IT

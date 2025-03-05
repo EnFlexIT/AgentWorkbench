@@ -6,12 +6,12 @@ import java.util.Vector;
 import de.enflexit.awb.baseUI.SeparatorPosition;
 
 /**
- * The Class DefaultTrayIconExtension can be extended to define individual menus, menu items
+ * The Class TrayIconMenuExtension can be extended to define individual menus, menu items
  * and toolbar components to the Swing main window of Agent.Workbench.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface AwbTrayIconExtension {
+public interface AwbTrayIconMenuExtension {
 
 	/**
 	 * Initializes the extension. Use this method to add your individual 
@@ -28,11 +28,11 @@ public interface AwbTrayIconExtension {
 	/**
 	 * Adds the specified AWT tray icon {@link MenuItem}.
 	 *
-	 * @param tryIconMenuItemToAdd the tray icon menu item to add
+	 * @param trayIconMenuItemToAdd the tray icon menu item to add
 	 * @param indexPosition the index position (may be <code>null</code> also)
 	 * @param separatorPosition the separator position  (may be <code>null</code> also)
 	 */
-	public void addTrayIconMenuItem(MenuItem tryIconMenuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition);
+	public void addTrayIconMenuItem(MenuItem trayIconMenuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition);
 	
 
 }

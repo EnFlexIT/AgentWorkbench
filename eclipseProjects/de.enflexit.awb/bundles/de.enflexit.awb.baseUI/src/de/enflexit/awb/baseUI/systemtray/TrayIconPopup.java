@@ -77,8 +77,8 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 	 */
 	private void addExtensionMenuItems() {
 		
-		List<AwbTrayIconExtension> trayIconExtensionList = ServiceFinder.findServices(AwbTrayIconExtension.class);
-		for (AwbTrayIconExtension trayIconExtension : trayIconExtensionList) {
+		List<AwbTrayIconMenuExtension> trayIconExtensionList = ServiceFinder.findServices(AwbTrayIconMenuExtension.class);
+		for (AwbTrayIconMenuExtension trayIconExtension : trayIconExtensionList) {
 			try {
 				this.proceedTrayIconExtension(trayIconExtension);
 			} catch (Exception ex) {
@@ -87,10 +87,10 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 		}
 	}
 	/**
-	 * Proceeds the specified {@link DefaultTrayIconExtension} and adds it specified tray icon menu itmes.
-	 * @param tiExtension the DefaultTrayIconExtension to proceed
+	 * Proceeds the specified {@link TrayIconMenuExtension} and adds it specified tray icon menu itmes.
+	 * @param tiExtension the TrayIconMenuExtension to proceed
 	 */
-	private void proceedTrayIconExtension(AwbTrayIconExtension tiExtension) {
+	private void proceedTrayIconExtension(AwbTrayIconMenuExtension tiExtension) {
 		
 		if (tiExtension==null) return;
 
@@ -99,7 +99,7 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 			tiExtension.initialize();
 			
 		} catch (Exception ex) {
-			System.err.println(tiExtension.getClass().getName() + ": Error while initializing the DefaultTrayIconExtension.");
+			System.err.println(tiExtension.getClass().getName() + ": Error while initializing the TrayIconMenuExtension.");
 			ex.printStackTrace();
 		}
 

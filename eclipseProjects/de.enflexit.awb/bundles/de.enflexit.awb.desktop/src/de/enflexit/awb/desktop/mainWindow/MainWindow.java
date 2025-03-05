@@ -87,7 +87,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	private static final long serialVersionUID = 1L;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
-	public static final String MAIN_WINDOW_EXTENSION_ID = "org.awb.swing.mainWindowExtension";
+	public static final String MAIN_WINDOW_EXTENSION_ID = "de.enflexit.awb.desktop.mainWindowExtension";
 
 	public enum WorkbenchMenu {
 		MenuProject,
