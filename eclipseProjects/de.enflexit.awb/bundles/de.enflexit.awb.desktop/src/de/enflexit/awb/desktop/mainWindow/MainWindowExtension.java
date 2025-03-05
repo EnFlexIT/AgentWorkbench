@@ -1,13 +1,12 @@
 package de.enflexit.awb.desktop.mainWindow;
 
-import java.awt.MenuItem;
-import java.awt.TrayIcon;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-
+import de.enflexit.awb.baseUI.SeparatorPosition;
+import de.enflexit.awb.baseUI.systemtray.TrayIconMenuExtension;
 import de.enflexit.awb.desktop.mainWindow.MainWindow.WorkbenchMenu;
 
 
@@ -17,20 +16,13 @@ import de.enflexit.awb.desktop.mainWindow.MainWindow.WorkbenchMenu;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public abstract class MainWindowExtension {
+public abstract class MainWindowExtension extends TrayIconMenuExtension {
 
-	public enum SeparatorPosition {
-		NoSeparator,
-		SeparatorInFrontOf,
-		SeparatorAfter,
-	}
-	
 	private Vector<MainWindowMenu> mainWindowMenuVector;
 	private Vector<MainWindowMenuItem> mainWindowMenuItemVector;
 	private Vector<MainWindowToolbarComponent> mainWindowToolBarComponentVector;
 	
-	private Vector<TrayIconMenuItem> trayIconMenuItemVector;
-	
+
 	/**
 	 * Initializes the extension. Use this method to add your individual 
 	 * elements to the main window of the workbench.
@@ -114,29 +106,7 @@ public abstract class MainWindowExtension {
 		this.getMainWindowToolBarComponentVector().addElement(new MainWindowToolbarComponent(toolbarComponentToAdd, indexPosition, separatorPosition));
 	}
 	
-	/**
-	 * Returns the tray icon menu item vector.
-	 * @return the tray icon menu item vector
-	 */
-	public Vector<TrayIconMenuItem> getTrayIconMenuItemVector() {
-		if (trayIconMenuItemVector==null) {
-			trayIconMenuItemVector = new Vector<>();
-		}
-		return trayIconMenuItemVector;
-	}
-	/**
-	 * Adds the specified AWT tray icon {@link MenuItem}.
-	 *
-	 * @param tryIconMenuItemToAdd the tray icon menu item to add
-	 * @param indexPosition the index position (may be <code>null</code> also)
-	 * @param separatorPosition the separator position  (may be <code>null</code> also)
-	 */
-	protected void addTrayIconMenuItem(MenuItem tryIconMenuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {
-		if (tryIconMenuItemToAdd==null) {
-			throw new NullPointerException("The menu item to be added is null.");
-		}
-		this.getTrayIconMenuItemVector().addElement(new TrayIconMenuItem(tryIconMenuItemToAdd, indexPosition, separatorPosition));
-	}
+	
 	
 	
 	// ------------------------------------------------------------------------
@@ -256,41 +226,5 @@ public abstract class MainWindowExtension {
 		}
 	}
 	
-	/**
-	 * The Class TrayIconMenuItem describes a single menu item 
-	 * that are to be added to the AWB {@link TrayIcon}.
-	 */
-	public class TrayIconMenuItem {
-		
-		private MenuItem menuItem;
-		private Integer indexPosition;
-		private SeparatorPosition separatorPosition;
-		
-		public TrayIconMenuItem(MenuItem menuItem, Integer indexPosition, SeparatorPosition separatorPosition) {
-			this.setMenuItem(menuItem);
-			this.setIndexPosition(indexPosition);
-			this.setSeparatorPosition(separatorPosition);
-		}
-
-		public MenuItem getMenuItem() {
-			return menuItem;
-		}
-		public void setMenuItem(MenuItem menuItem) {
-			this.menuItem = menuItem;
-		}
-
-		public Integer getIndexPosition() {
-			return indexPosition;
-		}
-		public void setIndexPosition(Integer indexPosition) {
-			this.indexPosition = indexPosition;
-		}
-
-		public SeparatorPosition getSeparatorPosition() {
-			return separatorPosition;
-		}
-		public void setSeparatorPosition(SeparatorPosition separatorPosition) {
-			this.separatorPosition = separatorPosition;
-		}
-	}
+	
 }

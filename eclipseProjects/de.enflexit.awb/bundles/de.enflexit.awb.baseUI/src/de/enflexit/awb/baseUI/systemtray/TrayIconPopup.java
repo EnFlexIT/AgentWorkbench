@@ -5,10 +5,13 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Icon;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.systemtray.AwbTrayIcon.TrayUsage;
@@ -18,7 +21,6 @@ import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.jade.Platform.SystemAgent;
 import de.enflexit.awb.core.ui.AwbOptionsDialog;
 import de.enflexit.awb.core.update.AWBUpdater;
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.language.Language;
 
 /**
@@ -30,6 +32,8 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 
 	private static final long serialVersionUID = -126917985058515163L;
 
+	public static final String TRAY_ICON_MENU_EXTENSION_ID = "de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension";
+	
 	private AwbTrayIcon awbTrayIcon = null;
 	
 	private Vector<MenuItem> menuItemList;
@@ -67,30 +71,37 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 			// --- Add standard menu items ----------------
 			this.addStandardMenuItems();
 			// --- Add extension menu items ---------------
-			this.addExtensionMenuItems();
+			this.proceedTrayIconMenuExtensions();
 		}
 		return menuItemList;
 	}
 	
 	/**
-	 * Adds the extension menu items.
+	 * Proceeds the main window extensions that are defines 
+	 * by the corresponding extension point.
 	 */
-	private void addExtensionMenuItems() {
+	private void proceedTrayIconMenuExtensions() {
 		
-		List<AwbTrayIconMenuExtension> trayIconExtensionList = ServiceFinder.findServices(AwbTrayIconMenuExtension.class);
-		for (AwbTrayIconMenuExtension trayIconExtension : trayIconExtensionList) {
-			try {
-				this.proceedTrayIconExtension(trayIconExtension);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+		IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(TRAY_ICON_MENU_EXTENSION_ID);
+		try {
+			for (int i = 0; i < configElements.length; i++) {
+				IConfigurationElement configElement = configElements[i]; 
+				final Object execExt = configElement.createExecutableExtension("class");
+				if (execExt instanceof TrayIconMenuExtension) {
+					TrayIconMenuExtension timExtension = (TrayIconMenuExtension) execExt;
+					this.proceedTrayIconMenuExtension(timExtension);
+				}
+			} 
+
+		} catch (CoreException ex) {
+            System.err.println(ex.getMessage());
+        }
 	}
 	/**
 	 * Proceeds the specified {@link TrayIconMenuExtension} and adds it specified tray icon menu itmes.
 	 * @param tiExtension the TrayIconMenuExtension to proceed
 	 */
-	private void proceedTrayIconExtension(AwbTrayIconMenuExtension tiExtension) {
+	private void proceedTrayIconMenuExtension(AwbTrayIconMenuExtension tiExtension) {
 		
 		if (tiExtension==null) return;
 

@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-
+import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;

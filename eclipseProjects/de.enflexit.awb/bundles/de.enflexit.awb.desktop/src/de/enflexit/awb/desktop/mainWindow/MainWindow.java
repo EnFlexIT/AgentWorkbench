@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.console.JTabbedPane4Consoles;
 import de.enflexit.awb.core.Application;
@@ -66,7 +67,6 @@ import de.enflexit.awb.desktop.dialogs.StartAgentDialog;
 import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.MainWindowMenu;
 import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.MainWindowMenuItem;
 import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.MainWindowToolbarComponent;
-import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.SeparatorPosition;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
 import de.enflexit.common.images.ImageHelper;

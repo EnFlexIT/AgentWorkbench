@@ -10,7 +10,9 @@ Export-Package: de.enflexit.awb.desktop,
  de.enflexit.awb.desktop.mainWindow
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: de.enflexit.awb.baseUI.console,
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.console,
+ de.enflexit.awb.baseUI.systemtray,
  de.enflexit.awb.core,
  de.enflexit.awb.core.classLoadService,
  de.enflexit.awb.core.config,

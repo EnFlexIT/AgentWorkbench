@@ -7,7 +7,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.awb.timeSeriesDataProvider
-Import-Package: de.enflexit.awb.core,
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.systemtray,
+ de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.project,
  de.enflexit.awb.desktop.mainWindow,

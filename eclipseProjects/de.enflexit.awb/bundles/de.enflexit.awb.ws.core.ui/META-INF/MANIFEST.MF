@@ -13,7 +13,9 @@ Require-Bundle: de.enflexit.awb.ws.client,
  org.eclipse.jetty.util,
  org.eclipse.osgi
 Export-Package: de.enflexit.awb.ws.ui
-Import-Package: de.enflexit.awb.core,
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.systemtray,
+ de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.desktop.mainWindow,
  de.enflexit.common,
