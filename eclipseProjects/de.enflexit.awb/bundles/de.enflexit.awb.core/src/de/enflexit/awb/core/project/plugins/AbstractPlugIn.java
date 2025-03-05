@@ -86,11 +86,9 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 	}
 	
 	/**
-	 * This method will be invoked just after the onPlugOut() method 
-	 * was executed.
-	 * DO NOT OVERRIDE !!!
+	 * This final method will be invoked just after the onPlugOut() method was executed.
 	 */
-	public void afterPlugOut() {
+	public final void afterPlugOut() {
 		this.project.deleteObserver(this);
 		this.removeCustomElements();
 	}
@@ -105,7 +103,7 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 	 */
 	protected void addJMenu(MenueType myMenu) {
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().addPlugInMenu(myMenu);
+			Application.getMainWindow().addMenu(myMenu);
 		}
 		customComponent.add(myMenu);
 	}
@@ -119,7 +117,7 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 	 */
 	protected void addJMenu(MenueType myMenu, int indexPosition) {
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().addPlugInMenu(myMenu, indexPosition);
+			Application.getMainWindow().addMenu(myMenu, indexPosition);
 		}
 		customComponent.add(myMenu);
 	}
@@ -133,7 +131,7 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 	 */
 	protected void addJMenuItemComponent(MenueType menu2add, MenuItemType myMenuItemComponent) {
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().addPlugInMenuItemComponent(menu2add, myMenuItemComponent);
+			Application.getMainWindow().addMenuItemComponent(menu2add, myMenuItemComponent);
 		}
 		customComponent.add(myMenuItemComponent);
 	}
@@ -148,7 +146,7 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 	 */
 	protected void addJMenuItemComponent(MenueType menu2add, MenuItemType myMenuItemComponent, int indexPosition) {
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().addPlugInMenuItemComponent(menu2add, myMenuItemComponent, indexPosition);
+			Application.getMainWindow().addMenuItemComponent(menu2add, myMenuItemComponent, indexPosition);
 		}
 		customComponent.add(myMenuItemComponent);
 	}
@@ -161,7 +159,7 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 	 */
 	protected void addJToolbarComponent(ToolBarComponentType myComponent) {
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().addJToolbarComponent(myComponent);
+			Application.getMainWindow().addToolbarComponent(myComponent);
 		}
 		customComponent.add(myComponent);
 	}
@@ -174,7 +172,7 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 	 */
 	protected void addJToolbarComponent(ToolBarComponentType myComponent, int indexPosition) {
 		if (Application.getMainWindow()!=null) {
-			Application.getMainWindow().addJToolbarComponent(myComponent, indexPosition);
+			Application.getMainWindow().addToolbarComponent(myComponent, indexPosition);
 		}
 		customComponent.add(myComponent);
 	}
@@ -240,7 +238,7 @@ public abstract class AbstractPlugIn<MenueType, MenuItemType, ToolBarComponentTy
 		// --- Remove custom toolbar/menu elements --------
 		for (int i = 0; i < customComponent.size(); i++) {
 			Object component = customComponent.get(i);
-			Application.getMainWindow().removePlugInComponent(component);
+			Application.getMainWindow().removeComponent(component);
 		}
 		customComponent = new Vector<>();
 		

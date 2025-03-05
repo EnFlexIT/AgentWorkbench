@@ -2,15 +2,41 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Automatic-Module-Name: de.enflexit.awb.desktop
 Bundle-ActivationPolicy: lazy
-Bundle-Name: Agent.Workbench - Desktop
+Bundle-Name: Agent.Workbench - Desktop Application
 Bundle-SymbolicName: de.enflexit.awb.desktop
 Bundle-Version: 3.0.0.qualifier
+Export-Package: de.enflexit.awb.desktop,
+ de.enflexit.awb.desktop.mainWindow
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: de.enflexit.awb.core.project,
+Import-Package: de.enflexit.awb.baseUI.console,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.jade,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.setup,
  de.enflexit.awb.core.project.transfer,
  de.enflexit.awb.core.ui,
+ de.enflexit.awb.core.update,
  de.enflexit.awb.simulation.agents,
+ de.enflexit.awb.simulation.load,
+ de.enflexit.awb.simulation.load.monitoring,
+ de.enflexit.awb.simulation.logging,
+ de.enflexit.common,
+ de.enflexit.common.classLoadService,
+ de.enflexit.common.classSelection,
+ de.enflexit.common.featureEvaluation,
+ de.enflexit.common.images,
+ de.enflexit.common.swing,
+ de.enflexit.common.swing.fileSelection,
+ de.enflexit.db.hibernate,
+ de.enflexit.language,
+ jade.core,
+ jade.wrapper,
+ org.eclipse.core.runtime,
+ org.eclipse.equinox.p2.metadata,
+ org.eclipse.equinox.p2.metadata.expression;version="[2.0.0,3.0.0)",
  org.slf4j
 Service-Component: OSGI-INF/desktopUiService.xml
 

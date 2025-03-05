@@ -74,7 +74,7 @@ public class LoadExecutionAgent extends Agent {
 			
 			// --- If the Action is a 'start'-action, it can be also a 'restart'-action -----
 			if (startArg==BASE_ACTION_Start) {
-				if (mainWindow!=null && mainWindow.isEnableSimStop()) {
+				if (mainWindow!=null && mainWindow.isEnabledSimStop()) {
 					startArg = BASE_ACTION_Restart;
 				}
 			}
@@ -87,10 +87,10 @@ public class LoadExecutionAgent extends Agent {
 				if (staticBalancing!=null) {
 					myAgent.addBehaviour(staticBalancing);	
 					if (mainWindow!=null) {
-						mainWindow.setEnableSimStart(false);
-						mainWindow.setEnableSimPause(true);
-						mainWindow.setEnableSimStop(true);
-						mainWindow.enableSetupSelector(false);
+						mainWindow.setEnabledSimStart(false);
+						mainWindow.setEnabledSimPause(true);
+						mainWindow.setEnabledSimStop(true);
+						mainWindow.setEnabledSetupSelector(false);
 					}
 				} else {
 					myAgent.doDelete();
@@ -101,9 +101,9 @@ public class LoadExecutionAgent extends Agent {
 				LoadExecutionAgent.this.platform.setPlatformState(PlatformState.PausingMAS);
 				setPauseSimulation(true);
 				if (mainWindow!=null) {
-					mainWindow.setEnableSimStart(true);
-					mainWindow.setEnableSimPause(false);
-					mainWindow.setEnableSimStop(true);
+					mainWindow.setEnabledSimStart(true);
+					mainWindow.setEnabledSimPause(false);
+					mainWindow.setEnabledSimStop(true);
 				}
 				myAgent.doDelete();
 				break;
@@ -112,9 +112,9 @@ public class LoadExecutionAgent extends Agent {
 				LoadExecutionAgent.this.platform.setPlatformState(PlatformState.RestartingMAS);
 				setPauseSimulation(false);
 				if (mainWindow!=null) {
-					mainWindow.setEnableSimStart(false);
-					mainWindow.setEnableSimPause(true);
-					mainWindow.setEnableSimStop(true);
+					mainWindow.setEnabledSimStart(false);
+					mainWindow.setEnabledSimPause(true);
+					mainWindow.setEnabledSimStop(true);
 				}
 				Application.getJadePlatform().setPlatformState(PlatformState.RunningMAS);
 				myAgent.doDelete();

@@ -937,7 +937,7 @@ public class Platform {
 				String msgText = Language.translate("Zur Zeit ist kein Agenten-Projekt geöffnet.");
 				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), msgText, msgHead, AwbMessageDialog.OK_OPTION);
 				// --- Since the simulation was not started, enable the start button again
-				Application.getMainWindow().setEnableSimStart(true);
+				Application.getMainWindow().setEnabledSimStart(true);
 				return;	
 			} else {
 				Application.getProjectFocused().save();

@@ -293,7 +293,22 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMainWindow!");
+			// --- Check instances ----------------------------------
+			List<AwbMainWindow<?, ?, ? ,?>> mainWindowList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbMainWindow<?, ?, ?, ?> mainWindow = awbUI.getMainWindow();
+				if (mainWindow!=null) mainWindowList.add(mainWindow);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (mainWindowList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbMainWindow!");
+			} else if (mainWindowList.size()==1) {
+				return mainWindowList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMainWindow!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getMainWindow();
 		}

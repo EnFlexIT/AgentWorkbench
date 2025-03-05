@@ -20,6 +20,7 @@ import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
 import de.enflexit.awb.core.ui.AwbTranslationDialog;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
+import de.enflexit.awb.desktop.mainWindow.MainWindow;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 
 /**
@@ -86,14 +87,15 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		// --- Nothing to do here, since BaseUiService will create the component ----
 		return false;
 	}
-
 	
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
+	 */
 	@Override
 	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MainWindow();
 	}
+	
 	
 	@Override
 	public AwbProjectInteractionDialog getProjectInteractionDialog(String actionTitel, ProjectAction action) {

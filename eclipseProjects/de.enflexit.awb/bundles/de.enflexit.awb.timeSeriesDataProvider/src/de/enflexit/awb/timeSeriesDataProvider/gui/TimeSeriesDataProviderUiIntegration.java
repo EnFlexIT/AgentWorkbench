@@ -7,10 +7,9 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import org.agentgui.gui.swing.MainWindowExtension;
-
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationListener;
+import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 
 /**
