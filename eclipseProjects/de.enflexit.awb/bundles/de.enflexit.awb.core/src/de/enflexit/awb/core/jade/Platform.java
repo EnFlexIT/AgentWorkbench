@@ -492,7 +492,7 @@ public class Platform {
 		
 		Application.setJadeStatusColor(JadeStatusColor.Red);
 		this.setPlatformState(PlatformState.Standby);
-		if (Application.getMainWindow()!=null) {
+		if (Application.isMainWindowInitiated()==true) {
 			Application.getMainWindow().setSimulationReady2Start();
 		}
 		// --- Clean up the Heap memory -------------------

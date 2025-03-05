@@ -267,7 +267,7 @@ public class Application {
 	}
 	
 	/**
-	 * Gets the main window.
+	 * Creates and returns the {@link AwbMainWindow}.
 	 * @return the main window
 	 */
 	public static AwbMainWindow<?, ?, ?, ?> getMainWindow() {
@@ -294,6 +294,14 @@ public class Application {
 		mainWindow = newMainWindow;
 	}
 	/**
+	 * Checks if the {@link AwbMainWindow} is initiated.
+	 * @return true, if is main window initiated
+	 */
+	public static boolean isMainWindowInitiated() {
+		return Application.mainWindow!=null;
+	}
+	
+	/**
 	 * Adds a supplement to the application title.
 	 * @param add2BasicTitle the addition for the basic title 
 	 */
@@ -309,8 +317,8 @@ public class Application {
 	 * @param jadeStatus the new jade status color
 	 */
 	public static void setJadeStatusColor(JadeStatusColor jadeStatus) {
-		if (getMainWindow()!=null) {
-			getMainWindow().setJadeStatusColor(jadeStatus);
+		if (Application.mainWindow!=null) {
+			Application.mainWindow.setJadeStatusColor(jadeStatus);
 		}
 		if (trayIcon!=null) {
 			trayIcon.refreshView();	

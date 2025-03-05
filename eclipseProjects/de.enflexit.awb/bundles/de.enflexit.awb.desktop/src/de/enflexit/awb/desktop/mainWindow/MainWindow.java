@@ -49,6 +49,8 @@ import javax.swing.border.EtchedBorder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.console.JTabbedPane4Consoles;
@@ -84,6 +86,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 	private static final long serialVersionUID = 1L;
 
+	private static Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
 	public static final String MAIN_WINDOW_EXTENSION_ID = "org.awb.swing.mainWindowExtension";
 
 	public enum WorkbenchMenu {
@@ -648,18 +651,30 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		return jMenuBarMain;
 	}
 	
-	@Override
-	public void addMenu(Object myMenu) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addMenu(Object myMenu, int indexPosition) {
-		// TODO Auto-generated method stub
-		
-	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbMainWindow#addMenu(java.lang.Object)
+	 */
+	@Override
+	public void addMenu(Object myNewMenu) {
+		this.addMenu(myNewMenu, -1);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbMainWindow#addMenu(java.lang.Object, int)
+	 */
+	@Override
+	public void addMenu(Object myNewMenu, int indexPosition) {
+		
+		if (myNewMenu ==null) {
+			LOGGER.error("No menu was specified that is to be added as a new menu.");
+			return;
+		} else if (myNewMenu instanceof JMenu == false) {
+			LOGGER.error("The specified menu type is not of type JMenu. Instead a type '" + myNewMenu.getClass().getName() + "' was specified.");
+			return;
+		}
+		// --- Add the specified JMenu --------------------
+		this.addJMenu((JMenu) myNewMenu, indexPosition);
+	}
 	/**
 	 * This method can be used in order to add an individual menu at a specified index position of the menu bar.
 	 *
@@ -668,7 +683,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	private void addJMenu(JMenu myMenu, Integer indexPosition) {
 		int nElements = this.getJMenuBarMain().getSubElements().length;
-		if (indexPosition==null || indexPosition > (nElements - 1)) {
+		if (indexPosition==null || indexPosition==-1 || indexPosition > (nElements - 1)) {
 			this.addJMenu(myMenu);
 		} else {
 			this.getJMenuBarMain().add(myMenu, (int)indexPosition);
@@ -690,18 +705,32 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	@Override
 	public void addMenuItemComponent(Object menu2add2, Object myMenuItemComponent) {
-		// TODO Auto-generated method stub
-		
+		this.addMenuItemComponent(menu2add2, myMenuItemComponent, -1);
 	}
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AwbMainWindow#addMenuItemComponent(java.lang.Object, java.lang.Object, int)
 	 */
 	@Override
 	public void addMenuItemComponent(Object menu2add2, Object myMenuItemComponent, int indexPosition) {
-		// TODO Auto-generated method stub
+		
+		if (menu2add2 ==null) {
+			LOGGER.error("No menu was specified to which the new menu item is to be added.");
+			return;
+		} else if (menu2add2 instanceof JMenu == false) {
+			LOGGER.error("The specified menu to which a component is to be added, s not of type JMenu. Instead a type '" + menu2add2.getClass().getName() + "' was specified.");
+			return;
+		}
+		
+		if (myMenuItemComponent ==null) {
+			LOGGER.error("No menu item was specified to be added to the specified menu.");
+			return;
+		} else if (myMenuItemComponent instanceof JComponent == false) {
+			LOGGER.error("The specified menu item to be added is not of type JComponent. Instead a type '" + myMenuItemComponent.getClass().getName() + "' was specified.");
+			return;
+		}
+		// --- Add the component --------------------------
+		this.addJMenuItemComponent((JMenu)myMenuItemComponent, (JComponent)myMenuItemComponent, indexPosition);
 	}
-	
 	/**
 	 * This method can be used in order to add an individual JMmenuItem at a specified index position of the given menu.
 	 *
@@ -711,14 +740,13 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	private void addJMenuItemComponent(JMenu menu2add, JComponent myMenuItemComponent, int indexPosition) {
 		int nElements = menu2add.getItemCount();
-		if (indexPosition > (nElements - 1)) {
+		if (indexPosition==-1 || indexPosition > (nElements - 1)) {
 			this.addJMenuItemComponent(menu2add, myMenuItemComponent);
 		} else {
 			menu2add.add(myMenuItemComponent, indexPosition);
 			this.validate();
 		}
 	}
-
 	/**
 	 * This method can be used in order to add an individual JMmenuItem to the given menu.
 	 *
@@ -1495,25 +1523,22 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	@Override
 	public void addToolbarComponent(Object myComponent) {
-		// TODO Auto-generated method stub
-		
+		this.addToolbarComponent(myComponent, -1);
 	}
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AwbMainWindow#addToolbarComponent(java.lang.Object, int)
 	 */
 	@Override
 	public void addToolbarComponent(Object myComponent, int indexPosition) {
-		// TODO Auto-generated method stub
 		
-	}
-	
-	/**
-	 * This method can be used in order to add an individual menu button to the toolbar.
-	 * @param myComponent the my component
-	 */
-	private void addJToolbarComponent(JComponent myComponent) {
-		this.addJToolbarComponent(myComponent, null);
+		if (myComponent ==null) {
+			LOGGER.error("No toolbar component was specified that is to be added to the main window toolbar.");
+			return;
+		} else if (myComponent instanceof JComponent == false) {
+			LOGGER.error("The specified toolbar component is not of type JComponent. Instead a type '" + myComponent.getClass().getName() + "' was specified.");
+			return;
+		}
+		this.addJToolbarComponent((JComponent) myComponent, indexPosition);
 	}
 	/**
 	 * This method can be used in order to add an individual menu button a specified index position of the toolbar.
@@ -1522,7 +1547,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	private void addJToolbarComponent(JComponent myComponent, Integer indexPosition) {
 		int nElements = this.getJToolBarApplication().getComponentCount();
-		if (indexPosition==null || indexPosition > (nElements-1)) {
+		if (indexPosition==null || indexPosition==-1 || indexPosition > (nElements-1)) {
 			this.getJToolBarApplication().add(myComponent);
 		} else {
 			this.getJToolBarApplication().add(myComponent, (int)indexPosition);
@@ -1542,10 +1567,24 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	// --- Create Toolbar - END -----------------------------------
 	// ------------------------------------------------------------
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbMainWindow#removeComponent(java.lang.Object)
+	 */
 	@Override
 	public void removeComponent(Object component) {
-		// TODO Auto-generated method stub
 		
+		if (component==null) return;
+		if (component instanceof JComponent==false) {
+			LOGGER.error("The specified component to remove is not of type JComponent. Instead a type '" + component.getClass().getName() + "' was specified.");
+			return;
+		}
+		
+		// --- Remove custom toolbar/menu elements --------
+		JComponent jComp = (JComponent) component;
+		Container container = jComp.getParent();
+		if (container!=null) {
+			container.remove(jComp);
+		}
 	}
 	
 	
