@@ -18,9 +18,6 @@ Require-Bundle: jakarta.ws.rs-api,
  com.fasterxml.jackson.core.jackson-databind,
  com.fasterxml.jackson.datatype.jackson-datatype-jsr310,
  wrapped.org.openapitools.jackson-databind-nullable,
- de.enflexit.common,
- org.agentgui.core,
- org.agentgui.lib.jade,
  de.enflexit.awb.ws.client,
  org.eclipse.osgi
 Bundle-ActivationPolicy: lazy
@@ -32,4 +29,13 @@ Export-Package: de.enflexit.awb.samples.ws.restapi.client,
  de.enflexit.awb.samples.ws.restapi.client.gen.handler,
  de.enflexit.awb.samples.ws.restapi.client.gen.handler.auth,
  de.enflexit.awb.samples.ws.restapi.client.gen.model
-Import-Package: jakarta.annotation
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.common.classLoadService,
+ jade.content.onto;version="[4.6.0,5.0.0)",
+ jade.core,
+ jakarta.annotation

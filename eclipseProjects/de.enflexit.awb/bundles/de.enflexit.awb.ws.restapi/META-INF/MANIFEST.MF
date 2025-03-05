@@ -21,8 +21,7 @@ Require-Bundle: jakarta.servlet-api,
  com.fasterxml.jackson.core.jackson-databind,
  com.fasterxml.jackson.datatype.jackson-datatype-jsr310,
  com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-base,
- com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider,
- org.agentgui.core
+ com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider
 Export-Package: de.enflexit.awb.ws.restapi,
  de.enflexit.awb.ws.restapi.gen,
  de.enflexit.awb.ws.restapi.gen.factories,
@@ -30,7 +29,11 @@ Export-Package: de.enflexit.awb.ws.restapi,
  de.enflexit.awb.ws.restapi.gen.model
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Import-Package: de.enflexit.common,
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.simulation.load,
+ de.enflexit.common,
  jakarta.annotation,
  jakarta.ws.rs,
  jakarta.ws.rs.core,

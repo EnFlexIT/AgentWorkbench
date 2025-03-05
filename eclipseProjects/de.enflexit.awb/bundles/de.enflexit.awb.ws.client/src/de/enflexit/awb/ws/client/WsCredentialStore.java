@@ -24,10 +24,9 @@ import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
-
-import agentgui.core.application.Application;
-import agentgui.core.application.ApplicationListener;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationListener;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.credential.AbstractCredential;
 import de.enflexit.awb.ws.credential.ApiKeyCredential;

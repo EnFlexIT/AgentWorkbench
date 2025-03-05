@@ -2,8 +2,7 @@ package de.enflexit.awb.ws.restapi.impl;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.NotFoundException;
 import de.enflexit.awb.ws.restapi.gen.VersionApiService;

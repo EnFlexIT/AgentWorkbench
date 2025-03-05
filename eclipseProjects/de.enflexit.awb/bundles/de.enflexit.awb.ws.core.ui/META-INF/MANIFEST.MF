@@ -7,14 +7,18 @@ Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: de.enflexit.common,
- org.agentgui.core,
- de.enflexit.awb.ws.client,
+Require-Bundle: de.enflexit.awb.ws.client,
  de.enflexit.awb.ws.core,
  org.eclipse.jetty.server,
  org.eclipse.jetty.util,
  org.eclipse.osgi
 Export-Package: de.enflexit.awb.ws.ui
-Import-Package: org.apache.commons.lang3
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.desktop.mainWindow,
+ de.enflexit.common,
+ de.enflexit.common.crypto,
+ de.enflexit.common.swing,
+ org.apache.commons.lang3
 Bundle-ClassPath: .,
  miglayout15-swing.jar

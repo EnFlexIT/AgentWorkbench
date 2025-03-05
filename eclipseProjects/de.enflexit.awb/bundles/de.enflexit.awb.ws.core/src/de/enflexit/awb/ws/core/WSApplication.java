@@ -3,7 +3,7 @@ package de.enflexit.awb.ws.core;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.language.Language;
 
 /**

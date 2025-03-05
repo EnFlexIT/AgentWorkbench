@@ -7,8 +7,7 @@ import java.util.List;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-
-import agentgui.simulationService.load.LoadUnits;
+import de.enflexit.awb.simulation.load.LoadUnits;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.InfoApi;
 import de.enflexit.awb.ws.restapi.gen.InfoApiService;

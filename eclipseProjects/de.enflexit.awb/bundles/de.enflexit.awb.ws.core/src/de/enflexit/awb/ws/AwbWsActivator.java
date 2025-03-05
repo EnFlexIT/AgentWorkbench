@@ -3,8 +3,8 @@ package de.enflexit.awb.ws;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import agentgui.core.application.Application;
-import agentgui.core.application.ApplicationListener;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationListener;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.JettyServerManager;
 import jakarta.ws.rs.ext.RuntimeDelegate;

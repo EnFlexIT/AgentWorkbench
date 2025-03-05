@@ -11,7 +11,6 @@ Bundle-Activator: de.enflexit.awb.ws.AwbWsActivator
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbWebServerService.xml 
 Require-Bundle: org.eclipse.osgi,
- org.agentgui.core,
  org.eclipse.jetty.security,
  org.eclipse.jetty.server,
  org.eclipse.jetty.ee10.servlet,
@@ -36,7 +35,9 @@ Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core.security.jwt,
  de.enflexit.awb.ws.core.util,
  de.enflexit.awb.ws.server
-Import-Package: de.enflexit.common,
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
+ de.enflexit.common,
  de.enflexit.common.crypto,
  de.enflexit.common.swing,
  de.enflexit.language,

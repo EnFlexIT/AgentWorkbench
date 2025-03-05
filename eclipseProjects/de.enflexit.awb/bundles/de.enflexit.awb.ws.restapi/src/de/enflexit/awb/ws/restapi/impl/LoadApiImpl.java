@@ -2,8 +2,7 @@ package de.enflexit.awb.ws.restapi.impl;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-
-import agentgui.simulationService.load.LoadMeasureThread;
+import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.LoadApi;
 import de.enflexit.awb.ws.restapi.gen.LoadApiService;

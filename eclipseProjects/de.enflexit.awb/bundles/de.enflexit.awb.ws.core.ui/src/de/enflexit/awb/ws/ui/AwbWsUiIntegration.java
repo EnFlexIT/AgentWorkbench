@@ -7,12 +7,12 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import org.agentgui.gui.swing.MainWindowExtension;
-
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyServerManager;
@@ -211,7 +211,11 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 			ae.getSource()==this.getTrayIconMenuItemWsConfiguration()) {
 			// --- Open the modal JDialogWsConfiguration ------------ 
 			if (configDialog==null) {
-				configDialog = new JDialogWsConfiguration(Application.getMainWindow());
+				if (Application.isMainWindowInitiated()==true && Application.getMainWindow() instanceof JFrame) {
+					configDialog = new JDialogWsConfiguration((JFrame)Application.getMainWindow());
+				} else {
+					configDialog = new JDialogWsConfiguration();
+				}
 				configDialog.setVisible(true);
 				// - - - - - - - -
 				configDialog.dispose();

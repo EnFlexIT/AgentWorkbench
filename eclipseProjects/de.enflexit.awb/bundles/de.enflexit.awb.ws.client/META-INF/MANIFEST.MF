@@ -9,11 +9,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.enflexit.awb.ws.client.BundleActivator
 Require-Bundle: org.eclipse.osgi,
- org.agentgui.core,
  com.google.gson,
- de.enflexit.common,
  de.enflexit.awb.ws.core
-Import-Package: jakarta.xml.bind,
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.project,
+ de.enflexit.common,
+ jakarta.xml.bind,
  jakarta.xml.bind.annotation
 Export-Package: de.enflexit.awb.ws.client,
  de.enflexit.awb.ws.credential

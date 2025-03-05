@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.ws.server.AwbServer;
 
 /**

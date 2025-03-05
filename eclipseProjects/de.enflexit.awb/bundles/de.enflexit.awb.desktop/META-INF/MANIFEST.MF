@@ -6,6 +6,7 @@ Bundle-Name: Agent.Workbench - Desktop Application
 Bundle-SymbolicName: de.enflexit.awb.desktop
 Bundle-Version: 3.0.0.qualifier
 Export-Package: de.enflexit.awb.desktop,
+ de.enflexit.awb.desktop.dialogs,
  de.enflexit.awb.desktop.mainWindow
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-17
