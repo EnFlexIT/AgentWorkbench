@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.update;
+package de.enflexit.awb.desktop.project.update;
 
 /**
  * The listener interface for receiving information to close the current dialog or window that 

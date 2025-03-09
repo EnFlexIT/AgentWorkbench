@@ -29,7 +29,7 @@
 package agentgui.core.update;
 
 /**
- * The Class ProjectRepositoryUpdateAuthorizationException.
+ * The Class HttpURLConnectorAuthorizationException.
  * 
  * @author Alexander Graute - SOFTEC - University of Duisburg - Essen
  */

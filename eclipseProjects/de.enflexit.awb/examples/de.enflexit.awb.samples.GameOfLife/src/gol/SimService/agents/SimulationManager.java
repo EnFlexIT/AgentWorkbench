@@ -7,10 +7,10 @@ import jade.core.ServiceException;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import agentgui.simulationService.agents.SimulationManagerAgent;
-import agentgui.simulationService.environment.EnvironmentModel;
-import agentgui.simulationService.time.TimeModelContinuous;
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.agents.SimulationManagerAgent;
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 
 public class SimulationManager extends SimulationManagerAgent {
 

@@ -43,9 +43,9 @@ import org.awb.env.networkModel.prototypes.StarGraphElement;
 import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
 
 
 /**

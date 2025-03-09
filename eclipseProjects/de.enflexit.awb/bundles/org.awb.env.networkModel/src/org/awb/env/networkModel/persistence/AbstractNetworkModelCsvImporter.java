@@ -1,5 +1,6 @@
 package org.awb.env.networkModel.persistence;
 
+import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import javax.swing.JOptionPane;
 
 import org.awb.env.networkModel.NetworkModel;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.csv.CSV_FilePreview;
 import de.enflexit.common.csv.CsvDataController;
 
@@ -261,7 +262,7 @@ public abstract class AbstractNetworkModelCsvImporter extends AbstractNetworkMod
 			} 
 			
 			if (csvFilePreview==null) {
-				csvFilePreview = new CSV_FilePreview(Application.getMainWindow(), this.getCsvDataController());
+				csvFilePreview = new CSV_FilePreview((Window)Application.getMainWindow(), this.getCsvDataController());
 			} else {
 				csvFilePreview.requestFocus();
 			}

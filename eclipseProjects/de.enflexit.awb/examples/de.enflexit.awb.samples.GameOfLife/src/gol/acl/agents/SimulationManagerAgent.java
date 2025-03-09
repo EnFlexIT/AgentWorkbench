@@ -1,5 +1,8 @@
 package gol.acl.agents;
 
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.simulation.LoadService;
+import de.enflexit.awb.simulation.LoadServiceHelper;
 import gol.acl.gui.GameOfLifeGUI;
 import jade.core.AID;
 import jade.core.Agent;
@@ -14,9 +17,6 @@ import java.util.HashMap;
 
 import javax.swing.JDesktopPane;
 
-import agentgui.core.application.Application;
-import agentgui.simulationService.LoadService;
-import agentgui.simulationService.LoadServiceHelper;
 
 public class SimulationManagerAgent extends Agent { 
 	

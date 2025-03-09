@@ -19,9 +19,8 @@ import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.jade.phonebook.search.PhoneBookSearchFilter;
 import jade.core.AID;
 

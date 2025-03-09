@@ -54,7 +54,7 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.language.Language;
 
 /**

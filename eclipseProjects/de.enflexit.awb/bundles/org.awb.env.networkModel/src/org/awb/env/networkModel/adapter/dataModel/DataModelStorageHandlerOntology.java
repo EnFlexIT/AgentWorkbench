@@ -12,7 +12,7 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter4Ontology;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.SetupDataModelStorageService;
 
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.common.ExceptionHandling;
 import de.enflexit.common.ontology.OntologyClassTreeObject;
 import jade.content.lang.Codec.CodecException;

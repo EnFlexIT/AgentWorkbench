@@ -4,12 +4,25 @@ Bundle-Name: Examples
 Bundle-SymbolicName: de.enflexit.awb.samples.Examples
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.samples.Examples
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/classLoadService.xml
-Require-Bundle: org.agentgui.lib.jade,
- org.agentgui.core,
- de.enflexit.common
+Require-Bundle: de.enflexit.common
 Export-Package: de.enflexit.awb.samples.classLoadService,
  de.enflexit.awb.samples.example01
 Bundle-ActivationPolicy: lazy
+Import-Package: de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time,
+ jade.content;version="[4.6.0,5.0.0)",
+ jade.content.lang;version="[4.6.0,5.0.0)",
+ jade.content.lang.sl;version="[4.6.0,5.0.0)",
+ jade.content.onto;version="[4.6.0,5.0.0)",
+ jade.content.onto.basic;version="[4.6.0,5.0.0)",
+ jade.content.schema;version="[4.6.0,5.0.0)",
+ jade.core;version="[4.6.0,5.0.0)",
+ jade.core.behaviours;version="[4.6.0,5.0.0)",
+ jade.lang.acl;version="[4.6.0,5.0.0)",
+ jade.util.leap;version="[4.6.0,5.0.0)"
 

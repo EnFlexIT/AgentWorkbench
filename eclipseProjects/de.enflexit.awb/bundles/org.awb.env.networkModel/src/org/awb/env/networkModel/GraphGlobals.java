@@ -44,9 +44,8 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
-
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.PathHandling;
 import edu.uci.ics.jung.graph.Graph;
 

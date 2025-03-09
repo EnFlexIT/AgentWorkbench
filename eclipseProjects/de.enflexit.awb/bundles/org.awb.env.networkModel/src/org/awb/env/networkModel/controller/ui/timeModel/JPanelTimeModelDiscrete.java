@@ -61,14 +61,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import de.enflexit.language.Language;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelDiscrete;
-import agentgui.simulationService.time.TimeModelStroke;
-import agentgui.simulationService.time.TimeUnit;
-import agentgui.simulationService.time.TimeUnitVector;
+import de.enflexit.awb.core.environment.TimeModelController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.JPanel4TimeModelConfiguration;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
+import de.enflexit.awb.simulation.environment.time.TimeModelStroke;
+import de.enflexit.awb.simulation.environment.time.TimeUnit;
+import de.enflexit.awb.simulation.environment.time.TimeUnitVector;
 import de.enflexit.common.swing.JSpinnerDateTime;
 import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.common.swing.TimeZoneWidget;
@@ -129,7 +129,8 @@ public class JPanelTimeModelDiscrete extends JPanel4TimeModelConfiguration imple
 	 * @param timeModelController the time model controller
 	 */
 	public JPanelTimeModelDiscrete(Project project, TimeModelController timeModelController) {
-		super(project, timeModelController);
+		this.setProject(project);
+		this.setTimeModelController(timeModelController);
 		this.initialize();
 	}
 	/* (non-Javadoc)

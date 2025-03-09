@@ -38,8 +38,6 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-import org.agentgui.gui.AwbProgressMonitor;
-import org.agentgui.gui.UiBridge;
 import org.awb.env.networkModel.DataModelNetworkElement;
 import org.awb.env.networkModel.GraphNode;
 import org.awb.env.networkModel.NetworkComponent;
@@ -48,11 +46,12 @@ import org.awb.env.networkModel.adapter.NetworkComponentAdapter;
 import org.awb.env.networkModel.adapter.NetworkComponentAdapter4DataModel;
 import org.awb.env.networkModel.adapter.dataModel.AbstractDataModelStorageHandler;
 
-import agentgui.core.application.Application;
 import de.enflexit.language.Language;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetupNotification;
-import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.common.swing.OwnerDetection;
 
 /**

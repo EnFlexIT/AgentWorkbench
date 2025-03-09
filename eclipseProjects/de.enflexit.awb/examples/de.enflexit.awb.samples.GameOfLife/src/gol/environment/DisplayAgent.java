@@ -1,17 +1,17 @@
 package gol.environment;
 
+import de.enflexit.awb.baseUI.agents.AbstractSwingDisplayAgent;
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
+import de.enflexit.awb.simulation.environment.time.TimeModelStroke;
 import jade.core.Location;
-import agentgui.core.environment.EnvironmentController;
-import agentgui.simulationService.agents.AbstractDisplayAgent;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelContinuous;
-import agentgui.simulationService.time.TimeModelDiscrete;
-import agentgui.simulationService.time.TimeModelStroke;
 
 /**
  * The Class DisplayAgent.
  */
-public class DisplayAgent extends AbstractDisplayAgent {
+public class DisplayAgent extends AbstractSwingDisplayAgent {
 
 	private static final long serialVersionUID = -766291673903767678L;
 

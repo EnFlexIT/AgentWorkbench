@@ -28,6 +28,8 @@
  */
 package org.awb.env.networkModel.controller.ui.commands;
 
+import java.awt.Window;
+
 import javax.swing.JOptionPane;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
@@ -36,7 +38,7 @@ import javax.swing.undo.CannotUndoException;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.language.Language;
 
 /**
@@ -57,7 +59,7 @@ public class ClearNetworkModel extends AbstractUndoableEdit {
 		this.oldNetworkModel = this.graphController.getNetworkModel().getCopy();
 		
 		// --- Ask user if the NetworkModel should be cleared -----
-		int answer = JOptionPane.showConfirmDialog(Application.getMainWindow(),
+		int answer = JOptionPane.showConfirmDialog((Window)Application.getMainWindow(),
 					 Language.translate("Are you sure that you want to clear the graph?", Language.EN), 
 					 Language.translate("Confirmation", Language.EN), 
 					 JOptionPane.YES_NO_OPTION);

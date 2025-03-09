@@ -12,6 +12,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+
+import de.enflexit.awb.core.environment.EnvironmentPanel;
+import de.enflexit.awb.core.project.DistributionSetup;
 import de.enflexit.common.Observable;
 
 import javax.swing.BorderFactory;
@@ -22,8 +25,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
-import agentgui.core.environment.EnvironmentPanel;
-import agentgui.core.project.DistributionSetup;
 
 public class SquaredEnvironmentGUI extends EnvironmentPanel implements ActionListener {
 

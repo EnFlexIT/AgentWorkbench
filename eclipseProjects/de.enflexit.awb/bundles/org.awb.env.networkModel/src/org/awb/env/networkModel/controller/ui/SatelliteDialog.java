@@ -43,10 +43,9 @@ import javax.swing.Timer;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
 import de.enflexit.language.Language;
-import agentgui.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
-
 
 /**
  * The SatelliteDialog for the graph and network environment.

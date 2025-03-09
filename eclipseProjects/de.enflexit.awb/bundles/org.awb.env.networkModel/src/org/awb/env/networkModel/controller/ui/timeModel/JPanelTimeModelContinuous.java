@@ -54,11 +54,11 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.NumberFormatter;
 
 import de.enflexit.language.Language;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelContinuous;
+import de.enflexit.awb.core.environment.TimeModelController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.JPanel4TimeModelConfiguration;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
 import de.enflexit.common.swing.JSpinnerDateTime;
 import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.common.swing.TimeZoneWidget;
@@ -114,7 +114,8 @@ public class JPanelTimeModelContinuous extends JPanel4TimeModelConfiguration imp
 	 * @param timeModelController the time model controller
 	 */
 	public JPanelTimeModelContinuous(Project project, TimeModelController timeModelController) {
-		super(project, timeModelController);
+		this.setProject(project);
+		this.setTimeModelController(timeModelController);
 		this.initialize();
 	}
 

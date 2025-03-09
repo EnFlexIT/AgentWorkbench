@@ -1,7 +1,10 @@
 package de.enflexit.awb.desktop;
 
+import java.awt.Window;
+
 import javax.swing.Icon;
 
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
@@ -20,7 +23,9 @@ import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
 import de.enflexit.awb.core.ui.AwbTranslationDialog;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
+import de.enflexit.awb.desktop.dialogs.ProjectNewOpen;
 import de.enflexit.awb.desktop.mainWindow.MainWindow;
+import de.enflexit.awb.desktop.project.ProjectWindow;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 
 /**
@@ -96,19 +101,31 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		return new MainWindow();
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProjectInteractionDialog(java.lang.String, de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction)
+	 */
 	@Override
 	public AwbProjectInteractionDialog getProjectInteractionDialog(String actionTitel, ProjectAction action) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+		ProjectNewOpen pno = null;
+		if (Application.isMainWindowInitiated()==true && Application.getMainWindow() instanceof Window) {
+			pno = new ProjectNewOpen((Window)Application.getMainWindow(), actionTitel, action);
+		} else {
+			pno = new ProjectNewOpen(null, actionTitel, action);
+		}
+		return pno;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProjectWindow(de.enflexit.awb.core.project.Project)
+	 */
 	@Override
 	public AwbProjectWindow getProjectWindow(Project project) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ProjectWindow(project);
 	}
 
+	
+	
 	@Override
 	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName) {
 		// TODO Auto-generated method stub

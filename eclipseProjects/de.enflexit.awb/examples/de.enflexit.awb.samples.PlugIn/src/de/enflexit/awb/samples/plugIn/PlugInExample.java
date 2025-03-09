@@ -8,16 +8,13 @@ import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-
-import org.agentgui.gui.AwbProjectWindowTab;
-import org.agentgui.gui.swing.project.ProjectWindowTab;
-import org.agentgui.gui.swing.project.TabForSubPanels;
-
-import agentgui.core.application.Application;
-//import agentgui.core.application.Language;
-import agentgui.core.config.GlobalInfo;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.PlugIn;
+import de.enflexit.awb.core.ui.AwbProjectWindowTab;
+import de.enflexit.awb.desktop.mainWindow.MainWindow;
+import de.enflexit.awb.desktop.project.*;
 import jade.core.ProfileImpl;
 
 /**
@@ -64,7 +61,7 @@ public class PlugInExample extends PlugIn {
 			}
 		});
 		
-		JMenu menu = Application.getMainWindow().getJMenuMainSimulation();
+		JMenu menu = ((MainWindow)Application.getMainWindow()).getJMenuMainSimulation();
 		this.addJMenuItemComponent(menu, myJMenuItem, 0);
 		
 		// --- adding a Button to the toolbar -------------

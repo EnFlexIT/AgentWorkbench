@@ -37,8 +37,8 @@ import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import agentgui.simulationService.environment.AbstractEnvironmentModel;
-import agentgui.simulationService.environment.EnvironmentModel;
+import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
+
 
 /**
  * Classes that should work as import components for the 

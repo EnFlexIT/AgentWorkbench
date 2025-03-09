@@ -6,9 +6,10 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.jade.phonebook
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.agentgui.lib.jade,
- de.enflexit.common,
- org.agentgui.core
-Import-Package: jakarta.xml.bind,
+ de.enflexit.common
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.project,
+ jakarta.xml.bind,
  jakarta.xml.bind.annotation
 Export-Package: de.enflexit.jade.behaviour,
  de.enflexit.jade.phonebook,

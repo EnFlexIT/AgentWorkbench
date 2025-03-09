@@ -616,7 +616,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @param destinationFileName the destination file name
 	 * @param webResAuth the WebResourcesAuthorization
 	 * @return true, if successful
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
 	public boolean downloadOrCopyProjectArchiveFromRepository(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry, String destinationFileName, WebResourcesAuthorization webResAuth) throws ProjectRepositoryUpdateException {
 		
@@ -676,7 +676,7 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * Returns the {@link ProjectRepository} from the projects update site.
 	 *
 	 * @return the ProjectRepository
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
 	public ProjectRepository getProjectRepository() throws ProjectRepositoryUpdateException {
 		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {

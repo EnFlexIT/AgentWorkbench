@@ -8,6 +8,7 @@ import java.util.Scanner;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.http.HttpURLConnectorException;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.transfer.Download;
 
@@ -129,7 +130,7 @@ public class MirrorTool implements MirrorToolListener {
 						listener.onMirroringFinaliized(MirrorToolsJob.MirrorProjectRepository, successful);
 					}
 
-				} catch(ProjectRepositoryUpdateException ex) {
+				} catch (HttpURLConnectorException ex) {
 					System.err.println(ex.getLocalizedMessage());
 				}
 			}

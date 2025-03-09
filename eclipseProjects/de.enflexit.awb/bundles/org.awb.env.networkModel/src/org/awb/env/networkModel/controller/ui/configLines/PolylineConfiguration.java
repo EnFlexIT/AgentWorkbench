@@ -20,9 +20,9 @@ import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 import org.awb.env.networkModel.positioning.GraphNodePositionFactory;
 
-import agentgui.core.application.Application;
 import de.enflexit.language.Language;
-import agentgui.core.environment.EnvironmentController;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 

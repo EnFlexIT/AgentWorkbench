@@ -47,9 +47,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import agentgui.simulationService.SimulationService;
-import agentgui.simulationService.SimulationServiceHelper;
-import agentgui.simulationService.agents.SimulationAgent;
+import de.enflexit.awb.simulation.SimulationService;
+import de.enflexit.awb.simulation.SimulationServiceHelper;
+import de.enflexit.awb.simulation.agents.SimulationAgent;
 
 /**
  * The agent can be used in order to test the synchronisation of the time, which is provided by 

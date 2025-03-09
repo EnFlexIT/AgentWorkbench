@@ -7,7 +7,8 @@ import jade.core.Location;
 import java.util.HashMap;
 import java.util.Vector;
 
-import agentgui.simulationService.agents.SimulationAgent;
+import de.enflexit.awb.simulation.agents.SimulationAgent;
+
 
 
 public class GameOfLifeAgent extends SimulationAgent { 

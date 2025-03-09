@@ -8,13 +8,14 @@ import java.util.List;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
-import agentgui.simulationService.load.LoadUnits;
+
 import de.enflexit.awb.samples.ws.restapi.server.RestApiConfiguration;
 import de.enflexit.awb.samples.ws.restapi.server.gen.InfoApi;
 import de.enflexit.awb.samples.ws.restapi.server.gen.InfoApiService;
 import de.enflexit.awb.samples.ws.restapi.server.gen.NotFoundException;
 import de.enflexit.awb.samples.ws.restapi.server.gen.model.NetworkConnection;
 import de.enflexit.awb.samples.ws.restapi.server.gen.model.SystemInformation;
+import de.enflexit.awb.simulation.load.LoadUnits;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;

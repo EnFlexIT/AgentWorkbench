@@ -5,7 +5,6 @@ Bundle-SymbolicName: de.enflexit.awb.samples.PlugIn;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  de.enflexit.common;bundle-version="1.0.0",
- org.agentgui.core;bundle-version="2.0.0",
  org.agentgui.lib.jade;bundle-version="4.4.0",
  org.awb.env.networkModel;bundle-version="2.1.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
@@ -14,3 +13,14 @@ Export-Package: de.enflexit.awb.samples.plugIn,
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.agentgui.sample.plugIn
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.core.ui,
+ de.enflexit.awb.desktop.mainWindow,
+ de.enflexit.awb.desktop.project,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time

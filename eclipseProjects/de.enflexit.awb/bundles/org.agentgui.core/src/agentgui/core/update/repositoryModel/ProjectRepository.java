@@ -275,7 +275,7 @@ public class ProjectRepository implements Serializable {
 	 * @param fileReferenceOrLink the file reference or link to the repository
 	 * @param auth the WebResourcesAuthorization
 	 * @return the project repository or null
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
 	public static ProjectRepository loadProjectRepository(String fileReferenceOrLink, WebResourcesAuthorization auth) throws ProjectRepositoryUpdateException, IllegalArgumentException {
 		
@@ -314,7 +314,7 @@ public class ProjectRepository implements Serializable {
 	 * @param webURL the web URL
 	 * @param auth the WebResourcesAuthorization
 	 * @return the project repository
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
 	public static ProjectRepository loadProjectRepository(URL webURL, WebResourcesAuthorization auth) throws ProjectRepositoryUpdateException, IllegalArgumentException {
 		
@@ -365,7 +365,7 @@ public class ProjectRepository implements Serializable {
 	 * @param sourceURL the source URL
 	 * @param auth authorization details
 	 * @return the http URL connection
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 * @throws URISyntaxException the URI syntax exception
@@ -380,7 +380,7 @@ public class ProjectRepository implements Serializable {
 	 * @param sourceURL the source URL
 	 * @return the http URL connection
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 * @throws URISyntaxException 
 	 */
 	private static HttpURLConnection openConnectionToUpdateSite(URL sourceURL, WebResourcesAuthorization auth) throws IOException, ProjectRepositoryUpdateException, IllegalArgumentException, URISyntaxException {		

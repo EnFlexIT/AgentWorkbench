@@ -5,6 +5,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.AwbPlugIn;
+import de.enflexit.awb.core.project.plugins.PlugInNotification;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 
@@ -17,12 +23,6 @@ import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-
-import agentgui.core.application.Application;
-import agentgui.core.plugin.AwbPlugIn;
-import agentgui.core.plugin.PlugInNotification;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetupNotification;
 
 
 /**
@@ -184,6 +184,21 @@ public class ObserverOutputTab extends JPanel implements Observer {
 				break;
 			case SIMULATION_SETUP_SAVED:
 				appendText += newLine + "=> Simulation setup was saved";
+				break;
+			case SIMULATION_SETUP_AGENT_ADDED:
+				appendText += newLine + "=> Simulation setup: agent was added";
+				break;
+			case SIMULATION_SETUP_AGENT_REMOVED:
+				appendText += newLine + "=> Simulation setup: agent was removed";
+				break;
+			case SIMULATION_SETUP_AGENT_RENAMED:
+				appendText += newLine + "=> Simulation setup: agent was renamed";
+				break;
+			case SIMULATION_SETUP_DETAILS_LOADED:
+				appendText += newLine + "=> Simulation setup: details loaded";
+				break;
+			case SIMULATION_SETUP_DETAILS_SAVED:
+				appendText += newLine + "=> Simulation setup: details saved";
 				break;
 			}
 			

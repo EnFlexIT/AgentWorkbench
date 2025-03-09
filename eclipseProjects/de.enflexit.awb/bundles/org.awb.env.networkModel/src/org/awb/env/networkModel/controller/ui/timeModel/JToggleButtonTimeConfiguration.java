@@ -2,6 +2,9 @@ package org.awb.env.networkModel.controller.ui.timeModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 
@@ -13,9 +16,6 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiTools;
 
 import de.enflexit.language.Language;
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelDateBased;
 
 /**
  * The Class JToggleButtonTimeConfiguration enables to configure the time range 

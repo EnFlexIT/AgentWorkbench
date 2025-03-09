@@ -31,9 +31,9 @@ package de.enflexit.awb.samples.simulationService;
 import jade.core.Agent;
 import jade.core.ServiceException;
 import jade.core.behaviours.CyclicBehaviour;
-import agentgui.simulationService.LoadService;
-import agentgui.simulationService.LoadServiceHelper;
-import agentgui.simulationService.load.LoadInformation.Container2Wait4;
+import de.enflexit.awb.simulation.LoadService;
+import de.enflexit.awb.simulation.LoadServiceHelper;
+import de.enflexit.awb.simulation.load.LoadInformation.Container2Wait4;
 
 /**
  * This is a simple agent, which is able to start a new remote container, if the background system is running.

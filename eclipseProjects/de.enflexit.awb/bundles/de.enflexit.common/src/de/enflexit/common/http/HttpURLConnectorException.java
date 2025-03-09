@@ -1,31 +1,31 @@
-package de.enflexit.awb.core.update;
+package de.enflexit.common.http;
 
 /**
- * The Class ProjectRepositoryUpdateException.
+ * The Class HttpURLConnectorException.
  * 
  * @author Alexander Graute - SOFTEC - University of Duisburg - Essen
  */
-public class ProjectRepositoryUpdateException extends Exception {
+public class HttpURLConnectorException extends Exception {
 
 	private static final long serialVersionUID = 4890519136346013418L;
 
 	/**
 	 * Instantiates a new project repository update exception.
 	 */
-	public ProjectRepositoryUpdateException() {
+	public HttpURLConnectorException() {
 	}
 	/**
 	 * Instantiates a new project repository update exception.
 	 * @param message the message
 	 */
-	public ProjectRepositoryUpdateException(String message) {
+	public HttpURLConnectorException(String message) {
 		super(message);
 	}
 	/**
 	 * Instantiates a new project repository update exception.
 	 * @param cause the cause
 	 */
-	public ProjectRepositoryUpdateException(Throwable cause) {
+	public HttpURLConnectorException(Throwable cause) {
 		super(cause);
 	}
 	/**
@@ -33,7 +33,7 @@ public class ProjectRepositoryUpdateException extends Exception {
 	 * @param message the message
 	 * @param cause the cause
 	 */
-	public ProjectRepositoryUpdateException(String message, Throwable cause) {
+	public HttpURLConnectorException(String message, Throwable cause) {
 		super(message, cause);
 	}
 	/**
@@ -43,7 +43,7 @@ public class ProjectRepositoryUpdateException extends Exception {
 	 * @param enableSuppression the enable suppression
 	 * @param writableStackTrace the writable stack trace
 	 */
-	public ProjectRepositoryUpdateException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public HttpURLConnectorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

@@ -22,12 +22,12 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGuiJInternalFrame;
 import org.awb.env.networkModel.controller.ui.BasicGraphGuiVisViewer;
 
 import de.enflexit.language.Language;
-import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelContinuous;
-import agentgui.simulationService.time.TimeModelDiscrete;
-import agentgui.simulationService.time.TimeModelPresent;
-import agentgui.simulationService.time.TimeModelStroke;
+import de.enflexit.awb.simulation.environment.time.JPanel4TimeModelConfiguration;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelContinuous;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
+import de.enflexit.awb.simulation.environment.time.TimeModelPresent;
+import de.enflexit.awb.simulation.environment.time.TimeModelStroke;
 
 /**
  * The Class JInternalFrameTimeConfiguration is used to show and configure the time
@@ -189,7 +189,7 @@ public class JInternalFrameTimeConfiguration extends BasicGraphGuiJInternalFrame
 	@Override
 	public void dispose() {
 		if (jComponentTimeModel!=null && jComponentTimeModel instanceof JPanel4TimeModelConfiguration) {
-			((JPanel4TimeModelConfiguration)jComponentTimeModel).deleteObserver();
+			((JPanel4TimeModelConfiguration)jComponentTimeModel).deleteAsProjectObserver();
 		}
 		if (graphVisualizationPanel!=null) {
 			graphVisualizationPanel.removeComponentListener(this.getGraphVisualizationPanelListener());

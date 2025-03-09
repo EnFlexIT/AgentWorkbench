@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.update;
+package de.enflexit.awb.desktop.project.update;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

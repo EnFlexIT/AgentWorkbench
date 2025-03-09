@@ -1,5 +1,6 @@
 package org.awb.env.networkModel.controller.ui.commands;
 
+import java.awt.Window;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +17,9 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.NetworkModelOperationalDataImportService;
 
-import agentgui.core.application.Application;
 import de.enflexit.language.Language;
-import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
 import de.enflexit.common.ServiceFinder;
 
 /**
@@ -95,7 +96,7 @@ public class ImportOperationalData extends AbstractUndoableEdit{
 			}
 
 			// --- Show the dialog --------------------------------------------
-			int dialogAnswer = fileChooser.showOpenDialog(Application.getMainWindow());
+			int dialogAnswer = fileChooser.showOpenDialog((Window)Application.getMainWindow());
 			if (dialogAnswer== JFileChooser.APPROVE_OPTION) {
 				Application.getGlobalInfo().setLastSelectedFolder(fileChooser.getCurrentDirectory());
 				this.importFile = fileChooser.getSelectedFile();

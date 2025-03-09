@@ -15,10 +15,13 @@ Export-Package: com.expression.parser,
  de.enflexit.expression.functions,
  de.enflexit.expression.gui,
  de.enflexit.expression.math
-Import-Package: de.enflexit.common,
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.desktop.mainWindow,
+ de.enflexit.common,
  de.enflexit.common.swing,
  de.enflexit.language
-Require-Bundle: org.agentgui.core
 Bundle-ClassPath: .,
  lib/com.expression.parser-3.3.0.jar
 Service-Component: OSGI-INF/mathExpressionService.xml,

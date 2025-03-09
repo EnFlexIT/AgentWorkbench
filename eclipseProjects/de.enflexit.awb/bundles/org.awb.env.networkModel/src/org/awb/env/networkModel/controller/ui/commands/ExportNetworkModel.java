@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.controller.ui.commands;
 
+import java.awt.Window;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,7 @@ import javax.swing.undo.CannotUndoException;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.NetworkModelExportService;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.language.Language;
 
 /**
@@ -209,7 +210,7 @@ public class ExportNetworkModel extends AbstractUndoableEdit {
 			}
 			
 			// --- Show FileChooser ---------------------------------
-			int dialogAnswer = fileChooser.showSaveDialog(Application.getMainWindow()); 
+			int dialogAnswer = fileChooser.showSaveDialog((Window)Application.getMainWindow()); 
 			if (dialogAnswer==JFileChooser.APPROVE_OPTION) {
 				Application.getGlobalInfo().setLastSelectedFolder(fileChooser.getCurrentDirectory());
 				File selectedFile = fileChooser.getSelectedFile();

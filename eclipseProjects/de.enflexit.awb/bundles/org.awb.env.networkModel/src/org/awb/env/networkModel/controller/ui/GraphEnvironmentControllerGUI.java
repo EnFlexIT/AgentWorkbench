@@ -39,6 +39,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.environment.EnvironmentPanel;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import java.util.Vector;
@@ -58,9 +61,7 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.visualisation.notifications.DataModelOpenViewNotification;
 
-import agentgui.core.application.Application;
 import de.enflexit.language.Language;
-import agentgui.core.environment.EnvironmentPanel;
 
 /**
  * The GUI for a GraphEnvironmentController. This contains a pane showing the NetworkComponents table and the BasicGraphGUI. The main class which associates with the components table, the environment

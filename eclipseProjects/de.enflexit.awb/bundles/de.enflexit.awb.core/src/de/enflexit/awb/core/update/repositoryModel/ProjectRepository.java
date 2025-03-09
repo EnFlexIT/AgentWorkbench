@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.Writer;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -18,7 +17,12 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.net.ssl.HttpsURLConnection;
+import org.osgi.framework.Version;
+
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.common.http.HttpURLConnector;
+import de.enflexit.common.http.HttpURLConnectorException;
+import de.enflexit.common.http.WebResourcesAuthorization;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -27,15 +31,6 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-
-import org.osgi.framework.Version;
-
-import de.enflexit.language.Language;
-import de.enflexit.awb.core.project.Project;
-import de.enflexit.awb.core.update.ProjectRepositoryUpdateAuthorizationException;
-import de.enflexit.awb.core.update.ProjectRepositoryUpdateException;
-import de.enflexit.common.http.WebResourcesAuthorization;
-import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
 
 /**
  * The Class ProjectRepository describes the structure of a project repository.
@@ -247,9 +242,9 @@ public class ProjectRepository implements Serializable {
 	 * @param fileReferenceOrLink the file reference or link to the repository
 	 * @param auth the WebResourcesAuthorization
 	 * @return the project repository or null
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
-	public static ProjectRepository loadProjectRepository(String fileReferenceOrLink, WebResourcesAuthorization auth) throws ProjectRepositoryUpdateException, IllegalArgumentException {
+	public static ProjectRepository loadProjectRepository(String fileReferenceOrLink, WebResourcesAuthorization auth) throws HttpURLConnectorException, IllegalArgumentException {
 		
 		if (fileReferenceOrLink==null) return null;
 		
@@ -286,9 +281,9 @@ public class ProjectRepository implements Serializable {
 	 * @param webURL the web URL
 	 * @param auth the WebResourcesAuthorization
 	 * @return the project repository
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
-	public static ProjectRepository loadProjectRepository(URL webURL, WebResourcesAuthorization auth) throws ProjectRepositoryUpdateException, IllegalArgumentException {
+	public static ProjectRepository loadProjectRepository(URL webURL, WebResourcesAuthorization auth) throws HttpURLConnectorException, IllegalArgumentException {
 		
 		if (webURL==null) return null;
 		
@@ -301,7 +296,7 @@ public class ProjectRepository implements Serializable {
 		InputStream is = null;
 		try {
 			// --- Open Http connection ----------------------------
-			httpConnection = openConnectionToUpdateSite(sourceURLPath, auth); 
+			httpConnection = HttpURLConnector.openConnection(sourceURLPath, auth); 
 			is = httpConnection.getInputStream();
 
 			// --- Define JAXB stuff -------------------------------- 
@@ -330,78 +325,6 @@ public class ProjectRepository implements Serializable {
 		}
 		return projectRepository;
 	}	
-	
-	/**
-	 * Open http connection to update site.
-	 *
-	 * @param sourceURL the source URL
-	 * @param auth authorization details
-	 * @return the http URL connection
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws URISyntaxException the URI syntax exception
-	 */
-	public static HttpURLConnection openConnectionToUpdateSite(String sourceURL, WebResourcesAuthorization auth) throws ProjectRepositoryUpdateException,  IOException, IllegalArgumentException, URISyntaxException{
-		String sourceURLPath = getLocationPathIncludingRepositoryFile(sourceURL, true);
-		return ProjectRepository.openConnectionToUpdateSite(new URL(sourceURLPath), auth);
-	}
-	/**
-	 * Open http connection to update site.
-	 *
-	 * @param sourceURL the source URL
-	 * @return the http URL connection
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
-	 * @throws URISyntaxException 
-	 */
-	private static HttpURLConnection openConnectionToUpdateSite(URL sourceURL, WebResourcesAuthorization auth) throws IOException, ProjectRepositoryUpdateException, IllegalArgumentException, URISyntaxException {		
-  	
-		HttpURLConnection connection = null;
-		Authenticator.setDefault(null);
-	
-		// --- Open http or https connection --------------------
-		if (sourceURL.getProtocol().equals("https")) {
-			connection = (HttpsURLConnection) sourceURL.openConnection(); 
-		} else if (sourceURL.getProtocol().equals("http")) {
-			connection = (HttpURLConnection) sourceURL.openConnection(); 
-		} else {
-			throw new IOException("[" + ProjectRepository.class.getSimpleName() + "] Update site must use http or https protocol");
-		}
-
-		// --- Configure HTTP request ----------------------------
-		connection.addRequestProperty("User-Agent", "Mozilla/4.76"); 
-		connection.setAllowUserInteraction(false);
-		connection.setDoOutput(true);
-		if(auth != null && auth.getType() != AuthorizationType.NONE) {
-			connection.setRequestProperty("Authorization", auth.getEncodedHeader());
-		}
-		// --- Throwing exception to inform user after a failed http request --------------------------- 
-		switch(connection.getResponseCode()) {
-			case HttpURLConnection.HTTP_OK:
-				break;
-			case HttpURLConnection.HTTP_MULT_CHOICE:
-			case HttpURLConnection.HTTP_MOVED_PERM:
-			case HttpURLConnection.HTTP_MOVED_TEMP:
-				throw new ProjectRepositoryUpdateException(Language.translate("Die angeforderte Ressource steht nicht mehr unter der gewählten Update-Site zur Verfügung und wurde umgeleitet"));
-			case HttpURLConnection.HTTP_BAD_REQUEST:
-				throw new ProjectRepositoryUpdateException(Language.translate("Die Anfrage war fehlerhaft"));
-			case HttpURLConnection.HTTP_UNAUTHORIZED:
-				throw new ProjectRepositoryUpdateAuthorizationException(Language.translate("Authorisierungsdaten fehlerhaft oder nicht vorhanden."));
-			case HttpURLConnection.HTTP_FORBIDDEN:
-				throw new ProjectRepositoryUpdateException(Language.translate("Authentifizierung ist nicht möglich. Bitte Authorisierungseinstellungen überprüfen"));
-			case HttpURLConnection.HTTP_NOT_FOUND:
-				throw new ProjectRepositoryUpdateException(Language.translate("Angegebene Update-Site enthält keine Repositorydatei"));
-			case HttpURLConnection.HTTP_INTERNAL_ERROR:
-				throw new ProjectRepositoryUpdateException(Language.translate("Serverfehler aufgetreten"));
-			case 418:
-				throw new ProjectRepositoryUpdateException(Language.translate("Ich bin eine Teekanne"));
-			default:
-				throw new ProjectRepositoryUpdateException(Language.translate("Unbekannter Fehler aufgetreten. Response-Code: ")+ connection.getResponseCode());					
-		}
-		return connection;
-	}
-	
 	
 	
 	/**
@@ -448,7 +371,7 @@ public class ProjectRepository implements Serializable {
 	 * @param isWebLink indicates if the specified initial location is a web link. if not a file is assumed
 	 * @return the location including repository file
 	 */
-	private static String getLocationPathIncludingRepositoryFile(String initialLocation, boolean isWebLink) {
+	public static String getLocationPathIncludingRepositoryFile(String initialLocation, boolean isWebLink) {
 		String location = initialLocation;
 		if (location.endsWith(REPOSITORY_FILE_NAME)==false) {
 			String fileSeparator = File.separator;
@@ -458,6 +381,5 @@ public class ProjectRepository implements Serializable {
 		}
 		return location; 
 	}
-	
 	
 }

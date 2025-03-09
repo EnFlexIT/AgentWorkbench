@@ -6,7 +6,6 @@ Automatic-Module-Name: org.agentgui.sample.GameOfLife
 Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.common,
- org.agentgui.core,
  org.agentgui.lib.jade,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
@@ -19,6 +18,19 @@ Export-Package: gol.acl.agents,
  gol.plugin,
  gol.SimService.agents,
  gol.SimService.balancing
-Import-Package: de.enflexit.language,
+Import-Package: de.enflexit.awb.baseUI.agents,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.simulation,
+ de.enflexit.awb.simulation.agents,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment,
+ de.enflexit.awb.simulation.environment.time,
+ de.enflexit.awb.simulation.transaction,
+ de.enflexit.language,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation

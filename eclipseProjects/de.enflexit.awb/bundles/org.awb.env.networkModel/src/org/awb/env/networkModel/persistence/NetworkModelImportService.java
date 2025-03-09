@@ -12,7 +12,8 @@ import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
-import agentgui.simulationService.environment.AbstractEnvironmentModel;
+import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
+
 
 /**
  * This interface defines the methods of a service for importing network topology data from files must provide.

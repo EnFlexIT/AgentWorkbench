@@ -28,7 +28,7 @@
  */
 package org.awb.env.networkModel.visualisation.notifications;
 
-import agentgui.simulationService.transaction.DisplayAgentNotification;
+import de.enflexit.awb.simulation.transaction.DisplayAgentNotification;
 
 /**
  * The Class DisplayAgentNotificationGraph is the super class for

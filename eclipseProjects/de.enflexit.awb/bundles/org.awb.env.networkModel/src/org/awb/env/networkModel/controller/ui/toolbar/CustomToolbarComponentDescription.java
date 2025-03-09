@@ -36,9 +36,8 @@ import org.awb.env.networkModel.controller.ui.BasicGraphGui;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarSurrounding;
 import org.awb.env.networkModel.controller.ui.BasicGraphGui.ToolBarType;
 
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.common.StringHelper;
-
 
 /**
  * The Class CustomToolbarComponentDescription can be used in order to 

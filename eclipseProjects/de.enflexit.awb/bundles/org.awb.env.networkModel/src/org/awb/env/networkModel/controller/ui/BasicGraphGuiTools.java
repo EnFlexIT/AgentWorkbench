@@ -77,7 +77,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import de.enflexit.language.Language;
-import agentgui.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.swing.OwnerDetection;

@@ -43,11 +43,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import de.enflexit.language.Language;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.JPanel4TimeModelConfiguration;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelStroke;
+import de.enflexit.awb.core.environment.TimeModelController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.JPanel4TimeModelConfiguration;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelStroke;
 
 /**
  * The Class JPanelTimeModelStroke.
@@ -76,7 +76,8 @@ public class JPanelTimeModelStroke extends JPanel4TimeModelConfiguration impleme
 	 * @param timeModelController the time model controller
 	 */
 	public JPanelTimeModelStroke(Project project, TimeModelController timeModelController) {
-		super(project, timeModelController);
+		this.setProject(project);
+		this.setTimeModelController(timeModelController);
 		this.initialize();
 	}
 	

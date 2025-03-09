@@ -46,7 +46,6 @@ import agentgui.core.charts.xyChart.gui.XyChartEditorJPanel;
 import agentgui.core.charts.xyChart.gui.XyWidget;
 import agentgui.ontology.XyChart;
 import agentgui.ontology.XyDataSeries;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
 import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 

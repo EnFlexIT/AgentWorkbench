@@ -11,7 +11,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Require-Bundle: de.enflexit.awb.ws.core,
  de.enflexit.oshi,
- org.agentgui.core,
  org.glassfish.jersey.containers.jersey-container-servlet,
  org.glassfish.jersey.containers.jersey-container-servlet-core,
  org.glassfish.jersey.core.jersey-client,
@@ -28,7 +27,8 @@ Require-Bundle: de.enflexit.awb.ws.core,
  com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider,
  com.fasterxml.jackson.module.jackson-module-jakarta-xmlbind-annotations,
  de.enflexit.awb.ws.swagger2x
-Import-Package: jakarta.annotation,
+Import-Package: de.enflexit.awb.simulation.load,
+ jakarta.annotation,
  jakarta.servlet,
  jakarta.servlet.http,
  jakarta.validation,

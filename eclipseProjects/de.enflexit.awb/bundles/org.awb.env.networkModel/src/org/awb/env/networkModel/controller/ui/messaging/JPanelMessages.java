@@ -46,7 +46,7 @@ import javax.swing.table.TableColumn;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.ui.messaging.GraphUIMessage.GraphUIMessageType;
 
-import agentgui.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.common.swing.TableCellColorHelper;
 import de.enflexit.common.swing.TimeZoneDateFormat;
 

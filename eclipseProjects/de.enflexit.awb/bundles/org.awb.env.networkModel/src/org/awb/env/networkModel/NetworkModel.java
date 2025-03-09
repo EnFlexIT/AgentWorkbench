@@ -74,9 +74,8 @@ import org.awb.env.networkModel.settings.DomainSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.LayoutSettings;
 import org.awb.env.networkModel.visualisation.DisplayAgent;
-
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
-import agentgui.simulationService.environment.DisplaytEnvironmentModel;
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.simulation.environment.DisplaytEnvironmentModel;
 import de.enflexit.common.SerialClone;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 import edu.uci.ics.jung.graph.Graph;

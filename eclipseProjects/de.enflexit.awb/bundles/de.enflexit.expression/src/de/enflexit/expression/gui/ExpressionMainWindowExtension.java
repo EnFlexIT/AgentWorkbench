@@ -1,15 +1,15 @@
 package de.enflexit.expression.gui;
 
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import org.agentgui.gui.swing.MainWindowExtension;
-
-import agentgui.core.application.Application;
-import agentgui.core.config.GlobalInfo;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
 import de.enflexit.expression.DevelopmentSwitch;
 
 /**
@@ -51,8 +51,15 @@ public class ExpressionMainWindowExtension extends MainWindowExtension implement
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		if (ae.getSource()==this.getJButtonExpression()) {
-			ExpressionEditorDialog eed = new ExpressionEditorDialog(Application.getMainWindow(), null, null, true);
+
+			ExpressionEditorDialog eed = null;
+			if (Application.isMainWindowInitiated()==true && Application.getMainWindow() instanceof Window) {
+				eed = new ExpressionEditorDialog((Window) Application.getMainWindow(), null, null, true);
+			} else {
+				eed = new ExpressionEditorDialog(null, null, null, true);
+			}
 			eed.setVisible(true);
 		}
 	}

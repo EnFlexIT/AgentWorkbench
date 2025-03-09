@@ -51,7 +51,6 @@ import agentgui.ontology.Simple_Long;
 import agentgui.ontology.TimeSeries;
 import agentgui.ontology.TimeSeriesChart;
 import agentgui.ontology.TimeSeriesValuePair;
-import agentgui.simulationService.transaction.DisplayAgentNotification;
 import de.enflexit.common.ontology.gui.OntologyClassEditorJPanel;
 import de.enflexit.common.ontology.gui.OntologyInstanceViewer;
 

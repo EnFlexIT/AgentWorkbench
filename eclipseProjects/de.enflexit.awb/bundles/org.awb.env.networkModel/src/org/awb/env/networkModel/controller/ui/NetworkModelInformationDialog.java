@@ -38,6 +38,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 
@@ -59,7 +61,6 @@ import org.awb.env.networkModel.helper.NetworkModelAnalyzer;
 import org.awb.env.networkModel.helper.NetworkModelAnalyzerListener;
 
 import de.enflexit.language.Language;
-import agentgui.core.config.GlobalInfo;
 
 /**
  * Dialog for getting an analysis of the current NetworkModel.

@@ -324,7 +324,22 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectInteractionDialog!");
+			// --- Check instances ----------------------------------
+			List<AwbProjectInteractionDialog> pidList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbProjectInteractionDialog pIntDialog = awbUI.getProjectInteractionDialog(title, action);
+				if (pIntDialog!=null) pidList.add(pIntDialog);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (pidList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbProjectInteractionDialog!");
+			} else if (pidList.size()==1) {
+				return pidList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMainWindow!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getProjectInteractionDialog(title, action);
 		}
@@ -340,12 +355,29 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectWindow!");
+			// --- Check instances ----------------------------------
+			List<AwbProjectWindow> pwList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbProjectWindow projectWindow = awbUI.getProjectWindow(project);
+				if (projectWindow!=null) pwList.add(projectWindow);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (pwList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbProjectWindow!");
+			} else if (pwList.size()==1) {
+				return pwList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectWindow!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getProjectWindow(project);
 		}
 		return null;
 	}
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#createProjectWindowTab(de.enflexit.awb.core.project.Project, int, java.lang.String, java.lang.String, javax.swing.Icon, java.lang.Object, java.lang.String)
 	 */

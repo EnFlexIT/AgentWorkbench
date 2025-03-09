@@ -67,8 +67,8 @@ import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemXDirecti
 import org.awb.env.networkModel.settings.LayoutSettings.CoordinateSystemYDirection;
 import org.awb.env.networkModel.settings.LayoutSettings.EdgeShape;
 
-import agentgui.core.application.Application;
 import de.enflexit.language.Language;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.swing.JComboBoxWide;
 
 /**

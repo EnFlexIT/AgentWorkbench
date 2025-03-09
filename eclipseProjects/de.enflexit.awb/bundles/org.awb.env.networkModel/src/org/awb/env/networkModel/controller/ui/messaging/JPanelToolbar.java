@@ -42,8 +42,8 @@ import javax.swing.JToolBar;
 import org.awb.env.networkModel.GraphGlobals;
 import org.awb.env.networkModel.controller.ui.messaging.MessagingJInternalFrame.WidgetOrientation;
 
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.language.Language;
-import agentgui.core.config.GlobalInfo;
 
 /**
  * The Class JPanleStates represents the visualization for state indications.

@@ -2,16 +2,16 @@ package de.enflexit.awb.remoteControl;
 
 import javax.swing.SwingUtilities;
 
-import agentgui.core.application.Application;
-import agentgui.core.application.ApplicationListener;
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.jade.Platform.SystemAgent;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetupNotification;
-import agentgui.core.project.setup.SimulationSetupNotification.SimNoteReason;
-import agentgui.simulationService.agents.LoadExecutionAgent;
-import agentgui.simulationService.time.TimeModelDateBased;
-import agentgui.simulationService.time.TimeModelDiscrete;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationListener;
+import de.enflexit.awb.core.environment.TimeModelController;
+import de.enflexit.awb.core.jade.Platform.SystemAgent;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
+import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
+import de.enflexit.awb.simulation.environment.time.TimeModelDiscrete;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 
@@ -142,7 +142,7 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 		Object[] startWith = new Object[1];
 		startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 		Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith, true);
-		Application.getMainWindow().setEnableSimStart(false);
+		Application.getMainWindow().setEnabledSimStart(false);
 		return true;
 	}
 	

@@ -68,9 +68,9 @@ import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS.ComponentSorting;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
-import agentgui.core.application.Application;
 import de.enflexit.language.Language;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.imageFileSelection.MissingIcon;
@@ -503,7 +503,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 */
 	public TableCellEditor4ClassSelector getAgentClassesCellEditor(){
 		if(agentClassesCellEditor == null){
-			agentClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), Agent.class, "", "", Language.translate("Agenten"), true);
+			agentClassesCellEditor = new TableCellEditor4ClassSelector((Window)Application.getMainWindow(), Agent.class, "", "", Language.translate("Agenten"), true);
 		}
 		return agentClassesCellEditor;
 	}
@@ -513,7 +513,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 */
 	public TableCellEditor4ClassSelector getAdapterClassesCellEditor(){
 		if(adapterClassesCellEditor == null){
-			adapterClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), NetworkComponentAdapter.class, "", "", Language.translate("Erweiterungsadapter für Netzwerkkomponenten"), true);
+			adapterClassesCellEditor = new TableCellEditor4ClassSelector((Window)Application.getMainWindow(), NetworkComponentAdapter.class, "", "", Language.translate("Erweiterungsadapter für Netzwerkkomponenten"), true);
 		}
 		return adapterClassesCellEditor;
 	}
@@ -523,7 +523,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 */
 	public TableCellEditor4ClassSelector getPrototypeClassesCellEditor(){
 		if(prototypeClassesCellEditor == null){
-			prototypeClassesCellEditor = new TableCellEditor4ClassSelector(Application.getMainWindow(), AbstractGraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"), false);
+			prototypeClassesCellEditor = new TableCellEditor4ClassSelector((Window)Application.getMainWindow(), AbstractGraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"), false);
 		}
 		return prototypeClassesCellEditor;
 	}

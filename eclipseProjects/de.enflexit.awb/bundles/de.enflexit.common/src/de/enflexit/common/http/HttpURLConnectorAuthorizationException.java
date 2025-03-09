@@ -1,31 +1,31 @@
-package de.enflexit.awb.core.update;
+package de.enflexit.common.http;
 
 /**
- * The Class ProjectRepositoryUpdateAuthorizationException.
+ * The Class HttpURLConnectorAuthorizationException.
  * @author Alexander Graute - SOFTEC - University of Duisburg - Essen
  */
-public class ProjectRepositoryUpdateAuthorizationException extends ProjectRepositoryUpdateException {
+public class HttpURLConnectorAuthorizationException extends HttpURLConnectorException {
 
 	private static final long serialVersionUID = 4555792668841391604L;
 
 	/**
 	 * Instantiates a new project repository update authorization exception.
 	 */
-	public ProjectRepositoryUpdateAuthorizationException() {
+	public HttpURLConnectorAuthorizationException() {
 		super();
 	}
 	/**
 	 * Instantiates a new project repository update authorization exception.
 	 * @param message the message
 	 */
-	public ProjectRepositoryUpdateAuthorizationException(String message) {
+	public HttpURLConnectorAuthorizationException(String message) {
 		super(message);
 	}
 	/**
 	 * Instantiates a new project repository update authorization exception.
 	 * @param cause the cause
 	 */
-	public ProjectRepositoryUpdateAuthorizationException(Throwable cause) {
+	public HttpURLConnectorAuthorizationException(Throwable cause) {
 		super(cause);
 	}
 	/**
@@ -33,7 +33,7 @@ public class ProjectRepositoryUpdateAuthorizationException extends ProjectReposi
 	 * @param message the message
 	 * @param cause the cause
 	 */
-	public ProjectRepositoryUpdateAuthorizationException(String message, Throwable cause) {
+	public HttpURLConnectorAuthorizationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 	/**
@@ -43,7 +43,7 @@ public class ProjectRepositoryUpdateAuthorizationException extends ProjectReposi
 	 * @param enableSuppression the enable suppression
 	 * @param writableStackTrace the writable stack trace
 	 */
-	public ProjectRepositoryUpdateAuthorizationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public HttpURLConnectorAuthorizationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

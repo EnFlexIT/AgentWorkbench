@@ -3,11 +3,11 @@ package de.enflexit.common.csv;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class CSV_FilePreview extends JDialog {
      * @param owner             the owner frame
      * @param csvDataController the HashMap of CsvDataController
      */
-    public CSV_FilePreview(Frame owner, HashMap<String, CsvDataController> csvDataController) {
+    public CSV_FilePreview(Window owner, HashMap<String, CsvDataController> csvDataController) {
 		super(owner);
 		this.csvDataController = new TreeMap<>();
 		this.csvDataController.putAll(csvDataController);
@@ -66,7 +66,7 @@ public class CSV_FilePreview extends JDialog {
      * @param owner             the owner frame
      * @param csvDataController the TreeMap of CsvDataController
      */
-    public CSV_FilePreview(Frame owner, TreeMap<String, CsvDataController> csvDataController) {
+    public CSV_FilePreview(Window owner, TreeMap<String, CsvDataController> csvDataController) {
 		super(owner);
 		this.csvDataController = csvDataController;
 		this.initialize();

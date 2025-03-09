@@ -2,9 +2,9 @@ package gol.environment;
 
 import java.util.HashMap;
 
+import de.enflexit.awb.simulation.environment.DisplaytEnvironmentModel;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 
 /**
  * The Class SquaredEnvironmentModel.

@@ -1,7 +1,7 @@
 package gol.plugin;
 
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.PlugIn;
 
 /**
  * The Class GameOfLifePlugIn is just a base implementation of a PlugIn and 

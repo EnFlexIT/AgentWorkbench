@@ -1,9 +1,7 @@
 package org.awb.env.networkModel.classFilter;
 
 import java.util.Vector;
-
-import org.agentgui.bundle.evaluation.BundleClassFilterService;
-
+import de.enflexit.awb.core.bundleEvaluation.BundleClassFilterService;
 import de.enflexit.common.bundleEvaluation.AbstractBundleClassFilter;
 
 /**

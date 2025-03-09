@@ -7,18 +7,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.core.environment.EnvironmentPanel;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
+import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
+import de.enflexit.awb.simulation.environment.DisplaytEnvironmentModel;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
-
-import agentgui.core.environment.EnvironmentController;
-import agentgui.core.environment.EnvironmentPanel;
-import agentgui.core.project.Project;
-import agentgui.core.project.setup.SimulationSetupNotification;
-import agentgui.simulationService.environment.AbstractEnvironmentModel;
-import agentgui.simulationService.environment.DisplaytEnvironmentModel;
 
 /**
  * This is the controller for the squared gol.environment and an example 

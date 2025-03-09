@@ -28,6 +28,7 @@
  */
 package org.awb.env.networkModel.controller.ui.commands;
 
+import java.awt.Window;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,9 +49,9 @@ import org.awb.env.networkModel.NetworkModel;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.persistence.NetworkModelImportService;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
 import de.enflexit.language.Language;
-import agentgui.simulationService.environment.AbstractEnvironmentModel;
 
 /**
  * The AbstractUndoableEdit 'ImportNetworkModel' imports a selected file.
@@ -148,7 +149,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 				Language.translate("Merge", Language.EN), 
 				Language.translate("Cancel", Language.EN)
 			};
-		return JOptionPane.showOptionDialog(Application.getMainWindow(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		return JOptionPane.showOptionDialog((Window)Application.getMainWindow(), message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 	}
 	
 	/**
@@ -306,7 +307,7 @@ public class ImportNetworkModel extends AbstractUndoableEdit {
 			graphFC.setCurrentDirectory(Application.getGlobalInfo().getLastSelectedFolder());
 			
 			// --- Show FileChooser ---------------------------------
-			int dialogAnswer = graphFC.showOpenDialog(Application.getMainWindow()); 
+			int dialogAnswer = graphFC.showOpenDialog((Window) Application.getMainWindow()); 
 			if (dialogAnswer==JFileChooser.APPROVE_OPTION) {
 				Application.getGlobalInfo().setLastSelectedFolder(graphFC.getCurrentDirectory());
 				File selectedFile = graphFC.getSelectedFile();

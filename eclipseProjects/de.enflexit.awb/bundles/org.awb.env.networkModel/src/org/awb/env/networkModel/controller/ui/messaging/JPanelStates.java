@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 
 import org.awb.env.networkModel.controller.ui.messaging.MessagingJInternalFrame.WidgetOrientation;
 
-import agentgui.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
 
 /**
  * The Class JPanleStates represents the visualization for state indications.

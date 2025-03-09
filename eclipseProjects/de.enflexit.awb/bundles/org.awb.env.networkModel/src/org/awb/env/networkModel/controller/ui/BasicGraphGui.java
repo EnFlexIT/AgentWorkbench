@@ -93,7 +93,7 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 
 import com.google.common.base.Function;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.images.ImageHelper;

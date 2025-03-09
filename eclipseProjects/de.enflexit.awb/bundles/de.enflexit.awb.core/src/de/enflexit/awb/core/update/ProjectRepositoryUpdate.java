@@ -17,6 +17,7 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.common.ExecutionEnvironment;
+import de.enflexit.common.http.HttpURLConnectorException;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.transfer.Download;
 import de.enflexit.common.transfer.FileCopier;
@@ -404,7 +405,7 @@ public class ProjectRepositoryUpdate extends Thread {
 				}
 			}
 			
-		} catch(ProjectRepositoryUpdateException | IllegalArgumentException ex) {
+		} catch(HttpURLConnectorException | IllegalArgumentException ex) {
 			updateTitle = Language.translate("Update failed", Language.EN);
 			updateMessage = ex.getLocalizedMessage();
 			updateMessageType = AwbMessageDialog.ERROR_MESSAGE;
@@ -588,9 +589,9 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @param destinationFileName the destination file name
 	 * @param webResAuth the WebResourcesAuthorization
 	 * @return true, if successful
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
-	public boolean downloadOrCopyProjectArchiveFromRepository(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry, String destinationFileName, WebResourcesAuthorization webResAuth) throws ProjectRepositoryUpdateException {
+	public boolean downloadOrCopyProjectArchiveFromRepository(String sourceDirectoryOrWebReference, RepositoryEntry updateRepositoryEntry, String destinationFileName, WebResourcesAuthorization webResAuth) throws HttpURLConnectorException {
 		
 		boolean successful = false;
 		ProjectRepository repo =  this.getProjectRepository();
@@ -648,9 +649,9 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * Returns the {@link ProjectRepository} from the projects update site.
 	 *
 	 * @return the ProjectRepository
-	 * @throws ProjectRepositoryUpdateException the project repository update exception
+	 * @throws HttpURLConnectorException the project repository update exception
 	 */
-	public ProjectRepository getProjectRepository() throws ProjectRepositoryUpdateException {
+	public ProjectRepository getProjectRepository() throws HttpURLConnectorException {
 		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {
 			projectRepository = ProjectRepository.loadProjectRepository(this.currProject.getUpdateSite(), this.currProject.getUpdateAuthorization());
 			if (projectRepository==null) {

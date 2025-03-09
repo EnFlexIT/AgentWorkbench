@@ -8,8 +8,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.maps.MapSettings;
 import org.awb.env.networkModel.settings.LayoutSettings;
 
-import agentgui.core.application.Application;
-import agentgui.core.project.Project;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.AbstractGeoCoordinate;
 import de.enflexit.geography.coordinates.OSGBCoordinate;

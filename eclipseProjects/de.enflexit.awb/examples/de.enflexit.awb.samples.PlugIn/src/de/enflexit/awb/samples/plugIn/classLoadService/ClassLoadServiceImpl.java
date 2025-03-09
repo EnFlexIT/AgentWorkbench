@@ -31,13 +31,12 @@ package de.enflexit.awb.samples.plugIn.classLoadService;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import agentgui.core.classLoadService.ClassLoadService;
-import agentgui.core.plugin.PlugIn;
-import agentgui.core.project.Project;
-import agentgui.simulationService.balancing.DynamicLoadBalancingBase;
-import agentgui.simulationService.balancing.StaticLoadBalancingBase;
-import agentgui.simulationService.time.TimeModel;
+import de.enflexit.awb.core.classLoadService.ClassLoadService;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.project.plugins.PlugIn;
+import de.enflexit.awb.simulation.balancing.DynamicLoadBalancingBase;
+import de.enflexit.awb.simulation.balancing.StaticLoadBalancingBase;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
 

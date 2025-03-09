@@ -5,7 +5,14 @@ Bundle-SymbolicName: de.enflexit.awb.remoteControl
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.awb.remoteControl
 Require-Bundle: com.google.gson,
- org.agentgui.core,
  de.enflexit.common
 Automatic-Module-Name: de.enflexit.awb.remoteControl
 Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: de.enflexit.awb.core,
+ de.enflexit.awb.core.environment,
+ de.enflexit.awb.core.jade,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.setup,
+ de.enflexit.awb.core.ui,
+ de.enflexit.awb.simulation.agents,
+ de.enflexit.awb.simulation.environment.time

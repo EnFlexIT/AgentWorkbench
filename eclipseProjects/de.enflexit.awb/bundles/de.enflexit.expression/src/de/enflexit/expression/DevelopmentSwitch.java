@@ -1,6 +1,6 @@
 package de.enflexit.expression;
 
-import agentgui.core.application.Application;
+import de.enflexit.awb.core.Application;
 import de.enflexit.common.ExecutionEnvironment;
 
 /**

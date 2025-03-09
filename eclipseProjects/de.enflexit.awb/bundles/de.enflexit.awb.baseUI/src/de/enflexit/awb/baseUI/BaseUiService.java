@@ -18,7 +18,6 @@ import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
 import de.enflexit.awb.core.ui.AgentWorkbenchUI;
-import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbBenchmarkMonitor;
 import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
@@ -95,9 +94,8 @@ public class BaseUiService implements AgentWorkbenchUI {
 			aboutDialog = new AboutDialog(null);
 		} else {
 			// --- In case a MainWindow is available ... -------
-			AwbMainWindow<?, ?, ?, ?> mainWindow = AgentWorkbenchUiManager.getInstance().getMainWindow();
-			if (mainWindow instanceof Window) {
-				aboutDialog = new AboutDialog((Window) mainWindow);
+			if (Application.isMainWindowInitiated()==true) {
+				aboutDialog = new AboutDialog((Window) Application.getMainWindow());
 			} else {
 				aboutDialog = new AboutDialog(null);
 			}
@@ -128,10 +126,10 @@ public class BaseUiService implements AgentWorkbenchUI {
 			}
 		}
 		
-		if (Application.isRunningAsServer()==true) {
+		if (Application.isRunningAsServer()==true || Application.isMainWindowInitiated()==false) {
 			optionDialog = new OptionDialog(null);
 		} else {
-			optionDialog = new OptionDialog((Window) AgentWorkbenchUiManager.getInstance().getMainWindow());
+			optionDialog = new OptionDialog((Window) Application.getMainWindow());
 		}
 		if (categoryToFocus!=null) {
 			optionDialog.setFocusOnTab(categoryToFocus);

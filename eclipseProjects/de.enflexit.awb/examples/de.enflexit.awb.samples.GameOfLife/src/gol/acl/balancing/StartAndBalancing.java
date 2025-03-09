@@ -1,5 +1,7 @@
 package gol.acl.balancing;
 
+import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
+import de.enflexit.awb.simulation.balancing.StaticLoadBalancingBase;
 import jade.core.Location;
 import jade.core.ServiceException;
 
@@ -11,8 +13,6 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import agentgui.simulationService.agents.LoadExecutionAgent;
-import agentgui.simulationService.balancing.StaticLoadBalancingBase;
 
 public class StartAndBalancing extends StaticLoadBalancingBase {
 

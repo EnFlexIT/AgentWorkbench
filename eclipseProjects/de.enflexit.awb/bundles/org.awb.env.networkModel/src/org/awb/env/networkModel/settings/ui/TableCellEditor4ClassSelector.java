@@ -29,7 +29,7 @@
 package org.awb.env.networkModel.settings.ui;
 
 import java.awt.Component;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -63,7 +63,7 @@ public class TableCellEditor4ClassSelector extends AbstractCellEditor implements
 	 * @param clazz2Search4Description the clazz2 search4 description
 	 * @param allowNull the indicator to allow null or not
 	 */
-	public TableCellEditor4ClassSelector(Frame owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull){
+	public TableCellEditor4ClassSelector(Window owner, Class<?> clazz2Search4, String clazz2Search4CurrentValue, String clazz2Search4DefaultValue, String clazz2Search4Description, boolean allowNull){
 		
 		classSelector = new ClassSelectionDialog(owner, clazz2Search4, clazz2Search4CurrentValue, clazz2Search4DefaultValue, clazz2Search4Description, allowNull);
 		

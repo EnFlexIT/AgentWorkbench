@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.update;
+package de.enflexit.awb.desktop.project.update;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,14 +37,18 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import de.enflexit.language.Language;
+import de.enflexit.awb.baseUI.dialogs.AuthenticatationDialog;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.BundleProperties;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.awb.core.update.ProjectRepositoryUpdate;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepositoryEntries;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryTagVersions;
+import de.enflexit.common.http.HttpURLConnectorAuthorizationException;
+import de.enflexit.common.http.HttpURLConnectorException;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.swing.OwnerDetection;
 
@@ -481,10 +485,10 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		try {
 			repo = ProjectRepository.loadProjectRepository(link, lastUsedAuthorization);
 			
-		} catch (ProjectRepositoryUpdateAuthorizationException ex) {
+		} catch (HttpURLConnectorAuthorizationException ex) {
 			// --- Open UpdateSettingsDialog if previous request returned an unauthorized response
 			Frame owner = OwnerDetection.getOwnerFrameForComponent(this);
-			AuthenticatationDialog dialog = new AuthenticatationDialog(owner, lastUsedAuthorization, link);
+			AuthenticatationDialog dialog = new AuthenticatationDialog(owner, link, lastUsedAuthorization);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setConfirmButtonText("Connect");
 			
@@ -493,11 +497,11 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 				lastUsedAuthorization = dialog.getSavedAuthorizationSettings();
 				repo = ProjectRepository.loadProjectRepository(link, lastUsedAuthorization);
 				
-			} catch(ProjectRepositoryUpdateException | IllegalArgumentException e) {
+			} catch(HttpURLConnectorException | IllegalArgumentException e) {
 				System.err.println(e.getLocalizedMessage());
 			}		
 			
-		} catch(ProjectRepositoryUpdateException | IllegalArgumentException ex) {
+		} catch(HttpURLConnectorException | IllegalArgumentException ex) {
 			System.err.println(ex.getLocalizedMessage());
 		}
 		
@@ -703,7 +707,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 				}
 				
 			}
-		} catch (HeadlessException | ProjectRepositoryUpdateException e) {
+		} catch (HeadlessException | HttpURLConnectorException e) {
 			AwbMessageDialog.showMessageDialog(this, Language.translate("The installation of the project '",Language.EN) + this.repositoryEntrySelected.getProjectName() + Language.translate("' failed ", Language.EN)+System.getProperty("line.separator") + Language.translate("Error: ",Language.EN) + e.getLocalizedMessage(), Language.translate("Installation failed", Language.EN), AwbMessageDialog.ERROR_MESSAGE);
 			e.printStackTrace();
 		}

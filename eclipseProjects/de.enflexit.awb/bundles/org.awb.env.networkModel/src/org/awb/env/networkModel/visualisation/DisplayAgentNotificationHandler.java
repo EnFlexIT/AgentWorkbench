@@ -46,7 +46,7 @@ import org.awb.env.networkModel.visualisation.notifications.NetworkComponentDire
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeries;
 import org.awb.env.networkModel.visualisation.notifications.UpdateDataSeriesException;
 
-import agentgui.simulationService.transaction.EnvironmentNotification;
+import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
 import jade.core.AID;
 
 /**

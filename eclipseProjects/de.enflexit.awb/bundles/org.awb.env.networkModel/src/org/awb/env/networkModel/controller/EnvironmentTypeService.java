@@ -2,15 +2,15 @@ package org.awb.env.networkModel.controller;
 
 import org.awb.env.networkModel.visualisation.DisplayAgent;
 
+import de.enflexit.awb.core.environment.EnvironmentController;
+import de.enflexit.awb.core.environment.EnvironmentType;
 import de.enflexit.language.Language;
-import agentgui.core.environment.EnvironmentController;
-import agentgui.core.environment.EnvironmentType;
 import jade.core.Agent;
 
 /**
  * The Class EnvironmentTypeService.
  */
-public class EnvironmentTypeService implements agentgui.core.environment.EnvironmentTypeService {
+public class EnvironmentTypeService implements de.enflexit.awb.core.environment.EnvironmentTypeService {
 
 	/* (non-Javadoc)
 	 * @see agentgui.core.environment.EnvironmentTypeService#getEnvironmentType()

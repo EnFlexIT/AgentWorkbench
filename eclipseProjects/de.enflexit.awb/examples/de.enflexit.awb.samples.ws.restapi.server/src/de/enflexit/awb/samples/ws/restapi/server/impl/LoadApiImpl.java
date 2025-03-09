@@ -3,12 +3,12 @@ package de.enflexit.awb.samples.ws.restapi.server.impl;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
-import agentgui.simulationService.load.LoadMeasureThread;
 import de.enflexit.awb.samples.ws.restapi.server.RestApiConfiguration;
 import de.enflexit.awb.samples.ws.restapi.server.gen.LoadApi;
 import de.enflexit.awb.samples.ws.restapi.server.gen.LoadApiService;
 import de.enflexit.awb.samples.ws.restapi.server.gen.NotFoundException;
 import de.enflexit.awb.samples.ws.restapi.server.gen.model.SystemLoad;
+import de.enflexit.awb.simulation.load.LoadMeasureThread;
 
 /**
  * The individual implementation class for the {@link LoadApi}.

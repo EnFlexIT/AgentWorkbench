@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.update;
+package de.enflexit.awb.baseUI.dialogs;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,7 +25,8 @@ import javax.swing.SwingConstants;
 
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.config.GlobalInfo;
-import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
+import de.enflexit.common.http.HttpURLConnector;
+import de.enflexit.common.http.HttpURLConnectorException;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
@@ -68,22 +69,22 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	 * Instantiates a new project update settings dialog.
 	 *
 	 * @param frame the frame
-	 * @param updateSite the update site
+	 * @param siteToContact the site to contact
 	 */
-	public AuthenticatationDialog(Frame frame, String updateSite) {
-		this(frame, null, updateSite);
+	public AuthenticatationDialog(Frame frame, String siteToContact) {
+		this(frame, siteToContact, null);
 	}
 	/**
 	 * Instantiates a new project update settings dialog.
 	 *
 	 * @param frame the frame
 	 * @param authorization the update authorization
-	 * @param updateSite the update site
+	 * @param siteToContact the update site
 	 */
-	public AuthenticatationDialog(Frame frame, WebResourcesAuthorization authorization, String updateSite) {
+	public AuthenticatationDialog(Frame frame, String siteToContact, WebResourcesAuthorization authorization) {
 		super(frame);
 		
-		this.updateSite = updateSite;
+		this.updateSite = siteToContact;
 		
 		this.setTitle(Language.translate("Authentisierungs-Einstellungen"));
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
@@ -104,8 +105,6 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	 * Initialize components.
 	 */
 	public void initialize() {
-		
-		
 		
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -152,6 +151,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 		gbc_jLabelPassword.gridx = 0;
 		gbc_jLabelPassword.gridy = 2;
 		this.getJPanelContent().add(getJLabelPassword(), gbc_jLabelPassword);
+		
 		GridBagConstraints gbc_JPasswordFieldPassword = new GridBagConstraints();
 		gbc_JPasswordFieldPassword.gridwidth = 2;
 		gbc_JPasswordFieldPassword.insets = new Insets(0, 0, 5, 10);
@@ -190,7 +190,6 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	private JPanel getJPanelContent() {
 		if (jPanelContent==null) {
 			jPanelContent = new JPanel();
-			
 		}
 		return jPanelContent;
 	}
@@ -285,8 +284,6 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 		return JPasswordFieldPassword;
 	}
 	
-	
-	
 	/**
 	 * @return the savedAuthorizationSettings
 	 */
@@ -377,6 +374,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	 * @return true, if successful
 	 */
 	private boolean testConnection() {
+		
 		boolean successfulConnection = true;
 		WebResourcesAuthorization authorizationSettings = this.getProjectRepositoryAuthorizationFromFields();
 		this.setStatusMessageType(StatusMessageType.NORMAL);	
@@ -384,14 +382,14 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 
 		try {
 			this.setStatusMessage(Language.translate("Connecting...", Language.EN));
-			ProjectRepository.openConnectionToUpdateSite(updateSite, authorizationSettings);
+			HttpURLConnector.openConnection(updateSite, authorizationSettings);
 			this.setStatusMessageType(StatusMessageType.SUCCESSFUL);
 			this.setStatusMessage(Language.translate("Verbindung erfolgreich"));
 			
-		} catch (IOException | URISyntaxException | ProjectRepositoryUpdateException e) {
+		} catch (IOException | URISyntaxException | HttpURLConnectorException ex) {
 			successfulConnection = false;
-			setStatusMessageType(StatusMessageType.ERROR);
-			setStatusMessage(e.getLocalizedMessage());
+			this.setStatusMessageType(StatusMessageType.ERROR);
+			this.setStatusMessage(ex.getLocalizedMessage());
 		}
 		return successfulConnection;
 	}

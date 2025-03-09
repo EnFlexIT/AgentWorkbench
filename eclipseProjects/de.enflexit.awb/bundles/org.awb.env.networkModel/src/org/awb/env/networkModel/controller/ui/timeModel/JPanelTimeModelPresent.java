@@ -35,10 +35,10 @@ import java.awt.Insets;
 
 import javax.swing.event.ChangeListener;
 
-import agentgui.core.gui.projectwindow.simsetup.TimeModelController;
-import agentgui.core.project.Project;
-import agentgui.simulationService.time.TimeModel;
-import agentgui.simulationService.time.TimeModelPresent;
+import de.enflexit.awb.core.environment.TimeModelController;
+import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.simulation.environment.time.TimeModel;
+import de.enflexit.awb.simulation.environment.time.TimeModelPresent;
 
 /**
  * The Class JPanelTimeModelPresent is the JPanel used for configuration of the TimeModelPresent.

@@ -9,6 +9,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.db.hibernate.HibernateUtilities;
+import jade.JadeClassLoader;
 
 /**
  * The Class AwbBundleActivator.
@@ -20,21 +21,37 @@ public class AwbBundleActivator implements BundleActivator, BundleListener {
 	public static String localBundleName;
 	private boolean debug = false;
 	
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
+		this.addJadeClassLoadService();
 		context.addBundleListener(this);
 	}
+	/**
+	 * Adds the jade class load service.
+	 */
+	private void addJadeClassLoadService() {
+		JadeClassLoader.setClassLoaderService(new JadeClassLoaderService());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		context.removeBundleListener(this);
+		this.removeJadeClassLoadService();
 	}
-
+	/**
+	 * Removes the jade class load service.
+	 */
+	private void removeJadeClassLoadService() {
+		JadeClassLoader.setClassLoaderService(null);
+	}
+	
 	/**
 	 * Returns the local bundle name.
 	 * @return the local bundle name
