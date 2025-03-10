@@ -47,6 +47,11 @@ public class TimeModelController implements Observer {
 	public TimeModelController(Project project) {
 		this.currProject = project;
 		this.currProject.addObserver(this);
+	}
+	/**
+	 * Initializes the {@link TimeModelController}. May be invoked after instance generation;
+	 */
+	public void initialize() {
 		this.addTimeModelDisplayToProjectWindow();
 	}
 	

@@ -2,7 +2,7 @@
 <project>
     <projectName>GraphTest</projectName>
     <projectTreeVisible>true</projectTreeVisible>
-    <projectTabHeaderVisible>true</projectTabHeaderVisible>
+    <projectTabHeaderVisible>false</projectTabHeaderVisible>
     <versionTag>Complete Project</versionTag>
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateDateLastChecked>0</updateDateLastChecked>

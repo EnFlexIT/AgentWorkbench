@@ -95,6 +95,22 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		return false;
 	}
 	
+	@Override
+	public AwbBenchmarkMonitor getBenchmarkMonitor() {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return null;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
 	 */
@@ -134,20 +150,6 @@ public class DesktopUiService implements AgentWorkbenchUI {
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
-		// --- Nothing to do here, since BaseUiService will create the component ----
-		return null;
-	}
-
-	@Override
-	public AwbBenchmarkMonitor getBenchmarkMonitor() {
-		// --- Nothing to do here, since BaseUiService will create the component ----
-		return null;
-	}
 
 	@Override
 	public AwbTranslationDialog showModalTranslationDialog() {

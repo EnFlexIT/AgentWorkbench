@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import de.enflexit.awb.baseUI.console.JFrame4Consoles;
 import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.dialogs.AboutDialog;
+import de.enflexit.awb.baseUI.dialogs.BenchmarkMonitor;
 import de.enflexit.awb.baseUI.dialogs.ProgressMonitor;
 import de.enflexit.awb.baseUI.monitor.load.SystemLoadDialog;
 import de.enflexit.awb.baseUI.monitor.threading.ThreadMonitorDialog;
@@ -150,6 +151,37 @@ public class BaseUiService implements AgentWorkbenchUI {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getBenchmarkMonitor()
+	 */
+	@Override
+	public AwbBenchmarkMonitor getBenchmarkMonitor() {
+		Window owner = null;
+		if (Application.isMainWindowInitiated()==true) {
+			owner = (Window)Application.getMainWindow();
+		}
+		return new BenchmarkMonitor(owner);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
+
+		// --- Try to get a JDesktopPane ----------------------------
+		AwbMainWindowProjectDesktop projectDesktop = null;
+		if (Application.isMainWindowInitiated()==true) {
+			projectDesktop = Application.getMainWindow().getProjectDesktop();
+		}
+
+		// --- Get the image icon for the progress monitor ----------
+		ImageIcon imageIcon = GlobalInfo.getInternalImageIconAwbIcon16();
+		// --- Get the look and feel --------------------------------
+		String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		return new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, projectDesktop, lookAndFeelClassName);
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
@@ -185,33 +217,6 @@ public class BaseUiService implements AgentWorkbenchUI {
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
-
-		// --- Try to get a JDesktopPane ----------------------------
-		AwbMainWindowProjectDesktop projectDesktop = null;
-		if (Application.isMainWindowInitiated()==true) {
-			projectDesktop = Application.getMainWindow().getProjectDesktop();
-		}
-
-		// --- Get the image icon for the progress monitor ----------
-		ImageIcon imageIcon = GlobalInfo.getInternalImageIconAwbIcon16();
-		// --- Get the look and feel --------------------------------
-		String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
-		return new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, projectDesktop, lookAndFeelClassName);
-	}
-	
-	
-	
-	@Override
-	public AwbBenchmarkMonitor getBenchmarkMonitor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public AwbTranslationDialog showModalTranslationDialog() {
 		// TODO Auto-generated method stub

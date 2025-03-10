@@ -2009,6 +2009,7 @@ import de.enflexit.language.Language;
 	public TimeModelController getTimeModelController() {
 		if (this.timeModelController == null) {
 			this.timeModelController = new TimeModelController(this);
+			this.timeModelController.initialize();
 		}
 		return timeModelController;
 	}

@@ -443,6 +443,7 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		}
 		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getBenchmarkMonitor()
 	 */
@@ -453,14 +454,28 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProgressMonitor!");
+			// --- Check instances ----------------------------------
+			List<AwbBenchmarkMonitor> bmList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbBenchmarkMonitor bmMonitor = awbUI.getBenchmarkMonitor();
+				if (bmMonitor!=null) bmList.add(bmMonitor);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (bmList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbBenchmarkMonitor!");
+			} else if (bmList.size()==1) {
+				return bmList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbBenchmarkMonitor!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getBenchmarkMonitor();
 		}
 		return null;
 	}
-	
-	
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalTranslationDialog()
