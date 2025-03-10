@@ -13,7 +13,7 @@ de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of
 de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing selected!;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;;;;
+de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be created.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
 de;AWB auf GitBook;AWB on GitBook;;;
@@ -304,7 +304,7 @@ de;Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese
 de;Gegenwarts-Zeit.;Present Time;;;
 de;Geräte-Agent;Embedded System Agent;;;
 de;Gesamtes Projekt verteilen;Distribute entire project;;;
-de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;;;;
+de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the general project base directory.<br>Should the projects be closed now?;;;
 de;Geöffnete Projekte müssen geschlossen werden, um das Projekt-Basisverzeichnis zu ändern.<br>Sollen die Projekte jetzt geschlossen werden?;Open projects must be closed to change the project base directory.<br>Close the projects now?;;;
 de;Gleichmäßige Verteilung der Agenten auf alle verfügbaren Maschinen;Even distribution on all available machines;;;
 de;Google - Übersetzung;Google translation;;;
@@ -473,7 +473,7 @@ de;Möchten Sie das Wörterbuches auf den Stand nach der Erstinstallation zurüc
 de;Möchten Sie das aktuelle Projekt exportieren?;Export the current project?
 de;Möchten Sie die Anwendung nun umschalten ?;Do you want do switch the application now?;;;
 de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you want to switch the display language?<br>The application has to be restarted for this<br>purpose and projects has to be reopened.;;;
-de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;;;;
+de;Möchten Sie die Anzeigesprache wirklich umstellen?<br>Die Anwendung muss hierzu neu gestartet und Projekte<br>von Ihnen neu geöffnet werden.;Do you really want to change the display language?<br>To do this, you must restart the application and reopen projects.;;;
 de;Möchten Sie die CSV-Version des Wörterbuches jetzt übernehmen?;Do you want to take over the CSV version of the dictionary now?;;;
 de;Möchten Sie die Konfiguration nun vornehmen?;Would you like to configure this now?;;;
 de;Möchten Sie einen weiteren Agenten dieser Art starten?;Do you want to start another agent of this kind?

@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.enflexit.awb.baseUI;
 
 import java.awt.Component;
@@ -15,6 +12,7 @@ import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.dialogs.AboutDialog;
 import de.enflexit.awb.baseUI.dialogs.BenchmarkMonitor;
 import de.enflexit.awb.baseUI.dialogs.ProgressMonitor;
+import de.enflexit.awb.baseUI.dialogs.TranslationDialog;
 import de.enflexit.awb.baseUI.monitor.load.SystemLoadDialog;
 import de.enflexit.awb.baseUI.monitor.threading.ThreadMonitorDialog;
 import de.enflexit.awb.baseUI.options.OptionDialog;
@@ -38,7 +36,6 @@ import de.enflexit.awb.core.ui.AwbProjectExportDialog;
 import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
-import de.enflexit.awb.core.ui.AwbTranslationDialog;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 
 /**
@@ -50,6 +47,8 @@ public class BaseUiService implements AgentWorkbenchUI {
 
 	private AboutDialog aboutDialog;
 	private OptionDialog optionDialog;
+	private TranslationDialog translationDialog;
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getImplementationName()
@@ -152,6 +151,38 @@ public class BaseUiService implements AgentWorkbenchUI {
 	}
 	
 	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalTranslationDialog()
+	 */
+	@Override
+	public boolean showModalTranslationDialog() {
+
+		if (translationDialog!=null) {
+			if (translationDialog.isVisible()==true) {
+				// --- Set focus again ----------
+				translationDialog.requestFocus();
+				return false;
+			} else {
+				// --- dispose it first --------- 
+				translationDialog.dispose();
+				translationDialog = null;
+			}
+		}
+		
+		if (Application.isRunningAsServer()==true || Application.isMainWindowInitiated()==false) {
+			translationDialog = new TranslationDialog(null);
+		} else {
+			translationDialog = new TranslationDialog((Window) Application.getMainWindow());
+		}
+		translationDialog.setVisible(true);
+		// - - - - - - - - - - - - - - - - - - - -
+		if (translationDialog!=null) {
+			translationDialog.dispose();
+		}
+		translationDialog = null;
+		return true;
+	}
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getBenchmarkMonitor()
 	 */
 	@Override
@@ -217,11 +248,7 @@ public class BaseUiService implements AgentWorkbenchUI {
 	}
 
 	
-	@Override
-	public AwbTranslationDialog showModalTranslationDialog() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID) {

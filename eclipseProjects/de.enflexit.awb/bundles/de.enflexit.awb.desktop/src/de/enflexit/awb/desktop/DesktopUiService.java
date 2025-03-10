@@ -22,7 +22,6 @@ import de.enflexit.awb.core.ui.AwbProjectExportDialog;
 import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
-import de.enflexit.awb.core.ui.AwbTranslationDialog;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
 import de.enflexit.awb.desktop.dialogs.ProjectNewOpen;
 import de.enflexit.awb.desktop.mainWindow.MainWindow;
@@ -95,6 +94,15 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalTranslationDialog()
+	 */
+	@Override
+	public boolean showModalTranslationDialog() {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return false;
+	}
+	
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
 		// --- Nothing to do here, since BaseUiService will create the component ----
@@ -149,14 +157,8 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		return new ProjectWindowTab(currProject, displayType_DEV_or_USER, tabTitle, toolTipText, icon, (JComponent) displayComponent, parentsName);
 	}
 
+
 	
-
-	@Override
-	public AwbTranslationDialog showModalTranslationDialog() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID) {
 		// TODO Auto-generated method stub

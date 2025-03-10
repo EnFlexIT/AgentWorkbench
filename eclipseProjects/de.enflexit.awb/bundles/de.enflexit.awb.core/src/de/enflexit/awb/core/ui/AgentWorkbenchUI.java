@@ -70,6 +70,11 @@ public interface AgentWorkbenchUI {
 	 */
 	public boolean showModalOptionsDialog(String categoryToFocus);
 
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a  standalon translation dialog.
+	 * @return the awb translation dialog
+	 */
+	public boolean showModalTranslationDialog();
 	
 	
 	/**
@@ -125,12 +130,6 @@ public interface AgentWorkbenchUI {
 	 */
 	public AwbBenchmarkMonitor getBenchmarkMonitor();
 	
-	
-	/**
-	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a  standalon translation dialog.
-	 * @return the awb translation dialog
-	 */
-	public AwbTranslationDialog showModalTranslationDialog();
 	
 	/**
 	 * Depending on the availability of the {@link AwbMainWindow}, should open a modal or a standalone database configuration dialog.
