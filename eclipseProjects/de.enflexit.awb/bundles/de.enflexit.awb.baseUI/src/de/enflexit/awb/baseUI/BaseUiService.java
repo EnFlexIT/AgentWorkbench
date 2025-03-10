@@ -1,19 +1,25 @@
+/*
+ * 
+ */
 package de.enflexit.awb.baseUI;
 
 import java.awt.Component;
 import java.awt.Window;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import de.enflexit.awb.baseUI.console.JFrame4Consoles;
 import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.dialogs.AboutDialog;
+import de.enflexit.awb.baseUI.dialogs.ProgressMonitor;
 import de.enflexit.awb.baseUI.monitor.load.SystemLoadDialog;
 import de.enflexit.awb.baseUI.monitor.threading.ThreadMonitorDialog;
 import de.enflexit.awb.baseUI.options.OptionDialog;
 import de.enflexit.awb.baseUI.systemtray.AwbTrayIcon;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.project.transfer.ProjectExportController;
@@ -23,6 +29,7 @@ import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
 import de.enflexit.awb.core.ui.AwbDatabaseDialog;
 import de.enflexit.awb.core.ui.AwbMainWindow;
+import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogSystemLoad;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogThreading;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
@@ -142,39 +149,63 @@ public class BaseUiService implements AgentWorkbenchUI {
 		optionDialog = null;
 		return true;
 	}
-
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
 	 */
 	@Override
 	public AwbMainWindow<?, ?, ?, ?> getMainWindow() {
+		// --- Implemented in the desktop bundle ----------
 		return null;
 	}
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProjectInteractionDialog(java.lang.String, de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction)
+	 */
 	@Override
 	public AwbProjectInteractionDialog getProjectInteractionDialog(String actionTitel, ProjectAction action) {
-		// TODO Auto-generated method stub
+		// --- Implemented in the desktop bundle ----------
 		return null;
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProjectWindow(de.enflexit.awb.core.project.Project)
+	 */
 	@Override
 	public AwbProjectWindow getProjectWindow(Project project) {
-		// TODO Auto-generated method stub
+		// --- Implemented in the desktop bundle ----------
 		return null;
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#createProjectWindowTab(de.enflexit.awb.core.project.Project, int, java.lang.String, java.lang.String, javax.swing.Icon, java.lang.Object, java.lang.String)
+	 */
 	@Override
 	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName) {
-		// TODO Auto-generated method stub
+		// --- Implemented in the desktop bundle ----------
 		return null;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+		// --- Try to get a JDesktopPane ----------------------------
+		AwbMainWindowProjectDesktop projectDesktop = null;
+		if (Application.isMainWindowInitiated()==true) {
+			projectDesktop = Application.getMainWindow().getProjectDesktop();
+		}
+
+		// --- Get the image icon for the progress monitor ----------
+		ImageIcon imageIcon = GlobalInfo.getInternalImageIconAwbIcon16();
+		// --- Get the look and feel --------------------------------
+		String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		return new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, projectDesktop, lookAndFeelClassName);
+	}
+	
+	
+	
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
 		// TODO Auto-generated method stub

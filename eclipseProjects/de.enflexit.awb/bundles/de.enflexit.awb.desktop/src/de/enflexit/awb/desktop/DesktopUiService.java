@@ -3,6 +3,7 @@ package de.enflexit.awb.desktop;
 import java.awt.Window;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
@@ -26,6 +27,7 @@ import de.enflexit.awb.core.ui.AwbTrayIcon;
 import de.enflexit.awb.desktop.dialogs.ProjectNewOpen;
 import de.enflexit.awb.desktop.mainWindow.MainWindow;
 import de.enflexit.awb.desktop.project.ProjectWindow;
+import de.enflexit.awb.desktop.project.ProjectWindowTab;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 
 /**
@@ -123,24 +125,27 @@ public class DesktopUiService implements AgentWorkbenchUI {
 	public AwbProjectWindow getProjectWindow(Project project) {
 		return new ProjectWindow(project);
 	}
-
-	
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#createProjectWindowTab(de.enflexit.awb.core.project.Project, int, java.lang.String, java.lang.String, javax.swing.Icon, java.lang.Object, java.lang.String)
+	 */
 	@Override
 	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ProjectWindowTab(currProject, displayType_DEV_or_USER, tabTitle, toolTipText, icon, (JComponent) displayComponent, parentsName);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
-		// TODO Auto-generated method stub
+		// --- Nothing to do here, since BaseUiService will create the component ----
 		return null;
 	}
 
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
-		// TODO Auto-generated method stub
+		// --- Nothing to do here, since BaseUiService will create the component ----
 		return null;
 	}
 

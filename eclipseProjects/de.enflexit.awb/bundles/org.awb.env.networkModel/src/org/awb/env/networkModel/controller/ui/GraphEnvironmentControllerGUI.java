@@ -42,6 +42,7 @@ import java.util.List;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.environment.EnvironmentPanel;
+import de.enflexit.awb.desktop.mainWindow.MainWindow;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import java.util.Vector;
@@ -308,8 +309,8 @@ public class GraphEnvironmentControllerGUI extends EnvironmentPanel implements O
     		
     		// --- Set internal frame size ----------------
     		Dimension internalFrameSize = new Dimension(800, 600);
-    		if (Application.isOperatingHeadless()==false && Application.getMainWindow()!=null) {
-    			Dimension projectDesktopSize = Application.getMainWindow().getJDesktopPane4Projects().getSize();
+    		if (Application.isOperatingHeadless()==false && Application.isMainWindowInitiated()==true) {
+    			Dimension projectDesktopSize = ((MainWindow)Application.getMainWindow()).getJDesktopPane4Projects().getSize();
     			internalFrameSize.width  = (int) (projectDesktopSize.getWidth()  - 230.0);
     			internalFrameSize.height = (int) (projectDesktopSize.getHeight() - 60.0);
     		}

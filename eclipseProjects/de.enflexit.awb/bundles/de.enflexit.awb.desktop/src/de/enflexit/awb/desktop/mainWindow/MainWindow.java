@@ -31,7 +31,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -61,6 +60,7 @@ import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
 import de.enflexit.awb.core.jade.Platform.SystemAgent;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.ui.AwbMainWindow;
+import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.desktop.dialogs.StartAgentDialog;
 import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.MainWindowMenu;
@@ -107,7 +107,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	private PlatformStatusDialog platformStatusDialog;
 	
 	private JSplitPane jSplitPane4ProjectDesktop;
-	private JDesktopPane jDesktopPane4Projects;
+	private MainWindowProjectDesktop jDesktopPane4Projects;
 	private JTabbedPane4Consoles jTabbedPane4Console;
 	private JPanelConsole jPanelConsoleLocal;
 	private int visibleDividersLocation;
@@ -603,9 +603,16 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		return jSplitPane4ProjectDesktop;
 	}
 	
-	public JDesktopPane getJDesktopPane4Projects() {
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbMainWindow#getProjectDesktop()
+	 */
+	@Override
+	public AwbMainWindowProjectDesktop getProjectDesktop() {
+		return this.getJDesktopPane4Projects();
+	}
+	public MainWindowProjectDesktop getJDesktopPane4Projects() {
 		if (jDesktopPane4Projects == null) {
-			jDesktopPane4Projects = new JDesktopPane();
+			jDesktopPane4Projects = new MainWindowProjectDesktop();
 		}
 		return jDesktopPane4Projects;
 	}

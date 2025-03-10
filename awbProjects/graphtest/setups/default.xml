@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup/>
+    <timeModelSettings>
+        <entry>
+            <key>TimeFormat</key>
+            <value>dd.MM.yyyy HH:mm:ss.SSS</value>
+        </entry>
+        <entry>
+            <key>TimeCurrent</key>
+            <value>1741595487146</value>
+        </entry>
+        <entry>
+            <key>ZoneId</key>
+            <value>Europe/Berlin</value>
+        </entry>
+        <entry>
+            <key>TimeStop</key>
+            <value>1741681887146</value>
+        </entry>
+        <entry>
+            <key>DisplayUnitIndex</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>TimeStart</key>
+            <value>1741595487146</value>
+        </entry>
+        <entry>
+            <key>StepWidth</key>
+            <value>60000</value>
+        </entry>
+    </timeModelSettings>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
+</simulationSetup>

@@ -6,7 +6,6 @@ Automatic-Module-Name: org.agentgui.sample.GameOfLife
 Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: de.enflexit.common,
- org.agentgui.lib.jade,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml,
@@ -32,5 +31,9 @@ Import-Package: de.enflexit.awb.baseUI.agents,
  de.enflexit.awb.simulation.environment.time,
  de.enflexit.awb.simulation.transaction,
  de.enflexit.language,
+ jade.content.onto;version="[4.6.0,5.0.0)",
+ jade.core,
+ jade.core.behaviours;version="[4.6.0,5.0.0)",
+ jade.lang.acl;version="[4.6.0,5.0.0)",
  jakarta.xml.bind,
  jakarta.xml.bind.annotation

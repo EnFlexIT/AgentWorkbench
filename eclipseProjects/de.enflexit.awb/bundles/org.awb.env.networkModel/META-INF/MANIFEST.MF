@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.awb.env.networkModel;singleton:=true
 Bundle-Version: 2.3.1.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: org.awb.env.networkModel
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/bundleClassFilterService.xml,
  OSGI-INF/BaseClassLoadService.xml,
  OSGI-INF/EnvironmentTypeService.xml,
@@ -33,7 +33,6 @@ Export-Package: org.awb.env.networkModel,
  org.awb.env.networkModel.visualisation.notifications
 Require-Bundle: de.enflexit.common,
  de.enflexit.geography,
- org.agentgui.lib.jade,
  org.agentgui.lib.jung,
  org.eclipse.core.runtime,
  org.eclipse.osgi.services,
@@ -54,10 +53,20 @@ Import-Package: agentgui.core.charts,
  de.enflexit.awb.core.project,
  de.enflexit.awb.core.project.setup,
  de.enflexit.awb.core.ui,
+ de.enflexit.awb.desktop.mainWindow,
  de.enflexit.awb.simulation.agents,
  de.enflexit.awb.simulation.environment,
  de.enflexit.awb.simulation.environment.time,
  de.enflexit.awb.simulation.transaction,
  de.enflexit.language,
+ jade.content.lang,
+ jade.content.lang.xml,
+ jade.content.onto,
+ jade.core,
+ jade.core.behaviours,
+ jade.lang.acl,
+ jade.util.leap,
  jakarta.xml.bind,
- jakarta.xml.bind.annotation
+ jakarta.xml.bind.annotation,
+ org.apache.commons.codec,
+ org.apache.commons.codec.binary

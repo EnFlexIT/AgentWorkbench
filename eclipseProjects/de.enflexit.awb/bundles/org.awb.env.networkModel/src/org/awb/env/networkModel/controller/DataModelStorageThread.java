@@ -51,7 +51,9 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
+import de.enflexit.awb.desktop.mainWindow.MainWindow;
 import de.enflexit.common.swing.OwnerDetection;
 
 /**
@@ -301,8 +303,8 @@ public class DataModelStorageThread extends Thread {
     					
     					// --- Free application status --------------
     					DataModelStorageThread.this.graphController.setBasicGraphGuiVisViewerActionOnTop(false);
-    					if (Application.getMainWindow()!=null) {
-    						Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
+    					if (Application.isMainWindowInitiated()==true) {
+    						((MainWindow)Application.getMainWindow()).setCursor(Cursor.getDefaultCursor());
     					}
     					Application.setStatusBarMessageReady();
 
@@ -484,7 +486,7 @@ public class DataModelStorageThread extends Thread {
 			Window ownerWindow = OwnerDetection.getOwnerFrameForComponent(parentComponent);
 			
 			// --- Initiate ProgressMonitor -------------------------
-			progressMonitor = UiBridge.getInstance().getProgressMonitor(title, header, progress);
+			progressMonitor = AgentWorkbenchUiManager.getInstance().getProgressMonitor(title, header, progress);
 			progressMonitor.setOwner(ownerWindow);
 			progressMonitor.setAllow2Cancel(false);
 			

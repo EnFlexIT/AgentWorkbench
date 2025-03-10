@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.lang.Thread.State;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -1074,7 +1075,7 @@ public class BundleEvaluator {
 				jarFilePath = bundleDirectory + jarFilePath;
 				jarFilePath = jarFilePath.replaceAll("//", "/");
 				// --- Create new URL -------------------------------
-				jarFileURL = new URL("jar:file:" + jarFilePath + "!/");
+				jarFileURL = new URI("jar:file:" + jarFilePath + "!/").toURL();
 				if (debug) System.out.println("=> ...corrected to: " + jarFileURL);
 			}
 			
@@ -1087,6 +1088,8 @@ public class BundleEvaluator {
 			ioEx.printStackTrace();
 		} catch (ClassCastException ccEx) {
 			ccEx.printStackTrace();
+		} catch (URISyntaxException uriEx) {
+			uriEx.printStackTrace();
 		}
 		
 		// ----------------------------------------------------------

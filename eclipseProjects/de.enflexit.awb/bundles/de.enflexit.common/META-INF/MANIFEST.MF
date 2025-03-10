@@ -4,8 +4,7 @@ Bundle-Name: Common
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
 Bundle-Version: 2.2.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17,
- JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml 
 Bundle-Vendor: EnFlex.IT
@@ -54,6 +53,7 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.transfer
 Import-Package: de.enflexit.language,
  de.enflexit.logging,
+ jade.content,
  jade.content.lang,
  jade.content.lang.xml,
  jade.content.onto,

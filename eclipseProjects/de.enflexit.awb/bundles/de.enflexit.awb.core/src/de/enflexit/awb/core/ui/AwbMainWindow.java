@@ -170,6 +170,19 @@ public interface AwbMainWindow<MenueType, MenuItemType, ToolBarType, ToolBarComp
 	public void addToolbarComponent(Object newComponent, int indexPosition);
 
 
+	/**
+	 * Removes the specified component from the main window.
+	 * @param component the component
+	 */
 	public void removeComponent(Object component);
+	
+	
+	
+	/**
+	 * Has to return the project desktop of the AwbMainWindw.
+	 *
+	 * @return the project desktop
+	 */
+	public AwbMainWindowProjectDesktop getProjectDesktop();
 	
 }

@@ -383,17 +383,34 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 	 */
 	@Override
 	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName) {
-		
+
 		if (this.isMissingAwbUIServce()==true) return null;
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectWindowTab!");
+			// --- Check instances ----------------------------------
+			List<AwbProjectWindowTab> pwtList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbProjectWindowTab pwt = awbUI.createProjectWindowTab(currProject, displayType_DEV_or_USER, tabTitle, toolTipText, icon, displayComponent, parentsName);
+				if (pwt!=null) pwtList.add(pwt);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (pwtList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbProjectWindowTab!");
+			} else if (pwtList.size()==1) {
+				return pwtList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectWindowTab!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).createProjectWindowTab(currProject, displayType_DEV_or_USER, tabTitle, toolTipText, icon, displayComponent, parentsName);
 		}
 		return null;
 	}
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
@@ -405,7 +422,22 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProgressMonitor!");
+			// --- Check instances ----------------------------------
+			List<AwbProgressMonitor> pmList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbProgressMonitor pMonitor = awbUI.getProgressMonitor(windowTitle, headerText, progressText);
+				if (pMonitor!=null) pmList.add(pMonitor);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (pmList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbProgressMonitor!");
+			} else if (pmList.size()==1) {
+				return pmList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProgressMonitor!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getProgressMonitor(windowTitle, headerText, progressText);
 		}

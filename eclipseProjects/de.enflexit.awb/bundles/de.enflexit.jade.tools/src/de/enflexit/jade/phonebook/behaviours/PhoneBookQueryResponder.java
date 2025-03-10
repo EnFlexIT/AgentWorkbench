@@ -21,7 +21,7 @@ import jade.proto.SimpleAchieveREResponder;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  * @param <T> the generic type
  */
-public class PhoneBookQueryResponder<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder{
+public class PhoneBookQueryResponder<GenericPhoneBookEntry extends AbstractPhoneBookEntry> extends SimpleAchieveREResponder {
 
 	private static final long serialVersionUID = 1416124382854967230L;
 	
