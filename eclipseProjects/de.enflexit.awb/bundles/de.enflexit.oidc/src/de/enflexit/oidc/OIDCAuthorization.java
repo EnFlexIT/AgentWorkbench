@@ -28,6 +28,7 @@
  */
 package de.enflexit.oidc;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.io.File;
@@ -36,6 +37,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ProtocolException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -50,7 +52,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JDialog;
 
 import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
+import com.sun.net.httpserver.HttpExchange;
 
 import de.enflexit.api.Translator;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
@@ -60,7 +64,7 @@ import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
  * This class provides a simple interface to the OpenID Connect authorisation.
  * Use with getInstance(), getDialog()/connect() and getUserID().
  */
-public class OIDCAuthorization {
+public class OIDCAuthorization implements OIDCCallbackListener {
 
 	/** The claim representing the user ID in OIDC (subject) */
 	private static final String OIDC_ID_CLAIM_USERID = "sub";
@@ -71,9 +75,9 @@ public class OIDCAuthorization {
 	private SimpleOIDCClient oidcClient;
 
 	/** The accessed resource URI, initialized with @see OIDCPanel.DEBUG_RESOURCE_URI. */
-	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
+	private String resourceURI;
 	/** The URI of the OIDC provider/issuer. */
-	private String issuerURI = "";
+	private String issuerURI;
 	
 	/** The availability handler called when the resource is available. */
 	private OIDCResourceAvailabilityHandler availabilityHandler;
@@ -93,7 +97,10 @@ public class OIDCAuthorization {
 	private File truststoreFile;
 
 	private String lastSuccessfulUser;
-
+	
+	private String clientID;
+	private String clientSecret;
+	
 	
 	
 	/**
@@ -197,18 +204,33 @@ public class OIDCAuthorization {
 	}
 
 	/**
+	 * Sets the client ID.
+	 * @param clientID the new client ID
+	 */
+	public void setClientID(String clientID) {
+		this.clientID = clientID;
+	}
+	/**
 	 * Gets the client id.
 	 * @return the client id
 	 */
 	public String getClientID() {
-		return OIDCPanel.DEBUG_CLIENT_ID;
+		return this.clientID;
+	}
+	
+	/**
+	 * Sets the client secret.
+	 * @param clientSecret the new client secret
+	 */
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
 	}
 	/**
 	 * Gets the client secret.
 	 * @return the client secret
 	 */
 	public String getClientSecret() {
-		return OIDCPanel.DEBUG_CLIENT_SECRET;
+		return this.clientSecret;
 	}
 
 	/**
@@ -302,6 +324,36 @@ public class OIDCAuthorization {
 		oidcClient.setRedirectURI(getResourceURI());
 		urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
 		inited = true;
+	}
+	
+	/**
+	 * Authorizes a user using the authorization code flow. An authorization code is requested
+	 * from the keycloak server and exchanged for the required tokens. User login is handled by
+	 * keycloak, i.e. if not already logged in the login page will be opened in the browser.
+	 * @return true, if successful
+	 * @throws IOException 
+	 * @throws URISyntaxException 
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
+	 */
+	public void authorizeByByAuthenticationCode() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException, IOException {
+		
+		if (!inited) {
+			this.init();
+		}
+		
+		new OIDCCallbackHTTPServer(8888, "/oauth/callback/", this).startInThread();
+		
+		URI authenticationRequestURI = oidcClient.buildAuthorizationCodeRequest();
+		try {
+			Desktop.getDesktop().browse(authenticationRequestURI);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
@@ -563,7 +615,7 @@ public class OIDCAuthorization {
 
 			connection = (HttpsURLConnection) requestURL.openConnection();
 			connection.setInstanceFollowRedirects(false);
-			Trust.trustSpecific(connection, truststoreFile);
+			Trust.trustSpecific(connection, OIDCAuthorization.this.truststoreFile);
 
 			connection.setRequestMethod("GET");
 			if (accessToken != null) {
@@ -657,6 +709,11 @@ public class OIDCAuthorization {
 	private class OIDCProblemException extends RuntimeException {
 		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -6015464771451068526L;
+	}
+
+	@Override
+	public void callbackReceived(HttpExchange exchange) {
+		System.out.println("[" + this.getClass().getSimpleName() + "] Callback received!");
 	}
 	
 }

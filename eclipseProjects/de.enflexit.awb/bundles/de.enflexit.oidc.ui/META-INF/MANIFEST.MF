@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OIDC Authorization UI
+Bundle-SymbolicName: de.enflexit.oidc.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: de.enflexit.oidc
+Import-Package: org.agentgui.gui.swing
+Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: de.enflexit.oidc.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-21
