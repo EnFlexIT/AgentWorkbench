@@ -72,9 +72,34 @@ public interface AgentWorkbenchUI {
 
 	/**
 	 * Depending on the availability of the {@link AwbMainWindow}, should display a modal or a  standalon translation dialog.
-	 * @return the awb translation dialog
+	 * @return true, if a dialog was shown
 	 */
 	public boolean showModalTranslationDialog();
+	
+	/**
+	 * Depending on the availability of the {@link AwbMainWindow}, should open a modal or a standalone database configuration dialog.
+	 *
+	 * @param factoryID the Hibernate factory ID to focus
+	 * @return true, if a dialog was shown
+	 */
+	public boolean showModalDatabaseDialog(String factoryID);
+	
+	/**
+	 * Has to return a progress monitor .
+	 *
+	 * @param windowTitle the window title
+	 * @param headerText the header text
+	 * @param progressText the progress text
+	 * @return the progress monitor
+	 */
+	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText);
+	
+	/**
+	 * Has to return a monitor UI to visualize the running system benchmark.
+	 * @return the benchmark monitor
+	 */
+	public AwbBenchmarkMonitor getBenchmarkMonitor();
+	
 	
 	
 	/**
@@ -115,29 +140,6 @@ public interface AgentWorkbenchUI {
 	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName);
 	
 	/**
-	 * Has to return a progress monitor .
-	 *
-	 * @param windowTitle the window title
-	 * @param headerText the header text
-	 * @param progressText the progress text
-	 * @return the progress monitor
-	 */
-	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText);
-	
-	/**
-	 * Has to return a monitor UI to visualize the running system benchmark.
-	 * @return the benchmark monitor
-	 */
-	public AwbBenchmarkMonitor getBenchmarkMonitor();
-	
-	
-	/**
-	 * Depending on the availability of the {@link AwbMainWindow}, should open a modal or a standalone database configuration dialog.
-	 * @param factoryID the Hibernate factory ID to focus 
-	 */
-	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID);
-	
-	/**
 	 * Depending on the availability of the {@link AwbMainWindow}, should open a modal or a standalone project export dialog, where
 	 * the {@link ProjectExportSettings} are to be configured.
 	 *
@@ -145,7 +147,7 @@ public interface AgentWorkbenchUI {
 	 * @param projectExportController the project export controller to use
 	 * @return the AwbProjectExportDialog to work in
 	 */
-	public AwbProjectExportDialog showModalProjectExportDialog(Project project, ProjectExportController projectExportController);
+	public AwbProjectExportDialog getProjectExportDialog(Project project, ProjectExportController projectExportController);
 	
 	
 	/**

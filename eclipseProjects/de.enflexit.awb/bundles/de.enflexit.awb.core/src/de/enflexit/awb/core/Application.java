@@ -26,7 +26,6 @@ import de.enflexit.awb.core.project.ProjectsLoaded;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbConsole;
-import de.enflexit.awb.core.ui.AwbDatabaseDialog;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
@@ -981,7 +980,7 @@ public class Application {
 		AgentWorkbenchUiManager.getInstance().showModalAboutDialog();
 	}
 	/**
-	 * Opens the central {@link AwbDatabaseDialog} of the application with a specified factoryID.
+	 * Opens the central database dialog of the application with a specified factoryID.
 	 * @param factoryID the factory ID to configure or <code>null</code>
 	 */
 	public static void showDatabaseDialog(String factoryID) {

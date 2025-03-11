@@ -26,7 +26,6 @@ import de.enflexit.awb.core.ui.AgentWorkbenchUI;
 import de.enflexit.awb.core.ui.AwbBenchmarkMonitor;
 import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
-import de.enflexit.awb.core.ui.AwbDatabaseDialog;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogSystemLoad;
@@ -37,6 +36,7 @@ import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
+import de.enflexit.db.hibernate.gui.DatabaseConnectionSettingsDialog;
 
 /**
  * The Class BaseUiService.
@@ -48,7 +48,7 @@ public class BaseUiService implements AgentWorkbenchUI {
 	private AboutDialog aboutDialog;
 	private OptionDialog optionDialog;
 	private TranslationDialog translationDialog;
-	
+	private DatabaseConnectionSettingsDialog databaseDialog;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getImplementationName()
@@ -181,6 +181,38 @@ public class BaseUiService implements AgentWorkbenchUI {
 		translationDialog = null;
 		return true;
 	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalDatabaseDialog(java.lang.String)
+	 */
+	@Override
+	public boolean showModalDatabaseDialog(String factoryID) {
+
+		if (databaseDialog!=null) {
+			if (databaseDialog.isVisible()==true) {
+				// --- Set focus again ----------
+				databaseDialog.requestFocus();
+				return false;
+			} else {
+				// --- dispose it first --------- 
+				databaseDialog.dispose();
+				databaseDialog = null;
+			}
+		}
+		
+		Window ownerWindow = null;
+		if (Application.isRunningAsServer()==false || Application.isMainWindowInitiated()==true) {
+			ownerWindow = (Window) Application.getMainWindow();
+		}
+		databaseDialog = new DatabaseConnectionSettingsDialog(ownerWindow, factoryID);
+		databaseDialog.setVisible(true);
+		// - - - - - - - - - - - - - - - - - - - -
+		if (databaseDialog!=null) {
+			databaseDialog.dispose();
+		}
+		databaseDialog = null;
+		return true;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getBenchmarkMonitor()
@@ -212,7 +244,7 @@ public class BaseUiService implements AgentWorkbenchUI {
 		String lookAndFeelClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
 		return new ProgressMonitor(windowTitle, headerText, progressText, imageIcon, projectDesktop, lookAndFeelClassName);
 	}
-	
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
@@ -246,19 +278,12 @@ public class BaseUiService implements AgentWorkbenchUI {
 		// --- Implemented in the desktop bundle ----------
 		return null;
 	}
-
-	
-	
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalProjectExportDialog(de.enflexit.awb.core.project.Project, de.enflexit.awb.core.project.transfer.ProjectExportController)
+	 */
 	@Override
-	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AwbProjectExportDialog showModalProjectExportDialog(Project project, ProjectExportController projectExportController) {
-		// TODO Auto-generated method stub
+	public AwbProjectExportDialog getProjectExportDialog(Project project, ProjectExportController projectExportController) {
+		// --- Implemented in the desktop bundle ----------
 		return null;
 	}
 

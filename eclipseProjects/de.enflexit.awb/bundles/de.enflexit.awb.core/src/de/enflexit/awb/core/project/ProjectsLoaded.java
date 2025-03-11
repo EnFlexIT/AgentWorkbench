@@ -449,7 +449,7 @@ public class ProjectsLoaded {
 		ProjectExportController projectExportController = ProjectExportControllerProvider.getProjectExportController();
 		
 		// --- Show the ProjectExportDialog -----------------------------------
-		AwbProjectExportDialog projectExportDialog = AgentWorkbenchUiManager.getInstance().showModalProjectExportDialog(project, projectExportController);
+		AwbProjectExportDialog projectExportDialog = AgentWorkbenchUiManager.getInstance().getProjectExportDialog(project, projectExportController);
 		projectExportDialog.setAllowInstallationPackageConfiguration(false);
 		projectExportDialog.setVisible(true);
 		// - - Does the user action here - - - - - - - - - - - - - - - - - - -

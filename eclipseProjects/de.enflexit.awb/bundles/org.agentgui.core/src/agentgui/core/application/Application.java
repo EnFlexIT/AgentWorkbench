@@ -52,7 +52,7 @@ import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.db.hibernate.HibernateUtilities;
-import de.enflexit.db.hibernate.gui.AwbDatabaseDialog;
+import de.enflexit.db.hibernate.gui.DatabaseConnectionSettingsDialog;
 import de.enflexit.language.Language;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.URLProcessor;
@@ -96,7 +96,7 @@ public class Application {
 	/** The About dialog of the main application window. */
 	private static AboutDialog aboutDialog;
 	/** The Database dialog for the main application window */
-	private static AwbDatabaseDialog awbDatabaseDialog;
+	private static DatabaseConnectionSettingsDialog databaseConnectionSettingsDialog;
 	/** The About dialog of the application.*/
 	private static OptionDialog optionDialog;
 	/** With this attribute/class the agent platform (JADE) will be controlled. */
@@ -1019,24 +1019,24 @@ public class Application {
 	}
 	
 	/**
-	 * Opens the central {@link AwbDatabaseDialog} of the application with a specified factoryID.
+	 * Opens the central {@link DatabaseConnectionSettingsDialog} of the application with a specified factoryID.
 	 *
 	 * @param ownerWindow the owner window
 	 * @param factoryID the factory ID to configure or <code>null</code>
 	 */
 	public static void showDatabaseDialog(Window ownerWindow, String factoryID) {
 		
-		if (awbDatabaseDialog!=null) return;
+		if (databaseConnectionSettingsDialog!=null) return;
 		
 		if (ownerWindow!=null) {
-			awbDatabaseDialog = new AwbDatabaseDialog(ownerWindow, factoryID);
+			databaseConnectionSettingsDialog = new DatabaseConnectionSettingsDialog(ownerWindow, factoryID);
 		} else {
-			awbDatabaseDialog = new AwbDatabaseDialog(getMainWindow(), factoryID);
+			databaseConnectionSettingsDialog = new DatabaseConnectionSettingsDialog(getMainWindow(), factoryID);
 		}
-		awbDatabaseDialog.setVisible(true);
+		databaseConnectionSettingsDialog.setVisible(true);
 		// - - - Wait for user - - - - - - - - -  
-		awbDatabaseDialog.dispose();
-		awbDatabaseDialog = null;
+		databaseConnectionSettingsDialog.dispose();
+		databaseConnectionSettingsDialog = null;
 	}
 	
 	/**

@@ -96,7 +96,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 		this.project = project;
 		
 		// --- Show a dialog to configure the export ----------------
-		AwbProjectExportDialog projectExportDialog = AgentWorkbenchUiManager.getInstance().showModalProjectExportDialog(project, this);
+		AwbProjectExportDialog projectExportDialog = AgentWorkbenchUiManager.getInstance().getProjectExportDialog(project, this);
 		projectExportDialog.setVisible(true);
 		// - - Does the user action here - - - - - - - - - - - - - --
 		if (projectExportDialog.isCanceled() == false) {

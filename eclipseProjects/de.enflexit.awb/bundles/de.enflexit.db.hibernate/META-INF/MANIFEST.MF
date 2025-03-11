@@ -35,7 +35,7 @@ Bundle-ClassPath: .,
  lib/hibernate-osgi-5.6.15.Final.jar
 Import-Package: de.enflexit.common,
  de.enflexit.common.swing,
- org.eclipse.core.runtime.preferences;version="3.5.0",
+ org.eclipse.core.runtime.preferences,
  org.slf4j
 Require-Bundle: org.eclipse.osgi
 Service-Component: OSGI-INF/dbServiceConsumer.xml

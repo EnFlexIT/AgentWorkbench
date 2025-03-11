@@ -27,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
@@ -41,7 +40,7 @@ import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AwbDatabaseDialog extends JDialog implements ActionListener, HibernateStateVisualizationService {
+public class DatabaseConnectionSettingsDialog extends JDialog implements ActionListener, HibernateStateVisualizationService {
 
 	private static final long serialVersionUID = -5778880894988052682L;
 	
@@ -71,7 +70,7 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener, Hibern
 	 * @param owner the owner
 	 * @param factoryID the factory ID
 	 */
-	public AwbDatabaseDialog(Window owner, String factoryID) {
+	public DatabaseConnectionSettingsDialog(Window owner, String factoryID) {
 		super(owner);
 		this.initialize();
 		if (factoryID!=null && factoryID.isBlank()==false) {
@@ -97,9 +96,9 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener, Hibern
 		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
-				if (AwbDatabaseDialog.this.isDoClose()==false) return;
-				HibernateStateVisualizer.unregisterStateVisualizationService(AwbDatabaseDialog.this);
-				AwbDatabaseDialog.this.setVisible(false);
+				if (DatabaseConnectionSettingsDialog.this.isDoClose()==false) return;
+				HibernateStateVisualizer.unregisterStateVisualizationService(DatabaseConnectionSettingsDialog.this);
+				DatabaseConnectionSettingsDialog.this.setVisible(false);
 			}
 		});
 		
@@ -180,8 +179,8 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener, Hibern
     private void registerEscapeKeyStroke() {
     	final ActionListener listener = new ActionListener() {
             public final void actionPerformed(final ActionEvent e) {
-            	if (AwbDatabaseDialog.this.isDoClose()==false) return;
-            	AwbDatabaseDialog.this.setVisible(false);
+            	if (DatabaseConnectionSettingsDialog.this.isDoClose()==false) return;
+            	DatabaseConnectionSettingsDialog.this.setVisible(false);
             }
         };
         final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
@@ -448,13 +447,13 @@ public class AwbDatabaseDialog extends JDialog implements ActionListener, Hibern
 				@Override
 				public void run() {
 					// --- A new factory was selected? --------------
-					if (AwbDatabaseDialog.this.isChangedFactoryID(AwbDatabaseDialog.this.getFactoryIdSelected())==false) return;
+					if (DatabaseConnectionSettingsDialog.this.isChangedFactoryID(DatabaseConnectionSettingsDialog.this.getFactoryIdSelected())==false) return;
 					// --- Save changed database settings? ----------
-					if (AwbDatabaseDialog.this.isSaveChangedDatabaseSettings(AwbDatabaseDialog.this.currentFactoryID)==true) {
-						AwbDatabaseDialog.this.saveDatabaseSettings(AwbDatabaseDialog.this.currentFactoryID);
+					if (DatabaseConnectionSettingsDialog.this.isSaveChangedDatabaseSettings(DatabaseConnectionSettingsDialog.this.currentFactoryID)==true) {
+						DatabaseConnectionSettingsDialog.this.saveDatabaseSettings(DatabaseConnectionSettingsDialog.this.currentFactoryID);
 					}
 					// --- Change to selected factory ---------------
-					AwbDatabaseDialog.this.loadDatabaseSettings(AwbDatabaseDialog.this.getFactoryIdSelected());
+					DatabaseConnectionSettingsDialog.this.loadDatabaseSettings(DatabaseConnectionSettingsDialog.this.getFactoryIdSelected());
 				}
 			});
 

@@ -256,11 +256,11 @@ public class DatabaseSelectionPanel extends JPanel implements HibernateStateVisu
 			parentContainer = parentContainer.getParent();
 		}
 
-		AwbDatabaseDialog awbDatabaseDialog = new AwbDatabaseDialog(parentWindow, factoryID);
-		awbDatabaseDialog.setVisible(true);
+		DatabaseConnectionSettingsDialog databaseConnectionSettingsDialog = new DatabaseConnectionSettingsDialog(parentWindow, factoryID);
+		databaseConnectionSettingsDialog.setVisible(true);
 		// - - - Wait for user - - - - - - - - -  
-		awbDatabaseDialog.dispose();
-		awbDatabaseDialog = null;
+		databaseConnectionSettingsDialog.dispose();
+		databaseConnectionSettingsDialog = null;
 		
 	}
 	

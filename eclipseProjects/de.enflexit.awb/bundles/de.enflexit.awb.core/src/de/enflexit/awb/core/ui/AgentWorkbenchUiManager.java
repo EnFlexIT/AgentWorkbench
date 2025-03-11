@@ -308,6 +308,98 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		return dialogWasShown;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalDatabaseDialog(java.lang.String)
+	 */
+	@Override
+	public boolean showModalDatabaseDialog(String factoryID) {
+
+		if (this.isMissingAwbUIServce()==true) return false;
+		
+		boolean dialogWasShown = false;
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			// --- Check service instances --------------------------
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				dialogWasShown = dialogWasShown | awbUI.showModalDatabaseDialog(factoryID);
+			}
+			// --- Write error if nothing was shown -----------------
+			if (dialogWasShown==false) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbTranslationDialog was shown!");
+			}
+			
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).showModalDatabaseDialog(factoryID);
+		}
+		return dialogWasShown;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
+		
+		if (this.isMissingAwbUIServce()==true) return null;
+		
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			// --- Check instances ----------------------------------
+			List<AwbProgressMonitor> pmList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbProgressMonitor pMonitor = awbUI.getProgressMonitor(windowTitle, headerText, progressText);
+				if (pMonitor!=null) pmList.add(pMonitor);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (pmList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbProgressMonitor!");
+			} else if (pmList.size()==1) {
+				return pmList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProgressMonitor!");
+			}
+			
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).getProgressMonitor(windowTitle, headerText, progressText);
+		}
+		return null;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getBenchmarkMonitor()
+	 */
+	@Override
+	public AwbBenchmarkMonitor getBenchmarkMonitor() {
+
+		if (this.isMissingAwbUIServce()==true) return null;
+		
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			// --- Check instances ----------------------------------
+			List<AwbBenchmarkMonitor> bmList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbBenchmarkMonitor bmMonitor = awbUI.getBenchmarkMonitor();
+				if (bmMonitor!=null) bmList.add(bmMonitor);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (bmList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbBenchmarkMonitor!");
+			} else if (bmList.size()==1) {
+				return bmList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbBenchmarkMonitor!");
+			}
+			
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).getBenchmarkMonitor();
+		}
+		return null;
+	}
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getMainWindow()
@@ -436,102 +528,34 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		return null;
 	}
 	
-	
-	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProgressMonitor(java.lang.String, java.lang.String, java.lang.String)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProjectExportDialog(de.enflexit.awb.core.project.Project, de.enflexit.awb.core.project.transfer.ProjectExportController)
 	 */
 	@Override
-	public AwbProgressMonitor getProgressMonitor(String windowTitle, String headerText, String progressText) {
-		
-		if (this.isMissingAwbUIServce()==true) return null;
-		
-		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls > 1) {
-			// --- Check instances ----------------------------------
-			List<AwbProgressMonitor> pmList = new ArrayList<>();
-			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
-				AwbProgressMonitor pMonitor = awbUI.getProgressMonitor(windowTitle, headerText, progressText);
-				if (pMonitor!=null) pmList.add(pMonitor);
-			}
-			
-			// --- Write Error or return AwbConsoleDialog -----------
-			if (pmList.size()==0) {
-				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbProgressMonitor!");
-			} else if (pmList.size()==1) {
-				return pmList.get(0);
-			} else {
-				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProgressMonitor!");
-			}
-			
-		} else {
-			return this.getAgentWorkbenchUiList().get(0).getProgressMonitor(windowTitle, headerText, progressText);
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getBenchmarkMonitor()
-	 */
-	@Override
-	public AwbBenchmarkMonitor getBenchmarkMonitor() {
+	public AwbProjectExportDialog getProjectExportDialog(Project project, ProjectExportController projectExportController) {
 
 		if (this.isMissingAwbUIServce()==true) return null;
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
 			// --- Check instances ----------------------------------
-			List<AwbBenchmarkMonitor> bmList = new ArrayList<>();
+			List<AwbProjectExportDialog> pExList = new ArrayList<>();
 			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
-				AwbBenchmarkMonitor bmMonitor = awbUI.getBenchmarkMonitor();
-				if (bmMonitor!=null) bmList.add(bmMonitor);
+				AwbProjectExportDialog pIntDialog = awbUI.getProjectExportDialog(project, projectExportController);
+				if (pIntDialog!=null) pExList.add(pIntDialog);
 			}
 			
 			// --- Write Error or return AwbConsoleDialog -----------
-			if (bmList.size()==0) {
-				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbBenchmarkMonitor!");
-			} else if (bmList.size()==1) {
-				return bmList.get(0);
+			if (pExList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbProjectExportDialog!");
+			} else if (pExList.size()==1) {
+				return pExList.get(0);
 			} else {
-				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbBenchmarkMonitor!");
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectExportDialog!");
 			}
 			
 		} else {
-			return this.getAgentWorkbenchUiList().get(0).getBenchmarkMonitor();
-		}
-		return null;
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalDatabaseDialog(java.lang.String)
-	 */
-	@Override
-	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID) {
-
-		if (this.isMissingAwbUIServce()==true) return null;
-		
-		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbDatabaseDialog!");
-		} else {
-			return this.getAgentWorkbenchUiList().get(0).showModalDatabaseDialog(factoryID);
-		}
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalProjectExportDialog(de.enflexit.awb.core.project.Project, de.enflexit.awb.core.project.transfer.ProjectExportController)
-	 */
-	@Override
-	public AwbProjectExportDialog showModalProjectExportDialog(Project project, ProjectExportController projectExportController) {
-
-		if (this.isMissingAwbUIServce()==true) return null;
-		
-		int noOfUiImpls = this.getNumberOfUiImplementations();
-		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbProjectExportDialog!");
-		} else {
-			return this.getAgentWorkbenchUiList().get(0).showModalProjectExportDialog(project, projectExportController);
+			return this.getAgentWorkbenchUiList().get(0).getProjectExportDialog(project, projectExportController);
 		}
 		return null;
 	}

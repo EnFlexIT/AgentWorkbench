@@ -30,7 +30,6 @@ import javax.swing.border.EtchedBorder;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
-import de.enflexit.awb.core.ui.AwbAboutDialog;
 import de.enflexit.common.swing.JHyperLink;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
@@ -41,7 +40,7 @@ import de.enflexit.language.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AboutDialog extends JDialog implements AwbAboutDialog, ActionListener{
+public class AboutDialog extends JDialog implements ActionListener{
 
 	private static final long serialVersionUID = -5882844235988801425L;
 	

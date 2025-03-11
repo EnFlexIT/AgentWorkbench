@@ -55,7 +55,6 @@ import javax.swing.table.TableRowSorter;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
-import de.enflexit.awb.core.ui.AwbTranslationDialog;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.language.Language;
@@ -65,7 +64,7 @@ import de.enflexit.language.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class TranslationDialog extends JDialog implements ActionListener, AwbTranslationDialog {
+public class TranslationDialog extends JDialog implements ActionListener{
 
 private static final long serialVersionUID = 1L;
 	

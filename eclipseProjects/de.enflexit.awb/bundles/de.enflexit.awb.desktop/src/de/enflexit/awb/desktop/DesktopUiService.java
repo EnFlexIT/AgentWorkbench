@@ -13,7 +13,6 @@ import de.enflexit.awb.core.ui.AgentWorkbenchUI;
 import de.enflexit.awb.core.ui.AwbBenchmarkMonitor;
 import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
-import de.enflexit.awb.core.ui.AwbDatabaseDialog;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogSystemLoad;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogThreading;
@@ -23,6 +22,7 @@ import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
+import de.enflexit.awb.desktop.dialogs.ProjectExportDialog;
 import de.enflexit.awb.desktop.dialogs.ProjectNewOpen;
 import de.enflexit.awb.desktop.mainWindow.MainWindow;
 import de.enflexit.awb.desktop.project.ProjectWindow;
@@ -102,6 +102,15 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		// --- Nothing to do here, since BaseUiService will create the component ----
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showModalDatabaseDialog(java.lang.String)
+	 */
+	@Override
+	public boolean showModalDatabaseDialog(String factoryID) {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return false;
+	}
 	
 	@Override
 	public AwbBenchmarkMonitor getBenchmarkMonitor() {
@@ -156,29 +165,29 @@ public class DesktopUiService implements AgentWorkbenchUI {
 	public AwbProjectWindowTab createProjectWindowTab(Project currProject, int displayType_DEV_or_USER, String tabTitle, String toolTipText, Icon icon, Object displayComponent, String parentsName) {
 		return new ProjectWindowTab(currProject, displayType_DEV_or_USER, tabTitle, toolTipText, icon, (JComponent) displayComponent, parentsName);
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getProjectExportDialog(de.enflexit.awb.core.project.Project, de.enflexit.awb.core.project.transfer.ProjectExportController)
+	 */
+	@Override
+	public AwbProjectExportDialog getProjectExportDialog(Project project, ProjectExportController projectExportController) {
+		return new ProjectExportDialog(project, projectExportController);
+	}
 
 	
-	@Override
-	public AwbDatabaseDialog showModalDatabaseDialog(String factoryID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AwbProjectExportDialog showModalProjectExportDialog(Project project, ProjectExportController projectExportController) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getAwbMonitoringDialogSystemLoad(de.enflexit.awb.simulation.agents.LoadMeasureAgent)
+	 */
 	@Override
 	public AwbMonitoringDialogSystemLoad getAwbMonitoringDialogSystemLoad(LoadMeasureAgent lmAgent) {
-		// TODO Auto-generated method stub
+		// --- Nothing to do here, since BaseUiService will create the component ----
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getAwbMonitoringDialogThreading(de.enflexit.awb.simulation.agents.LoadMeasureAgent)
+	 */
 	@Override
 	public AwbMonitoringDialogThreading getAwbMonitoringDialogThreading(LoadMeasureAgent lmAgent) {
-		// TODO Auto-generated method stub
+		// --- Nothing to do here, since BaseUiService will create the component ----
 		return null;
 	}
 	
