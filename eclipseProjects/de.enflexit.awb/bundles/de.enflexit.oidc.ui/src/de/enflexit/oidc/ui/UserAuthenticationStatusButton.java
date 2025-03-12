@@ -1,7 +1,12 @@
 package de.enflexit.oidc.ui;
 
+import java.net.URISyntaxException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
+import de.enflexit.oidc.AuthenticationState;
+import de.enflexit.oidc.OIDCAuthorization;
 
 /**
  * A custom toolbar button that shows the current authentication state of the user, and allows logging in/out.
@@ -9,16 +14,19 @@ import javax.swing.JButton;
  */
 public class UserAuthenticationStatusButton extends JButton {
 	
-	private static final String ICON_PATH_LOGGED_IN ="/icons/UserLoggedIn_16x16.png";
-	private static final String ICON_PATH_LOGGED_OUT = "/icons/UserLoggedOut_16x16.png";
+	private static final String ICON_PATH_LOGGED_IN ="/icons/UserLoggedIn.png";
+	private static final String ICON_PATH_LOGGED_OUT = "/icons/UserLoggedOut.png";
+	private static final String ICON_PATH_LOGIN_PENDING = "/icons/LoginPending.png";
 	
 	private static final String BUTTON_TEXT_LOGGED_OUT = "Not logged in";
+	private static final String BUTTON_TEXT_LOGIN_PENDING = "Authentication pending";
 	private static final String BUTTON_TEXT_LOGGED_IN = "Logged in as ";
 
 	private static final long serialVersionUID = 8112353415174825641L;
 	
 	private ImageIcon imageIconLoggedIn;
 	private ImageIcon imageIconLoggedOut;
+	private ImageIcon imageIconLoginPending;
 	
 	private boolean userLoggedIn;
 	
@@ -27,8 +35,7 @@ public class UserAuthenticationStatusButton extends JButton {
 	 */
 	public UserAuthenticationStatusButton() {
 		super();
-		this.setButtonState(this.userLoggedIn);
-		
+		this.setAuthenticationState(this.userLoggedIn ? AuthenticationState.LOGGED_IN : AuthenticationState.LOGGED_OUT);
 	}
 
 	private ImageIcon getImageIconLoggedIn() {
@@ -45,19 +52,41 @@ public class UserAuthenticationStatusButton extends JButton {
 		return imageIconLoggedOut;
 	}
 	
+	private ImageIcon getImageIconLoginPending() {
+		if (imageIconLoginPending==null) {
+			imageIconLoginPending = new ImageIcon(this.getClass().getResource(ICON_PATH_LOGIN_PENDING));
+		}
+		return imageIconLoginPending;
+	}
+	
 	/**
 	 * Sets the the icon and text on the button, according to the current authentication state.
 	 * @param authorizationState the new button state
 	 */
-	private void setButtonState(boolean authorizationState) {
-		if (authorizationState==true) {
-			String username = "Some user";	//TODO get user name from authentication
+	public void setAuthenticationState(AuthenticationState authenticationState) {
+		
+		switch(authenticationState) {
+		case LOGGED_IN:
+			String username;
+			try {
+				username = OIDCAuthorization.getInstance().getUserFullName();
+			} catch (URISyntaxException e) {
+				username = "unknown";
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error obtaining the user's name from the ID token!");
+				e.printStackTrace();
+			}
 			this.setIcon(this.getImageIconLoggedIn());
 			this.setText(BUTTON_TEXT_LOGGED_IN + username);
-		} else {
+			break;
+		case LOGGED_OUT:
 			this.setIcon(this.getImageIconLoggedOut());
 			this.setText(BUTTON_TEXT_LOGGED_OUT);
+			break;
+		case PENDING:
+			this.setIcon(this.getImageIconLoginPending());
+			this.setText(BUTTON_TEXT_LOGIN_PENDING);
 		}
+		
 	}
 	
 

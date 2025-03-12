@@ -1,6 +1,7 @@
 package de.enflexit.oidc;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 
@@ -46,6 +47,13 @@ public class OIDCCallbackHTTPServer {
 					@Override
 					public void handle(HttpExchange exchange) throws IOException {
 						OIDCCallbackHTTPServer.this.handleCallback(exchange);
+						
+						String response = "Redirect successful, please close this tab!";
+						exchange.sendResponseHeaders(200, response.length());
+						OutputStream os = exchange.getResponseBody();
+						os.write(response.getBytes());
+						os.close();
+						
 						OIDCCallbackHTTPServer.this.stopServer = true;
 					}
 					

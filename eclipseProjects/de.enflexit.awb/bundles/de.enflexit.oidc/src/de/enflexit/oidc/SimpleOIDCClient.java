@@ -109,18 +109,20 @@ public class SimpleOIDCClient {
 	private URI authorizationEndpointURI;
 	private URI userInfoEndpointURI;
 	private URI redirectURI;
+	private String localCallbackURI;
 
 	private OIDCProviderMetadata providerMetadata;
 	private OIDCClientInformation clientInformation;
 	private OIDCClientMetadata clientMetadata;
 	private String clientMetadataJSON;
 
+	private String realmName;
 	private ClientID clientID;
 	private Secret clientSecret;
 	private State state;
 	private Nonce nonce;
 
-	private AuthorizationCode authCode;
+	private AuthorizationCode authorizationCode;
 	private ResourceOwnerPasswordCredentialsGrant resourceOwnerCredentialsGrant;
 	private AccessToken accessToken;
 	private JWT idToken;
@@ -226,7 +228,14 @@ public class SimpleOIDCClient {
 	 */
 	public void retrieveProviderMetadata() throws IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
-		URL providerConfigurationURL = issuerURI.resolve(URLPATH_WELL_KNOWN_OPENID).toURL();
+		String urlPartRealm = "";
+		
+		// --- If a realm was specified, set that part of the URL accordingly
+		if (this.getRealmName()!=null) {
+			urlPartRealm = "/realms/" + this.getRealmName() + "/";
+		}
+		
+		URL providerConfigurationURL = issuerURI.resolve(urlPartRealm + URLPATH_WELL_KNOWN_OPENID).toURL();
 //		System.out.println(providerConfigurationURL);
 		URLConnection conn = providerConfigurationURL.openConnection();
 
@@ -267,6 +276,23 @@ public class SimpleOIDCClient {
 			this.clientSecret = new Secret(clientSecret);
 		}
 		clientInformation = new OIDCClientInformation(clientID, null, clientMetadata, this.clientSecret);
+	}
+	
+	
+
+	/**
+	 * Gets the realm name.
+	 * @return the realm name
+	 */
+	public String getRealmName() {
+		return realmName;
+	}
+	/**
+	 * Sets the realm name.
+	 * @param realmName the new realm name
+	 */
+	public void setRealmName(String realmName) {
+		this.realmName = realmName;
 	}
 
 	/**
@@ -356,6 +382,14 @@ public class SimpleOIDCClient {
 	public URI getRedirectURI() {
 		return this.redirectURI;
 	}
+	
+	public String getLocalCallbackURI() {
+		return localCallbackURI;
+	}
+
+	public void setLocalCallbackURI(String localCallbackURI) {
+		this.localCallbackURI = localCallbackURI;
+	}
 
 	/**
 	 * Gets the state.
@@ -386,13 +420,18 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Authentication request
-	 * The authentication request is done by redirecting the end user to the provider, for more details see the OIDC specification. The redirect URL is built as follows, using the Authorization Code Flow:
-	 * To specify additional parameters in the authentication request, use AuthenticationRequest.Builder.
+	 * The authentication request is done by redirecting the end user to the provider, for more details see the OIDC specification. The response is
+	 * handled by the specified local callback URL, where a local HTTP server must be listening to process it. If showLoginPage==true, the login page
+	 * will be shown if the user is not logged in already. Otherwise the redirect will occur immediately, leading to a {@link AuthenticationErrorResponse}
+	 * if not logged in. 
 	 *
-	 * @return the uri
+	 * @param localCallbackURL the local callback URL
+	 * @param showLoginPage whether to show the login page if not logged in 
+	 * @return the authorization code request URI
 	 * @throws SerializeException the serialize exception
+	 * @throws URISyntaxException the URI syntax exception
 	 */
-	public URI buildAuthorizationCodeRequest() throws SerializeException {
+	public URI buildAuthorizationCodeRequest(String localCallbackURL, boolean showLoginPage) throws SerializeException, URISyntaxException {
 		
 		if (state==null) state = new State();
 		if (nonce==null) nonce = new Nonce();
@@ -408,11 +447,13 @@ public class SimpleOIDCClient {
 				new ResponseType(ResponseType.Value.CODE),
 				scope, clientID, redirectURI, state, nonce);
 		*/
-		Builder builder = new AuthenticationRequest.Builder(new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI);
+		Builder builder = new AuthenticationRequest.Builder(new ResponseType(ResponseType.Value.CODE), scope, clientID, new URI(localCallbackURL));
 		builder.endpointURI(authorizationEndpointURI);
 		builder.state(state);
 		builder.nonce(nonce);
-		builder.prompt(new Prompt(Prompt.Type.NONE));
+		
+		Prompt.Type promptType = (showLoginPage==true ? Prompt.Type.LOGIN : Prompt.Type.NONE);
+		builder.prompt(new Prompt(promptType));
 		authenticationRequest = builder.build();
 
 		URI authReqURI = authenticationRequest.toURI();
@@ -455,8 +496,8 @@ public class SimpleOIDCClient {
 				System.err.println(this.getClass().getSimpleName() + " - " + "State not valid");
 				return;
 			}
-			authCode = successResponse.getAuthorizationCode();
-			System.out.println("Authorization Code: " + authCode);
+			authorizationCode = successResponse.getAuthorizationCode();
+			System.out.println("Authorization Code: " + authorizationCode);
 			
 		}
 	}
@@ -485,6 +526,14 @@ public class SimpleOIDCClient {
 	public void setResourceOwnerCredentials(String user, String password) {
 		resourceOwnerCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(user, new Secret(password));
 	}
+	
+	/**
+	 * Sets the authorization code.
+	 * @param authorizationCode the new authorization code
+	 */
+	public void setAuthorizationCode(AuthorizationCode authorizationCode) {
+		this.authorizationCode = authorizationCode;
+	}
 
 	/**
 	 * Token Request
@@ -494,19 +543,20 @@ public class SimpleOIDCClient {
 	 * @throws NoSuchAlgorithmException the no such algorithm exception
 	 * @throws CertificateException the certificate exception
 	 * @throws KeyStoreException the key store exception
+	 * @throws URISyntaxException 
 	 */
-	public void requestToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+	public boolean requestToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException {
 
 		AuthorizationGrant grant;
-		if (authCode == null) {
+		if (authorizationCode == null) {
 			if (resourceOwnerCredentialsGrant == null) {
 				System.err.println(this.getClass().getSimpleName() + " - Authentication Code is null and no user/password set, stopping token retrieval");
-				return;
+				return false;
 			} else {
 				grant = resourceOwnerCredentialsGrant;
 			}
 		} else {
-			grant = new AuthorizationCodeGrant(authCode, redirectURI);
+			grant = new AuthorizationCodeGrant(authorizationCode, new URI(this.localCallbackURI));
 		}
 		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant);
 		HTTPResponse tokenHTTPResp = null;
@@ -535,12 +585,14 @@ public class SimpleOIDCClient {
 			ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
 			System.err.println(this.getClass().getSimpleName() + " - Error at token retrieval");
 			System.err.println(error);
-			return;
+			return false;
 		}
 
 		OIDCTokenResponse accessTokenResponse = (OIDCTokenResponse) tokenResponse;
 		accessToken = accessTokenResponse.getOIDCTokens().getAccessToken();
 		idToken = accessTokenResponse.getOIDCTokens().getIDToken();
+		
+		return true;
 	}
 
 	/**

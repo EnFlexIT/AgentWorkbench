@@ -15,5 +15,9 @@ import com.sun.net.httpserver.HttpExchange;
  */
 public interface OIDCCallbackListener {
 	
-	public void callbackReceived(HttpExchange exchange);
+	public enum OIDCCallbackEvent{
+		AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_FAILED
+	}
+	
+	public void callbackReceived(HttpExchange callbackResponse);
 }

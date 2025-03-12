@@ -46,14 +46,19 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JDialog;
 
+import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.ParseException;
-import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
+import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
+import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
+import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
+import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
 import com.sun.net.httpserver.HttpExchange;
 
 import de.enflexit.api.Translator;
@@ -66,8 +71,10 @@ import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
  */
 public class OIDCAuthorization implements OIDCCallbackListener {
 
-	/** The claim representing the user ID in OIDC (subject) */
-	private static final String OIDC_ID_CLAIM_USERID = "sub";
+	/** The claims representing relevant infos from the ID token */
+	private static final String OIDC_ID_CLAIM_USER_ID = "sub";
+	private static final String OIDC_ID_CLAIM_USER_NAME = "preferred_username";
+	private static final String OIDC_ID_CLAIM_FULL_NAME = "name";
 
 	/** The single instance of this singleton class. */
 	private static OIDCAuthorization instance;
@@ -101,7 +108,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	private String clientID;
 	private String clientSecret;
 	
+	private String realmName;
+	private String localCallbackURL;
 	
+	private ArrayList<AuthenticationStateListener> authenticationStateListeners;
 	
 	/**
 	 * Instantiates a new OIDC authorization.
@@ -189,6 +199,37 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	}
 
 	/**
+	 * Gets the realm.
+	 * @return the realm
+	 */
+	public String getRealmName() {
+		return realmName;
+	}
+	
+	/**
+	 * Sets the realm.
+	 * @param realmName the new realm
+	 */
+	public void setRealmName(String realmName) {
+		this.realmName = realmName;
+	}
+	
+	/**
+	 * Gets the local callback URL.
+	 * @return the local callback URL
+	 */
+	public String getLocalCallbackURL() {
+		return localCallbackURL;
+	}
+	
+	/**
+	 * Sets the local callback URL.
+	 * @param localCallbackURL the new local callback URL
+	 */
+	public void setLocalCallbackURL(String localCallbackURL) {
+		this.localCallbackURL = localCallbackURL;
+	}
+	/**
 	 * Gets the resource URI.
 	 * @return the resource URI
 	 */
@@ -232,6 +273,8 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	public String getClientSecret() {
 		return this.clientSecret;
 	}
+	
+	
 
 	/**
 	 * Gets the authorization dialog (with null defaults).
@@ -284,15 +327,45 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public String getUserID() throws OIDCProblemException, URISyntaxException {
-		String userID;
+		return this.getOIDCClaim(OIDC_ID_CLAIM_USER_ID);
+	}
+	
+	/**
+	 * Gets the user name of the authenticated user.
+	 * @return the user name
+	 * @throws OIDCProblemException the OIDC problem exception
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	public String getUserName() throws OIDCProblemException, URISyntaxException {
+		return this.getOIDCClaim(OIDC_ID_CLAIM_USER_NAME);
+	}
+	
+	/**
+	 * Gets the full name of the authenticated user.
+	 * @return the user full name
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	public String getUserFullName() throws OIDCProblemException, URISyntaxException {
+		return this.getOIDCClaim(OIDC_ID_CLAIM_FULL_NAME);
+	}
+	
+	/**
+	 * Gets the value for the specified OIDC claim.
+	 * @param oidcClaim the oidc claim
+	 * @return the OIDC claim
+	 * @throws OIDCProblemException the OIDC problem exception
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	private String getOIDCClaim(String oidcClaim) throws OIDCProblemException, URISyntaxException {
+		String claimValue;
 		if (!isValid()) {
 			throw new OIDCProblemException();
 		}
 		Map<String, Object> allClaims = getOIDCClient().getIdClaims().getClaims();
-		userID = (String) allClaims.get(OIDC_ID_CLAIM_USERID);
+		claimValue = (String) allClaims.get(OIDC_ID_CLAIM_FULL_NAME);
 
-		if (userID != null) {
-			return userID;
+		if (claimValue != null) {
+			return claimValue;
 		}
 		return "";
 	}
@@ -314,6 +387,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		urlProcessor = new URLProcessor();
 
 		oidcClient.setIssuerURI(getIssuerURI());
+		oidcClient.setRealmName(this.getRealmName());
 		try {
 			oidcClient.retrieveProviderMetadata();
 			oidcClient.setClientMetadata(getResourceURI());
@@ -338,22 +412,25 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws KeyManagementException 
 	 */
-	public void authorizeByByAuthenticationCode() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException, IOException {
+	public void startAuthenticationCodeRequest() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException, IOException {
+		
+		this.notifyListeners(AuthenticationState.PENDING);
 		
 		if (!inited) {
 			this.init();
 		}
 		
+		this.oidcClient.setLocalCallbackURI(this.localCallbackURL);
+		
 		new OIDCCallbackHTTPServer(8888, "/oauth/callback/", this).startInThread();
 		
-		URI authenticationRequestURI = oidcClient.buildAuthorizationCodeRequest();
+		URI authenticationRequestURI = oidcClient.buildAuthorizationCodeRequest(this.localCallbackURL, true);
 		try {
 			Desktop.getDesktop().browse(authenticationRequestURI);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	/**
@@ -408,7 +485,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 */
 	public boolean accessResource() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
-		this.getUrlProcessor().prepare(new URL(getResourceURI()));
+		this.getUrlProcessor().prepare(new URI(getResourceURI()).toURL());
 		String result = urlProcessor.process();
 		if (result == null) {
 			// all good (unlikely on first call)
@@ -714,6 +791,69 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	@Override
 	public void callbackReceived(HttpExchange exchange) {
 		System.out.println("[" + this.getClass().getSimpleName() + "] Callback received!");
+		try {
+			AuthenticationResponse response = AuthenticationResponseParser.parse(exchange.getRequestURI());
+			
+			System.out.println("[" + this.getClass().getSimpleName() + "] State: " + response.getState());
+			
+			if (response instanceof AuthenticationErrorResponse) {
+				this.notifyListeners(AuthenticationState.LOGGED_OUT);
+				System.out.println("Authentication failed!");
+			} else if (response instanceof AuthenticationSuccessResponse){
+				
+				AuthenticationSuccessResponse successResponse = (AuthenticationSuccessResponse) response;
+				AuthorizationCode authCode = successResponse.getAuthorizationCode();
+				this.oidcClient.setAuthorizationCode(authCode);
+				
+				try {
+					this.oidcClient.requestToken();
+				} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException e) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] Error requesting tokens!");
+					e.printStackTrace();
+				}
+				
+				this.notifyListeners(AuthenticationState.LOGGED_IN);
+				System.out.println("Authentication successful");
+			}
+			
+		} catch (ParseException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error parsing response!");
+			e.printStackTrace();
+		}
 	}
+	
+	private ArrayList<AuthenticationStateListener> getAuthenticationListeners() {
+		if (authenticationStateListeners==null) {
+			authenticationStateListeners = new ArrayList<AuthenticationStateListener>();
+		}
+		return authenticationStateListeners;
+	}
+	
+	/**
+	 * Adds an authentication state listener.
+	 * @param listener the listener
+	 */
+	public void addAuthenticationStateListener(AuthenticationStateListener listener) {
+		if (this.getAuthenticationListeners().contains(listener)==false) {
+			this.getAuthenticationListeners().add(listener);
+		}
+	}
+	
+	/**
+	 * Removes an authentication state listener.
+	 * @param listener the listener
+	 */
+	public void removeAuthenticationStateListener(AuthenticationStateListener listener) {
+		if (this.getAuthenticationListeners().contains(listener)==true) {
+			this.getAuthenticationListeners().remove(listener);
+		}
+	}
+	
+	private void notifyListeners(AuthenticationState authenticationState) {
+		for (AuthenticationStateListener listener : this.getAuthenticationListeners()) {
+			listener.authenticationStateChanged(authenticationState);
+		}
+	}
+	
 	
 }
