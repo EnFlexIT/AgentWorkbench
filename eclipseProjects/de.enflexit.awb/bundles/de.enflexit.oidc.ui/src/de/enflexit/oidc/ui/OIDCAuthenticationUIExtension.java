@@ -12,9 +12,9 @@ import java.security.cert.CertificateException;
 
 import org.agentgui.gui.swing.MainWindowExtension;
 
-import de.enflexit.oidc.AuthenticationState;
 import de.enflexit.oidc.AuthenticationStateListener;
 import de.enflexit.oidc.OIDCAuthorization;
+import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 
 /**
  * Adds a button for user authentication to the toolbar.
@@ -23,7 +23,7 @@ import de.enflexit.oidc.OIDCAuthorization;
 public class OIDCAuthenticationUIExtension extends MainWindowExtension implements ActionListener, AuthenticationStateListener {
 	
 	private UserAuthenticationStatusButton authenticationStateButton;
-
+	
 	/* (non-Javadoc)
 	 * @see org.agentgui.gui.swing.MainWindowExtension#initialize()
 	 */
@@ -69,13 +69,25 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getAuthenticationStateButton()) {
 			
-			try {
-				OIDCAuthorization.getInstance().startAuthenticationCodeRequest();
-			} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException e) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Exception during authorizaiton attempt");
-				e.printStackTrace();
+			if (OIDCAuthorization.getInstance().getAuthenticationState()==AuthenticationState.LOGGED_OUT) {
+				this.startAuthentication();
+			} else if (OIDCAuthorization.getInstance().getAuthenticationState()==AuthenticationState.LOGGED_IN) {
+				this.triggerLogout();
 			}
 		}
+	}
+	
+	private void startAuthentication() {
+		try {
+			OIDCAuthorization.getInstance().startAuthenticationCodeRequest();
+		} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Exception during authorizaiton attempt");
+			e.printStackTrace();
+		}
+	}
+	
+	private void triggerLogout() {
+		OIDCAuthorization.getInstance().triggerRemoteLogout();
 	}
 
 	/* (non-Javadoc)

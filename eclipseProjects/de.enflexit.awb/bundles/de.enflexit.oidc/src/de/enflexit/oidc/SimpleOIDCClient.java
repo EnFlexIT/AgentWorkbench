@@ -77,6 +77,7 @@ import com.nimbusds.openid.connect.sdk.AuthenticationRequest.Builder;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
 import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
+import com.nimbusds.openid.connect.sdk.LogoutRequest;
 import com.nimbusds.openid.connect.sdk.Nonce;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser;
@@ -109,7 +110,7 @@ public class SimpleOIDCClient {
 	private URI authorizationEndpointURI;
 	private URI userInfoEndpointURI;
 	private URI redirectURI;
-	private String localCallbackURI;
+	private URI localCallbackURI;
 
 	private OIDCProviderMetadata providerMetadata;
 	private OIDCClientInformation clientInformation;
@@ -136,10 +137,11 @@ public class SimpleOIDCClient {
 	 * Reset.
 	 */
 	public void reset() {
-		accessToken = null;
-		idToken = null;
-		userInfoClaims = null;
-		idClaims = null;
+		this.authorizationCode = null;
+		this.accessToken = null;
+		this.idToken = null;
+		this.userInfoClaims = null;
+		this.idClaims = null;
 	}
 
 	/**
@@ -373,7 +375,6 @@ public class SimpleOIDCClient {
 	public void setRedirectURI(String redirectURIString) throws URISyntaxException {
 		this.redirectURI = new URI(redirectURIString);
 	}
-
 	/**
 	 * Gets the redirect URI.
 	 * 
@@ -382,13 +383,21 @@ public class SimpleOIDCClient {
 	public URI getRedirectURI() {
 		return this.redirectURI;
 	}
-	
-	public String getLocalCallbackURI() {
-		return localCallbackURI;
-	}
 
-	public void setLocalCallbackURI(String localCallbackURI) {
-		this.localCallbackURI = localCallbackURI;
+	/**
+	 * Sets the local callback URI.
+	 * @param localCallbackURI the new local callback URI
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	public void setLocalCallbackURI(String localCallbackURI) throws URISyntaxException {
+		this.localCallbackURI = new URI(localCallbackURI);
+	}
+	/**
+	 * Gets the local callback URI.
+	 * @return the local callback URI
+	 */
+	public URI getLocalCallbackURI() {
+		return localCallbackURI;
 	}
 
 	/**
@@ -556,7 +565,7 @@ public class SimpleOIDCClient {
 				grant = resourceOwnerCredentialsGrant;
 			}
 		} else {
-			grant = new AuthorizationCodeGrant(authorizationCode, new URI(this.localCallbackURI));
+			grant = new AuthorizationCodeGrant(authorizationCode, getLocalCallbackURI());
 		}
 		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant);
 		HTTPResponse tokenHTTPResp = null;
@@ -713,6 +722,30 @@ public class SimpleOIDCClient {
 	 */
 	public JSONObject getUserInfoJSON() {
 		return userInfoClaims;
+	}
+	
+	public boolean sendLogoutRequest() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+		LogoutRequest logoutRequest = new LogoutRequest(this.providerMetadata.getEndSessionEndpointURI(), this.idToken);
+		HTTPResponse httpResponse = null;
+		
+		try {
+			HTTPRequest httpRequest = logoutRequest.toHTTPRequest();
+			httpRequest.setHostnameVerifier(null);
+			httpRequest.setSSLSocketFactory(Trust.getSocketFactory(trustStoreFile));
+			httpResponse = httpRequest.send();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (httpResponse!=null) {
+			// --- Logout successful - clear tokens etc. -----------------------
+			this.reset();
+			return true;
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() +"] No logout response received!");
+			return false;
+		}
 	}
 
 	/**

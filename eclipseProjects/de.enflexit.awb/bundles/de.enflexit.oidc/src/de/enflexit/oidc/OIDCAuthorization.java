@@ -59,6 +59,7 @@ import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
 import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
+import com.nimbusds.openid.connect.sdk.LogoutRequest;
 import com.sun.net.httpserver.HttpExchange;
 
 import de.enflexit.api.Translator;
@@ -70,6 +71,10 @@ import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
  * Use with getInstance(), getDialog()/connect() and getUserID().
  */
 public class OIDCAuthorization implements OIDCCallbackListener {
+	
+	public enum AuthenticationState {
+		LOGGED_IN, LOGGED_OUT, PENDING
+	}
 
 	/** The claims representing relevant infos from the ID token */
 	private static final String OIDC_ID_CLAIM_USER_ID = "sub";
@@ -110,6 +115,8 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	
 	private String realmName;
 	private String localCallbackURL;
+	
+	private AuthenticationState authenticationState = AuthenticationState.LOGGED_OUT;
 	
 	private ArrayList<AuthenticationStateListener> authenticationStateListeners;
 	
@@ -414,7 +421,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 */
 	public void startAuthenticationCodeRequest() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException, IOException {
 		
-		this.notifyListeners(AuthenticationState.PENDING);
+		this.setAuthenticationState(AuthenticationState.PENDING);
 		
 		if (!inited) {
 			this.init();
@@ -469,6 +476,21 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			System.err.println("OIDC authorization failed");
 			System.err.println("authRedirection=" + authRedirection);
 			return false;
+		}
+	}
+	
+	/**
+	 * Trigger remote logout.
+	 */
+	public void triggerRemoteLogout() {
+		try {
+			boolean logoutSuccess = this.oidcClient.sendLogoutRequest();
+			if (logoutSuccess==true) {
+				this.setAuthenticationState(AuthenticationState.LOGGED_OUT);
+			}
+		} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error sending logout request!");
+			e.printStackTrace();
 		}
 	}
 
@@ -788,6 +810,9 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		private static final long serialVersionUID = -6015464771451068526L;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.oidc.OIDCCallbackListener#callbackReceived(com.sun.net.httpserver.HttpExchange)
+	 */
 	@Override
 	public void callbackReceived(HttpExchange exchange) {
 		System.out.println("[" + this.getClass().getSimpleName() + "] Callback received!");
@@ -797,7 +822,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			System.out.println("[" + this.getClass().getSimpleName() + "] State: " + response.getState());
 			
 			if (response instanceof AuthenticationErrorResponse) {
-				this.notifyListeners(AuthenticationState.LOGGED_OUT);
+				this.setAuthenticationState(AuthenticationState.LOGGED_OUT);
 				System.out.println("Authentication failed!");
 			} else if (response instanceof AuthenticationSuccessResponse){
 				
@@ -812,7 +837,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 					e.printStackTrace();
 				}
 				
-				this.notifyListeners(AuthenticationState.LOGGED_IN);
+				this.setAuthenticationState(AuthenticationState.LOGGED_IN);
 				System.out.println("Authentication successful");
 			}
 			
@@ -849,10 +874,19 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		}
 	}
 	
-	private void notifyListeners(AuthenticationState authenticationState) {
+	private void setAuthenticationState(AuthenticationState authenticationState) {
+		this.authenticationState = authenticationState;
 		for (AuthenticationStateListener listener : this.getAuthenticationListeners()) {
 			listener.authenticationStateChanged(authenticationState);
-		}
+		}		
+	}
+	
+	/**
+	 * Gets the current authentication state.
+	 * @return the authentication state
+	 */
+	public AuthenticationState getAuthenticationState() {
+		return authenticationState;
 	}
 	
 	

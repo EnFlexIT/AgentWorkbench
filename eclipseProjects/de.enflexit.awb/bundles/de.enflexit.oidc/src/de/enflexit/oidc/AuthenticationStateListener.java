@@ -1,5 +1,7 @@
 package de.enflexit.oidc;
 
+import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
+
 /**
  * Implement this interace if you want to react to changes of the authentication state.
  */

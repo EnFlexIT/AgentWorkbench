@@ -5,8 +5,8 @@ import java.net.URISyntaxException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import de.enflexit.oidc.AuthenticationState;
 import de.enflexit.oidc.OIDCAuthorization;
+import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 
 /**
  * A custom toolbar button that shows the current authentication state of the user, and allows logging in/out.
