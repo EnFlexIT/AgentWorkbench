@@ -48,7 +48,7 @@ public class OIDCCallbackHTTPServer {
 					public void handle(HttpExchange exchange) throws IOException {
 						OIDCCallbackHTTPServer.this.handleCallback(exchange);
 						
-						String response = "Redirect successful, please close this tab!";
+						String response = "Authentication successful, please close this browser window/tab!";
 						exchange.sendResponseHeaders(200, response.length());
 						OutputStream os = exchange.getResponseBody();
 						os.write(response.getBytes());

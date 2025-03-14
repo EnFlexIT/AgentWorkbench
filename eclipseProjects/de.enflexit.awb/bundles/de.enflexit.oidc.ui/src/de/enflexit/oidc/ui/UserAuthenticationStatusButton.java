@@ -77,14 +77,20 @@ public class UserAuthenticationStatusButton extends JButton {
 			}
 			this.setIcon(this.getImageIconLoggedIn());
 			this.setText(BUTTON_TEXT_LOGGED_IN + username);
+			this.setEnabled(true);
+			this.setToolTipText("Click to log out");
 			break;
 		case LOGGED_OUT:
 			this.setIcon(this.getImageIconLoggedOut());
 			this.setText(BUTTON_TEXT_LOGGED_OUT);
+			this.setEnabled(true);
+			this.setToolTipText("Click to log in");
 			break;
 		case PENDING:
 			this.setIcon(this.getImageIconLoginPending());
 			this.setText(BUTTON_TEXT_LOGIN_PENDING);
+			this.setEnabled(false);
+			this.setToolTipText("The log in page was opened in your browser!");
 		}
 		
 	}

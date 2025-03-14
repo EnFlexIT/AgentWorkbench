@@ -59,7 +59,6 @@ import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
 import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
-import com.nimbusds.openid.connect.sdk.LogoutRequest;
 import com.sun.net.httpserver.HttpExchange;
 
 import de.enflexit.api.Translator;
@@ -85,11 +84,11 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	private static OIDCAuthorization instance;
 	/** The OIDC client. */
 	private SimpleOIDCClient oidcClient;
+	
+	private OIDCSettings oidcSettings;
 
 	/** The accessed resource URI, initialized with @see OIDCPanel.DEBUG_RESOURCE_URI. */
 	private String resourceURI;
-	/** The URI of the OIDC provider/issuer. */
-	private String issuerURI;
 	
 	/** The availability handler called when the resource is available. */
 	private OIDCResourceAvailabilityHandler availabilityHandler;
@@ -109,12 +108,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	private File truststoreFile;
 
 	private String lastSuccessfulUser;
-	
-	private String clientID;
-	private String clientSecret;
-	
-	private String realmName;
-	private String localCallbackURL;
 	
 	private AuthenticationState authenticationState = AuthenticationState.LOGGED_OUT;
 	
@@ -145,9 +138,38 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	public SimpleOIDCClient getOIDCClient() throws URISyntaxException {
 		if (oidcClient == null) {
 			oidcClient = new SimpleOIDCClient();
-			oidcClient.setIssuerURI(issuerURI);
+			oidcClient.setIssuerURI(this.getOIDCSettings().getIssuerURL());
 		}
 		return oidcClient;
+	}
+
+	/**
+	 * Gets the OIDC settings. If not set yet, a new instance with default settings will be generated.
+	 * @return the OIDC settings
+	 */
+	public OIDCSettings getOIDCSettings() {
+		if (oidcSettings==null) {
+			oidcSettings = new OIDCSettings();
+			oidcSettings.initializeWithDefaults();
+		}
+		return oidcSettings;
+	}
+	/**
+	 * Sets the OIDC settings.
+	 * @param oidcSettings the new oidc settings
+	 */
+	public void setOIDCSettings(OIDCSettings oidcSettings) {
+		this.oidcSettings = oidcSettings;
+	}
+	
+	/**
+	 * Sets the issuer URI.
+	 * @param issuerURI the new issuer URI
+	 * @deprecated Just kept for backwards compatibility, remove when the old authorization stuff is removed from agentgui.core
+	 */
+	@Deprecated 
+	public void setIssuerURI(String issuerURI) {
+		this.getOIDCSettings().setIssuerURL(issuerURI);
 	}
 
 	/**
@@ -191,52 +213,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	}
 
 	/**
-	 * Gets the issuer URI.
-	 * @return the issuer URI
-	 */
-	public String getIssuerURI() {
-		return issuerURI;
-	}
-	/**
-	 * Sets the issuer URI.
-	 * @param issuerURI the new issuer URI
-	 */
-	public void setIssuerURI(String issuerURI) {
-		this.issuerURI = issuerURI;
-	}
-
-	/**
-	 * Gets the realm.
-	 * @return the realm
-	 */
-	public String getRealmName() {
-		return realmName;
-	}
-	
-	/**
-	 * Sets the realm.
-	 * @param realmName the new realm
-	 */
-	public void setRealmName(String realmName) {
-		this.realmName = realmName;
-	}
-	
-	/**
-	 * Gets the local callback URL.
-	 * @return the local callback URL
-	 */
-	public String getLocalCallbackURL() {
-		return localCallbackURL;
-	}
-	
-	/**
-	 * Sets the local callback URL.
-	 * @param localCallbackURL the new local callback URL
-	 */
-	public void setLocalCallbackURL(String localCallbackURL) {
-		this.localCallbackURL = localCallbackURL;
-	}
-	/**
 	 * Gets the resource URI.
 	 * @return the resource URI
 	 */
@@ -251,36 +227,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		this.resourceURI = resourceURI;
 	}
 
-	/**
-	 * Sets the client ID.
-	 * @param clientID the new client ID
-	 */
-	public void setClientID(String clientID) {
-		this.clientID = clientID;
-	}
-	/**
-	 * Gets the client id.
-	 * @return the client id
-	 */
-	public String getClientID() {
-		return this.clientID;
-	}
-	
-	/**
-	 * Sets the client secret.
-	 * @param clientSecret the new client secret
-	 */
-	public void setClientSecret(String clientSecret) {
-		this.clientSecret = clientSecret;
-	}
-	/**
-	 * Gets the client secret.
-	 * @return the client secret
-	 */
-	public String getClientSecret() {
-		return this.clientSecret;
-	}
-	
 	
 
 	/**
@@ -393,15 +339,15 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		//oidcClient.reset();
 		urlProcessor = new URLProcessor();
 
-		oidcClient.setIssuerURI(getIssuerURI());
-		oidcClient.setRealmName(this.getRealmName());
+		oidcClient.setIssuerURI(this.getOIDCSettings().getIssuerURL());
+		oidcClient.setRealmName(this.getOIDCSettings().getRealmID());
 		try {
 			oidcClient.retrieveProviderMetadata();
 			oidcClient.setClientMetadata(getResourceURI());
 		} catch (ParseException e) {
 			throw new IOException("OIDC ParseException");
 		}
-		oidcClient.setClientID(getClientID(), getClientSecret());
+		oidcClient.setClientID(this.getOIDCSettings().getClientID(), this.getOIDCSettings().getClientSecret());
 		oidcClient.setRedirectURI(getResourceURI());
 		urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
 		inited = true;
@@ -427,17 +373,21 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			this.init();
 		}
 		
-		this.oidcClient.setLocalCallbackURI(this.localCallbackURL);
+		this.oidcClient.setLocalCallbackURI(this.getLocalCallbackURL());
 		
 		new OIDCCallbackHTTPServer(8888, "/oauth/callback/", this).startInThread();
 		
-		URI authenticationRequestURI = oidcClient.buildAuthorizationCodeRequest(this.localCallbackURL, true);
+		URI authenticationRequestURI = oidcClient.buildAuthorizationCodeRequest(this.getLocalCallbackURL(), true);
 		try {
 			Desktop.getDesktop().browse(authenticationRequestURI);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private String getLocalCallbackURL() {
+		return "http://localhost:" + this.getOIDCSettings().getLocalHTTPPort() + this.getOIDCSettings().getAuthenticationEndpoint();
 	}
 
 	/**
