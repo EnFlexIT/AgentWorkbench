@@ -28,14 +28,13 @@ public class UserAuthenticationStatusButton extends JButton {
 	private ImageIcon imageIconLoggedOut;
 	private ImageIcon imageIconLoginPending;
 	
-	private boolean userLoggedIn;
-	
 	/**
 	 * Instantiates a new user authentication status button.
 	 */
 	public UserAuthenticationStatusButton() {
 		super();
-		this.setAuthenticationState(this.userLoggedIn ? AuthenticationState.LOGGED_IN : AuthenticationState.LOGGED_OUT);
+//		this.setAuthenticationState(this.userLoggedIn ? AuthenticationState.LOGGED_IN : AuthenticationState.LOGGED_OUT);
+		this.setAuthenticationState(OIDCAuthorization.getInstance().getAuthenticationState());
 	}
 
 	private ImageIcon getImageIconLoggedIn() {

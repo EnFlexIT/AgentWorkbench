@@ -3,9 +3,6 @@ package de.enflexit.oidc;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
-
-import com.nimbusds.oauth2.sdk.Response;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -15,6 +12,9 @@ import com.sun.net.httpserver.HttpServer;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class OIDCCallbackHTTPServer {
+	
+	// A minimal HTML page that invokes a JavaScript to close the window/tab 
+	private static final String REDIRECT_PAGE_CONTENT = "<html><head></head><body><script type=\"text/javascript\">window.close();</script><p>OIDC redirect successful, please close this window/tab and return to the application!</p></body></html>"; 
 	
 	private int port;
 	private String callbackEndpoint;
@@ -47,8 +47,8 @@ public class OIDCCallbackHTTPServer {
 					@Override
 					public void handle(HttpExchange exchange) throws IOException {
 						OIDCCallbackHTTPServer.this.handleCallback(exchange);
-						
-						String response = "Authentication successful, please close this browser window/tab!";
+
+						String response = REDIRECT_PAGE_CONTENT;
 						exchange.sendResponseHeaders(200, response.length());
 						OutputStream os = exchange.getResponseBody();
 						os.write(response.getBytes());
@@ -72,6 +72,9 @@ public class OIDCCallbackHTTPServer {
 		this.callbackListener.callbackReceived(exchange);
 	}
 	
+	/**
+	 * Starts the server in a separate thread.
+	 */
 	public void startInThread() {
 		
 		new Thread(new Runnable() {
@@ -98,5 +101,11 @@ public class OIDCCallbackHTTPServer {
 		
 	}
 	
+	/**
+	 * Stop the server.
+	 */
+	public void stop() {
+		this.stopServer = true;
+	}
 	
 }

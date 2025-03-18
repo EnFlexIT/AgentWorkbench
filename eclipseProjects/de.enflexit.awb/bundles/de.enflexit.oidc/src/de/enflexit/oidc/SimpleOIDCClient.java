@@ -70,6 +70,7 @@ import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.util.JSONObjectUtils;
 import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
@@ -125,8 +126,11 @@ public class SimpleOIDCClient {
 
 	private AuthorizationCode authorizationCode;
 	private ResourceOwnerPasswordCredentialsGrant resourceOwnerCredentialsGrant;
+	
 	private AccessToken accessToken;
 	private JWT idToken;
+	private RefreshToken refreshToken;
+	
 	private JSONObject userInfoClaims;
 	private JWTClaimsSet idClaims;
 
@@ -140,6 +144,7 @@ public class SimpleOIDCClient {
 		this.authorizationCode = null;
 		this.accessToken = null;
 		this.idToken = null;
+		this.refreshToken = null;
 		this.userInfoClaims = null;
 		this.idClaims = null;
 	}
@@ -435,12 +440,12 @@ public class SimpleOIDCClient {
 	 * if not logged in. 
 	 *
 	 * @param localCallbackURL the local callback URL
-	 * @param showLoginPage whether to show the login page if not logged in 
+	 * @param showLoginForm whether to show the login page if not logged in - set to false if you only want to check for an existing login
 	 * @return the authorization code request URI
 	 * @throws SerializeException the serialize exception
 	 * @throws URISyntaxException the URI syntax exception
 	 */
-	public URI buildAuthorizationCodeRequest(String localCallbackURL, boolean showLoginPage) throws SerializeException, URISyntaxException {
+	public URI buildAuthorizationCodeRequest(String localCallbackURL, boolean showLoginForm) throws SerializeException, URISyntaxException {
 		
 		if (state==null) state = new State();
 		if (nonce==null) nonce = new Nonce();
@@ -449,20 +454,16 @@ public class SimpleOIDCClient {
 		// Specify scope
 		Scope scope = Scope.parse("openid");
 
-		// Compose the request
-		/*
-		authenticationRequest = new AuthenticationRequest(
-				authorizationEndpointURI,
-				new ResponseType(ResponseType.Value.CODE),
-				scope, clientID, redirectURI, state, nonce);
-		*/
+		
 		Builder builder = new AuthenticationRequest.Builder(new ResponseType(ResponseType.Value.CODE), scope, clientID, new URI(localCallbackURL));
 		builder.endpointURI(authorizationEndpointURI);
 		builder.state(state);
 		builder.nonce(nonce);
 		
-		Prompt.Type promptType = (showLoginPage==true ? Prompt.Type.LOGIN : Prompt.Type.NONE);
-		builder.prompt(new Prompt(promptType));
+		if (showLoginForm==false) {
+			builder.prompt(new Prompt(Prompt.Type.NONE));
+		}
+		
 		authenticationRequest = builder.build();
 
 		URI authReqURI = authenticationRequest.toURI();
@@ -600,6 +601,7 @@ public class SimpleOIDCClient {
 		OIDCTokenResponse accessTokenResponse = (OIDCTokenResponse) tokenResponse;
 		accessToken = accessTokenResponse.getOIDCTokens().getAccessToken();
 		idToken = accessTokenResponse.getOIDCTokens().getIDToken();
+		refreshToken = accessTokenResponse.getTokens().getRefreshToken();
 		
 		return true;
 	}
@@ -610,6 +612,42 @@ public class SimpleOIDCClient {
 	 */
 	public AccessToken getAccessToken() {
 		return accessToken;
+	}
+	/**
+	 * Sets the access token.
+	 * @param accessToken the new access token
+	 */
+	public void setAccessToken(AccessToken accessToken) {
+		this.accessToken = accessToken;
+	}
+	
+	/**
+	 * Gets the ID token.
+	 * @return the ID token
+	 */
+	public JWT getIdToken() {
+		return idToken;
+	}
+	/**
+	 * Sets the id token.
+	 * @param idToken the new id token
+	 */
+	public void setIdToken(JWT idToken) {
+		this.idToken = idToken;
+	}
+	/**
+	 * Gets the refresh token.
+	 * @return the refresh token
+	 */
+	public RefreshToken getRefreshToken() {
+		return refreshToken;
+	}
+	/**
+	 * Sets the refresh token.
+	 * @param refreshToken the new refresh token
+	 */
+	public void setRefreshToken(RefreshToken refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	/**

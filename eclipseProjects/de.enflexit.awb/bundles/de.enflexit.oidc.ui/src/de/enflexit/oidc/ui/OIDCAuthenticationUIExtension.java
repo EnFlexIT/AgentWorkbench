@@ -7,11 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -56,11 +51,12 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		try {
 			OIDCAuthorization.getInstance().setTrustStore(this.getTrustStoreFile());
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error setting the trust store file!");
 			e.printStackTrace();
 		}
 		
 		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
+//		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
 	}
 	
 	private File getTrustStoreFile() {
@@ -103,12 +99,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	}
 	
 	private void startAuthentication() {
-		try {
-			OIDCAuthorization.getInstance().startAuthenticationCodeRequest();
-		} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException e) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Exception during authorizaiton attempt");
-			e.printStackTrace();
-		}
+		OIDCAuthorization.getInstance().requestAuthorizationCode(true);
 	}
 	
 	private void triggerLogout() {

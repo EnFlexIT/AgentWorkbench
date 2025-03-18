@@ -11,4 +11,5 @@ Require-Bundle: de.enflexit.api,
  net.minidev.json-smart
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc
-Import-Package: de.enflexit.common.swing
+Import-Package: de.enflexit.common.swing,
+ org.eclipse.equinox.security.storage;version="[1.0.0,2.0.0)"
