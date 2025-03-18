@@ -1,5 +1,6 @@
 package de.enflexit.awb.core.project;
 
+import java.io.File;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -197,6 +198,7 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	private void setFileDir(ProfileImpl profile) {
 		String baseDir = Application.getGlobalInfo().getPathBaseDir().toString();
+		if (baseDir.endsWith(File.separator)==false) baseDir += File.separator; 
 		profile.setParameter(Profile.FILE_DIR, baseDir);
 	}
 	/**

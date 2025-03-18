@@ -19,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
-import de.enflexit.awb.simulation.BundleHelper;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 import de.enflexit.common.swing.TimeSelection;
 import de.enflexit.language.Language;
@@ -357,7 +357,7 @@ public class SystemLoadPanel extends JPanel {
 
 			if (imgName!=null) {
 				try {
-					this.setIcon(BundleHelper.getImageIcon(imgName));
+					this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
 				} catch (Exception err) {
 					System.err.println("[" + this.getClass().getName() + "]" + Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
 				}				

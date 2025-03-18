@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JToolBar;
 
-import de.enflexit.awb.simulation.BundleHelper;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 import de.enflexit.common.swing.TimeSelection;
 import de.enflexit.language.Language;
@@ -75,7 +75,7 @@ public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 			jButtonMeasureRefresh = new JButton();
 			jButtonMeasureRefresh.setToolTipText(Language.translate("Refresh Thread Measurement", Language.EN));
 			jButtonMeasureRefresh.setPreferredSize(new Dimension(26,26));
-			jButtonMeasureRefresh.setIcon(BundleHelper.getImageIcon("Refresh.png" ));
+			jButtonMeasureRefresh.setIcon(GlobalInfo.getInternalImageIcon("Refresh.png" ));
 			jButtonMeasureRefresh.addActionListener(this);	
 		}
 		return jButtonMeasureRefresh;
@@ -91,7 +91,7 @@ public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 			jButtonMeasureStart = new JButton();
 			jButtonMeasureStart.setToolTipText(Language.translate("Start Thread Measurement", Language.EN));
 			jButtonMeasureStart.setPreferredSize(new Dimension(26,26));
-			jButtonMeasureStart.setIcon(BundleHelper.getImageIcon("MBLoadPlay.png" ));
+			jButtonMeasureStart.setIcon(GlobalInfo.getInternalImageIcon("MBLoadPlay.png" ));
 			jButtonMeasureStart.addActionListener(this);	
 		}
 		return jButtonMeasureStart;
@@ -107,7 +107,7 @@ public class ThreadMonitorToolBar extends JToolBar implements ActionListener {
 			jButtonMeasurePause = new JButton();
 			jButtonMeasurePause.setToolTipText(Language.translate("Pause Thread Measurement", Language.EN));
 			jButtonMeasurePause.setPreferredSize(new Dimension(26,26));
-			jButtonMeasurePause.setIcon(BundleHelper.getImageIcon("MBLoadPause.png"));
+			jButtonMeasurePause.setIcon(GlobalInfo.getInternalImageIcon("MBLoadPause.png"));
 			jButtonMeasurePause.addActionListener(this);	
 		}
 		return jButtonMeasurePause;

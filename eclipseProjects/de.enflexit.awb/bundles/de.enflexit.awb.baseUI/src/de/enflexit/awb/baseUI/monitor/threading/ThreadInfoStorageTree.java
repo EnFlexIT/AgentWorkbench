@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.awb.baseUI.monitor.threading;
 
 import java.awt.Component;
@@ -55,7 +27,7 @@ import javax.swing.tree.TreePath;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import de.enflexit.awb.simulation.BundleHelper;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.simulation.load.threading.ThreadDetail;
 import de.enflexit.awb.simulation.load.threading.storage.ThreadInfoStorage;
 import de.enflexit.awb.simulation.load.threading.storage.ThreadInfoStorageAgent;
@@ -682,10 +654,10 @@ public class ThreadInfoStorageTree extends JTree implements ActionListener{
     	 */
     	public MyTreeCellRenderer(){
     		isSelected = false;
-	    	this.activeIcon = BundleHelper.getImageIcon("StatGreen.png");
-	    	this.inActiveIcon = BundleHelper.getImageIcon("StatRed.png");
-	    	this.agentActiveIcon= BundleHelper.getImageIcon("AWB-Green16.png");
-	    	this.agentInActiveIcon= BundleHelper.getImageIcon("AWB-Red16.png");
+	    	this.activeIcon = GlobalInfo.getInternalImageIcon("StatGreen.png");
+	    	this.inActiveIcon = GlobalInfo.getInternalImageIcon("StatRed.png");
+	    	this.agentActiveIcon= GlobalInfo.getInternalImageIcon("AWB-Green16.png");
+	    	this.agentInActiveIcon= GlobalInfo.getInternalImageIcon("AWB-Red16.png");
 	    }
 
 	    /* (non-Javadoc)

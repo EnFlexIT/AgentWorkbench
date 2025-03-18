@@ -43,7 +43,7 @@ Import-Package: agentgui.core.charts.timeseriesChart,
  org.slf4j,
  oshi,
  oshi.hardware
-Require-Bundle: de.enflexit.jade
+Require-Bundle: de.enflexit.jade;bundle-version="4.6.3"
 Export-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.bundleEvaluation,
  de.enflexit.awb.core.classLoadService,

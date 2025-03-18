@@ -11,8 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogThreading;
-import de.enflexit.awb.simulation.BundleHelper;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 import de.enflexit.awb.simulation.load.threading.ThreadProtocolVector;
 import de.enflexit.awb.simulation.load.threading.storage.ThreadInfoStorage;
@@ -61,7 +61,7 @@ public class ThreadMonitorDialog extends JFrame implements AwbMonitoringDialogTh
 		
 		this.setSize(1000, 562);
 		
-		this.setIconImage(BundleHelper.getImageIcon("awb16.png").getImage());
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 	    this.setTitle("Agent.Workbench: Thread Monitor");
 		
 		// --- Add a WindowsListener --------------------------------

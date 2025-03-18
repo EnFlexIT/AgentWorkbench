@@ -311,7 +311,7 @@ public class Platform {
 						Platform.this.getAgentContainerList().clear();
 						Application.setJadeStatusColor(JadeStatusColor.Red);
 						Platform.this.setPlatformState(PlatformState.Standby);
-						if (Application.getMainWindow()!=null){
+						if (Application.isMainWindowInitiated()==true){
 							Application.getMainWindow().setSimulationReady2Start();
 						}
 						// --- Stop download server -----------------
@@ -362,7 +362,7 @@ public class Platform {
 	 * @return true, if the user answered 'yes'
 	 */
 	public boolean stopAskUserBefore() {
-		if (this.isMainContainerRunning()==true && Application.getMainWindow()!=null && Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+		if (this.isMainContainerRunning()==true && Application.isMainWindowInitiated()==true && Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
 			String title = Language.translate("JADE wird zur Zeit ausgeführt!");
 			String message = Language.translate("Möchten Sie JADE nun beenden?");
 			Integer answer =  AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), message, title, AwbMessageDialog.YES_NO_OPTION);
@@ -1005,7 +1005,7 @@ public class Platform {
 			int msgAnswer;
 			String msgHead = Language.translate("Der Agent '") + agentName +  Language.translate("' ist bereits geöffnet!");
 			String msgText = Language.translate("Möchten Sie einen weiteren Agenten dieser Art starten?");
-			if (Application.getMainWindow()==null) {
+			if (Application.isMainWindowInitiated()==true) {
 				msgAnswer = AwbMessageDialog.showConfirmDialog(null, msgText, msgHead, AwbMessageDialog.YES_NO_OPTION);				
 			} else {
 				msgAnswer = AwbMessageDialog.showConfirmDialog(Application.getMainWindow(), msgText, msgHead, AwbMessageDialog.YES_NO_OPTION);	

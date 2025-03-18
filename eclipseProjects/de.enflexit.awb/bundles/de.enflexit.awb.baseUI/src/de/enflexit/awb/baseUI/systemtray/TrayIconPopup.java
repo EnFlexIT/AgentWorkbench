@@ -5,6 +5,9 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Icon;
@@ -33,6 +36,7 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 	private static final long serialVersionUID = -126917985058515163L;
 
 	public static final String TRAY_ICON_MENU_EXTENSION_ID = "de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension";
+	public static final String MAIN_WINDOW_EXTENSION_ID = "de.enflexit.awb.desktop.mainWindowExtension";
 	
 	private AwbTrayIcon awbTrayIcon = null;
 	
@@ -82,10 +86,14 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 	 */
 	private void proceedTrayIconMenuExtensions() {
 		
-		IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(TRAY_ICON_MENU_EXTENSION_ID);
+		// --- Collect relevant extension  points -------------------
+		List<IConfigurationElement> configElementList = new ArrayList<>();
+		configElementList.addAll(Arrays.asList(Platform.getExtensionRegistry().getConfigurationElementsFor(TRAY_ICON_MENU_EXTENSION_ID)));
+		configElementList.addAll(Arrays.asList(Platform.getExtensionRegistry().getConfigurationElementsFor(MAIN_WINDOW_EXTENSION_ID)));
+		
 		try {
-			for (int i = 0; i < configElements.length; i++) {
-				IConfigurationElement configElement = configElements[i]; 
+			for (int i = 0; i < configElementList.size(); i++) {
+				IConfigurationElement configElement = configElementList.get(i); 
 				final Object execExt = configElement.createExecutableExtension("class");
 				if (execExt instanceof TrayIconMenuExtension) {
 					TrayIconMenuExtension timExtension = (TrayIconMenuExtension) execExt;

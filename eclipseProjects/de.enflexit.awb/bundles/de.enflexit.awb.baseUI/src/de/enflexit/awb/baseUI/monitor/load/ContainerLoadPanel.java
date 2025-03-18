@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.awb.baseUI.monitor.load;
 
 import java.awt.Dimension;
@@ -40,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
-import de.enflexit.awb.simulation.BundleHelper;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.simulation.load.LoadInformation.NodeDescription;
 import de.enflexit.awb.simulation.ontology.OSInfo;
 import de.enflexit.awb.simulation.ontology.PlatformLoad;
@@ -57,8 +29,8 @@ public class ContainerLoadPanel extends JPanel {
 
 	public static final int loadPanelHeight = 85;
 	
-	private final ImageIcon iconGreen = BundleHelper.getImageIcon("StatGreen.png");
-	private final ImageIcon iconRed = BundleHelper.getImageIcon("StatRed.png");
+	private final ImageIcon iconGreen = GlobalInfo.getInternalImageIcon("StatGreen.png");
+	private final ImageIcon iconRed = GlobalInfo.getInternalImageIcon("StatRed.png");
 
 	private JLabel jLabelThreshold = null;
 	private JProgressBar jLoadCPU = null;

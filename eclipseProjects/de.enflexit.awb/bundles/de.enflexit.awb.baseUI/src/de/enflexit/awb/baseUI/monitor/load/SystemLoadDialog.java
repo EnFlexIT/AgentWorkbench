@@ -9,8 +9,8 @@ import java.util.Hashtable;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.ui.AwbMonitoringDialogSystemLoad;
-import de.enflexit.awb.simulation.BundleHelper;
 import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
 import de.enflexit.awb.simulation.load.LoadInformation.NodeDescription;
 import de.enflexit.awb.simulation.ontology.PlatformLoad;
@@ -54,7 +54,7 @@ public class SystemLoadDialog extends JFrame implements AwbMonitoringDialogSyste
 	private void initialize() {
 		
 		this.setSize(620, 120);
-		this.setIconImage(BundleHelper.getImageIcon("awb16.png").getImage());
+		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 	    this.setTitle("Agent.Workbench: " + Language.translate("Load Monitor"));
 		this.setContentPane(this.getSystemLoadPanel());		
 		
@@ -66,6 +66,7 @@ public class SystemLoadDialog extends JFrame implements AwbMonitoringDialogSyste
 				setVisible(false);
 			}
 		});
+		this.setVisible(true);
 	}
 
 	/**

@@ -305,8 +305,8 @@ public class Application {
 	 * @param add2BasicTitle the addition for the basic title 
 	 */
 	public static void setTitleAddition(String add2BasicTitle) {
-		if (getMainWindow()!=null) {
-			getMainWindow().setTitelAddition(add2BasicTitle);
+		if (Application.isMainWindowInitiated()==true) {
+			Application.getMainWindow().setTitelAddition(add2BasicTitle);
 		}
 	}
 
@@ -316,8 +316,8 @@ public class Application {
 	 * @param jadeStatus the new jade status color
 	 */
 	public static void setJadeStatusColor(JadeStatusColor jadeStatus) {
-		if (Application.mainWindow!=null) {
-			Application.mainWindow.setJadeStatusColor(jadeStatus);
+		if (Application.isMainWindowInitiated()==true) {
+			Application.getMainWindow().setJadeStatusColor(jadeStatus);
 		}
 		if (trayIcon!=null) {
 			trayIcon.refreshView();	
@@ -329,7 +329,7 @@ public class Application {
 	 * @param statusText the new status bar message
 	 */
 	public static void setStatusBarMessage(String statusText) {
-		if (getMainWindow()!=null) {
+		if (Application.isMainWindowInitiated()==true) {
 			getMainWindow().setStatusBarMessage(statusText);	
 		}
 	}
@@ -337,7 +337,7 @@ public class Application {
 	 * Sets the status bar text message to 'Ready'.
 	 */
 	public static void setStatusBarMessageReady() {
-		if (getMainWindow()!=null) {
+		if (Application.isMainWindowInitiated()==true) {
 			getMainWindow().setStatusBarMessage(Language.translate("Fertig"));
 		}
 	}
@@ -583,13 +583,14 @@ public class Application {
 				@Override
 				public void run() {
 					
-					setStatusBarMessageReady();
+					Application.getMainWindow();
+					Application.setStatusBarMessageReady();
 					
-					setOntologyVisualisationConfigurationToCommonBundle();
+					Application.setOntologyVisualisationConfigurationToCommonBundle();
 					
 					// --- Do the benchmark -------------------------
-					doBenchmark(false);
-					waitForBenchmark();
+					Application.doBenchmark(false);
+					Application.waitForBenchmark();
 
 					// --- Check for updates ------------------------
 					AWBUpdater updater = new AWBUpdater();
@@ -597,7 +598,7 @@ public class Application {
 					updater.waitForUpdate();
 					
 					// --- Open project? ----------------------------
-					proceedStartArgumentOpenProject();
+					Application.proceedStartArgumentOpenProject();
 					
 				}
 			});

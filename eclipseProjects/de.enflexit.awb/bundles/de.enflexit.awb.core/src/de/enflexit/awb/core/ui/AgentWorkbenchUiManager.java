@@ -571,7 +571,22 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMonitoringDialogSystemLoad!");
+			// --- Check instances ----------------------------------
+			List<AwbMonitoringDialogSystemLoad> pExList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbMonitoringDialogSystemLoad monDialog = awbUI.getAwbMonitoringDialogSystemLoad(lmAgent);
+				if (monDialog!=null) pExList.add(monDialog);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (pExList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbMonitoringDialogSystemLoad!");
+			} else if (pExList.size()==1) {
+				return pExList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMonitoringDialogSystemLoad!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getAwbMonitoringDialogSystemLoad(lmAgent);
 		}
@@ -587,7 +602,22 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 		
 		int noOfUiImpls = this.getNumberOfUiImplementations();
 		if (noOfUiImpls > 1) {
-			LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMonitoringDialogThreading!");
+			// --- Check instances ----------------------------------
+			List<AwbMonitoringDialogThreading> pExList = new ArrayList<>();
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				AwbMonitoringDialogThreading threadMonDialog = awbUI.getAwbMonitoringDialogThreading(lmAgent);
+				if (threadMonDialog!=null) pExList.add(threadMonDialog);
+			}
+			
+			// --- Write Error or return AwbConsoleDialog -----------
+			if (pExList.size()==0) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no AwbMonitoringDialogThreading!");
+			} else if (pExList.size()==1) {
+				return pExList.get(0);
+			} else {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations and thus can't unambiguously answer the request for an AwbMonitoringDialogThreading!");
+			}
+			
 		} else {
 			return this.getAgentWorkbenchUiList().get(0).getAwbMonitoringDialogThreading(lmAgent);
 		}

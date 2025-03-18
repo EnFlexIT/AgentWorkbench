@@ -465,7 +465,9 @@ public class LoadMeasureAgent extends Agent {
 					// ------------------------------------------------------------------					
 					
 					// --- Update container-Load ----------------------------------------
-					getSystemLoadDialog().updateContainerLoad(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
+					if (getSystemLoadDialog()!=null) {
+						getSystemLoadDialog().updateContainerLoad(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);
+					}
 					// --- If wanted, save the current values to file -------------------
 					if (monitorSaveLoad==true) {
 						buildDatasetPart(containerName, containerDesc, benchmarkValue, containerLoad, containerNoAgents);

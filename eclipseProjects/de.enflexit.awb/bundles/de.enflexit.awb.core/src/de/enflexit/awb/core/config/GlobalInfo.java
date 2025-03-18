@@ -541,9 +541,8 @@ public class GlobalInfo implements ZoneIdResolver {
 		}
 		return localBaseDir;
 	}	
-	
-	
 
+	
 	/**
 	 * Creates the directory if not already there and thus required.
 	 * @param pathString the path string
