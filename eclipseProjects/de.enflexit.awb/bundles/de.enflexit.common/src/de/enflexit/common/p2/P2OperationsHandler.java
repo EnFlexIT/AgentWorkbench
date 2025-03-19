@@ -533,8 +533,11 @@ public class P2OperationsHandler {
 	private Vector<String> getUpdateRelevantBundleNames() {
 		if (updateRelevantBundleNames==null) {
 			updateRelevantBundleNames = new Vector<>();
-			updateRelevantBundleNames.add("org.agentgui.core");
-			updateRelevantBundleNames.add("org.agentgui.lib.jade");
+			updateRelevantBundleNames.add("de.enflexit.awb.core");
+			updateRelevantBundleNames.add("de.enflexit.awb.baseUI");
+			updateRelevantBundleNames.add("de.enflexit.awb.desktop");
+			updateRelevantBundleNames.add("de.enflexit.awb.ws.core");
+			updateRelevantBundleNames.add("de.enflexit.awb.ws.restapi");
 			updateRelevantBundleNames.add("org.agentgui.lib.jung");
 			updateRelevantBundleNames.add("org.awb.env.maps");
 			updateRelevantBundleNames.add("org.awb.env.networkModel");
