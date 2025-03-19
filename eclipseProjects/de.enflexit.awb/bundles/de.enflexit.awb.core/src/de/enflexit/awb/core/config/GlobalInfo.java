@@ -1126,6 +1126,18 @@ public class GlobalInfo implements ZoneIdResolver {
 		return this.getBundleProperties().getEclipsePreferences().getByteArray(key, defaultValue);
 	}
 	
+	/**
+	 * Returns the symbolic bundle name of the core bundle.
+	 * @return the symbolic bundle name
+	 */
+	public static String getSymbolicBundleName() {
+		
+		Bundle thisBundle = FrameworkUtil.getBundle(GlobalInfo.class);
+		if (thisBundle!=null) {
+			return thisBundle.getSymbolicName();
+		}
+		return null;
+	}
 	
 	// ---- SciMark 2.0 Benchmark ----------------------------
 	/**

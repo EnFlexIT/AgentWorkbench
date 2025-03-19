@@ -35,7 +35,6 @@ Require-Bundle: de.enflexit.common,
  de.enflexit.geography,
  org.agentgui.lib.jung,
  org.eclipse.core.runtime,
- org.eclipse.osgi.services,
  org.apache.commons.text
 Bundle-ActivationPolicy: lazy
 Import-Package: agentgui.core.charts,
