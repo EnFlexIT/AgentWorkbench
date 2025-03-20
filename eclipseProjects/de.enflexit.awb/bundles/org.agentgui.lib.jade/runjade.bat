@@ -1,1 +1,0 @@
-java  -classpath .;.\jade.jar;.\commons-codec\commons-codec-1.3.jar; jade.Boot -gui -services jade.core.event.NotificationService;jade.core.mobility.AgentMobilityService;  %1 %2 %3 %4 %5 %6 %7 %8 %9
