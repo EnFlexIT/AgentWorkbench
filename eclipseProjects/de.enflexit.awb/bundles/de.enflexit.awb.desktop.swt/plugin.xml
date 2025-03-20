@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="de.enflexit.awb.desktop.swt.application"
+            name="Agent.Workbench">
+         <property
+         		name="applicationXMI"
+         		value="de.enflexit.awb.desktop.swt/Application.e4xmi">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/awb16.png,icons/awb32.png,icons/awb48.png,icons/awb64.png,icons/awb128.png,icons/awb256.png">
+         </property>
+         <property
+               name="appName"
+               value="Agent.Workbench">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="3,267,494,12">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/awb128.png">
+         </property>
+         <property
+               name="aboutText"
+               value="Agent Workbench (AWB) is an OSGI- and Eclipse-based RCP application that enables to configure and execute Agents and Multi-Agent Systems in various ways.">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+      </product>
+   </extension>
+
+    <extension id="org.agentgui.MainMenuModelProcessor"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            apply="always"
+            class="de.enflexit.awb.desktop.swt.ApplicationModelMainMenuProcessor"
+            beforefragment="true">
+      </processor>
+   </extension>
+   <extension
+         id="org.agentgui.core.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            apply="always"
+            uri="ApplicationMenues.e4xmi">
+      </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.enflexit.awb.desktop.swt.ui.project.ProjectEditor"
+            id="de.enflexit.awb.desktop.swt.ui.project.ProjectEditor"
+            name="ProjectEditor">
+      </editor>
+   </extension>
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="de.enflexit.awb.desktop.swt.AwbIApplicationSWT">
+         </run>
+      </application>
+   </extension>
+   
+</plugin>

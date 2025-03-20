@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_Z6jYoH59EeeSPpFWfRBHVA" elementId="de.enflexit.awb.desktop.swt.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_ascvoH59EeeSPpFWfRBHVA" elementId="de.enflexit.awb.desktop.swt.trimmedwindow.agentworkbench" label="Agent Workbench" x="0" y="0" width="1024" height="800">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_2WOAYLm3Eee7X_3op2efPQ" elementId="de.enflexit.awb.desktop.swt.perspectivestack" accessibilityPhrase="Workbench Perspectives" selectedElement="_W8B08Lm4Eee7X_3op2efPQ">
+      <children xsi:type="advanced:Perspective" xmi:id="_W8B08Lm4Eee7X_3op2efPQ" elementId="de.enflexit.awb.desktop.swt.perspective.main" accessibilityPhrase="Main Perspective" selectedElement="_FYAaALm3Eee7X_3op2efPQ" label="Main Perspective" tooltip="Main Perspective">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_FYAaALm3Eee7X_3op2efPQ" elementId="de.enflexit.awb.desktop.swt.partsashcontainer.main" containerData="" selectedElement="_92pUEH6fEeeSPpFWfRBHVA">
+          <children xsi:type="basic:PartStack" xmi:id="_92pUEH6fEeeSPpFWfRBHVA" elementId="de.enflexit.awb.desktop.swt.partstack.editor" containerData=""/>
+          <children xsi:type="basic:PartStack" xmi:id="_IZ7wYLwcEeetOJ50-BuhLQ" elementId="de.enflexit.awb.desktop.swt.partstack.inform">
+            <children xsi:type="advanced:Placeholder" xmi:id="_iCzA8LwcEeetOJ50-BuhLQ" elementId="de.enflexit.awb.desktop.swt.placeholder.console" accessibilityPhrase="Console Placeholder" ref="_1JTCMLojEee7X_3op2efPQ"/>
+          </children>
+        </children>
+      </children>
+    </children>
+    <mainMenu xmi:id="_vQVB4LpeEeeqqsE_fxRcnA" elementId="org.eclipse.ui.main.menu"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_1JTCMLojEee7X_3op2efPQ" elementId="de.enflexit.awb.desktop.swt.part.console" contributionURI="bundleclass://de.enflexit.awb.desktop.swt/de.enflexit.awb.desktop.swt.ui.parts.ConsoleView" label="Console" tooltip="Console"/>
+    <trimBars xmi:id="_DCT4cJ-hEeeqz9onJxuSMg" elementId="de.enflexit.awb.desktop.swt.trimbar.main">
+      <children xsi:type="menu:ToolBar" xmi:id="_XBgx0J-hEeeqz9onJxuSMg" elementId="de.enflexit.awb.desktop.swt.toolbar.main"/>
+    </trimBars>
+  </children>
+  <descriptors xmi:id="_9y4ykMGUEeefRs6i8TeWIg" elementId="de.enflexit.awb.desktop.swt.partdescriptor.agentproject" label="Agent Project" iconURI="platform:/plugin/de.enflexit.awb.desktop.swt/icons/core/AgentGUIGreen16.png" tooltip="Project: " allowMultiple="true" category="AgentProject" closeable="true" dirtyable="true" contributionURI="bundleclass://de.enflexit.awb.desktop.swt/de.enflexit.awb.desktop.swt.ui.project.ProjectEditor"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_XwQYkE2EEd-DfN2vYY4Lew" elementId="Cleanup Addon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon"/>
+  <addons xmi:id="_bqcWME2EEd-DfN2vYY4Lew" elementId="DnD Addon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"/>
+  <addons xmi:id="_7GC6sGp-Ed-QyNZjH9g15Q" elementId="MinMax Addon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"/>
+  <addons xmi:id="_Qi0jsK3VEeKmi64HKTZsXA" elementId="HandlerProcessingAddon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+</application:Application>

@@ -11,21 +11,32 @@ import de.enflexit.language.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AwbIApplication implements IApplication {
+public class AwbIApplication implements AwbIApplicationInterface {
 
 	private IApplicationContext iApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
 	
-	/**
-	 * Returns the current IApplicationContext.
-	 * @return the i application context
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#getIApplicationContext()
 	 */
+	@Override
 	public IApplicationContext getIApplicationContext() {
 		return this.iApplicationContext;
 	}
-	/**
-	 * Sets the application is running.
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#setIApplicationContext(org.eclipse.equinox.app.IApplicationContext)
 	 */
+	@Override
+	public void setIApplicationContext(IApplicationContext iApplicationContext) {
+		this.iApplicationContext = iApplicationContext;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#setApplicationIsRunning()
+	 */
+	@Override
 	public void setApplicationIsRunning() {
 		this.getIApplicationContext().applicationRunning();	
 	}
@@ -34,7 +45,7 @@ public class AwbIApplication implements IApplication {
 	/**
 	 * Waits for the termination of the application.
 	 */
-	private void waitForApplicationTermination() throws Exception {
+	protected void waitForApplicationTermination() throws Exception {
 		// --- Wait for termination of the application ----
 		while (Application.isQuitJVM()==false) {
 			Thread.sleep(250);
@@ -46,11 +57,14 @@ public class AwbIApplication implements IApplication {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#start(org.eclipse.equinox.app.IApplicationContext)
+	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 
 		// --- Remind application context -----------------
-		this.iApplicationContext = context;
+		this.setIApplicationContext(context);
 		
 		// --- Start the actual application ---------------
 		this.startApplication();
@@ -74,10 +88,10 @@ public class AwbIApplication implements IApplication {
 		Application.start(this);
 	}
 	
-	/**
-	 * Stop the IApplication with a specific return value
-	 * @param returnValue The return value
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#stop(java.lang.Integer)
 	 */
+	@Override
 	public void stop(Integer returnValue) {
 		this.appReturnValue = returnValue;
 		this.stop();
@@ -85,6 +99,9 @@ public class AwbIApplication implements IApplication {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
+	 */
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#stop()
 	 */
 	@Override
 	public void stop() {
@@ -99,11 +116,10 @@ public class AwbIApplication implements IApplication {
 		Application.setQuitJVM(true);
 	}
 	
-	/**
-	 * Starts the end user application that either based on Swing or SWT.
-	 * @param postWindowOpenRunnable the post window open runnable
-	 * @return the integer
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#startEndUserApplication(java.lang.Runnable)
 	 */
+	@Override
 	public Integer startEndUserApplication(Runnable postWindowOpenRunnable) {
 		
 		try {
@@ -115,13 +131,10 @@ public class AwbIApplication implements IApplication {
 		return this.appReturnValue;
 	}
 	
-	/**
-	 * Start swing UI.
-	 *
-	 * @param postWindowOpenRunnable the post window open runnable
-	 * @return the integer
-	 * @throws Exception the exception
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#startMainWindow(java.lang.Runnable)
 	 */
+	@Override
 	public Integer startMainWindow(Runnable postWindowOpenRunnable) throws Exception {
 		
 		Integer appReturnValue = IApplication.EXIT_OK;
@@ -144,12 +157,10 @@ public class AwbIApplication implements IApplication {
 		return appReturnValue;
 	}
 	
-	/**
-	 * Just starts JADE without any further visualization.
-	 *
-	 * @param arguments the command line arguments for the JADE platform 
-	 * @return the integer
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#startJadeStandalone(java.lang.String[])
 	 */
+	@Override
 	public Integer startJadeStandalone(String[] arguments) {
 		
 		// --- Remove splash screen -----------------------
