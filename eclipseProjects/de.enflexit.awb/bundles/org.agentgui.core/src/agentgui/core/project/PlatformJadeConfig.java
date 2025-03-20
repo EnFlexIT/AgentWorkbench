@@ -107,9 +107,6 @@ public class PlatformJadeConfig implements Serializable {
 	public static final String SERVICE_AgentGUI_LoadService = agentgui.simulationService.LoadService.class.getName();
 	public static final String SERVICE_AgentGUI_SimulationService = agentgui.simulationService.SimulationService.class.getName();
 	
-	// --- Add-On-Services ----------------------------------------------------
-	public static final String SERVICE_InterPlatformMobilityService = jade.core.migration.InterPlatformMobilityService.class.getName();
-	
 	/** Array of services, which will be started with JADE in every case */
 	private static final String[] autoServices = {SERVICE_MessagingService, SERVICE_AgentManagementService};
 	private static final String AUTOSERVICE_TextAddition = "Startet automatisch !";

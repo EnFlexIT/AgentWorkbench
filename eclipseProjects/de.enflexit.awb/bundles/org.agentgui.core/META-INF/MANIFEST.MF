@@ -6,7 +6,7 @@ Bundle-SymbolicName: org.agentgui.core;singleton:=true
 Bundle-Version: 2.4.2.qualifier
 Bundle-Activator: org.agentgui.PlugInActivator
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/classLoadService.xml, 
  OSGI-INF/dbStateVisualService.xml
 Bundle-ActivationPolicy: lazy
@@ -17,14 +17,16 @@ Import-Package: agentgui.core.charts.timeseriesChart,
  jakarta.inject,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,
+ org.apache.commons.codec.binary,
+ org.osgi.service.component,
  org.slf4j
 Require-Bundle: de.enflexit.common,
  de.enflexit.oidc,
  de.enflexit.oshi,
  de.enflexit.db.hibernate,
  de.enflexit.awb.bgSystem,
- org.agentgui.lib.jade,
  wrapped.es.urjc.etsii.grafo.scimark,
+ de.enflexit.jade,
  de.enflexit.jfreechart,
  org.eclipse.core.runtime,
  org.eclipse.core.net,
@@ -45,7 +47,6 @@ Require-Bundle: de.enflexit.common,
  org.eclipse.equinox.p2.ui.sdk,
  org.eclipse.equinox.p2.ui.sdk.scheduler,
  org.eclipse.equinox.security,
- org.eclipse.osgi.services,
  org.eclipse.rcp
 Export-Package: agentgui.core.application,
  agentgui.core.classLoadService,

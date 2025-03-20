@@ -138,7 +138,6 @@ public class Platform {
 		// --- Further Agent.Workbench agents --- 
 		SimStarter("simstarter"),
 		Utility("utility"),
-		ProjectFileManager("file.manager"),
 		LoadMonitor("loadmonitor"), 
 		ThreadMonitor("threadmonitor"); 
 		
@@ -1102,7 +1101,6 @@ public class Platform {
 			
 			// --- Agent.Workbench - agents -----------------------------
 			systemAgentsClasses.put(SystemAgent.Utility, agentgui.core.utillity.UtilityAgent.class.getName());
-			systemAgentsClasses.put(SystemAgent.ProjectFileManager, agentgui.core.jade.ProjectFileManagerAgent.class.getName());
 			systemAgentsClasses.put(SystemAgent.SimStarter, agentgui.simulationService.agents.LoadExecutionAgent.class.getName());
 			systemAgentsClasses.put(SystemAgent.LoadMonitor, agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
 			systemAgentsClasses.put(SystemAgent.ThreadMonitor, agentgui.simulationService.agents.LoadMeasureAgent.class.getName());
