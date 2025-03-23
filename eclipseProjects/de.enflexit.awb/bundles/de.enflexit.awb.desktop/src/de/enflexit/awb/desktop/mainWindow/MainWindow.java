@@ -59,6 +59,7 @@ import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
 import de.enflexit.awb.core.jade.Platform.SystemAgent;
 import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.update.AWBUpdater;
@@ -1138,6 +1139,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainHelp.add(new CWMenuItem("HelpUpdate", Language.translate("Nach Update suchen") + " !", "Update.png"));
 			jMenuMainHelp.add(new CWMenuItem("HelpAWBChanges", Language.translate("Letzte Änderungen"), null));
 			jMenuMainHelp.addSeparator();
+			//jMenuMainHelp.add(new CWMenuItem("EclipsePreferences", "Preferences", null));
 			jMenuMainHelp.add(new CWMenuItem("EclipseWindow", "Eclipse Window", "eclipse.png"));
 		}
 		return jMenuMainHelp;
@@ -1306,9 +1308,11 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			} else if (actionCMD.equalsIgnoreCase("HelpUpdate")) {
 				new AWBUpdater(true).start();
 
+			} else if (actionCMD.equalsIgnoreCase("EclipsePreferences")) {
+				AgentWorkbenchUiManager.getInstance().showEclipsePreferences();
+				
 			} else if (actionCMD.equalsIgnoreCase("EclipseWindow")) {
-				// --- TODO Show the Eclipse Workbench to install new components and so on
-				//Application.showEclipseWorkbench();
+				AgentWorkbenchUiManager.getInstance().showEclipseWorkbench();
 
 			} else {
 				System.err.println(Language.translate("Unbekannt: ") + "ActionCommand => " + actionCMD);

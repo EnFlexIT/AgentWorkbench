@@ -3,6 +3,7 @@ package de.enflexit.awb.core;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.language.Language;
 
 /**
@@ -34,13 +35,28 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	
 	
 	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#getApplicationReturnValue()
+	 */
+	@Override
+	public Integer getApplicationReturnValue() {
+		return appReturnValue;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#setAppReturnValue(java.lang.Integer)
+	 */
+	@Override
+	public void setApplicationReturnValue(Integer appReturnValue) {
+		this.appReturnValue = appReturnValue;
+	}
+	
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.AwbIApplicationInterface#setApplicationIsRunning()
 	 */
 	@Override
 	public void setApplicationIsRunning() {
 		this.getIApplicationContext().applicationRunning();	
 	}
-	
 	
 	/**
 	 * Waits for the termination of the application.
@@ -56,9 +72,6 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplicationInterface#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
@@ -108,6 +121,8 @@ public class AwbIApplication implements AwbIApplicationInterface {
 
 		// --- Check for open projects ------
 		if (Application.stopAgentWorkbench()==false) return;
+		// --- Stop Eclipse workbench -------
+		AgentWorkbenchUiManager.getInstance().disposeEclipseWorkbench();
 		// --- Stop LogFileWriter -----------
 		Application.stopLoggingWriter();
 		// --- ShutdownExecuter -------------
@@ -139,9 +154,9 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		
 		Integer appReturnValue = IApplication.EXIT_OK;
 		if (Application.isOperatingHeadless()==false) {
-			// -- TODO Start UI 
-//			this.setSwingMainWindow(new MainWindow());
-//			Application.getProjectsLoaded().setProjectView();
+			// --- Start UI -------------------------------
+			Application.getMainWindow();
+			Application.getProjectsLoaded().setProjectView();
 		}
 		
 		// --- Execute the post window open runnable ------

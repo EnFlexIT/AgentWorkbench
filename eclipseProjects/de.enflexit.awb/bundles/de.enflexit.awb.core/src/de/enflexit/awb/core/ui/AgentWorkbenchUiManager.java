@@ -20,9 +20,11 @@ import de.enflexit.language.Language;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
+public class AgentWorkbenchUiManager implements AgentWorkbenchUI, SwingToSwtConnectorService {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(AgentWorkbenchUiManager.class);
+	
+	private SwingToSwtConnectorService swingToSwtConnectorService;
 	
 	// ----------------------------------------------------
 	// --- The singleton area -----------------------------
@@ -685,6 +687,73 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI {
 			return this.getAgentWorkbenchUiList().get(0).showInputDialog(parentComponent, message, title, messageType, icon, selectionValues, initialSelectionValue);
 		}
 		return null;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here the methods for the SwingToSwtConnectorService -----------
+	// ------------------------------------------------------------------------	
+	/**
+	 * Returns the currently available SwingToSwtConnectorService (provided by the *.desktop.swt bundle).
+	 * @return the SwingToSwtConnectorService
+	 */
+	private SwingToSwtConnectorService getSwingToSwtConnectorService() {
+		if (swingToSwtConnectorService==null) {
+			List<SwingToSwtConnectorService> serviceList = ServiceFinder.findServices(SwingToSwtConnectorService.class);
+			if (serviceList!=null && serviceList.size()>0) {
+				swingToSwtConnectorService = serviceList.get(0);
+			}
+		}
+		return swingToSwtConnectorService;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.SwingToSwtConnectorService#showEclipseWorkbench()
+	 */
+	@Override
+	public void showEclipseWorkbench() {
+		if (this.getSwingToSwtConnectorService()==null) return;
+		this.getSwingToSwtConnectorService().showEclipseWorkbench();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.SwingToSwtConnectorService#disposeEclipseWorkbench()
+	 */
+	@Override
+	public void disposeEclipseWorkbench() {
+		if (this.getSwingToSwtConnectorService()==null) return;
+		this.getSwingToSwtConnectorService().disposeEclipseWorkbench();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.SwingToSwtConnectorService#showEclipsePreferences()
+	 */
+	@Override
+	public void showEclipsePreferences() {
+		if (this.getSwingToSwtConnectorService()==null) return;
+		this.getSwingToSwtConnectorService().showEclipsePreferences();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.SwingToSwtConnectorService#showEclipseAbout()
+	 */
+	@Override
+	public void showEclipseAbout() {
+		if (this.getSwingToSwtConnectorService()==null) return;
+		this.getSwingToSwtConnectorService().showEclipseAbout();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.SwingToSwtConnectorService#showEclipseCheckForUpdates()
+	 */
+	@Override
+	public void showEclipseCheckForUpdates() {
+		if (this.getSwingToSwtConnectorService()==null) return;
+		this.getSwingToSwtConnectorService().showEclipseCheckForUpdates();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.SwingToSwtConnectorService#showEclipseInstallNewSoftware()
+	 */
+	@Override
+	public void showEclipseInstallNewSoftware() {
+		if (this.getSwingToSwtConnectorService()==null) return;
+		this.getSwingToSwtConnectorService().showEclipseInstallNewSoftware();	
 	}
 	
 }

@@ -10,6 +10,10 @@
             description="The core and headless runtime environment of Agent.Workbench"
             name="Agent.Workbench-Core">
          <property
+         		name="applicationXMI"
+         		value="platform:/plugin/de.enflexit.awb.desktop.swt/Application.e4xmi">
+         </property>
+         <property
                name="appName"
                value="Agent.Workbench-Core">
          </property>
@@ -19,7 +23,7 @@
          </property>
          <property
                name="aboutImage"
-               value="platform:/plugin/org.agentgui.core/icons/awb128.png">
+               value="platform:/plugin/de.enflexit.awb.desktop.swt/icons/awb128.png">
          </property>
          <property
                name="aboutText"

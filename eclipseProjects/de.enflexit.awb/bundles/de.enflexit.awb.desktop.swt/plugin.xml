@@ -9,7 +9,7 @@
             name="Agent.Workbench">
          <property
          		name="applicationXMI"
-         		value="de.enflexit.awb.desktop.swt/Application.e4xmi">
+         		value="platform:/plugin/de.enflexit.awb.desktop.swt/Application.e4xmi">
          </property>
          <property
                name="windowImages"
@@ -38,7 +38,7 @@
       </product>
    </extension>
 
-    <extension id="org.agentgui.MainMenuModelProcessor"
+    <extension id="de.enflexit.awb.desktop.swt.MainMenuModelProcessor"
          point="org.eclipse.e4.workbench.model">
       <processor
             apply="always"
@@ -47,7 +47,7 @@
       </processor>
    </extension>
    <extension
-         id="org.agentgui.core.fragment"
+         id="de.enflexit.awb.desktop.swt.fragment"
          point="org.eclipse.e4.workbench.model">
       <fragment
             apply="always"
@@ -62,16 +62,10 @@
             name="ProjectEditor">
       </editor>
    </extension>
-   <extension
-         id="application"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-         <run
-               class="de.enflexit.awb.desktop.swt.AwbIApplicationSWT">
-         </run>
+   
+   <extension id="application" point="org.eclipse.core.runtime.applications">
+      <application cardinality="singleton-global" thread="main" visible="true">
+         <run class="de.enflexit.awb.desktop.swt.AwbIApplicationSWT"></run>
       </application>
    </extension>
    

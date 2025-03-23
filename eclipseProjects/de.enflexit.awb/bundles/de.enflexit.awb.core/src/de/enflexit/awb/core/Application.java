@@ -280,7 +280,7 @@ public class Application {
 	 * @param postWindowOpenRunnable the post window open runnable
 	 */
 	public static void startMainWindow(Runnable postWindowOpenRunnable) {
-		getAwbIApplication().startEndUserApplication(postWindowOpenRunnable);
+		Application.getAwbIApplication().startEndUserApplication(postWindowOpenRunnable);
 	}
 	/**
 	 * Sets the main window.
@@ -375,18 +375,18 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start required Agent.Workbench instances ---------
 			// ------------------------------------------------------
-			getConsole();
-			getGlobalInfo();
-			startBundleEvaluation();
+			Application.getConsole();
+			Application.getGlobalInfo();
+			Application.startBundleEvaluation();
 			
 			new LoadMeasureThread().start();  
-			startAgentWorkbench();
+			Application.startAgentWorkbench();
 			
 		} else {
 			// ------------------------------------------------------
 			// --- Just start JADE ----------------------------------
 			// ------------------------------------------------------
-			getGlobalInfo();
+			Application.getGlobalInfo();
 
 			// --- Load project resources ? -------------------------
 			if (project2OpenAfterStart!=null) {
@@ -400,7 +400,7 @@ public class Application {
 			}
 			
 			System.out.println("Starting JADE ...");
-			getAwbIApplication().startJadeStandalone(remainingArgs);
+			Application.getAwbIApplication().startJadeStandalone(remainingArgs);
 		
 		}
 		
@@ -576,14 +576,13 @@ public class Application {
 			
 			// ------------------------------------------------------
 			// --- Start Application --------------------------------
-			getTrayIcon(); 
-			getProjectsLoaded();
+			Application.getTrayIcon(); 
+			Application.getProjectsLoaded();
 
-			startMainWindow(new Runnable() {
+			Application.startMainWindow(new Runnable() {
 				@Override
 				public void run() {
 					
-					Application.getMainWindow();
 					Application.setStatusBarMessageReady();
 					
 					Application.setOntologyVisualisationConfigurationToCommonBundle();
@@ -610,10 +609,10 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start Server-Version of AgentGUI -----------------
 			// --- In the Server-Case, start the benchmark now ! ----
-			getAwbIApplication().setApplicationIsRunning();
-			getTrayIcon();
-			doBenchmark(false);
-			startServer();
+			Application.getAwbIApplication().setApplicationIsRunning();
+			Application.getTrayIcon();
+			Application.doBenchmark(false);
+			Application.startServer();
 			break;
 
 		case DEVICE_SYSTEM:
@@ -624,11 +623,11 @@ public class Application {
 			updater.waitForUpdate();
 
 			// --- Set application as executed ----------------------
-			getAwbIApplication().setApplicationIsRunning();
+			Application.getAwbIApplication().setApplicationIsRunning();
 			
 			// --- Start Service / Embedded System Agent ------------
 			System.out.println("Starting the service/agent");
-			startServiceOrEmbeddedSystemAgent();
+			Application.startServiceOrEmbeddedSystemAgent();
 			break;
 		}
 		
@@ -673,31 +672,31 @@ public class Application {
 				// ----------------------------------------------------------------------
 				// --- Execute a setup --------------------------------------------------
 				// ----------------------------------------------------------------------
-				getTrayIcon();
-				getProjectsLoaded();
+				Application.getTrayIcon();
+				Application.getProjectsLoaded();
 				
 				startMainWindow(new Runnable() {
 					@Override
 					public void run() {
 						
-						if (getMainWindow()!=null) {
-							setStatusBarMessageReady();
+						if (Application.isMainWindowInitiated()==true) {
+							Application.setStatusBarMessageReady();
 						}
-						doBenchmark(false);
-						waitForBenchmark();
+						Application.doBenchmark(false);
+						Application.waitForBenchmark();
 					
 						// --- Open the specified project -------------------------------
 						Application.setStatusBarMessage(Language.translate("Öffne Projekt") + " '" + projectFolder + "'...");
-						final Project projectOpened = getProjectsLoaded().add(projectFolder);
+						final Project projectOpened = Application.getProjectsLoaded().add(projectFolder);
 						if (projectOpened!=null) {
 							// --- Execute the simulation setup -------------------------
 							boolean setupLoaded = projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
 							if (setupLoaded==true) {
-								if (getJadePlatform().start(false)==true) {
+								if (Application.getJadePlatform().start(false)==true) {
 									// --- Start Setup --------------------------
 									Object[] startWith = new Object[1];
 									startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
-									getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
+									Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith);
 								}
 							}
 						
@@ -713,7 +712,7 @@ public class Application {
 				// ----------------------------------------------------------------------
 				switch (embSysAgentVis) {
 				case TRAY_ICON:
-					getTrayIcon();
+					Application.getTrayIcon();
 					break;
 					
 				case NONE:
@@ -721,23 +720,23 @@ public class Application {
 					if (Application.isStartedLoggingWriter()==false) {
 						Application.startLoggingWriter();
 						// --- Create some initial output for the log file --------------
-						getGlobalInfo().getVersionInfo().printVersionInfo();
+						Application.getGlobalInfo().getVersionInfo().printVersionInfo();
 						System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 					}
 					// --- Start observing shutdown file --------------------------------
-					startShutdownThread();
+					Application.startShutdownThread();
 					break;
 				}
 				
 				// --- Load project -----------------------------------------------------
-				Project projectOpened = getProjectsLoaded().add(projectFolder);
+				Project projectOpened = Application.getProjectsLoaded().add(projectFolder);
 				if (projectOpened!=null) {
 					// --- Switch to the specified setup --------------------------------
 					if (simulationSetup!=null && simulationSetup.equals("")==false) {
 						projectOpened.getSimulationSetups().setupLoadAndFocus(SimNoteReason.SIMULATION_SETUP_LOAD, simulationSetup, false);
 					}
 					// --- Start JADE for an embedded system agent ----------------------
-					getJadePlatform().start4EmbeddedSystemAgent();
+					Application.getJadePlatform().start4EmbeddedSystemAgent();
 				}
 				break;
 			}

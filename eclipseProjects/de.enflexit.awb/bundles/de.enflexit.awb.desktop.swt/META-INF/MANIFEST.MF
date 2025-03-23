@@ -54,3 +54,4 @@ Export-Package: de.enflexit.awb.desktop.swt,
  de.enflexit.awb.desktop.swt.ui.parts,
  de.enflexit.awb.desktop.swt.ui.preferences.pages,
  de.enflexit.awb.desktop.swt.ui.project
+Service-Component: OSGI-INF/swingToSwtConnectorService.xml

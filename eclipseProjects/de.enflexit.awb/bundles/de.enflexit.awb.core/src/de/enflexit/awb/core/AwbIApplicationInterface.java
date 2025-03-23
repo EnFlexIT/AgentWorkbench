@@ -11,7 +11,7 @@ import org.eclipse.equinox.app.IApplicationContext;
 public interface AwbIApplicationInterface extends IApplication {
 
 	/**
-	 * Returns the current IApplicationContext.
+	 * Has to return the current IApplicationContext.
 	 * @return the i application context
 	 */
 	public IApplicationContext getIApplicationContext();
@@ -21,6 +21,19 @@ public interface AwbIApplicationInterface extends IApplication {
 	 * @param iApplicationContext the new i application context
 	 */
 	public void setIApplicationContext(IApplicationContext iApplicationContext);
+	
+	
+	/**
+	 * Has to return the application return value.
+	 * @return the application return value
+	 */
+	public Integer getApplicationReturnValue();
+	
+	/**
+	 * Sets the application return value.
+	 * @param appReturnValue the new app return value
+	 */
+	public void setApplicationReturnValue(Integer appReturnValue);
 	
 	
 	/**
