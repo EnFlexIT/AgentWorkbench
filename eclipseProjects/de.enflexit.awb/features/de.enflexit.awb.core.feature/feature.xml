@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.enflexit.awb.desktop.feature"
+      label="Agent.Workbench Desktop-Feature"
+      version="3.0.0.qualifier"
+      provider-name="EnFlex.IT"
+      plugin="de.enflexit.awb.core"
+      os="linux,macosx,win32"
+      arch="x86_64">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="Enflex.IT Update Site" url="https://p2.enflex.it/awb/latest/"/>
+   </url>
+
+   <includes
+         id="de.enflexit.awb.core.feature"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
+      <import plugin="de.enflexit.geography"/>
+      <import plugin="org.eclipse.core.runtime" version="3.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.net"/>
+      <import plugin="org.eclipse.ui" version="3.100.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.net"/>
+      <import plugin="org.eclipse.e4.core.di" version="1.6.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.model.workbench" version="1.5.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.services" version="1.2.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench" version="1.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.di" version="1.2.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.p2.core"/>
+      <import plugin="org.eclipse.equinox.p2.engine"/>
+      <import plugin="org.eclipse.equinox.p2.metadata"/>
+      <import plugin="org.eclipse.equinox.p2.operations"/>
+      <import plugin="org.eclipse.equinox.p2.repository"/>
+      <import plugin="org.eclipse.equinox.p2.repository.tools"/>
+      <import plugin="org.eclipse.equinox.p2.ui"/>
+      <import plugin="org.eclipse.equinox.p2.ui.sdk"/>
+      <import plugin="org.eclipse.equinox.p2.ui.sdk.scheduler"/>
+      <import plugin="org.eclipse.equinox.security"/>
+      <import plugin="org.eclipse.osgi.services" version="3.6.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.rcp" version="4.8.0" match="greaterOrEqual"/>
+      <import feature="de.enflexit.common.feature" version="2.0.1" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="de.enflexit.awb.desktop"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.awb.desktop.swt"
+         version="0.0.0"/>
+
+</feature>

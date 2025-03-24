@@ -15,33 +15,43 @@
 
 	<modules>
 		<module>de.enflexit.awb.baseOntology</module>
+		<module>de.enflexit.awb.baseUI</module>
 		<module>de.enflexit.awb.bgSystem</module>
-		<!-- <module>de.enflexit.awb.core</module> -->
-		<!-- <module>de.enflexit.awb.environment</module> -->
-		<!-- <module>de.enflexit.awb.simulation</module> -->
+		<module>de.enflexit.awb.core</module>
+		<module>de.enflexit.awb.desktop</module>
+		<module>de.enflexit.awb.desktop.swt</module>
+
+		<module>de.enflexit.awb.remoteControl</module>
+		<module>de.enflexit.awb.timeSeriesDataProvider</module>
+		
 		<module>de.enflexit.awb.ws.client</module>
 		<module>de.enflexit.awb.ws.core</module>
 		<module>de.enflexit.awb.ws.core.ui</module>
 		<module>de.enflexit.awb.ws.jetty</module>
 		<module>de.enflexit.awb.ws.restapi</module>
 		<module>de.enflexit.awb.ws.swagger2x</module>
+		
 		<module>de.enflexit.common</module>
 		<module>de.enflexit.common.flatlaf</module>
+		
 		<module>de.enflexit.db.hibernate</module>
 		<module>de.enflexit.db.mariaDB</module>
 		<module>de.enflexit.db.mySQL</module>
 		<module>de.enflexit.db.postgres</module>
+		
 		<module>de.enflexit.expression</module>
+		
 		<module>de.enflexit.geography</module>
 		<module>de.enflexit.jade.tools</module>
 		<module>de.enflexit.jaxb.impl.binding</module>
 		<module>de.enflexit.language</module>
 		<module>de.enflexit.logging</module>
 		<module>de.enflexit.oidc</module>
+		<module>de.enflexit.oidc.ui</module>
 		<module>de.enflexit.oshi</module>
-		<module>org.agentgui.core</module>
-		<module>org.agentgui.lib.jade</module>
+
 		<module>org.agentgui.lib.jung</module>
+
 		<module>org.awb.env.maps</module>
 		<module>org.awb.env.networkModel</module>
 		

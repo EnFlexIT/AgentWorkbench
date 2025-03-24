@@ -282,6 +282,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		super.dispose();
 	}
 	
+	
 	/**
 	 * Proceeds the main window extensions that are defines 
 	 * by the corresponding extension point.

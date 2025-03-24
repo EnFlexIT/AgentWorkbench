@@ -1,5 +1,7 @@
 package de.enflexit.awb.core.ui;
 
+import java.awt.Cursor;
+
 import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
 
 /**
@@ -184,5 +186,12 @@ public interface AwbMainWindow<MenueType, MenuItemType, ToolBarType, ToolBarComp
 	 * @return the project desktop
 	 */
 	public AwbMainWindowProjectDesktop getProjectDesktop();
+
+
+	/**
+	 * Has to set the specified cursor to the UI.
+	 * @param defaultCursor the new cursor
+	 */
+	public void setCursor(Cursor defaultCursor);
 	
 }

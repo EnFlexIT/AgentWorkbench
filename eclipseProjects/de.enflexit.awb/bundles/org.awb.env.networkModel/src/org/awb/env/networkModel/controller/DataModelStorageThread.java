@@ -53,7 +53,6 @@ import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification.SimNoteReason;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
-import de.enflexit.awb.desktop.mainWindow.MainWindow;
 import de.enflexit.common.swing.OwnerDetection;
 
 /**
@@ -304,7 +303,7 @@ public class DataModelStorageThread extends Thread {
     					// --- Free application status --------------
     					DataModelStorageThread.this.graphController.setBasicGraphGuiVisViewerActionOnTop(false);
     					if (Application.isMainWindowInitiated()==true) {
-    						((MainWindow)Application.getMainWindow()).setCursor(Cursor.getDefaultCursor());
+    						(Application.getMainWindow()).setCursor(Cursor.getDefaultCursor());
     					}
     					Application.setStatusBarMessageReady();
 

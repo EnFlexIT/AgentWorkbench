@@ -1,5 +1,7 @@
 package de.enflexit.awb.desktop.mainWindow;
 
+import java.awt.Dimension;
+
 import javax.swing.JDesktopPane;
 
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
@@ -13,4 +15,12 @@ public class MainWindowProjectDesktop extends JDesktopPane implements AwbMainWin
 
 	private static final long serialVersionUID = 8499541000415826399L;
 
+	/* (non-Javadoc)
+	 * @see java.awt.Component#getSize()
+	 */
+	@Override
+	public Dimension getSize() {
+		return super.getSize();
+	}
+	
 }

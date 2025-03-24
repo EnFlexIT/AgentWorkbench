@@ -13,8 +13,10 @@
 	
 	<logger name="de.enflexit.db" level="warn" />
 	<logger name="de.enflexit.db.hibernate" level="error" />
+	<logger name="de.enflexit.db.mariaDB" level="error" />
 	<logger name="de.enflexit.db.mySQL" level="error" />
-
+	<logger name="de.enflexit.db.postgres" level="error" />
+	
 	<logger name="de.enflexit.eom.database" level="error" />
 
   	<logger name="org.hibernate" level="error" />

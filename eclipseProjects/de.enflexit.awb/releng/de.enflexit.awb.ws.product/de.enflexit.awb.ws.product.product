@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent.Workbench-WS" uid="de.enflexit.awb.ws" id="de.enflexit.awb.ws.core.product" application="de.enflexit.awb.ws.core.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Agent.Workbench-WS" uid="de.enflexit.awb.ws" id="de.enflexit.awb.ws.core.product" application="de.enflexit.awb.ws.core.application" version="1.0.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/org.agentgui.core/icons/awb128.png"/>
@@ -42,6 +42,7 @@
 
    <features>
       <feature id="de.enflexit.awb.ws.feature" installMode="root"/>
+      <feature id="de.enflexit.awb.ws.restapi.feature" installMode="root"/>
    </features>
 
    <configurations>
@@ -53,7 +54,7 @@
    </configurations>
 
    <repositories>
-      <repository location="https://p2.enflex.it/awb/latest/" enabled="true" />
+      <repository location="https://p2.enflex.it/awb/latest/" name="" enabled="true" />
    </repositories>
 
    <preferencesInfo>

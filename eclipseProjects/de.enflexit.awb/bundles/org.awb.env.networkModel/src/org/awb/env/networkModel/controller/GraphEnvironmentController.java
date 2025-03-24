@@ -74,7 +74,6 @@ import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.AgentClassElement4SimStart;
 import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
-import de.enflexit.awb.desktop.mainWindow.MainWindow;
 import de.enflexit.awb.simulation.environment.AbstractEnvironmentModel;
 import de.enflexit.awb.simulation.environment.DisplaytEnvironmentModel;
 import de.enflexit.common.ServiceFinder;
@@ -501,7 +500,7 @@ public class GraphEnvironmentController extends EnvironmentController {
 
 					// --- Set application status text --------------------------------------------
 					if (Application.isMainWindowInitiated()==true) {
-						((MainWindow)Application.getMainWindow()).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						Application.getMainWindow().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						Application.setStatusBarMessage(Language.translate("Lade Setup") + ": " + GraphEnvironmentController.this.getFileXML().getAbsolutePath() + " ...");
 						// --- Reset Undo-Manager -------------------------------------------------
 						GraphEnvironmentController.this.getNetworkModelUndoManager().getUndoManager().discardAllEdits();
@@ -569,8 +568,10 @@ public class GraphEnvironmentController extends EnvironmentController {
 					// --- => Reset the NetworkModel instance in the GraphNodePositionFactory -----
 					GraphNodePositionFactory.setLoadingNetworkModel(null);
 					GraphEnvironmentController.this.isTemporaryPreventSaving = false;
-					((MainWindow)Application.getMainWindow()).setCursor(Cursor.getDefaultCursor());
-					Application.setStatusBarMessageReady();
+					if (Application.isMainWindowInitiated()==true) {
+						Application.getMainWindow().setCursor(Cursor.getDefaultCursor());
+						Application.setStatusBarMessageReady();
+					}
 				}
 				
 			}

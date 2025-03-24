@@ -4,7 +4,7 @@
 <product name="Agent.Workbench" uid="de.enflexit.awb" id="de.enflexit.awb.core.product" application="de.enflexit.awb.core.application" version="3.0.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
-      <image path="/org.agentgui.core/icons/awb128.png"/>
+      <image path="/de.enflexit.awb.core/icons/awb128.png"/>
       <text>
          Agent Workbench (AWB) is an OSGI- and Eclipse-based RCP application that enables to configure and execute Agents and Multi-Agent Systems in various ways.
       </text>
@@ -23,7 +23,7 @@
    <windowImages i16="icons/awb16.png" i32="icons/awb32.png" i48="icons/awb48.png" i64="icons/awb64.png" i128="icons/awb128.png" i256="icons/awb256.png"/>
 
    <splash
-      location="org.agentgui.core"
+      location="de.enflexit.awb.core"
       startupProgressRect="3,267,494,12" />
    <launcher name="AgentWorkbench">
       <linux icon="/icons/awb.xpm"/>
@@ -41,7 +41,7 @@
    </plugins>
 
    <features>
-      <feature id="org.agentgui.feature" installMode="root"/>
+      <feature id="de.enflexit.awb.desktop.feature" installMode="root"/>
    </features>
 
    <configurations>
