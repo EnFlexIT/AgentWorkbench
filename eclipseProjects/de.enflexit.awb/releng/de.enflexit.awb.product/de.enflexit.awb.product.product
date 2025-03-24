@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent.Workbench" uid="de.enflexit.awb" id="org.agentgui.core.product" application="org.agentgui.core.application" version="2.4.2.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Agent.Workbench" uid="de.enflexit.awb" id="de.enflexit.awb.core.product" application="de.enflexit.awb.core.application" version="3.0.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/org.agentgui.core/icons/awb128.png"/>

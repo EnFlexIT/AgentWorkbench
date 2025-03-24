@@ -331,7 +331,7 @@ public class GlobalInfo implements ZoneIdResolver {
 		
 		StringBuilder sysInfo = new StringBuilder();
 		
-		sysInfo.append(this.getVersionInfo().getFullVersionInfo(true, "") + newLineSeparator);
+		sysInfo.append(this.getVersionInfo().getFullVersionInfo(true, true, "") + newLineSeparator);
 		sysInfo.append(this.getVersionInfo().getJavaInfo() + newLineSeparator);
 		sysInfo.append(newLineSeparator);
 
@@ -1056,7 +1056,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public VersionInfo getVersionInfo() {
 		if (this.versionInfo==null) {
-			this.versionInfo = new VersionInfo(BundleProperties.PLUGIN_ID, this.getApplicationTitle());
+			this.versionInfo = new VersionInfo(BundleProperties.PLUGIN_ID, this.getApplicationTitle(), "AWB-Legacy");
 		}
 		return this.versionInfo;
 	}

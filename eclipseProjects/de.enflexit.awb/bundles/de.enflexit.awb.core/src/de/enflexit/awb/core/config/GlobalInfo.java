@@ -100,6 +100,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	private PropertyContentProvider propertyContentProvider;
 	
 	// --- File-Properties ------------------------------------------
+	private AWBProduct awbProduct;
 	private ExecutionMode fileExecutionMode;
 	private String processID;
 	
@@ -149,6 +150,31 @@ public class GlobalInfo implements ZoneIdResolver {
 	private BundleProperties bundleProperties;
 	private VersionInfo versionInfo;
 
+	/**
+	 * The Enumeration of possible products of Agent.Workbench.
+	 * In order to get the current execution mode use  
+	 * the method {@link GlobalInfo#getExecutionMode()} and {@link GlobalInfo#getExecutionModeDescription()} 
+	 * @see GlobalInfo#getExecutionMode()
+	 */
+	public enum AWBProduct {
+		WEB("de.enflexit.awb.ws.core.product", "Web"),
+		DESKTOP_SWING("de.enflexit.awb.core.product", "Desktop"), 
+		DESKTOP_SWT("de.enflexit.awb.desktop.swt.product", "RCP-Desktop"); 
+
+		private final String productID;
+		private final String productName;
+		
+		private AWBProduct(String productID, String productName) {
+			this.productID   = productID;
+			this.productName = productName;
+		}
+		public String getProductID() {
+			return productID;
+		}
+		public String getProductName() {
+			return productName;
+		}
+	}
 	
 	/**
 	 * The Enumeration of possible ExecutionModes.
@@ -327,7 +353,7 @@ public class GlobalInfo implements ZoneIdResolver {
 		
 		StringBuilder sysInfo = new StringBuilder();
 		
-		sysInfo.append(this.getVersionInfo().getFullVersionInfo(true, "") + newLineSeparator);
+		sysInfo.append(this.getVersionInfo().getFullVersionInfo(true, true, "") + newLineSeparator);
 		sysInfo.append(this.getVersionInfo().getJavaInfo() + newLineSeparator);
 		sysInfo.append(newLineSeparator);
 
@@ -338,6 +364,24 @@ public class GlobalInfo implements ZoneIdResolver {
 		sysInfo.append("Project Directory: 	" + this.getPathProjects() + newLineSeparator);
 		
 		return sysInfo.toString();
+	}
+	
+	
+	/**
+	 * Returns the current AWB product that is currently executed.
+	 * @return the AWB product
+	 */
+	public AWBProduct getAWBProduct() {
+		if (awbProduct==null) {
+			String currProductID = Platform.getProduct().getId();
+			for (AWBProduct awbProductCheck : AWBProduct.values()) {
+				if (awbProductCheck.getProductID().equals(currProductID)==true) {
+					this.awbProduct = awbProductCheck;
+					break;
+				}
+			}
+		}
+		return awbProduct;
 	}
 	
 	
@@ -1052,7 +1096,8 @@ public class GlobalInfo implements ZoneIdResolver {
 	public VersionInfo getVersionInfo() {
 		if (this.versionInfo==null) {
 			Bundle bundle = FrameworkUtil.getBundle(GlobalInfo.class);
-			this.versionInfo = new VersionInfo(bundle.getSymbolicName(), this.getApplicationTitle());
+			AWBProduct currAWBProduct = this.getAWBProduct();
+			this.versionInfo = new VersionInfo(bundle.getSymbolicName(), this.getApplicationTitle(), currAWBProduct==null ? null : currAWBProduct.getProductName());
 		}
 		return this.versionInfo;
 	}

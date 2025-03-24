@@ -47,6 +47,7 @@ public class VersionInfo {
 	
 	private String plugInID;
 	private String applicationTitle;
+	private String productName;
 	
 	private Version version;
 	
@@ -55,9 +56,10 @@ public class VersionInfo {
 	 * @param plugInID the plug in ID
 	 * @param applicationTitle the application title
 	 */
-	public VersionInfo(String plugInID, String applicationTitle) {
+	public VersionInfo(String plugInID, String applicationTitle, String productName) {
 		this.plugInID = plugInID;
 		this.applicationTitle = applicationTitle;
+		this.productName = productName;
 		this.printVersionInfo();
 	}
 
@@ -103,31 +105,35 @@ public class VersionInfo {
 	 * @return the version info
 	 */
 	public String getVersionInfo() {
-		return this.getFullVersionInfo(true, " ") + " on " + this.getJavaInfo() + ""; 
+		return this.getFullVersionInfo(true, true, " ") + " on " + this.getJavaInfo() + ""; 
 	}
 	
 	/**
 	 * This method returns the full version information of Agent.Workbench.
 	 *
 	 * @param includeApplicationTitle the include application title
+	 * @param includeProductName the include product name
 	 * @param newLineString the new line string
 	 * @return the full version info
 	 */
-	public String getFullVersionInfo(boolean includeApplicationTitle, String newLineString) {
+	public String getFullVersionInfo(boolean includeApplicationTitle, boolean includeProductName, String newLineString) {
 		
-		String versionInfo = "";
+		if (newLineString==null) newLineString= "";
+
 		String dateOrQualifier = this.getVersion()!=null ? this.getVersion().getQualifier() : "Unknown Qualifier"; 
 		Date versionDate =  this.getVersionDate();
 		if (versionDate!=null) {
 			dateOrQualifier = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(this.getVersionDate());
 		}
-		
-		if (newLineString==null) {
-			newLineString="";
+
+		// --- Start to build version info string -------------------
+		String versionInfo = "";
+		if (includeApplicationTitle==true && this.applicationTitle!=null && this.applicationTitle.isBlank()==false) {
+			versionInfo += this.applicationTitle + " " + newLineString;	
 		}
 		
-		if (includeApplicationTitle) {
-			versionInfo += this.applicationTitle + " " + newLineString;	
+		if (includeProductName==true && this.productName!=null && this.productName.isBlank()==false) {
+			versionInfo = versionInfo.trim() + "-" + this.productName + " " + newLineString;
 		}
 		
 		versionInfo += this.getVersionMajor() + "." + this.getVersionMinor() + "." + this.getVersionMicro() + newLineString;

@@ -26,12 +26,12 @@
                value="Agent Workbench - WS (AWB-WS) is an Eclipse based RCP application that enables to configure and execute Agents and Multi-Agent systems in various ways.">
          </property>
          <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
-         </property>
-         <property
                name="windowImages"
                value="icons/awb16.png,icons/awb32.png,icons/awb48.png,icons/awb64.png,icons/awb128.png,icons/awb256.png">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>
@@ -40,7 +40,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="de.enflexit.awb.ws.core.WSApplication">
+               class="de.enflexit.awb.ws.core.AwbIApplicationWeb">
          </run>
       </application>
    </extension>
