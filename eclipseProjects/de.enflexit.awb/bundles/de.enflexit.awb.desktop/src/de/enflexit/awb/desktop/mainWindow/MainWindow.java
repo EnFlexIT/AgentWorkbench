@@ -54,6 +54,10 @@ import org.slf4j.LoggerFactory;
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.console.JTabbedPane4Consoles;
+import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
+import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowMenu;
+import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowMenuItem;
+import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowToolbarComponent;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
@@ -61,12 +65,10 @@ import de.enflexit.awb.core.jade.Platform.SystemAgent;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMainWindow;
+import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.desktop.dialogs.StartAgentDialog;
-import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.MainWindowMenu;
-import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.MainWindowMenuItem;
-import de.enflexit.awb.desktop.mainWindow.MainWindowExtension.MainWindowToolbarComponent;
 import de.enflexit.awb.desktop.project.update.ProjectRepositoryExplorerDialog;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
@@ -88,17 +90,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	private static final long serialVersionUID = 1L;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
-	public static final String MAIN_WINDOW_EXTENSION_ID = "de.enflexit.awb.desktop.mainWindowExtension";
-
-	public enum WorkbenchMenu {
-		MenuProject,
-		MenuView,
-		MenuJade,
-		MenuSimulation,
-		MenuExtra,
-		MenuWindows,
-		MenuHelp
-	}
 	
 	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 
@@ -297,7 +288,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	private void proceedMainWindowExtensions() {
 		
-		IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(MAIN_WINDOW_EXTENSION_ID);
+		IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(MainWindowExtension.MAIN_WINDOW_EXTENSION_ID);
 		try {
 			for (int i = 0; i < configElements.length; i++) {
 				IConfigurationElement configElement = configElements[i]; 
@@ -420,10 +411,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 	/**
 	 * Returns the specified workbench menu as JMenu.
-	 * @param wbMenu the {@link WorkbenchMenu}
+	 * @param wbMenu the {@link AwbMainWindowMenu}
 	 * @return the JMenu of workbench menu
 	 */
-	private JMenu getJMenuOfWorkbenchMenu(WorkbenchMenu wbMenu) {
+	private JMenu getJMenuOfWorkbenchMenu(AwbMainWindowMenu wbMenu) {
 		
 		JMenu jMenuWorkbench = null;
 		switch (wbMenu) {

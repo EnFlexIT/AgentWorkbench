@@ -6,7 +6,7 @@ Automatic-Module-Name: de.enflexit.awb.ws.core.ui
 Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: de.enflexit.awb.ws.client,
  de.enflexit.awb.ws.core,
  org.eclipse.jetty.server,
@@ -14,10 +14,10 @@ Require-Bundle: de.enflexit.awb.ws.client,
  org.eclipse.osgi
 Export-Package: de.enflexit.awb.ws.ui
 Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.baseUI.systemtray,
  de.enflexit.awb.core,
  de.enflexit.awb.core.config,
- de.enflexit.awb.desktop.mainWindow,
  de.enflexit.common,
  de.enflexit.common.crypto,
  de.enflexit.common.swing,

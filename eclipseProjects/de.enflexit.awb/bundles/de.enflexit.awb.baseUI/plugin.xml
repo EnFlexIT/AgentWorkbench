@@ -2,5 +2,5 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension" name="Agent.Workbench - BaseUI- TrayIcon Menu Extension (AWT)" schema="schema/de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension.exsd"/>
-
+   <extension-point id="de.enflexit.awb.desktop.mainWindowExtension" name="Agent.Workbench - Desktop - Main Window Extension (Swing)" schema="schema/de.enflexit.awb.desktop.mainWindowExtension.exsd"/>
 </plugin>

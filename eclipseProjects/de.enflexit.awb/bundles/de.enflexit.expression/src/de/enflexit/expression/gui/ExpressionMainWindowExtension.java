@@ -7,9 +7,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
-import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
 import de.enflexit.expression.DevelopmentSwitch;
 
 /**

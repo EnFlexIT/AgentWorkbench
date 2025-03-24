@@ -1,4 +1,4 @@
-package de.enflexit.awb.desktop.mainWindow;
+package de.enflexit.awb.baseUI.mainWindow;
 
 import java.util.Vector;
 
@@ -7,8 +7,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.systemtray.TrayIconMenuExtension;
-import de.enflexit.awb.desktop.mainWindow.MainWindow.WorkbenchMenu;
-
+import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 
 /**
  * The Class MainWindowExtension can be extended to define individual menus, menu items
@@ -18,10 +17,11 @@ import de.enflexit.awb.desktop.mainWindow.MainWindow.WorkbenchMenu;
  */
 public abstract class MainWindowExtension extends TrayIconMenuExtension {
 
+	public static final String MAIN_WINDOW_EXTENSION_ID = "de.enflexit.awb.desktop.mainWindowExtension";
+
 	private Vector<MainWindowMenu> mainWindowMenuVector;
 	private Vector<MainWindowMenuItem> mainWindowMenuItemVector;
 	private Vector<MainWindowToolbarComponent> mainWindowToolBarComponentVector;
-	
 
 	/**
 	 * Initializes the extension. Use this method to add your individual 
@@ -72,7 +72,7 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 	 * @param indexPosition the index position for the menu item (may be <code>null</code> also)
 	 * @param separatorPosition the separator position (may be <code>null</code> also)
 	 */
-	protected void addJMenuItem(WorkbenchMenu workbenchMenuToAddTo, JMenuItem menuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {
+	protected void addJMenuItem(AwbMainWindowMenu workbenchMenuToAddTo, JMenuItem menuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {
 		if (workbenchMenuToAddTo==null) {
 			throw new NullPointerException("The menu for the menu item to add was not specified.");
 		}
@@ -147,23 +147,23 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 	 */
 	public class MainWindowMenuItem {
 		
-		private WorkbenchMenu workbenchMenu;
+		private AwbMainWindowMenu awbMainWindowMenu;
 		private JMenuItem jMenuItem;
 		private Integer indexPosition;
 		private SeparatorPosition separatorPosition;
 		
-		public MainWindowMenuItem(WorkbenchMenu workbenchMenu, JMenuItem menuItem, Integer indexPosition, SeparatorPosition separatorPosition) {
-			this.setWorkbenchMenu(workbenchMenu);
+		public MainWindowMenuItem(AwbMainWindowMenu awbMainWindowMenu, JMenuItem menuItem, Integer indexPosition, SeparatorPosition separatorPosition) {
+			this.setWorkbenchMenu(awbMainWindowMenu);
 			this.setJMenuItem(menuItem);
 			this.setIndexPosition(indexPosition);
 			this.setSeparatorPosition(separatorPosition);
 		}
 		
-		public WorkbenchMenu getWorkbenchMenu() {
-			return workbenchMenu;
+		public AwbMainWindowMenu getWorkbenchMenu() {
+			return awbMainWindowMenu;
 		}
-		public void setWorkbenchMenu(WorkbenchMenu workbenchMenu) {
-			this.workbenchMenu = workbenchMenu;
+		public void setWorkbenchMenu(AwbMainWindowMenu awbMainWindowMenu) {
+			this.awbMainWindowMenu = awbMainWindowMenu;
 		}
 
 		public JMenuItem getJMenuItem() {

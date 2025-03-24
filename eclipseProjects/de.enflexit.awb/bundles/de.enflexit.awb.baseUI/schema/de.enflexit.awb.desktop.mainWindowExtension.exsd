@@ -55,7 +55,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="de.enflexit.awb.desktop.mainWindow.MainWindowExtension:"/>
+                  <meta.attribute kind="java" basedOn="de.enflexit.awb.baseUI.mainWindow.MainWindowExtension:"/>
                </appinfo>
             </annotation>
          </attribute>

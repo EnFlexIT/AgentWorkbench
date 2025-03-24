@@ -13,6 +13,8 @@ import de.enflexit.awb.baseUI.SeparatorPosition;
  */
 public abstract class TrayIconMenuExtension implements AwbTrayIconMenuExtension {
 
+	public static final String TRAY_ICON_MENU_EXTENSION_ID = "de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension";
+	
 	private Vector<TrayIconMenuItem> trayIconMenuItemVector;
 	
 	/* (non-Javadoc)

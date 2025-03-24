@@ -16,9 +16,9 @@ Export-Package: com.expression.parser,
  de.enflexit.expression.gui,
  de.enflexit.expression.math
 Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.core,
  de.enflexit.awb.core.config,
- de.enflexit.awb.desktop.mainWindow,
  de.enflexit.common,
  de.enflexit.common.swing,
  de.enflexit.language

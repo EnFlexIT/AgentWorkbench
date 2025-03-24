@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import de.enflexit.awb.baseUI.SeparatorPosition;
+import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.baseUI.systemtray.AwbTrayIcon.TrayUsage;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
@@ -35,9 +36,6 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 
 	private static final long serialVersionUID = -126917985058515163L;
 
-	public static final String TRAY_ICON_MENU_EXTENSION_ID = "de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension";
-	public static final String MAIN_WINDOW_EXTENSION_ID = "de.enflexit.awb.desktop.mainWindowExtension";
-	
 	private AwbTrayIcon awbTrayIcon = null;
 	
 	private Vector<MenuItem> menuItemList;
@@ -88,8 +86,8 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 		
 		// --- Collect relevant extension  points -------------------
 		List<IConfigurationElement> configElementList = new ArrayList<>();
-		configElementList.addAll(Arrays.asList(Platform.getExtensionRegistry().getConfigurationElementsFor(TRAY_ICON_MENU_EXTENSION_ID)));
-		configElementList.addAll(Arrays.asList(Platform.getExtensionRegistry().getConfigurationElementsFor(MAIN_WINDOW_EXTENSION_ID)));
+		configElementList.addAll(Arrays.asList(Platform.getExtensionRegistry().getConfigurationElementsFor(TrayIconMenuExtension.TRAY_ICON_MENU_EXTENSION_ID)));
+		configElementList.addAll(Arrays.asList(Platform.getExtensionRegistry().getConfigurationElementsFor(MainWindowExtension.MAIN_WINDOW_EXTENSION_ID)));
 		
 		try {
 			for (int i = 0; i < configElementList.size(); i++) {
