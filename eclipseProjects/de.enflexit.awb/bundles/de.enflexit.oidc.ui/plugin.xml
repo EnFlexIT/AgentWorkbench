@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.awb.swing.mainWindowExtension">
+         point="de.enflexit.awb.desktop.mainWindowExtension">
       <mainWindowExtensionClient
             class="de.enflexit.oidc.ui.OIDCAuthenticationUIExtension">
       </mainWindowExtensionClient>

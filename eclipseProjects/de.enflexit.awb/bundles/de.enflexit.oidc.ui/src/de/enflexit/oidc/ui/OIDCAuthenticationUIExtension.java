@@ -11,10 +11,8 @@ import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
-import org.agentgui.gui.swing.MainWindowExtension;
-
-import agentgui.core.application.Application;
+import de.enflexit.awb.baseUI.SeparatorPosition;
+import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.oidc.AuthenticationStateListener;
@@ -107,7 +105,10 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	}
 	
 	private void showOIDCSettingsDialog() {
-		JDialog settingDialog = new JDialog(Application.getMainWindow());
+		//TODO figure out how to get the owner window in the new structure
+//		JDialog settingDialog = new JDialog(Application.getMainWindow());
+		
+		JDialog settingDialog = new JDialog();
 		settingDialog.setContentPane(new OIDCSettingsPanel(this.getOIDCSettings(), settingDialog));
 		settingDialog.setSize(600, 450);
 		
@@ -127,7 +128,10 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		} catch (URISyntaxException | IOException e) {
 			String errorMessage = "Could not open the account panel! Please check your issuer URI and realm ID in the OIDC settings!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + errorMessage);
-			JOptionPane.showMessageDialog(Application.getMainWindow(), errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
+
+			//TODO figure out how to get the owner window in the new structure
+//			JOptionPane.showMessageDialog(Application.getMainWindow(), errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 	}

@@ -51,7 +51,6 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JDialog;
-
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
@@ -88,8 +87,8 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	
 	private static final String SECURE_PREFERENCES_TOKEN_PATH = "de/enflexit/oidc/tokens";
 	private static final String PREFERENCES_KEY_ID_TOKEN = "idToken";
-	private static final String PREFERENCES_KEY_ACCESS_TOKEN = "accessToken";
-	private static final String PREFERENCES_KEY_REFRESH_TOKEN = "refreshToken";
+//	private static final String PREFERENCES_KEY_ACCESS_TOKEN = "accessToken";
+//	private static final String PREFERENCES_KEY_REFRESH_TOKEN = "refreshToken";
 
 	/** The single instance of this singleton class. */
 	private static OIDCAuthorization instance;

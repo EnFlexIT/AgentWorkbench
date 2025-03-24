@@ -3,9 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OIDC Authorization UI
 Bundle-SymbolicName: de.enflexit.oidc.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Import-Package: de.enflexit.common.swing
-Require-Bundle: de.enflexit.oidc,
- org.agentgui.core
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.core,
+ de.enflexit.awb.desktop.mainWindow,
+ de.enflexit.common.swing
+Require-Bundle: de.enflexit.oidc
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-21
