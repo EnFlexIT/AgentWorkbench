@@ -12,7 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import de.enflexit.awb.baseUI.SeparatorPosition;
-import de.enflexit.awb.desktop.mainWindow.MainWindowExtension;
+import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.oidc.AuthenticationStateListener;
