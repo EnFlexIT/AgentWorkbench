@@ -59,6 +59,7 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		this.parent = parent;
 		this.oidcSettings = oidcSettings;
 		this.initialize();
+		this.setModelToForm();
 	}
 
 	private void initialize() {
@@ -398,13 +399,11 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		if (ae.getSource()==this.getJButtonApply()) {
 			this.setFormToModel();
 			parent.setVisible(false);
-			//TODO store settings
+			this.getOidcSettings().storeToPreferences();
 		} else if (ae.getSource()==this.getJButtonCancel()) {
 			parent.setVisible(false);
 		} else if (ae.getSource()==this.getJButtonRestoreDefaults()) {
-			OIDCSettings defaultSettings = new OIDCSettings();
-			defaultSettings.initializeWithDefaults();
-			this.setOidcSettings(defaultSettings);
+			this.setOidcSettings(OIDCSettings.getDefaultSettings());
 			this.setModelToForm();
 		}
 	}

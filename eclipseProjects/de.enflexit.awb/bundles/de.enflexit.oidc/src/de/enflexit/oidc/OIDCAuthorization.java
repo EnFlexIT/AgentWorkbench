@@ -159,8 +159,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 */
 	public OIDCSettings getOIDCSettings() {
 		if (oidcSettings==null) {
-			oidcSettings = new OIDCSettings();
-			oidcSettings.initializeWithDefaults();
+			oidcSettings = OIDCSettings.loadFromPreferences();
 		}
 		return oidcSettings;
 	}
