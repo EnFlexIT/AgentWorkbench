@@ -28,6 +28,7 @@
  */
 package de.enflexit.oidc;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.io.File;
@@ -36,6 +37,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ProtocolException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -44,13 +46,27 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JDialog;
 
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
+
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.SerializeException;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
+import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
+import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
+import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
+import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
+import com.sun.net.httpserver.HttpExchange;
 
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
@@ -59,20 +75,31 @@ import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
  * This class provides a simple interface to the OpenID Connect authorisation.
  * Use with getInstance(), getDialog()/connect() and getUserID().
  */
-public class OIDCAuthorization {
+public class OIDCAuthorization implements OIDCCallbackListener {
+	
+	public enum AuthenticationState {
+		LOGGED_IN, LOGGED_OUT, PENDING
+	}
 
-	/** The claim representing the user ID in OIDC (subject) */
-	private static final String OIDC_ID_CLAIM_USERID = "sub";
+	/** The claims representing relevant infos from the ID token */
+	private static final String OIDC_ID_CLAIM_USER_ID = "sub";
+	private static final String OIDC_ID_CLAIM_USER_NAME = "preferred_username";
+	private static final String OIDC_ID_CLAIM_FULL_NAME = "name";
+	
+	private static final String SECURE_PREFERENCES_TOKEN_PATH = "de/enflexit/oidc/tokens";
+	private static final String PREFERENCES_KEY_ID_TOKEN = "idToken";
+	private static final String PREFERENCES_KEY_ACCESS_TOKEN = "accessToken";
+	private static final String PREFERENCES_KEY_REFRESH_TOKEN = "refreshToken";
 
 	/** The single instance of this singleton class. */
 	private static OIDCAuthorization instance;
 	/** The OIDC client. */
 	private SimpleOIDCClient oidcClient;
+	
+	private OIDCSettings oidcSettings;
 
 	/** The accessed resource URI, initialized with @see OIDCPanel.DEBUG_RESOURCE_URI. */
-	private String resourceURI = OIDCPanel.DEBUG_RESOURCE_URI;
-	/** The URI of the OIDC provider/issuer. */
-	private String issuerURI = "";
+	private String resourceURI;
 	
 	/** The availability handler called when the resource is available. */
 	private OIDCResourceAvailabilityHandler availabilityHandler;
@@ -88,8 +115,13 @@ public class OIDCAuthorization {
 	private File truststoreFile;
 
 	private String lastSuccessfulUser;
-
 	
+	private AuthenticationState authenticationState = AuthenticationState.LOGGED_OUT;
+	
+	private ArrayList<AuthenticationStateListener> authenticationStateListeners;
+	
+	private ISecurePreferences tokenStore;
+	private boolean initialCheckDone;
 	
 	/**
 	 * Instantiates a new OIDC authorization.
@@ -103,6 +135,7 @@ public class OIDCAuthorization {
 	public static OIDCAuthorization getInstance() {
 		if (instance == null) {
 			instance = new OIDCAuthorization();
+//			instance.loadIDToken();
 		}
 		return instance;
 	}
@@ -113,12 +146,41 @@ public class OIDCAuthorization {
 	 * @return the OIDC client
 	 * @throws URISyntaxException the URI syntax exception
 	 */
-	public SimpleOIDCClient getOIDCClient() throws URISyntaxException {
+	public SimpleOIDCClient getOIDCClient() {
 		if (oidcClient == null) {
 			oidcClient = new SimpleOIDCClient();
-			oidcClient.setIssuerURI(issuerURI);
+//			oidcClient.setIssuerURI(this.getOIDCSettings().getIssuerURL());
 		}
 		return oidcClient;
+	}
+
+	/**
+	 * Gets the OIDC settings. If not set yet, a new instance with default settings will be generated.
+	 * @return the OIDC settings
+	 */
+	public OIDCSettings getOIDCSettings() {
+		if (oidcSettings==null) {
+			oidcSettings = new OIDCSettings();
+			oidcSettings.initializeWithDefaults();
+		}
+		return oidcSettings;
+	}
+	/**
+	 * Sets the OIDC settings.
+	 * @param oidcSettings the new oidc settings
+	 */
+	public void setOIDCSettings(OIDCSettings oidcSettings) {
+		this.oidcSettings = oidcSettings;
+	}
+	
+	/**
+	 * Sets the issuer URI.
+	 * @param issuerURI the new issuer URI
+	 * @deprecated Just kept for backwards compatibility, remove when the old authorization stuff is removed from agentgui.core
+	 */
+	@Deprecated 
+	public void setIssuerURI(String issuerURI) {
+		this.getOIDCSettings().setIssuerURL(issuerURI);
 	}
 
 	/**
@@ -162,21 +224,6 @@ public class OIDCAuthorization {
 	}
 
 	/**
-	 * Gets the issuer URI.
-	 * @return the issuer URI
-	 */
-	public String getIssuerURI() {
-		return issuerURI;
-	}
-	/**
-	 * Sets the issuer URI.
-	 * @param issuerURI the new issuer URI
-	 */
-	public void setIssuerURI(String issuerURI) {
-		this.issuerURI = issuerURI;
-	}
-
-	/**
 	 * Gets the resource URI.
 	 * @return the resource URI
 	 */
@@ -189,21 +236,6 @@ public class OIDCAuthorization {
 	 */
 	public void setResourceURI(String resourceURI) {
 		this.resourceURI = resourceURI;
-	}
-
-	/**
-	 * Gets the client id.
-	 * @return the client id
-	 */
-	public String getClientID() {
-		return OIDCPanel.DEBUG_CLIENT_ID;
-	}
-	/**
-	 * Gets the client secret.
-	 * @return the client secret
-	 */
-	public String getClientSecret() {
-		return OIDCPanel.DEBUG_CLIENT_SECRET;
 	}
 
 	/**
@@ -257,15 +289,45 @@ public class OIDCAuthorization {
 	 * @throws URISyntaxException the URI syntax exception
 	 */
 	public String getUserID() throws OIDCProblemException, URISyntaxException {
-		String userID;
-		if (!isValid()) {
-			throw new OIDCProblemException();
-		}
+		return this.getOIDCClaim(OIDC_ID_CLAIM_USER_ID);
+	}
+	
+	/**
+	 * Gets the user name of the authenticated user.
+	 * @return the user name
+	 * @throws OIDCProblemException the OIDC problem exception
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	public String getUserName() throws OIDCProblemException, URISyntaxException {
+		return this.getOIDCClaim(OIDC_ID_CLAIM_USER_NAME);
+	}
+	
+	/**
+	 * Gets the full name of the authenticated user.
+	 * @return the user full name
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	public String getUserFullName() throws OIDCProblemException, URISyntaxException {
+		return this.getOIDCClaim(OIDC_ID_CLAIM_FULL_NAME);
+	}
+	
+	/**
+	 * Gets the value for the specified OIDC claim.
+	 * @param oidcClaim the oidc claim
+	 * @return the OIDC claim
+	 * @throws OIDCProblemException the OIDC problem exception
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	private String getOIDCClaim(String oidcClaim) throws OIDCProblemException, URISyntaxException {
+		String claimValue;
+//		if (!isValid()) {
+//			throw new OIDCProblemException();
+//		}
 		Map<String, Object> allClaims = getOIDCClient().getIdClaims().getClaims();
-		userID = (String) allClaims.get(OIDC_ID_CLAIM_USERID);
+		claimValue = (String) allClaims.get(oidcClaim);
 
-		if (userID != null) {
-			return userID;
+		if (claimValue != null) {
+			return claimValue;
 		}
 		return "";
 	}
@@ -286,17 +348,77 @@ public class OIDCAuthorization {
 		//oidcClient.reset();
 		urlProcessor = new URLProcessor();
 
-		oidcClient.setIssuerURI(getIssuerURI());
+		oidcClient.setIssuerURI(this.getOIDCSettings().getIssuerURL());
+		oidcClient.setRealmName(this.getOIDCSettings().getRealmID());
 		try {
 			oidcClient.retrieveProviderMetadata();
 			oidcClient.setClientMetadata(getResourceURI());
 		} catch (ParseException e) {
 			throw new IOException("OIDC ParseException");
 		}
-		oidcClient.setClientID(getClientID(), getClientSecret());
+		oidcClient.setClientID(this.getOIDCSettings().getClientID(), this.getOIDCSettings().getClientSecret());
 		oidcClient.setRedirectURI(getResourceURI());
 		urlProcessor.prepare(oidcClient.getRedirectURI().toURL());
+		
+		oidcClient.setLocalCallbackURI(this.getLocalCallbackURL());
+		
 		inited = true;
+	}
+	
+	public synchronized void doInitialAuthenticationCheck() {
+		if (this.initialCheckDone==false) {
+			this.requestAuthorizationCode(false);
+			this.initialCheckDone = true;
+		}
+	}
+	
+	/**
+	 * Authorizes a user using the authorization code flow. An authorization code is requested
+	 * from the keycloak server and exchanged for the required tokens. User login is handled by
+	 * keycloak, i.e. if not already logged in the login page will be opened in the browser.
+	 * @return true, if successful
+	 * @throws IOException 
+	 * @throws URISyntaxException 
+	 * @throws KeyStoreException 
+	 * @throws CertificateException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyManagementException 
+	 */
+	public void requestAuthorizationCode(boolean showLogin) {
+		
+		if (!inited) {
+			try {
+				this.init();
+			} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException e) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error initializing the OIDC client, please check your settings!");
+				e.printStackTrace();
+				return;
+			}
+		}
+		
+		URI authenticationRequestURI = null;
+		try {
+			authenticationRequestURI = oidcClient.buildAuthorizationCodeRequest(this.getLocalCallbackURL(), showLogin);
+		} catch (SerializeException | URISyntaxException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error building the authentication request URI, please check your settings!");
+			e.printStackTrace();
+			return;
+		}
+			
+		new OIDCCallbackHTTPServer(this.getOIDCSettings().getLocalHTTPPort(), this.getOIDCSettings().getAuthenticationEndpoint(), this).startInThread();
+		this.setAuthenticationState(AuthenticationState.PENDING);
+		try {
+			Desktop.getDesktop().browse(authenticationRequestURI);
+		} catch (IOException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error opening the login page, please check your OIDC settings!");
+			e.printStackTrace();
+			return;
+		}
+		
+	}
+	
+	private String getLocalCallbackURL() {
+		return "http://localhost:" + this.getOIDCSettings().getLocalHTTPPort() + this.getOIDCSettings().getAuthenticationEndpoint();
 	}
 
 	/**
@@ -337,6 +459,21 @@ public class OIDCAuthorization {
 			return false;
 		}
 	}
+	
+	/**
+	 * Trigger remote logout.
+	 */
+	public void triggerRemoteLogout() {
+		try {
+			boolean logoutSuccess = this.oidcClient.sendLogoutRequest();
+			if (logoutSuccess==true) {
+				this.setAuthenticationState(AuthenticationState.LOGGED_OUT);
+			}
+		} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error sending logout request!");
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Access some resource previously set by {@link #setResourceURI(String)}. If not accessible, show user/password dialog
@@ -351,7 +488,7 @@ public class OIDCAuthorization {
 	 */
 	public boolean accessResource() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
-		this.getUrlProcessor().prepare(new URL(getResourceURI()));
+		this.getUrlProcessor().prepare(new URI(getResourceURI()).toURL());
 		String result = urlProcessor.process();
 		if (result == null) {
 			// all good (unlikely on first call)
@@ -537,7 +674,7 @@ public class OIDCAuthorization {
 
 			connection = (HttpsURLConnection) requestURL.openConnection();
 			connection.setInstanceFollowRedirects(false);
-			Trust.trustSpecific(connection, truststoreFile);
+			Trust.trustSpecific(connection, OIDCAuthorization.this.truststoreFile);
 
 			connection.setRequestMethod("GET");
 			if (accessToken != null) {
@@ -631,6 +768,150 @@ public class OIDCAuthorization {
 	private class OIDCProblemException extends RuntimeException {
 		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -6015464771451068526L;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.oidc.OIDCCallbackListener#callbackReceived(com.sun.net.httpserver.HttpExchange)
+	 */
+	@Override
+	public void callbackReceived(HttpExchange exchange) {
+		try {
+			AuthenticationResponse response = AuthenticationResponseParser.parse(exchange.getRequestURI());
+			
+			if (response instanceof AuthenticationErrorResponse) {
+				this.setAuthenticationState(AuthenticationState.LOGGED_OUT);
+				System.out.println("Authentication failed!");
+			} else if (response instanceof AuthenticationSuccessResponse){
+				
+				AuthenticationSuccessResponse successResponse = (AuthenticationSuccessResponse) response;
+				AuthorizationCode authCode = successResponse.getAuthorizationCode();
+				this.oidcClient.setAuthorizationCode(authCode);
+				
+				try {
+					if (this.oidcClient.requestToken()==true) {
+						this.storeIDToken();
+					}
+				} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException e) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] Error requesting tokens!");
+					e.printStackTrace();
+				}
+				
+				this.setAuthenticationState(AuthenticationState.LOGGED_IN);
+			}
+			
+		} catch (ParseException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error parsing response!");
+			e.printStackTrace();
+		}
+	}
+	
+	private ArrayList<AuthenticationStateListener> getAuthenticationListeners() {
+		if (authenticationStateListeners==null) {
+			authenticationStateListeners = new ArrayList<AuthenticationStateListener>();
+		}
+		return authenticationStateListeners;
+	}
+	
+	/**
+	 * Adds an authentication state listener.
+	 * @param listener the listener
+	 */
+	public void addAuthenticationStateListener(AuthenticationStateListener listener) {
+		if (this.getAuthenticationListeners().contains(listener)==false) {
+			this.getAuthenticationListeners().add(listener);
+		}
+	}
+	
+	/**
+	 * Removes an authentication state listener.
+	 * @param listener the listener
+	 */
+	public void removeAuthenticationStateListener(AuthenticationStateListener listener) {
+		if (this.getAuthenticationListeners().contains(listener)==true) {
+			this.getAuthenticationListeners().remove(listener);
+		}
+	}
+	
+	private void setAuthenticationState(AuthenticationState authenticationState) {
+		this.authenticationState = authenticationState;
+		for (AuthenticationStateListener listener : this.getAuthenticationListeners()) {
+			listener.authenticationStateChanged(authenticationState);
+		}		
+	}
+	
+	/**
+	 * Gets the current authentication state.
+	 * @return the authentication state
+	 */
+	public AuthenticationState getAuthenticationState() {
+		return authenticationState;
+	}
+
+	/**
+	 * Stores the current tokens in the Eclipse RCP secure preferences.
+	 * @throws StorageException the storage exception
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	private void storeIDToken() {
+		// --- Access the secure preferences store of eclipse RCP ------------- 
+		
+		if (this.getOIDCClient().getIdToken()!=null) {
+			try {
+				this.getTokenStore().put(PREFERENCES_KEY_ID_TOKEN, this.getOIDCClient().getIdToken().serialize(), true);
+				this.getTokenStore().flush();
+			} catch (StorageException | IOException e) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error storing the ID token locally!");
+				e.printStackTrace();
+			}
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The ID token is not set!");
+		}
+		
+	}
+	
+	/**
+	 * Loads the tokens from the Eclipse RCP secure preferences, if present.
+	 * @throws StorageException the storage exception
+	 * @throws ParseException the parse exception
+	 * @throws ParseException the parse exception
+	 * @throws ParseException the parse exception
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	private void loadIDToken() {
+		
+		try {
+			String idTokenSerialized = this.getTokenStore().get(PREFERENCES_KEY_ID_TOKEN, null);
+			if (idTokenSerialized!=null && idTokenSerialized.isBlank()==false) {
+				JWT idToken = JWTParser.parse(idTokenSerialized);
+				if (idToken!=null) {
+					System.out.println("Successfully loaded the ID token!");
+					this.getOIDCClient().setIdToken(idToken);
+					this.setAuthenticationState(AuthenticationState.LOGGED_IN);
+				} else {
+					System.out.println("Failed to load the ID token!");
+				}
+			}
+		} catch (StorageException | java.text.ParseException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error loading the ID token from the local secure storage!");
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Removes stored tokens from the secure preferences.
+	 */
+	//TODO make private when no longer needed public for the debug menu entry
+	private void clearStoredTokens() {
+		this.getTokenStore().remove(PREFERENCES_KEY_ID_TOKEN);
+	}
+	
+	private ISecurePreferences getTokenStore() {
+		if (tokenStore==null) {
+			tokenStore = SecurePreferencesFactory.getDefault().node(SECURE_PREFERENCES_TOKEN_PATH);
+		}
+		return tokenStore;
 	}
 	
 }

@@ -70,6 +70,7 @@ import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.util.JSONObjectUtils;
 import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest;
@@ -77,6 +78,7 @@ import com.nimbusds.openid.connect.sdk.AuthenticationRequest.Builder;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
 import com.nimbusds.openid.connect.sdk.AuthenticationSuccessResponse;
+import com.nimbusds.openid.connect.sdk.LogoutRequest;
 import com.nimbusds.openid.connect.sdk.Nonce;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser;
@@ -109,21 +111,26 @@ public class SimpleOIDCClient {
 	private URI authorizationEndpointURI;
 	private URI userInfoEndpointURI;
 	private URI redirectURI;
+	private URI localCallbackURI;
 
 	private OIDCProviderMetadata providerMetadata;
 	private OIDCClientInformation clientInformation;
 	private OIDCClientMetadata clientMetadata;
 	private String clientMetadataJSON;
 
+	private String realmName;
 	private ClientID clientID;
 	private Secret clientSecret;
 	private State state;
 	private Nonce nonce;
 
-	private AuthorizationCode authCode;
+	private AuthorizationCode authorizationCode;
 	private ResourceOwnerPasswordCredentialsGrant resourceOwnerCredentialsGrant;
+	
 	private AccessToken accessToken;
 	private JWT idToken;
+	private RefreshToken refreshToken;
+	
 	private JSONObject userInfoClaims;
 	private JWTClaimsSet idClaims;
 
@@ -134,10 +141,12 @@ public class SimpleOIDCClient {
 	 * Reset.
 	 */
 	public void reset() {
-		accessToken = null;
-		idToken = null;
-		userInfoClaims = null;
-		idClaims = null;
+		this.authorizationCode = null;
+		this.accessToken = null;
+		this.idToken = null;
+		this.refreshToken = null;
+		this.userInfoClaims = null;
+		this.idClaims = null;
 	}
 
 	/**
@@ -226,7 +235,14 @@ public class SimpleOIDCClient {
 	 */
 	public void retrieveProviderMetadata() throws IOException, ParseException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
-		URL providerConfigurationURL = issuerURI.resolve(URLPATH_WELL_KNOWN_OPENID).toURL();
+		String urlPartRealm = "";
+		
+		// --- If a realm was specified, set that part of the URL accordingly
+		if (this.getRealmName()!=null) {
+			urlPartRealm = "/realms/" + this.getRealmName() + "/";
+		}
+		
+		URL providerConfigurationURL = issuerURI.resolve(urlPartRealm + URLPATH_WELL_KNOWN_OPENID).toURL();
 //		System.out.println(providerConfigurationURL);
 		URLConnection conn = providerConfigurationURL.openConnection();
 
@@ -267,6 +283,23 @@ public class SimpleOIDCClient {
 			this.clientSecret = new Secret(clientSecret);
 		}
 		clientInformation = new OIDCClientInformation(clientID, null, clientMetadata, this.clientSecret);
+	}
+	
+	
+
+	/**
+	 * Gets the realm name.
+	 * @return the realm name
+	 */
+	public String getRealmName() {
+		return realmName;
+	}
+	/**
+	 * Sets the realm name.
+	 * @param realmName the new realm name
+	 */
+	public void setRealmName(String realmName) {
+		this.realmName = realmName;
 	}
 
 	/**
@@ -347,7 +380,6 @@ public class SimpleOIDCClient {
 	public void setRedirectURI(String redirectURIString) throws URISyntaxException {
 		this.redirectURI = new URI(redirectURIString);
 	}
-
 	/**
 	 * Gets the redirect URI.
 	 * 
@@ -355,6 +387,22 @@ public class SimpleOIDCClient {
 	 */
 	public URI getRedirectURI() {
 		return this.redirectURI;
+	}
+
+	/**
+	 * Sets the local callback URI.
+	 * @param localCallbackURI the new local callback URI
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	public void setLocalCallbackURI(String localCallbackURI) throws URISyntaxException {
+		this.localCallbackURI = new URI(localCallbackURI);
+	}
+	/**
+	 * Gets the local callback URI.
+	 * @return the local callback URI
+	 */
+	public URI getLocalCallbackURI() {
+		return localCallbackURI;
 	}
 
 	/**
@@ -386,13 +434,18 @@ public class SimpleOIDCClient {
 
 	/**
 	 * Authentication request
-	 * The authentication request is done by redirecting the end user to the provider, for more details see the OIDC specification. The redirect URL is built as follows, using the Authorization Code Flow:
-	 * To specify additional parameters in the authentication request, use AuthenticationRequest.Builder.
+	 * The authentication request is done by redirecting the end user to the provider, for more details see the OIDC specification. The response is
+	 * handled by the specified local callback URL, where a local HTTP server must be listening to process it. If showLoginPage==true, the login page
+	 * will be shown if the user is not logged in already. Otherwise the redirect will occur immediately, leading to a {@link AuthenticationErrorResponse}
+	 * if not logged in. 
 	 *
-	 * @return the uri
+	 * @param localCallbackURL the local callback URL
+	 * @param showLoginForm whether to show the login page if not logged in - set to false if you only want to check for an existing login
+	 * @return the authorization code request URI
 	 * @throws SerializeException the serialize exception
+	 * @throws URISyntaxException the URI syntax exception
 	 */
-	public URI buildAuthorizationCodeRequest() throws SerializeException {
+	public URI buildAuthorizationCodeRequest(String localCallbackURL, boolean showLoginForm) throws SerializeException, URISyntaxException {
 		
 		if (state==null) state = new State();
 		if (nonce==null) nonce = new Nonce();
@@ -401,18 +454,16 @@ public class SimpleOIDCClient {
 		// Specify scope
 		Scope scope = Scope.parse("openid");
 
-		// Compose the request
-		/*
-		authenticationRequest = new AuthenticationRequest(
-				authorizationEndpointURI,
-				new ResponseType(ResponseType.Value.CODE),
-				scope, clientID, redirectURI, state, nonce);
-		*/
-		Builder builder = new AuthenticationRequest.Builder(new ResponseType(ResponseType.Value.CODE), scope, clientID, redirectURI);
+		
+		Builder builder = new AuthenticationRequest.Builder(new ResponseType(ResponseType.Value.CODE), scope, clientID, new URI(localCallbackURL));
 		builder.endpointURI(authorizationEndpointURI);
 		builder.state(state);
 		builder.nonce(nonce);
-		builder.prompt(new Prompt(Prompt.Type.NONE));
+		
+		if (showLoginForm==false) {
+			builder.prompt(new Prompt(Prompt.Type.NONE));
+		}
+		
 		authenticationRequest = builder.build();
 
 		URI authReqURI = authenticationRequest.toURI();
@@ -455,8 +506,8 @@ public class SimpleOIDCClient {
 				System.err.println(this.getClass().getSimpleName() + " - " + "State not valid");
 				return;
 			}
-			authCode = successResponse.getAuthorizationCode();
-			System.out.println("Authorization Code: " + authCode);
+			authorizationCode = successResponse.getAuthorizationCode();
+			System.out.println("Authorization Code: " + authorizationCode);
 			
 		}
 	}
@@ -485,6 +536,14 @@ public class SimpleOIDCClient {
 	public void setResourceOwnerCredentials(String user, String password) {
 		resourceOwnerCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(user, new Secret(password));
 	}
+	
+	/**
+	 * Sets the authorization code.
+	 * @param authorizationCode the new authorization code
+	 */
+	public void setAuthorizationCode(AuthorizationCode authorizationCode) {
+		this.authorizationCode = authorizationCode;
+	}
 
 	/**
 	 * Token Request
@@ -494,19 +553,20 @@ public class SimpleOIDCClient {
 	 * @throws NoSuchAlgorithmException the no such algorithm exception
 	 * @throws CertificateException the certificate exception
 	 * @throws KeyStoreException the key store exception
+	 * @throws URISyntaxException 
 	 */
-	public void requestToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+	public boolean requestToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException {
 
 		AuthorizationGrant grant;
-		if (authCode == null) {
+		if (authorizationCode == null) {
 			if (resourceOwnerCredentialsGrant == null) {
 				System.err.println(this.getClass().getSimpleName() + " - Authentication Code is null and no user/password set, stopping token retrieval");
-				return;
+				return false;
 			} else {
 				grant = resourceOwnerCredentialsGrant;
 			}
 		} else {
-			grant = new AuthorizationCodeGrant(authCode, redirectURI);
+			grant = new AuthorizationCodeGrant(authorizationCode, getLocalCallbackURI());
 		}
 		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant);
 		HTTPResponse tokenHTTPResp = null;
@@ -535,12 +595,15 @@ public class SimpleOIDCClient {
 			ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
 			System.err.println(this.getClass().getSimpleName() + " - Error at token retrieval");
 			System.err.println(error);
-			return;
+			return false;
 		}
 
 		OIDCTokenResponse accessTokenResponse = (OIDCTokenResponse) tokenResponse;
 		accessToken = accessTokenResponse.getOIDCTokens().getAccessToken();
 		idToken = accessTokenResponse.getOIDCTokens().getIDToken();
+		refreshToken = accessTokenResponse.getTokens().getRefreshToken();
+		
+		return true;
 	}
 
 	/**
@@ -549,6 +612,42 @@ public class SimpleOIDCClient {
 	 */
 	public AccessToken getAccessToken() {
 		return accessToken;
+	}
+	/**
+	 * Sets the access token.
+	 * @param accessToken the new access token
+	 */
+	public void setAccessToken(AccessToken accessToken) {
+		this.accessToken = accessToken;
+	}
+	
+	/**
+	 * Gets the ID token.
+	 * @return the ID token
+	 */
+	public JWT getIdToken() {
+		return idToken;
+	}
+	/**
+	 * Sets the id token.
+	 * @param idToken the new id token
+	 */
+	public void setIdToken(JWT idToken) {
+		this.idToken = idToken;
+	}
+	/**
+	 * Gets the refresh token.
+	 * @return the refresh token
+	 */
+	public RefreshToken getRefreshToken() {
+		return refreshToken;
+	}
+	/**
+	 * Sets the refresh token.
+	 * @param refreshToken the new refresh token
+	 */
+	public void setRefreshToken(RefreshToken refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	/**
@@ -661,6 +760,30 @@ public class SimpleOIDCClient {
 	 */
 	public JSONObject getUserInfoJSON() {
 		return userInfoClaims;
+	}
+	
+	public boolean sendLogoutRequest() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+		LogoutRequest logoutRequest = new LogoutRequest(this.providerMetadata.getEndSessionEndpointURI(), this.idToken);
+		HTTPResponse httpResponse = null;
+		
+		try {
+			HTTPRequest httpRequest = logoutRequest.toHTTPRequest();
+			httpRequest.setHostnameVerifier(null);
+			httpRequest.setSSLSocketFactory(Trust.getSocketFactory(trustStoreFile));
+			httpResponse = httpRequest.send();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (httpResponse!=null) {
+			// --- Logout successful - clear tokens etc. -----------------------
+			this.reset();
+			return true;
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() +"] No logout response received!");
+			return false;
+		}
 	}
 
 	/**
