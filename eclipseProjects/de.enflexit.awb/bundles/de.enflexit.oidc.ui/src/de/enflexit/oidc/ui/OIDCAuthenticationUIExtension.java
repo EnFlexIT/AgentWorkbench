@@ -42,8 +42,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		this.addToolbarComponent(this.getAuthenticationStateButton(), null, SeparatorPosition.NoSeparator);
 		this.addJMenu(this.getJMenuAuthentication(), null);
 		
-		OIDCSettings oidcSettings = new OIDCSettings();
-		oidcSettings.initializeWithDefaults();
+		OIDCSettings oidcSettings = OIDCAuthorization.getInstance().getOIDCSettings();
 
 		OIDCAuthorization.getInstance().setOIDCSettings(oidcSettings);
 		
@@ -108,6 +107,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	
 	private void showOIDCSettingsDialog() {
 		JDialog settingDialog = new JDialog(Application.getMainWindow());
+		settingDialog.setTitle("OpenID Connect Configuration");
 		settingDialog.setContentPane(new OIDCSettingsPanel(this.getOIDCSettings(), settingDialog));
 		settingDialog.setSize(600, 450);
 		
