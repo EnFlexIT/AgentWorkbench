@@ -23,7 +23,7 @@
          </property>
          <property
                name="aboutImage"
-               value="platform:/plugin/org.agentgui.core/icons/awb128.png">
+               value="platform:/plugin/de.enflexit.awb.core/icons/awb128.png">
          </property>
          <property
                name="aboutText"

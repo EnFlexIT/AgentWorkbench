@@ -21,7 +21,7 @@
 
 ([project+annotation] of  %3APROJECT-ANNOTATION
 
-	(%3ALOCATION "D:\\git\\AgentWorkbench\\eclipseProjects\\org.agentgui\\bundles\\org.agentgui.core\\src")
+	(%3ALOCATION "D:\\git\\AgentWorkbench\\eclipseProjects\\org.agentgui\\bundles\\de.enflexit.awb.baseOntology\\src")
 	(%3AONTOLOGYNAME "AgentGUI_Base")
 	(%3APACKAGE "agentgui.ontology")
 	(%3ASUPPORT "j2se"))
