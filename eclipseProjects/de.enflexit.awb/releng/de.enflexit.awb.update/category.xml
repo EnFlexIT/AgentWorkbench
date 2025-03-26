@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature id="de.enflexiti.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
-      <category name="de.enflexit.awb"/>
+   <feature id="de.enflexit.awb.desktop.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
+      <category name="de.enflexit.awb.desktop"/>
    </feature>
-   <feature id="org.agentgui.feature.source" version="0.0.0">
-      <category name="de.enflexit.awb"/>
+   <feature id="de.enflexit.awb.desktop.feature.source" version="0.0.0">
+      <category name="de.enflexit.awb.desktop"/>
    </feature>
-   <feature id="de.enflexit.common.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
-      <category name="de.enflexit.awb"/>
-   </feature>
-   <feature id="de.enflexit.common.feature.source" version="0.0.0">
-      <category name="de.enflexit.awb"/>
-   </feature>
+   
    <feature id="de.enflexit.awb.ws.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
       <category name="de.enflexit.awb.ws"/>
    </feature>
    <feature id="de.enflexit.awb.ws.feature.source">
       <category name="de.enflexit.awb.ws"/>
    </feature>
-   <feature id="de.enflexit.awb.ws.restapi.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
-      <category name="de.enflexit.awb.ws"/>
-   </feature>
-   <feature id="de.enflexit.awb.ws.restapi.feature.source">
-      <category name="de.enflexit.awb.ws"/>
-   </feature>
+  
    <category-def name="de.enflexit.awb" label="Agent.Workbench"/>
-   <category-def name="de.enflexit.awb.ws" label="Agent.Workbench - WS">
+   <category-def name="de.enflexit.awb.desktop" label="Agent.Workbench-Desktop">
+      <category name="de.enflexit.awb"/>
+   </category-def>
+   <category-def name="de.enflexit.awb.ws" label="Agent.Workbench-WS">
       <category name="de.enflexit.awb"/>
    </category-def>
 </site>

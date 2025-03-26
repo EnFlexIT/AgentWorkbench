@@ -42,7 +42,6 @@
 
    <features>
       <feature id="de.enflexit.awb.ws.feature" installMode="root"/>
-      <feature id="de.enflexit.awb.ws.restapi.feature" installMode="root"/>
    </features>
 
    <configurations>
