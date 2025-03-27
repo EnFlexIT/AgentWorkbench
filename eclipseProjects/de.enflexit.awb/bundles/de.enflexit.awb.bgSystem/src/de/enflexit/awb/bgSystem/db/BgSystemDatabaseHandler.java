@@ -97,7 +97,7 @@ public class BgSystemDatabaseHandler {
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
-				session.saveOrUpdate(bgSystemPlatform);
+				session.persist(bgSystemPlatform);
 				session.flush();
 				transaction.commit();
 				successful = true;
@@ -156,7 +156,7 @@ public class BgSystemDatabaseHandler {
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
-				session.delete(bgSystemPlatform);
+				session.remove(bgSystemPlatform);
 				session.flush();
 				transaction.commit();
 				successful = true;
@@ -185,7 +185,7 @@ public class BgSystemDatabaseHandler {
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
-				Query<?> query = session.createQuery("DELETE FROM BgSystemPlatform");
+				Query<?> query = session.createQuery("DELETE FROM BgSystemPlatform", List.class);
 			    noOfDeletations = query.executeUpdate();
 				transaction.commit();
 				
@@ -214,8 +214,7 @@ public class BgSystemDatabaseHandler {
 			try {
 				transaction = session.beginTransaction();
 				
-				@SuppressWarnings("unchecked")
-				Query<BgSystemPlatform> query = session.createQuery("from BgSystemPlatform");
+				Query<BgSystemPlatform> query = session.createQuery("from BgSystemPlatform", BgSystemPlatform.class);
 				bgSysPlatformList = query.list();
 				transaction.commit();
 				
@@ -243,12 +242,12 @@ public class BgSystemDatabaseHandler {
 			try {
 				transaction = session.beginTransaction();
 				// --- Clear the table first ------------------------
-				Query<?> query = session.createQuery("DELETE FROM BgSystemPlatform");
+				Query<?> query = session.createQuery("DELETE FROM BgSystemPlatform", List.class);
 				query.executeUpdate();
 				
 				// --- Save all platforms out of the list -----------  
 				for (int i = 0; i < bgSystemPlatformList.size(); i++) {
-					session.saveOrUpdate(bgSystemPlatformList.get(i));
+					session.persist(bgSystemPlatformList.get(i));
 			        if (i % 100 == 0) {
 			            session.flush();
 			            session.clear();

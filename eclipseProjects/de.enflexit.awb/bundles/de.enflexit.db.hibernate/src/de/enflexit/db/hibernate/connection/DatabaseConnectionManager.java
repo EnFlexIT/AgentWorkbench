@@ -46,6 +46,7 @@ public class DatabaseConnectionManager {
 	private HashMap<String, HibernateDatabaseConnectionService> dbConnectionServiceHashMap;
 	private HibernateDatabaseConnectionServiceTracker dbConnectionsTracker;
 	
+	
 	/**
 	 * Start the local HibernateDatabaseConnectionServiceTracker.
 	 */

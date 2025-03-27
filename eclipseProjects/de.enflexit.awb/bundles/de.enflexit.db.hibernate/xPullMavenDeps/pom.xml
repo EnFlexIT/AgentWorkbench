@@ -6,7 +6,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<hibernate-version>5.6.15.Final</hibernate-version>
+		<hibernate-version>6.6.11.Final</hibernate-version>
 	</properties>
 
 	<dependencies>
@@ -16,12 +16,14 @@
 			<version>${hibernate-version}</version>
 			<type>jar</type>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-osgi</artifactId>
 			<version>${hibernate-version}</version>
 			<type>jar</type>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>

@@ -37,4 +37,5 @@ Import-Package: de.enflexit.awb.core,
  jade.core,
  jade.core.behaviours,
  jade.lang.acl,
- jade.util.leap
+ jade.util.leap,
+ jakarta.persistence

@@ -11,6 +11,8 @@
         <appender-ref ref="STDOUT" />
     </root>
 	
+	<logger name="de.enflexit.awb.core" level="error" />
+	
 	<logger name="de.enflexit.db" level="warn" />
 	<logger name="de.enflexit.db.hibernate" level="error" />
 	<logger name="de.enflexit.db.mariaDB" level="error" />
@@ -19,17 +21,18 @@
 	
 	<logger name="de.enflexit.eom.database" level="error" />
 
-  	<logger name="org.hibernate" level="error" />
+	<logger name="de.enflexit.oshi" level="error" />
+	
+  	<logger name="org.hibernate" level="info" />
 	<logger name="org.hibernate.SQL" level="error" />
 	<logger name="org.hibernate.type.descriptor.sql" level="error" />
 	<logger name="org.hibernate.pretty" level="error" />
 	<logger name="org.hibernate.cache" level="error" />
 	<logger name="org.hibernate.hql.internal.ast.AST" level="error" />
 	<logger name="org.hibernate.tool.hbm2ddl" level="error" />
-	
-	<logger name="de.enflexit.oshi" level="error" />
-
+	<logger name="net.sf.ehcache" level="error" />
+	<logger name="org.jboss" level="error" />
+   
 	<logger name="com.mchange.v2" level="error" />
-	
 
 </configuration>

@@ -43,6 +43,8 @@ public class HibernateUtilities {
 	private static ConcurrentHashMap<String, SessionFactoryMonitor> sessionFactoryMonitorHashMap;
 	private static HashMap<String, SessionFactory> sessionFactoryHashMap;
 	
+	private static Vector<String> factoriesStartedInThread;
+	
 	private static boolean isDebug = false;
 	
 	/**
@@ -347,6 +349,17 @@ public class HibernateUtilities {
 		}
 	}
 	
+	
+	/**
+	 * Returns the vector of factory-ID's that are currently starting.
+	 * @return the factories started in a dedicated thread
+	 */
+	private static Vector<String> getFactoriesStartedInThread() {
+		if (factoriesStartedInThread==null) {
+			factoriesStartedInThread = new Vector<>();
+		}
+		return factoriesStartedInThread;
+	}
 	/**
 	 * Start the specified SessionFactory within an extra thread.
 	 *
@@ -356,13 +369,21 @@ public class HibernateUtilities {
 	 * @param doSilentConnectionCheck set true, to do a silent connection check
 	 */
 	public static void startSessionFactoryInThread(final String factoryID, final Configuration configuration, final boolean isResetSessionFactory, final boolean doSilentConnectionCheck) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-				HibernateUtilities.getSessionFactory(factoryID, configuration, isResetSessionFactory, doSilentConnectionCheck);
-			}
-		}, "Start of SessionFactory " + factoryID).start();
+		
+		synchronized (HibernateUtilities.getFactoriesStartedInThread()) {
+			
+			if (HibernateUtilities.getFactoriesStartedInThread().contains(factoryID)==true) return;
+			
+			HibernateUtilities.getFactoriesStartedInThread().add(factoryID);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+					HibernateUtilities.getSessionFactory(factoryID, configuration, isResetSessionFactory, doSilentConnectionCheck);
+					HibernateUtilities.getFactoriesStartedInThread().remove(factoryID);
+				}
+			}, "Start of SessionFactory " + factoryID).start();
+		}
 	}
 	
 	/**

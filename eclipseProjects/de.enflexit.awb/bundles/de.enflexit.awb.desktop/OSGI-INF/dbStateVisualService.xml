@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.awb.desktop.mainWindow.HibernateStateVisualService">
+   <implementation class="de.enflexit.awb.desktop.mainWindow.HibernateStateVisualService"/>
+   <service>
+      <provide interface="de.enflexit.db.hibernate.gui.HibernateStateVisualizationService"/>
+   </service>
+</scr:component>

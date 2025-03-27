@@ -51,6 +51,7 @@ Import-Package: de.enflexit.awb.baseUI,
  de.enflexit.common.swing,
  de.enflexit.common.swing.fileSelection,
  de.enflexit.db.hibernate,
+ de.enflexit.db.hibernate.gui,
  de.enflexit.language,
  jade.content.onto,
  jade.core,
@@ -60,5 +61,6 @@ Import-Package: de.enflexit.awb.baseUI,
  org.eclipse.equinox.p2.metadata.expression,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/desktopUiService.xml
+Service-Component: OSGI-INF/desktopUiService.xml,
+ OSGI-INF/dbStateVisualService.xml
 

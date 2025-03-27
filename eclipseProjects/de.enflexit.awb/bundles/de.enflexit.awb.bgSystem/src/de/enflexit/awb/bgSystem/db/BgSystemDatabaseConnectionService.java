@@ -10,6 +10,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
+import de.enflexit.db.hibernate.ColumnOrderingStrategyAsDefinedInClass;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
 
@@ -69,6 +70,7 @@ public class BgSystemDatabaseConnectionService implements HibernateDatabaseConne
 			URL url = this.getLocalBundle().getResource(cfgFile);
 			configuration = new Configuration().configure(url);
 			this.addMappingFileResources(configuration);
+			this.addColumnOrderingStrategy(configuration);
 			this.addInternalHibernateProperties(configuration);
 		}
 		return configuration;
@@ -101,6 +103,14 @@ public class BgSystemDatabaseConnectionService implements HibernateDatabaseConne
 	}
 	
 	/**
+	 * Adds the column ordering strategy.
+	 * @param configuration the configuration
+	 */
+	private void addColumnOrderingStrategy(Configuration configuration) {
+		configuration.setColumnOrderingStrategy(new ColumnOrderingStrategyAsDefinedInClass());
+	}
+	
+	/**
 	 * Adds the hibernate mapping files to the configuration.
 	 * @param conf the current hibernate configuration
 	 */
@@ -112,7 +122,7 @@ public class BgSystemDatabaseConnectionService implements HibernateDatabaseConne
 		BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 		if (bundleWiring==null) return; 
 		
-		Vector<String> mappingResources = new Vector<>(bundleWiring.listResources(mappingFilesPackage, "*.hbm.xml", BundleWiring.LISTRESOURCES_LOCAL));
+		Vector<String> mappingResources = new Vector<>(bundleWiring.listResources(mappingFilesPackage, "*.xml", BundleWiring.LISTRESOURCES_LOCAL));
 		for (int i = 0; i < mappingResources.size(); i++) {
 			String mappingResource = mappingResources.get(i);
 			conf.addResource(mappingResource);
