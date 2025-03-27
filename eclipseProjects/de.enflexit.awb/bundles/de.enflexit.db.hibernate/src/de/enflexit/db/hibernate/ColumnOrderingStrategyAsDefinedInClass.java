@@ -1,17 +1,22 @@
 package de.enflexit.db.hibernate;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard;
-import org.hibernate.dialect.Dialect;
+import org.hibernate.mapping.BasicValue;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.SimpleValue;
 import org.hibernate.mapping.Table;
+import org.hibernate.mapping.Value;
 
 /**
  * The Class ColumnOrderingStrategyAsDefinedInClass.
@@ -27,17 +32,16 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 	@Override
 	public List<Column> orderTableColumns(Table table, Metadata metadata) {
 		
-		System.err.println("[" + this.getClass().getSimpleName() + "] was called for: " + table.getName() + " => " + table.getNameIdentifier());
-		
+		// --- Get attribute positions ------------------------------
 		List<String> entityAttribteList = this.getEntityAttributeList(table, metadata);
-
 		
-		
-		
-		
-		final ArrayList<Column> orderedColumns = new ArrayList<>( table.getColumns() );
-		orderedColumns.sort(new ColumnComparator(metadata));
-		return orderedColumns;
+		if (entityAttribteList!=null) {
+			// --- Sort with the help of the local comparator -------
+			final ArrayList<Column> orderedColumns = new ArrayList<>(table.getColumns());
+			orderedColumns.sort(new ColumnComparator(entityAttribteList));
+			return orderedColumns;
+		}
+		return super.orderTableColumns(table, metadata);
 	}
 	
 	/**
@@ -62,7 +66,6 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 		Field[] attributes = clazz.getDeclaredFields();
 		for (Field field : attributes) {
 			attributeList.add(field.getName());
-
 		}
 		return attributeList;
 	}
@@ -96,30 +99,102 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 	 */
 	protected static class ColumnComparator implements Comparator<Column> {
 		
-		private final Metadata metadata;
+		private final List<String> entityAttribteList;
+		private HashMap<String, Integer> entityAttributePositionHashMap;
 
-		protected ColumnComparator(Metadata metadata) {
-			this.metadata = metadata;
+		protected ColumnComparator(List<String> entityAttribteList) {
+			this.entityAttribteList = entityAttribteList ;
 		}
 
+		/**
+		 * Gets the entity attribute position hash map.
+		 * @return the entity attribute position hash map
+		 */
+		public HashMap<String, Integer> getEntityAttribtePositionHashMap() {
+			if (entityAttributePositionHashMap==null) {
+				entityAttributePositionHashMap = new HashMap<>();
+				for (int i = 0; i < entityAttribteList.size(); i++) {
+					String attribute = entityAttribteList.get(i);
+					entityAttributePositionHashMap.put(attribute, i+1);
+				}
+			}
+			return entityAttributePositionHashMap;
+		}
+		
 		@Override
 		public int compare(Column col1, Column col2) {
 			
-			final Dialect dialect = metadata.getDatabase().getDialect();
+			String collumnAttribute1 = this.getAttributeName(col1);
+			String collumnAttribute2 = this.getAttributeName(col2);
 			
-			final int physicalSizeInBytes1 = physicalSizeInBytes(col1.getSqlTypeCode(metadata), col1.getColumnSize(dialect, metadata ), metadata);
-			final int physicalSizeInBytes2 = physicalSizeInBytes(col2.getSqlTypeCode(metadata), col2.getColumnSize(dialect, metadata ), metadata);
-
-			int cmp = Integer.compare( Integer.max( physicalSizeInBytes1, 4 ), Integer.max( physicalSizeInBytes2, 4 ) );
-			if ( cmp != 0 ) {
-				return cmp;
-			}
-			cmp = Boolean.compare( physicalSizeInBytes1 > 2048, physicalSizeInBytes2 > 2048 );
-			if ( cmp != 0 ) {
-				return cmp;
+			Integer listPosition1 = this.getEntityAttribtePositionHashMap().get(collumnAttribute1);
+			Integer listPosition2 = this.getEntityAttribtePositionHashMap().get(collumnAttribute2);
+			
+			if (listPosition1!=null && listPosition2!=null) {
+				int cmp = Integer.compare(listPosition1, listPosition2 );
+				if (cmp!=0) return cmp;
 			}
 			return col1.getName().compareTo( col2.getName() );
 		}
+		
+		/**
+		 * Returns the classes attribute name that corresponds to the specified column.
+		 *
+		 * @param column the column
+		 * @return the attribute name
+		 */
+		private String getAttributeName(Column column) {
+			
+			// --- Quick solution ? ---------------------------------
+			String attributeName = column.getName(); // as default
+			if (this.getEntityAttribtePositionHashMap().containsKey(attributeName)==true) return attributeName;
+
+			// -- Check the value of the column ---------------------
+			Type javaType = null;
+			Value value = column.getValue();
+			if (value instanceof SimpleValue) {
+				SimpleValue simpleValue = (SimpleValue)value;
+				Properties typeParameters = simpleValue.getTypeParameters();
+				if (typeParameters!=null) {
+					Object propValue = typeParameters.get("org.hibernate.type.ParameterType.propertyName");
+					if (propValue!=null) {
+						attributeName = (String)propValue;
+						if (this.getEntityAttribtePositionHashMap().containsKey(attributeName)==true) return attributeName;
+					}
+				}
+				
+				// --- Try getting the Java Type --------------------
+				if (simpleValue instanceof BasicValue) {
+					javaType = ((BasicValue) simpleValue).getResolvedJavaType();
+				}
+			}
+			
+			// --- Now, guess :-( -----------------------------------
+			String columnName = column.getName();
+			String columnNameToLower = columnName.toLowerCase();
+			String columnNameWithoutUnderscore = columnNameToLower.replace("_", "");
+					
+			boolean isBoolean = javaType.equals(Boolean.TYPE);
+			
+			for (String toCheck : this.entityAttribteList) {
+				String toCheckToLower = toCheck.toLowerCase();
+				String toCheckWithoutUnderscore = toCheckToLower.replace("_", "");
+				
+				if (toCheck.equals(columnName)==true) return toCheck;
+				if (toCheckToLower.equals(columnNameToLower)==true) return toCheck;
+				if (toCheckWithoutUnderscore.equals(columnNameWithoutUnderscore)==true) return toCheck;
+				
+				if (isBoolean==true) {
+					String toCheckPrefixIs  = "is" + toCheckWithoutUnderscore;
+					if (toCheckPrefixIs.equals(columnNameWithoutUnderscore)==true) return toCheck;
+					
+					String toCheckPrefixHas = "has" + toCheckWithoutUnderscore;
+					if (toCheckPrefixHas.equals(columnNameWithoutUnderscore)==true) return toCheck;
+				}
+			}
+			return null;
+		}
+		
 	}
 	
 }

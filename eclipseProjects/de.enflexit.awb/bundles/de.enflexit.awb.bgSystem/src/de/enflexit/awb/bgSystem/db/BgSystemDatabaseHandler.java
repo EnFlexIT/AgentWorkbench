@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 
 import de.enflexit.awb.bgSystem.db.dataModel.BgSystemPlatform;
@@ -185,7 +186,7 @@ public class BgSystemDatabaseHandler {
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
-				Query<?> query = session.createQuery("DELETE FROM BgSystemPlatform", List.class);
+				MutationQuery query = session.createMutationQuery("DELETE FROM BgSystemPlatform");
 			    noOfDeletations = query.executeUpdate();
 				transaction.commit();
 				
@@ -242,7 +243,7 @@ public class BgSystemDatabaseHandler {
 			try {
 				transaction = session.beginTransaction();
 				// --- Clear the table first ------------------------
-				Query<?> query = session.createQuery("DELETE FROM BgSystemPlatform", List.class);
+				MutationQuery query = session.createMutationQuery("DELETE FROM BgSystemPlatform");
 				query.executeUpdate();
 				
 				// --- Save all platforms out of the list -----------  

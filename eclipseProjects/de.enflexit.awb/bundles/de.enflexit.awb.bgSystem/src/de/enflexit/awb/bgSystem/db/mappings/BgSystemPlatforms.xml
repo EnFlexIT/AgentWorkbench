@@ -3,48 +3,12 @@
        
     <description>The minimal mappings for a persistent entity in XML.</description>
     
-    <entity name="Background-System-Platforms" class="de.enflexit.awb.bgSystem.db.dataModel.BgSystemPlatform" access="FIELD">
+    <entity name="BgSystemPlatform" class="de.enflexit.awb.bgSystem.db.dataModel.BgSystemPlatform" access="FIELD">
 		<table name="bg_system_platforms"/>
-
         <attributes>
 			<id name="contactAgent">
 				<column name="contact_agent" length="255"/>
 			</id>
-
-			<basic name="platformName">
-				<column name="platform_name" length="255"/>
-			</basic>
-			<basic name="server">
-				<column name="is_Server" />
-			</basic>
-			<basic name="ipAddress">
-				<column name="ip_address" length="100"/>
-			</basic>
-			<basic name="url">
-				<column name="url" length="255"/>
-			</basic>
-			<basic name="jadePort">
-				<column name="jade_port" />
-			</basic>
-			<basic name="http4mtp">
-				<column name="http4mtp" length="255"/>
-			</basic>            
-
-
-			<basic name="versionMajor">
-	            <column name="version_major" />
-	        </basic>
-			<basic name="versionMinor">
-	            <column name="version_minor" />
-	        </basic>
-	        <basic name="versionMicro">
-	            <column name="version_micro" />
-	        </basic>
-			<basic name="versionBuild">
-	            <column name="version_build" length="50"/>
-	        </basic>
-
-            
         </attributes>
     </entity>
     

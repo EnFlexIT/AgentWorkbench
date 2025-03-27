@@ -23,7 +23,7 @@
 
 	<logger name="de.enflexit.oshi" level="error" />
 	
-  	<logger name="org.hibernate" level="info" />
+  	<logger name="org.hibernate" level="error" />
 	<logger name="org.hibernate.SQL" level="error" />
 	<logger name="org.hibernate.type.descriptor.sql" level="error" />
 	<logger name="org.hibernate.pretty" level="error" />
