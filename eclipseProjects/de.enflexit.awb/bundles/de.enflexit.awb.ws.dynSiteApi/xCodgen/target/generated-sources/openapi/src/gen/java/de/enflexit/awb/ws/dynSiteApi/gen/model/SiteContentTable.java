@@ -1,5 +1,5 @@
 /*
- * Enflex.IT - Dynamic Content Api
+ * EnFlex.IT - Dynamic Content Api
  * This is the Definition of the Api to dynamically fetch content for any enflex.it application
  *
  * The version of the OpenAPI document: 0.0.1
@@ -16,6 +16,7 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
@@ -29,27 +30,12 @@ import jakarta.validation.Valid;
  * SiteContentTable
  */
 @JsonPropertyOrder({
-  SiteContentTable.JSON_PROPERTY_UNIQUE_CONTENT_I_D,
-  SiteContentTable.JSON_PROPERTY_EDITABLE,
-  SiteContentTable.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS,
   SiteContentTable.JSON_PROPERTY_HEADER,
   SiteContentTable.JSON_PROPERTY_DATA_TYPE,
   SiteContentTable.JSON_PROPERTY_DATA
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-03-31T09:56:23.457253900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentTable   {
-  public static final String JSON_PROPERTY_UNIQUE_CONTENT_I_D = "uniqueContentID";
-  @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_I_D)
-  private Integer uniqueContentID;
-
-  public static final String JSON_PROPERTY_EDITABLE = "editable";
-  @JsonProperty(JSON_PROPERTY_EDITABLE)
-  private Boolean editable;
-
-  public static final String JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS = "updatePeriodInSeconds";
-  @JsonProperty(JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS)
-  private Integer updatePeriodInSeconds;
-
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class SiteContentTable extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_HEADER = "header";
   @JsonProperty(JSON_PROPERTY_HEADER)
   private List<String> header = new ArrayList<>();
@@ -61,66 +47,6 @@ public class SiteContentTable   {
   public static final String JSON_PROPERTY_DATA = "data";
   @JsonProperty(JSON_PROPERTY_DATA)
   private List<List<String>> data = new ArrayList<>();
-
-  public SiteContentTable uniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
-    return this;
-  }
-
-  /**
-   * Get uniqueContentID
-   * @return uniqueContentID
-   **/
-  @JsonProperty(value = "uniqueContentID")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUniqueContentID() {
-    return uniqueContentID;
-  }
-
-  public void setUniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
-  }
-
-  public SiteContentTable editable(Boolean editable) {
-    this.editable = editable;
-    return this;
-  }
-
-  /**
-   * Get editable
-   * @return editable
-   **/
-  @JsonProperty(value = "editable")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Boolean getEditable() {
-    return editable;
-  }
-
-  public void setEditable(Boolean editable) {
-    this.editable = editable;
-  }
-
-  public SiteContentTable updatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-    return this;
-  }
-
-  /**
-   * Get updatePeriodInSeconds
-   * @return updatePeriodInSeconds
-   **/
-  @JsonProperty(value = "updatePeriodInSeconds")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUpdatePeriodInSeconds() {
-    return updatePeriodInSeconds;
-  }
-
-  public void setUpdatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-  }
 
   public SiteContentTable header(List<String> header) {
     this.header = header;
@@ -216,27 +142,21 @@ public class SiteContentTable   {
       return false;
     }
     SiteContentTable siteContentTable = (SiteContentTable) o;
-    return Objects.equals(this.uniqueContentID, siteContentTable.uniqueContentID) &&
-        Objects.equals(this.editable, siteContentTable.editable) &&
-        Objects.equals(this.updatePeriodInSeconds, siteContentTable.updatePeriodInSeconds) &&
-        Objects.equals(this.header, siteContentTable.header) &&
+    return super.equals(o) && Objects.equals(this.header, siteContentTable.header) &&
         Objects.equals(this.dataType, siteContentTable.dataType) &&
         Objects.equals(this.data, siteContentTable.data);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uniqueContentID, editable, updatePeriodInSeconds, header, dataType, data);
+    return Objects.hash(super.hashCode(), header, super.hashCode(), dataType, super.hashCode(), data);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentTable {\n");
-    
-    sb.append("    uniqueContentID: ").append(toIndentedString(uniqueContentID)).append("\n");
-    sb.append("    editable: ").append(toIndentedString(editable)).append("\n");
-    sb.append("    updatePeriodInSeconds: ").append(toIndentedString(updatePeriodInSeconds)).append("\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    header: ").append(toIndentedString(header)).append("\n");
     sb.append("    dataType: ").append(toIndentedString(dataType)).append("\n");
     sb.append("    data: ").append(toIndentedString(data)).append("\n");

@@ -3,10 +3,8 @@ package de.enflexit.awb.ws.dynSiteApi;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import de.enflexit.awb.ws.core.AbstractJerseyServletWrapper;
-import de.enflexit.awb.ws.dynSiteApi.gen.Bootstrap;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
-
 
 /**
  * The Class AwbRestApiServlet.

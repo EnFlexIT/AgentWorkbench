@@ -1,5 +1,5 @@
 /*
- * Enflex.IT - Dynamic Content Api
+ * EnFlex.IT - Dynamic Content Api
  * This is the Definition of the Api to dynamically fetch content for any enflex.it application
  *
  * The version of the OpenAPI document: 0.0.1
@@ -16,6 +16,7 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
@@ -25,84 +26,9 @@ import jakarta.validation.Valid;
  * SiteContentXYChart
  */
 @JsonPropertyOrder({
-  SiteContentXYChart.JSON_PROPERTY_UNIQUE_CONTENT_I_D,
-  SiteContentXYChart.JSON_PROPERTY_EDITABLE,
-  SiteContentXYChart.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-03-31T09:56:23.457253900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentXYChart   {
-  public static final String JSON_PROPERTY_UNIQUE_CONTENT_I_D = "uniqueContentID";
-  @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_I_D)
-  private Integer uniqueContentID;
-
-  public static final String JSON_PROPERTY_EDITABLE = "editable";
-  @JsonProperty(JSON_PROPERTY_EDITABLE)
-  private Boolean editable;
-
-  public static final String JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS = "updatePeriodInSeconds";
-  @JsonProperty(JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS)
-  private Integer updatePeriodInSeconds;
-
-  public SiteContentXYChart uniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
-    return this;
-  }
-
-  /**
-   * Get uniqueContentID
-   * @return uniqueContentID
-   **/
-  @JsonProperty(value = "uniqueContentID")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUniqueContentID() {
-    return uniqueContentID;
-  }
-
-  public void setUniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
-  }
-
-  public SiteContentXYChart editable(Boolean editable) {
-    this.editable = editable;
-    return this;
-  }
-
-  /**
-   * Get editable
-   * @return editable
-   **/
-  @JsonProperty(value = "editable")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Boolean getEditable() {
-    return editable;
-  }
-
-  public void setEditable(Boolean editable) {
-    this.editable = editable;
-  }
-
-  public SiteContentXYChart updatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-    return this;
-  }
-
-  /**
-   * Get updatePeriodInSeconds
-   * @return updatePeriodInSeconds
-   **/
-  @JsonProperty(value = "updatePeriodInSeconds")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUpdatePeriodInSeconds() {
-    return updatePeriodInSeconds;
-  }
-
-  public void setUpdatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-  }
-
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class SiteContentXYChart extends AbstractSiteContentChart  {
 
   @Override
   public boolean equals(Object o) {
@@ -112,25 +38,19 @@ public class SiteContentXYChart   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentXYChart siteContentXYChart = (SiteContentXYChart) o;
-    return Objects.equals(this.uniqueContentID, siteContentXYChart.uniqueContentID) &&
-        Objects.equals(this.editable, siteContentXYChart.editable) &&
-        Objects.equals(this.updatePeriodInSeconds, siteContentXYChart.updatePeriodInSeconds);
+    SiteContentXYChart siteContentXYChart = (SiteContentXYChart) o;return super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uniqueContentID, editable, updatePeriodInSeconds);
+    return super.hashCode();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentXYChart {\n");
-    
-    sb.append("    uniqueContentID: ").append(toIndentedString(uniqueContentID)).append("\n");
-    sb.append("    editable: ").append(toIndentedString(editable)).append("\n");
-    sb.append("    updatePeriodInSeconds: ").append(toIndentedString(updatePeriodInSeconds)).append("\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("}");
     return sb.toString();
   }

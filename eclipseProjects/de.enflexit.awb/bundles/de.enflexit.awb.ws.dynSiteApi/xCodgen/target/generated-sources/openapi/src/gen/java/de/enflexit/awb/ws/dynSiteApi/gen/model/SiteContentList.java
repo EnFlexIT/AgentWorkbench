@@ -18,17 +18,53 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * AbstractSiteContentChart
+ * SiteContentList
  */
 @JsonPropertyOrder({
+  SiteContentList.JSON_PROPERTY_CONTENT_LIST
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class AbstractSiteContentChart extends AbstractSiteContent  {
+public class SiteContentList   {
+  public static final String JSON_PROPERTY_CONTENT_LIST = "contentList";
+  @JsonProperty(JSON_PROPERTY_CONTENT_LIST)
+  private List<@Valid AbstractSiteContent> contentList = new ArrayList<>();
+
+  public SiteContentList contentList(List<@Valid AbstractSiteContent> contentList) {
+    this.contentList = contentList;
+    return this;
+  }
+
+  public SiteContentList addContentListItem(AbstractSiteContent contentListItem) {
+    if (this.contentList == null) {
+      this.contentList = new ArrayList<>();
+    }
+    this.contentList.add(contentListItem);
+    return this;
+  }
+
+  /**
+   * Get contentList
+   * @return contentList
+   **/
+  @JsonProperty(value = "contentList")
+  @Schema(description = "")
+  @Valid 
+  public List<@Valid AbstractSiteContent> getContentList() {
+    return contentList;
+  }
+
+  public void setContentList(List<@Valid AbstractSiteContent> contentList) {
+    this.contentList = contentList;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -38,19 +74,21 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AbstractSiteContentChart abstractSiteContentChart = (AbstractSiteContentChart) o;return super.equals(o);
+    SiteContentList siteContentList = (SiteContentList) o;
+    return Objects.equals(this.contentList, siteContentList.contentList);
   }
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return Objects.hash(contentList);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AbstractSiteContentChart {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("class SiteContentList {\n");
+    
+    sb.append("    contentList: ").append(toIndentedString(contentList)).append("\n");
     sb.append("}");
     return sb.toString();
   }

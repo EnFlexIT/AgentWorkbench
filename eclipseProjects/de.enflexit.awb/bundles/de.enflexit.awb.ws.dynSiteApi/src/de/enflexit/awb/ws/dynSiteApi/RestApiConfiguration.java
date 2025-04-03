@@ -9,7 +9,9 @@ import jakarta.ws.rs.core.Variant;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import de.enflexit.awb.ws.dynSiteApi.gen.GetContentApi;
 import de.enflexit.awb.ws.dynSiteApi.gen.JacksonJsonProvider;
+import de.enflexit.awb.ws.dynSiteApi.gen.SetContentApi;
 
 
 /**
@@ -20,8 +22,8 @@ import de.enflexit.awb.ws.dynSiteApi.gen.JacksonJsonProvider;
 @ApplicationPath("/" + RestApiConfiguration.APPLICATION_CONTEXT_PATH)
 public class RestApiConfiguration extends ResourceConfig {
 
-	public static final String APPLICATION_NAME = "Dynamic Site Content - API";
-	public static final String APPLICATION_CONTEXT_PATH = "dsc";
+	public static final String APPLICATION_NAME = "Dynamic Content - API";
+	public static final String APPLICATION_CONTEXT_PATH = "dc";
 	
 	public static final String RESPONSE_ENCODING = "UTF-8";
 	public static final Locale RESPONSE_LOCALE= Locale.ENGLISH;
@@ -43,11 +45,8 @@ public class RestApiConfiguration extends ResourceConfig {
 	private void configureEndpoints() {
 		this.register(JacksonJsonProvider.class);
 	
-//		this.register(UserApi.class);
-//		this.register(InfoApi.class);
-//		this.register(LoadApi.class);
-//		this.register(ExecutionStateApi.class);
-//		this.register(VersionApi.class);
+		this.register(GetContentApi.class);
+		this.register(SetContentApi.class);
 	}
 	
 	/**

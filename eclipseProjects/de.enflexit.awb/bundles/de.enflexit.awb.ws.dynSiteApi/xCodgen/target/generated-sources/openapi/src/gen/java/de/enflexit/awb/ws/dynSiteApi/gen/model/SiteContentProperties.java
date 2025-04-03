@@ -1,5 +1,5 @@
 /*
- * Enflex.IT - Dynamic Content Api
+ * EnFlex.IT - Dynamic Content Api
  * This is the Definition of the Api to dynamically fetch content for any enflex.it application
  *
  * The version of the OpenAPI document: 0.0.1
@@ -16,9 +16,12 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
@@ -27,157 +30,40 @@ import jakarta.validation.Valid;
  * SiteContentProperties
  */
 @JsonPropertyOrder({
-  SiteContentProperties.JSON_PROPERTY_UNIQUE_CONTENT_I_D,
-  SiteContentProperties.JSON_PROPERTY_EDITABLE,
-  SiteContentProperties.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS,
-  SiteContentProperties.JSON_PROPERTY_KEY,
-  SiteContentProperties.JSON_PROPERTY_VALUE,
-  SiteContentProperties.JSON_PROPERTY_VALUE_TYPE
+  SiteContentProperties.JSON_PROPERTY_PROPERTY_ENTRIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-03-31T09:56:23.457253900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentProperties   {
-  public static final String JSON_PROPERTY_UNIQUE_CONTENT_I_D = "uniqueContentID";
-  @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_I_D)
-  private Integer uniqueContentID;
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class SiteContentProperties extends AbstractSiteContent  {
+  public static final String JSON_PROPERTY_PROPERTY_ENTRIES = "propertyEntries";
+  @JsonProperty(JSON_PROPERTY_PROPERTY_ENTRIES)
+  private List<@Valid PropertyEntry> propertyEntries = new ArrayList<>();
 
-  public static final String JSON_PROPERTY_EDITABLE = "editable";
-  @JsonProperty(JSON_PROPERTY_EDITABLE)
-  private Boolean editable;
+  public SiteContentProperties propertyEntries(List<@Valid PropertyEntry> propertyEntries) {
+    this.propertyEntries = propertyEntries;
+    return this;
+  }
 
-  public static final String JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS = "updatePeriodInSeconds";
-  @JsonProperty(JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS)
-  private Integer updatePeriodInSeconds;
-
-  public static final String JSON_PROPERTY_KEY = "key";
-  @JsonProperty(JSON_PROPERTY_KEY)
-  private String key;
-
-  public static final String JSON_PROPERTY_VALUE = "value";
-  @JsonProperty(JSON_PROPERTY_VALUE)
-  private String value;
-
-  public static final String JSON_PROPERTY_VALUE_TYPE = "valueType";
-  @JsonProperty(JSON_PROPERTY_VALUE_TYPE)
-  private ValueType valueType;
-
-  public SiteContentProperties uniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
+  public SiteContentProperties addPropertyEntriesItem(PropertyEntry propertyEntriesItem) {
+    if (this.propertyEntries == null) {
+      this.propertyEntries = new ArrayList<>();
+    }
+    this.propertyEntries.add(propertyEntriesItem);
     return this;
   }
 
   /**
-   * Get uniqueContentID
-   * @return uniqueContentID
+   * Get propertyEntries
+   * @return propertyEntries
    **/
-  @JsonProperty(value = "uniqueContentID")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUniqueContentID() {
-    return uniqueContentID;
+  @JsonProperty(value = "propertyEntries")
+  @Schema(description = "")
+  @Valid 
+  public List<@Valid PropertyEntry> getPropertyEntries() {
+    return propertyEntries;
   }
 
-  public void setUniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
-  }
-
-  public SiteContentProperties editable(Boolean editable) {
-    this.editable = editable;
-    return this;
-  }
-
-  /**
-   * Get editable
-   * @return editable
-   **/
-  @JsonProperty(value = "editable")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Boolean getEditable() {
-    return editable;
-  }
-
-  public void setEditable(Boolean editable) {
-    this.editable = editable;
-  }
-
-  public SiteContentProperties updatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-    return this;
-  }
-
-  /**
-   * Get updatePeriodInSeconds
-   * @return updatePeriodInSeconds
-   **/
-  @JsonProperty(value = "updatePeriodInSeconds")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUpdatePeriodInSeconds() {
-    return updatePeriodInSeconds;
-  }
-
-  public void setUpdatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-  }
-
-  public SiteContentProperties key(String key) {
-    this.key = key;
-    return this;
-  }
-
-  /**
-   * Get key
-   * @return key
-   **/
-  @JsonProperty(value = "key")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public SiteContentProperties value(String value) {
-    this.value = value;
-    return this;
-  }
-
-  /**
-   * Get value
-   * @return value
-   **/
-  @JsonProperty(value = "value")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  public SiteContentProperties valueType(ValueType valueType) {
-    this.valueType = valueType;
-    return this;
-  }
-
-  /**
-   * Get valueType
-   * @return valueType
-   **/
-  @JsonProperty(value = "valueType")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public ValueType getValueType() {
-    return valueType;
-  }
-
-  public void setValueType(ValueType valueType) {
-    this.valueType = valueType;
+  public void setPropertyEntries(List<@Valid PropertyEntry> propertyEntries) {
+    this.propertyEntries = propertyEntries;
   }
 
 
@@ -190,30 +76,20 @@ public class SiteContentProperties   {
       return false;
     }
     SiteContentProperties siteContentProperties = (SiteContentProperties) o;
-    return Objects.equals(this.uniqueContentID, siteContentProperties.uniqueContentID) &&
-        Objects.equals(this.editable, siteContentProperties.editable) &&
-        Objects.equals(this.updatePeriodInSeconds, siteContentProperties.updatePeriodInSeconds) &&
-        Objects.equals(this.key, siteContentProperties.key) &&
-        Objects.equals(this.value, siteContentProperties.value) &&
-        Objects.equals(this.valueType, siteContentProperties.valueType);
+    return super.equals(o) && Objects.equals(this.propertyEntries, siteContentProperties.propertyEntries);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uniqueContentID, editable, updatePeriodInSeconds, key, value, valueType);
+    return Objects.hash(super.hashCode(), propertyEntries);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentProperties {\n");
-    
-    sb.append("    uniqueContentID: ").append(toIndentedString(uniqueContentID)).append("\n");
-    sb.append("    editable: ").append(toIndentedString(editable)).append("\n");
-    sb.append("    updatePeriodInSeconds: ").append(toIndentedString(updatePeriodInSeconds)).append("\n");
-    sb.append("    key: ").append(toIndentedString(key)).append("\n");
-    sb.append("    value: ").append(toIndentedString(value)).append("\n");
-    sb.append("    valueType: ").append(toIndentedString(valueType)).append("\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    propertyEntries: ").append(toIndentedString(propertyEntries)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -4,7 +4,7 @@ Bundle-Name: AWB WS-Rest API Bundle
 Bundle-SymbolicName: de.enflexit.awb.ws.dynSiteApi
 Bundle-Version: 0.4.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.dynSiteApi
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbWebHandlerApiService.xml
 Require-Bundle: jakarta.servlet-api,

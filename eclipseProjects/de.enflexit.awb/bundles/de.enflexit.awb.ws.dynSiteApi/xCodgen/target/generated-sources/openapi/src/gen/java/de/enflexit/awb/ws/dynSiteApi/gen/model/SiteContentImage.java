@@ -1,5 +1,5 @@
 /*
- * Enflex.IT - Dynamic Content Api
+ * EnFlex.IT - Dynamic Content Api
  * This is the Definition of the Api to dynamically fetch content for any enflex.it application
  *
  * The version of the OpenAPI document: 0.0.1
@@ -16,6 +16,7 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
@@ -25,113 +26,13 @@ import jakarta.validation.Valid;
  * SiteContentImage
  */
 @JsonPropertyOrder({
-  SiteContentImage.JSON_PROPERTY_UNIQUE_CONTENT_I_D,
-  SiteContentImage.JSON_PROPERTY_EDITABLE,
-  SiteContentImage.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS,
-  SiteContentImage.JSON_PROPERTY_MIME_TYPE,
   SiteContentImage.JSON_PROPERTY_DATA_IN_B64
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-03-31T09:56:23.457253900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentImage   {
-  public static final String JSON_PROPERTY_UNIQUE_CONTENT_I_D = "uniqueContentID";
-  @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_I_D)
-  private Integer uniqueContentID;
-
-  public static final String JSON_PROPERTY_EDITABLE = "editable";
-  @JsonProperty(JSON_PROPERTY_EDITABLE)
-  private Boolean editable;
-
-  public static final String JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS = "updatePeriodInSeconds";
-  @JsonProperty(JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS)
-  private Integer updatePeriodInSeconds;
-
-  public static final String JSON_PROPERTY_MIME_TYPE = "mimeType";
-  @JsonProperty(JSON_PROPERTY_MIME_TYPE)
-  private String mimeType;
-
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class SiteContentImage extends SiteContentMedia  {
   public static final String JSON_PROPERTY_DATA_IN_B64 = "dataInB64";
   @JsonProperty(JSON_PROPERTY_DATA_IN_B64)
   private String dataInB64;
-
-  public SiteContentImage uniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
-    return this;
-  }
-
-  /**
-   * Get uniqueContentID
-   * @return uniqueContentID
-   **/
-  @JsonProperty(value = "uniqueContentID")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUniqueContentID() {
-    return uniqueContentID;
-  }
-
-  public void setUniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
-  }
-
-  public SiteContentImage editable(Boolean editable) {
-    this.editable = editable;
-    return this;
-  }
-
-  /**
-   * Get editable
-   * @return editable
-   **/
-  @JsonProperty(value = "editable")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Boolean getEditable() {
-    return editable;
-  }
-
-  public void setEditable(Boolean editable) {
-    this.editable = editable;
-  }
-
-  public SiteContentImage updatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-    return this;
-  }
-
-  /**
-   * Get updatePeriodInSeconds
-   * @return updatePeriodInSeconds
-   **/
-  @JsonProperty(value = "updatePeriodInSeconds")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getUpdatePeriodInSeconds() {
-    return updatePeriodInSeconds;
-  }
-
-  public void setUpdatePeriodInSeconds(Integer updatePeriodInSeconds) {
-    this.updatePeriodInSeconds = updatePeriodInSeconds;
-  }
-
-  public SiteContentImage mimeType(String mimeType) {
-    this.mimeType = mimeType;
-    return this;
-  }
-
-  /**
-   * Get mimeType
-   * @return mimeType
-   **/
-  @JsonProperty(value = "mimeType")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getMimeType() {
-    return mimeType;
-  }
-
-  public void setMimeType(String mimeType) {
-    this.mimeType = mimeType;
-  }
 
   public SiteContentImage dataInB64(String dataInB64) {
     this.dataInB64 = dataInB64;
@@ -163,27 +64,19 @@ public class SiteContentImage   {
       return false;
     }
     SiteContentImage siteContentImage = (SiteContentImage) o;
-    return Objects.equals(this.uniqueContentID, siteContentImage.uniqueContentID) &&
-        Objects.equals(this.editable, siteContentImage.editable) &&
-        Objects.equals(this.updatePeriodInSeconds, siteContentImage.updatePeriodInSeconds) &&
-        Objects.equals(this.mimeType, siteContentImage.mimeType) &&
-        Objects.equals(this.dataInB64, siteContentImage.dataInB64);
+    return super.equals(o) && Objects.equals(this.dataInB64, siteContentImage.dataInB64);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uniqueContentID, editable, updatePeriodInSeconds, mimeType, dataInB64);
+    return Objects.hash(super.hashCode(), dataInB64);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentImage {\n");
-    
-    sb.append("    uniqueContentID: ").append(toIndentedString(uniqueContentID)).append("\n");
-    sb.append("    editable: ").append(toIndentedString(editable)).append("\n");
-    sb.append("    updatePeriodInSeconds: ").append(toIndentedString(updatePeriodInSeconds)).append("\n");
-    sb.append("    mimeType: ").append(toIndentedString(mimeType)).append("\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    dataInB64: ").append(toIndentedString(dataInB64)).append("\n");
     sb.append("}");
     return sb.toString();

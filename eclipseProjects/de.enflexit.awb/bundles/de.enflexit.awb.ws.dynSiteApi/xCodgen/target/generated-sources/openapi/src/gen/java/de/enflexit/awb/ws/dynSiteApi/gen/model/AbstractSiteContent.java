@@ -1,5 +1,5 @@
 /*
- * Enflex.IT - Dynamic Content Api
+ * EnFlex.IT - Dynamic Content Api
  * This is the Definition of the Api to dynamically fetch content for any enflex.it application
  *
  * The version of the OpenAPI document: 0.0.1
@@ -14,8 +14,11 @@
 package de.enflexit.awb.ws.dynSiteApi.gen.model;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
@@ -29,7 +32,16 @@ import jakarta.validation.Valid;
   AbstractSiteContent.JSON_PROPERTY_EDITABLE,
   AbstractSiteContent.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-03-31T09:56:23.457253900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContent", visible = true)
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = SiteContentImage.class, name = "SiteContentImage"),
+  @JsonSubTypes.Type(value = SiteContentProperties.class, name = "SiteContentProperties"),
+  @JsonSubTypes.Type(value = SiteContentTable.class, name = "SiteContentTable"),
+  @JsonSubTypes.Type(value = SiteContentText.class, name = "SiteContentText"),
+  @JsonSubTypes.Type(value = SiteContentTimeSeriesChart.class, name = "SiteContentTimeSeriesChart"),
+  @JsonSubTypes.Type(value = SiteContentXYChart.class, name = "SiteContentXYChart"),
+})
+
 public class AbstractSiteContent   {
   public static final String JSON_PROPERTY_UNIQUE_CONTENT_I_D = "uniqueContentID";
   @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_I_D)

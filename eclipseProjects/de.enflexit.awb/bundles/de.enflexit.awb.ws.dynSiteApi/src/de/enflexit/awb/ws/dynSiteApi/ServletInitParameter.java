@@ -2,6 +2,9 @@ package de.enflexit.awb.ws.dynSiteApi;
 
 import java.util.HashMap;
 
+import de.enflexit.awb.ws.dynSiteApi.impl.GetContentApiServiceImpl;
+import de.enflexit.awb.ws.dynSiteApi.impl.SetContentApiServiceImpl;
+
 
 /**
  * The Class ServletInitParameter.
@@ -16,11 +19,9 @@ public class ServletInitParameter extends HashMap<String, String>{
 	 * Instantiates a new awb rest api init parameter.
 	 */
 	public ServletInitParameter() {
+
+		this.put("GetContentApi.implementation", GetContentApiServiceImpl.class.getName());
+		this.put("SetContentApi.implementation", SetContentApiServiceImpl.class.getName());
 		
-//		this.put("UserApi.implementation", UserApiImpl.class.getName());
-//		this.put("InfoApi.implementation", InfoApiImpl.class.getName());
-//		this.put("LoadApi.implementation", LoadApiImpl.class.getName());
-//		this.put("ExecutionStateApi.implementation", ExecutionStateApiImpl.class.getName());
-//		this.put("VersionApi.implementation", VersionApiImpl.class.getName());
 	}
 }
