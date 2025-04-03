@@ -4,7 +4,7 @@ Bundle-Name: JADE Tools
 Bundle-SymbolicName: de.enflexit.jade.tools
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.jade.phonebook
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: de.enflexit.common
 Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.project,

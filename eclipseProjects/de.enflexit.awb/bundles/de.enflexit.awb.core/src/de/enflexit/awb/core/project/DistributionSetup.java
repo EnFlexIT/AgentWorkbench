@@ -5,11 +5,9 @@ import java.io.Serializable;
 import de.enflexit.awb.simulation.load.LoadThresholdLevels;
 
 /**
- * This class represents the model data for the distribution of an agency, which
- * can be configured in the tab {@link Distribution} of the simulation setup.
+ * This class represents the model data for the distribution of an agency that 
+ * can be configured in the tab 'Distribution' of the simulation setup.
  *  
- * @see Distribution
- * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen 
  */
 public class DistributionSetup implements Serializable {

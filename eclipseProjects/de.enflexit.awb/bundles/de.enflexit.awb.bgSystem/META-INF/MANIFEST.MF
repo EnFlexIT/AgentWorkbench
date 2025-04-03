@@ -7,7 +7,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.enflexit.awb.bgSystem.BundleActivator
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Export-Package: de.enflexit.awb.bgSystem,
  de.enflexit.awb.bgSystem.agents,

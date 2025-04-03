@@ -4,7 +4,7 @@ Bundle-Name: Swagger 2.x for OpenAPI 3.0
 Bundle-SymbolicName: de.enflexit.awb.ws.swagger2x
 Bundle-Version: 2.2.15.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.swagger2x
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
 Require-Bundle: jakarta.ws.rs-api;bundle-version="3.1.0",

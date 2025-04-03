@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.awb.ws.core;singleton:=true
 Bundle-Version: 11.0.14.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.ws.core
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Activator: de.enflexit.awb.ws.AwbWsActivator
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbWebServerService.xml 

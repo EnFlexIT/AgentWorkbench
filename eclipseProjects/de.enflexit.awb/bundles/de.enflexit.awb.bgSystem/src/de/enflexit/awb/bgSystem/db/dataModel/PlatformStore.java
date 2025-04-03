@@ -6,7 +6,7 @@ import java.util.List;
 import de.enflexit.awb.bgSystem.db.BgSystemDatabaseHandler;
 
 /**
- * The Class PlatformStore is used by the {@link ServerMasterAgent} to organize
+ * The Class PlatformStore is used by the ServerMasterAgent to organize
  * the available platforms.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen

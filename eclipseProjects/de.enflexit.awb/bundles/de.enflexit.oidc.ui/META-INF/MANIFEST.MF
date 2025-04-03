@@ -10,4 +10,4 @@ Import-Package: de.enflexit.awb.baseUI,
 Require-Bundle: de.enflexit.oidc
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21

@@ -5,7 +5,7 @@ Bundle-Name: PostgreSQL - Integration
 Bundle-SymbolicName: de.enflexit.db.postgres
 Bundle-Version: 42.7.5.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/dbService.xml

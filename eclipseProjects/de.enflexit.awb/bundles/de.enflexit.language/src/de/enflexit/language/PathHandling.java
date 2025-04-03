@@ -16,7 +16,7 @@ import org.osgi.framework.FrameworkUtil;
  * 	<li>an application base path {@link #getApplicationBasePath(Class)}</li>
  * 	<li>an properties directory that is always <b>{basePath}/properties/</b> @see #</li>
  *  <li>depending on the operating system, the path for logging files</li>
- * <ul>
+ * </ul>
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */

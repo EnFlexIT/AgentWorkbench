@@ -5,7 +5,7 @@ Bundle-Name: Agent.Workbench - API Help
 Bundle-SymbolicName: de.enflexit.awb.help;singleton:=true
 Bundle-Vendor: EnFlex.IT
 Bundle-Version: 2.4.2.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: de.enflexit.awb.core,
  de.enflexit.awb.baseUI,
  de.enflexit.awb.desktop,

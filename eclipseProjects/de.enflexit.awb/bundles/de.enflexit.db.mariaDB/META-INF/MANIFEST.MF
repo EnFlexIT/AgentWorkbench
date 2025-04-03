@@ -5,7 +5,7 @@ Bundle-Name: MariaDB - Integration
 Bundle-SymbolicName: de.enflexit.db.mariaDB
 Bundle-Version: 3.5.2.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/dbService.xml

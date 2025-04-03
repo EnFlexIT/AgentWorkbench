@@ -4,7 +4,7 @@ Bundle-Name: Jung
 Bundle-SymbolicName: org.agentgui.lib.jung
 Bundle-Version: 2.2.0.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.agentgui.lib.jung
 Export-Package: com.google.common.annotations,
  com.google.common.base,

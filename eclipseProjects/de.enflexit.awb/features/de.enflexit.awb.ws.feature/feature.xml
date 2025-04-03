@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.enflexit.awb.ws.feature"
-      label="Agent.Workbench WS-Feature"
+      label="AWB Web Server-Feature"
       version="12.0.16.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.awb.ws.core"
@@ -93,14 +93,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.jetty.alpn.conscrypt.client"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.alpn.conscrypt.server"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.jetty.alpn.java.client"
          version="0.0.0"/>
 
@@ -129,19 +121,11 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.jetty.ee10.apache-jsp"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.jetty.ee10.osgi.alpn.fragment"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.jetty.ee10.osgi.boot"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee10.osgi.boot.jsp"
          version="0.0.0"/>
 
    <plugin
@@ -169,63 +153,11 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.jetty.ee8.annotations"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.apache-jsp"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.openid"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.osgi.boot"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.osgi.boot.jsp"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.plus"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.proxy"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.security"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.server"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.servlet"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.servlets"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.ee8.webapp"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.jetty.http.spi"
          version="0.0.0"/>
 
    <plugin
          id="org.eclipse.jetty.http2.client"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.http2.client.http"
          version="0.0.0"/>
 
    <plugin
@@ -242,10 +174,6 @@
 
    <plugin
          id="org.eclipse.jetty.http3.client"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.jetty.http3.client.http"
          version="0.0.0"/>
 
    <plugin
@@ -322,6 +250,10 @@
 
    <plugin
          id="de.enflexit.awb.ws.restapi"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.awb.ws.dynSiteApi"
          version="0.0.0"/>
 
 </feature>

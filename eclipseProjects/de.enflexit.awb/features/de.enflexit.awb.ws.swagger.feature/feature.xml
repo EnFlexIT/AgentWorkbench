@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.enflexit.awb.ws.swagger.feature"
-      label="Agent.Workbench Swagger-Feature"
+      label="AWB Swagger-Feature"
       version="2.2.15.qualifier"
       provider-name="EnFlex.IT">
 

@@ -7,7 +7,7 @@ Bundle-SymbolicName: de.enflexit.awb.baseUI;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Require-Bundle: de.enflexit.awb.core
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Service-Component: OSGI-INF/baseUiService.xml
 Import-Package: de.enflexit.awb.bgSystem.db,
  de.enflexit.common,

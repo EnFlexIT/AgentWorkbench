@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Automatic-Module-Name: de.enflexit.logging
 Bundle-SymbolicName: de.enflexit.logging
-Bundle-Name: Bundle for SLF4J + Logback
+Bundle-Name: SLF4J + Logback
 Bundle-Version: 1.5.17.qualifier
 Export-Package: ch.qos.logback.classic;version="1.5.17",
  ch.qos.logback.classic.boolex;version="1.5.17",
@@ -89,6 +89,6 @@ Bundle-ClassPath: .,
  lib/slf4j-api-2.0.17.jar,
  lib/logback-classic-db-1.2.11.1.jar,
  lib/logback-core-db-1.2.11.1.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.osgi
 Import-Package: jade.core

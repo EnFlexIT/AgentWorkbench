@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.enflexit.awb.core.feature"
-      label="Agent.Workbench Core-Feature"
+      label="AWB Core-Feature"
       version="3.0.0.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.awb.core"
@@ -77,11 +77,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.core.net.linux"
-         os="linux"
-         version="0.0.0"/>
-
-   <plugin
          id="wrapped.es.urjc.etsii.grafo.scimark"
          version="0.0.0"/>
 
@@ -99,11 +94,6 @@
 
    <plugin
          id="de.enflexit.awb.bgSystem"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.core.net.win32"
-         os="win32"
          version="0.0.0"/>
 
    <plugin

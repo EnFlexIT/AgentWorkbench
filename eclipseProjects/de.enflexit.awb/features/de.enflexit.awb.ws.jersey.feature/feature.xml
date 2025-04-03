@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.enflexit.awb.ws.jersey.feature"
-      label="Agent.Workbench Jersey-Feature"
+      label="AWB Jersey-Feature"
       version="3.1.10.qualifier"
       provider-name="Enflex.IT">
 
@@ -72,9 +72,5 @@
    <plugin
          id="org.glassfish.jersey.media.jersey-media-multipart"
          version="3.1.10"/>
-
-   <plugin
-         id="jakarta.el"
-         version="0.0.0"/>
 
 </feature>

@@ -6,7 +6,7 @@ Automatic-Module-Name: org.awb.env.networkModel.maps
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Service-Component: OSGI-INF/BaseMapService.xml
 Bundle-ClassPath: .,
  lib/jxMapViewer/jxmapviewer2-2.6.jar

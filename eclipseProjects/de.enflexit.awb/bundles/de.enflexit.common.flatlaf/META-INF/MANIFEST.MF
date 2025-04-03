@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.common.flatlaf
 Automatic-Module-Name: de.enflexit.common.flatlaf
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ClassPath: .,
  lib/flatlaf-3.4.1.jar,
  lib/flatlaf-intellij-themes-3.4.1.jar

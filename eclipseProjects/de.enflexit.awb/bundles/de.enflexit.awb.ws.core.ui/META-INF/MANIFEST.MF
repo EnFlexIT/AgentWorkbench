@@ -6,7 +6,7 @@ Automatic-Module-Name: de.enflexit.awb.ws.core.ui
 Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: de.enflexit.awb.ws.client,
  de.enflexit.awb.ws.core,
  org.eclipse.jetty.server,

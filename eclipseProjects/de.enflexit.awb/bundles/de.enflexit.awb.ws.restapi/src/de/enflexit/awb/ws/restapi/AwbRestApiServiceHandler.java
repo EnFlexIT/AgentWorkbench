@@ -31,7 +31,7 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 	public Handler getHandler() {
 		if (servletContextHandler==null) {
 			servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-			servletContextHandler.setContextPath("/" + RestApiConfiguration.APPLICATION_CONTEXT_PATH + "/");
+			servletContextHandler.setContextPath("/" + RestApiConfiguration.APPLICATION_CONTEXT_PATH);
 			
 			ServletHolder jersey = servletContextHandler.addServlet(JereseyServletContainer.class, "/*");
 			jersey.setInitParameters(new ServletInitParameter());

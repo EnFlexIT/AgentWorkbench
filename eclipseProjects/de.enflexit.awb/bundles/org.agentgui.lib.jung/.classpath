@@ -8,6 +8,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jung-io-2.2.0.jar" sourcepath="lib/jung-io-2.2.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-visualization-2.2.0.jar" sourcepath="lib/jung-visualization-2.2.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

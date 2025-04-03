@@ -7,7 +7,7 @@ Export-Package: de.enflexit.awb.remoteControl
 Require-Bundle: com.google.gson,
  de.enflexit.common
 Automatic-Module-Name: de.enflexit.awb.remoteControl
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.environment,
  de.enflexit.awb.core.jade,

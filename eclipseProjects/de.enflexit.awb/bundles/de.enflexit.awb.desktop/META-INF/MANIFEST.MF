@@ -12,7 +12,7 @@ Export-Package: de.enflexit.awb.desktop,
  de.enflexit.awb.desktop.project.setup,
  de.enflexit.awb.desktop.project.update
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.components,
  de.enflexit.awb.baseUI.console,

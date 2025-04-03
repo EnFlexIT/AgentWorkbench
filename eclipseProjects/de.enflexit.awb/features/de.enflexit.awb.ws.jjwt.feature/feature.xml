@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.enflexit.awb.ws.jjwt.feature"
-      label="Agent.Workbench JJWT-Feature"
+      label="AWB JJWT-Feature"
       version="0.12.5.qualifier"
       provider-name="Enflex.IT">
 
@@ -23,12 +23,10 @@
 
    <plugin
          id="io.jsonwebtoken.jjwt-gson"
-         os="linux,macosx,win32"
          version="0.0.0"/>
 
    <plugin
          id="io.jsonwebtoken.jjwt-impl"
-         os="linux,macosx,win32"
          version="0.0.0"/>
 
 </feature>

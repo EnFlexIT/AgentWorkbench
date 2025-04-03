@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.enflexit.db.feature"
-      label="Agent.Workbench Database-Feature"
+      label="AWB Database-Feature"
       version="5.6.15.qualifier"
       provider-name="EnFlex.IT"
       os="linux,macosx,win32"

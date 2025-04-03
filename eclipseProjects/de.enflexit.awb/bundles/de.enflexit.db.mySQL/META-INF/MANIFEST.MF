@@ -5,7 +5,7 @@ Bundle-Name: MySQL - Integration
 Bundle-SymbolicName: de.enflexit.db.mySQL
 Bundle-Version: 9.2.0.qualifier
 Bundle-Vendor: EnFlex.IT
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/dbService.xml

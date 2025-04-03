@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.geography
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex:IT
 Automatic-Module-Name: de.enflexit.geography
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.geography,
  de.enflexit.geography.coordinates,
  de.enflexit.geography.coordinates.ui,

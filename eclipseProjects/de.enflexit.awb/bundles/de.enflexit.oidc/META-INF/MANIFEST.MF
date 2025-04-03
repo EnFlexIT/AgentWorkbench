@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OIDC
 Bundle-SymbolicName: de.enflexit.oidc
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.oidc;uses:="de.enflexit.api,javax.net.ssl,javax.swing"
 Require-Bundle: oauth2-oidc-sdk,
  com.nimbusds.nimbus-jose-jwt,

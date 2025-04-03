@@ -8,7 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/swagger-integration-jakarta-2.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swagger-jaxrs2-jakarta-2.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swagger-models-jakarta-2.2.15.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
