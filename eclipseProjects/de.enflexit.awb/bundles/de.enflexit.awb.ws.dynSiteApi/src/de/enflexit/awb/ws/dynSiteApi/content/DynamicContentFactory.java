@@ -1,12 +1,20 @@
-package de.enflexit.awb.ws.dynSiteApi.samples;
+/*
+ * 
+ */
+package de.enflexit.awb.ws.dynSiteApi.content;
 
+import java.util.List;
+
+import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
 
 /**
  * A factory for creating DynamicContentExample objects.
  */
-public class DynamicContentExampleFactory {
+public class DynamicContentFactory {
 
 	/**
 	 * Creates a new DynamicContentExample object.
@@ -54,6 +62,44 @@ public class DynamicContentExampleFactory {
 		scImage.setMimeType(mimeType);
 		scImage.setDataInB64(dataInBase64);
 		return scImage;
+	}
+	
+	
+	/**
+	 * Creates a new DynamicContentExample object.
+	 *
+	 * @param uniqueContentID the unique content ID
+	 * @param updatePeriodInSeconds the update period in seconds
+	 * @param isEditable the is editable
+	 * @param peList the list of PropertyEntry
+	 * @return a new instance of the type SiteContentImage
+	 */
+	public static SiteContentProperties createSiteContentProperties(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<PropertyEntry> peList) {
+		
+		SiteContentProperties scProps = new SiteContentProperties();
+		scProps.setUniqueContentID(uniqueContentID);
+		scProps.setUpdatePeriodInSeconds(updatePeriodInSeconds);
+		scProps.setEditable(isEditable);
+		
+		scProps.setPropertyEntries(peList);
+		return scProps;
+	}
+
+	/**
+	 * Creates a new DynamicContentExample object.
+	 *
+	 * @param key the key
+	 * @param valueType the value type
+	 * @param value the value
+	 * @return the property entry
+	 */
+	public static PropertyEntry createPropertyEntry(String key, ValueType valueType, String value) {
+		
+		PropertyEntry pe = new PropertyEntry();
+		pe.setKey(key);
+		pe.setValueType(valueType);
+		pe.setValue(value);
+		return pe;
 	}
 	
 }

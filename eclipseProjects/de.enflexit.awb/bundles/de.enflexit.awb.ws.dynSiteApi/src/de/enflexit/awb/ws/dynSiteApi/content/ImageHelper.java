@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.dynSiteApi.samples;
+package de.enflexit.awb.ws.dynSiteApi.content;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;

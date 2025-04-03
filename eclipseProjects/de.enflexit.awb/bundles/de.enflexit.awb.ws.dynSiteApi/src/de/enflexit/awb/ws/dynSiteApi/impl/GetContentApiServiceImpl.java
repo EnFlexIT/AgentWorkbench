@@ -1,12 +1,17 @@
 package de.enflexit.awb.ws.dynSiteApi.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.enflexit.awb.ws.dynSiteApi.RestApiConfiguration;
+import de.enflexit.awb.ws.dynSiteApi.content.DynamicContentFactory;
+import de.enflexit.awb.ws.dynSiteApi.content.ImageHelper;
 import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
 import de.enflexit.awb.ws.dynSiteApi.gen.GetContentApiService;
 import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
-import de.enflexit.awb.ws.dynSiteApi.samples.DynamicContentExampleFactory;
-import de.enflexit.awb.ws.dynSiteApi.samples.ImageHelper;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
@@ -49,25 +54,37 @@ public class GetContentApiServiceImpl extends GetContentApiService {
 
 		switch (menuID) {
 		case -1: 
-			scList.addContentListItem(DynamicContentExampleFactory.createSiteContentText(1, 0,  false, null, "Example Text"));
-			scList.addContentListItem(DynamicContentExampleFactory.createSiteContentText(2, 10, false, null, "Example Text that should be updated every 10 seconds"));
-			scList.addContentListItem(DynamicContentExampleFactory.createSiteContentText(3, 0,  true,  null, "Example Text that is to edit"));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentText(1, 0,  false, null, "Example Text"));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentText(2, 10, false, null, "Example Text that should be updated every 10 seconds"));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentText(3, 0,  true,  null, "Example Text that is to edit"));
 			break;
 			
 		case -2:
 			String image1 = ImageHelper.getImageIconBase64Encoded("awb48.png");
-			scList.addContentListItem(DynamicContentExampleFactory.createSiteContentImage(4, 0,  false, "image/png", image1));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(4, 0,  false, "image/png", image1));
 
 			String image2 = ImageHelper.getImageIconBase64Encoded("components.gif");
-			scList.addContentListItem(DynamicContentExampleFactory.createSiteContentImage(5, 10, true,  "image/gif", image2));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(5, 10, true,  "image/gif", image2));
 			
 			String image3 = ImageHelper.getImageIconBase64Encoded("splash.bmp");
-			scList.addContentListItem(DynamicContentExampleFactory.createSiteContentImage(6, 0,  false, "image/bmp", image3));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(6, 0,  false, "image/bmp", image3));
 
 			String image4 = ImageHelper.getImageIconBase64Encoded("Survey_Logo.jpg");
-			scList.addContentListItem(DynamicContentExampleFactory.createSiteContentImage(7, 0,  true,  "image/jpg", image4));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(7, 0,  true,  "image/jpg", image4));
 			break;
 
+		case -3:
+			List<PropertyEntry> peList = new ArrayList<>();
+			peList.add(DynamicContentFactory.createPropertyEntry("example.String", ValueType.STRING, "TestValue"));
+			peList.add(DynamicContentFactory.createPropertyEntry("example.boolean", ValueType.BOOLEAN, "true"));
+			peList.add(DynamicContentFactory.createPropertyEntry("example.integer", ValueType.INTEGER, "1"));
+			peList.add(DynamicContentFactory.createPropertyEntry("example.double", ValueType.DOUBLE, "3.1415"));
+			peList.add(DynamicContentFactory.createPropertyEntry("example.long", ValueType.LONG, String.valueOf(Long.MAX_VALUE)));
+			
+			scList.addContentListItem(DynamicContentFactory.createSiteContentProperties(8, 0, false, peList));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentProperties(9, 0, true, peList));
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + menuID);
 		}
