@@ -78,7 +78,7 @@ public class HttpURLConnector {
 		case HttpURLConnection.HTTP_FORBIDDEN:
 			throw new HttpURLConnectorException(Language.translate("Authentifizierung ist nicht möglich. Bitte Authorisierungseinstellungen überprüfen"));
 		case HttpURLConnection.HTTP_NOT_FOUND:
-			throw new HttpURLConnectorException(Language.translate("Angegebene Update-Site enthält keine Repositorydatei"));
+			throw new HttpURLConnectorException(Language.translate("Die angegebene Update-Site enthält keine Repositorydatei"));
 		case HttpURLConnection.HTTP_INTERNAL_ERROR:
 			throw new HttpURLConnectorException(Language.translate("Serverfehler aufgetreten"));
 		case 418:

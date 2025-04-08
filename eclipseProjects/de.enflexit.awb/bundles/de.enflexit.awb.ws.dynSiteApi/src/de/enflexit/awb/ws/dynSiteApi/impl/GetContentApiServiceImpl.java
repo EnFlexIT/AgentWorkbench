@@ -36,9 +36,10 @@ public class GetContentApiServiceImpl extends GetContentApiService {
 		
     	// --- Create the content according to the menueID -------------------
 		SiteContentList scList = this.getSiteContentList(menueID);
-
-		
-		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(scList).build();
+		if (scList!=null) {
+			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(scList).build();
+		}
+		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Unknown menueID!")).build();
     }
 	
 	

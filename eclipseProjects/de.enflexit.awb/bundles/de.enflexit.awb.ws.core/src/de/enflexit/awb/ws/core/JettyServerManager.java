@@ -31,6 +31,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.AwbWebRegistry;
@@ -637,7 +639,7 @@ public class JettyServerManager {
 	 */
 	private boolean startConfiguredServer(final Server server, final String serverName) {
 		
-		// --- Start the server ---------------------------
+		// --- Start the server -------------------------------------
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -647,14 +649,20 @@ public class JettyServerManager {
 					server.start();
 					
 				} catch (Exception ex) {
-					System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Thread '" + Thread.currentThread().getName() + "' Error while trying to starting server '" + serverName + "':");
+					System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Thread '" + Thread.currentThread().getName() + "' Error while trying to start server '" + serverName + "':");
 					ex.printStackTrace();
+
+					// --- Shutdown Agent.Workbench ??? -------------
+					if (Application.getGlobalInfo().getAWBProduct()==AWBProduct.WEB) {
+						System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Failure while starting server - shuting down " + Application.getGlobalInfo().getApplicationTitle() + " ... ");
+						Application.stop();
+					}
 				}
 			}
 		}, "Jetty_" + serverName).start();
 		
-		// --- Wait for the start of the server -----------
-		long waitTime    = 5 * 1000; // --- maximum 5 s ---
+		// --- Wait for the start of the server ---------------------
+		long waitTime    = 5 * 1000; // --- maximum 5 s -------------
  		long waitTimeEnd = System.currentTimeMillis() + waitTime;
 		while (server.isStarted()==false && System.currentTimeMillis()<=waitTimeEnd) {
 			try {

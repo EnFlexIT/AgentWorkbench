@@ -18,10 +18,12 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
+import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeWebAppSettings;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
 /**
@@ -48,6 +50,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		
 		private JPanelSettingsServer jPanelSettingsServer;
 		private JPanelSettingsSecurity jPanelSettingsSecurity;
+		private JPanelSettingsWebApplication jPanelSettingsWebApplication;
 		private JPanelSettingsHandler jPanelSettingsHandler;	
 		
 	/**
@@ -141,13 +144,16 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			newServerTreeNodeServer = this.getJTreeServer().getParentServerNode((ServerTreeNodeHandler) serverTreeNodeObject);
 		} else if (serverTreeNodeObject instanceof ServerTreeNodeServerSecurity) {
 			// --- Show security panel ---------------------------------------- 
-			newServerTreeNodeServer = this.getJTreeServer().getParentServerNode((ServerTreeNodeServerSecurity) serverTreeNodeObject);
+			newServerTreeNodeServer = ((ServerTreeNodeServerSecurity) serverTreeNodeObject).getServerTreeNodeServer();
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeWebAppSettings) {
+			// --- Show WebApp panel ------------------------------------------
+			newServerTreeNodeServer = ((ServerTreeNodeWebAppSettings) serverTreeNodeObject).getServerTreeNodeServer();
 		}
 
 		// --------------------------------------------------------------------
 		// --- Check for server change and setting changes --------------------
 		// --------------------------------------------------------------------
-		if (this.editServerTreeNodeServer!=null && newServerTreeNodeServer!=this.editServerTreeNodeServer && this.editServerTreeNodeServer.hasChangedJettySettings()==true) {
+		if (this.isEqualServerTreeNode(this.editServerTreeNodeServer, newServerTreeNodeServer)==false && this.editServerTreeNodeServer!=null && this.editServerTreeNodeServer.hasChangedJettySettings()==true) {
 			// --- Ask the user to save or discard settings -------------------
 			if (this.userConfirmedToChangeView()==false) {
 				// --- Return to previous selection ---------------------------
@@ -182,10 +188,33 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			settingsPanel.setServerTreeNodeServer(this.editServerTreeNodeServer);
 			this.getJPanelSettingsSecurity().setDataModel((ServerTreeNodeServerSecurity) serverTreeNodeObject);
 			
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeWebAppSettings) {
+			settingsPanel = this.getJPanelSettingsWebApplication();
+			settingsPanel.setServerTreeNodeServer(this.editServerTreeNodeServer);
+			this.getJPanelSettingsWebApplication().setDataModel((ServerTreeNodeWebAppSettings) serverTreeNodeObject);
 		}
+		
 		this.getJLabelServerName().setText(this.editServerTreeNodeServer.getJettyConfiguration().getServerName());
 		this.getJToolBarServer().setServerTreeNode(this.editServerTreeNodeServer);
 		this.exchangeRightCenterComponent((JComponent) settingsPanel);
+	}
+	
+	/**
+	 * Checks if the specified server tree nodes are equal or the same.
+	 *
+	 * @param serverTreeNode1 the server tree node 1
+	 * @param serverTreeNode2 the server tree node 2
+	 * @return true, if is equal server tree node
+	 */
+	private boolean isEqualServerTreeNode(ServerTreeNodeServer serverTreeNode1, ServerTreeNodeServer serverTreeNode2) {
+		
+		if (serverTreeNode1==null && serverTreeNode2==null) return true;
+		if (serverTreeNode1!=null && serverTreeNode2==null) return false;
+		if (serverTreeNode1==null && serverTreeNode2!=null) return false;
+		
+		JettyConfiguration jc1 = serverTreeNode1.getJettyConfiguration();
+		JettyConfiguration jc2 = serverTreeNode2.getJettyConfiguration();
+		return jc1.equals(jc2);
 	}
 	
 	/**
@@ -197,6 +226,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		ServerTreeNodeServer stnServer = null;
 		ServerTreeNodeHandler stnHandler = null;
 		ServerTreeNodeServerSecurity stnSecurity = null;
+		ServerTreeNodeWebAppSettings stnWebAppSettings = null;
 		
 		AbstractServerTreeNodeObject stnoSelected = this.getJTreeServer().getServerTreeNodeObjectSelected();
 		if (stnoSelected instanceof ServerTreeNodeServer) {
@@ -206,7 +236,10 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			stnServer = this.getJTreeServer().getParentServerNode(stnHandler);
 		} else if (stnoSelected instanceof ServerTreeNodeServerSecurity) {
 			stnSecurity = (ServerTreeNodeServerSecurity) stnoSelected;
-			stnServer = this.getJTreeServer().getParentServerNode(stnSecurity);
+			stnServer = stnSecurity.getServerTreeNodeServer();
+		} else if (stnoSelected instanceof ServerTreeNodeWebAppSettings) {
+			stnWebAppSettings = (ServerTreeNodeWebAppSettings) stnoSelected;
+			stnServer = stnWebAppSettings.getServerTreeNodeServer();
 		}
 
 		// --- Reload tree --------------------------------
@@ -218,7 +251,6 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		if (stnSecurity!=null) this.getJTreeServer().selectSecurityNode(stnServer.getJettyConfiguration().getServerName());
 		
 	}
-	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.ui.WsConfigurationInterface#hasUnsavedChanges()
 	 */
@@ -320,6 +352,12 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		}
 		return jPanelSettingsSecurity;
 	}
+	private JPanelSettingsWebApplication getJPanelSettingsWebApplication() {
+		if (jPanelSettingsWebApplication==null) {
+			jPanelSettingsWebApplication = new JPanelSettingsWebApplication();
+		}
+		return jPanelSettingsWebApplication;
+	}
 	private JPanelSettingsHandler getJPanelSettingsHandler() {
 		if (jPanelSettingsHandler==null) {
 			jPanelSettingsHandler = new JPanelSettingsHandler();
@@ -353,6 +391,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		this.getJPanelSettingsServer().stopEditing();
 		this.getJPanelSettingsHandler().stopEditing();
 		this.getJPanelSettingsSecurity().stopEditing();
+		this.getJPanelSettingsWebApplication().stopEditing();
 	}
 	
 }

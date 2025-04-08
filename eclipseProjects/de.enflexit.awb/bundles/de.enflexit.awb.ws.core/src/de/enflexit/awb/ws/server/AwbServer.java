@@ -28,7 +28,9 @@ import de.enflexit.awb.ws.core.JettyCustomizer;
 public class AwbServer implements AwbWebServerService, JettyCustomizer {
 
 	public static final String NAME = "AWB-WebServer";
-	public static final String AWB_SERVER_ROOT_PATH = "awbAdmin";
+	public static final String AWB_SERVER_ROOT_PATH = "webRoot";
+	public static final String AWB_SERVER_DOWNLOAD_PATH = "webDownloads";
+	public static final String AWB_SERVER_WEB_APP_ARCHIVE_PATH = "webAppArchive";
 	
 	private JettyConfiguration jettyConfiguration;
 	

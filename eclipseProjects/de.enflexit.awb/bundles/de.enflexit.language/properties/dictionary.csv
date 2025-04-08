@@ -70,6 +70,7 @@ de;Als Bild exportieren;Export as image;;;
 de;Als Projekt Start-Tab verwenden;Use as project start-tab;;;
 de;Alter Wert:;Old value:
 de;An Fenster anpassen;Fit to window;;;
+de;Angegebene Update-Site enthält keine Repositorydatei;;;;
 de;Ansicht wiederherstellen;Restore View;;;
 de;Ansicht:;View:
 de;Ansicht;View
@@ -205,6 +206,7 @@ de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The cla
 de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.<br>Bitte wählen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.;;;
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Die angeforderte Ressource steht nicht mehr unter der gewählten Update-Site zur Verfügung und wurde umgeleitet;The requested resource is no longer available at the selected update site and has been redirected;;;
+de;Die angegebene Update-Site enthält keine Repositorydatei;;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;

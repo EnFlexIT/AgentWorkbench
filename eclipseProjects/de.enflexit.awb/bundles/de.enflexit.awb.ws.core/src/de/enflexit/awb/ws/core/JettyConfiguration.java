@@ -42,7 +42,8 @@ import de.enflexit.common.SerialClone;
     "startOn",
     "mutableHandlerCollection",
     "jettySettings",
-    "securitySettings"
+    "securitySettings",
+    "webApplicationSettings"
 })
 public class JettyConfiguration implements Serializable {
 
@@ -93,9 +94,12 @@ public class JettyConfiguration implements Serializable {
 	private TreeMap<String, JettyAttribute<?>> jettySettings;
 	
 	private JettySecuritySettings securitySettings;
+	private JettyWebApplicationSettings webApplicationSettings;
 	
 	private transient Handler handler;
 	private transient JettyCustomizer jettyCustomizer;
+	
+	
 	
 	
 	/**
@@ -305,6 +309,24 @@ public class JettyConfiguration implements Serializable {
 	}
 	
 	/**
+	 * Returns the web application.
+	 * @return the web application
+	 */
+	public JettyWebApplicationSettings getWebApplicationSettings() {
+		if (webApplicationSettings==null) {
+			webApplicationSettings = new JettyWebApplicationSettings();
+		}
+		return webApplicationSettings;
+	}
+	/**
+	 * Sets the web application.
+	 * @param webApplicationSettings the new web application
+	 */
+	public void setWebApplication(JettyWebApplicationSettings webApplication) {
+		this.webApplicationSettings = webApplication;
+	}
+	
+	/**
 	 * Sets the handler.
 	 * @param handler the new handler
 	 */
@@ -357,6 +379,32 @@ public class JettyConfiguration implements Serializable {
 		return port;
 	}
 	
+	/**
+	 * Returns the link to the web application.
+	 * @return the web application link
+	 */
+	public String getWebApplicationLink() {
+
+		boolean isHTTPS = (boolean) this.get(JettyConstants.HTTPS_ENABLED).getValue();
+		if (isHTTPS==true) {
+			String httpsHost = (String) this.get(JettyConstants.HTTPS_HOST).getValue();
+			int httpsPort = (int) this.get(JettyConstants.HTTPS_PORT).getValue();
+			if (httpsHost!=null) {
+				return "https://" + httpsHost + ":" + httpsPort;
+			}
+		}
+		
+		boolean isHTTP = (boolean) this.get(JettyConstants.HTTP_ENABLED).getValue();
+		if (isHTTP==true) {
+			String httpHost = (String) this.get(JettyConstants.HTTP_HOST).getValue();
+			int httpPort = (int) this.get(JettyConstants.HTTP_PORT).getValue();
+			if (httpHost!=null) {
+				return "http://" + httpHost + ":" + httpPort;
+			}
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Returns a copy of the current instance, while the Handler (see {@link #getHandler()}) and 
@@ -388,6 +436,7 @@ public class JettyConfiguration implements Serializable {
 
 		if (jcComp.getJettySettings().equals(this.getJettySettings())==false) return false;
 		if (jcComp.getSecuritySettings().equals(this.getSecuritySettings())==false) return false;
+		if (jcComp.getWebApplicationSettings().equals(this.getWebApplicationSettings())==false) return false;
 		
 		if (jcComp.getHandler()!=this.getHandler()) return false;
 		if (jcComp.getJettyCustomizer()!=this.getJettyCustomizer()) return false;

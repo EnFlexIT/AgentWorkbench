@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 /**
  * This class can be used to recursively delete folder structures
+ * 
  * @author Nils Loose - DAWIS - ICB - University of Duisburg - Essen
- *
  */
 public class RecursiveFolderDeleter {
 	

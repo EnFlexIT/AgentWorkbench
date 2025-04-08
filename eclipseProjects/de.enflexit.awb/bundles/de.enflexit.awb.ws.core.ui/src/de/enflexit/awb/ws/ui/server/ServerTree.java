@@ -21,6 +21,7 @@ import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeRoot;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeWebAppSettings;
 
 /**
  * The Class ServerTree is used in {@link JPanelServerConfiguration} to show the
@@ -136,6 +137,10 @@ public class ServerTree extends JTree {
 		ServerTreeNodeServer stnServer = new ServerTreeNodeServer(serverService, serverInstances);
 		DefaultMutableTreeNode serverNode = new DefaultMutableTreeNode(stnServer); 
 		this.getTreeModelServer().insertNodeInto(serverNode, this.getRootTreeNode(), this.getRootTreeNode().getChildCount());
+
+		// --- Add web application node -------------------
+		serverNode.add(new DefaultMutableTreeNode(new ServerTreeNodeWebAppSettings(stnServer)));
+		
 		// --- Add server security node -------------------
 		serverNode.add(new DefaultMutableTreeNode(new ServerTreeNodeServerSecurity(stnServer)));
 		// --- Add the handler to the server node --------- 

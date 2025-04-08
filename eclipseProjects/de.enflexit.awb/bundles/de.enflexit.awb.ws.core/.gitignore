@@ -1,6 +1,6 @@
 /target/
 /bin/
-/awbHome/
-/awbAdmin/
-/AWB-WS.launch
+/webRoot/
+/webDownloads/
+/webAppArchive/
 /.polyglot.META-INF

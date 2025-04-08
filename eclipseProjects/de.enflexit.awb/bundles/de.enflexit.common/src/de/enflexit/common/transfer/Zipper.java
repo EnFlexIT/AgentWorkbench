@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.common.transfer;
 
 import java.awt.Image;
@@ -82,12 +54,13 @@ public class Zipper extends Thread {
 	private final int execZip = 1;
 	private final int execUnZip = 2;
 	
+	private boolean isHideProgress;
 	private ZipperMonitor zipMonitor;
 	
 	private String excludePattern;
-	private Vector<File> fileList = new Vector<File>();
+	private Vector<File> fileList;
 	private String zipFolder;
-	private String zipSourceFolder;
+	private Vector<String> zipSourceFileOrDirectory;
 	
 	private String unzipZipFolder;
 	private String unzipDestinationFolder;
@@ -113,10 +86,25 @@ public class Zipper extends Thread {
 	 * @return the monitoring visualization
 	 */
 	private ZipperMonitor getZipperMonitor() {
-		if (this.zipMonitor==null && this.isHeadlessOperation()==false) {
+		if (this.zipMonitor==null && this.isHideProgress()==false && this.isHeadlessOperation()==false) {
 			this.zipMonitor = new ZipperMonitor(this.owner, this.getApplicationName(), this.getIconImage(), this.getLookAndFeelClassName());	
 		}
 		return this.zipMonitor;
+	}
+	
+	/**
+	 * Checks if is hide progress.
+	 * @return true, if is hide progress
+	 */
+	public boolean isHideProgress() {
+		return isHideProgress;
+	}
+	/**
+	 * Sets to hide the progress or not.
+	 * @param isHideProgress the new hide progress
+	 */
+	public void setHideProgress(boolean isHideProgress) {
+		this.isHideProgress = isHideProgress;
 	}
 	
 	/**
@@ -170,7 +158,7 @@ public class Zipper extends Thread {
 		
 		// --- Do the specified job -------------------
 		if (this.kindOfExec==this.execZip) {
-			this.zipFolder(this.zipSourceFolder, this.zipFolder);
+			this.zipFilesAndDirectories();
 		} else if (this.kindOfExec==this.execUnZip) {
 			this.unzipFolder(this.unzipZipFolder, this.unzipDestinationFolder);
 		}
@@ -282,19 +270,39 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * Define the source folder, which has to be packed here.
-	 * @param zipSourceFolder the zipSourceFolder to set
+	 * Returns the source folders that are to be zipped.
+	 * @return the zip source folder
 	 */
-	public void setZipSourceFolder(String zipSourceFolder) {
-		this.zipSourceFolder = zipSourceFolder;
+	public Vector<String> getZipSourceFileOrDirectory() {
+		if (zipSourceFileOrDirectory==null) {
+			zipSourceFileOrDirectory = new Vector<>();
+		}
+		return zipSourceFileOrDirectory;
 	}
 	/**
-	 * Get the current source folder for packing into a zip-file 
-	 * @return the zipSourceFolder
+	 * Adds the specified source folder to the designated zip file.
+	 * @param zipSourceFileOrDirectory the zip source folder
 	 */
-	public String getZipSourceFolder() {
-		return this.zipSourceFolder;
+	public void addZipSourceFileOrDirectory(File zipSourceFile) {
+		this.addZipSourceFileOrDirectory(zipSourceFile.getAbsolutePath());
 	}
+	/**
+	 * Adds the specified source folder to the designated zip file.
+	 * @param zipSourceFileOrDirectory the zip source folder
+	 */
+	public void addZipSourceFileOrDirectory(String zipSourceFolder) {
+		if (this.getZipSourceFileOrDirectory().contains(zipSourceFolder)==false) {
+			this.getZipSourceFileOrDirectory().add(zipSourceFolder);
+		}
+	}
+	/**
+	 * Define the source folder, which has to be packed here.
+	 * @param zipSourceFileOrDirectory the zipSourceFileOrDirectory to set
+	 */
+	public void setZipSourceFolder(String zipSourceFolder) {
+		this.addZipSourceFileOrDirectory(zipSourceFolder);
+	}
+	
 
 	/**
 	 * Specify the zip-File/Folder here, which has to unpacked
@@ -491,17 +499,20 @@ public class Zipper extends Thread {
 	 * See example above.
 	 */
 	public void doZipFolder() {
+		
 		try {
 			if (this.zipFolder==null) {
 				throw new Exception("Use 'setZipFolder(String)' to specify the zip-file to zip");
 			}
-			if (this.zipSourceFolder==null) {
+			if (this.zipSourceFileOrDirectory==null) {
 				throw new Exception("Use 'setZipSourceFolder(String)' to specify the destination for unzipping");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		if (this.zipFolder!=null && this.zipSourceFolder!=null) {
+		
+		if (this.zipFolder!=null && this.zipSourceFileOrDirectory!=null) {
 			this.kindOfExec = execZip;
 			if (this.isRunInThread()==true) {
 				this.start();	
@@ -512,77 +523,93 @@ public class Zipper extends Thread {
 	}
 	
 	/**
-	 * @param srcFolder: path to the folder to be zipped
-	 * @param destZipFile: path to the final zip file
+	 * Zips all files and directories that were specified.
 	 */
-	private void zipFolder(String srcFolder, String destZipFile) {
+	private void zipFilesAndDirectories() {
 		
-		if (new File(srcFolder).isDirectory()) {
+		// --------------------------------------------
+		// --- Evaluate the folder structure -----
+		this.evaluateDirectories();
+		
+		// --------------------------------------------
+		// --- Configure/show zipMonitor ---------
+		if (this.getZipperMonitor()!=null) {
+			this.getZipperMonitor().setNumberOfFilesMax(this.fileList.size());
+			this.getZipperMonitor().setProcessDescription(true, "");
+			this.getZipperMonitor().setVisible(true);	
+		}
 
-			// --------------------------------------------
-			// --- Evaluate the folder structure -----
-			this.evaluateFolder(srcFolder);
-			// --- configure/show zipMonitor ---------
-			if (this.getZipperMonitor()!=null) {
-				this.getZipperMonitor().setNumberOfFilesMax(this.fileList.size());
-				this.getZipperMonitor().setProcessDescription(true, srcFolder);
-				this.getZipperMonitor().setVisible(true);	
-			}
-			// --------------------------------------------
+		// --------------------------------------------
+		// --- 
+		ZipOutputStream zipOS = null;
+		FileOutputStream fileWriter = null;
+		try {
+			fileWriter = new FileOutputStream(this.getZipFolder());
+			zipOS = new ZipOutputStream(fileWriter);
 			
-			ZipOutputStream zip = null;
-			FileOutputStream fileWriter = null;
+			for (String fileOrDirecotry : this.getZipSourceFileOrDirectory()) {
+				if (new File(fileOrDirecotry).isDirectory()==true) {
+					// --- Add a directory to zip -----
+					if (this.getZipperMonitor()!=null) {
+						this.getZipperMonitor().setProcessDescription(true, fileOrDirecotry);
+					}
+					this.addDirectoryToZip(null, fileOrDirecotry, zipOS);
+					
+				} else {
+					// --- Add a file to zip ----------
+					this.addToZip(null, fileOrDirecotry, zipOS);
+					
+				}
+			}
+			zipOS.flush();
+		
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
 			try {
-				fileWriter = new FileOutputStream(destZipFile);
-				zip = new ZipOutputStream(fileWriter);
-				addFolderToZip("", srcFolder, zip);
-				zip.flush();
-			
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			} finally {
-				try {
-					if (zip!=null) zip.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
-				try {
-					if (fileWriter!=null) fileWriter.close();
-				} catch (IOException ioe) {
-					ioe.printStackTrace();
-				}
+				if (zipOS!=null) zipOS.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
 			}
-
-			// --- Consider the zipMonitor ------------------
-			if (this.getZipperMonitor()!=null && this.getZipperMonitor().isCanceled()) {
-				File destFileZip = new File(destZipFile);
-				destFileZip.delete();
+			try {
+				if (fileWriter!=null) fileWriter.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
 			}
+		}
 
-		} 
+		// --- Consider the zipMonitor ------------------
+		if (this.getZipperMonitor()!=null && this.getZipperMonitor().isCanceled()) {
+			File destFileZip = new File(this.getZipFolder());
+			destFileZip.delete();
+		}
+
 		
 	}
 	
 	/**
-	 * Adds a single source file to the zip-file
-	 * @param path
-	 * @param srcFile
-	 * @param zip
+	 * Adds a single directory or file to the current zip-file.
+	 *
+	 * @param initialRelativePath the path
+	 * @param fileOrDirectory the file orDirectory
+	 * @param zipOS the current ZipOutputStream
 	 */
-	private void addToZip(String path, String srcFile, ZipOutputStream zip) {
+	private void addToZip(String initialRelativePath, String fileOrDirectory, ZipOutputStream zipOS) {
 		
-		File folder = new File(srcFile);
-		if (folder.isDirectory()) {
-			this.addFolderToZip(path, srcFile, zip);
-		} else {
+		File folder = new File(fileOrDirectory);
+		if (folder.isDirectory()==true) {
+			// --- Add an directory -----------------------
+			this.addDirectoryToZip(initialRelativePath, fileOrDirectory, zipOS);
 			
+		} else {
+			// --- Add a file ----------------------------- 
 			try {
 				// --- consider the exclude pattern ---------------------
 				boolean includeFile = false;
 				if (this.excludePattern==null) {
 					includeFile=true;
 				} else {
-					if (srcFile.contains(this.excludePattern)) {
+					if (fileOrDirectory.contains(this.excludePattern)) {
 						includeFile=false;
 					} else {
 						includeFile=true;
@@ -593,17 +620,17 @@ public class Zipper extends Thread {
 					// --- Consider the zipMonitor ------------------
 					if (this.getZipperMonitor()!=null) {
 						this.getZipperMonitor().setNumberNextFile();
-						this.getZipperMonitor().setCurrentJobFile(srcFile);
+						this.getZipperMonitor().setCurrentJobFile(fileOrDirectory);
 						if (this.getZipperMonitor().isCanceled()) {
 							return;
 						}
 					}
-					FileInputStream in = new FileInputStream(srcFile);
-					zip.putNextEntry(new ZipEntry(path + File.separator + folder.getName()));
+					FileInputStream in = new FileInputStream(fileOrDirectory);
+					zipOS.putNextEntry(new ZipEntry(this.getRelativeZipPath(initialRelativePath, folder.getName())));
 					byte[] buf = new byte[1024];
 					int len;
 					while ((len = in.read(buf)) > 0) {
-						zip.write(buf, 0, len);
+						zipOS.write(buf, 0, len);
 					}
 					in.close();
 				}
@@ -615,56 +642,91 @@ public class Zipper extends Thread {
 	}
 
 	/**
-	 * Adds a complete folder to the zip-file 
-	 * @param path
-	 * @param srcFolder
-	 * @param zip
+	 * Adds a complete directory to the current zip-file .
+	 *
+	 * @param initialRelativePath the path
+	 * @param directoryPath the directory to add
+	 * @param zipOS the ZipOutputStream
 	 */
-	private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) {
-		File folder = new File(srcFolder);
-		String listOfFiles[] = folder.list();
+	private void addDirectoryToZip(String initialRelativePath, String directoryPath, ZipOutputStream zipOS) {
+		
+		File directory = new File(directoryPath);
+		String listOfFiles[] = directory.list();
 		try {
 			for (int i = 0; i < listOfFiles.length; i++) {
-				this.addToZip(path + File.separator + folder.getName(), srcFolder + File.separator + listOfFiles[i], zip);
+				this.addToZip(this.getRelativeZipPath(initialRelativePath, directory.getName()), directoryPath + File.separator + listOfFiles[i], zipOS);
 			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	
 	/**
+	 * Returns the relative path within the Zip-archive.
+	 *
+	 * @param initialRelativePath the initial relative path
+	 * @param fileName the file name
+	 * @return the relative zip path
+	 */
+	private String getRelativeZipPath(String initialRelativePath, String fileName) {
+		boolean isEmptyInitialPath = initialRelativePath==null || initialRelativePath.isBlank();
+		return isEmptyInitialPath==true ? fileName : initialRelativePath + File.separator + fileName; 
+	}
+	
+	
+	/**
+	 * This method will evaluate the locally specified files or directories, including sub-directories.
+	 * The containing File objects will be stored in the Vector 'fileList'
+	 */
+	private void evaluateDirectories() {
+		
+		this.fileList = new Vector<>();
+		for (String fileOrDirectory : this.getZipSourceFileOrDirectory()) {
+			this.evaluateDirectory(fileOrDirectory);
+		}
+	}
+	/**
 	 * This method will evaluate the given folder and it's sub-folder.
 	 * The containing File objects will be stored in the Vector 'fileList'
-	 * @param folder
+	 *
+	 * @param directory the directory to evaluate
 	 */
-	private void evaluateFolder(String srcFolder) {
+	private void evaluateDirectory(String fileOrDirectoryPath) {
 		
-		File folder = new File(srcFolder);
-		String listOfFiles[] = folder.list();
-		for (int i = 0; i < listOfFiles.length; i++) {
+		File fileOrDirectory = new File(fileOrDirectoryPath);
+		if (fileOrDirectory.isFile()==true) {
+			// --- Just remind the file -----------------------------
+			this.fileList.add(fileOrDirectory);
 			
-			// --- consider the exclude pattern ---------------------
-			boolean includeFile = false;
-			if (excludePattern==null) {
-				includeFile=true;
-			} else {
-				if (listOfFiles[i].contains(excludePattern)) {
-					includeFile=false;
-				} else {
+		} else if (fileOrDirectory.isDirectory()) {
+			// --- Evaluate directory -------------------------------
+			String listOfFiles[] = fileOrDirectory.list();
+			for (int i = 0; i < listOfFiles.length; i++) {
+				
+				// --- consider the exclude pattern -----------------
+				boolean includeFile = false;
+				if (excludePattern==null) {
 					includeFile=true;
-				}
-			}
-			
-			// --- If the current file should be included -----------
-			if (includeFile==true) {
-				File sngFileObject = new File(srcFolder + File.separator + listOfFiles[i]);
-				if (sngFileObject.isDirectory()) {
-					this.evaluateFolder(sngFileObject.getAbsolutePath());
 				} else {
-					this.fileList.add(sngFileObject);
+					if (listOfFiles[i].contains(excludePattern)) {
+						includeFile=false;
+					} else {
+						includeFile=true;
+					}
 				}
-			}
-		} // end for
+				
+				// --- If the current file should be included -----------
+				if (includeFile==true) {
+					File sngFileObject = new File(fileOrDirectoryPath + File.separator + listOfFiles[i]);
+					if (sngFileObject.isDirectory()) {
+						this.evaluateDirectory(sngFileObject.getAbsolutePath());
+					} else {
+						this.fileList.add(sngFileObject);
+					}
+				}
+			} // end for
+		}
 		
 	}
 

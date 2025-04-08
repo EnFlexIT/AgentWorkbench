@@ -2,8 +2,10 @@ package de.enflexit.awb.ws;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 
 import javax.swing.ImageIcon;
 
@@ -95,7 +97,7 @@ private static final String imagePackage = "/icons/";
 					bLocationFile = new File(bLocation);
 				
 				} else {
-					URL bundleLocationURL = new URL(bundle.getLocation());
+					URL bundleLocationURL = new URI(bundle.getLocation()).toURL();
 					bLocationFile = new File(bundleLocationURL.toURI());	
 				}
 				
@@ -127,7 +129,52 @@ private static final String imagePackage = "/icons/";
 		
 	}
 	
+	/**
+	 * Returns the web download directory.
+	 * @return the web download directory
+	 */
+	public static File getWebDownloadDirectory() {
+		return getWebDownloadDirectory(false);
+	}
+	/**
+	 * Returns the web download directory.
+	 *
+	 * @param createIfNotExists the create if not exist
+	 * @return the web download directory
+	 */
+	public static File getWebDownloadDirectory(boolean createIfNotExists) {
+		Path webBaseDirectory = getWebRootDirectory().getParentFile().toPath();
+		webBaseDirectory = webBaseDirectory.resolve(AwbServer.AWB_SERVER_DOWNLOAD_PATH);
+		File webBaseDirectoryFile = webBaseDirectory.toFile();
+		if (createIfNotExists==true && webBaseDirectoryFile.exists()==false) {
+			webBaseDirectoryFile.mkdirs();
+		}
+		return webBaseDirectoryFile;
+	}
 	
+	/**
+	 * Returns the web application archive directory.
+	 * @return the web application archive directory
+	 */
+	public static File getWebApplicationArchiveDirectory() {
+		return getWebApplicationArchiveDirectory(false);
+	}
+	/**
+	 * Returns the web application archive directory.
+	 *
+	 * @param createIfNotExists the create if not exist
+	 * @return the web application archive directory
+	 */
+	public static File getWebApplicationArchiveDirectory(boolean createIfNotExists) {
+		Path webBaseDirectory = getWebRootDirectory().getParentFile().toPath();
+		webBaseDirectory = webBaseDirectory.resolve(AwbServer.AWB_SERVER_WEB_APP_ARCHIVE_PATH);
+		File webBaseDirectoryFile = webBaseDirectory.toFile();
+		if (createIfNotExists==true && webBaseDirectoryFile.exists()==false) {
+			webBaseDirectoryFile.mkdirs();
+		}
+		return webBaseDirectoryFile;
+	}
+
 	// ----------------------------------------------------
 	// --- From here, debug print methods -----------------
 	// ----------------------------------------------------
