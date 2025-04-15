@@ -5,11 +5,31 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * The Class JwtSessionStore stores all sessions.
+ * The singleton class JwtSessionStore stores all {@link JwtAuthentication} instances for every instance
+ * of the {@link JwtSingleUserSecurityHandler} and the {@link JwtAuthenticator}.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class JwtSessionStore {
-
+	
+	private static JwtSessionStore instance;
+	/**
+	 * Return the single instance of the JwtSessionStore.
+	 * @return single instance of JwtSessionStore
+	 */
+	public static JwtSessionStore getInstance() {
+		if (instance==null) {
+			instance = new JwtSessionStore();
+		}
+		return instance;
+	}
+	/**
+	 * Private constructor for the JWT session store.
+	 */
+	private JwtSessionStore() { }
+	
+	
+	
 	private ConcurrentMap<String, JwtAuthentication> sessionMap;
 	
 	/**

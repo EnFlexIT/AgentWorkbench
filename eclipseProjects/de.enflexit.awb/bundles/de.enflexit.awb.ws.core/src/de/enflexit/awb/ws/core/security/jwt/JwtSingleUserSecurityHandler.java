@@ -6,6 +6,7 @@ import java.util.function.Function;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.security.Authenticator;
 import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
@@ -46,9 +47,11 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		this.login = login;
 		this.password = password;
 		
-		if (jwtConfig!=null) this.setAuthenticator(new JwtAuthenticator(jwtConfig));
+		if (jwtConfig!=null) {
+			this.setAuthenticator(new JwtAuthenticator(jwtConfig));
+		}
 		this.setIdentityService(new DefaultIdentityService());
-		this.setLoginService(new JwtLoginService()); // TODO
+		this.setLoginService(new JwtLoginService());
 		
 		if (this.isSecured()==true) {
 			this.put("/*", Constraint.ANY_USER);
@@ -111,10 +114,12 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		 */
 		@Override
 		public void logout(UserIdentity user) {
-			
-			// TODO
-//			this.authenticator.clearCachedAuthentication(jwtToken);
-			
+			Authenticator auth = JwtSingleUserSecurityHandler.this.getAuthenticator();
+			if (auth instanceof JwtAuthenticator) {
+				JwtAuthenticator jwtAuthenticator = (JwtAuthenticator) auth;
+				//TODO
+				
+			}
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jetty.security.LoginService#validate(org.eclipse.jetty.server.UserIdentity)

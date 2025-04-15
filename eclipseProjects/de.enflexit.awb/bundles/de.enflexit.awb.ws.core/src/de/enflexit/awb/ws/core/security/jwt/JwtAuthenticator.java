@@ -60,8 +60,6 @@ public class JwtAuthenticator extends LoginAuthenticator {
 
 	/** JWT token parser component. */
 	private JwtHandler jwtHandler;
-	/** Map of JWT token to sessions. */
-	private JwtSessionStore jwtSessionStore;
 
 	
 	/**
@@ -172,10 +170,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
 	 * @return the JwtSessionStore
 	 */
 	private JwtSessionStore getJwtSessionStore() {
-		if (jwtSessionStore==null) {
-			jwtSessionStore = new JwtSessionStore();
-		}
-		return jwtSessionStore;
+		return JwtSessionStore.getInstance();
 	}
 
 	
