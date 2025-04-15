@@ -1146,9 +1146,11 @@ public class BundleEvaluator {
 			if (canonicalPath.startsWith("/")==false) {
 				canonicalPath = "/"+canonicalPath;
 			}
-			URL jarFileURL = new URL("file:" + canonicalPath);
-			return jarFileURL = new URL("jar:" + jarFileURL.toExternalForm() + "!/");
+			URL jarFileURL = new URI("file:" + canonicalPath).toURL();
+			return jarFileURL = new URI("jar:" + jarFileURL.toExternalForm() + "!/").toURL();
 			
+		} catch (URISyntaxException uriEx) {
+			uriEx.printStackTrace();
 		} catch (MalformedURLException mUrlEx) {
 			mUrlEx.printStackTrace();
 		} catch (IOException ioEx) {

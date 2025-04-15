@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -127,7 +128,7 @@ public class Cache {
 				bLocationFile = new File(bLocation);
 			
 			} else {
-				URL bundleLocationURL = new URL(bundle.getLocation());
+				URL bundleLocationURL = new URI(bundle.getLocation()).toURL();
 				bLocationFile = new File(bundleLocationURL.toURI());	
 			}
 			

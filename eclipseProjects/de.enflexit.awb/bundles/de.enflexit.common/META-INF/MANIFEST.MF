@@ -11,7 +11,6 @@ Bundle-Vendor: EnFlex.IT
 Bundle-ClassPath: .
 Require-Bundle: de.enflexit.common.flatlaf,
  com.sun.xml.bind.jaxb-impl,
- org.eclipse.osgi.services,
  org.eclipse.core.runtime,
  bcpkix;bundle-version="1.78.1",
  bcprov;bundle-version="1.78.1",
@@ -62,4 +61,6 @@ Import-Package: de.enflexit.language,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,
  jakarta.xml.bind.annotation.adapters,
- org.apache.commons.codec.binary
+ org.apache.commons.codec.binary,
+ org.osgi.framework,
+ org.osgi.service.component
