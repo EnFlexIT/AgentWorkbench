@@ -3,22 +3,23 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.enflexit.awb</groupId>
-	<artifactId>de.enflexit.awb.bundles</artifactId>
+	<artifactId>de.enflexit.awb.bundles.web</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>de.enflexit.awb</groupId>
-		<artifactId>de.enflexit.awb.root</artifactId>
+		<artifactId>de.enflexit.awb.bundles</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<modules>
-		<module>database</module>
-		<module>core</module>
-		<module>desktop</module>
-		<module>web</module>
-
-		<module>de.enflexit.awb.help</module>
+		<module>de.enflexit.awb.ws.client</module>
+		<module>de.enflexit.awb.ws.core</module>
+		<module>de.enflexit.awb.ws.core.ui</module>
+		<module>de.enflexit.awb.ws.dynSiteApi</module>
+		<module>de.enflexit.awb.ws.jetty</module>
+		<module>de.enflexit.awb.ws.restapi</module>
+		<module>de.enflexit.awb.ws.swagger2x</module>
 	</modules>
 </project>
