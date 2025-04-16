@@ -55,7 +55,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		}
 		
 		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
-//		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
+		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
 	}
 	
 	private File getTrustStoreFile() {
@@ -95,14 +95,6 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 			menuItemAccountPanel.addActionListener(this);
 		}
 		return menuItemAccountPanel;
-	}
-	
-	private void startAuthentication() {
-		OIDCAuthorization.getInstance().requestAuthorizationCode(true);
-	}
-	
-	private void triggerLogout() {
-		OIDCAuthorization.getInstance().triggerRemoteLogout();
 	}
 	
 	private void showOIDCSettingsDialog() {
@@ -152,11 +144,18 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getAuthenticationStateButton()) {
 			
-			if (OIDCAuthorization.getInstance().getAuthenticationState()==AuthenticationState.LOGGED_OUT) {
-				this.startAuthentication();
-			} else if (OIDCAuthorization.getInstance().getAuthenticationState()==AuthenticationState.LOGGED_IN) {
-				this.triggerLogout();
+			switch(OIDCAuthorization.getInstance().getAuthenticationState()) {
+			case LOGGED_IN:
+				OIDCAuthorization.getInstance().triggerRemoteLogout();
+				break;
+			case LOGGED_OUT:
+				OIDCAuthorization.getInstance().requestAuthorizationCode(true);
+				break;
+			case PENDING:
+				OIDCAuthorization.getInstance().cancelLogIn();
+				break;
 			}
+			
 		} else if (ae.getSource()==this.getMenuItemOIDCSettings()) {
 			this.showOIDCSettingsDialog();
 		} else if (ae.getSource()==this.getMenuItemAccountPanel()) {

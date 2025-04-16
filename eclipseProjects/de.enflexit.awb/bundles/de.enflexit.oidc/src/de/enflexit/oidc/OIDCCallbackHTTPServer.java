@@ -14,7 +14,7 @@ import com.sun.net.httpserver.HttpServer;
 public class OIDCCallbackHTTPServer {
 	
 	// A minimal HTML page that invokes a JavaScript to close the window/tab 
-	private static final String REDIRECT_PAGE_CONTENT = "<html><head></head><body><script type=\"text/javascript\">window.close();</script><p>OIDC redirect successful, please close this window/tab and return to the application!</p></body></html>"; 
+	private static final String REDIRECT_PAGE_CONTENT = "<html><head></head><body><script type=\"text/javascript\">window.close();</script><p>AWB user login successful, please close this window/tab and return to the application!</p></body></html>"; 
 	
 	private int port;
 	private String callbackEndpoint;
