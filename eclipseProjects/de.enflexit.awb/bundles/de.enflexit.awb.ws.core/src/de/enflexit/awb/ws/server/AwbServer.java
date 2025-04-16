@@ -2,8 +2,12 @@ package de.enflexit.awb.ws.server;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Handler.Sequence;
 import org.eclipse.jetty.server.Server;
@@ -13,12 +17,15 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.resource.Resources;
+
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.JettyCustomizer;
+import de.enflexit.awb.ws.core.model.HandlerHelper;
 
 /**
  * The Class DefaultAwbServer.
@@ -75,8 +82,11 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 	@Override
 	public Server customizeConfiguration(Server server, Sequence handlerCollection) {
 
+		// ----------------------------------------------------------
 		// --- Define ResourceHandler for static content ------------
+		// ----------------------------------------------------------
 		ResourceHandler resHandler = new ResourceHandler();
+		resHandler.setDynamic(true);
         resHandler.setDirAllowed(true);
         resHandler.setWelcomeFiles(new String[]{ "index.html" });
         
@@ -95,23 +105,44 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         }
         resHandler.setBaseResource(resBase);
 
-        
         // --- Wrap ResourceHandler into ContextHandler -------------
-        ContextHandler ctxHandler = new ContextHandler();
-        ctxHandler.setHandler(resHandler);
+        ContextHandler ctxHandlerWebApp = new ContextHandler();
+        ctxHandlerWebApp.setHandler(resHandler);
         
+		// ----------------------------------------------------------
         // --- Define a ContextHandlerCollection --------------------
-        ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection(ctxHandler);
+		// ----------------------------------------------------------
+        List<String> ctxPathList = new ArrayList<>();
+        ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection(ctxHandlerWebApp);
         List<Handler> handlerList = handlerCollection.getHandlers();
         if (handlerList!=null) {
-        	for (int i = 0; i < handlerList.size(); i++) {
-        		contextHandlerCollection.addHandler(handlerList.get(i));
-        	} 
+        	for (Handler handler : handlerList) {
+        		contextHandlerCollection.addHandler(handler);
+        		String ctxPath = HandlerHelper.getContextPath(handler);
+        		ctxPath = ctxPath.replace("/", "");
+        		ctxPathList.add(ctxPath);
+        	}
         }
-        server.setHandler(contextHandlerCollection);
+        
+		// ----------------------------------------------------------
+        // --- Define a regular expression rule ---------------------
+		// ----------------------------------------------------------
+        String servletCtxPathList = StringUtils.join(ctxPathList, "|");
+        RewriteRegexRule rRegExRule = new RewriteRegexRule();
+        rRegExRule.setRegex("^(?!\\/(" + servletCtxPathList + ")\\/).+");
+        rRegExRule.setReplacement("index.html");
+        
+        // --- Define a rewrite handler -----------------------------
+        RewriteHandler rewriteHandler = new RewriteHandler();
+        rewriteHandler.setHandler(contextHandlerCollection);
+        rewriteHandler.addRule(rRegExRule);
+        
+		// ----------------------------------------------------------
+        // --- Set handler of the server ----------------------------
+		// ----------------------------------------------------------
+        server.setHandler(rewriteHandler);
         
 		return server;
 	}
-	
 	
 }

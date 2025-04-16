@@ -57,7 +57,7 @@
             <key>cors.filter.enabled</key>
             <value>
                 <key>cors.filter.enabled</key>
-                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
             </value>
         </entry>
         <entry>
@@ -78,7 +78,7 @@
             <key>http.host</key>
             <value>
                 <key>http.host</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">0.0.0.0</value>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">localhost</value>
             </value>
         </entry>
         <entry>
@@ -120,7 +120,7 @@
             <key>https.host</key>
             <value>
                 <key>https.host</key>
-                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">0.0.0.0</value>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">localhost</value>
             </value>
         </entry>
         <entry>

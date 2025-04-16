@@ -1,12 +1,13 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
+
+import java.security.Principal;
 import java.util.Map;
 import java.util.function.Function;
 
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.security.Authenticator;
 import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
@@ -17,6 +18,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Session;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
+
 
 /**
  * The Class JwtSingleUserSecurityHandler.
@@ -114,11 +116,10 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		 */
 		@Override
 		public void logout(UserIdentity user) {
-			Authenticator auth = JwtSingleUserSecurityHandler.this.getAuthenticator();
-			if (auth instanceof JwtAuthenticator) {
-				JwtAuthenticator jwtAuthenticator = (JwtAuthenticator) auth;
-				//TODO
-				
+			Principal p = user.getUserPrincipal();
+			if (p instanceof JwtPrincipal) {
+				JwtPrincipal jwtP = (JwtPrincipal) p;
+				JwtSessionStore.getInstance().removeAuthentication(jwtP.getJwtToken());
 			}
 		}
 		/* (non-Javadoc)
