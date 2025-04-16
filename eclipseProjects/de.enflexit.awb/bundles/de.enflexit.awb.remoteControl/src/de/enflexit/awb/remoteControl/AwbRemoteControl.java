@@ -142,7 +142,9 @@ public abstract class AwbRemoteControl implements ApplicationListener, Observer 
 		Object[] startWith = new Object[1];
 		startWith[0] = LoadExecutionAgent.BASE_ACTION_Start;
 		Application.getJadePlatform().startSystemAgent(SystemAgent.SimStarter, null, startWith, true);
-		Application.getMainWindow().setEnabledSimStart(false);
+		if (Application.isMainWindowInitiated()==true) {
+			Application.getMainWindow().setEnabledSimStart(false);
+		}
 		return true;
 	}
 	
