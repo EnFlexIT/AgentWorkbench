@@ -368,8 +368,7 @@
 			</dependencies>
 		</location>
 
-		
-		
+
 		<!-- Integration of latest Jersey version compatible to Jetty -->
 		<location includeConfigurePhase="true" includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
 			<dependencies>
