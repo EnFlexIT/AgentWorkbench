@@ -1,3 +1,31 @@
+/**
+ * ***************************************************************
+ * Agent.GUI is a framework to develop Multi-agent based simulation 
+ * applications based on the JADE - Framework in compliance with the 
+ * FIPA specifications. 
+ * Copyright (C) 2010 Christian Derksen and DAWIS
+ * http://www.dawis.wiwi.uni-due.de
+ * http://sourceforge.net/projects/agentgui/
+ * http://www.agentgui.org 
+ *
+ * GNU Lesser General Public License
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation,
+ * version 2.1 of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
+ * **************************************************************
+ */
 package de.enflexit.oidc;
 
 import java.awt.Desktop;
@@ -20,15 +48,18 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JDialog;
+
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTParser;
+//import com.nimbusds.jwt.JWT;
+//import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.SerializeException;
@@ -43,7 +74,7 @@ import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
- * This class provides a simple interface to the OpenID Connect authorisation.
+ * This class provides a simple interface to the OpenID Connect authorization.
  * Use with getInstance(), getDialog()/connect() and getUserID().
  */
 public class OIDCAuthorization implements OIDCCallbackListener {
@@ -51,6 +82,8 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	public enum AuthenticationState {
 		LOGGED_IN, LOGGED_OUT, PENDING
 	}
+	
+	private static final long AUTHENTICATION_TIMEOUT = 3 * 60 * 1000;	// Three minutes
 
 	/** The claims representing relevant infos from the ID token */
 	private static final String OIDC_ID_CLAIM_USER_ID = "sub";
@@ -77,6 +110,9 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	/** The URLProcessor used for the network communication. */
 	private URLProcessor urlProcessor;
 	
+	
+	/** The authorization dialog. */
+
 	private JDialog authDialog;
 	private Window owner;
 
@@ -93,6 +129,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	
 	private ISecurePreferences tokenStore;
 	private boolean initialCheckDone;
+	
+	private OIDCCallbackHTTPServer callbackServer;
+	
+	private Timer authenticationTimeout;
 	
 	/**
 	 * Instantiates a new OIDC authorization.
@@ -375,8 +415,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			return;
 		}
 			
-		new OIDCCallbackHTTPServer(this.getOIDCSettings().getLocalHTTPPort(), this.getOIDCSettings().getAuthenticationEndpoint(), this).startInThread();
+		this.startCallbackServer();
 		this.setAuthenticationState(AuthenticationState.PENDING);
+		this.startAuthenticationTimeout();
+		
 		try {
 			Desktop.getDesktop().browse(authenticationRequestURI);
 		} catch (IOException e) {
@@ -387,8 +429,59 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		
 	}
 	
+	private Timer getAuthenticationTimeout() {
+		if (authenticationTimeout==null) {
+			authenticationTimeout = new Timer("Authentication Timeout");
+		}
+		return authenticationTimeout;
+	}
+	
+	private TimerTask getTimeoutTask() {
+		TimerTask timeoutTask = new TimerTask() {
+			
+			@Override
+			public void run() {
+				System.out.println("Authencitation timeout - cancelling the log in request");
+				OIDCAuthorization.this.cancelLogIn();
+			}
+		};
+		
+		return timeoutTask;
+	}
+	
+	private void startAuthenticationTimeout() {
+		this.getAuthenticationTimeout().schedule(this.getTimeoutTask(), AUTHENTICATION_TIMEOUT);
+	}
+	
+	private void stopAuthenticationTimeout() {
+		this.getAuthenticationTimeout().cancel();
+		this.authenticationTimeout = null;
+	}
+	
+	/**
+	 * Gets the URL for the local callback server.
+	 * @return the local callback URL
+	 */
 	private String getLocalCallbackURL() {
 		return "http://localhost:" + this.getOIDCSettings().getLocalHTTPPort() + this.getOIDCSettings().getAuthenticationEndpoint();
+	}
+
+	/**
+	 * Starts the local callback server.
+	 */
+	private void startCallbackServer() {
+		this.callbackServer = new OIDCCallbackHTTPServer(this.getOIDCSettings().getLocalHTTPPort(), this.getOIDCSettings().getAuthenticationEndpoint(), this);
+		this.callbackServer.startInThread();
+	}
+	
+	/**
+	 * Stop and discard the local callback server.
+	 */
+	private void stopCallbackServer() {
+		if (this.callbackServer!=null) {
+			this.callbackServer.stop();
+			this.callbackServer = null;
+		}
 	}
 
 	/**
@@ -443,6 +536,14 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error sending logout request!");
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Cancel a pending log in process.
+	 */
+	public void cancelLogIn() {
+		this.stopCallbackServer();
+		this.setAuthenticationState(AuthenticationState.LOGGED_OUT);
 	}
 
 	/**
@@ -746,6 +847,9 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	@Override
 	public void callbackReceived(HttpExchange exchange) {
 		try {
+			
+			this.stopAuthenticationTimeout();
+			
 			AuthenticationResponse response = AuthenticationResponseParser.parse(exchange.getRequestURI());
 			
 			if (response instanceof AuthenticationErrorResponse) {
@@ -840,42 +944,42 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		
 	}
 	
-	/**
-	 * Loads the tokens from the Eclipse RCP secure preferences, if present.
-	 * @throws StorageException the storage exception
-	 * @throws ParseException the parse exception
-	 * @throws ParseException the parse exception
-	 * @throws ParseException the parse exception
-	 * @throws URISyntaxException the URI syntax exception
-	 */
-	private void loadIDToken() {
-		
-		try {
-			String idTokenSerialized = this.getTokenStore().get(PREFERENCES_KEY_ID_TOKEN, null);
-			if (idTokenSerialized!=null && idTokenSerialized.isBlank()==false) {
-				JWT idToken = JWTParser.parse(idTokenSerialized);
-				if (idToken!=null) {
-					System.out.println("Successfully loaded the ID token!");
-					this.getOIDCClient().setIdToken(idToken);
-					this.setAuthenticationState(AuthenticationState.LOGGED_IN);
-				} else {
-					System.out.println("Failed to load the ID token!");
-				}
-			}
-		} catch (StorageException | java.text.ParseException e) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Error loading the ID token from the local secure storage!");
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
-	 * Removes stored tokens from the secure preferences.
-	 */
-	//TODO make private when no longer needed public for the debug menu entry
-	private void clearStoredTokens() {
-		this.getTokenStore().remove(PREFERENCES_KEY_ID_TOKEN);
-	}
+//	/**
+//	 * Loads the tokens from the Eclipse RCP secure preferences, if present.
+//	 * @throws StorageException the storage exception
+//	 * @throws ParseException the parse exception
+//	 * @throws ParseException the parse exception
+//	 * @throws ParseException the parse exception
+//	 * @throws URISyntaxException the URI syntax exception
+//	 */
+//	private void loadIDToken() {
+//		
+//		try {
+//			String idTokenSerialized = this.getTokenStore().get(PREFERENCES_KEY_ID_TOKEN, null);
+//			if (idTokenSerialized!=null && idTokenSerialized.isBlank()==false) {
+//				JWT idToken = JWTParser.parse(idTokenSerialized);
+//				if (idToken!=null) {
+//					System.out.println("Successfully loaded the ID token!");
+//					this.getOIDCClient().setIdToken(idToken);
+//					this.setAuthenticationState(AuthenticationState.LOGGED_IN);
+//				} else {
+//					System.out.println("Failed to load the ID token!");
+//				}
+//			}
+//		} catch (StorageException | java.text.ParseException e) {
+//			System.err.println("[" + this.getClass().getSimpleName() + "] Error loading the ID token from the local secure storage!");
+//			e.printStackTrace();
+//		}
+//		
+//	}
+//	
+//	/**
+//	 * Removes stored tokens from the secure preferences.
+//	 */
+//	//TODO make private when no longer needed public for the debug menu entry
+//	private void clearStoredTokens() {
+//		this.getTokenStore().remove(PREFERENCES_KEY_ID_TOKEN);
+//	}
 	
 	private ISecurePreferences getTokenStore() {
 		if (tokenStore==null) {

@@ -361,7 +361,6 @@ public class SimpleOIDCClient {
 			System.err.println(errorResponse);
 			System.err.println(error);
 			System.err.println(regHTTPResponse.getStatusCode());
-			System.err.println(regHTTPResponse.getContent());
 			System.err.println(regHTTPResponse.getWWWAuthenticate());
 			System.err.println(regHTTPResponse.getLocation());
 		} else {
@@ -568,7 +567,7 @@ public class SimpleOIDCClient {
 		} else {
 			grant = new AuthorizationCodeGrant(authorizationCode, getLocalCallbackURI());
 		}
-		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant);
+		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant, Scope.parse("openid"));
 		HTTPResponse tokenHTTPResp = null;
 		try {
 			// --- Old style ----------
@@ -717,7 +716,6 @@ public class SimpleOIDCClient {
 			System.err.println(error);
 			System.err.println(error.getHTTPStatusCode());
 			System.err.println(userInfoHTTPResp.getStatusCode());
-			System.err.println(userInfoHTTPResp.getContent());
 			System.err.println(userInfoHTTPResp.getWWWAuthenticate());
 			System.err.println(userInfoHTTPResp.getLocation());
 		}

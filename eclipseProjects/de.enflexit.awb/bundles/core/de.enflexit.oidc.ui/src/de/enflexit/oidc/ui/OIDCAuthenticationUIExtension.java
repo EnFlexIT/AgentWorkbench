@@ -11,6 +11,7 @@ import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
@@ -53,7 +54,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		}
 		
 		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
-//		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
+		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
 	}
 	
 	private File getTrustStoreFile() {
@@ -95,18 +96,8 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		return menuItemAccountPanel;
 	}
 	
-	private void startAuthentication() {
-		OIDCAuthorization.getInstance().requestAuthorizationCode(true);
-	}
-	
-	private void triggerLogout() {
-		OIDCAuthorization.getInstance().triggerRemoteLogout();
-	}
-	
 	private void showOIDCSettingsDialog() {
-		//TODO figure out how to get the owner window in the new structure
 //		JDialog settingDialog = new JDialog(Application.getMainWindow());
-		
 		JDialog settingDialog = new JDialog();
 		settingDialog.setTitle("OpenID Connect Configuration");
 		settingDialog.setContentPane(new OIDCSettingsPanel(this.getOIDCSettings(), settingDialog));
@@ -128,8 +119,6 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		} catch (URISyntaxException | IOException e) {
 			String errorMessage = "Could not open the account panel! Please check your issuer URI and realm ID in the OIDC settings!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + errorMessage);
-
-			//TODO figure out how to get the owner window in the new structure
 //			JOptionPane.showMessageDialog(Application.getMainWindow(), errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
 			JOptionPane.showMessageDialog(null, errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
@@ -156,11 +145,18 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getAuthenticationStateButton()) {
 			
-			if (OIDCAuthorization.getInstance().getAuthenticationState()==AuthenticationState.LOGGED_OUT) {
-				this.startAuthentication();
-			} else if (OIDCAuthorization.getInstance().getAuthenticationState()==AuthenticationState.LOGGED_IN) {
-				this.triggerLogout();
+			switch(OIDCAuthorization.getInstance().getAuthenticationState()) {
+			case LOGGED_IN:
+				OIDCAuthorization.getInstance().triggerRemoteLogout();
+				break;
+			case LOGGED_OUT:
+				OIDCAuthorization.getInstance().requestAuthorizationCode(true);
+				break;
+			case PENDING:
+				OIDCAuthorization.getInstance().cancelLogIn();
+				break;
 			}
+			
 		} else if (ae.getSource()==this.getMenuItemOIDCSettings()) {
 			this.showOIDCSettingsDialog();
 		} else if (ae.getSource()==this.getMenuItemAccountPanel()) {
