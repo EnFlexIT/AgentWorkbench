@@ -54,7 +54,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		}
 		
 		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
-		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
+//		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
 	}
 	
 	private File getTrustStoreFile() {

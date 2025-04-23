@@ -72,6 +72,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.oidc.httpCallback.OIDCCallbackHTTPServer;
 
 /**
  * This class provides a simple interface to the OpenID Connect authorization.
