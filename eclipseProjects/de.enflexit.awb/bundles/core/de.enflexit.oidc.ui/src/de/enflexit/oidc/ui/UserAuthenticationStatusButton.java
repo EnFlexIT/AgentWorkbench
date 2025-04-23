@@ -18,11 +18,11 @@ public class UserAuthenticationStatusButton extends JButton {
 	private static final String ICON_PATH_LOGGED_OUT = "/icons/UserLoggedOut.png";
 	private static final String ICON_PATH_LOGIN_PENDING = "/icons/LoginPending.png";
 	
-	private static final String BUTTON_TEXT_LOGGED_IN = "Log out";
+	private static final String BUTTON_TEXT_LOGGED_IN = "Logged in as ";
 	private static final String BUTTON_TEXT_LOGGED_OUT = "Log in";
 	private static final String BUTTON_TEXT_LOGIN_PENDING = "Cancel log in";
 	
-	private static final String TOOLTIP_TEXT_LOGGED_IN = "Logged in as ";
+	private static final String TOOLTIP_TEXT_LOGGED_IN = "Show authorization menu";
 	private static final String TOOLTIP_TEXT_LOGGED_OUT = "Not logged in";
 	private static final String TOOLTIP_TEXT_LOGIN_PENDING = "The log in page was opened in your browser!";
 
@@ -79,8 +79,8 @@ public class UserAuthenticationStatusButton extends JButton {
 				e.printStackTrace();
 			}
 			this.setIcon(this.getImageIconLoggedIn());
-			this.setText(BUTTON_TEXT_LOGGED_IN);
-			this.setToolTipText(TOOLTIP_TEXT_LOGGED_IN + username);
+			this.setText(BUTTON_TEXT_LOGGED_IN + username);
+			this.setToolTipText(TOOLTIP_TEXT_LOGGED_IN);
 			break;
 		case LOGGED_OUT:
 			this.setIcon(this.getImageIconLoggedOut());

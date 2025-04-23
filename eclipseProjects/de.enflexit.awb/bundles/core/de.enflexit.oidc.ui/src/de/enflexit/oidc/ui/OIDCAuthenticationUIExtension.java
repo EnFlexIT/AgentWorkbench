@@ -11,6 +11,7 @@ import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
@@ -30,8 +31,11 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	private UserAuthenticationStatusButton authenticationStateButton;
 	
 	private JMenu jMenuAuthentication;
+	private JPopupMenu jPopupMenuAuthentication;
+	
 	private JMenuItem menuItemOIDCSettings;
 	private JMenuItem menuItemAccountPanel;
+	private JMenuItem menuItemLogOut;
 	
 	/* (non-Javadoc)
 	 * @see org.agentgui.gui.swing.MainWindowExtension#initialize()
@@ -80,6 +84,17 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		return jMenuAuthentication;
 	}
 	
+	private JPopupMenu getJPopupMenuAuthentication() {
+		if (jPopupMenuAuthentication==null) {
+			jPopupMenuAuthentication = new JPopupMenu();
+			
+			jPopupMenuAuthentication.add(this.getMenuItemOIDCSettings());
+			jPopupMenuAuthentication.add(this.getMenuItemAccountPanel());
+			jPopupMenuAuthentication.add(this.getMenuItemLogOut());
+		}
+		return jPopupMenuAuthentication;
+	}
+	
 	private  JMenuItem getMenuItemOIDCSettings() {
 		if (menuItemOIDCSettings==null) {
 			menuItemOIDCSettings = new JMenuItem("Edit KeyCloak / OIDC Settings");
@@ -94,6 +109,14 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 			menuItemAccountPanel.addActionListener(this);
 		}
 		return menuItemAccountPanel;
+	}
+	
+	private JMenuItem getMenuItemLogOut() {
+		if (menuItemLogOut==null) {
+			menuItemLogOut = new JMenuItem("Log out");
+			menuItemLogOut.addActionListener(this);
+		}
+		return menuItemLogOut;
 	}
 	
 	private void showOIDCSettingsDialog() {
@@ -147,7 +170,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 			
 			switch(OIDCAuthorization.getInstance().getAuthenticationState()) {
 			case LOGGED_IN:
-				OIDCAuthorization.getInstance().triggerRemoteLogout();
+				this.showPopupMenu();
 				break;
 			case LOGGED_OUT:
 				OIDCAuthorization.getInstance().requestAuthorizationCode(true);
@@ -161,6 +184,13 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 			this.showOIDCSettingsDialog();
 		} else if (ae.getSource()==this.getMenuItemAccountPanel()) {
 			this.openAccountPanel();
+		} else if (ae.getSource()==this.getMenuItemLogOut()) {
+			OIDCAuthorization.getInstance().triggerRemoteLogout();
 		}
 	}
+	
+	private void showPopupMenu() {
+		this.getJPopupMenuAuthentication().show(this.getAuthenticationStateButton(), 0, this.getAuthenticationStateButton().getHeight());
+	}
+	
 }
