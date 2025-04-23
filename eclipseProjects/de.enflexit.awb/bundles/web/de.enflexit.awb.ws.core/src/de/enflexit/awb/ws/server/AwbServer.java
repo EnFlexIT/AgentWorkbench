@@ -5,15 +5,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
-import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
+import org.eclipse.jetty.ee10.servlet.DefaultServlet;
+import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Handler.Sequence;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.eclipse.jetty.util.resource.Resources;
@@ -83,37 +81,32 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 	public Server customizeConfiguration(Server server, Sequence handlerCollection) {
 
 		// ----------------------------------------------------------
-		// --- Define ResourceHandler for static content ------------
+		// --- Define ServletContextHandler for static content ------
 		// ----------------------------------------------------------
-		ResourceHandler resHandler = new ResourceHandler();
-		resHandler.setDynamic(true);
-        resHandler.setDirAllowed(true);
-        resHandler.setWelcomeFiles(new String[]{ "index.html" });
+		ServletContextHandler servletContextHandler = new ServletContextHandler("/", ServletContextHandler.SESSIONS);
+        servletContextHandler.setContextPath("/");
+        servletContextHandler.setWelcomeFiles(new String[] { "index.html" });
+        servletContextHandler.addServlet(DefaultServlet.class, "/"); 
         
-        // --- Get base Path ----------
-        Path pathResBase = Path.of(BundleHelper.getWebRootDirectory(true).getAbsolutePath());
-        if (Files.isDirectory(pathResBase)==false) {
-        	System.err.println("[" + this.getClass().getSimpleName() + "] Path is not a directory: " + pathResBase);
-        }
-        if (Files.isReadable(pathResBase)==false) {
-        	System.err.println("[" + this.getClass().getSimpleName() + "] Path is not readable: " + pathResBase);
-        }
-        // --- Create Resource --------
-        Resource resBase = ResourceFactory.of(resHandler).newResource(pathResBase);
+        // --- Create web root resource -----------------------------
+        Path webRootPath = this.getWebRootPathValidated();
+        Resource resBase = ResourceFactory.of(servletContextHandler).newResource(webRootPath);
         if (Resources.isReadableDirectory(resBase)==false) {
         	System.err.println("[" + this.getClass().getSimpleName() + "] Resource is not a readable directory");
         }
-        resHandler.setBaseResource(resBase);
+        servletContextHandler.setBaseResource(resBase);
 
-        // --- Wrap ResourceHandler into ContextHandler -------------
-        ContextHandler ctxHandlerWebApp = new ContextHandler();
-        ctxHandlerWebApp.setHandler(resHandler);
+        // --- Create error handler that's redirects to index.html --
+        ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
+        errorHandler.addErrorPage(404, "/"); // return root ... being index.html
+        servletContextHandler.setErrorHandler(errorHandler);
+        
         
 		// ----------------------------------------------------------
         // --- Define a ContextHandlerCollection --------------------
 		// ----------------------------------------------------------
         List<String> ctxPathList = new ArrayList<>();
-        ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection(ctxHandlerWebApp);
+        ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection(servletContextHandler);
         List<Handler> handlerList = handlerCollection.getHandlers();
         if (handlerList!=null) {
         	for (Handler handler : handlerList) {
@@ -123,26 +116,32 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         		ctxPathList.add(ctxPath);
         	}
         }
-        
-		// ----------------------------------------------------------
-        // --- Define a regular expression rule ---------------------
-		// ----------------------------------------------------------
-        String servletCtxPathList = StringUtils.join(ctxPathList, "|");
-        RewriteRegexRule rRegExRule = new RewriteRegexRule();
-        rRegExRule.setRegex("^(?!\\/(" + servletCtxPathList + ")\\/).+");
-        rRegExRule.setReplacement("index.html");
-        
-        // --- Define a rewrite handler -----------------------------
-        RewriteHandler rewriteHandler = new RewriteHandler();
-        rewriteHandler.setHandler(contextHandlerCollection);
-        rewriteHandler.addRule(rRegExRule);
-        
+    
 		// ----------------------------------------------------------
         // --- Set handler of the server ----------------------------
 		// ----------------------------------------------------------
-        server.setHandler(rewriteHandler);
+        server.setHandler(contextHandlerCollection);
         
 		return server;
+	}
+	
+	/**
+	 * Returns the validated (usable!) web root path.
+	 * @return the web root validated
+	 */
+	private Path getWebRootPathValidated() {
+		
+		 // --- Get base Path ----------
+        Path webRootPath = Path.of(BundleHelper.getWebRootDirectory(true).getAbsolutePath());
+        if (Files.isDirectory(webRootPath)==false) {
+        	System.err.println("[" + this.getClass().getSimpleName() + "] Path is not a directory: " + webRootPath);
+        	return null;
+        }
+        if (Files.isReadable(webRootPath)==false) {
+        	System.err.println("[" + this.getClass().getSimpleName() + "] Path is not readable: " + webRootPath);
+        	return null;
+        }
+        return webRootPath;
 	}
 	
 }
