@@ -51,7 +51,11 @@ public class PropertyContentProvider {
 	 * The enumeration that describes the FileToProvide.
 	 */
 	public enum FileToProvide {
-		LOGIN_SUCCESS_HTML("LogInSuccess.html");
+		LOGIN_SUCCESS_HTML("LogInSuccess.html"),
+		LOGO_PNG("favicon.png"),
+		BACKGROUND_JPG("background.jpg"),
+		FAVICON_PNG("favicon.png")
+		;
 		
 		private final String fileName;
 		
