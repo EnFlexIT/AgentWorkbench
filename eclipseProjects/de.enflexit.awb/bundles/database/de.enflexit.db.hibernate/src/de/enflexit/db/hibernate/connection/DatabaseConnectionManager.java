@@ -114,7 +114,7 @@ public class DatabaseConnectionManager {
 			this.loadDatabaseConfigurationProperties(factoryID, configuration);
 			
 			// --- Check general database settings ----------------------------
-			if (this.getGeneralDatabaseSettings().isUseForEveryFactory()==true) {
+			if (this.getGeneralDatabaseSettings()!=null && this.getGeneralDatabaseSettings().isUseForEveryFactory()==true) {
 				// --- Overwrite DB settings with general settings ------------
 				Properties propsToEdit = configuration.getProperties();
 				Properties propsToRead = this.getGeneralDatabaseSettings().getHibernateDatabaseSettings();
@@ -166,7 +166,8 @@ public class DatabaseConnectionManager {
 			
 			// --- Try getting the general DatabaseSettings -------------
 			DatabaseSettings dbSettings = this.getDatabaseSettings(HibernateUtilities.GENERAL_SESSION_FACTORY_ID);
-						
+			if (dbSettings==null) return null;
+			
 			// --- Create the GeneralDatabaseSettings instance ----------
 			generalDatabaseSettings = new GeneralDatabaseSettings();
 			generalDatabaseSettings.setUseForEveryFactory(Boolean.valueOf(dbSettings.getHibernateDatabaseSettings().get(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY).toString()));
@@ -190,7 +191,7 @@ public class DatabaseConnectionManager {
 		if (generalDatabaseSettings!=null) {
 			
 			// --- If true, a complete session factory restart is required ----
-			hasChangedSettings = generalDatabaseSettings.equals(this.getGeneralDatabaseSettings())==false;
+			hasChangedSettings = this.getGeneralDatabaseSettings()==null || generalDatabaseSettings.equals(this.getGeneralDatabaseSettings())==false;
 			
 			// --- Write to eclipse preferences -------------------------------
 			Properties dbProps = generalDatabaseSettings.getHibernateDatabaseSettings();
@@ -224,7 +225,7 @@ public class DatabaseConnectionManager {
 		if (dbSystemList!=null && dbSystemList.size()>0) {
 			dbSystemName = dbSystemList .get(0);
 		}
-		if (dbSystemName==null) return null;
+		if (dbSystemName==null || dbSystemName.equals(HibernateUtilities.DB_SERVICE_REGISTRATION_ERROR)) return null;
 		
 		// --- Get default properties -------------------------------
 		Properties dbProps = null;
@@ -270,6 +271,7 @@ public class DatabaseConnectionManager {
 		if (dbSettings==null) {
 			// --- Create initial database settings -----------------
 			dbSettings = this.getInitialDatabaseSettings();
+			if (dbSettings==null) return null;
 			// --- General database settings? -----------------------
 			if (factoryID.equals(HibernateUtilities.GENERAL_SESSION_FACTORY_ID)==true) {
 				dbSettings.getHibernateDatabaseSettings().put(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY, Boolean.valueOf(false).toString());
