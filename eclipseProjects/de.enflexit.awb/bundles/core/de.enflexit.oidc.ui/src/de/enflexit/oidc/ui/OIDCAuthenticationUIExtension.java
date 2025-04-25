@@ -7,9 +7,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
@@ -28,14 +30,18 @@ import de.enflexit.oidc.OIDCSettings;
  */
 public class OIDCAuthenticationUIExtension extends MainWindowExtension implements ActionListener, AuthenticationStateListener {
 	
+	private static final String ACTION_COMMAND_OIDC_SETTINGS = "Edit KeyCloak / OIDC Settings";
+	private static final String ACTION_COMMAND_ACCOUNT_PANEL = "Open KeyCloak Account Panel";
+	private static final String ACTION_COMMAND_LOGOUT = "Log out";
+	
 	private UserAuthenticationStatusButton authenticationStateButton;
 	
 	private JMenu jMenuAuthentication;
 	private JPopupMenu jPopupMenuAuthentication;
 	
-	private JMenuItem menuItemOIDCSettings;
-	private JMenuItem menuItemAccountPanel;
-	private JMenuItem menuItemLogOut;
+	private Action actionOidcSettings;
+	private Action actionAccountPanel;
+	private Action actionLogOut;
 	
 	/* (non-Javadoc)
 	 * @see org.agentgui.gui.swing.MainWindowExtension#initialize()
@@ -78,8 +84,8 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	private JMenu getJMenuAuthentication() {
 		if (jMenuAuthentication==null) {
 			jMenuAuthentication = new JMenu("Authentication");
-			jMenuAuthentication.add(this.getMenuItemOIDCSettings());
-			jMenuAuthentication.add(this.getMenuItemAccountPanel());
+			jMenuAuthentication.add(this.getActionOidcSettings());
+			jMenuAuthentication.add(this.getActionAccountPanel());
 		}
 		return jMenuAuthentication;
 	}
@@ -88,35 +94,33 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		if (jPopupMenuAuthentication==null) {
 			jPopupMenuAuthentication = new JPopupMenu();
 			
-			jPopupMenuAuthentication.add(this.getMenuItemOIDCSettings());
-			jPopupMenuAuthentication.add(this.getMenuItemAccountPanel());
-			jPopupMenuAuthentication.add(this.getMenuItemLogOut());
+			jPopupMenuAuthentication.add(this.getActionOidcSettings());
+			jPopupMenuAuthentication.add(this.getActionAccountPanel());
+			jPopupMenuAuthentication.add(this.getActionLogOut());
 		}
 		return jPopupMenuAuthentication;
 	}
 	
-	private  JMenuItem getMenuItemOIDCSettings() {
-		if (menuItemOIDCSettings==null) {
-			menuItemOIDCSettings = new JMenuItem("Edit KeyCloak / OIDC Settings");
-			menuItemOIDCSettings.addActionListener(this);
+	
+	private Action getActionOidcSettings() {
+		if (actionOidcSettings==null) {
+			actionOidcSettings = new MenuAction(ACTION_COMMAND_OIDC_SETTINGS);
 		}
-		return menuItemOIDCSettings;
+		return actionOidcSettings;
 	}
 	
-	private JMenuItem getMenuItemAccountPanel() {
-		if (menuItemAccountPanel==null) {
-			menuItemAccountPanel = new JMenuItem("Open KeyCloak Account Panel");
-			menuItemAccountPanel.addActionListener(this);
+	private Action getActionAccountPanel() {
+		if (actionAccountPanel==null) {
+			actionAccountPanel = new MenuAction(ACTION_COMMAND_ACCOUNT_PANEL);
 		}
-		return menuItemAccountPanel;
+		return actionAccountPanel;
 	}
 	
-	private JMenuItem getMenuItemLogOut() {
-		if (menuItemLogOut==null) {
-			menuItemLogOut = new JMenuItem("Log out");
-			menuItemLogOut.addActionListener(this);
+	private Action getActionLogOut() {
+		if (actionLogOut==null) {
+			actionLogOut = new MenuAction(ACTION_COMMAND_LOGOUT);
 		}
-		return menuItemLogOut;
+		return actionLogOut;
 	}
 	
 	private void showOIDCSettingsDialog() {
@@ -179,18 +183,43 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 				OIDCAuthorization.getInstance().cancelLogIn();
 				break;
 			}
-			
-		} else if (ae.getSource()==this.getMenuItemOIDCSettings()) {
-			this.showOIDCSettingsDialog();
-		} else if (ae.getSource()==this.getMenuItemAccountPanel()) {
-			this.openAccountPanel();
-		} else if (ae.getSource()==this.getMenuItemLogOut()) {
-			OIDCAuthorization.getInstance().triggerRemoteLogout();
 		}
 	}
 	
+	/**
+	 * Shows the popup menu.
+	 */
 	private void showPopupMenu() {
 		this.getJPopupMenuAuthentication().show(this.getAuthenticationStateButton(), 0, this.getAuthenticationStateButton().getHeight());
+	}
+
+	/**
+	 * Simple {@link Action} implementation, to allow using the same item in both menus.
+	 */
+	private class MenuAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 7297945247474043596L;
+
+		/**
+		 * Instantiates a new menu action.
+		 *
+		 * @param name the name
+		 */
+		public MenuAction(String name) {
+			super(name);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent ae) {
+			if (ae.getActionCommand().equals(ACTION_COMMAND_OIDC_SETTINGS)) {
+				OIDCAuthenticationUIExtension.this.showOIDCSettingsDialog();
+			} else if (ae.getActionCommand().equals(ACTION_COMMAND_ACCOUNT_PANEL)) {
+				OIDCAuthenticationUIExtension.this.openAccountPanel();
+			} else if (ae.getActionCommand().equals(ACTION_COMMAND_LOGOUT)) {
+				OIDCAuthorization.getInstance().triggerRemoteLogout();
+			}
+		}
+		
 	}
 	
 }
