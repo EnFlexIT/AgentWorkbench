@@ -7,6 +7,7 @@ Bundle-Version: 6.6.11.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.enflexit.db.hibernate.HibernateActivator
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: .,
  lib/angus-activation-2.0.0.jar,

@@ -39,6 +39,9 @@ public class HibernateUtilities {
 	public static final String DEFAULT_SESSION_FACTORY_ID = "awbSessionFactory";
 	public static final String DB_SERVICE_REGISTRATION_ERROR = "NO DATABASE SYSTEM REGISTERD";
 	
+	public static final String GENERAL_SESSION_FACTORY_ID = "de.enflexit.db.general";
+	public static final String GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY = "de.enflexit.db.general.useForEveryFactory";
+	
 	private static HashMap<String, HibernateDatabaseService> databaseServices;
 	private static ConcurrentHashMap<String, SessionFactoryMonitor> sessionFactoryMonitorHashMap;
 	private static HashMap<String, SessionFactory> sessionFactoryHashMap;
@@ -672,7 +675,7 @@ public class HibernateUtilities {
 	
 	/**
 	 * Returns the database service by driver class name.
-	 * @param driverClaName the driver cla name
+	 * @param driverClaName the driver class name
 	 * @return the database service by driver class name
 	 */
 	public static HibernateDatabaseService getDatabaseServiceByDriverClassName(String driverClaName) {
