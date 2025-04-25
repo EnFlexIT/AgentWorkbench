@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentMedia.JSON_PROPERTY_MIME_TYPE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-25T15:51:31.606082900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class SiteContentMedia extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_MIME_TYPE = "mimeType";
   @JsonProperty(JSON_PROPERTY_MIME_TYPE)
