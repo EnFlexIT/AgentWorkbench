@@ -64,6 +64,7 @@ import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.SerializeException;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
+import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
@@ -94,7 +95,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	private static final String SECURE_PREFERENCES_TOKEN_PATH = "de/enflexit/oidc/tokens";
 	private static final String PREFERENCES_KEY_ID_TOKEN = "idToken";
 //	private static final String PREFERENCES_KEY_ACCESS_TOKEN = "accessToken";
-//	private static final String PREFERENCES_KEY_REFRESH_TOKEN = "refreshToken";
+	private static final String PREFERENCES_KEY_REFRESH_TOKEN = "refreshToken";
 
 	/** The single instance of this singleton class. */
 	private static OIDCAuthorization instance;
@@ -147,9 +148,32 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	public static OIDCAuthorization getInstance() {
 		if (instance == null) {
 			instance = new OIDCAuthorization();
-//			instance.loadIDToken();
+			try {
+				instance.checkForRefreshToken();
+			} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException e) {
+				System.err.println("[" + instance.getClass().getSimpleName() + "] Error restoring stored OIDC session:");
+				e.printStackTrace();
+			}
+			
 		}
 		return instance;
+	}
+	
+	private void checkForRefreshToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException, IOException {
+		RefreshToken refreshToken = this.loadRefreshToken();
+		if (refreshToken!=null) {
+			if (this.inited==false) {
+				this.init();
+			}
+			
+			this.getOIDCClient().setRefreshToken(refreshToken);
+			boolean refreshSuccess = this.getOIDCClient().refreshTokens();
+			System.out.println("[" + this.getClass().getSimpleName() + "] Token refresh successful: " + refreshSuccess);
+			this.setAuthenticationState((refreshSuccess==true) ? AuthenticationState.LOGGED_IN : AuthenticationState.LOGGED_OUT);
+			if (refreshSuccess==true) {
+				this.storeTokens();
+			}
+		}
 	}
 
 	/**
@@ -355,7 +379,18 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 */
 	public void init() throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
-		this.getOIDCClient();
+		OIDCSettings oidcSettings = OIDCAuthorization.getInstance().getOIDCSettings();
+
+		OIDCAuthorization.getInstance().setOIDCSettings(oidcSettings);
+		OIDCAuthorization.getInstance().setResourceURI("https://login.enflex.it");
+		
+		try {
+			OIDCAuthorization.getInstance().setTrustStore(this.getTrustStoreFile());
+		} catch (URISyntaxException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error setting the trust store file!");
+			e.printStackTrace();
+		}
+		
 		//oidcClient.reset();
 		urlProcessor = new URLProcessor();
 
@@ -374,6 +409,12 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		oidcClient.setLocalCallbackURI(this.getLocalCallbackURL());
 		
 		inited = true;
+	}
+	
+	private File getTrustStoreFile() {
+		String relativeCacertsPath = "/lib/security/cacerts".replace("/", File.separator);
+		String filename = System.getProperty("java.home") + relativeCacertsPath;
+		return new File(filename);
 	}
 	
 	public synchronized void doInitialAuthenticationCheck() {
@@ -397,6 +438,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 */
 	public void requestAuthorizationCode(boolean showLogin) {
 		
+		// --- Perform initialization tasks, if not done yet --------
 		if (!inited) {
 			try {
 				this.init();
@@ -407,6 +449,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			}
 		}
 		
+		// --- Prepare the URI for the authentication request -------
 		URI authenticationRequestURI = null;
 		try {
 			authenticationRequestURI = oidcClient.buildAuthorizationCodeRequest(this.getLocalCallbackURL(), showLogin);
@@ -415,8 +458,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			e.printStackTrace();
 			return;
 		}
-			
+		
+		// --- Start the callback server for processing the response ----------
 		this.startCallbackServer();
+		
 		this.setAuthenticationState(AuthenticationState.PENDING);
 		this.startAuthenticationTimeout();
 		
@@ -424,12 +469,15 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			Desktop.getDesktop().browse(authenticationRequestURI);
 		} catch (IOException e) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error opening the login page, please check your OIDC settings!");
+			this.cancelLogIn();
 			e.printStackTrace();
-			return;
 		}
-		
 	}
 	
+	/**
+	 * Gets the {@link Timer} instance for the authentication timeout.
+	 * @return the authentication timeout
+	 */
 	private Timer getAuthenticationTimeout() {
 		if (authenticationTimeout==null) {
 			authenticationTimeout = new Timer("Authentication Timeout");
@@ -437,6 +485,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		return authenticationTimeout;
 	}
 	
+	/**
+	 * Gets the {@link TimerTask} for the authentication timeout.
+	 * @return the timeout task
+	 */
 	private TimerTask getTimeoutTask() {
 		TimerTask timeoutTask = new TimerTask() {
 			
@@ -450,10 +502,17 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		return timeoutTask;
 	}
 	
+	/**
+	 * Starts the authentication timeout. If authentication is not finished,
+	 * it will be canceled after the specified timeout. 
+	 */
 	private void startAuthenticationTimeout() {
 		this.getAuthenticationTimeout().schedule(this.getTimeoutTask(), AUTHENTICATION_TIMEOUT);
 	}
 	
+	/**
+	 * Stops the  authentication timeout.
+	 */
 	private void stopAuthenticationTimeout() {
 		this.getAuthenticationTimeout().cancel();
 		this.authenticationTimeout = null;
@@ -684,7 +743,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 
 		/**
 		 * Gets the upload file.
-		 *
 		 * @return the upload file
 		 */
 		public File getUploadFile() {
@@ -693,7 +751,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 
 		/**
 		 * Gets the connection.
-		 *
 		 * @return the connection
 		 */
 		public HttpsURLConnection getConnection() {
@@ -702,7 +759,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 
 		/**
 		 * Gets the redirection URL.
-		 *
 		 * @return the redirection URL
 		 */
 		public String getRedirectionURL() {
@@ -711,7 +767,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 
 		/**
 		 * Gets the response code.
-		 *
 		 * @return the response code
 		 */
 		public int getResponseCode() {
@@ -741,8 +796,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		 * @throws KeyStoreException the key store exception
 		 */
 		public URLProcessor prepare(URL requestURL) throws IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
-//			System.out.println("requestURL=");
-//			System.out.println(requestURL);
 
 			connection = (HttpsURLConnection) requestURL.openConnection();
 			connection.setInstanceFollowRedirects(false);
@@ -862,16 +915,15 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 				AuthorizationCode authCode = successResponse.getAuthorizationCode();
 				this.oidcClient.setAuthorizationCode(authCode);
 				
-				try {
-					if (this.oidcClient.requestToken()==true) {
-						this.storeIDToken();
-					}
-				} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException e) {
-					System.err.println("[" + this.getClass().getSimpleName() + "] Error requesting tokens!");
-					e.printStackTrace();
+				if (this.oidcClient.requestToken()==true) {
+					// --- Log in successful ------------------------
+					this.setAuthenticationState(AuthenticationState.LOGGED_IN);
+					this.storeTokens();
+				} else {
+					// --- Log in failed ----------------------------
+					this.setAuthenticationState(AuthenticationState.LOGGED_OUT);
 				}
 				
-				this.setAuthenticationState(AuthenticationState.LOGGED_IN);
 			}
 			
 		} catch (ParseException e) {
@@ -880,6 +932,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		}
 	}
 	
+	/**
+	 * Gets the registered {@link AuthenticationStateListener}s.
+	 * @return the authentication listeners
+	 */
 	private ArrayList<AuthenticationStateListener> getAuthenticationListeners() {
 		if (authenticationStateListeners==null) {
 			authenticationStateListeners = new ArrayList<AuthenticationStateListener>();
@@ -907,6 +963,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		}
 	}
 	
+	/**
+	 * Sets the current authentication state, notifies listeners about changes.
+	 * @param authenticationState the new authentication state
+	 */
 	private void setAuthenticationState(AuthenticationState authenticationState) {
 		this.authenticationState = authenticationState;
 		for (AuthenticationStateListener listener : this.getAuthenticationListeners()) {
@@ -924,23 +984,31 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 
 	/**
 	 * Stores the current tokens in the Eclipse RCP secure preferences.
-	 * @throws StorageException the storage exception
-	 * @throws URISyntaxException the URI syntax exception
-	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	private void storeIDToken() {
-		// --- Access the secure preferences store of eclipse RCP ------------- 
+	private void storeTokens() {
 		
-		if (this.getOIDCClient().getIdToken()!=null) {
-			try {
+		try {
+			
+			boolean storeChanged = false;
+			// --- Store the ID token -------------------------------
+			if (this.getOIDCClient().getIdToken()!=null) {
 				this.getTokenStore().put(PREFERENCES_KEY_ID_TOKEN, this.getOIDCClient().getIdToken().serialize(), true);
-				this.getTokenStore().flush();
-			} catch (StorageException | IOException e) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Error storing the ID token locally!");
-				e.printStackTrace();
+				storeChanged = true;
 			}
-		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] The ID token is not set!");
+			// --- Store the refresh token --------------------------
+			if (this.getOIDCClient().getRefreshToken()!=null) {
+				this.getTokenStore().put(PREFERENCES_KEY_REFRESH_TOKEN, this.getOIDCClient().getRefreshToken().getValue(), true);
+				storeChanged = true;
+			}
+			
+			// --- Persist changes, if any --------------------------
+			if (storeChanged==true) {
+				this.getTokenStore().flush();
+			}
+			
+		} catch (StorageException | IOException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Error storing the OIDC tokens locally!");
+			e.printStackTrace();
 		}
 		
 	}
@@ -973,20 +1041,32 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 //		}
 //		
 //	}
-//	
-//	/**
-//	 * Removes stored tokens from the secure preferences.
-//	 */
-//	//TODO make private when no longer needed public for the debug menu entry
-//	private void clearStoredTokens() {
-//		this.getTokenStore().remove(PREFERENCES_KEY_ID_TOKEN);
-//	}
 	
 	private ISecurePreferences getTokenStore() {
 		if (tokenStore==null) {
 			tokenStore = SecurePreferencesFactory.getDefault().node(SECURE_PREFERENCES_TOKEN_PATH);
 		}
 		return tokenStore;
+	}
+	
+	/**
+	 * Loads the refresh token from the secure preferences store.
+	 * @return the refresh token, null if not found.
+	 */
+	private RefreshToken loadRefreshToken() {
+		RefreshToken refreshToken = null;
+		
+		String refreshTokenSTring;
+		try {
+			refreshTokenSTring = this.getTokenStore().get(PREFERENCES_KEY_REFRESH_TOKEN, null);
+			if (refreshTokenSTring!=null) {
+				refreshToken = new RefreshToken(refreshTokenSTring);
+			}
+		} catch (StorageException e) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Loading the refresh token failed!");
+			e.printStackTrace();
+		}
+		return refreshToken;
 	}
 	
 }

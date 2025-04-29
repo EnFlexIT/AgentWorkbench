@@ -3,7 +3,6 @@ package de.enflexit.oidc.ui;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,28 +50,10 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		this.addToolbarComponent(this.getAuthenticationStateButton(), null, SeparatorPosition.NoSeparator);
 		this.addJMenu(this.getJMenuAuthentication(), null);
 		
-		OIDCSettings oidcSettings = OIDCAuthorization.getInstance().getOIDCSettings();
-
-		OIDCAuthorization.getInstance().setOIDCSettings(oidcSettings);
-		
-		OIDCAuthorization.getInstance().setResourceURI("https://login.enflex.it");
-		try {
-			OIDCAuthorization.getInstance().setTrustStore(this.getTrustStoreFile());
-		} catch (URISyntaxException e) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Error setting the trust store file!");
-			e.printStackTrace();
-		}
-		
 		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
 //		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
 	}
 	
-	private File getTrustStoreFile() {
-		String relativeCacertsPath = "/lib/security/cacerts".replace("/", File.separator);
-		String filename = System.getProperty("java.home") + relativeCacertsPath;
-		return new File(filename);
-	}
-
 	private UserAuthenticationStatusButton getAuthenticationStateButton() {
 		if (authenticationStateButton==null) {
 			authenticationStateButton = new UserAuthenticationStatusButton();
