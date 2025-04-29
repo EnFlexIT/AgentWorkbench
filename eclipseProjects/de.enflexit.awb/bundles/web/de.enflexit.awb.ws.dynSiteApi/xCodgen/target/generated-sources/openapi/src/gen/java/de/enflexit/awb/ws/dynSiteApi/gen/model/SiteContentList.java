@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentList.JSON_PROPERTY_CONTENT_LIST
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-29T10:05:32.007037200+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class SiteContentList   {
   public static final String JSON_PROPERTY_CONTENT_LIST = "contentList";
   @JsonProperty(JSON_PROPERTY_CONTENT_LIST)
@@ -55,8 +55,8 @@ public class SiteContentList   {
    * @return contentList
    **/
   @JsonProperty(value = "contentList")
-  @Schema(description = "")
-  @Valid 
+  @Schema(required = true, description = "")
+  @NotNull @Valid 
   public List<@Valid AbstractSiteContent> getContentList() {
     return contentList;
   }

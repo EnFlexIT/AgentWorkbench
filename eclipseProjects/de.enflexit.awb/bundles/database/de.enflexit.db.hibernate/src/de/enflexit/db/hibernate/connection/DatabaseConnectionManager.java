@@ -46,6 +46,7 @@ public class DatabaseConnectionManager {
 	private HashMap<String, HibernateDatabaseConnectionService> dbConnectionServiceHashMap;
 	private HibernateDatabaseConnectionServiceTracker dbConnectionsTracker;
 	
+	private GeneralDatabaseSettings generalDatabaseSettings;
 	
 	/**
 	 * Start the local HibernateDatabaseConnectionServiceTracker.
@@ -101,12 +102,29 @@ public class DatabaseConnectionManager {
 	public void addHibernateDataBaseConnectionService(HibernateDatabaseConnectionService connectionService) {
 
 		try {
+			
 			// --- Get the necessary service instances ------------------------ 
 			String factoryID = connectionService.getFactoryID();
 			Configuration configuration = connectionService.getConfiguration();
+
+			// --- Ensure that the connection is closed -----------------------
+			HibernateUtilities.closeSessionFactory(factoryID);
 			
 			// --- Load JDBC connection data ----------------------------------
 			this.loadDatabaseConfigurationProperties(factoryID, configuration);
+			
+			// --- Check general database settings ----------------------------
+			if (this.getGeneralDatabaseSettings()!=null && this.getGeneralDatabaseSettings().isUseForEveryFactory()==true) {
+				// --- Overwrite DB settings with general settings ------------
+				Properties propsToEdit = configuration.getProperties();
+				Properties propsToRead = this.getGeneralDatabaseSettings().getHibernateDatabaseSettings();
+				List<Object> keyList = new ArrayList<>(propsToRead.keySet());
+				for (int i = 0; i < keyList.size(); i++) {
+					String key = (String) keyList.get(i);
+					String value = propsToRead.getProperty(key);
+					propsToEdit.setProperty(key, value);
+				}
+			}
 			
 			// --- Add to the locally known list ------------------------------
 			this.getHibernateDatabaseConnectionServiceHashMap().put(factoryID, connectionService);
@@ -133,15 +151,91 @@ public class DatabaseConnectionManager {
 		this.getHibernateDatabaseConnectionServiceHashMap().remove(factoryID);
 		// --- Destroy the SessionFactory -------------------------------------
 		HibernateUtilities.closeSessionFactory(factoryID);
-		
 	}
 	
-	
 
+	// ------------------------------------------------------------------------
+	// --- From here, handling of general database settings -------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the general database settings.
+	 * @return the general database settings
+	 */
+	public GeneralDatabaseSettings getGeneralDatabaseSettings() {
+		if (generalDatabaseSettings==null) {
+			
+			// --- Try getting the general DatabaseSettings -------------
+			DatabaseSettings dbSettings = this.getDatabaseSettings(HibernateUtilities.GENERAL_SESSION_FACTORY_ID);
+			if (dbSettings==null) return null;
+			
+			// --- Create the GeneralDatabaseSettings instance ----------
+			generalDatabaseSettings = new GeneralDatabaseSettings();
+			generalDatabaseSettings.setUseForEveryFactory(Boolean.valueOf(dbSettings.getHibernateDatabaseSettings().get(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY).toString()));
+			generalDatabaseSettings.setDatabaseSystemName(dbSettings.getDatabaseSystemName());
+			generalDatabaseSettings.setHibernateDatabaseSettings(dbSettings.getHibernateDatabaseSettings());
+			
+			// --- Remove the indicator to use in every factory ---------
+			generalDatabaseSettings.getHibernateDatabaseSettings().remove(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY);
+			
+		}
+		return generalDatabaseSettings;
+	}
+	/**
+	 * Sets and saves the general database settings.
+	 * @param generalDatabaseSettings the new general database settings
+	 */
+	public boolean saveGeneralDatabaseSettings(GeneralDatabaseSettings generalDatabaseSettings) {
+		
+		boolean success = true;
+		boolean hasChangedSettings = false;
+		if (generalDatabaseSettings!=null) {
+			
+			// --- If true, a complete session factory restart is required ----
+			hasChangedSettings = this.getGeneralDatabaseSettings()==null || generalDatabaseSettings.equals(this.getGeneralDatabaseSettings())==false;
+			
+			// --- Write to eclipse preferences -------------------------------
+			Properties dbProps = generalDatabaseSettings.getHibernateDatabaseSettings();
+			dbProps.put(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY, Boolean.valueOf(generalDatabaseSettings.isUseForEveryFactory()).toString());
+			success = this.saveDatabaseConfigurationProperties(HibernateUtilities.GENERAL_SESSION_FACTORY_ID, dbProps);
+			dbProps.remove(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY);
+		}
+		// --- Set to local variable ------------------------------------------
+		this.generalDatabaseSettings = generalDatabaseSettings;
+		
+		// --- Restart session factories ? ------------------------------------
+		if (hasChangedSettings==true) {
+			this.startRegisteredDatabaseConnections();
+		}
+		return success;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- From here, methods for loading & saving preferences ---------------- 
 	// ------------------------------------------------------------------------
+	/**
+	 * Returns initial database settings derived from registered {@link HibernateDatabaseService}s.
+	 * @return the initial database settings
+	 */
+	private DatabaseSettings getInitialDatabaseSettings() {
+		
+		// --- Get name of first known database system --------------
+		String dbSystemName = null;
+		List<String> dbSystemList = HibernateUtilities.getDatabaseSystemList();
+		if (dbSystemList!=null && dbSystemList.size()>0) {
+			dbSystemName = dbSystemList .get(0);
+		}
+		if (dbSystemName==null || dbSystemName.equals(HibernateUtilities.DB_SERVICE_REGISTRATION_ERROR)) return null;
+		
+		// --- Get default properties -------------------------------
+		Properties dbProps = null;
+		if (dbSystemName!=null) {
+			HibernateDatabaseService dbService = HibernateUtilities.getDatabaseService(dbSystemName);
+			dbProps = dbService.getHibernateDefaultPropertySettings();
+		}
+		return new DatabaseSettings(dbSystemName, dbProps);
+	}
+	
 	/**
 	 * Returns the database settings that can be used for the visual configuration of the database connection.
 	 *
@@ -150,16 +244,71 @@ public class DatabaseConnectionManager {
 	 */
 	public DatabaseSettings getDatabaseSettings(String factoryID) {
 
+		if (factoryID==null || factoryID.isBlank()) return null;
+		
+		// --- Get corresponding eclipse preferences ----------------
+		IEclipsePreferences eclipsePreferences = this.getEclipsePreferences(factoryID);
+		// --- Get the database system name -------------------------
+		String driverClass = eclipsePreferences.get("hibernate.connection.driver_class", null);
+		String databaseSystemName = HibernateUtilities.getDatabaseSystemNameByDriverClassName(driverClass);
+		if (databaseSystemName!=null) {
+			// --- Fill the properties ------------------------------
+			Properties dbProps = new Properties();
+			try {
+				for (String key : eclipsePreferences.keys()) {
+					dbProps.put(key, eclipsePreferences.get(key, null));
+				}
+				
+			} catch (BackingStoreException bsEx) {
+				bsEx.printStackTrace();
+			}
+			// --- Return the DatabaseSettings ----------------------
+			return new DatabaseSettings(databaseSystemName, dbProps);
+		}
+		
+		// --- Try to get settings from Hibernate Configuration -----
+		DatabaseSettings dbSettings = this.getDatabaseSettingsBasedOnHibernateConfiguration(factoryID);
+		if (dbSettings==null) {
+			// --- Create initial database settings -----------------
+			dbSettings = this.getInitialDatabaseSettings();
+			if (dbSettings==null) return null;
+			// --- General database settings? -----------------------
+			if (factoryID.equals(HibernateUtilities.GENERAL_SESSION_FACTORY_ID)==true) {
+				dbSettings.getHibernateDatabaseSettings().put(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY, Boolean.valueOf(false).toString());
+			}
+			// --- Save the new settings ----------------------------
+			this.saveDatabaseConfigurationPropertiesToEclipsePreferences(factoryID, dbSettings.getHibernateDatabaseSettings(), null);
+			
+		}
+		return dbSettings;
+	}
+	/**
+	 * Returns the database settings based on the hibernate {@link Configuration} within a {@link HibernateDatabaseConnectionService}.
+	 *
+	 * @param factoryID the factory ID
+	 * @return the database settings based on hibernate configuration
+	 */
+	private DatabaseSettings getDatabaseSettingsBasedOnHibernateConfiguration(String factoryID) {
+		
+		// --- Construction method for factory DB settings ------
 		HibernateDatabaseConnectionService dbConnectionService = this.getHibernateDatabaseConnectionService(factoryID);
 		if (dbConnectionService!=null) {
-			// --- Get configuration and derive database system name ----------
+			// --- Get configuration and database system name ---
 			Configuration hiberanteConfig = dbConnectionService.getConfiguration();
 			String databaseSystemName = HibernateUtilities.getDatabaseSystemNameByHibernateConfiguration(hiberanteConfig);
-			return new DatabaseSettings(databaseSystemName, hiberanteConfig);
+			if (databaseSystemName!=null) {
+				return new DatabaseSettings(databaseSystemName, hiberanteConfig);
+			}
+
+			// --- No DB name found - create initial settings ---
+			DatabaseSettings dbSettings = this.getInitialDatabaseSettings();
+			if (dbSettings!=null) {
+				this.saveDatabaseConfigurationPropertiesToEclipsePreferences(factoryID, dbSettings.getHibernateDatabaseSettings(), null);
+				return dbSettings;
+			}
 		}
 		return null;
 	}
-	
 	
 	/**
 	 * Returns the eclipse preferences.
@@ -179,7 +328,7 @@ public class DatabaseConnectionManager {
 	 */
 	public void loadDatabaseConfigurationProperties(String factoryID, Configuration hibernateConfig) {
 		
-		IEclipsePreferences eclipsePreferences = getEclipsePreferences(factoryID);
+		IEclipsePreferences eclipsePreferences = this.getEclipsePreferences(factoryID);
 		
 		String driverClass = eclipsePreferences.get("hibernate.connection.driver_class", null);
 		HibernateDatabaseService hds = HibernateUtilities.getDatabaseServiceByDriverClassName(driverClass);
@@ -246,9 +395,38 @@ public class DatabaseConnectionManager {
 			}
 		}
 		
-		// --- Get the corresponding eclipse preferences instance --- 
-		IEclipsePreferences eclipsePreferences = getEclipsePreferences(factoryID);
+		// --- Get the corresponding eclipse preferences instance ---
+		if (this.saveDatabaseConfigurationPropertiesToEclipsePreferences(factoryID, properties, hibernateConfig)==false) {
+			return false;
+		}
+		
+		// --- Restart the database connection ----------------------
+		if (hibernateConfig!=null) {
+			if (hasChangedSettings==true) {
+				HibernateUtilities.startSessionFactoryInThread(factoryID, hibernateConfig, true, false);
+			} else {
+				if (this.isAllowSessionFactoryStart(HibernateUtilities.getSessionFactoryMonitor(factoryID).getSessionFactoryState())==true) {
+					HibernateUtilities.startSessionFactoryInThread(factoryID, hibernateConfig, true, false);
+				}
+			}
+		}
+		return true;
+	}
+	/**
+	 * Saves the database configuration properties to the eclipse preferences and updates the specified {@link Configuration} of Hibernate.
+	 *
+	 * @param factoryID the factory ID
+	 * @param properties the new eclipse preferences for the database connection
+	 * @param hibernateConfig the hibernate config
+	 * @return true, if the settings were successfully saved
+	 */
+	private boolean saveDatabaseConfigurationPropertiesToEclipsePreferences(String factoryID, Properties properties, Configuration hibernateConfig) {
+		
 		try {
+			
+			// --- Get the corresponding preferences instance ------- 
+			IEclipsePreferences eclipsePreferences = getEclipsePreferences(factoryID);
+
 			ArrayList<Object> propertyList = new ArrayList<>(properties.keySet());
 			for (int i = 0; i < propertyList.size(); i++) {
 				// --- Save the eclipse preferences -----------------
@@ -265,17 +443,6 @@ public class DatabaseConnectionManager {
 		} catch (BackingStoreException bsEx) {
 			bsEx.printStackTrace();
 			return false;
-		}
-		
-		// --- Restart the database connection ----------------------
-		if (hibernateConfig!=null) {
-			if (hasChangedSettings==true) {
-				HibernateUtilities.startSessionFactoryInThread(factoryID, hibernateConfig, true, false);
-			} else {
-				if (this.isAllowSessionFactoryStart(HibernateUtilities.getSessionFactoryMonitor(factoryID).getSessionFactoryState())==true) {
-					HibernateUtilities.startSessionFactoryInThread(factoryID, hibernateConfig, true, false);
-				}
-			}
 		}
 		return true;
 	}

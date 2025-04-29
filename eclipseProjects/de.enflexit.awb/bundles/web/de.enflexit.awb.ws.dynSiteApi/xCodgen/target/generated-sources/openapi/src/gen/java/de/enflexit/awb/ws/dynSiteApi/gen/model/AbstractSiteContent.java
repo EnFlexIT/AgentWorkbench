@@ -32,14 +32,12 @@ import jakarta.validation.Valid;
   AbstractSiteContent.JSON_PROPERTY_EDITABLE,
   AbstractSiteContent.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T14:48:58.419716700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContent", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-29T10:05:32.007037200+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = SiteContentImage.class, name = "SiteContentImage"),
+  @JsonSubTypes.Type(value = AbstractSiteContentChart.class, name = "AbstractSiteContentChart"),
+  @JsonSubTypes.Type(value = SiteContentMedia.class, name = "SiteContentMedia"),
   @JsonSubTypes.Type(value = SiteContentProperties.class, name = "SiteContentProperties"),
   @JsonSubTypes.Type(value = SiteContentTable.class, name = "SiteContentTable"),
-  @JsonSubTypes.Type(value = SiteContentText.class, name = "SiteContentText"),
-  @JsonSubTypes.Type(value = SiteContentTimeSeriesChart.class, name = "SiteContentTimeSeriesChart"),
-  @JsonSubTypes.Type(value = SiteContentXYChart.class, name = "SiteContentXYChart"),
 })
 
 public class AbstractSiteContent   {

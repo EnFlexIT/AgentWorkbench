@@ -1,5 +1,6 @@
 package de.enflexit.db.hibernate.gui;
 
+import java.awt.Component;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -38,5 +39,15 @@ public abstract class AbstractDatabaseSettingsPanel extends JPanel {
 	 */
 	public abstract void addDocumentListenerToTextFields(DocumentListener documentnListener);
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setEnabled(boolean)
+	 */
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		for (Component comp : this.getComponents()) {
+			comp.setEnabled(enabled);
+		}
+	}
 	
 }

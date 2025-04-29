@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -25,14 +26,21 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
+import de.enflexit.db.hibernate.connection.GeneralDatabaseSettings;
+
+import javax.swing.JCheckBox;
 
 /**
  * The Class DatabaseSettingsDialog can be used to configure the 
@@ -44,8 +52,19 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 
 	private static final long serialVersionUID = -5778880894988052682L;
 	
+	private enum DatabaseSettingsType {
+		GeneralSettings,
+		FactorySettings
+	}
+	
 	private String currentFactoryID;
 	
+	private JTabbedPane jTabbedPaneSettings;
+	private JPanel jPanelGeneralSettings;
+	private JLabel jLabelHeaderGeneral;
+	private DatabaseSettingsPanel jPanelGeneralDatabaseSettings;
+	
+	private JPanel jPanelFactorySettings;
 	private JLabel jLabelHeader;
 	private JLabel jLabelFactoryID;
 	private DefaultComboBoxModel<String> comboBoxModelFactoryID;
@@ -62,7 +81,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 
 	private Vector<String> userMessages;
 	private JLabel jLabelFactroyState;
-	
+	private JCheckBox jCheckBoxUseForEveryFactory;
 	
 	/**
 	 * Instantiates a new database dialog.
@@ -75,13 +94,19 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		this.initialize();
 		if (factoryID!=null && factoryID.isBlank()==false) {
 			// --- Set selection to argument factoryID ----
+			this.getJTabbedPaneSettings().setSelectedIndex(1);
 			this.getJComboBoxFactoryID().setSelectedItem(factoryID);
 		} else {
 			if (this.getComboBoxModelFactoryID().getSize()>0) {
 				// --- Reset current selection ------------
 				this.getJComboBoxFactoryID().setSelectedItem(this.getFactoryIdSelected());
 			}
+			if (this.getJCheckBoxUseForEveryFactory().isSelected()==false) {
+				this.getJTabbedPaneSettings().setSelectedIndex(1);
+			}
 		}
+		this.updateSettingsUI();
+		this.updateButtonUI();
 	}
 	/**
 	 * Initialize.
@@ -108,71 +133,25 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 	    // --- Register as state visualizer -------------------------
 		HibernateStateVisualizer.registerStateVisualizationService(this);
 		
-		
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		getContentPane().setLayout(gridBagLayout);
-		
-		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
-		gbc_jLabelHeader.gridwidth = 3;
-		gbc_jLabelHeader.insets = new Insets(10, 10, 0, 10);
-		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
-		gbc_jLabelHeader.gridx = 0;
-		gbc_jLabelHeader.gridy = 0;
-		this.getContentPane().add(getJLabelHeader(), gbc_jLabelHeader);
-		
-		GridBagConstraints gbc_jLabelFactoryID = new GridBagConstraints();
-		gbc_jLabelFactoryID.insets = new Insets(10, 10, 0, 0);
-		gbc_jLabelFactoryID.anchor = GridBagConstraints.EAST;
-		gbc_jLabelFactoryID.gridx = 0;
-		gbc_jLabelFactoryID.gridy = 1;
-		this.getContentPane().add(getJLabelFactoryID(), gbc_jLabelFactoryID);
-	
-		GridBagConstraints gbc_jLabelFactroyState = new GridBagConstraints();
-		gbc_jLabelFactroyState.insets = new Insets(10, 0, 0, 0);
-		gbc_jLabelFactroyState.gridx = 1;
-		gbc_jLabelFactroyState.gridy = 1;
-		getContentPane().add(getJLabelFactroyState(), gbc_jLabelFactroyState);
-		
-		GridBagConstraints gbc_jComboBoxFactoryID = new GridBagConstraints();
-		gbc_jComboBoxFactoryID.anchor = GridBagConstraints.WEST;
-		gbc_jComboBoxFactoryID.insets = new Insets(10, 10, 0, 10);
-		gbc_jComboBoxFactoryID.gridx = 2;
-		gbc_jComboBoxFactoryID.gridy = 1;
-		this.getContentPane().add(getJComboBoxFactoryID(), gbc_jComboBoxFactoryID);
-		
-		GridBagConstraints gbc_separator = new GridBagConstraints();
-		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
-		gbc_separator.insets = new Insets(10, 10, 0, 10);
-		gbc_separator.gridwidth = 3;
-		gbc_separator.gridx = 0;
-		gbc_separator.gridy = 2;
-		this.getContentPane().add(getSeparator(), gbc_separator);
-		
-		GridBagConstraints gbc_jPanelDbSettings = new GridBagConstraints();
-		gbc_jPanelDbSettings.gridwidth = 3;
-		gbc_jPanelDbSettings.insets = new Insets(0, 0, 5, 0);
-		gbc_jPanelDbSettings.fill = GridBagConstraints.BOTH;
-		gbc_jPanelDbSettings.gridx = 0;
-		gbc_jPanelDbSettings.gridy = 3;
-		if (this.getComboBoxModelFactoryID().getSize()==0) {
-			this.getContentPane().add(this.getJPanelNoDatabaseConnections(), gbc_jPanelDbSettings);
-		} else {
-			this.getContentPane().add(this.getJPanelDbSettings(), gbc_jPanelDbSettings);
-		}
-		
-		if (this.getComboBoxModelFactoryID().getSize()>0) {
-			GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
-			gbc_jPanelButtons.gridwidth = 3;
-			gbc_jPanelButtons.fill = GridBagConstraints.VERTICAL;
-			gbc_jPanelButtons.insets = new Insets(10, 10, 20, 10);
-			gbc_jPanelButtons.gridx = 0;
-			gbc_jPanelButtons.gridy = 4;
-			this.getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
-		}
+		gridBagLayout.columnWidths = new int[]{584, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		this.getContentPane().setLayout(gridBagLayout);
+
+		GridBagConstraints gbc_jTabbedPaneSettings = new GridBagConstraints();
+		gbc_jTabbedPaneSettings.fill = GridBagConstraints.BOTH;
+		gbc_jTabbedPaneSettings.gridx = 0;
+		gbc_jTabbedPaneSettings.gridy = 0;
+		this.getContentPane().add(this.getJTabbedPaneSettings(), gbc_jTabbedPaneSettings);
+
+		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
+		gbc_jPanelButtons.insets = new Insets(10, 15, 15, 15);
+		gbc_jPanelButtons.fill = GridBagConstraints.VERTICAL;
+		gbc_jPanelButtons.gridx = 0;
+		gbc_jPanelButtons.gridy = 1;
+		this.getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
 		
 	}
 	
@@ -187,9 +166,191 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
         this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 	
+    
+    private JTabbedPane getJTabbedPaneSettings() {
+    	if (jTabbedPaneSettings==null) {
+    		jTabbedPaneSettings = new JTabbedPane();
+    		jTabbedPaneSettings.setBorder(BorderFactory.createEmptyBorder());
+    		jTabbedPaneSettings.setFont(new Font("Dialog", Font.PLAIN, 12));
+    		jTabbedPaneSettings.addTab(" General Settings  ", this.getJPanelGeneralSettings());
+    		jTabbedPaneSettings.addTab(" Factory Settings  ", this.getJPanelFactorySettings());
+    		jTabbedPaneSettings.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent ce) {
+					DatabaseConnectionSettingsDialog.this.updateButtonUI();
+				}
+			});
+    	}
+    	return jTabbedPaneSettings;
+    }
+    
+    /**
+     * Returns the DatabaseSettingsType.
+     * @return the database settings type
+     */
+    private DatabaseSettingsType getDatabaseSettingsType() {
+    	
+    	DatabaseSettingsType dbSettingsType = null;
+    	switch (this.getJTabbedPaneSettings().getSelectedIndex()) {
+    	case 0:
+    		dbSettingsType = DatabaseSettingsType.GeneralSettings;
+    		break;
+    	case 1:
+    		dbSettingsType = DatabaseSettingsType.FactorySettings;
+    		break;
+    	}
+    	return dbSettingsType;
+    }
+    
+    private JPanel getJPanelGeneralSettings() {
+    	if (jPanelGeneralSettings==null) {
+    		jPanelGeneralSettings = new JPanel();
+    		
+    		GridBagLayout gridBagLayout = new GridBagLayout();
+    		gridBagLayout.columnWidths = new int[]{0, 0};
+    		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
+    		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+    		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+    		jPanelGeneralSettings.setLayout(gridBagLayout);
+    		
+    		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
+    		gbc_jLabelHeader.insets = new Insets(10, 15, 0, 10);
+    		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
+    		gbc_jLabelHeader.gridx = 0;
+    		gbc_jLabelHeader.gridy = 0;
+    		jPanelGeneralSettings.add(getJLabelHeaderGeneral(), gbc_jLabelHeader);
+    		GridBagConstraints gbc_jCheckBoxUseForEveryFactory = new GridBagConstraints();
+    		gbc_jCheckBoxUseForEveryFactory.anchor = GridBagConstraints.WEST;
+    		gbc_jCheckBoxUseForEveryFactory.insets = new Insets(10, 10, 0, 10);
+    		gbc_jCheckBoxUseForEveryFactory.gridx = 0;
+    		gbc_jCheckBoxUseForEveryFactory.gridy = 1;
+    		jPanelGeneralSettings.add(getJCheckBoxUseForEveryFactory(), gbc_jCheckBoxUseForEveryFactory);
+    		
+    		GridBagConstraints gbc_jPanelGeneralDbSettings = new GridBagConstraints();
+    		gbc_jPanelGeneralDbSettings.fill = GridBagConstraints.BOTH;
+    		gbc_jPanelGeneralDbSettings.insets = new Insets(10, 0, 0, 0);
+    		gbc_jPanelGeneralDbSettings.gridx = 0;
+    		gbc_jPanelGeneralDbSettings.gridy = 2;
+    		jPanelGeneralSettings.add(getJPanelGeneralDatabaseSettings(), gbc_jPanelGeneralDbSettings);
+    		
+    	}
+    	return jPanelGeneralSettings;
+    }
+    
+    private JLabel getJLabelHeaderGeneral() {
+		if (jLabelHeaderGeneral == null) {
+			jLabelHeaderGeneral = new JLabel("General Database Connection Settings");
+			jLabelHeaderGeneral.setFont(new Font("Dialog", Font.BOLD, 14));
+		}
+		return jLabelHeaderGeneral;
+	}
+    private JCheckBox getJCheckBoxUseForEveryFactory() {
+		if (jCheckBoxUseForEveryFactory == null) {
+			jCheckBoxUseForEveryFactory = new JCheckBox("Use settings below for every database connection");
+			jCheckBoxUseForEveryFactory.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxUseForEveryFactory.addActionListener(this);
+		}
+		return jCheckBoxUseForEveryFactory;
+	}
+    private DatabaseSettingsPanel getJPanelGeneralDatabaseSettings() {
+		if (jPanelGeneralDatabaseSettings == null) {
+			jPanelGeneralDatabaseSettings = new DatabaseSettingsPanel(null);
+			this.loadGeneralDatabaseSettings();
+		}
+		return jPanelGeneralDatabaseSettings;
+	}
+    
+    /**
+     * Returns the GeneralDatabaseSettings, currently edited.
+     * @return the general database settings
+     */
+    private GeneralDatabaseSettings getGeneralDatabaseSettings() {
+    	
+    	// --- Get the DatabaseSettings from the panel --------------
+    	DatabaseSettings dbs = this.getJPanelGeneralDatabaseSettings().getDatabaseSettings();
+    	// --- Create the GeneralDatabaseSettings-instance ----------
+    	GeneralDatabaseSettings gdbs = new GeneralDatabaseSettings();
+    	gdbs.setUseForEveryFactory(this.getJCheckBoxUseForEveryFactory().isSelected());
+    	gdbs.setDatabaseSystemName(dbs.getDatabaseSystemName());
+    	gdbs.setHibernateDatabaseSettings(dbs.getHibernateDatabaseSettings());
+    	return gdbs;
+    }
+    /**
+     * Load general database settings.
+     */
+    private void loadGeneralDatabaseSettings() {
+    	GeneralDatabaseSettings gdbs = DatabaseConnectionManager.getInstance().getGeneralDatabaseSettings();
+    	this.getJCheckBoxUseForEveryFactory().setSelected(gdbs.isUseForEveryFactory());
+    	this.getJPanelGeneralDatabaseSettings().setDatabaseSettings(gdbs);
+    }
+    
+    
+    private JPanel getJPanelFactorySettings() {
+    	if (jPanelFactorySettings==null) {
+    		jPanelFactorySettings = new JPanel();
+    		
+    		GridBagLayout gridBagLayout = new GridBagLayout();
+    		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+    		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+    		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+    		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+    		jPanelFactorySettings.setLayout(gridBagLayout);
+    		
+    		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
+    		gbc_jLabelHeader.gridwidth = 3;
+    		gbc_jLabelHeader.insets = new Insets(10, 10, 0, 10);
+    		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
+    		gbc_jLabelHeader.gridx = 0;
+    		gbc_jLabelHeader.gridy = 0;
+    		jPanelFactorySettings.add(getJLabelHeader(), gbc_jLabelHeader);
+    		
+    		GridBagConstraints gbc_jLabelFactoryID = new GridBagConstraints();
+    		gbc_jLabelFactoryID.insets = new Insets(10, 10, 0, 0);
+    		gbc_jLabelFactoryID.anchor = GridBagConstraints.EAST;
+    		gbc_jLabelFactoryID.gridx = 0;
+    		gbc_jLabelFactoryID.gridy = 1;
+    		jPanelFactorySettings.add(getJLabelFactoryID(), gbc_jLabelFactoryID);
+    	
+    		GridBagConstraints gbc_jLabelFactroyState = new GridBagConstraints();
+    		gbc_jLabelFactroyState.insets = new Insets(10, 0, 0, 0);
+    		gbc_jLabelFactroyState.gridx = 1;
+    		gbc_jLabelFactroyState.gridy = 1;
+    		jPanelFactorySettings.add(getJLabelFactroyState(), gbc_jLabelFactroyState);
+    		
+    		GridBagConstraints gbc_jComboBoxFactoryID = new GridBagConstraints();
+    		gbc_jComboBoxFactoryID.anchor = GridBagConstraints.WEST;
+    		gbc_jComboBoxFactoryID.insets = new Insets(10, 10, 0, 10);
+    		gbc_jComboBoxFactoryID.gridx = 2;
+    		gbc_jComboBoxFactoryID.gridy = 1;
+    		jPanelFactorySettings.add(getJComboBoxFactoryID(), gbc_jComboBoxFactoryID);
+    		
+    		GridBagConstraints gbc_separator = new GridBagConstraints();
+    		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
+    		gbc_separator.insets = new Insets(10, 10, 0, 10);
+    		gbc_separator.gridwidth = 3;
+    		gbc_separator.gridx = 0;
+    		gbc_separator.gridy = 2;
+    		jPanelFactorySettings.add(getSeparator(), gbc_separator);
+    		
+    		GridBagConstraints gbc_jPanelDbSettings = new GridBagConstraints();
+    		gbc_jPanelDbSettings.gridwidth = 3;
+    		gbc_jPanelDbSettings.insets = new Insets(0, 0, 5, 0);
+    		gbc_jPanelDbSettings.fill = GridBagConstraints.BOTH;
+    		gbc_jPanelDbSettings.gridx = 0;
+    		gbc_jPanelDbSettings.gridy = 3;
+    		if (this.getComboBoxModelFactoryID().getSize()==0) {
+    			jPanelFactorySettings.add(this.getJPanelNoDatabaseConnections(), gbc_jPanelDbSettings);
+    		} else {
+    			jPanelFactorySettings.add(this.getJPanelDbSettings(), gbc_jPanelDbSettings);
+    		}
+    		
+    	}
+    	return jPanelFactorySettings;
+	}
+    
     private JLabel getJLabelHeader() {
 		if (jLabelHeader == null) {
-			jLabelHeader = new JLabel("Database Connections & Settings");
+			jLabelHeader = new JLabel("Individual Database Connections & Settings");
 			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 14));
 		}
 		return jLabelHeader;
@@ -267,17 +428,17 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
     	}
 	}
     /**
-	 * Returns the current database settings.
+	 * Returns the current factory database settings.
 	 * @return the database settings
 	 */
-	private DatabaseSettings getDatabaseSettings() {
+	private DatabaseSettings getFactoryDatabaseSettings() {
 		return this.getJPanelDbSettings().getDatabaseSettings();
 	}
 	/**
-	 * Sets the database settings to work on.
+	 * Sets the factory database settings to work on.
 	 * @param databaseSettings the new database settings
 	 */
-	private void setDatabaseSettings(DatabaseSettings databaseSettings) {
+	private void setFactoryDatabaseSettings(DatabaseSettings databaseSettings) {
 		this.getJPanelDbSettings().setDatabaseSettings(databaseSettings);
 	}
 	
@@ -338,6 +499,14 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		return jButtonClose;
 	}
 	
+	private void updateButtonUI() {
+		
+		int selectedTabIndex = this.getJTabbedPaneSettings().getSelectedIndex();
+		boolean isUseSettingsForEveryFactory = this.getJCheckBoxUseForEveryFactory().isSelected();
+		
+		boolean activateSaveAndTestButton = (isUseSettingsForEveryFactory==true & selectedTabIndex==0) ||(isUseSettingsForEveryFactory==false & selectedTabIndex==1);
+		this.getJButtonTestConnection().setEnabled(activateSaveAndTestButton);
+	}
 	
 	// --------------------------------------------------------------	
 	// --- From here some handling and modification classes ---------
@@ -364,38 +533,86 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 	 */
 	private void loadDatabaseSettings(String factoryID) {
 		// --- Get settings from connection manager -------
-		this.setDatabaseSettings(this.getDatabaseSettings(factoryID));
+		this.setFactoryDatabaseSettings(this.getDatabaseSettings(factoryID));
 		this.setHeaderInJPanelDbSettings("Database Settings for connection '" + factoryID + "'");
 		this.currentFactoryID = factoryID;
 		this.updateFactoryStatus();
+		boolean isUseGeneralSettings = this.getJCheckBoxUseForEveryFactory().isSelected();
+		this.getJPanelDbSettings().setEnabled(!isUseGeneralSettings);
 	}
 	/**
 	 * Save the database settings for the current database connection / factoryID.
 	 *
 	 * @param factoryID the factory ID
-	 * @return true, if successful
+	 * @return true, if successful or if no changes were made
 	 */
 	private boolean saveDatabaseSettings(String factoryID) {
-		if (factoryID==null) return false;
-		return DatabaseConnectionManager.getInstance().saveDatabaseConfigurationProperties(factoryID, this.getDatabaseSettings().getHibernateDatabaseSettings());
+		
+		boolean success = true;
+		if (factoryID==null) {
+			// --- If general settings are edited -------------------
+			if (this.hasChangedGeneralDatabaseSettings()==true) {
+				success = DatabaseConnectionManager.getInstance().saveGeneralDatabaseSettings(this.getGeneralDatabaseSettings());
+			}
+			
+		} else {
+			// --- If a factory connection is edited ----------------
+			if (this.hasChangedFactoryDatabaseSettings(factoryID)==true) {
+				success = DatabaseConnectionManager.getInstance().saveDatabaseConfigurationProperties(factoryID, this.getFactoryDatabaseSettings().getHibernateDatabaseSettings());
+			}
+		}
+		return success;
 	}
+	
+	/**
+	 * Checks for changed general database settings.
+	 * @return true, if we have changed settings
+	 */
+	private boolean hasChangedGeneralDatabaseSettings() {
+		DatabaseSettings dbSettingsGeneralNew = this.getGeneralDatabaseSettings();
+		DatabaseSettings dbSettingsGeneralOld = DatabaseConnectionManager.getInstance().getGeneralDatabaseSettings();
+		return dbSettingsGeneralNew.equals(dbSettingsGeneralOld)==false;
+	}
+	/**
+	 * Checks for changed factory database settings.
+	 *
+	 * @param factoryID the factory ID
+	 * @return true, if we have changed settings
+	 */
+	private boolean hasChangedFactoryDatabaseSettings(String factoryID) {
+		DatabaseSettings dbSettingsNew = this.getFactoryDatabaseSettings();
+		DatabaseSettings dbSettingsOld = this.getDatabaseSettings(factoryID);
+		return dbSettingsNew.equals(dbSettingsOld)==false;
+	}
+	
 	/**
 	 * Checks if the database settings have changed.
 	 * @return true, if is changed database settings
 	 */
-	private boolean isSaveChangedDatabaseSettings(String factoryID) {
+	private boolean isSaveChangedDatabaseSettings() {
 		
+		// --- If general settings are edited -----------------------
+		if (this.hasChangedGeneralDatabaseSettings()==true) {
+			// --- Save changes? ------------------------------------
+			String title = "Save the changes of the general database settings?";
+			String message = "Would you like to save the changes of the general database settings?";
+			int userAnswer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (userAnswer==JOptionPane.YES_OPTION) {
+				// --- Save the current settings --------------------
+				return true;
+			}
+		}
+		
+		// --- If a factory connection is edited --------------------
+		String factoryID = this.getFactoryIdSelected();
 		if (factoryID==null) return false;
-		
-		DatabaseSettings dbSettingsNew = this.getDatabaseSettings();
-		DatabaseSettings dbSettingsOld = this.getDatabaseSettings(factoryID);
-		if (dbSettingsNew!=null && dbSettingsNew.equals(dbSettingsOld)==false) {
-			// --- Save changes? --------------------------
-			String title = "Save Changes?";
+		if (this.hasChangedFactoryDatabaseSettings(factoryID)==true) {
+			// --- Save changes? ------------------------------------
+			String title = "Save the changes of the database settings?";
 			String message = "Would you like to save the changes for the \ndatabase connection of '" + factoryID + "'?";
 			int userAnswer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (userAnswer==JOptionPane.YES_OPTION) {
-				// --- Save the current settings ------
+				// --- Save the current settings --------------------
 				return true;
 			}
 		}
@@ -435,13 +652,31 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		this.getJLabelFactroyState().setToolTipText(sfm.getDescription());
 	}
 	
+	/**
+	 * Update settings UI.
+	 */
+	private void updateSettingsUI() {
+
+		boolean isUseForEveryFactory = this.getJCheckBoxUseForEveryFactory().isSelected();
+		
+		this.getJPanelGeneralDatabaseSettings().setEnabled(isUseForEveryFactory);
+
+		this.getJComboBoxFactoryID().setEnabled(!isUseForEveryFactory);
+		this.getJPanelDbSettings().setEnabled(!isUseForEveryFactory);
+		this.updateButtonUI();
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if (ae.getSource()==this.getJComboBoxFactoryID()) {
+		if (ae.getSource()==this.getJCheckBoxUseForEveryFactory() ) {
+			// --- Use connection settings for every factory -------- 
+			this.updateSettingsUI();
+			
+		} else if (ae.getSource()==this.getJComboBoxFactoryID()) {
 			// --- Selection of new FactoryID -----------------------
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -449,8 +684,15 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 					// --- A new factory was selected? --------------
 					if (DatabaseConnectionSettingsDialog.this.isChangedFactoryID(DatabaseConnectionSettingsDialog.this.getFactoryIdSelected())==false) return;
 					// --- Save changed database settings? ----------
-					if (DatabaseConnectionSettingsDialog.this.isSaveChangedDatabaseSettings(DatabaseConnectionSettingsDialog.this.currentFactoryID)==true) {
-						DatabaseConnectionSettingsDialog.this.saveDatabaseSettings(DatabaseConnectionSettingsDialog.this.currentFactoryID);
+					if (DatabaseConnectionSettingsDialog.this.isSaveChangedDatabaseSettings()==true) {
+						switch (DatabaseConnectionSettingsDialog.this.getDatabaseSettingsType()) {
+						case GeneralSettings: 
+							DatabaseConnectionSettingsDialog.this.saveDatabaseSettings(null);
+							break;
+						case FactorySettings:
+							DatabaseConnectionSettingsDialog.this.saveDatabaseSettings(DatabaseConnectionSettingsDialog.this.currentFactoryID);							
+							break;
+						}
 					}
 					// --- Change to selected factory ---------------
 					DatabaseConnectionSettingsDialog.this.loadDatabaseSettings(DatabaseConnectionSettingsDialog.this.getFactoryIdSelected());
@@ -459,6 +701,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 
 		} else if (ae.getSource()==this.getJButtonSave()) {
 			// --- Save the current settings ------------------------
+			this.saveDatabaseSettings(null);
 			this.saveDatabaseSettings(this.getFactoryIdSelected());
 
 		} else if (ae.getSource()==this.getJButtonClose()) {
@@ -468,7 +711,17 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			
 		} else if (ae.getSource()==this.getJButtonTestConnection()) {
 			// --- Test connection ----------------------------------
-			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+			DatabaseSettings dbSettings = null;
+			switch (this.getDatabaseSettingsType()) {
+			case GeneralSettings:
+				dbSettings = this.getJPanelGeneralDatabaseSettings().getDatabaseSettings();
+				break;
+				
+			case FactorySettings:
+				dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+				break;
+			}
+			
 			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
 			if (hds!=null) {
 				Properties props = dbSettings.getHibernateDatabaseSettings();
@@ -496,9 +749,24 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 	 */
 	private boolean isDoClose() {
 		
-		if (this.isSaveChangedDatabaseSettings(this.getFactoryIdSelected())==true) {
-			if (this.saveDatabaseSettings(this.getFactoryIdSelected())==false) {
-				// --- An error occurred, exit here -------------
+		if (this.isSaveChangedDatabaseSettings()==true) {
+
+			// --- Save factory DB settings of current first --------
+			String currFactoryID = this.getFactoryIdSelected();
+			boolean isSavedFactorySettings = this.saveDatabaseSettings(currFactoryID);
+			// --- Wait for session factory re-creation -------------
+			try {
+				while (HibernateUtilities.isSessionFactoryInCreation(currFactoryID)==true) {
+					Thread.sleep(100);
+				}
+			} catch (InterruptedException intEx) {
+				intEx.printStackTrace();
+			}
+			
+			// --- Save general DB settings -------------------------
+			boolean isSavedGeneralSettings = this.saveDatabaseSettings(null);
+			if (isSavedGeneralSettings==false || isSavedFactorySettings==false) {
+				// --- An error occurred ----------------------------
 				return false;
 			}
 		}

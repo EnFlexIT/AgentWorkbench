@@ -28,7 +28,6 @@ public class DatabaseSettings implements Serializable {
 	/**
 	 * Default constructor for DatabaseSettings (for the JAXB context only).
 	 */
-	@Deprecated
 	public DatabaseSettings() {	}
 	/**
 	 * Instantiates a new database settings.

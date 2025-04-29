@@ -62,16 +62,16 @@ public class GetContentApiServiceImpl extends GetContentApiService {
 			
 		case -2:
 			String image1 = ImageHelper.getImageIconBase64Encoded("awb48.png");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(4, 0,  false, "image/png", image1));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(4, 0,  false, "image/png", image1, null, null));
 
 			String image2 = ImageHelper.getImageIconBase64Encoded("components.gif");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(5, 10, true,  "image/gif", image2));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(5, 10, true,  "image/gif", image2, 200, null));
 			
 			String image3 = ImageHelper.getImageIconBase64Encoded("splash.bmp");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(6, 0,  false, "image/bmp", image3));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(6, 0,  false, "image/bmp", image3, null, 150));
 
 			String image4 = ImageHelper.getImageIconBase64Encoded("Survey_Logo.jpg");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(7, 0,  true,  "image/jpg", image4));
+			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(7, 0,  true,  "image/jpg", image4, 100, 100));
 			break;
 
 		case -3:

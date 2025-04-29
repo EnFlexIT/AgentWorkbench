@@ -50,14 +50,19 @@ public class DynamicContentFactory {
 	 * @param isEditable the is editable
 	 * @param mimeType the mime type
 	 * @param dataInBase64 the data in base 64
+	 * @param width the width of the image
+	 * @param height the height of the image
 	 * @return a new instance of the type SiteContentImage
 	 */
-	public static SiteContentImage createSiteContentImage(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, String mimeType, String dataInBase64) {
+	public static SiteContentImage createSiteContentImage(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, String mimeType, String dataInBase64, Integer width, Integer height) {
 		
 		SiteContentImage scImage = new SiteContentImage();
 		scImage.setUniqueContentID(uniqueContentID);
 		scImage.setUpdatePeriodInSeconds(updatePeriodInSeconds);
 		scImage.setEditable(isEditable);
+		
+		scImage.setWidth(width);
+		scImage.setHeight(height);
 		
 		scImage.setMimeType(mimeType);
 		scImage.setDataInB64(dataInBase64);

@@ -366,10 +366,6 @@ public class Application {
 		// --- Start log file writer, if needed ---------------------
 		if (isOperatingHeadless()==true) startLoggingWriter();
 		
-		// --- Start the HibernateUtilities -------------------------
-		HibernateUtilities.start();
-		
-		
 		// --- Case separation Agent.Workbench / JADE execution -----
 		if (Application.justStartJade==false) {
 			// ------------------------------------------------------

@@ -173,6 +173,18 @@ public class DatabaseSettingsPanel extends JPanel {
 		this.canceled = canceled;
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setEnabled(boolean)
+	 */
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		this.getJLabelHeader().setEnabled(enabled);
+		this.getJLabelDatabaseType().setEnabled(enabled);
+		this.getJComboBoxDbType().setEnabled(enabled);
+		this.getDatabaseSettingPanel().setEnabled(enabled);
+	}
+	
 	/**
 	 * Returns the database settings.
 	 * @return the database settings
