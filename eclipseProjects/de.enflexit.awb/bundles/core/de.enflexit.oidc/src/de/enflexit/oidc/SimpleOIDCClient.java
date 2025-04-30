@@ -53,6 +53,7 @@ import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant;
 import com.nimbusds.oauth2.sdk.AuthorizationGrant;
 import com.nimbusds.oauth2.sdk.ErrorObject;
 import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.RefreshTokenGrant;
 import com.nimbusds.oauth2.sdk.ResourceOwnerPasswordCredentialsGrant;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -554,7 +555,7 @@ public class SimpleOIDCClient {
 	 * @throws KeyStoreException the key store exception
 	 * @throws URISyntaxException 
 	 */
-	public boolean requestToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException {
+	public boolean requestToken() {
 
 		AuthorizationGrant grant;
 		if (authorizationCode == null) {
@@ -567,6 +568,23 @@ public class SimpleOIDCClient {
 		} else {
 			grant = new AuthorizationCodeGrant(authorizationCode, getLocalCallbackURI());
 		}
+		
+		return this.requestToken(grant);
+	}
+	
+	public boolean refreshTokens() {
+		if (this.refreshToken!=null) {
+			RefreshTokenGrant grant = new RefreshTokenGrant(this.refreshToken);
+			return this.requestToken(grant);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Refresh token not set!");
+			return false;
+		}
+	}
+		
+		
+	private boolean requestToken(AuthorizationGrant grant)  {
+		
 		TokenRequest tokenReq = new TokenRequest(providerMetadata.getTokenEndpointURI(), new ClientSecretBasic(clientID, clientInformation.getSecret()), grant, Scope.parse("openid"));
 		HTTPResponse tokenHTTPResp = null;
 		try {
@@ -575,7 +593,12 @@ public class SimpleOIDCClient {
 			// --- New style ----------
 			HTTPRequest request = tokenReq.toHTTPRequest();
 			request.setHostnameVerifier(null);
-			request.setSSLSocketFactory(Trust.getSocketFactory(trustStoreFile));
+			try {
+				request.setSSLSocketFactory(Trust.getSocketFactory(trustStoreFile));
+			} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error establishing a trusted connection!");
+				e.printStackTrace();
+			}
 			tokenHTTPResp = request.send();
 			
 		} catch (SerializeException | IOException e) {
@@ -592,8 +615,9 @@ public class SimpleOIDCClient {
 
 		if (tokenResponse instanceof TokenErrorResponse) {
 			ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
-			System.err.println(this.getClass().getSimpleName() + " - Error at token retrieval");
-			System.err.println(error);
+			System.err.println(this.getClass().getSimpleName() + " - Token retrieval failed!");
+			System.err.println("Error: " + error.getCode());
+			System.err.println("Description: " + error.getDescription());
 			return false;
 		}
 
