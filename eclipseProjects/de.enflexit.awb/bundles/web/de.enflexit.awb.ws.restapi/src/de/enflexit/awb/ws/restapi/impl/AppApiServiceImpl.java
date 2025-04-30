@@ -2,15 +2,15 @@ package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
 
-import de.enflexit.awb.ws.AwbWebApplication;
-import de.enflexit.awb.ws.AwbWebApplication.PropertyType;
-import de.enflexit.awb.ws.AwbWebApplicationManager;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.ApiResponseMessage;
 import de.enflexit.awb.ws.restapi.gen.AppApiService;
 import de.enflexit.awb.ws.restapi.gen.NotFoundException;
 import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
+import de.enflexit.awb.ws.webApp.AwbWebApplication;
+import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
+import de.enflexit.awb.ws.webApp.AwbWebApplication.PropertyType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 

@@ -34,7 +34,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
-import de.enflexit.awb.ws.AwbWebApplicationManager;
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.AwbWebRegistry;
 import de.enflexit.awb.ws.AwbWebServerService;
@@ -43,6 +42,7 @@ import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.security.NoSecurityHandler;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
+import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
 
 /**
  * The Singleton <i>JettyServerManager</i> is used to control the start of {@link Server} instances

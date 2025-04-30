@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws;
+package de.enflexit.awb.ws.webApp;
 
 import de.enflexit.common.properties.Properties;
 
@@ -34,12 +34,19 @@ public interface AwbWebApplication {
 	public void initialize();
 	
 	/**
+	 * Will be invoked by the {@link AwbWebApplicationManager} to set the stored / overall properties.
+	 * @param properties the new properties
+	 */
+	public void setProperties(Properties properties);
+
+	/**
 	 * Has to return the properties of the {@link AwbWebApplication}.
 	 *
 	 * @param typeOfProperty the type of property
 	 * @return the properties
 	 */
 	public Properties getProperties(PropertyType typeOfProperty);
+
 
 	
 	

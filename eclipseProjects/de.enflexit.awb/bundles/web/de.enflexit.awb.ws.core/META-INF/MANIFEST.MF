@@ -34,7 +34,8 @@ Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.core.security,
  de.enflexit.awb.ws.core.security.jwt,
  de.enflexit.awb.ws.core.util,
- de.enflexit.awb.ws.server
+ de.enflexit.awb.ws.server,
+ de.enflexit.awb.ws.webApp
 Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.common,
