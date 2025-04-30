@@ -16,66 +16,53 @@ package de.enflexit.awb.ws.restapi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.enflexit.awb.ws.restapi.gen.model.PropertyEntry;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * PasswordChange
+ * Properties
  */
 @JsonPropertyOrder({
-  PasswordChange.JSON_PROPERTY_PASSWORD_OLD,
-  PasswordChange.JSON_PROPERTY_PASSWORD_NEW
+  Properties.JSON_PROPERTY_PROPERTY_ENTRIES
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-29T11:33:26.991574300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class PasswordChange   {
-  public static final String JSON_PROPERTY_PASSWORD_OLD = "password_old";
-  @JsonProperty(JSON_PROPERTY_PASSWORD_OLD)
-  private String passwordOld;
+public class Properties   {
+  public static final String JSON_PROPERTY_PROPERTY_ENTRIES = "propertyEntries";
+  @JsonProperty(JSON_PROPERTY_PROPERTY_ENTRIES)
+  private List<@Valid PropertyEntry> propertyEntries = new ArrayList<>();
 
-  public static final String JSON_PROPERTY_PASSWORD_NEW = "password_new";
-  @JsonProperty(JSON_PROPERTY_PASSWORD_NEW)
-  private String passwordNew;
+  public Properties propertyEntries(List<@Valid PropertyEntry> propertyEntries) {
+    this.propertyEntries = propertyEntries;
+    return this;
+  }
 
-  public PasswordChange passwordOld(String passwordOld) {
-    this.passwordOld = passwordOld;
+  public Properties addPropertyEntriesItem(PropertyEntry propertyEntriesItem) {
+    if (this.propertyEntries == null) {
+      this.propertyEntries = new ArrayList<>();
+    }
+    this.propertyEntries.add(propertyEntriesItem);
     return this;
   }
 
   /**
-   * Get passwordOld
-   * @return passwordOld
+   * Get propertyEntries
+   * @return propertyEntries
    **/
-  @JsonProperty(value = "password_old")
+  @JsonProperty(value = "propertyEntries")
   @Schema(required = true, description = "")
-  @NotNull 
-  public String getPasswordOld() {
-    return passwordOld;
+  @NotNull @Valid 
+  public List<@Valid PropertyEntry> getPropertyEntries() {
+    return propertyEntries;
   }
 
-  public void setPasswordOld(String passwordOld) {
-    this.passwordOld = passwordOld;
-  }
-
-  public PasswordChange passwordNew(String passwordNew) {
-    this.passwordNew = passwordNew;
-    return this;
-  }
-
-  /**
-   * Get passwordNew
-   * @return passwordNew
-   **/
-  @JsonProperty(value = "password_new")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getPasswordNew() {
-    return passwordNew;
-  }
-
-  public void setPasswordNew(String passwordNew) {
-    this.passwordNew = passwordNew;
+  public void setPropertyEntries(List<@Valid PropertyEntry> propertyEntries) {
+    this.propertyEntries = propertyEntries;
   }
 
 
@@ -87,23 +74,21 @@ public class PasswordChange   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PasswordChange passwordChange = (PasswordChange) o;
-    return Objects.equals(this.passwordOld, passwordChange.passwordOld) &&
-        Objects.equals(this.passwordNew, passwordChange.passwordNew);
+    Properties properties = (Properties) o;
+    return Objects.equals(this.propertyEntries, properties.propertyEntries);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(passwordOld, passwordNew);
+    return Objects.hash(propertyEntries);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class PasswordChange {\n");
+    sb.append("class Properties {\n");
     
-    sb.append("    passwordOld: ").append("*").append("\n");
-    sb.append("    passwordNew: ").append("*").append("\n");
+    sb.append("    propertyEntries: ").append(toIndentedString(propertyEntries)).append("\n");
     sb.append("}");
     return sb.toString();
   }

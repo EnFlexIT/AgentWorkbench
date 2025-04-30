@@ -1,9 +1,10 @@
-.openapi-generator-ignore
 README.md
 pom.xml
 src/gen/java/de/enflexit/awb/ws/restapi/gen/ApiException.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/ApiOriginFilter.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/ApiResponseMessage.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/AppApi.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/AppApiService.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/DoRestartApi.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/DoRestartApiService.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/DoUpdateApi.java
@@ -36,10 +37,14 @@ src/gen/java/de/enflexit/awb/ws/restapi/gen/model/EventLogTypes.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/ExecutionState.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/NetworkConnection.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/PasswordChange.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Properties.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/model/PropertyEntry.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SystemInformation.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SystemLoad.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/model/ValueType.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Version.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/Bootstrap.java
+src/main/java/de/enflexit/awb/ws/restapi/gen/factories/AppApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/DoRestartApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/DoUpdateApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/EventLogApiServiceFactory.java
@@ -50,6 +55,7 @@ src/main/java/de/enflexit/awb/ws/restapi/gen/factories/IsUpdateAvailableApiServi
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/LoadApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/UserApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/VersionApiServiceFactory.java
+src/main/java/de/enflexit/awb/ws/restapi/gen/impl/AppApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/DoRestartApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/DoUpdateApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/EventLogApiServiceImpl.java

@@ -34,6 +34,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
+import de.enflexit.awb.ws.AwbWebApplicationManager;
 import de.enflexit.awb.ws.AwbWebHandlerService;
 import de.enflexit.awb.ws.AwbWebRegistry;
 import de.enflexit.awb.ws.AwbWebServerService;
@@ -289,6 +290,9 @@ public class JettyServerManager {
 		// --- Check if the server is already running ---------------
 		if (this.getServerInstances(serverConfig.getServerName())!=null) return false;
 		
+		// ----------------------------------------------------------
+		// --- Try to initialize a AwbWebApplication, if defined ----
+		AwbWebApplicationManager.initialize();
 		
 		// ----------------------------------------------------------
 		// --- Create new server instance ---------------------------

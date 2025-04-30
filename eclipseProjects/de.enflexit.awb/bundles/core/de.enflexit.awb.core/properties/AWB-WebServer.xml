@@ -184,7 +184,7 @@
                 <value>
                     <contextPath>_ServerWideSecurityConfiguration</contextPath>
                     <securityHandlerName>JwtSingleUserSecurityHandler</securityHandlerName>
-                    <securityHandlerActivated>true</securityHandlerActivated>
+                    <securityHandlerActivated>false</securityHandlerActivated>
                     <securityHandlerConfiguration>
                         <entry>
                             <key>JWT Issuer</key>

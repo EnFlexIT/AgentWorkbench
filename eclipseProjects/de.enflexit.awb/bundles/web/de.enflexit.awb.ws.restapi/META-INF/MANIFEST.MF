@@ -26,7 +26,9 @@ Export-Package: de.enflexit.awb.ws.restapi,
  de.enflexit.awb.ws.restapi.gen,
  de.enflexit.awb.ws.restapi.gen.factories,
  de.enflexit.awb.ws.restapi.gen.impl,
- de.enflexit.awb.ws.restapi.gen.model
+ de.enflexit.awb.ws.restapi.gen.model,
+ de.enflexit.awb.ws.restapi.impl,
+ de.enflexit.awb.ws.restapi.tools
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Import-Package: de.enflexit.awb.core,
@@ -34,6 +36,7 @@ Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.project,
  de.enflexit.awb.simulation.load,
  de.enflexit.common,
+ de.enflexit.common.properties,
  jakarta.annotation,
  jakarta.ws.rs,
  jakarta.ws.rs.core,
