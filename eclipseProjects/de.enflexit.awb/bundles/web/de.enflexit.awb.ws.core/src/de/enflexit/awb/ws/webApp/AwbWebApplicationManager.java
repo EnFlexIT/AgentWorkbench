@@ -31,7 +31,7 @@ public class AwbWebApplicationManager {
 	public static void initialize() {
 	
 		// --- If already defined, skip initialization --------------
-		if (isDefinedAwbWebApplication(false)==true) return;
+		if (AwbWebApplicationManager.isDefinedAwbWebApplication(false)==true) return;
 		
 		// --- Get all services defined -----------------------------
 		List<AwbWebApplication> webAppList = ServiceFinder.findServices(AwbWebApplication.class);
@@ -45,15 +45,25 @@ public class AwbWebApplicationManager {
 			webAppList.forEach(webApp -> AwbWebApplicationManager.setAwbWebApplication(webApp));
 		}
 		
-		// --- Exit if no web application was started ---------------
+		// --- Exit if no web application was locally assigned ------
 		if (AwbWebApplicationManager.isDefinedAwbWebApplication(false)==false) return;
 		
 		try {
 			// --- Load the application properties ------------------
-			AwbWebApplicationManager.getAwbWebApplication().setProperties(AwbWebApplicationManager.getWebApplicationProperties().getProperties());
+			Properties webAppProperties = AwbWebApplicationManager.getWebApplicationProperties().getProperties();
+			Properties webAppPropertiesComparison = webAppProperties.getCopy();
+			
+			// --- Call to check the defaults settings --------------
+			AwbWebApplicationManager.getAwbWebApplication().doCheckDefaultProperties(webAppProperties);
+			if (webAppProperties.equals(webAppPropertiesComparison)==false) {
+				AwbWebApplicationManager.getWebApplicationProperties().save();
+			}
+			// --- Assign the properties to the web application -----
+			AwbWebApplicationManager.getAwbWebApplication().setProperties(webAppProperties);
+
 			// -- Call to initialize the web application ------------
 			AwbWebApplicationManager.getAwbWebApplication().initialize();
-			System.out.println("[" + JettyServerManager.class.getSimpleName() + "] Initialized server-side base for web application '" + AwbWebApplicationManager.getAwbWebApplication().getClass().getName() + "'");
+			System.out.println("[" + JettyServerManager.class.getSimpleName() + "] Initialized server-side base for web application '" + AwbWebApplicationManager.getAwbWebApplication().getApplicationName() + "' (class: '" + AwbWebApplicationManager.getAwbWebApplication().getClass().getName() + "')");
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -67,12 +77,19 @@ public class AwbWebApplicationManager {
 	private static AwbWebApplicationProperties getWebApplicationProperties() {
 		if (webAppProperties==null) {
 			String webAppName = getAwbWebApplication().getApplicationName();
+			Properties propertiesForComparison = null;
 			File webAppPropFile = AwbWebApplicationProperties.getFileWebApplicationProperties(webAppName);
 			if (webAppPropFile.exists()==false) {
 				webAppProperties = new AwbWebApplicationProperties(webAppName, new Properties());
+				webAppProperties.addDefaultWebApplicationProperties();
 				webAppProperties.save();
 			} else {
 				webAppProperties = AwbWebApplicationProperties.load(webAppPropFile);
+				propertiesForComparison = webAppProperties.getProperties().getCopy();
+				webAppProperties.addDefaultWebApplicationProperties();
+				if (webAppProperties.getProperties().equals(propertiesForComparison)==false) {
+					webAppProperties.save();
+				}
 			}
 		}
 		return webAppProperties;

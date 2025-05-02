@@ -30,12 +30,41 @@ public abstract class DefaultWebApplication implements AwbWebApplication {
 		
 		Properties props = new Properties();
 		for (String identifier : this.appProperties.getIdentifierList()) {
+			// --- Get the property value ---------------------------
 			PropertyValue pValue =  this.appProperties.getPropertyValue(identifier);
 			
-			props.setValue(identifier, pValue);
+			// --- Check which type of properties is requested ------
+			boolean addToRequestedProperties = false;
+			switch (typeOfProperty) {
+			case AllProperties:
+				addToRequestedProperties = true;
+				break;
+			case PublicProperties:
+				addToRequestedProperties = (this.isPublicProperty(identifier)==true);
+				break;
+			case PrivateProperties:
+				addToRequestedProperties = (this.isPublicProperty(identifier)==false);
+				break;
+			}
+
+			// --- Add to result list if this applies ---------------
+			if (addToRequestedProperties==true) {
+				props.setValue(identifier, pValue);
+			}
 		}
 		return props;
-		
 	}
-
+	/**
+	 * Checks if a property is public.
+	 *
+	 * @param identifier the identifier
+	 * @return true, if is public property
+	 */
+	private boolean isPublicProperty(String identifier) {
+		if (this.getPublicPropertyKeys()!=null && this.getPublicPropertyKeys().contains(identifier)==true) {
+			return true;
+		}
+		return false;
+	}
+	
 }

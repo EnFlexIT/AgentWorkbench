@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.webApp;
 
+import java.util.List;
+
 import de.enflexit.common.properties.Properties;
 
 /**
@@ -28,10 +30,18 @@ public interface AwbWebApplication {
 	public String getApplicationDescription();
 	
 	
+	
 	/**
-	 * Will be called to enable initializing the web application (e.g. to establish database connections and so on).
+	 * Has to return the list of keys that are public available.
+	 * @return the public property keys
 	 */
-	public void initialize();
+	public List<String> getPublicPropertyKeys();
+	
+	/**
+	 * Will be invoked to enable a check for default web application properties.
+	 * @param webAppProperties the web app properties
+	 */
+	public void doCheckDefaultProperties(Properties webAppProperties);
 	
 	/**
 	 * Will be invoked by the {@link AwbWebApplicationManager} to set the stored / overall properties.
@@ -47,6 +57,12 @@ public interface AwbWebApplication {
 	 */
 	public Properties getProperties(PropertyType typeOfProperty);
 
+
+	
+	/**
+	 * Will be called to enable initializing the web application (e.g. to establish database connections and so on).
+	 */
+	public void initialize();
 
 	
 	
