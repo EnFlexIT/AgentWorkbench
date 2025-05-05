@@ -136,7 +136,8 @@ public class SimpleOIDCClient {
 	private JWTClaimsSet idClaims;
 
 	private File trustStoreFile;
-
+	
+	private boolean debug = false;
 	
 	/**
 	 * Reset.
@@ -615,9 +616,11 @@ public class SimpleOIDCClient {
 
 		if (tokenResponse instanceof TokenErrorResponse) {
 			ErrorObject error = ((TokenErrorResponse) tokenResponse).getErrorObject();
-			System.err.println(this.getClass().getSimpleName() + " - Token retrieval failed!");
-			System.err.println("Error: " + error.getCode());
-			System.err.println("Description: " + error.getDescription());
+			if (this.debug==true) {
+				System.err.println(this.getClass().getSimpleName() + " - Token retrieval failed!");
+				System.err.println("Error: " + error.getCode());
+				System.err.println("Description: " + error.getDescription());
+			}
 			return false;
 		}
 

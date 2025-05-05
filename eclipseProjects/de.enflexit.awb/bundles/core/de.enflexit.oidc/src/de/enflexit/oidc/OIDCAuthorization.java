@@ -168,7 +168,6 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			
 			this.getOIDCClient().setRefreshToken(refreshToken);
 			boolean refreshSuccess = this.getOIDCClient().refreshTokens();
-			System.out.println("[" + this.getClass().getSimpleName() + "] Token refresh successful: " + refreshSuccess);
 			this.setAuthenticationState((refreshSuccess==true) ? AuthenticationState.LOGGED_IN : AuthenticationState.LOGGED_OUT);
 			if (refreshSuccess==true) {
 				this.storeTokens();
