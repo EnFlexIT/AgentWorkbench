@@ -249,7 +249,7 @@ public class DatabaseConnectionManager {
 		// --- Get corresponding eclipse preferences ----------------
 		IEclipsePreferences eclipsePreferences = this.getEclipsePreferences(factoryID);
 		// --- Get the database system name -------------------------
-		String driverClass = eclipsePreferences.get("hibernate.connection.driver_class", null);
+		String driverClass = eclipsePreferences.get(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, null);
 		String databaseSystemName = HibernateUtilities.getDatabaseSystemNameByDriverClassName(driverClass);
 		if (databaseSystemName!=null) {
 			// --- Fill the properties ------------------------------
@@ -330,7 +330,7 @@ public class DatabaseConnectionManager {
 		
 		IEclipsePreferences eclipsePreferences = this.getEclipsePreferences(factoryID);
 		
-		String driverClass = eclipsePreferences.get("hibernate.connection.driver_class", null);
+		String driverClass = eclipsePreferences.get(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, null);
 		HibernateDatabaseService hds = HibernateUtilities.getDatabaseServiceByDriverClassName(driverClass);
 		if (hds!=null) {
 			// --- Get the key required for the database system -----
@@ -380,7 +380,7 @@ public class DatabaseConnectionManager {
 		if (properties==null) return false;
 		
 		// --- Create DatabaseSettings for a setting comparison -----
-		String driverClassNew = properties.getProperty("hibernate.connection.driver_class", null);
+		String driverClassNew = properties.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, null);
 		String dbSystemNameNew = HibernateUtilities.getDatabaseSystemNameByDriverClassName(driverClassNew);
 		DatabaseSettings dbSettingsNew = new DatabaseSettings(dbSystemNameNew, properties);
 		DatabaseSettings dbSettingsOld = this.getDatabaseSettings(factoryID);

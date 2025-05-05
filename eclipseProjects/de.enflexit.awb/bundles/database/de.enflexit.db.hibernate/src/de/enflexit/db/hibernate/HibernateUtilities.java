@@ -470,7 +470,7 @@ public class HibernateUtilities {
 		Connection conn = null;
 		String errMessage = null;
 		
-		String driverClassName = configuration.getProperty("hibernate.connection.driver_class");
+		String driverClassName = configuration.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
 		if (driverClassName==null) {
 			// --- Write driver class error -------------------------
 			errMessage = "No JDBC driver class was specified";
@@ -509,7 +509,7 @@ public class HibernateUtilities {
 	private static String isAvailableDatabase(Configuration configuration, boolean doSilentConnectionCheck) {
 		
 		String errMessage = null;
-		String driverClassName = configuration.getProperty("hibernate.connection.driver_class");
+		String driverClassName = configuration.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
 		if (driverClassName==null) {
 			// --- Write driver class error -------------------------
 			errMessage = "No JDBC driver class was specified";
@@ -652,9 +652,18 @@ public class HibernateUtilities {
 	 * @return the database system list
 	 */
 	public static List<String> getDatabaseSystemList() {
+		return HibernateUtilities.getDatabaseSystemList(true);
+	}
+	/**
+	 * Returns a sorted list of known/available database systems that are registered at the {@link HibernateUtilities}.
+	 * @return the database system list
+	 */
+	public static List<String> getDatabaseSystemList(boolean addErrorEntryIfEmpty) {
 		List<String> dbSystems = new ArrayList<>(getDatabaseServices().keySet());
 		if (dbSystems.isEmpty()==true) {
-			dbSystems.add(DB_SERVICE_REGISTRATION_ERROR);
+			if (addErrorEntryIfEmpty==true) {
+				dbSystems.add(DB_SERVICE_REGISTRATION_ERROR);
+			}
 		} else {
 			Collections.sort(dbSystems);
 		}
@@ -696,7 +705,7 @@ public class HibernateUtilities {
 	 */
 	public static String getDatabaseSystemNameByHibernateConfiguration(Configuration hibernateConfig) {
 		
-		String driverClass = hibernateConfig.getProperty("hibernate.connection.driver_class");
+		String driverClass = hibernateConfig.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
 		if (driverClass!=null && driverClass.isBlank()==false) {
 			return getDatabaseSystemNameByDriverClassName(driverClass);
 		}
