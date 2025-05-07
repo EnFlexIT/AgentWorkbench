@@ -81,6 +81,7 @@ Export-Package: ch.qos.logback.classic;version="1.5.17",
  org.slf4j.event;version="2.0.17",
  org.slf4j.helpers;version="2.0.17",
  org.slf4j.spi;version="2.0.17"
+Import-Package: org.osgi.framework
 Bundle-Vendor: EnFlex.IT
 Bundle-Activator: de.enflexit.logging.LoggingActivator
 Bundle-ClassPath: .,
@@ -90,5 +91,3 @@ Bundle-ClassPath: .,
  lib/logback-classic-db-1.2.11.1.jar,
  lib/logback-core-db-1.2.11.1.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: org.eclipse.osgi
-Import-Package: jade.core

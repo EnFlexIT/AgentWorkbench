@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: de.enflexit.db.ui
+Bundle-ManifestVersion: 2
+Bundle-Name: Database Settings UI
+Bundle-SymbolicName: de.enflexit.db.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-ActivationPolicy: lazy
+Export-Package: de.enflexit.db.ui
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.mainWindow,
+ de.enflexit.awb.baseUI.systemtray,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.ui,
+ de.enflexit.language

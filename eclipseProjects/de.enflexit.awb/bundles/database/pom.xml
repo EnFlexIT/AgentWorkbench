@@ -17,5 +17,6 @@
 		<module>de.enflexit.db.mariaDB</module>
 		<module>de.enflexit.db.mySQL</module>
 		<module>de.enflexit.db.postgres</module>
+		<module>de.enflexit.db.ui</module>
 	</modules>
 </project>

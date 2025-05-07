@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="de.enflexit.awb.desktop" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="de.enflexit.awb.baseUI" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.enflexit.awb.desktop" id="de.enflexit.awb.desktop.mainWindowExtension" name="Agent.Workbench - Desktop - Main Window Extension (Swing)"/>
+         <meta.schema plugin="de.enflexit.awb.baseUI" id="de.enflexit.awb.desktop.mainWindowExtension" name="Agent.Workbench - Desktop - Main Window Extension (Swing)"/>
       </appinfo>
       <documentation>
          This extension point can be used to extend the swing main window with new menus, menu items or toolbar elements
