@@ -13,12 +13,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -28,10 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.enflexit.common.SerialClone;
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
@@ -39,8 +42,6 @@ import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.GeneralDatabaseSettings;
-
-import javax.swing.JCheckBox;
 
 /**
  * The Class DatabaseSettingsDialog can be used to configure the 
@@ -99,7 +100,8 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		} else {
 			if (this.getComboBoxModelFactoryID().getSize()>0) {
 				// --- Reset current selection ------------
-				this.getJComboBoxFactoryID().setSelectedItem(this.getFactoryIdSelected());
+				this.currentFactoryID = this.getFactoryIdSelected();
+				this.loadDatabaseSettings(this.currentFactoryID);
 			}
 			if (this.getJCheckBoxUseForEveryFactory().isSelected()==false) {
 				this.getJTabbedPaneSettings().setSelectedIndex(1);
@@ -152,7 +154,20 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		gbc_jPanelButtons.gridx = 0;
 		gbc_jPanelButtons.gridy = 1;
 		this.getContentPane().add(getJPanelButtons(), gbc_jPanelButtons);
-		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.Dialog#setVisible(boolean)
+	 */
+	@Override
+	public void setVisible(boolean setVisible) {
+		super.setVisible(setVisible);
+		// --- Destroy the custom components
+		try {
+			this.getCustomDatabaseConfigurations().forEach(customDBConfig -> customDBConfig.disposeUIComponent());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
     private void registerEscapeKeyStroke() {
@@ -174,6 +189,16 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
     		jTabbedPaneSettings.setFont(new Font("Dialog", Font.PLAIN, 12));
     		jTabbedPaneSettings.addTab(" General Settings  ", this.getJPanelGeneralSettings());
     		jTabbedPaneSettings.addTab(" Factory Settings  ", this.getJPanelFactorySettings());
+    		
+    		// --- Add the custom DB configuration UI's as further tabs -------
+    		for (CustomDatabaseConfiguration cDbConfig : this.getCustomDatabaseConfigurations()) {
+    			try {
+    				jTabbedPaneSettings.addTab(" " + cDbConfig.getName() + "  ", cDbConfig.getUIComponent());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+    		}
+    		// --- Add change listener to the JTabbedPane ---------------------
     		jTabbedPaneSettings.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent ce) {
@@ -182,6 +207,13 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			});
     	}
     	return jTabbedPaneSettings;
+    }
+    /**
+     * Gets the custom database configurations.
+     * @return the custom database configurations
+     */
+    private List<CustomDatabaseConfiguration> getCustomDatabaseConfigurations() {
+    	return ServiceFinder.findServices(CustomDatabaseConfiguration.class);
     }
     
     /**
@@ -279,7 +311,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
      * Load general database settings.
      */
     private void loadGeneralDatabaseSettings() {
-    	GeneralDatabaseSettings gdbs = DatabaseConnectionManager.getInstance().getGeneralDatabaseSettings();
+    	GeneralDatabaseSettings gdbs = SerialClone.clone(DatabaseConnectionManager.getInstance().getGeneralDatabaseSettings());
     	this.getJCheckBoxUseForEveryFactory().setSelected(gdbs.isUseForEveryFactory());
     	this.getJPanelGeneralDatabaseSettings().setDatabaseSettings(gdbs);
     }
@@ -642,7 +674,6 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			this.getJLabelFactroyState().setToolTipText(sessionFactoryState.getDescription());
 		}
 	}
-	
 	/**
 	 * Updates the factory status.
 	 */
@@ -650,6 +681,22 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		SessionFactoryState sfm = HibernateUtilities.getSessionFactoryMonitor(this.currentFactoryID).getSessionFactoryState();
 		this.getJLabelFactroyState().setIcon(sfm.getIconImage());
 		this.getJLabelFactroyState().setToolTipText(sfm.getDescription());
+	}
+	
+	/**
+	 * Update after factory selection.
+	 */
+	private void updateFactorySettings() {
+		
+		String factorySelected = this.getFactoryIdSelected();
+		if (this.isChangedFactoryID(factorySelected)==false) return;
+
+		// --- Save changed database settings? ----------
+		if (this.isSaveChangedDatabaseSettings()==true) {
+			this.saveDatabaseSettings(this.currentFactoryID);							
+		}
+		// --- Change to selected factory ---------------
+		this.loadDatabaseSettings(factorySelected);
 	}
 	
 	/**
@@ -678,32 +725,18 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			
 		} else if (ae.getSource()==this.getJComboBoxFactoryID()) {
 			// --- Selection of new FactoryID -----------------------
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					// --- A new factory was selected? --------------
-					if (DatabaseConnectionSettingsDialog.this.isChangedFactoryID(DatabaseConnectionSettingsDialog.this.getFactoryIdSelected())==false) return;
-					// --- Save changed database settings? ----------
-					if (DatabaseConnectionSettingsDialog.this.isSaveChangedDatabaseSettings()==true) {
-						switch (DatabaseConnectionSettingsDialog.this.getDatabaseSettingsType()) {
-						case GeneralSettings: 
-							DatabaseConnectionSettingsDialog.this.saveDatabaseSettings(null);
-							break;
-						case FactorySettings:
-							DatabaseConnectionSettingsDialog.this.saveDatabaseSettings(DatabaseConnectionSettingsDialog.this.currentFactoryID);							
-							break;
-						}
-					}
-					// --- Change to selected factory ---------------
-					DatabaseConnectionSettingsDialog.this.loadDatabaseSettings(DatabaseConnectionSettingsDialog.this.getFactoryIdSelected());
-				}
-			});
+			this.updateFactorySettings();
 
 		} else if (ae.getSource()==this.getJButtonSave()) {
 			// --- Save the current settings ------------------------
 			this.saveDatabaseSettings(null);
 			this.saveDatabaseSettings(this.getFactoryIdSelected());
-
+			try {
+				this.getCustomDatabaseConfigurations().forEach(customDBConfig -> customDBConfig.saveConfiguration());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
 		} else if (ae.getSource()==this.getJButtonClose()) {
 			// --- Close editing ------------------------------------
 			if (this.isDoClose()==false) return;
@@ -749,11 +782,15 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 	 */
 	private boolean isDoClose() {
 		
+		boolean isSavedFactorySettings = true;
+		boolean isSavedGeneralSettings = true;
+		boolean isSavedCustomDatabaseSettingsWhereNecessary = true;
+		
 		if (this.isSaveChangedDatabaseSettings()==true) {
 
 			// --- Save factory DB settings of current first --------
 			String currFactoryID = this.getFactoryIdSelected();
-			boolean isSavedFactorySettings = this.saveDatabaseSettings(currFactoryID);
+			isSavedFactorySettings = this.saveDatabaseSettings(currFactoryID);
 			// --- Wait for session factory re-creation -------------
 			try {
 				while (HibernateUtilities.isSessionFactoryInCreation(currFactoryID)==true) {
@@ -764,13 +801,34 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			}
 			
 			// --- Save general DB settings -------------------------
-			boolean isSavedGeneralSettings = this.saveDatabaseSettings(null);
-			if (isSavedGeneralSettings==false || isSavedFactorySettings==false) {
-				// --- An error occurred ----------------------------
-				return false;
-			}
+			isSavedGeneralSettings = this.saveDatabaseSettings(null);
+			
 		}
-		return true;
+
+		// --- Check CustomDatabaseConfiguration --------------------
+		for (CustomDatabaseConfiguration cdc : this.getCustomDatabaseConfigurations()) {
+			
+			try {
+				if (cdc.hasChangedConfiguration()==true) {
+					String title = "Save changes?";
+					String message = "Would you like to save the changes done in tab '" + cdc.getName() + "'?";
+					int userAnswer = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (userAnswer==JOptionPane.YES_OPTION) {
+						boolean isSavedConfiguration = cdc.saveConfiguration();
+						if (isSavedConfiguration==false) {
+							isSavedCustomDatabaseSettingsWhereNecessary = false;
+						}
+					}
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
+		}
+		
+		// --- Everything OK? ---------------------------------------
+		return isSavedGeneralSettings & isSavedFactorySettings & isSavedCustomDatabaseSettingsWhereNecessary;
 	}
 	
 	

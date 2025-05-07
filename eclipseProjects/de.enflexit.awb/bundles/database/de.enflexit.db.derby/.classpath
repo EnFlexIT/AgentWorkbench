@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbyclient-10.17.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbynet-10.17.1.0.jar" sourcepath="D:/00 Tmp/15 Apache Derby/db-derby-10.17.1.0-src/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/derby-10.17.1.0.jar" sourcepath="D:/00 Tmp/15 Apache Derby/db-derby-10.17.1.0-src/java"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbyLocale_de_DE-10.17.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbyLocale_es-10.17.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbyLocale_fr-10.17.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbyoptionaltools-10.17.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbyshared-10.17.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/derbytools-10.17.1.0.jar" sourcepath="D:/00 Tmp/15 Apache Derby/db-derby-10.17.1.0-src/java"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

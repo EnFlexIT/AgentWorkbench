@@ -683,14 +683,34 @@ public class HibernateUtilities {
 	}
 	
 	/**
+	 * Checks if the specified driver class can be loaded / accessed as class.
+	 *
+	 * @param driverClassName the driver class name
+	 * @return true, if is driver class can be 
+	 */
+	public static boolean isDriverClassToLoad(String driverClassName) {
+		if (driverClassName==null || driverClassName.isBlank()==true) return false;
+		try {
+			Class.forName(driverClassName);
+			return true; 
+		} catch (ClassNotFoundException e) {
+			//e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
 	 * Returns the database service by driver class name.
-	 * @param driverClaName the driver class name
+	 * @param driverClassName the driver class name
 	 * @return the database service by driver class name
 	 */
-	public static HibernateDatabaseService getDatabaseServiceByDriverClassName(String driverClaName) {
+	public static HibernateDatabaseService getDatabaseServiceByDriverClassName(String driverClassName) {
+		
+		HibernateUtilities.isDriverClassToLoad(driverClassName);
+		
 		Vector<HibernateDatabaseService> dbServices = new Vector<>(getDatabaseServices().values()); 
 		for (int i = 0; i < dbServices.size(); i++) {
-			if (dbServices.get(i).getDriverClassName().equals(driverClaName)) {
+			if (dbServices.get(i).getDriverClassName().equals(driverClassName)) {
 				return dbServices.get(i);
 			}
 		}
@@ -721,7 +741,7 @@ public class HibernateUtilities {
 		
 		if (driverClassName!=null && driverClassName.isBlank()==false) {
 			// --- Get the database service ---------------
-			HibernateDatabaseService dbService = getDatabaseServiceByDriverClassName(driverClassName);
+			HibernateDatabaseService dbService = HibernateUtilities.getDatabaseServiceByDriverClassName(driverClassName);
 			if (dbService!=null) {
 				return dbService.getDatabaseSystemName();
 			}

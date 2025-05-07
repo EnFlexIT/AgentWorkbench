@@ -45,9 +45,19 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 		String urlWithoutDB = url.substring(0, lastSlash);
 		
 		try {
-			// --- Try to establish the connection ------------------
+			// --- Check for user name and password -----------------
+			boolean isUserSpecified = user!=null && user.isBlank()==false;
+			boolean isPswdSpecified = pswd!=null && pswd.isBlank()==false;
+
+			// --- Try to establish the Database connection ---------
+			Connection conn = null;
 			Class.forName(driverClass);
-			return DriverManager.getConnection(urlWithoutDB, user, pswd);
+			if (isUserSpecified==true && isPswdSpecified==true) {
+				conn = DriverManager.getConnection(urlWithoutDB, user, pswd);
+			} else {
+				conn = DriverManager.getConnection(urlWithoutDB);
+			}
+			return conn;
 			
 		} catch (NullPointerException npEx) {
 			String configString = "Driver: " + driverClass + ", URL: " + url + ", DB: " + db + ", User: " + user + ", PSWD: " + pswd + "";
@@ -99,9 +109,17 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 		
 		Connection conn = null;
 		try {
+			// --- Check for user name and password -----------------
+			boolean isUserSpecified = user!=null && user.isBlank()==false;
+			boolean isPswdSpecified = pswd!=null && pswd.isBlank()==false;
+			
 			// --- Try to establish the Database connection ---------
 			Class.forName(driverClass);
-			conn = DriverManager.getConnection(url, user, pswd);
+			if (isUserSpecified==true && isPswdSpecified==true) {
+				conn = DriverManager.getConnection(url, user, pswd);
+			} else {
+				conn = DriverManager.getConnection(url);
+			}
 			if (conn==null) return false;
 			
 			// --- Check if the database exists ---------------------
@@ -119,6 +137,7 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 			message = "[" + this.getMessagePrefix() +"] Failed throw NullPointerException with config: " + configString;
 			userMessageVector.addElement(message);
 			if (isPrintToConole) System.err.println(message);
+			//npEx.printStackTrace();
 			return false;
 			
 		} catch (SQLException sqlEx) {
@@ -126,12 +145,14 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 			mySQLErr = mySQLErr.replaceAll("(?m)^[ \t]*\r?\n", ""); // replace empty lines
 			userMessageVector.addElement(mySQLErr);
 			if (isPrintToConole) System.err.println(mySQLErr);
+			//sqlEx.printStackTrace();
 			return false;
 			
 		} catch (ClassNotFoundException cnfEx) {
 			message = "[" + this.getMessagePrefix() +"] Failed throw: " + cnfEx.getMessage();
 			userMessageVector.addElement(message);
 			if (isPrintToConole) System.err.println(message);
+			//cnfEx.printStackTrace();
 			return false;
 			
 		} finally {
