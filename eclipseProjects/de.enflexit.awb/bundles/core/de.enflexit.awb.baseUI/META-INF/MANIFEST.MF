@@ -34,6 +34,7 @@ Import-Package: de.enflexit.awb.bgSystem.db,
  org.jfree.chart.ui,
  org.jfree.data.general,
  org.jfree.data.xy,
+ org.osgi.framework,
  org.slf4j
 Export-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.agents,

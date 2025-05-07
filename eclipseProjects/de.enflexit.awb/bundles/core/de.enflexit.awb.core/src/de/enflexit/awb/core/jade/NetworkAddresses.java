@@ -164,31 +164,67 @@ public class NetworkAddresses {
 	}
 	
 	/**
-	 * Gets the JPopupMenu for the available network addresses.
+	 * Returns the JPopupMenu for the available network addresses.
 	 *
 	 * @param actListener the act listener
 	 * @return the JPopupMenu for {@link NetworkAddresses}
 	 * @see NetworkAddresses
 	 */
 	public JPopupMenu getJPopupMenu4NetworkAddresses(ActionListener actListener) {
+		return this.getJPopupMenu4NetworkAddresses(actListener, true, true, false, true, false);
+	}
+	/**
+	 * Returns the JPopupMenu for the available network addresses.
+	 *
+	 * @param actListener the act listener
+	 * @param includeDefault the add default addresses
+	 * @param includeIP4 the indicator to include IP 4 addresses
+	 * @param includeIP4LoopBack the indicator to include IP 4 loop back addresses
+	 * @param includeIP6 the indicator to include IP 6 addresses
+	 * @param includeIP6LoopBack the indicator to include IP 6 loop back addresses
+	 * @return the JPopupMenu for {@link NetworkAddresses}
+	 * @see NetworkAddresses
+	 */
+	public JPopupMenu getJPopupMenu4NetworkAddresses(ActionListener actListener, boolean includeDefault, boolean includeIP4, boolean includeIP4LoopBack, boolean includeIP6,  boolean includeIP6LoopBack) {
 		
 		jPopupMenuNetworkAddresses = new JPopupMenu("Network Addresses");
 		jPopupMenuNetworkAddresses.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		
-		jPopupMenuNetworkAddresses.add(this.getJLabelHeader("Default:"));
-		jPopupMenuNetworkAddresses.add(this.getJMenueItemDefault(PlatformJadeConfig.MTP_IP_AUTO_Config, actListener));
-		
-		jPopupMenuNetworkAddresses.addSeparator();
-		jPopupMenuNetworkAddresses.add(this.getJLabelHeader("IP4 - " + Language.translate("Adressen") + ":"));
-		for (NetworkAddress netAddress : this.getInet4Addresses()) {
-			jPopupMenuNetworkAddresses.add(this.getJMenueItemNetworkAddress(netAddress, actListener));
+		if (includeDefault==true) {
+			jPopupMenuNetworkAddresses.add(this.getJLabelHeader("Default:"));
+			jPopupMenuNetworkAddresses.add(this.getJMenueItemDefault(PlatformJadeConfig.MTP_IP_AUTO_Config, actListener));
 		}
 		
-		jPopupMenuNetworkAddresses.addSeparator();
-		jPopupMenuNetworkAddresses.add(this.getJLabelHeader("IP6 - " + Language.translate("Adressen") + ":"));
-		for (NetworkAddress netAddress : this.getInet6Addresses()) {
-			jPopupMenuNetworkAddresses.add(this.getJMenueItemNetworkAddress(netAddress, actListener));	
+		if (includeIP4==true) {
+			if (jPopupMenuNetworkAddresses.getComponentCount()>0) jPopupMenuNetworkAddresses.addSeparator();
+			jPopupMenuNetworkAddresses.add(this.getJLabelHeader("IP4 - " + Language.translate("Adressen") + ":"));
+			for (NetworkAddress netAddress : this.getInet4Addresses()) {
+				jPopupMenuNetworkAddresses.add(this.getJMenueItemNetworkAddress(netAddress, actListener));
+			}
 		}
+		if (includeIP4LoopBack) {
+			if (jPopupMenuNetworkAddresses.getComponentCount()>0) jPopupMenuNetworkAddresses.addSeparator();
+			jPopupMenuNetworkAddresses.add(this.getJLabelHeader("IP4 Loopback - " + Language.translate("Adressen") + ":"));
+			for (NetworkAddress netAddress : this.getInet4AddressesLoopBack()) {
+				jPopupMenuNetworkAddresses.add(this.getJMenueItemNetworkAddress(netAddress, actListener));
+			}
+		}
+		
+		if (includeIP6==true) {
+			if (jPopupMenuNetworkAddresses.getComponentCount()>0) jPopupMenuNetworkAddresses.addSeparator();
+			jPopupMenuNetworkAddresses.add(this.getJLabelHeader("IP6 - " + Language.translate("Adressen") + ":"));
+			for (NetworkAddress netAddress : this.getInet6Addresses()) {
+				jPopupMenuNetworkAddresses.add(this.getJMenueItemNetworkAddress(netAddress, actListener));	
+			}
+		}
+		if (includeIP6LoopBack==true) {
+			if (jPopupMenuNetworkAddresses.getComponentCount()>0) jPopupMenuNetworkAddresses.addSeparator();
+			jPopupMenuNetworkAddresses.add(this.getJLabelHeader("IP6 Loopback - " + Language.translate("Adressen") + ":"));
+			for (NetworkAddress netAddress : this.getInet6AddressesLoopBack()) {
+				jPopupMenuNetworkAddresses.add(this.getJMenueItemNetworkAddress(netAddress, actListener));	
+			}
+		}
+
 		return jPopupMenuNetworkAddresses;
 	}
 	

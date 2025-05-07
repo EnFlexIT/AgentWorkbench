@@ -5,19 +5,27 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
+import de.enflexit.awb.core.jade.NetworkAddresses;
+import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
+
 import javax.swing.JCheckBox;
+import javax.swing.JButton;
 
 /**
  * The Class CustomDerbyServerConfigurationPanel.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class CustomDerbyServerConfigurationPanel extends JPanel {
+public class CustomDerbyServerConfigurationPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 3414375347803741567L;
 	
@@ -34,6 +42,7 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 	private JTextField jTextFieldPort;
 	private JTextField jTextFieldUserName;
 	private JPasswordField jTextFieldPassword;
+	private JButton jButtonIPedit;
 	
 	/**
 	 * Instantiates a new custom derby server configuration panel.
@@ -47,20 +56,21 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{130, 0, 0};
+		gridBagLayout.columnWidths = new int[]{130, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.insets = new Insets(10, 10, 5, 5);
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
+		gbc_lblNewLabel.insets = new Insets(10, 10, 8, 5);
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 0;
 		add(getLblNewLabel(), gbc_lblNewLabel);
 		GridBagConstraints gbc_jCheckBoxStartServer = new GridBagConstraints();
+		gbc_jCheckBoxStartServer.gridwidth = 2;
 		gbc_jCheckBoxStartServer.anchor = GridBagConstraints.WEST;
-		gbc_jCheckBoxStartServer.insets = new Insets(10, 0, 5, 0);
+		gbc_jCheckBoxStartServer.insets = new Insets(10, 0, 8, 10);
 		gbc_jCheckBoxStartServer.gridx = 1;
 		gbc_jCheckBoxStartServer.gridy = 0;
 		add(getJCheckBoxStartServer(), gbc_jCheckBoxStartServer);
@@ -76,6 +86,11 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		gbc_jTextFieldHostOrIP.gridx = 1;
 		gbc_jTextFieldHostOrIP.gridy = 1;
 		add(getJTextFieldHostOrIP(), gbc_jTextFieldHostOrIP);
+		GridBagConstraints gbc_jButtonIPedit = new GridBagConstraints();
+		gbc_jButtonIPedit.insets = new Insets(0, 5, 5, 10);
+		gbc_jButtonIPedit.gridx = 2;
+		gbc_jButtonIPedit.gridy = 1;
+		add(getJButtonIPedit(), gbc_jButtonIPedit);
 		GridBagConstraints gbc_jLabelPort = new GridBagConstraints();
 		gbc_jLabelPort.insets = new Insets(0, 10, 5, 5);
 		gbc_jLabelPort.anchor = GridBagConstraints.WEST;
@@ -83,7 +98,8 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		gbc_jLabelPort.gridy = 2;
 		add(getJLabelPort(), gbc_jLabelPort);
 		GridBagConstraints gbc_jTextFieldPort = new GridBagConstraints();
-		gbc_jTextFieldPort.insets = new Insets(0, 0, 5, 0);
+		gbc_jTextFieldPort.gridwidth = 2;
+		gbc_jTextFieldPort.insets = new Insets(0, 0, 5, 10);
 		gbc_jTextFieldPort.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldPort.gridx = 1;
 		gbc_jTextFieldPort.gridy = 2;
@@ -95,7 +111,8 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		gbc_jLabelUserName.gridy = 3;
 		add(getJLabelUserName(), gbc_jLabelUserName);
 		GridBagConstraints gbc_jTextFieldUserName = new GridBagConstraints();
-		gbc_jTextFieldUserName.insets = new Insets(0, 0, 5, 0);
+		gbc_jTextFieldUserName.gridwidth = 2;
+		gbc_jTextFieldUserName.insets = new Insets(0, 0, 5, 10);
 		gbc_jTextFieldUserName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldUserName.gridx = 1;
 		gbc_jTextFieldUserName.gridy = 3;
@@ -107,18 +124,14 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		gbc_jLabelPassword.gridy = 4;
 		add(getJLabelPassword(), gbc_jLabelPassword);
 		GridBagConstraints gbc_jTextFieldPassword = new GridBagConstraints();
-		gbc_jTextFieldPassword.insets = new Insets(0, 0, 5, 0);
+		gbc_jTextFieldPassword.gridwidth = 2;
+		gbc_jTextFieldPassword.insets = new Insets(0, 0, 5, 10);
 		gbc_jTextFieldPassword.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldPassword.gridx = 1;
 		gbc_jTextFieldPassword.gridy = 4;
 		add(getJTextFieldPassword(), gbc_jTextFieldPassword);
 	}
 	
-	/**
-	 * Gets the lbl new label.
-	 *
-	 * @return the lbl new label
-	 */
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
 			lblNewLabel = new JLabel("Start Network Server");
@@ -126,25 +139,6 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		}
 		return lblNewLabel;
 	}
-	
-	/**
-	 * Gets the j check box start server.
-	 *
-	 * @return the j check box start server
-	 */
-	private JCheckBox getJCheckBoxStartServer() {
-		if (jCheckBoxStartServer == null) {
-			jCheckBoxStartServer = new JCheckBox("Start a Derby database server that is accessible via network");
-			jCheckBoxStartServer.setFont(new Font("Dialog", Font.PLAIN, 12));
-		}
-		return jCheckBoxStartServer;
-	}
-	
-	/**
-	 * Gets the j label host or IP.
-	 *
-	 * @return the j label host or IP
-	 */
 	private JLabel getJLabelHostOrIP() {
 		if (jLabelHostOrIP == null) {
 			jLabelHostOrIP = new JLabel("Host or IP");
@@ -152,12 +146,6 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		}
 		return jLabelHostOrIP;
 	}
-	
-	/**
-	 * Gets the j label port.
-	 *
-	 * @return the j label port
-	 */
 	private JLabel getJLabelPort() {
 		if (jLabelPort == null) {
 			jLabelPort = new JLabel("Port (default: 1527)");
@@ -165,12 +153,6 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		}
 		return jLabelPort;
 	}
-	
-	/**
-	 * Gets the j label user name.
-	 *
-	 * @return the j label user name
-	 */
 	private JLabel getJLabelUserName() {
 		if (jLabelUserName == null) {
 			jLabelUserName = new JLabel("User Name");
@@ -178,12 +160,6 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		}
 		return jLabelUserName;
 	}
-	
-	/**
-	 * Gets the j label password.
-	 *
-	 * @return the j label password
-	 */
 	private JLabel getJLabelPassword() {
 		if (jLabelPassword == null) {
 			jLabelPassword = new JLabel("Password");
@@ -192,11 +168,6 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		return jLabelPassword;
 	}
 	
-	/**
-	 * Gets the j text field host or IP.
-	 *
-	 * @return the j text field host or IP
-	 */
 	// --- Value fields -----------------------------------
 	private JTextField getJTextFieldHostOrIP() {
 		if (jTextFieldHostOrIP == null) {
@@ -206,12 +177,13 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		}
 		return jTextFieldHostOrIP;
 	}
-	
-	/**
-	 * Gets the j text field port.
-	 *
-	 * @return the j text field port
-	 */
+	private JCheckBox getJCheckBoxStartServer() {
+		if (jCheckBoxStartServer == null) {
+			jCheckBoxStartServer = new JCheckBox("Start a Derby database server that is accessible via network");
+			jCheckBoxStartServer.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jCheckBoxStartServer;
+	}
 	private JTextField getJTextFieldPort() {
 		if (jTextFieldPort == null) {
 			jTextFieldPort = new JTextField();
@@ -220,12 +192,6 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		}
 		return jTextFieldPort;
 	}
-	
-	/**
-	 * Gets the j text field user name.
-	 *
-	 * @return the j text field user name
-	 */
 	private JTextField getJTextFieldUserName() {
 		if (jTextFieldUserName == null) {
 			jTextFieldUserName = new JTextField();
@@ -234,12 +200,6 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		}
 		return jTextFieldUserName;
 	}
-	
-	/**
-	 * Gets the j text field password.
-	 *
-	 * @return the j text field password
-	 */
 	private JPasswordField getJTextFieldPassword() {
 		if (jTextFieldPassword == null) {
 			jTextFieldPassword = new JPasswordField();
@@ -272,6 +232,36 @@ public class CustomDerbyServerConfigurationPanel extends JPanel {
 		dnsProperties.setUserName(this.getJTextFieldUserName().getText());
 		dnsProperties.setPassword(new String(this.getJTextFieldPassword().getPassword()));
 		return dnsProperties;
+	}
+	
+	private JButton getJButtonIPedit() {
+		if (jButtonIPedit == null) {
+			jButtonIPedit = new JButton();
+			jButtonIPedit.setToolTipText("IP auswählen");
+			jButtonIPedit.setPreferredSize(new Dimension(26, 26));
+			jButtonIPedit.setIcon(HibernateStateVisualizer.getImageIcon("edit.png"));
+			jButtonIPedit.addActionListener(this);
+		}
+		return jButtonIPedit;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if (ae.getSource()==this.getJButtonIPedit()) {
+			NetworkAddresses netAddresses = new NetworkAddresses();
+			JPopupMenu popUp = netAddresses.getJPopupMenu4NetworkAddresses(this, false, true, true, true, true);
+			popUp.show(this.getJTextFieldHostOrIP(), 0, this.getJTextFieldHostOrIP().getHeight());
+			
+		} else if (ae.getSource() instanceof JMenuItem) {
+			// --- Trigger from JPopoupMenue for the IP-Addresses ---
+			JMenuItem menuItem = (JMenuItem) ae.getSource() ;
+			this.getJTextFieldHostOrIP().setText(menuItem.getActionCommand());
+			
+		}
 	}
 	
 }

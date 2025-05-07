@@ -147,27 +147,28 @@ public class StartOptions extends AbstractOptionTab implements ActionListener, H
 		this.registerOptionPanel(this.getJPanelHibernateState());
 		this.registerOptionPanel(this.getJPanelEmbeddedSystemAgent());
 		
-		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-		gridBagConstraints3.gridx = 0;
-		gridBagConstraints3.fill = GridBagConstraints.BOTH;
-		gridBagConstraints3.weightx = 1.0;
-		gridBagConstraints3.weighty = 1.0;
-		gridBagConstraints3.insets = new Insets(10, 10, 10, 10);
-		gridBagConstraints3.gridy = 1;
-		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
-		gridBagConstraints21.gridx = 0;
-		gridBagConstraints21.fill = GridBagConstraints.HORIZONTAL;
-		gridBagConstraints21.insets = new Insets(20, 20, 0, 20);
-		gridBagConstraints21.anchor = GridBagConstraints.WEST;
-		gridBagConstraints21.weightx = 1.0;
-		gridBagConstraints21.weighty = 0.0;
-		gridBagConstraints21.gridy = 0;
-		
 		this.setSize(770, 440);
 		this.setLayout(new GridBagLayout());
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		this.add(this.getJPanelTop(), gridBagConstraints21);
-		this.add(this.getJPanel4ScrollPane(), gridBagConstraints3);
+
+		GridBagConstraints gbcJPanelTop = new GridBagConstraints();
+		gbcJPanelTop.gridx = 0;
+		gbcJPanelTop.fill = GridBagConstraints.HORIZONTAL;
+		gbcJPanelTop.insets = new Insets(20, 20, 0, 20);
+		gbcJPanelTop.anchor = GridBagConstraints.WEST;
+		gbcJPanelTop.weightx = 1.0;
+		gbcJPanelTop.weighty = 0.0;
+		gbcJPanelTop.gridy = 0;
+		this.add(this.getJPanelTop(), gbcJPanelTop);
+
+		GridBagConstraints gbcJPanel4ScrollPane = new GridBagConstraints();
+		gbcJPanel4ScrollPane.gridx = 0;
+		gbcJPanel4ScrollPane.fill = GridBagConstraints.BOTH;
+		gbcJPanel4ScrollPane.weightx = 1.0;
+		gbcJPanel4ScrollPane.weighty = 1.0;
+		gbcJPanel4ScrollPane.insets = new Insets(10, 10, 10, 10);
+		gbcJPanel4ScrollPane.gridy = 1;
+		this.add(this.getJPanel4ScrollPane(), gbcJPanel4ScrollPane);
 	
 		this.registerWindowListener();
 		
@@ -206,9 +207,10 @@ public class StartOptions extends AbstractOptionTab implements ActionListener, H
 		}
 		return jPanel4ScrollPane;
 	}
+	
 	/**
 	 * This method initializes jRadioButtonRunAsApplication	.
-	 * @return javax.swing.JRadioButton
+	 * @return the j radio button run as application
 	 */
 	private JRadioButton getJRadioButtonRunAsApplication() {
 		if (jRadioButtonRunAsApplication == null) {

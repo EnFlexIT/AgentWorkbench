@@ -23,7 +23,8 @@ Service-Component: OSGI-INF/dbService.xml,
  OSGI-INF/dbServiceEmbedded.xml,
  OSGI-INF/derbyNetworkServerConfiguration.xml
 Require-Bundle: de.enflexit.db.hibernate
-Import-Package: de.enflexit.common,
+Import-Package: de.enflexit.awb.core.jade,
+ de.enflexit.common,
  org.eclipse.core.runtime.preferences,
  org.osgi.framework,
  org.osgi.service.prefs,
