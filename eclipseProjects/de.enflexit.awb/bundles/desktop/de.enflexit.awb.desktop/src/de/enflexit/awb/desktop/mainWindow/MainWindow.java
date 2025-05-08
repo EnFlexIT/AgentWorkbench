@@ -7,12 +7,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -41,7 +38,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
@@ -74,6 +70,7 @@ import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.common.swing.AwbLookAndFeelInfo;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
@@ -93,7 +90,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	
 	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 
-	private JFrameSizeAndPostionController windowController;
+	private JFrameSizeAndPostionController sizeAndPositionController;
 	
 	private MainWindowStatusBar jPanelStatusBar;
 	private PlatformStatusDialog platformStatusDialog;
@@ -153,13 +150,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// --- Set the Look and Feel of the Application -------------
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-		// --- Configure console and divider position ---------------
-		double windowHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 100;
-		if (Application.getGlobalInfo().isMaximzeMainWindow()==false) {
-			windowHeight = this.getSizeRelatedToScreenSize().getHeight() - 100;
-		}
-		this.visibleDividersLocation = (int) windowHeight * 3/4; 
-	
 		// --- Create the Main-Elements of the Application ----------
 		this.initComponents();
 
@@ -176,10 +166,19 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		
 		// --- Proceed the MainWindow Extensions --------------------
 		this.proceedMainWindowExtensions();
+
+		
+		// --- Set size by using local Window controller ----------
+		Dimension frameSize = this.getWindowSizeAndPostionController().getOptimalSize();
+		this.setPreferredSize(frameSize);
+		this.setSize(new Dimension(1200, 700));
+
+		// --- Configure console and divider position ---------------
+		this.visibleDividersLocation = (int) (frameSize.getHeight() - 100) * 3/4; 
 		
 		this.pack();
 		this.setVisible(true);
-
+		
 		// --- Place MainWindow center on screen --------------------
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
 	}
@@ -194,11 +193,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		this.getContentPane().add(this.getJPanelToolbar(), BorderLayout.NORTH);
 		this.getContentPane().add(this.getStatusBar(), BorderLayout.SOUTH);
 		this.getContentPane().add(this.getJSplit4ProjectDesktop());
-
-		
-		Dimension frameSize = this.getSizeRelatedToScreenSize();
-		this.setPreferredSize(frameSize);
-		this.setSize(new Dimension(1384, 739));
 
 		// --- Maximze the JFrame, if configured in the GlobalInfo --
 		if (Application.getGlobalInfo().isMaximzeMainWindow() == true) {
@@ -240,9 +234,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 				}
 			}
 		});
-
-		// --- Start the local Window controller ----------
-		this.getWindowSizeAndPostionController();
 		
 		// --- Set button for simulation control ----------
 		this.setSimulationReady2Start();
@@ -251,30 +242,12 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 * Returns the JFrameSizeAndPostionController used for the MainWindow.
 	 */
 	private JFrameSizeAndPostionController getWindowSizeAndPostionController() {
-		if (windowController==null) {
-			windowController = new JFrameSizeAndPostionController(this);
+		if (sizeAndPositionController==null) {
+			sizeAndPositionController = new JFrameSizeAndPostionController(this);
 		}
-		return windowController;
+		return sizeAndPositionController;
 	}
 	
-	/**
-	 * Return the size in relation (scaled) to the screen size.
-	 */
-	private Dimension getSizeRelatedToScreenSize() {
-
-		// --- Scale relative to screen ---------
-		double scale = 0.9;
-		
-		GraphicsDevice gd = this.getGraphicsConfiguration().getDevice();
-		if (gd==null) {
-			gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-		}
-		int frameWidth  = (int) (gd.getDisplayMode().getWidth()  * scale);
-		int frameHeight = (int) (gd.getDisplayMode().getHeight() * scale);
-
-		return new Dimension(frameWidth, frameHeight);
-	}
-
 	/* (non-Javadoc)
 	 * @see java.awt.Window#dispose()
 	 */
@@ -314,10 +287,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		if (mwExtension==null) return;
 
 		// ----------------------------------------------------------
-		// --- Menus ------------------------------------------------
+		// --- Initialize MainWindowExtension -----------------------
 		// ----------------------------------------------------------
 		try {
-			// --- Call the initialize method first -----------------
 			mwExtension.initialize();
 			
 		} catch (Exception ex) {
@@ -325,6 +297,22 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			ex.printStackTrace();
 		}
 		
+		// ----------------------------------------------------------
+		// --- Identity Provider ------------------------------------
+		// ----------------------------------------------------------
+		try {
+			if (mwExtension.getJButtonIdentityProvider()!=null) {
+				this.setIdentityProviderComponent(mwExtension.getJButtonIdentityProvider());
+			}
+			
+		} catch (Exception ex) {
+			System.err.println(mwExtension.getClass().getName() + ": Error while initializing the MainWindowExtension.");
+			ex.printStackTrace();
+		}
+		
+		// ----------------------------------------------------------
+		// --- Menus ------------------------------------------------
+		// ----------------------------------------------------------
 		try {
 			// --- Check the vector of new menus --------------------
 			if (mwExtension.getMainWindowMenuVector().size()>0) {
@@ -1029,7 +1017,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		public void actionPerformed(ActionEvent evt) {
@@ -1047,9 +1034,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	private void setJMenuExtraLnF() {
 
-		for (LookAndFeelInfo lafInfo : AwbLookAndFeelAdjustments.getInstalledLookAndFeels()) {
+		for (AwbLookAndFeelInfo lafInfo : AwbLookAndFeelAdjustments.getInstalledLookAndFeels()) {
 			boolean setBold = lafInfo.getClassName().equals(Application.getGlobalInfo().getAppLookAndFeelClassName());
-			jMenuExtraLnF.add(new JMenuItmenLnF(lafInfo.getName(), lafInfo.getClassName(), setBold));
+			jMenuExtraLnF.add(new JMenuItmenLnF(lafInfo.getAwbInfoText(), lafInfo.getClassName(), setBold));
 		}
 	}
 
@@ -1085,8 +1072,12 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			}
 			this.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					// TODO Change of the LookNFeel 
-					//Application.setLookAndFeel(JMenuItmenLnF.this.LnFClass);
+					
+					String newLnF = JMenuItmenLnF.this.LnFClass;
+					Application.getGlobalInfo().setAppLookAndFeelClassName(newLnF);
+					AwbLookAndFeelAdjustments.setLookAndFeel(newLnF, MainWindow.this);
+					MainWindow.this.resetAfterLookAndFeelUpdate();
+					Application.getProjectsLoaded().setProjectView();
 				}
 			});
 		}
@@ -1348,7 +1339,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jPanelToolBar.add(this.getJToolBarApplication(), gbc_jToolBarApplication);
 			
 			GridBagConstraints gbc_jToolBarCloseProject = new GridBagConstraints();
-			gbc_jToolBarCloseProject.anchor = GridBagConstraints.WEST;
+			gbc_jToolBarCloseProject.anchor = GridBagConstraints.EAST;
 			gbc_jToolBarCloseProject.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jToolBarCloseProject.gridx = 1;
 			gbc_jToolBarCloseProject.gridy = 0;
@@ -1579,7 +1570,21 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			container.remove(jComp);
 		}
 	}
-	
+
+	// ------------------------------------------------------------
+	// --- JButton "Identity Provider-Button" ---------------------
+	// ------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbMainWindow#setIdentityProviderComponent(java.lang.Object)
+	 */
+	@Override
+	public void setIdentityProviderComponent(Object component) {
+		if (component instanceof JButton) {
+			JButton jButtonIP = (JButton) component;
+			this.getJToolBarCloseProject().addSeparator();
+			this.getJToolBarCloseProject().add(jButtonIP);
+		}
+	}
 	
 	// ------------------------------------------------------------
 	// --- Toolbar "Close-Button" ---------------------------------

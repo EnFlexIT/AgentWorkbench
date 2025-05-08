@@ -51,7 +51,14 @@ public interface AwbMainWindow<MenueType, MenuItemType, ToolBarType, ToolBarComp
 	 * @return the application toolbar
 	 */
 	public ToolBarType getApplicationToolbar();
-		
+
+	
+	/**
+	 * Sets the identity provider component.
+	 * @param component the new identity provider component
+	 */
+	public void setIdentityProviderComponent(Object component);
+	
 
 	
 	/**

@@ -67,7 +67,7 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public String toString() {
-		return "<html><b>Server-wide Securtiy Settings</b></html>";
+		return "<html><b>Server-wide Security Settings</b></html>";
 	}
 	
 	/* (non-Javadoc)
@@ -75,7 +75,7 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public String getToolTipText() {
-		return "<html><b>Securtiy Settings for server '" + this.getJettyConfiguration().getServerName() + "'</html>";
+		return "<html><b>Security Settings for server '" + this.getJettyConfiguration().getServerName() + "'</html>";
 	}
 
 	/* (non-Javadoc)

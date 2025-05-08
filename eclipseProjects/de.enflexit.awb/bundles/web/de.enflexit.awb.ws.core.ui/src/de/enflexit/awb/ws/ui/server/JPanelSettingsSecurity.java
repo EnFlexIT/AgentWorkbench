@@ -262,9 +262,11 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 						Class<?> clazz = (Class<?>) JPanelSettingsSecurity.this.getJTableConfiguration().getValueAt(row, 1);
 						renderer = this.getDefaultRenderer(clazz);
 						if (clazz.equals(Boolean.class)==true) {
-							JCheckBox checkRenderer = (JCheckBox) renderer;
-							checkRenderer.setOpaque(true);
-							checkRenderer.setHorizontalAlignment(JCheckBox.LEFT);
+							if (renderer instanceof JCheckBox) {
+								JCheckBox checkRenderer = (JCheckBox) renderer;
+								checkRenderer.setOpaque(true);
+								checkRenderer.setHorizontalAlignment(JCheckBox.LEFT);
+							}
 						}
 					}
 					return renderer;

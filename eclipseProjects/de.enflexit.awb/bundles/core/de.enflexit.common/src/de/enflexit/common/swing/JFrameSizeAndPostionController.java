@@ -125,7 +125,7 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 		int yMovement = this.getCorrectionYMovement();
 		Dimension newSize = this.getCorrectionSize();
 
-		if (yMovement>0 || newSize!=null) {
+		if (yMovement>0 || (newSize!=null && this.isFrameMaximized()==false)) {
 			// --- Correct size and/or position of the frame ------------------
 			if (newSize!=null) this.frameObserved.setSize(newSize);
 			if (yMovement!=0 || xMovement!=0) {
@@ -187,7 +187,7 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 		Dimension correctionSize = null;
 		Rectangle windowBounds = this.getFrameBounds();
 		Rectangle screenBounds = this.getDeviceBounds(this.getGraphicsDevice());
-		if (this.isFrameMaximized()==false && ( windowBounds.width > screenBounds.width || windowBounds.height > screenBounds.height)) {
+		if (windowBounds.width > screenBounds.width || windowBounds.height > screenBounds.height) {
 			correctionSize = new Dimension((int)(screenBounds.getWidth() * 0.95), (int) (screenBounds.getHeight() * 0.9));
 		}
 		
@@ -196,6 +196,14 @@ public class JFrameSizeAndPostionController extends ComponentAdapter {
 			System.out.println("=> Device Size = " + this.getSizeAsString(screenBounds) + ", Frame Size " + this.getSizeAsString(windowBounds) + " => New Dimension: "  +(correctionSize!=null ? this.getSizeAsString(correctionSize) : "-"));
 		}
 		return correctionSize;
+	}
+	/**
+	 * ´Returns the optimal frame size.
+	 * @return the optimal size
+	 */
+	public Dimension getOptimalSize() {
+		Rectangle screenBounds = this.getDeviceBounds(this.getGraphicsDevice());
+		return new Dimension((int)(screenBounds.getWidth() * 0.95), (int) (screenBounds.getHeight() * 0.9));
 	}
 	
 	// ------------------------------------------------------------------------

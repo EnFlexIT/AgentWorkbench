@@ -15,9 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 /**
@@ -28,54 +26,45 @@ import com.formdev.flatlaf.FlatLightLaf;
 public class AwbLookAndFeelAdjustments {
 
 	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
-
-	public enum AwbLook {
-		Default,
-		Light,
-		Dark
-	}
+	public final static String LIGHT_LOOK_AND_FEEL_CLASS  = FlatLightLaf.class.getName();
+	public final static String DARK_LOOK_AND_FEEL_CLASS   = FlatDarkLaf.class.getName();
 	
-	private static AwbLook awbLook = AwbLook.Default;
-	
-	private static boolean isFurtherLaFToInstall = false;
+	private static boolean isFurtherLaFToInstall = true;
 	private static boolean isFurtherLaFInstalled = false;
 	
-	/**
-	 * Returns the current AWB look.
-	 * @return the AWB look
-	 * @see AwbLook
-	 */
-	public static AwbLook getAwbLook() {
-		return awbLook;
-	}
-	/**
-	 * Sets the new AWB look.
-	 * @param newAwbLook the new AWB look
-	 */
-	public static void setAwbLook(AwbLook newAwbLook) {
-		awbLook = newAwbLook;
-	}
 	
 	/**
 	 * Returns all installed look and feels.
 	 * @return the installed look and feels
 	 */
-	public static LookAndFeelInfo[] getInstalledLookAndFeels() {
+	public static List<AwbLookAndFeelInfo> getInstalledLookAndFeels() {
 		
-		// --- Install further LookAndFeels ---------------
+		// --- Install further LookAndFeels --------------------------
 		if (isFurtherLaFToInstall==true && isFurtherLaFInstalled==false) {
 			AwbLookAndFeelAdjustments.installLookAndFeels();
 		}
 		
-		// --- Sort list of installed LookAndFeels --------
-		LookAndFeelInfo[] lookAndFeels = UIManager.getInstalledLookAndFeels();
-		Arrays.sort(lookAndFeels, new Comparator<LookAndFeelInfo>() {
+		// --- Sort list of installed LookAndFeels -------------------
+		LookAndFeelInfo[] lafArray = UIManager.getInstalledLookAndFeels();
+		Arrays.sort(lafArray, new Comparator<LookAndFeelInfo>() {
 			@Override
 			public int compare(LookAndFeelInfo laf1, LookAndFeelInfo laf2) {
 				return laf1.getName().compareTo(laf2.getName());
 			}
 		});
-		return lookAndFeels;
+		
+		// --- Prepare the list of available LookAndFeels -----------
+		List<AwbLookAndFeelInfo> lafList = new ArrayList<>();
+		for (LookAndFeelInfo lafInfo : lafArray) {
+			if (lafInfo.getClassName().equals(FlatLightLaf.class.getName())==true) {
+				lafList.add(new AwbLookAndFeelInfo(lafInfo, "Light Theme"));
+			} else if (lafInfo.getClassName().equals(FlatDarkLaf.class.getName())==true) {
+				lafList.add(new AwbLookAndFeelInfo(lafInfo, "Dark Theme"));
+			} else if (lafInfo.getClassName().equals(DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
+				lafList.add(new AwbLookAndFeelInfo(lafInfo, "Nimbus (Legacy)"));
+			}
+		}
+		return lafList;
 	}
 
 	/**
@@ -85,9 +74,7 @@ public class AwbLookAndFeelAdjustments {
 		
 		try {
 			FlatLightLaf.installLafInfo();
-			FlatDarculaLaf.installLafInfo();
 			FlatDarkLaf.installLafInfo();
-			FlatIntelliJLaf.installLafInfo();
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -137,8 +124,21 @@ public class AwbLookAndFeelAdjustments {
 					ex.printStackTrace();
 				}
 			}
-
 		}
+		
+	}
+	
+	/**
+	 * Checks if the current Look and feel is a dark look and feel.
+	 * @return true, if is dark look and feel
+	 */
+	public static boolean isDarkLookAndFeel() {
+		
+		boolean isDark = false;
+		if (UIManager.getLookAndFeel().getClass().getName().equals(FlatDarkLaf.class.getName())==true) {
+			isDark = true;
+		}
+		return isDark;
 	}
 	
 	/**
@@ -167,7 +167,6 @@ public class AwbLookAndFeelAdjustments {
 	 */
 	private static void doLookAndFeelAdjustmentsForFlatLaf() {
 		
-		//IntelliJTheme.setup(Utils.class.getResourceAsStream("/com/formdev/flatlaf/intellijthemes/themes/Cobalt_2.theme.json" ) );
 		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbTabbedPaneUI_FlatLaf.class.getName());
 		UIManager.getLookAndFeelDefaults().put("ClassLoader", AwbLookAndFeelAdjustments.class.getClassLoader());
 	}
@@ -188,26 +187,6 @@ public class AwbLookAndFeelAdjustments {
 		// --- Splash color: new Color(20, 130, 172)
 		// ----------------------------------------------------------------------------------------------------------------------
 		
-		switch (AwbLookAndFeelAdjustments.getAwbLook()) {
-		case Light:
-			AwbLookAndFeelAdjustments.doLookAndFeelAdjustmentsLightMode();
-			break;
-			
-		case Dark:
-			AwbLookAndFeelAdjustments.doLookAndFeelAdjustmentsDarkMode();
-			break;
-
-		default:
-			AwbLookAndFeelAdjustments.doLookAndFeelAdjustmentsDefaultMode();
-			break;
-		}
-	}
-
-	/**
-	 * Do look and feel adjustments for the default mode.
-	 */
-	private static void doLookAndFeelAdjustmentsDefaultMode() {
-		
 		// --- Do adjustments for TabbedPane ------------------------
 		UIManager.put("TabbedPane.focus", Color.GRAY);
 		
@@ -226,43 +205,6 @@ public class AwbLookAndFeelAdjustments {
 		UIManager.getLookAndFeelDefaults().put("TabbedPaneUI", AwbTabbedPaneUI_Nimbus.class.getName());
 		
 	}
-	
-	/**
-	 * Do look and feel adjustments for the light mode.
-	 */
-	private static void doLookAndFeelAdjustmentsLightMode() {
-		
-		Color splashColor = new Color(20, 130, 172); 
-		
-		UIManager.put("nimbusBase", new Color(240, 240, 240));
-		UIManager.put("nimbusBlueGrey", new Color(240, 240, 240));
-		UIManager.put("control", new Color(240, 240, 240));
-		UIManager.put("nimbusOrange", splashColor);
-
-		UIManager.put("nimbusSelectionBackground", splashColor);
-		TableCellColorHelper.setTableHighlightColor(splashColor);
-		
-		UIManager.put("MenuBar:Menu[Selected].textForeground", splashColor);
-		UIManager.put("MenuItem[MouseOver].textForeground", splashColor);
-		
-		// --- Test area ----
-		//UIManager.put("Tree.selectionBackground", new Color(20, 130, 172));
-		//UIManager.put("Tree.textBackground", new Color(20, 130, 172));
-		
-//		UIManager.put("SplitPane:SplitPaneDivider[Enabled].backgroundPainter", new AwbSplitPaneDividerPainter(null, 1));
-//		UIManager.put("SplitPane:SplitPaneDivider[Focused].backgroundPainter", new AwbSplitPaneDividerPainter(null, 2));
-//		UIManager.put("SplitPane:SplitPaneDivider[Enabled].foregroundPainter", new AwbSplitPaneDividerPainter(null, 3));
-//		UIManager.put("SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter", new AwbSplitPaneDividerPainter(null, 4));
-		
-	}
-	
-	/**
-	 * Do look and feel adjustments for the dark mode.
-	 */
-	private static void doLookAndFeelAdjustmentsDarkMode() {
-		
-		
-	}
 
 	
 	// ------------------------------------------------------------------
@@ -270,7 +212,6 @@ public class AwbLookAndFeelAdjustments {
 	// ------------------------------------------------------------------	
 	/**
 	 * Prints the current look and feel properties.
-	 *
 	 * @param filterPhrases [optional] filter phrases
 	 */
 	public static void printCurrentLookAndFeelProperties(String ... filterPhrases) {
@@ -314,71 +255,5 @@ public class AwbLookAndFeelAdjustments {
 		}
 		return false;
 	}
-	
-	/**
-	 * Checks if the current Look and feel is a dark look and feel.
-	 * @return true, if is dark look and feel
-	 */
-	public static boolean isDarkLookAndFeel() {
-		
-		boolean isDark = false;
-		boolean isDebug = false;
-		
-		// --- Get text colors from UiManager -------------
-		List<String> colorNameList = new ArrayList<String>();
-		
-		UIDefaults uiDefaults = UIManager.getLookAndFeel().getDefaults();
-		for (Object key : uiDefaults.keySet()) {
-			
-			// --- Filter for String 'text' ---------------
-			if (key instanceof String==false) continue;
-			String keyString = ((String)key).toLowerCase();
-			if (keyString.contains("text")==false) continue;
-			if (keyString.contains("background")==true) continue;
-			if (keyString.contains("foreground")==true) continue;
-			if (keyString.contains("disable")==true) continue;
-			if (keyString.contains("textarea")==true) continue;
-			if (keyString.contains("textfield")==true) continue;
-			if (keyString.contains("textpane")==true) continue;
-			if (keyString.contains("high")==true) continue;
-
-			// --- Check if value is a color -------------- 
-			Object value = uiDefaults.get(key);
-			if (value instanceof Color==false) continue;
-			
-			colorNameList.add((String) key);
-		}
-
-		if (isDebug==true) {
-			Collections.sort(colorNameList);
-			System.out.println("Color named with text: " + colorNameList.size());
-		}
-		
-		// --- Calculate average luminance ----------------
-		double luminanceAvg = 0;
-		for (String  colorName : colorNameList) {
-			// --- Calculate simgle luminance -------------
-			Color color = uiDefaults.getColor(colorName);
-			int r = color.getRed();
-			int g = color.getGreen();
-			int b = color.getBlue();
-			double luminance = 0.2126*r + 0.7152*g + 0.0722*b;
-			luminanceAvg += luminance;
-			if (isDebug==true) {
-				boolean isDarkTextColor = luminance < 128 ? true : false;
-				System.out.println("Color Name: " + colorName + ", RGB(" + r +", " + g + ", " + b + "), Luminance: " + luminance + ", is dark text color: " + isDarkTextColor);
-			}
-		}
-		if (isDebug==true) System.out.println();
-
-		// --- Final calculation --------------------------
-		if (colorNameList.size()>0) {
-			luminanceAvg = luminanceAvg / colorNameList.size();
-			boolean isDarkAvgTextColor = luminanceAvg < 128 ? true : false;
-			return !isDarkAvgTextColor;
-		}
-		return isDark;
-	}
-	
 	
 }

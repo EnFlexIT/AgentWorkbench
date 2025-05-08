@@ -1,6 +1,7 @@
 package de.enflexit.oidc.ui;
 
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +16,6 @@ import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
@@ -51,16 +51,17 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	@Override
 	public void initialize() {
 		
-		this.addToolbarComponent(this.getAuthenticationStateButton(), null, SeparatorPosition.NoSeparator);
-		this.addJMenu(this.getJMenuAuthentication(), null);
+		this.setJButtonIdentityProvider(this.getAuthenticationStateButton());
 		
+		this.addJMenu(this.getJMenuAuthentication(), null);
 		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
-//		OIDCAuthorization.getInstance().doInitialAuthenticationCheck();
 	}
 	
 	private UserAuthenticationStatusButton getAuthenticationStateButton() {
 		if (authenticationStateButton==null) {
 			authenticationStateButton = new UserAuthenticationStatusButton();
+			authenticationStateButton.setPreferredSize(new Dimension(120, 26));
+			authenticationStateButton.setMinimumSize(new Dimension(120, 26));
 			authenticationStateButton.addActionListener(this);
 		}
 		return authenticationStateButton;

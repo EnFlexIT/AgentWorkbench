@@ -7,12 +7,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.oidc;uses:="de.enflexit.api,javax.net.ssl,javax.swing"
 Require-Bundle: oauth2-oidc-sdk,
  com.nimbusds.nimbus-jose-jwt,
- net.minidev.json-smart,
- org.eclipse.osgi
+ net.minidev.json-smart
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc
 Import-Package: de.enflexit.common.swing,
  de.enflexit.language,
- org.eclipse.core.runtime.preferences;version="[3.5.0,4.0.0)",
- org.eclipse.equinox.security.storage;version="[1.0.0,2.0.0)",
- org.osgi.service.prefs;version="[1.1.0,2.0.0)"
+ org.eclipse.core.runtime.preferences,
+ org.eclipse.equinox.security.storage,
+ org.osgi.framework,
+ org.osgi.service.prefs

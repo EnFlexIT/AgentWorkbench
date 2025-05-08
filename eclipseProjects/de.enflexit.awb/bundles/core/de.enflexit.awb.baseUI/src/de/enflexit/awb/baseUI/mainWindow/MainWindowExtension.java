@@ -2,6 +2,7 @@ package de.enflexit.awb.baseUI.mainWindow;
 
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -19,6 +20,8 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 
 	public static final String MAIN_WINDOW_EXTENSION_ID = "de.enflexit.awb.desktop.mainWindowExtension";
 
+	private JButton jButtonIdentityProvider;
+	
 	private Vector<MainWindowMenu> mainWindowMenuVector;
 	private Vector<MainWindowMenuItem> mainWindowMenuItemVector;
 	private Vector<MainWindowToolbarComponent> mainWindowToolBarComponentVector;
@@ -28,6 +31,22 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 	 * elements to the main window of the workbench.
 	 */
 	public abstract void initialize();
+	
+	
+	/**
+	 * Gets the JButton identity provider.
+	 * @return the JButton identity provider
+	 */
+	public JButton getJButtonIdentityProvider() {
+		return jButtonIdentityProvider;
+	}
+	/**
+	 * Enables to set the JButton for the identity provider.
+	 * @param jButtonIdentityProvider the new j button identity provider
+	 */
+	protected void setJButtonIdentityProvider(JButton jButtonIdentityProvider) {
+		this.jButtonIdentityProvider = jButtonIdentityProvider;
+	}
 	
 	
 	/**
