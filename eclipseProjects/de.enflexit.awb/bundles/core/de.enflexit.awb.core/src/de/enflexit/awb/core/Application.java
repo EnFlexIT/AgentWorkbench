@@ -918,43 +918,6 @@ public class Application {
 	}
 	
 	
-	
-	/**
-	 * Opens the OpenID Connect dialog 
-	 */
-	public static void showAuthenticationDialog() {
-		
-//		try {
-//		
-//			OIDCAuthorization.getInstance().setIssuerURI(Application.getGlobalInfo().getOIDCIssuerURI());
-//			OIDCAuthorization.getInstance().setTranslator(Language.getInstance());
-//			OIDCAuthorization.getInstance().setTrustStore(new File(Application.getGlobalInfo().getPathProperty(true).toString() + File.separator + Trust.OIDC_TRUST_STORE));
-//			OIDCAuthorization.getInstance().setAvailabilityHandler( new OIDCResourceAvailabilityHandler() {
-//				
-//				/* (non-Javadoc)
-//				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onResourceAvailable(de.enflexit.oidc.OIDCAuthorization.URLProcessor)
-//				 */
-//				@Override
-//				public void onResourceAvailable(URLProcessor urlProcessor) {
-//					Application.getGlobalInfo().setOIDCUsername(OIDCAuthorization.getInstance().getLastSuccessfulUser());
-//				}
-//				/* (non-Javadoc)
-//				 * @see de.enflexit.oidc.OIDCResourceAvailabilityHandler#onAuthorizationNecessary(de.enflexit.oidc.OIDCAuthorization)
-//				 */
-//				@Override
-//				public boolean onAuthorizationNecessary(OIDCAuthorization oidcAuthorization) {
-//					return true; // show the login panel
-//				}
-//			});
-//			OIDCAuthorization.getInstance().accessResource(OIDCPanel.DEBUG_RESOURCE_URI, getGlobalInfo().getOIDCUsername(), getMainWindow());
-//			
-//		} catch (URISyntaxException | KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException ex) {
-//			//ex.printStackTrace();
-//			System.err.println("Authentication failed: "+ ex.getClass()+": "+ ex.getMessage());
-//		}
-	}
-	
-	
 	/**
 	 * Opens the options dialog without a specific category or tab to show
 	 */

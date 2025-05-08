@@ -97,7 +97,6 @@ public class OIDCCallbackHTTPServer {
 //				httpServer.createContext(this.callbackEndpoint, new StaticFileHandler("/resources/", "/oauth/callback/", FileToProvide.LOGIN_SUCCESS_HTML.toString()));
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -105,6 +104,7 @@ public class OIDCCallbackHTTPServer {
 	}
 	
 	private void sendFileNotFound(HttpExchange exchange) throws IOException {
+		
 		exchange.getResponseHeaders().set("Content-Type", "text/plain");
 		String response = "HTTP Error 404 - File not found";
 		exchange.sendResponseHeaders(404, response.length());
@@ -135,12 +135,11 @@ public class OIDCCallbackHTTPServer {
 	public void startInThread() {
 		
 		new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
 				OIDCCallbackHTTPServer.this.start();
 			}
-		}).start();
+		}, OIDCCallbackHTTPServer.class.getSimpleName() + "-Thread").start();
 	}
 	
 	/**

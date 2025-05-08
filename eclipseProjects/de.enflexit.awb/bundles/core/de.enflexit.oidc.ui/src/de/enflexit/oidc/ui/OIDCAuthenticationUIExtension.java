@@ -1,6 +1,7 @@
 package de.enflexit.oidc.ui;
 
 import java.awt.Desktop;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import javax.swing.JPopupMenu;
 
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.oidc.AuthenticationStateListener;
@@ -42,11 +44,13 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	private Action actionAccountPanel;
 	private Action actionLogOut;
 	
+	
 	/* (non-Javadoc)
 	 * @see org.agentgui.gui.swing.MainWindowExtension#initialize()
 	 */
 	@Override
 	public void initialize() {
+		
 		this.addToolbarComponent(this.getAuthenticationStateButton(), null, SeparatorPosition.NoSeparator);
 		this.addJMenu(this.getJMenuAuthentication(), null);
 		
@@ -105,8 +109,8 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	}
 	
 	private void showOIDCSettingsDialog() {
-//		JDialog settingDialog = new JDialog(Application.getMainWindow());
-		JDialog settingDialog = new JDialog();
+
+		JDialog settingDialog = new JDialog(OwnerDetection.getOwnerWindowForComponent(this.getAuthenticationStateButton()));
 		settingDialog.setTitle("OpenID Connect Configuration");
 		settingDialog.setContentPane(new OIDCSettingsPanel(this.getOIDCSettings(), settingDialog));
 		settingDialog.setSize(600, 450);
@@ -116,6 +120,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	}
 	
 	private void openAccountPanel() {
+		
 		String realmPart = "";
 		if (this.getOIDCSettings().getRealmID()!=null && this.getOIDCSettings().getRealmID().isBlank()==false) {
 			realmPart = "/realms/" + this.getOIDCSettings().getRealmID();
@@ -124,11 +129,12 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		try {
 			URI accountPanelURI = new URI(this.getOIDCSettings().getIssuerURL()).resolve(realmPart + "/account");
 			Desktop.getDesktop().browse(accountPanelURI);
+			
 		} catch (URISyntaxException | IOException e) {
 			String errorMessage = "Could not open the account panel! Please check your issuer URI and realm ID in the OIDC settings!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + errorMessage);
-//			JOptionPane.showMessageDialog(Application.getMainWindow(), errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
-			JOptionPane.showMessageDialog(null, errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
+			Window owner = OwnerDetection.getOwnerWindowForComponent(this.getAuthenticationStateButton());
+			JOptionPane.showMessageDialog(owner, errorMessage, "Could not open the account panel!", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
 	}

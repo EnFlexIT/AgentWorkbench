@@ -191,10 +191,11 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 		this.setJMenuBar(this.getJMenuBarMain());
 
-		getContentPane().add(this.getJPanelToolbar(), BorderLayout.NORTH);
-		getContentPane().add(this.getStatusBar(), BorderLayout.SOUTH);
-		getContentPane().add(this.getJSplit4ProjectDesktop());
+		this.getContentPane().add(this.getJPanelToolbar(), BorderLayout.NORTH);
+		this.getContentPane().add(this.getStatusBar(), BorderLayout.SOUTH);
+		this.getContentPane().add(this.getJSplit4ProjectDesktop());
 
+		
 		Dimension frameSize = this.getSizeRelatedToScreenSize();
 		this.setPreferredSize(frameSize);
 		this.setSize(new Dimension(1384, 739));
@@ -966,7 +967,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 			jMenuExtra.addSeparator();
 			jMenuExtra.add(new CWMenuItem("ExtraOptions", Language.translate("Optionen"), null));
-			jMenuExtra.add(new CWMenuItem("Authentication", Language.translate("Web Service Authentifizierung"), null));
 
 		}
 		return jMenuExtra;
@@ -1276,9 +1276,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 			} else if (actionCMD.equalsIgnoreCase("ExtraOptions")) {
 				Application.showOptionsDialog();
-
-			} else if (actionCMD.equalsIgnoreCase("Authentication")) {
-				Application.showAuthenticationDialog();
 
 			// --- Help Menu ----------------------------------------
 			} else if (actionCMD.equalsIgnoreCase("HelpAbout")) {
