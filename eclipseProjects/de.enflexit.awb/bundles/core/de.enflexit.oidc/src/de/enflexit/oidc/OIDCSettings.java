@@ -11,14 +11,12 @@ public class OIDCSettings {
 	public static final String PREFERENCES_KEY_CLIENT_NAME = "clientName";
 	public static final String PREFERENCES_KEY_LOCAL_CALLBACK_PORT = "callback.localPort";
 	public static final String PREFERENCES_KEY_AUTHENTICATION_CALLBACK_ENDPOINT = "callback.localAuthEndpoint";
-	public static final String PREFERENCES_KEY_LOGOUT_CALLBACK_ENDPOINT = "callback.localLogoutEndpoint";
 	
 	private static final String DEFAULT_ISSUER_URL = "https://login.enflex.it";
 	private static final String DEFAULT_REALM_NAME = "enflexService";
 	private static final String DEFAULT_CLIENT_NAME = "AWB-Test";
 	private static final int DEFAULT_LOCAL_PORT = 8888;
 	private static final String DEFAULT_AUTHENTICATION_ENDPOINT = "/oauth/callback/";
-	private static final String DEFAULT_LOGOUT_ENDPOINT = "/oauth/callback/";
 	
 	private static final String DEFAULT_CLIENT_SECRET = "PeQ5NZeH4aGpr58knm2MviLA5IJ5uvY3";
 	
@@ -32,7 +30,6 @@ public class OIDCSettings {
 	
 	private int localHTTPPort;
 	private String authenticationEndpoint;
-	private String logOutEndpoint;
 	
 	/**
 	 * Gets the issuer URL.
@@ -125,21 +122,6 @@ public class OIDCSettings {
 	}
 	
 	/**
-	 * Gets the backchannel logout endpoint.
-	 * @return the backchannel logout endpoint
-	 */
-	public String getLogOutEndpoint() {
-		return logOutEndpoint;
-	}
-	/**
-	 * Sets the backchannel logout endpoint.
-	 * @param logOutEndpoint the new backchannel logout endpoint
-	 */
-	public void setLogOutEndpoint(String logOutEndpoint) {
-		this.logOutEndpoint = logOutEndpoint;
-	}
-	
-	/**
 	 * Initializes all settings with the default values specified in the constants above..
 	 */
 	private void initializeWithDefaults() {
@@ -149,7 +131,6 @@ public class OIDCSettings {
 		this.setClientSecret(DEFAULT_CLIENT_SECRET);
 		this.setLocalHTTPPort(DEFAULT_LOCAL_PORT);
 		this.setAuthenticationEndpoint(DEFAULT_AUTHENTICATION_ENDPOINT);
-		this.setLogOutEndpoint(DEFAULT_LOGOUT_ENDPOINT);
 	}
 	
 	public static OIDCSettings getDefaultSettings() {

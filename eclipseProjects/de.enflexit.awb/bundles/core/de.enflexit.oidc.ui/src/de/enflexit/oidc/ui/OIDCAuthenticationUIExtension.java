@@ -12,10 +12,11 @@ import java.net.URISyntaxException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
-import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
@@ -24,6 +25,8 @@ import de.enflexit.oidc.AuthenticationStateListener;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 import de.enflexit.oidc.OIDCSettings;
+
+import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 
 /**
  * Adds a toolbar button and a menu for handling user authentication against keycloak.
@@ -37,7 +40,6 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	
 	private UserAuthenticationStatusButton authenticationStateButton;
 	
-	private JMenu jMenuAuthentication;
 	private JPopupMenu jPopupMenuAuthentication;
 	
 	private Action actionOidcSettings;
@@ -53,7 +55,9 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 		
 		this.setJButtonIdentityProvider(this.getAuthenticationStateButton());
 		
-		this.addJMenu(this.getJMenuAuthentication(), null);
+		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, new JMenuItem(this.getActionOidcSettings()), null, SeparatorPosition.SeparatorInFrontOf);
+		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, new JMenuItem(this.getActionAccountPanel()), null, SeparatorPosition.NoSeparator);
+		
 		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
 	}
 	
@@ -65,15 +69,6 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 			authenticationStateButton.addActionListener(this);
 		}
 		return authenticationStateButton;
-	}
-	
-	private JMenu getJMenuAuthentication() {
-		if (jMenuAuthentication==null) {
-			jMenuAuthentication = new JMenu("Authentication");
-			jMenuAuthentication.add(this.getActionOidcSettings());
-			jMenuAuthentication.add(this.getActionAccountPanel());
-		}
-		return jMenuAuthentication;
 	}
 	
 	private JPopupMenu getJPopupMenuAuthentication() {

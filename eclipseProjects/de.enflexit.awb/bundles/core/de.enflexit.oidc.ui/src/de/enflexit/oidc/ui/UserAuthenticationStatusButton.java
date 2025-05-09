@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 
@@ -15,21 +16,21 @@ import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 public class UserAuthenticationStatusButton extends JButton {
 	
 	private static final String ICON_PATH_LOGGED_IN ="/icons/UserLoggedIn.png";
-	private static final String ICON_PATH_LOGGED_OUT = "/icons/UserLoggedOut.png";
+	private static final String ICON_PATH_LOGGED_OUT_LIGHT = "/icons/UserLoggedOutLight.png";
+	private static final String ICON_PATH_LOGGED_OUT_DARK = "/icons/UserLoggedOutDark.png";
 	private static final String ICON_PATH_LOGIN_PENDING = "/icons/LoginPending.png";
 	
-	private static final String BUTTON_TEXT_LOGGED_IN = "Logged in as ";
+	private static final String BUTTON_TEXT_LOGGED_IN = "Logged in";
 	private static final String BUTTON_TEXT_LOGGED_OUT = "Log in";
-	private static final String BUTTON_TEXT_LOGIN_PENDING = "Cancel log in";
+	private static final String BUTTON_TEXT_LOGIN_PENDING = "Cancel";
 	
-	private static final String TOOLTIP_TEXT_LOGGED_IN = "Show authorization menu";
+	private static final String TOOLTIP_TEXT_LOGGED_IN = "Logged in as ";
 	private static final String TOOLTIP_TEXT_LOGGED_OUT = "Not logged in";
 	private static final String TOOLTIP_TEXT_LOGIN_PENDING = "The log in page was opened in your browser!";
 
 	private static final long serialVersionUID = 8112353415174825641L;
 	
 	private ImageIcon imageIconLoggedIn;
-	private ImageIcon imageIconLoggedOut;
 	private ImageIcon imageIconLoginPending;
 	
 	/**
@@ -37,7 +38,6 @@ public class UserAuthenticationStatusButton extends JButton {
 	 */
 	public UserAuthenticationStatusButton() {
 		super();
-//		this.setAuthenticationState(this.userLoggedIn ? AuthenticationState.LOGGED_IN : AuthenticationState.LOGGED_OUT);
 		this.setAuthenticationState(OIDCAuthorization.getInstance().getAuthenticationState());
 	}
 
@@ -49,10 +49,11 @@ public class UserAuthenticationStatusButton extends JButton {
 	}
 
 	private ImageIcon getImageIconLoggedOut() {
-		if (imageIconLoggedOut==null) {
-			imageIconLoggedOut = new ImageIcon(this.getClass().getResource(ICON_PATH_LOGGED_OUT));
+		if (this.isInDarkMode()) {
+			return new ImageIcon(this.getClass().getResource(ICON_PATH_LOGGED_OUT_DARK));
+		} else {
+			return new ImageIcon(this.getClass().getResource(ICON_PATH_LOGGED_OUT_LIGHT));
 		}
-		return imageIconLoggedOut;
 	}
 	
 	private ImageIcon getImageIconLoginPending() {
@@ -79,8 +80,8 @@ public class UserAuthenticationStatusButton extends JButton {
 				e.printStackTrace();
 			}
 			this.setIcon(this.getImageIconLoggedIn());
-			this.setText(BUTTON_TEXT_LOGGED_IN + username);
-			this.setToolTipText(TOOLTIP_TEXT_LOGGED_IN);
+			this.setText(BUTTON_TEXT_LOGGED_IN);
+			this.setToolTipText(TOOLTIP_TEXT_LOGGED_IN + username);
 			break;
 		case LOGGED_OUT:
 			this.setIcon(this.getImageIconLoggedOut());
@@ -95,5 +96,8 @@ public class UserAuthenticationStatusButton extends JButton {
 		
 	}
 	
-
+	private boolean isInDarkMode() {
+		return AwbLookAndFeelAdjustments.isDarkLookAndFeel();
+	}
+	
 }

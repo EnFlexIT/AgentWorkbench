@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -41,8 +40,6 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 	private JLabel jLabelOIDCSettings;
 	private JLabel jLabelAuthenticationEndpoint;
 	private JTextField jTextFieldAuthenticationEndpoint;
-	private JLabel jLabelLogOutEndpoint;
-	private JTextField jTextFieldLogOutEndpoint;
 	private JPanel jPanelButtons;
 	private JButton jButtonApply;
 	private JButton jButtonCancel;
@@ -66,9 +63,9 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelOIDCSettings = new GridBagConstraints();
 		gbc_jLabelOIDCSettings.anchor = GridBagConstraints.SOUTHWEST;
@@ -91,7 +88,7 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_jTextFieldIssuerURI = new GridBagConstraints();
 		gbc_jTextFieldIssuerURI.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldIssuerURI.gridwidth = 3;
-		gbc_jTextFieldIssuerURI.insets = new Insets(5, 5, 5, 5);
+		gbc_jTextFieldIssuerURI.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldIssuerURI.gridx = 1;
 		gbc_jTextFieldIssuerURI.gridy = 1;
 		add(getJTextFieldIssuerURI(), gbc_jTextFieldIssuerURI);
@@ -104,7 +101,7 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_jTextFieldRealmID = new GridBagConstraints();
 		gbc_jTextFieldRealmID.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldRealmID.gridwidth = 3;
-		gbc_jTextFieldRealmID.insets = new Insets(5, 5, 5, 5);
+		gbc_jTextFieldRealmID.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldRealmID.gridx = 1;
 		gbc_jTextFieldRealmID.gridy = 2;
 		add(getJTextFieldRealmID(), gbc_jTextFieldRealmID);
@@ -117,7 +114,7 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_jTextFieldClientID = new GridBagConstraints();
 		gbc_jTextFieldClientID.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldClientID.gridwidth = 3;
-		gbc_jTextFieldClientID.insets = new Insets(5, 5, 5, 5);
+		gbc_jTextFieldClientID.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldClientID.gridx = 1;
 		gbc_jTextFieldClientID.gridy = 3;
 		add(getJTextFieldClientID(), gbc_jTextFieldClientID);
@@ -130,7 +127,7 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_jTextFieldClientSecret = new GridBagConstraints();
 		gbc_jTextFieldClientSecret.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldClientSecret.gridwidth = 3;
-		gbc_jTextFieldClientSecret.insets = new Insets(5, 5, 5, 5);
+		gbc_jTextFieldClientSecret.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldClientSecret.gridx = 1;
 		gbc_jTextFieldClientSecret.gridy = 4;
 		add(getJTextFieldClientSecret(), gbc_jTextFieldClientSecret);
@@ -151,7 +148,7 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_jTextFieldLocalPort = new GridBagConstraints();
 		gbc_jTextFieldLocalPort.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldLocalPort.gridwidth = 2;
-		gbc_jTextFieldLocalPort.insets = new Insets(5, 5, 5, 5);
+		gbc_jTextFieldLocalPort.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldLocalPort.gridx = 2;
 		gbc_jTextFieldLocalPort.gridy = 6;
 		add(getJTextFieldLocalHTTPPort(), gbc_jTextFieldLocalPort);
@@ -164,31 +161,16 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		add(getJLabelAuthenticationEndpoint(), gbc_jLabelAuthenticationEndpoint);
 		GridBagConstraints gbc_jTextFieldAuthenticationEndpoint = new GridBagConstraints();
 		gbc_jTextFieldAuthenticationEndpoint.gridwidth = 2;
-		gbc_jTextFieldAuthenticationEndpoint.insets = new Insets(5, 5, 5, 5);
+		gbc_jTextFieldAuthenticationEndpoint.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldAuthenticationEndpoint.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldAuthenticationEndpoint.gridx = 2;
 		gbc_jTextFieldAuthenticationEndpoint.gridy = 7;
 		add(getJTextFieldAuthenticationEndpoint(), gbc_jTextFieldAuthenticationEndpoint);
-		GridBagConstraints gbc_jLabelLogOutEndpoint = new GridBagConstraints();
-		gbc_jLabelLogOutEndpoint.anchor = GridBagConstraints.EAST;
-		gbc_jLabelLogOutEndpoint.gridwidth = 2;
-		gbc_jLabelLogOutEndpoint.insets = new Insets(5, 5, 5, 5);
-		gbc_jLabelLogOutEndpoint.gridx = 0;
-		gbc_jLabelLogOutEndpoint.gridy = 8;
-		add(getJLabelLogOutEndpoint(), gbc_jLabelLogOutEndpoint);
-		GridBagConstraints gbc_jTextFieldLogOutEndpoint = new GridBagConstraints();
-		gbc_jTextFieldLogOutEndpoint.gridwidth = 2;
-		gbc_jTextFieldLogOutEndpoint.insets = new Insets(5, 5, 5, 5);
-		gbc_jTextFieldLogOutEndpoint.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldLogOutEndpoint.gridx = 2;
-		gbc_jTextFieldLogOutEndpoint.gridy = 8;
-		add(getJTextFieldLogOutEndpoint(), gbc_jTextFieldLogOutEndpoint);
 		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
 		gbc_jPanelButtons.gridwidth = 4;
-		gbc_jPanelButtons.insets = new Insets(0, 0, 0, 5);
 		gbc_jPanelButtons.fill = GridBagConstraints.BOTH;
 		gbc_jPanelButtons.gridx = 0;
-		gbc_jPanelButtons.gridy = 9;
+		gbc_jPanelButtons.gridy = 8;
 		add(getJPanelButtons(), gbc_jPanelButtons);
 	}
 
@@ -290,20 +272,6 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldAuthenticationEndpoint;
 	}
-	private JLabel getJLabelLogOutEndpoint() {
-		if (jLabelLogOutEndpoint == null) {
-			jLabelLogOutEndpoint = new JLabel("Log Out Endpoint:");
-			jLabelLogOutEndpoint.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelLogOutEndpoint;
-	}
-	private JTextField getJTextFieldLogOutEndpoint() {
-		if (jTextFieldLogOutEndpoint == null) {
-			jTextFieldLogOutEndpoint = new JTextField();
-			jTextFieldLogOutEndpoint.setColumns(10);
-		}
-		return jTextFieldLogOutEndpoint;
-	}
 	private JPanel getJPanelButtons() {
 		if (jPanelButtons == null) {
 			jPanelButtons = new JPanel();
@@ -379,7 +347,6 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		this.getJTextFieldClientSecret().setText(this.getOidcSettings().getClientSecret());
 		this.getJTextFieldLocalHTTPPort().setText(String.valueOf(this.getOidcSettings().getLocalHTTPPort()));
 		this.getJTextFieldAuthenticationEndpoint().setText(this.getOidcSettings().getAuthenticationEndpoint());
-		this.getJTextFieldLogOutEndpoint().setText(this.getOidcSettings().getLogOutEndpoint());
 	}
 	
 	private void setFormToModel() {
@@ -389,7 +356,6 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		this.getOidcSettings().setClientSecret(this.getJTextFieldClientSecret().getText());
 		this.getOidcSettings().setLocalHTTPPort(Integer.parseInt(this.getJTextFieldLocalHTTPPort().getText()));
 		this.getOidcSettings().setAuthenticationEndpoint(this.getJTextFieldAuthenticationEndpoint().getText());
-		this.getOidcSettings().setLogOutEndpoint(this.getJTextFieldLogOutEndpoint().getText());
 	}
 
 	/* (non-Javadoc)
