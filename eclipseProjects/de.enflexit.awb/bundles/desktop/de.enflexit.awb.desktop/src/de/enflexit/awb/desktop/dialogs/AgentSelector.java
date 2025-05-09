@@ -1,6 +1,5 @@
 package de.enflexit.awb.desktop.dialogs;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;

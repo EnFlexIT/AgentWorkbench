@@ -1,6 +1,5 @@
 package de.enflexit.awb.desktop.dialogs;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -42,12 +41,12 @@ import javax.swing.tree.TreePath;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IRequirement;
 
-import de.enflexit.language.Language;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.language.Language;
 
 /**
  * The Class FeatureSelectionDialog.
