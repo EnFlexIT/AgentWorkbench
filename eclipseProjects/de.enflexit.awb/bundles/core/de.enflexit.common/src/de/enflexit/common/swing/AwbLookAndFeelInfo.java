@@ -87,4 +87,11 @@ public class AwbLookAndFeelInfo {
 		return this.getLookAndFeelInfo().getClassName();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.getAwbInfoText();
+	}
 }

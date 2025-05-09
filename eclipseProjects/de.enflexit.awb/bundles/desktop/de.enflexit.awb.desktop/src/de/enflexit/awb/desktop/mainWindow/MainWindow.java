@@ -946,7 +946,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 			// --- Menue 'LnF' -------
 			jMenuExtraLnF = new JMenu();
-			jMenuExtraLnF.setText("Look and Feel");
+			jMenuExtraLnF.setText(Application.getApplicationTitle() + " - Theme");
 			this.setJMenuExtraLnF();
 			jMenuExtra.add(jMenuExtraLnF);
 
@@ -1034,7 +1034,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	private void setJMenuExtraLnF() {
 
-		for (AwbLookAndFeelInfo lafInfo : AwbLookAndFeelAdjustments.getInstalledLookAndFeels()) {
+		for (AwbLookAndFeelInfo lafInfo : AwbLookAndFeelAdjustments.getAvailableLookAndFeels()) {
 			boolean setBold = lafInfo.getClassName().equals(Application.getGlobalInfo().getAppLookAndFeelClassName());
 			jMenuExtraLnF.add(new JMenuItmenLnF(lafInfo.getAwbInfoText(), lafInfo.getClassName(), setBold));
 		}
@@ -1075,9 +1075,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 					
 					String newLnF = JMenuItmenLnF.this.LnFClass;
 					Application.getGlobalInfo().setAppLookAndFeelClassName(newLnF);
-					AwbLookAndFeelAdjustments.setLookAndFeel(newLnF, MainWindow.this);
-					MainWindow.this.resetAfterLookAndFeelUpdate();
-					Application.getProjectsLoaded().setProjectView();
+					MainWindow.this.applyNewThemeSettings();
 				}
 			});
 		}
@@ -1085,6 +1083,17 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	// ------------------------------------------------------------
 	// ------------------------------------------------------------
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbMainWindow#applyNewThemeSettings()
+	 */
+	@Override
+	public void applyNewThemeSettings() {
+		String newLnF = Application.getGlobalInfo().getAppLookAndFeelClassName();
+		AwbLookAndFeelAdjustments.setLookAndFeel(newLnF, MainWindow.this);
+		MainWindow.this.resetAfterLookAndFeelUpdate();
+		Application.getProjectsLoaded().setProjectView();
+	}
+	
 	// ------------------------------------------------------------
 	// --- Menu Window---------------------------------------------
 	// ------------------------------------------------------------

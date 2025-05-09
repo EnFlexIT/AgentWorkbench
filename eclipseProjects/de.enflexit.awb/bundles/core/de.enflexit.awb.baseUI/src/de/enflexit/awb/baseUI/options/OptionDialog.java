@@ -75,6 +75,7 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	private StartOptions startOptions;
 	private LogFileOptions logFileOptions;
 	private UpdateOptions updateOptions;
+	private ThemeOptions themeOptions;
 	private OIDCOptions oidcOptions;
 	private DirectoryOptions exeDirOption;
 	
@@ -112,6 +113,7 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	    this.addOptionTab(this.getDirectoryOptions(), null);
 	    this.addOptionTab(this.getUpdateOptions(), null);
 	    this.addOptionTab(this.getOIDCOptions(), null);
+	    this.addOptionTab(this.getThemeOptions(), null);
 	    this.addOptionTab(this.getLogFileOptions(), null);
 	    
 	    if (Application.isRunningAsServer()==true || (execMode==ExecutionMode.DEVICE_SYSTEM && devExecMode==DeviceSystemExecutionMode.AGENT)) {
@@ -222,6 +224,16 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 			updateOptions = new UpdateOptions();
 		}
 		return updateOptions;
+	}
+	/**
+	 * Gets the theme options.
+	 * @return the theme options
+	 */
+	private ThemeOptions getThemeOptions() {
+		if (themeOptions==null) {
+			themeOptions = new ThemeOptions();
+		}
+		return themeOptions;
 	}
 	/**
 	 * Gets the OIDC options.

@@ -37,7 +37,7 @@ public class AwbLookAndFeelAdjustments {
 	 * Returns all installed look and feels.
 	 * @return the installed look and feels
 	 */
-	public static List<AwbLookAndFeelInfo> getInstalledLookAndFeels() {
+	public static List<AwbLookAndFeelInfo> getAvailableLookAndFeels() {
 		
 		// --- Install further LookAndFeels --------------------------
 		if (isFurtherLaFToInstall==true && isFurtherLaFInstalled==false) {
@@ -103,6 +103,10 @@ public class AwbLookAndFeelAdjustments {
 				// --- Set the new LookAndFeel ----------------------
 				UIManager.setLookAndFeel(lafClassNameNew);
 				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
+				if (invoker!=null) {
+					SwingUtilities.updateComponentTreeUI(invoker);
+				}
+			} else {
 				if (invoker!=null) {
 					SwingUtilities.updateComponentTreeUI(invoker);
 				}

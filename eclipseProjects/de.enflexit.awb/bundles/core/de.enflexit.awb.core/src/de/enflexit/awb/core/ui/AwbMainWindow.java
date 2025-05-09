@@ -2,6 +2,7 @@ package de.enflexit.awb.core.ui;
 
 import java.awt.Cursor;
 
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
 
 /**
@@ -200,5 +201,10 @@ public interface AwbMainWindow<MenueType, MenuItemType, ToolBarType, ToolBarComp
 	 * @param defaultCursor the new cursor
 	 */
 	public void setCursor(Cursor defaultCursor);
+
+	/**
+	 * Has to apply the new Theme settings (for Swing a LookAndFeel) that are available in the {@link GlobalInfo}.
+	 */
+	public void applyNewThemeSettings();
 	
 }
