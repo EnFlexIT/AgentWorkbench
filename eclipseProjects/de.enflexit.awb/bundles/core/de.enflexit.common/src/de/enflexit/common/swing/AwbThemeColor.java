@@ -8,13 +8,20 @@ import java.awt.Color;
  */
 public enum AwbThemeColor {
 
-	Canvas_Background(Color.white, new Color(70, 73, 75)),
+	RegularText(Color.BLACK, Color.WHITE),
 	
 	ButtonTextRed(new Color(153, 0, 0), new Color(255, 0, 0)),
 	ButtonTextGreen(new Color(0, 153, 0), new Color(0, 189, 0)),
 	ButtonTextBlue(new Color(0, 0, 153), new Color(76, 135, 200)),
 	
-	LinkTextColor(new Color(0, 0, 153), new Color(76, 135, 200));
+	LinkTextColor(new Color(0, 0, 153), new Color(76, 135, 200)),
+	
+	Canvas_Background(Color.white, new Color(70, 73, 75)),
+	
+	Graph_Node(new Color(230, 230, 230), new Color(230, 230, 230)),
+	Graph_Edge(new Color(80, 80, 80), new Color(230, 230, 230)),
+	
+	;
 	
 	
 	private final Color lightColor;

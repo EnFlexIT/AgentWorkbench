@@ -14,6 +14,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -25,9 +26,11 @@ import com.formdev.flatlaf.FlatLightLaf;
  */
 public class AwbLookAndFeelAdjustments {
 
-	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+	public final static String NIMBUS_LOOK_AND_FEEL_CLASS  = NimbusLookAndFeel.class.getName();
 	public final static String LIGHT_LOOK_AND_FEEL_CLASS  = FlatLightLaf.class.getName();
 	public final static String DARK_LOOK_AND_FEEL_CLASS   = FlatDarkLaf.class.getName();
+
+	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = NIMBUS_LOOK_AND_FEEL_CLASS;
 	
 	private static boolean isFurtherLaFToInstall = true;
 	private static boolean isFurtherLaFInstalled = false;
@@ -57,11 +60,11 @@ public class AwbLookAndFeelAdjustments {
 		// --- Prepare the list of available LookAndFeels -----------
 		List<AwbLookAndFeelInfo> lafList = new ArrayList<>();
 		for (LookAndFeelInfo lafInfo : lafArray) {
-			if (lafInfo.getClassName().equals(FlatLightLaf.class.getName())==true) {
+			if (lafInfo.getClassName().equals(LIGHT_LOOK_AND_FEEL_CLASS)==true) {
 				lafList.add(new AwbLookAndFeelInfo(lafInfo, "Light Theme"));
-			} else if (lafInfo.getClassName().equals(FlatDarkLaf.class.getName())==true) {
+			} else if (lafInfo.getClassName().equals(DARK_LOOK_AND_FEEL_CLASS)==true) {
 				lafList.add(new AwbLookAndFeelInfo(lafInfo, "Dark Theme"));
-			} else if (lafInfo.getClassName().equals(DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
+			} else if (lafInfo.getClassName().equals(NIMBUS_LOOK_AND_FEEL_CLASS)==true) {
 				lafList.add(new AwbLookAndFeelInfo(lafInfo, "Nimbus (Legacy)"));
 			}
 		}
@@ -104,8 +107,8 @@ public class AwbLookAndFeelAdjustments {
 				// --- Set the new LookAndFeel ----------------------
 				UIManager.setLookAndFeel(lafClassNameNew);
 				AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
-				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 			}
+			AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 			if (invoker!=null) {
 				SwingUtilities.updateComponentTreeUI(invoker);
 			}
@@ -136,7 +139,7 @@ public class AwbLookAndFeelAdjustments {
 	 */
 	public static boolean isDarkLookAndFeel() {
 		if (isDarkLookAndFeel==null) {
-			isDarkLookAndFeel = UIManager.getLookAndFeel().getClass().getName().equals(FlatDarkLaf.class.getName());
+			isDarkLookAndFeel = UIManager.getLookAndFeel().getClass().getName().equals(DARK_LOOK_AND_FEEL_CLASS);
 		}
 		return isDarkLookAndFeel;
 	}
@@ -153,7 +156,7 @@ public class AwbLookAndFeelAdjustments {
 		
 		// --- Do LookAndFee specific settings ------------
 		String lafClassName = UIManager.getLookAndFeel().getClass().getName();
-		if (lafClassName.equals(DEFAUL_LOOK_AND_FEEL_CLASS)==true) {
+		if (lafClassName.equals(NIMBUS_LOOK_AND_FEEL_CLASS)==true) {
 			// --- Nimbus ---------------------------------
 			doLookAndFeelAdjustmentsForNimbus();
 		} else if (lafClassName.startsWith("com.formdev.flatlaf.")==true) {
