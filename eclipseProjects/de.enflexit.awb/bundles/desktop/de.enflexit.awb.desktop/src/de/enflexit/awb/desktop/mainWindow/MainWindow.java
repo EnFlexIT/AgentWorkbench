@@ -181,6 +181,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		
 		// --- Place MainWindow center on screen --------------------
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
+		this.toFront();
 	}
 
 	/**

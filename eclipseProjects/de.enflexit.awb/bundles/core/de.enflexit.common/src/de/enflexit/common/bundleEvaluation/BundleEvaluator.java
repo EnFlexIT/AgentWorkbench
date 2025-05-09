@@ -1074,6 +1074,8 @@ public class BundleEvaluator {
 				String bundleDirectory = this.getBundleDirectory(bundle);
 				jarFilePath = bundleDirectory + jarFilePath;
 				jarFilePath = jarFilePath.replaceAll("//", "/");
+				jarFilePath = jarFilePath.replace(" ", "%20");
+				
 				// --- Create new URL -------------------------------
 				jarFileURL = new URI("jar:file:" + jarFilePath + "!/").toURL();
 				if (debug) System.out.println("=> ...corrected to: " + jarFileURL);

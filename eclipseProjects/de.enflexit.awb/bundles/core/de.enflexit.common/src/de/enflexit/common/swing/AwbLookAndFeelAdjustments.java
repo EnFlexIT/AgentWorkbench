@@ -105,13 +105,9 @@ public class AwbLookAndFeelAdjustments {
 				UIManager.setLookAndFeel(lafClassNameNew);
 				AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
 				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
-				if (invoker!=null) {
-					SwingUtilities.updateComponentTreeUI(invoker);
-				}
-			} else {
-				if (invoker!=null) {
-					SwingUtilities.updateComponentTreeUI(invoker);
-				}
+			}
+			if (invoker!=null) {
+				SwingUtilities.updateComponentTreeUI(invoker);
 			}
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException lnfEx) {
