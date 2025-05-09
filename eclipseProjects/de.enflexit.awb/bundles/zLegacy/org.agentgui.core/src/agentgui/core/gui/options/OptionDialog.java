@@ -414,7 +414,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		if (jButtonClose==null) {
 			jButtonClose = new JButton();
 			jButtonClose.setText("Schließen");
-			jButtonClose.setForeground(new Color(0, 0, 153));
+			jButtonClose.setForeground(AwbThemeColor.Blue.getColor());
 			jButtonClose.setPreferredSize(new Dimension(100, 26));
 			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonClose.setActionCommand("Close");

@@ -1,7 +1,6 @@
 package de.enflexit.awb.baseUI.options;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -26,17 +25,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.border.EtchedBorder;
 
-import de.enflexit.language.Language;
 import de.enflexit.awb.bgSystem.db.BgSystemDatabaseConnectionService;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
+import de.enflexit.language.Language;
 
 /**
  * On this JPanel the starting options of AgentGUI can be set.
@@ -551,7 +551,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener, H
 			jButtonApply = new JButton();
 			jButtonApply.setText("Anwenden");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonApply.setForeground(new Color(0, 153, 0));
+			jButtonApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonApply.setPreferredSize(new Dimension(100, 26));
 			jButtonApply.setActionCommand("applySettings");
 			jButtonApply.addActionListener(this);

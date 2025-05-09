@@ -35,6 +35,7 @@ import javax.swing.event.ChangeListener;
 
 import de.enflexit.common.SerialClone;
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
@@ -506,7 +507,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		if (jButtonSave == null) {
 			jButtonSave = new JButton("Save");
 			jButtonSave.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSave.setForeground(new Color(0, 153, 0));
+			jButtonSave.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonSave.setPreferredSize(new Dimension(80, 26));
 			jButtonSave.addActionListener(this);
 		}
@@ -516,6 +517,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		if (jButtonTestConnection == null) {
 			jButtonTestConnection = new JButton("Test Connection");
 			jButtonTestConnection.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonTestConnection.setPreferredSize(new Dimension(130, 26));
 			jButtonTestConnection.addActionListener(this);
 		}
 		return jButtonTestConnection;
@@ -524,7 +526,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		if (jButtonClose == null) {
 			jButtonClose = new JButton("Close");
 			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonClose.setForeground(new Color(153, 0, 0));
+			jButtonClose.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonClose.setPreferredSize(new Dimension(80, 26));
 			jButtonClose.addActionListener(this);
 		}

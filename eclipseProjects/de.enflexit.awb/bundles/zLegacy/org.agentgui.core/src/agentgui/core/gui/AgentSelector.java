@@ -233,7 +233,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton();
 			jButtonOk.setPreferredSize(new Dimension(120, 26));
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.Green.getColor());
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOk.setText("Hinzufügen");
 			jButtonOk.setActionCommand("Ok");
@@ -249,7 +249,7 @@ public class AgentSelector extends JDialog implements ActionListener {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setPreferredSize(new Dimension(120, 26));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.Red.getColor()));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setText("Abbrechen");
 			jButtonCancel.setActionCommand("Cancel");

@@ -194,7 +194,7 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 			jButtonSetPortDefault.setText("OK");
 			jButtonSetPortDefault.setBounds(new Rectangle(215, 10, 77, 26));
 			jButtonSetPortDefault.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSetPortDefault.setForeground(new Color(0, 153, 0));
+			jButtonSetPortDefault.setForeground(AwbThemeColor.Green.getColor());
 			jButtonSetPortDefault.setActionCommand("SetPortDefault");
 			jButtonSetPortDefault.addActionListener(this);
 		}
@@ -210,7 +210,7 @@ public class JadeSetupNewPort extends JDialog implements ActionListener {
 			jButtonCancel = new JButton();
 			jButtonCancel.setBounds(new Rectangle(305, 10, 77, 26));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.Red.getColor()));
 			jButtonCancel.setText("Cancel");
 			jButtonCancel.addActionListener(this);
 		}

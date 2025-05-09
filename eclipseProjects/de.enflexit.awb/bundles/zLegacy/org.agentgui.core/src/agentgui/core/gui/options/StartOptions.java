@@ -549,7 +549,7 @@ public class StartOptions extends AbstractOptionTab implements ActionListener, H
 			jButtonApply = new JButton();
 			jButtonApply.setText("Anwenden");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonApply.setForeground(new Color(0, 153, 0));
+			jButtonApply.setForeground(AwbThemeColor.Green.getColor());
 			jButtonApply.setPreferredSize(new Dimension(100, 26));
 			jButtonApply.setActionCommand("applySettings");
 			jButtonApply.addActionListener(this);

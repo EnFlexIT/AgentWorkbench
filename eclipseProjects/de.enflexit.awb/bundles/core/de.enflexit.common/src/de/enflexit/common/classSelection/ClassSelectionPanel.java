@@ -1,6 +1,5 @@
 package de.enflexit.common.classSelection;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -26,6 +25,7 @@ import javax.swing.ListSelectionModel;
 import de.enflexit.common.classLoadService.BaseClassLoadServiceUtility;
 import de.enflexit.common.images.ImageProvider;
 import de.enflexit.common.images.ImageProvider.ImageFile;
+import de.enflexit.common.swing.AwbThemeColor;
 
 
 /**
@@ -466,7 +466,7 @@ public class ClassSelectionPanel extends JPanel {
 			jButtonCancel = new JButton();
 			jButtonCancel.setPreferredSize(new Dimension(120, 26));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setText("Cancel");
 			jButtonCancel.addActionListener(new ActionListener() {
 				@Override
@@ -487,7 +487,7 @@ public class ClassSelectionPanel extends JPanel {
 			jButtonOK = new JButton();
 			jButtonOK.setPreferredSize(new Dimension(120, 26));
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setText("Apply");
 			jButtonOK.addActionListener(new ActionListener() {
 				@Override

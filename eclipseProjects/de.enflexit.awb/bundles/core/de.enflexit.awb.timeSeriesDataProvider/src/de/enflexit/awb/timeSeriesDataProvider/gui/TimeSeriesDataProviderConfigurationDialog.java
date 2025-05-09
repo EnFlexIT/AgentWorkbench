@@ -5,6 +5,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -102,7 +103,7 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 		if (btnOk == null) {
 			btnOk = new JButton("OK");
 			btnOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			btnOk.setForeground(new Color(0, 153, 0));
+			btnOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			btnOk.setPreferredSize(new Dimension(85, 26));
 			btnOk.addActionListener(this);
 
@@ -118,7 +119,7 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 		if (btnCancel == null) {
 			btnCancel = new JButton("Cancel");
 			btnCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			btnCancel.setForeground(new Color(153, 0, 0));
+			btnCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			btnCancel.setPreferredSize(new Dimension(85, 26));
 			btnCancel.addActionListener(this);
 		}

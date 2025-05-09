@@ -45,6 +45,7 @@ import de.enflexit.awb.core.project.transfer.ProjectExportController;
 import de.enflexit.awb.core.project.transfer.ProjectExportSettings;
 import de.enflexit.awb.core.project.transfer.ProjectExportSettingsController;
 import de.enflexit.awb.core.ui.AwbProjectExportDialog;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.fileSelection.DirectoryEvaluator;
@@ -481,7 +482,7 @@ public class ProjectExportDialog extends JDialog implements AwbProjectExportDial
 		if (jButtonOk == null) {
 			jButtonOk = new JButton("OK");
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOk.setMinimumSize(new Dimension(100, 28));
 			jButtonOk.addActionListener(this);
 		}
@@ -495,7 +496,7 @@ public class ProjectExportDialog extends JDialog implements AwbProjectExportDial
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setMinimumSize(new Dimension(100, 28));
 			jButtonCancel.addActionListener(this);
 		}

@@ -261,7 +261,7 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 			jButtonSave = new JButton();
 			jButtonSave.setText("Speichern");
 			jButtonSave.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSave.setForeground(new Color(0, 153, 0));
+			jButtonSave.setForeground(AwbThemeColor.Green.getColor());
 			jButtonSave.setPreferredSize(new Dimension(100, 26));
 			jButtonSave.addActionListener(this);
 		}

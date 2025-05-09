@@ -229,7 +229,7 @@ public class LogFileOptions extends AbstractOptionTab implements ActionListener 
 			jButtonApply = new JButton();
 			jButtonApply.setText("Speichern");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonApply.setForeground(new Color(0, 153, 0));
+			jButtonApply.setForeground(AwbThemeColor.Green.getColor());
 			jButtonApply.setPreferredSize(new Dimension(100, 26));
 			jButtonApply.addActionListener(this);
 		}

@@ -124,7 +124,7 @@ public class TimeZoneWidgetDialog extends JDialog implements ActionListener {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.addActionListener(this);
 		}
@@ -135,7 +135,7 @@ public class TimeZoneWidgetDialog extends JDialog implements ActionListener {
 			jButtonApply = new JButton("Apply");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonApply.setPreferredSize(new Dimension(100, 26));
-			jButtonApply.setForeground(new Color(0, 153, 0));
+			jButtonApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonApply.addActionListener(this);
 		}
 		return jButtonApply;

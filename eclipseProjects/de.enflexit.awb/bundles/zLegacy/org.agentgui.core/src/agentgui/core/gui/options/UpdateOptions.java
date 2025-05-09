@@ -246,7 +246,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 			jButtonUpdateSiteApply = new JButton();
 			jButtonUpdateSiteApply.setText("Speichern");
 			jButtonUpdateSiteApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonUpdateSiteApply.setForeground(new Color(0, 153, 0));
+			jButtonUpdateSiteApply.setForeground(AwbThemeColor.Green.getColor());
 			jButtonUpdateSiteApply.setPreferredSize(new Dimension(100, 26));
 			jButtonUpdateSiteApply.addActionListener(this);
 		}

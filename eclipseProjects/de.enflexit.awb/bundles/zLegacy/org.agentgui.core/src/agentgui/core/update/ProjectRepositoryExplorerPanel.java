@@ -482,7 +482,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		if (jButtonInstallUpdate == null) {
 			jButtonInstallUpdate = new JButton("Install");
 			jButtonInstallUpdate.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonInstallUpdate.setForeground(new Color(0, 153, 0));
+			jButtonInstallUpdate.setForeground(AwbThemeColor.Green.getColor());
 			jButtonInstallUpdate.setPreferredSize(new Dimension(120, 26));
 			jButtonInstallUpdate.addActionListener(this);
 		}

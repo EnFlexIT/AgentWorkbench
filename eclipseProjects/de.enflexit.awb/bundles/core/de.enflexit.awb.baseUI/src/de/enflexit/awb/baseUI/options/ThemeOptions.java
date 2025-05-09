@@ -1,6 +1,5 @@
 package de.enflexit.awb.baseUI.options;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -19,6 +18,7 @@ import javax.swing.JLabel;
 import de.enflexit.awb.core.Application;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.AwbLookAndFeelInfo;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.language.Language;
 
@@ -130,7 +130,7 @@ public class ThemeOptions extends AbstractOptionTab {
 			jButtonApply = new JButton();
 			jButtonApply.setText(Language.translate("Anwenden"));
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonApply.setForeground(new Color(0, 153, 0));
+			jButtonApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonApply.setPreferredSize(new Dimension(100, 26));
 			jButtonApply.addActionListener(new ActionListener() {
 				@Override

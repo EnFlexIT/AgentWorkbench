@@ -445,7 +445,7 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 			jButtonOk = new JButton("Ok");
 			jButtonOk.setPreferredSize(new Dimension(80, 26));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOk.addActionListener(this);
 		}
 		return jButtonOk;
@@ -455,7 +455,7 @@ public class TimeZoneSelectionDialog extends JDialog implements ActionListener {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setPreferredSize(new Dimension(80, 26));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.addActionListener(this);
 		}
 		return jButtonCancel;

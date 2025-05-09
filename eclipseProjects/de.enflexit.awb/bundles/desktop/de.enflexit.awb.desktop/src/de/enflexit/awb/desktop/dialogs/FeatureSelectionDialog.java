@@ -45,6 +45,7 @@ import org.eclipse.equinox.p2.metadata.IRequirement;
 import de.enflexit.language.Language;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -228,7 +229,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	private JButton getJButtonOk() {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton("OK");
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOk.setPreferredSize(new Dimension(80, 26));
 			jButtonOk.addActionListener(this);
@@ -238,7 +239,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setPreferredSize(new Dimension(80, 26));
 			jButtonCancel.addActionListener(this);

@@ -1,6 +1,5 @@
 package de.enflexit.awb.baseUI.dialogs;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -30,11 +29,11 @@ import javax.swing.border.EtchedBorder;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.JHyperLink;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.language.Language;
-
 /**
  * The GUI of the AboutDialog.
  * 
@@ -226,7 +225,7 @@ public class AboutDialog extends JDialog implements ActionListener{
 			jButtonOk = new JButton();
 			jButtonOk.setText("Schließen");
 			jButtonOk.setText(Language.translate(jButtonOk.getText()));
-			jButtonOk.setForeground(new Color(0, 0 ,153));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextBlue.getColor());
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOk.setPreferredSize(new Dimension(120, 28));
 			jButtonOk.setActionCommand("OK");

@@ -1,34 +1,5 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.common.ontology.gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -47,12 +18,13 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EtchedBorder;
 
-import de.enflexit.language.Language;
 import de.enflexit.common.ontology.AgentStartConfiguration;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.common.ontology.OntologyVisualizationHelper;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.language.Language;
 
 /**
  * This class can be used to display a user interface thats allows to configure
@@ -247,7 +219,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 			jButtonOK = new JButton();
 			jButtonOK.setPreferredSize(new Dimension(120, 26));
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setText("OK");
 			jButtonOK.setText(Language.translate(jButtonOK.getText()));
 			jButtonOK.addActionListener(this);
@@ -264,7 +236,7 @@ public class OntologyInstanceDialog extends JDialog implements ActionListener {
 			jButtonCancel = new JButton();
 			jButtonCancel.setPreferredSize(new Dimension(120, 26));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setText("Abbruch");
 			jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 			jButtonCancel.addActionListener(this);

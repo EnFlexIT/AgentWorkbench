@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
+import de.enflexit.common.swing.AwbThemeColor;
 
 /**
  * The Class JPanelSettingsServer.
@@ -249,9 +250,9 @@ public class JPanelSettingsServer extends JPanel implements JettyConfigurationIn
 		String display = serverNodeModel.getRunningServerDescription();
 		Color color = null; 
 		if (serverNodeModel.isRunningServer()==true) {
-			color = new Color(0, 153, 0);
+			color = AwbThemeColor.ButtonTextGreen.getColor();
 		} else {
-			color = new Color(153, 0, 0);
+			color = AwbThemeColor.ButtonTextRed.getColor();
 		}
 		this.getJLabelStateDescription().setText(display);
 		this.getJLabelStateDescription().setForeground(color);

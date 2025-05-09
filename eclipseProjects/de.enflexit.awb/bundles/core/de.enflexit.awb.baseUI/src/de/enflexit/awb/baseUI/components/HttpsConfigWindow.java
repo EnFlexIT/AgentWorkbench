@@ -32,6 +32,7 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.common.crypto.CertificateProperties;
 import de.enflexit.common.crypto.KeyStoreController;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -399,7 +400,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 	private JButton getJButtonOK() {
 		if (jButtonOK == null) {
 			jButtonOK = new JButton(Language.translate("OK", Language.EN));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOK.setPreferredSize(new Dimension(85, 26));
 			jButtonOK.addActionListener(this);
@@ -410,7 +411,7 @@ public class HttpsConfigWindow extends JDialog implements ActionListener {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton(Language.translate("Cancel", Language.EN));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setPreferredSize(new Dimension(85, 26));
 			jButtonCancel.addActionListener(this);
 		}

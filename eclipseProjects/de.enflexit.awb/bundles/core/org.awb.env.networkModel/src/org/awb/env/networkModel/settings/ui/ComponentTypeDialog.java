@@ -71,6 +71,7 @@ import org.awb.env.networkModel.settings.LayoutSettings;
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.imageFileSelection.MissingIcon;
@@ -474,7 +475,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			jButtonOk.setText(Language.translate(jButtonOk.getText()));
 			jButtonOk.setPreferredSize(new Dimension(120, 28));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOk.addActionListener(this);
 		}
 		return jButtonOk;
@@ -490,7 +491,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 			jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 			jButtonCancel.setPreferredSize(new Dimension(120, 28));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.addActionListener(this);
 		}
 		return jButtonCancel;

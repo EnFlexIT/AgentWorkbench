@@ -45,6 +45,7 @@ import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.ProjectsLoaded.ProjectAction;
 import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -306,7 +307,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectInteractionDial
 			jCheckBoxExportBefore.setText("Vor dem Löschen exportieren!");
 			jCheckBoxExportBefore.setText(Language.translate(jCheckBoxExportBefore.getText()));
 			jCheckBoxExportBefore.setFont(new Font("Dialog", Font.BOLD, 12));
-			jCheckBoxExportBefore.setForeground(new Color(153, 0, 0));
+			jCheckBoxExportBefore.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jCheckBoxExportBefore.setSelected(true);
 			jCheckBoxExportBefore.setActionCommand("EXPORT");
 			jCheckBoxExportBefore.addActionListener(this);
@@ -506,7 +507,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectInteractionDial
 			jButtonOK = new JButton();
 			jButtonOK.setText("OK");
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setActionCommand("OK");
 			jButtonOK.addActionListener(this);
 		}
@@ -523,7 +524,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectInteractionDial
 			jButtonCancel.setText("Abbruch");
 			jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setActionCommand("Cancel");
 			jButtonCancel.addActionListener(this);
 		}

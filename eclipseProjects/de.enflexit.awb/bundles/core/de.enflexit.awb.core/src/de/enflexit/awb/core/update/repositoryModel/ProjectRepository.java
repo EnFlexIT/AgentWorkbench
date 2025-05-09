@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -251,13 +252,14 @@ public class ProjectRepository implements Serializable {
 		ProjectRepository projectRepository = null;
 		// --- Check if the update site is a web site URL -------
 		try {
-			URL updateURL = new URL(fileReferenceOrLink);
+			
+			URL updateURL = new URI(fileReferenceOrLink).toURL();
 			
 			projectRepository = ProjectRepository.loadProjectRepository(updateURL, auth);
 			if (projectRepository!=null) {
 				projectRepository.setWebRepository(true);
 			}
-		} catch (MalformedURLException urlEx) {
+		} catch (MalformedURLException | URISyntaxException urlEx) {
 			urlEx.printStackTrace();
 		}
 		

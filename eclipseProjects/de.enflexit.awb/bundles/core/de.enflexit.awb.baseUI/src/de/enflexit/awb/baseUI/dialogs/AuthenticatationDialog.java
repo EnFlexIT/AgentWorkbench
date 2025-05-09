@@ -29,6 +29,7 @@ import de.enflexit.common.http.HttpURLConnector;
 import de.enflexit.common.http.HttpURLConnectorException;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -243,7 +244,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 		if (jButtonSave == null) {
 			jButtonSave = new JButton(Language.translate(this.getConfirmButtonText(), Language.EN));
 			jButtonSave.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSave.setForeground(new Color(0, 153, 0));
+			jButtonSave.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonSave.setPreferredSize(new Dimension(120, 26));
 			jButtonSave.addActionListener(this);
 		}
@@ -254,9 +255,9 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 		if(jLabelStatusMessage == null) {
 			jLabelStatusMessage = new JLabel(this.getStatusMessage());
 			if(this.getStatusMessageType() == StatusMessageType.ERROR) {
-				jLabelStatusMessage.setForeground(new Color(153, 0, 0));
+				jLabelStatusMessage.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			} else if(this.getStatusMessageType() == StatusMessageType.SUCCESSFUL) {
-				jLabelStatusMessage.setForeground(new Color(0, 153, 0));
+				jLabelStatusMessage.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			} else {
 				jLabelStatusMessage.setForeground(new Color(0, 0, 0));
 			}
@@ -441,9 +442,9 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	 */
 	public void setStatusMessageType(StatusMessageType statusMessageType) {
 		if(statusMessageType == StatusMessageType.ERROR) {
-			getJLabelStatusMessage().setForeground(new Color(153, 0, 0));
+			getJLabelStatusMessage().setForeground(AwbThemeColor.ButtonTextRed.getColor());
 		} else if(statusMessageType == StatusMessageType.SUCCESSFUL) {
-			getJLabelStatusMessage().setForeground(new Color(0, 153, 0));
+			getJLabelStatusMessage().setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 		} else {
 			getJLabelStatusMessage().setForeground(new Color(0, 0, 0));
 		}

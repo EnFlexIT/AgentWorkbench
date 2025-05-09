@@ -1,6 +1,5 @@
 package de.enflexit.awb.baseUI.options;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -48,6 +47,7 @@ import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.ui.AwbOptionsDialog;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -407,7 +407,7 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 		if (jButtonClose==null) {
 			jButtonClose = new JButton();
 			jButtonClose.setText("Schließen");
-			jButtonClose.setForeground(new Color(0, 0, 153));
+			jButtonClose.setForeground(AwbThemeColor.ButtonTextBlue.getColor());
 			jButtonClose.setPreferredSize(new Dimension(100, 26));
 			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonClose.setActionCommand("Close");

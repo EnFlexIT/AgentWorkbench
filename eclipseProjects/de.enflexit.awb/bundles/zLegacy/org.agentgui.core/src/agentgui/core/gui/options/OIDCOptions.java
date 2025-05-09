@@ -207,7 +207,7 @@ public class OIDCOptions extends AbstractOptionTab implements ActionListener {
 			jButtonOIDCIssuerURIApply = new JButton();
 			jButtonOIDCIssuerURIApply.setText("Speichern");
 			jButtonOIDCIssuerURIApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOIDCIssuerURIApply.setForeground(new Color(0, 153, 0));
+			jButtonOIDCIssuerURIApply.setForeground(AwbThemeColor.Green.getColor());
 			jButtonOIDCIssuerURIApply.setPreferredSize(new Dimension(100, 26));
 			jButtonOIDCIssuerURIApply.addActionListener(this);
 		}

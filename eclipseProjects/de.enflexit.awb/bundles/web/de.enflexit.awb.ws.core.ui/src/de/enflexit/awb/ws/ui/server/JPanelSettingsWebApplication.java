@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.ui.server;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -15,9 +14,13 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -33,12 +36,7 @@ import de.enflexit.awb.ws.core.util.WebApplicationUpdate;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdateProcess;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdateProcessListener;
 import de.enflexit.awb.ws.core.util.WebApplicationVersion;
-
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.JHyperLink;
 import de.enflexit.common.swing.OwnerDetection;
 
@@ -324,7 +322,7 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		if (jButtonCheckForUpdates == null) {
 			jButtonCheckForUpdates = new JButton("Check for Update");
 			jButtonCheckForUpdates.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCheckForUpdates.setForeground(new Color(0, 153, 0));
+			jButtonCheckForUpdates.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonCheckForUpdates.setPreferredSize(new Dimension(180, 27));
 			jButtonCheckForUpdates.addActionListener(this);
 		}
@@ -381,7 +379,7 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		if (jButtonInstallSelected == null) {
 			jButtonInstallSelected = new JButton("Install selected Version");
 			jButtonInstallSelected.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonInstallSelected.setForeground(new Color(0, 153, 0));
+			jButtonInstallSelected.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonInstallSelected.setPreferredSize(new Dimension(180, 27));
 			jButtonInstallSelected.addActionListener(this);
 		}

@@ -1,6 +1,5 @@
 package de.enflexit.awb.baseUI.options;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -23,8 +22,8 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.BundleProperties;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.InstallationPackageFinder;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.language.Language;
-
 /**
  * The Class OIDCOptions extends an {@link AbstractOptionTab} and is
  * used in order to visually configure the OpenID Connect settings of Agent.GUI.
@@ -233,7 +232,7 @@ public class DirectoryOptions extends AbstractOptionTab implements ActionListene
 			jButtonSave = new JButton();
 			jButtonSave.setText("Speichern");
 			jButtonSave.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSave.setForeground(new Color(0, 153, 0));
+			jButtonSave.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonSave.setPreferredSize(new Dimension(100, 26));
 			jButtonSave.addActionListener(this);
 		}

@@ -510,7 +510,7 @@ public class ProjectExportDialog extends JDialog implements AwbProjectExportDial
 		if (jButtonOk == null) {
 			jButtonOk = new JButton("OK");
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.Green.getColor());
 			jButtonOk.setMinimumSize(new Dimension(100, 28));
 			jButtonOk.addActionListener(this);
 		}
@@ -524,7 +524,7 @@ public class ProjectExportDialog extends JDialog implements AwbProjectExportDial
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.Red.getColor()));
 			jButtonCancel.setMinimumSize(new Dimension(100, 28));
 			jButtonCancel.addActionListener(this);
 		}

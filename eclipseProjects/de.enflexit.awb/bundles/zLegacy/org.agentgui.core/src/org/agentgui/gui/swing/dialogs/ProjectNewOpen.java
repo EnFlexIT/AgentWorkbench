@@ -306,7 +306,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			jCheckBoxExportBefore.setText("Vor dem Löschen exportieren!");
 			jCheckBoxExportBefore.setText(Language.translate(jCheckBoxExportBefore.getText()));
 			jCheckBoxExportBefore.setFont(new Font("Dialog", Font.BOLD, 12));
-			jCheckBoxExportBefore.setForeground(new Color(153, 0, 0));
+			jCheckBoxExportBefore.setForeground(AwbThemeColor.Red.getColor()));
 			jCheckBoxExportBefore.setSelected(true);
 			jCheckBoxExportBefore.setActionCommand("EXPORT");
 			jCheckBoxExportBefore.addActionListener(this);
@@ -506,7 +506,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			jButtonOK = new JButton();
 			jButtonOK.setText("OK");
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.Green.getColor());
 			jButtonOK.setActionCommand("OK");
 			jButtonOK.addActionListener(this);
 		}
@@ -523,7 +523,7 @@ public class ProjectNewOpen extends JDialog implements AwbProjectNewOpenDialog, 
 			jButtonCancel.setText("Abbruch");
 			jButtonCancel.setText(Language.translate(jButtonCancel.getText()));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.Red.getColor()));
 			jButtonCancel.setActionCommand("Cancel");
 			jButtonCancel.addActionListener(this);
 		}

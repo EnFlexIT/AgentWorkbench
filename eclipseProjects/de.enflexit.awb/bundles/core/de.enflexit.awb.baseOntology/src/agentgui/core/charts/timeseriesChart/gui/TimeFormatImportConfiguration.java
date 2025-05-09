@@ -48,6 +48,7 @@ import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.ExceptionHandling;
 import de.enflexit.common.GlobalDefaultValues;
 import de.enflexit.common.GlobalRuntimeValues;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
@@ -663,7 +664,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 			jButtonOK.setText("OK");
 			jButtonOK.setText(Language.translate(jButtonOK.getText(), Language.EN));
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setPreferredSize(new Dimension(80, 26));
 			jButtonOK.addActionListener(this);
 		}
@@ -679,7 +680,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 			jButtonCancel.setText("Cancel");
 			jButtonCancel.setText(Language.translate(jButtonCancel.getText(), Language.EN));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setPreferredSize(new Dimension(80, 26));
 			jButtonCancel.addActionListener(this);
 		}

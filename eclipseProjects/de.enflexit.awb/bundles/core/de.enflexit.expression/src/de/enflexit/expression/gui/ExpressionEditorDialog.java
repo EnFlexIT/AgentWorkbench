@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
@@ -166,7 +167,7 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	private JButton getJButtonOK() {
 		if (jButtonOK == null) {
 			jButtonOK = new JButton(Language.translate("  OK  ",Language.EN));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOK.setMinimumSize(new Dimension(100, 28));
 			jButtonOK.setMaximumSize(new Dimension(100, 28));
@@ -183,7 +184,7 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton(Language.translate("Cancel",Language.EN));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setMinimumSize(new Dimension(100, 28));
 			jButtonCancel.setMaximumSize(new Dimension(100, 28));
 			jButtonCancel.setPreferredSize(new Dimension(100, 28));

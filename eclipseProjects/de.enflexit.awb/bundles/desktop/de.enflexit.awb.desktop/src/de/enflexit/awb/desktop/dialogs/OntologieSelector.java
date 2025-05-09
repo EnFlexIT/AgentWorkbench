@@ -60,6 +60,7 @@ import javax.swing.event.ListDataListener;
 
 import de.enflexit.common.classSelection.ClassElement2Display;
 import de.enflexit.common.classSelection.JListClassSearcher;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.language.Language;
@@ -281,7 +282,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		if (jButtonSelect == null) {
 			jButtonSelect = new JButton();
 			jButtonSelect.setText("Hinzufügen");
-			jButtonSelect.setForeground(new Color(0, 153, 0));
+			jButtonSelect.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonSelect.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonSelect.setPreferredSize(new Dimension(100, 26));
 			jButtonSelect.addActionListener(this);
@@ -297,7 +298,7 @@ public class OntologieSelector extends JDialog implements ActionListener{
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton();
 			jButtonCancel.setText("Abbrechen");
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.addActionListener(this);

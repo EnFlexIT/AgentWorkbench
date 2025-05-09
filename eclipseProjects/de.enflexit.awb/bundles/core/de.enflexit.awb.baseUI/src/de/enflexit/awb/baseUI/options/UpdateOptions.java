@@ -1,6 +1,5 @@
 package de.enflexit.awb.baseUI.options;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -22,6 +21,7 @@ import javax.swing.border.EtchedBorder;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.update.AWBUpdater;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.language.Language;
 
 
@@ -218,7 +218,7 @@ public class UpdateOptions extends AbstractOptionTab implements ActionListener {
 			jButtonUpdateSiteApply = new JButton();
 			jButtonUpdateSiteApply.setText("Speichern");
 			jButtonUpdateSiteApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonUpdateSiteApply.setForeground(new Color(0, 153, 0));
+			jButtonUpdateSiteApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonUpdateSiteApply.setPreferredSize(new Dimension(100, 26));
 			jButtonUpdateSiteApply.addActionListener(this);
 		}

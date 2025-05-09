@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -24,6 +23,7 @@ import javax.swing.WindowConstants;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.ui.client.JPanelClientConfiguration;
 import de.enflexit.awb.ws.ui.server.JPanelServerConfiguration;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -143,7 +143,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		if (jButtonClose == null) {
 			jButtonClose = new JButton("Close");
 			jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonClose.setForeground(new Color(0, 0, 153));
+			jButtonClose.setForeground(AwbThemeColor.ButtonTextBlue.getColor());
 			jButtonClose.setPreferredSize(new Dimension(100, 26));
 			jButtonClose.addActionListener(this);
 		}

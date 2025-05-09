@@ -230,7 +230,7 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 		if (this.jLabelTimeDisplay==null) {
 			jLabelTimeDisplay = new JLabel();
 			jLabelTimeDisplay.setFont(new Font("Dialog", Font.BOLD, 12));
-			jLabelTimeDisplay.setForeground(new Color(0, 153, 0));
+			jLabelTimeDisplay.setForeground(AwbThemeColor.Green.getColor());
 		}
 		return this.jLabelTimeDisplay;
 	}

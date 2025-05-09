@@ -351,7 +351,7 @@ public class StartAgentDialog extends JDialog implements ActionListener {
 		if (jButtonOK == null) {
 			jButtonOK = new JButton("OK");
 			jButtonOK.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOK.setForeground(new Color(0, 153, 0));
+			jButtonOK.setForeground(AwbThemeColor.Green.getColor());
 			jButtonOK.setPreferredSize(new Dimension(80, 26));
 			jButtonOK.addActionListener(this);
 		}
@@ -361,7 +361,7 @@ public class StartAgentDialog extends JDialog implements ActionListener {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.Red.getColor()));
 			jButtonCancel.setPreferredSize(new Dimension(80, 26));
 			jButtonCancel.addActionListener(this);
 		}

@@ -83,7 +83,7 @@ public class TimeModelContinuousExecutionElements extends TimeModelBaseExecution
 			
 			// --- Set color of time display ------------------------
 			if (time<=timeStop) {
-				this.getJLabelTimeDisplay().setForeground(new Color(0, 153, 0));
+				this.getJLabelTimeDisplay().setForeground(AwbThemeColor.Green.getColor());
 			} else {
 				this.getJLabelTimeDisplay().setForeground(new Color(255, 51, 0));	
 			}

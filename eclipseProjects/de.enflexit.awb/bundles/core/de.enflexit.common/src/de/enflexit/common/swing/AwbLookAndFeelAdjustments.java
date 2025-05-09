@@ -32,6 +32,7 @@ public class AwbLookAndFeelAdjustments {
 	private static boolean isFurtherLaFToInstall = true;
 	private static boolean isFurtherLaFInstalled = false;
 	
+	private static Boolean isDarkLookAndFeel;
 	
 	/**
 	 * Returns all installed look and feels.
@@ -102,6 +103,7 @@ public class AwbLookAndFeelAdjustments {
 			if (lafClassNameNew.equals(lafClassNameOld)==false) {
 				// --- Set the new LookAndFeel ----------------------
 				UIManager.setLookAndFeel(lafClassNameNew);
+				AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
 				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 				if (invoker!=null) {
 					SwingUtilities.updateComponentTreeUI(invoker);
@@ -118,6 +120,7 @@ public class AwbLookAndFeelAdjustments {
 			if (lafClassNameOld!=null) {
 				try {
 					UIManager.setLookAndFeel(lafClassNameOld);
+					AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
 					AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 					if (invoker!=null) {
 						SwingUtilities.updateComponentTreeUI(invoker);
@@ -129,7 +132,6 @@ public class AwbLookAndFeelAdjustments {
 				}
 			}
 		}
-		
 	}
 	
 	/**
@@ -137,12 +139,10 @@ public class AwbLookAndFeelAdjustments {
 	 * @return true, if is dark look and feel
 	 */
 	public static boolean isDarkLookAndFeel() {
-		
-		boolean isDark = false;
-		if (UIManager.getLookAndFeel().getClass().getName().equals(FlatDarkLaf.class.getName())==true) {
-			isDark = true;
+		if (isDarkLookAndFeel==null) {
+			isDarkLookAndFeel = UIManager.getLookAndFeel().getClass().getName().equals(FlatDarkLaf.class.getName());
 		}
-		return isDark;
+		return isDarkLookAndFeel;
 	}
 	
 	/**

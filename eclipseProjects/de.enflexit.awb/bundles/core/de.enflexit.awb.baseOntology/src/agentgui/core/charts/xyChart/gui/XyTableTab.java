@@ -1,6 +1,5 @@
 package agentgui.core.charts.xyChart.gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -33,6 +32,7 @@ import agentgui.core.charts.xyChart.XyTableModel;
 import agentgui.ontology.DataSeries;
 import agentgui.ontology.ValuePair;
 import agentgui.ontology.XyDataSeries;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.language.Language;
 
 /**
@@ -175,7 +175,7 @@ public class XyTableTab extends TableTab {
 		if(jButtonApplySettings==null) {
 			jButtonApplySettings = new JButton(Language.translate("Anwenden"));
 			jButtonApplySettings.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonApplySettings.setForeground(new Color(0, 153, 0));
+			jButtonApplySettings.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonApplySettings.setMargin(new Insets(0, 20, 0, 20));
 			jButtonApplySettings.addActionListener(this);
 		}

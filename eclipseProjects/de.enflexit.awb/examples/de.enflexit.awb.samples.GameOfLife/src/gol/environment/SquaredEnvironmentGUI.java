@@ -16,6 +16,7 @@ import java.util.HashMap;
 import de.enflexit.awb.core.environment.EnvironmentPanel;
 import de.enflexit.awb.core.project.DistributionSetup;
 import de.enflexit.common.Observable;
+import de.enflexit.common.swing.AwbThemeColor;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -265,7 +266,7 @@ public class SquaredEnvironmentGUI extends EnvironmentPanel implements ActionLis
 			jButtonApply = new JButton();
 			jButtonApply.setText("Apply");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonApply.setForeground(new Color(0, 153, 0));
+			jButtonApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonApply.addActionListener(this);
 		}
 		return jButtonApply;
@@ -335,7 +336,7 @@ public class SquaredEnvironmentGUI extends EnvironmentPanel implements ActionLis
 			jButtonApplyAgents = new JButton();
 			jButtonApplyAgents.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonApplyAgents.setText("Apply");
-			jButtonApplyAgents.setForeground(new Color(0, 153, 0));
+			jButtonApplyAgents.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonApplyAgents.addActionListener(this);
 		}
 		return jButtonApplyAgents;
@@ -350,7 +351,7 @@ public class SquaredEnvironmentGUI extends EnvironmentPanel implements ActionLis
 			jButtonClear = new JButton();
 			jButtonClear.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonClear.setText("Clear");
-			jButtonClear.setForeground(new Color(0, 0, 153));
+			jButtonClear.setForeground(AwbThemeColor.ButtonTextBlue.getColor());
 			jButtonClear.addActionListener(this);
 		}
 		return jButtonClear;

@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.SerialClone;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.geography.coordinates.AbstractCoordinate;
@@ -171,7 +172,7 @@ public class GraphNodePositionDialog extends JDialog implements ActionListener {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton("OK");
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOk.setPreferredSize(new Dimension(100, 26));
 			jButtonOk.setMaximumSize(jButtonOk.getPreferredSize());
 			jButtonOk.setMinimumSize(jButtonOk.getPreferredSize());
@@ -187,7 +188,7 @@ public class GraphNodePositionDialog extends JDialog implements ActionListener {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.setPreferredSize(new Dimension(100, 26));
 			jButtonCancel.setMinimumSize(jButtonCancel.getPreferredSize());
 			jButtonCancel.setMaximumSize(jButtonCancel.getPreferredSize());

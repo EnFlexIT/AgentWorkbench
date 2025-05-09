@@ -1,6 +1,5 @@
 package de.enflexit.awb.desktop.project.update;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -36,7 +35,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import de.enflexit.language.Language;
 import de.enflexit.awb.baseUI.dialogs.AuthenticatationDialog;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.BundleProperties;
@@ -50,7 +48,9 @@ import de.enflexit.awb.core.update.repositoryModel.RepositoryTagVersions;
 import de.enflexit.common.http.HttpURLConnectorAuthorizationException;
 import de.enflexit.common.http.HttpURLConnectorException;
 import de.enflexit.common.http.WebResourcesAuthorization;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.language.Language;
 
 /**
  * The Class ProjectRepositoryExplorer provides .
@@ -458,7 +458,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		if (jButtonInstallUpdate == null) {
 			jButtonInstallUpdate = new JButton("Install");
 			jButtonInstallUpdate.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonInstallUpdate.setForeground(new Color(0, 153, 0));
+			jButtonInstallUpdate.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonInstallUpdate.setPreferredSize(new Dimension(120, 26));
 			jButtonInstallUpdate.addActionListener(this);
 		}

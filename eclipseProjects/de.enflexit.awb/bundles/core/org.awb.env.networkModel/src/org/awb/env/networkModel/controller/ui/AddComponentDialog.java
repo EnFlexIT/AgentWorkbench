@@ -102,6 +102,7 @@ import com.google.common.base.Function;
 
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.JComboBoxWide;
 import de.enflexit.geography.coordinates.UTMCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
@@ -717,7 +718,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    jButtonClose.setText(Language.translate(jButtonClose.getText(), Language.EN));
 		    jButtonClose.setPreferredSize(new Dimension(95, 26));
 		    jButtonClose.setFont(new Font("Dialog", Font.BOLD, 12));
-		    jButtonClose.setForeground(new Color(153, 0, 0));
+		    jButtonClose.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 		    jButtonClose.addActionListener(this);
 		}
 		return jButtonClose;
@@ -732,7 +733,7 @@ public class AddComponentDialog extends BasicGraphGuiJInternalFrame implements A
 		    jButtonAdd.setText("Add");
 		    jButtonAdd.setText(Language.translate(jButtonAdd.getText(), Language.EN));
 		    jButtonAdd.setPreferredSize(new Dimension(95, 26));
-		    jButtonAdd.setForeground(new Color(0, 153, 0));
+		    jButtonAdd.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 		    jButtonAdd.setFont(new Font("Dialog", Font.BOLD, 12));
 		    jButtonAdd.addActionListener(this);
 		}

@@ -1,6 +1,5 @@
 package de.enflexit.awb.baseUI.options;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -18,6 +17,7 @@ import javax.swing.border.EtchedBorder;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.language.Language;
 
 /**
@@ -179,7 +179,7 @@ public class OIDCOptions extends AbstractOptionTab implements ActionListener {
 			jButtonOIDCIssuerURIApply = new JButton();
 			jButtonOIDCIssuerURIApply.setText("Speichern");
 			jButtonOIDCIssuerURIApply.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOIDCIssuerURIApply.setForeground(new Color(0, 153, 0));
+			jButtonOIDCIssuerURIApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOIDCIssuerURIApply.setPreferredSize(new Dimension(100, 26));
 			jButtonOIDCIssuerURIApply.addActionListener(this);
 		}

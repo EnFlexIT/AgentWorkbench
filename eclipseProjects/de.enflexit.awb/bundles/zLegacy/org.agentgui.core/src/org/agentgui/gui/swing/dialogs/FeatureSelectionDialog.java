@@ -256,7 +256,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	private JButton getJButtonOk() {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton("OK");
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.Green.getColor());
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOk.setPreferredSize(new Dimension(80, 26));
 			jButtonOk.addActionListener(this);
@@ -266,7 +266,7 @@ public class FeatureSelectionDialog extends JDialog implements ActionListener {
 	private JButton getJButtonCancel() {
 		if (jButtonCancel == null) {
 			jButtonCancel = new JButton("Cancel");
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.Red.getColor()));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonCancel.setPreferredSize(new Dimension(80, 26));
 			jButtonCancel.addActionListener(this);

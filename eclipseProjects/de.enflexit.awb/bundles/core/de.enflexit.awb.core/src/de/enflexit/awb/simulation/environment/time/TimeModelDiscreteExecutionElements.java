@@ -2,6 +2,7 @@ package de.enflexit.awb.simulation.environment.time;
 
 import java.awt.Color;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.language.Language;
 
 /**
@@ -47,7 +48,7 @@ public class TimeModelDiscreteExecutionElements extends TimeModelBaseExecutionEl
 			
 			// --- Set color of time display --------------
 			if (time<=timeStop) {
-				this.getJLabelTimeDisplay().setForeground(new Color(0, 153, 0));
+				this.getJLabelTimeDisplay().setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			} else {
 				this.getJLabelTimeDisplay().setForeground(new Color(255, 51, 0));	
 			}

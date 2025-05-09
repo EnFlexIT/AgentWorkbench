@@ -23,6 +23,7 @@ import javax.swing.WindowConstants;
 import org.awb.env.networkModel.NetworkComponent;
 import org.awb.env.networkModel.controller.GraphEnvironmentController;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -172,7 +173,7 @@ public class NetworkComponentSelectionDialog extends JDialog implements ActionLi
 			jButtonOk = new JButton("Ok");
 			jButtonOk.setPreferredSize(new Dimension(80, 26));
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonOk.setForeground(new Color(0, 153, 0));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOk.addActionListener(this);
 		}
 		return jButtonOk;
@@ -182,7 +183,7 @@ public class NetworkComponentSelectionDialog extends JDialog implements ActionLi
 			jButtonCancel = new JButton("Cancel");
 			jButtonCancel.setPreferredSize(new Dimension(80, 26));
 			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.setForeground(new Color(153, 0, 0));
+			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
 			jButtonCancel.addActionListener(this);
 		}
 		return jButtonCancel;

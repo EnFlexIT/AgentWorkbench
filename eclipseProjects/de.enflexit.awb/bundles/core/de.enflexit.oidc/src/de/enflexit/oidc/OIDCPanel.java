@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.language.Language;
 
 /**
@@ -217,7 +218,7 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		if (jButtonConnect == null) {
 			jButtonConnect = new JButton(Language.translate("Verbinden"));
 			jButtonConnect.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonConnect.setForeground(new Color(0, 0, 153));
+			jButtonConnect.setForeground(AwbThemeColor.ButtonTextBlue.getColor());
 			jButtonConnect.addActionListener(this);
 		}
 		return jButtonConnect;
@@ -245,11 +246,11 @@ public class OIDCPanel extends JPanel implements ActionListener {
 		this.getJLabelResult().setVisible(true);
 		if (successful==true) {
 			this.getJLabelResult().setText(Language.translate("Erfolgreich"));
-			this.getJLabelResult().setForeground(new Color(0, 153, 0));
+			this.getJLabelResult().setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			this.getParent().getParent().getParent().setVisible(false);
 		} else {
 			this.getJLabelResult().setText(Language.translate("Fehlgeschlagen") + ": "+message);
-			this.getJLabelResult().setForeground(new Color(153, 0, 0));
+			this.getJLabelResult().setForeground(AwbThemeColor.ButtonTextRed.getColor());
 		}
 	}
 
