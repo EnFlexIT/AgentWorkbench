@@ -52,7 +52,7 @@ public class JHyperLink extends JLabel {
 	private static final long serialVersionUID = -8351025656123572661L;
 
 	protected String link = null;
-	protected final Color LINK_COLOR = Color.blue;
+	protected final Color LINK_COLOR = AwbThemeColor.LinkTextColor.getColor();
 	protected boolean underline;
 	
 	protected LinkedList<ActionListener> actionListenerList = new LinkedList<ActionListener>();

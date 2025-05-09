@@ -97,6 +97,7 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.images.ImageHelper;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.imageFileSelection.ConfigurableFileFilter;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
@@ -530,7 +531,7 @@ public class BasicGraphGui extends JPanel implements Observer {
 			// --- Create a new VisualizationViewer instance ------------------
 			// ----------------------------------------------------------------
 			visView = new BasicGraphGuiVisViewer<GraphNode, GraphEdge>(layout);
-			visView.setBackground(Color.WHITE);
+			visView.setBackground(AwbThemeColor.Canvas_Background.getColor());
 			visView.setDoubleBuffered(true);
 			
 			// --- Configure mouse and key interaction ------------------------
