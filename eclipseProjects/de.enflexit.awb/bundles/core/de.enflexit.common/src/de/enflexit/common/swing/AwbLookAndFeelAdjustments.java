@@ -103,13 +103,9 @@ public class AwbLookAndFeelAdjustments {
 				// --- Set the new LookAndFeel ----------------------
 				UIManager.setLookAndFeel(lafClassNameNew);
 				AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
-				if (invoker!=null) {
-					SwingUtilities.updateComponentTreeUI(invoker);
-				}
-			} else {
-				if (invoker!=null) {
-					SwingUtilities.updateComponentTreeUI(invoker);
-				}
+			}
+			if (invoker!=null) {
+				SwingUtilities.updateComponentTreeUI(invoker);
 			}
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException lnfEx) {
