@@ -44,6 +44,7 @@ import javax.swing.tree.TreeSelectionModel;
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.ui.AwbOptionsDialog;
@@ -116,7 +117,9 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	    this.addOptionTab(this.getThemeOptions(), null);
 	    this.addOptionTab(this.getLogFileOptions(), null);
 	    
-	    if (Application.isRunningAsServer()==true || (execMode==ExecutionMode.DEVICE_SYSTEM && devExecMode==DeviceSystemExecutionMode.AGENT)) {
+	    AWBProduct currProduct = Application.getGlobalInfo().getAWBProduct();
+	    
+	    if (currProduct==AWBProduct.WEB || Application.isRunningAsServer()==true || (execMode==ExecutionMode.DEVICE_SYSTEM && devExecMode==DeviceSystemExecutionMode.AGENT)) {
 	    	String tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, (JPanel)Application.getConsole(), tabTitle);	
 	    }
@@ -145,8 +148,13 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 		});
 
 		// --- Size and center dialog -------------------------------
+		Rectangle maxSize = new Rectangle(1200, 675);
 		Rectangle screenSize = this.getGraphicsConfiguration().getBounds();
-		this.setSize((int) (screenSize.getWidth()*0.7), (int)(screenSize.getHeight()*0.8));
+		Rectangle dialogSize = new Rectangle((int)(screenSize.getWidth()*0.7), (int)(screenSize.getHeight()*0.8));;
+		if (dialogSize.width>maxSize.width || dialogSize.height>maxSize.height) {
+			dialogSize = maxSize;
+		}
+		this.setSize(dialogSize.width, dialogSize.height);
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 
 	}
