@@ -40,6 +40,10 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
@@ -77,7 +81,6 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	private LogFileOptions logFileOptions;
 	private UpdateOptions updateOptions;
 	private ThemeOptions themeOptions;
-	private OIDCOptions oidcOptions;
 	private DirectoryOptions exeDirOption;
 	
 	private Vector<AbstractJPanelForOptions> optionPanels;
@@ -113,7 +116,6 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	    this.addOptionTab(this.getStartOptions(), null);
 	    this.addOptionTab(this.getDirectoryOptions(), null);
 	    this.addOptionTab(this.getUpdateOptions(), null);
-	    this.addOptionTab(this.getOIDCOptions(), null);
 	    this.addOptionTab(this.getThemeOptions(), null);
 	    this.addOptionTab(this.getLogFileOptions(), null);
 	    
@@ -123,8 +125,11 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	    	String tabTitle = Language.translate("Konsole");
 	    	this.addOptionTab(tabTitle, null, (JPanel)Application.getConsole(), tabTitle);	
 	    }
+	    
+	    // --- Add option tabs from extensions ----------------------
+	    this.proceedOptionDialogExtensions();
 
-	    // --- Expand tree -----------------------------------------
+	    // --- Expand tree ------------------------------------------
 	    this.optionTreeExpand2Level(3, true);
 	}
 	
@@ -243,17 +248,6 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 		}
 		return themeOptions;
 	}
-	/**
-	 * Gets the OIDC options.
-	 * @return the OIDC options
-	 */
-	private OIDCOptions getOIDCOptions() {
-		if (oidcOptions==null) {
-			oidcOptions = new OIDCOptions();
-		}
-		return oidcOptions;
-	}
-	
 	
 	/**
 	 * This method initializes jSplitPaneMain.
@@ -444,6 +438,30 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 		jTabbedPaneRight.addTab(title, icon, optionTab, toolTip);
 
 		addOptionTabNode(title);
+	}
+	
+	private void proceedOptionDialogExtensions() {
+		IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(AwbOptionDialogExtension.OPTION_DIALOG_EXTENSION_ID);
+		try {
+			for (int i = 0; i < configElements.length; i++) {
+				IConfigurationElement configElement = configElements[i]; 
+				final Object execExt = configElement.createExecutableExtension("class");
+				if (execExt instanceof AwbOptionDialogExtension) {
+					AwbOptionDialogExtension optExtension = (AwbOptionDialogExtension) execExt;
+					this.proceedOptionDialogExtension(optExtension);
+				}
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void proceedOptionDialogExtension(AwbOptionDialogExtension optionDialogExtension) {
+		optionDialogExtension.initialize();
+		 for (AbstractOptionTab optionTab : optionDialogExtension.getOptionTabs()) {
+			 this.addOptionTab(optionTab, null);
+		 }
 	}
 
 	/**

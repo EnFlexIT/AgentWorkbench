@@ -5,8 +5,10 @@ Bundle-SymbolicName: de.enflexit.oidc.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,
+ de.enflexit.awb.baseUI.options,
  de.enflexit.awb.core.ui,
- de.enflexit.common.swing
+ de.enflexit.common.swing,
+ de.enflexit.language
 Require-Bundle: de.enflexit.oidc
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc.ui

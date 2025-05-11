@@ -11,7 +11,6 @@ import java.net.URISyntaxException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -19,13 +18,11 @@ import javax.swing.JPopupMenu;
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.common.swing.WindowSizeAndPostionController;
-import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.oidc.AuthenticationStateListener;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 import de.enflexit.oidc.OIDCSettings;
-
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 
 /**
@@ -105,14 +102,7 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	}
 	
 	private void showOIDCSettingsDialog() {
-
-		JDialog settingDialog = new JDialog(OwnerDetection.getOwnerWindowForComponent(this.getAuthenticationStateButton()));
-		settingDialog.setTitle("OpenID Connect Configuration");
-		settingDialog.setContentPane(new OIDCSettingsPanel(this.getOIDCSettings(), settingDialog));
-		settingDialog.setSize(600, 450);
-		
-		WindowSizeAndPostionController.setJDialogPositionOnScreen(settingDialog, JDialogPosition.ParentCenter);
-		settingDialog.setVisible(true);
+		AgentWorkbenchUiManager.getInstance().showModalOptionsDialog(OIDCSettingsOptionTab.OPTIONS_TAB_TITLE);
 	}
 	
 	private void openAccountPanel() {

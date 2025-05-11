@@ -3,4 +3,5 @@
 <plugin>
    <extension-point id="de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension" name="Agent.Workbench - BaseUI- TrayIcon Menu Extension (AWT)" schema="schema/de.enflexit.awb.baseUI.systemtray.trayIconMenuExtension.exsd"/>
    <extension-point id="de.enflexit.awb.desktop.mainWindowExtension" name="Agent.Workbench - Desktop - Main Window Extension (Swing)" schema="schema/de.enflexit.awb.desktop.mainWindowExtension.exsd"/>
+   <extension-point id="de.enflexit.awb.baseUI.options.optionDialogExtension" name="Agent.Workbench - BaseUI - Option Dialog Extension (AWT)" schema="schema/de.enflexit.awb.baseUI.options.optionDialogExtension.exsd"/>
 </plugin>

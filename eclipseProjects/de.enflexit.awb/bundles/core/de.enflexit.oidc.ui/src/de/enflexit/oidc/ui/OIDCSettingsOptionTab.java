@@ -1,9 +1,6 @@
 package de.enflexit.oidc.ui;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
@@ -14,17 +11,23 @@ import java.awt.Window;
 
 import javax.swing.JTextField;
 
+import de.enflexit.awb.baseUI.options.AbstractOptionTab;
 import de.enflexit.common.swing.AwbThemeColor;
+import de.enflexit.language.Language;
 import de.enflexit.oidc.OIDCSettings;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-public class OIDCSettingsPanel extends JPanel implements ActionListener {
+/**
+ * This options tab provides the configuration options for OpenID Connect authentication. 
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
+public class OIDCSettingsOptionTab extends AbstractOptionTab {
 	
 	private static final long serialVersionUID = -4020259086366150207L;
 	
-	private static final String ICON_PATH_RESTORE_DEFAULTS = "/icons/Reset.png";
+	public static final String OPTIONS_TAB_TITLE = "OpenID Connect Settings";
+	private static final String OPTIONS_TAB_TOOLTIP_TEXT = "Configuration options for OpenID Connect authenticaiton";
 	
 	private JLabel jLabelIssuerURI;
 	private JTextField jTextFieldIssuerURI;
@@ -40,138 +43,148 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 	private JLabel jLabelOIDCSettings;
 	private JLabel jLabelAuthenticationEndpoint;
 	private JTextField jTextFieldAuthenticationEndpoint;
-	private JPanel jPanelButtons;
 	private JButton jButtonApply;
-	private JButton jButtonCancel;
-	private JButton jButtonRestoreDefaults;
 	
 	private OIDCSettings oidcSettings;
 	private Window parent;
 	
-	public OIDCSettingsPanel() {
+	/**
+	 * Instantiates a new OIDC settings panel.
+	 */
+	public OIDCSettingsOptionTab() {
 		this.initialize();
 	}
 	
-	
-	public OIDCSettingsPanel(OIDCSettings oidcSettings, Window parent) {
+	/**
+	 * Instantiates a new OIDC settings panel.
+	 * @param oidcSettings the oidc settings
+	 * @param parent the parent
+	 */
+	public OIDCSettingsOptionTab(OIDCSettings oidcSettings, Window parent) {
 		this.parent = parent;
 		this.oidcSettings = oidcSettings;
 		this.initialize();
 		this.setModelToForm();
 	}
 
+	/**
+	 * Initializes the UI components.
+	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelOIDCSettings = new GridBagConstraints();
 		gbc_jLabelOIDCSettings.anchor = GridBagConstraints.SOUTHWEST;
-		gbc_jLabelOIDCSettings.gridwidth = 3;
-		gbc_jLabelOIDCSettings.insets = new Insets(10, 10, 5, 5);
+		gbc_jLabelOIDCSettings.gridwidth = 2;
+		gbc_jLabelOIDCSettings.insets = new Insets(20, 20, 5, 5);
 		gbc_jLabelOIDCSettings.gridx = 0;
 		gbc_jLabelOIDCSettings.gridy = 0;
 		add(getJLabelOIDCSettings(), gbc_jLabelOIDCSettings);
-		GridBagConstraints gbc_jButtonRestoreDefaults = new GridBagConstraints();
-		gbc_jButtonRestoreDefaults.insets = new Insets(10, 5, 5, 10);
-		gbc_jButtonRestoreDefaults.gridx = 3;
-		gbc_jButtonRestoreDefaults.gridy = 0;
-		add(getJButtonRestoreDefaults(), gbc_jButtonRestoreDefaults);
+		GridBagConstraints gbc_jButtonApply = new GridBagConstraints();
+		gbc_jButtonApply.insets = new Insets(20, 20, 0, 20);
+		gbc_jButtonApply.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jButtonApply.gridx = 2;
+		gbc_jButtonApply.gridy = 0;
+		add(getJButtonApply(), gbc_jButtonApply);
 		GridBagConstraints gbc_jLabelIssuerURI = new GridBagConstraints();
 		gbc_jLabelIssuerURI.anchor = GridBagConstraints.EAST;
-		gbc_jLabelIssuerURI.insets = new Insets(5, 10, 5, 5);
+		gbc_jLabelIssuerURI.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelIssuerURI.gridx = 0;
 		gbc_jLabelIssuerURI.gridy = 1;
 		add(getJLabelIssuerURI(), gbc_jLabelIssuerURI);
 		GridBagConstraints gbc_jTextFieldIssuerURI = new GridBagConstraints();
 		gbc_jTextFieldIssuerURI.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldIssuerURI.gridwidth = 3;
 		gbc_jTextFieldIssuerURI.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldIssuerURI.gridx = 1;
 		gbc_jTextFieldIssuerURI.gridy = 1;
 		add(getJTextFieldIssuerURI(), gbc_jTextFieldIssuerURI);
 		GridBagConstraints gbc_jLabelRealmID = new GridBagConstraints();
 		gbc_jLabelRealmID.anchor = GridBagConstraints.EAST;
-		gbc_jLabelRealmID.insets = new Insets(5, 10, 5, 5);
+		gbc_jLabelRealmID.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelRealmID.gridx = 0;
 		gbc_jLabelRealmID.gridy = 2;
 		add(getJLabelRealmID(), gbc_jLabelRealmID);
 		GridBagConstraints gbc_jTextFieldRealmID = new GridBagConstraints();
 		gbc_jTextFieldRealmID.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldRealmID.gridwidth = 3;
 		gbc_jTextFieldRealmID.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldRealmID.gridx = 1;
 		gbc_jTextFieldRealmID.gridy = 2;
 		add(getJTextFieldRealmID(), gbc_jTextFieldRealmID);
 		GridBagConstraints gbc_jLabelClientID = new GridBagConstraints();
 		gbc_jLabelClientID.anchor = GridBagConstraints.EAST;
-		gbc_jLabelClientID.insets = new Insets(5, 10, 5, 5);
+		gbc_jLabelClientID.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelClientID.gridx = 0;
 		gbc_jLabelClientID.gridy = 3;
 		add(getJLabelClientID(), gbc_jLabelClientID);
 		GridBagConstraints gbc_jTextFieldClientID = new GridBagConstraints();
 		gbc_jTextFieldClientID.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldClientID.gridwidth = 3;
 		gbc_jTextFieldClientID.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldClientID.gridx = 1;
 		gbc_jTextFieldClientID.gridy = 3;
 		add(getJTextFieldClientID(), gbc_jTextFieldClientID);
 		GridBagConstraints gbc_jLabelClientSecret = new GridBagConstraints();
 		gbc_jLabelClientSecret.anchor = GridBagConstraints.EAST;
-		gbc_jLabelClientSecret.insets = new Insets(5, 10, 5, 5);
+		gbc_jLabelClientSecret.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelClientSecret.gridx = 0;
 		gbc_jLabelClientSecret.gridy = 4;
 		add(getJLabelClientSecret(), gbc_jLabelClientSecret);
 		GridBagConstraints gbc_jTextFieldClientSecret = new GridBagConstraints();
 		gbc_jTextFieldClientSecret.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldClientSecret.gridwidth = 3;
 		gbc_jTextFieldClientSecret.insets = new Insets(5, 5, 5, 0);
 		gbc_jTextFieldClientSecret.gridx = 1;
 		gbc_jTextFieldClientSecret.gridy = 4;
 		add(getJTextFieldClientSecret(), gbc_jTextFieldClientSecret);
 		GridBagConstraints gbc_jLabelLocalCallbackServer = new GridBagConstraints();
 		gbc_jLabelLocalCallbackServer.anchor = GridBagConstraints.WEST;
-		gbc_jLabelLocalCallbackServer.gridwidth = 3;
-		gbc_jLabelLocalCallbackServer.insets = new Insets(15, 12, 5, 5);
+		gbc_jLabelLocalCallbackServer.gridwidth = 2;
+		gbc_jLabelLocalCallbackServer.insets = new Insets(20, 20, 5, 5);
 		gbc_jLabelLocalCallbackServer.gridx = 0;
 		gbc_jLabelLocalCallbackServer.gridy = 5;
 		add(getJLabelLocalCallbackServer(), gbc_jLabelLocalCallbackServer);
 		GridBagConstraints gbc_jLabelLocalPort = new GridBagConstraints();
-		gbc_jLabelLocalPort.gridwidth = 2;
 		gbc_jLabelLocalPort.anchor = GridBagConstraints.EAST;
-		gbc_jLabelLocalPort.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelLocalPort.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelLocalPort.gridx = 0;
 		gbc_jLabelLocalPort.gridy = 6;
 		add(getJLabelLocalHTTPPort(), gbc_jLabelLocalPort);
 		GridBagConstraints gbc_jTextFieldLocalPort = new GridBagConstraints();
 		gbc_jTextFieldLocalPort.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldLocalPort.gridwidth = 2;
 		gbc_jTextFieldLocalPort.insets = new Insets(5, 5, 5, 0);
-		gbc_jTextFieldLocalPort.gridx = 2;
+		gbc_jTextFieldLocalPort.gridx = 1;
 		gbc_jTextFieldLocalPort.gridy = 6;
 		add(getJTextFieldLocalHTTPPort(), gbc_jTextFieldLocalPort);
 		GridBagConstraints gbc_jLabelAuthenticationEndpoint = new GridBagConstraints();
 		gbc_jLabelAuthenticationEndpoint.anchor = GridBagConstraints.EAST;
-		gbc_jLabelAuthenticationEndpoint.gridwidth = 2;
-		gbc_jLabelAuthenticationEndpoint.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelAuthenticationEndpoint.insets = new Insets(10, 20, 0, 5);
 		gbc_jLabelAuthenticationEndpoint.gridx = 0;
 		gbc_jLabelAuthenticationEndpoint.gridy = 7;
 		add(getJLabelAuthenticationEndpoint(), gbc_jLabelAuthenticationEndpoint);
 		GridBagConstraints gbc_jTextFieldAuthenticationEndpoint = new GridBagConstraints();
-		gbc_jTextFieldAuthenticationEndpoint.gridwidth = 2;
-		gbc_jTextFieldAuthenticationEndpoint.insets = new Insets(5, 5, 5, 0);
+		gbc_jTextFieldAuthenticationEndpoint.insets = new Insets(5, 5, 0, 0);
 		gbc_jTextFieldAuthenticationEndpoint.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldAuthenticationEndpoint.gridx = 2;
+		gbc_jTextFieldAuthenticationEndpoint.gridx = 1;
 		gbc_jTextFieldAuthenticationEndpoint.gridy = 7;
 		add(getJTextFieldAuthenticationEndpoint(), gbc_jTextFieldAuthenticationEndpoint);
-		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
-		gbc_jPanelButtons.gridwidth = 4;
-		gbc_jPanelButtons.fill = GridBagConstraints.BOTH;
-		gbc_jPanelButtons.gridx = 0;
-		gbc_jPanelButtons.gridy = 8;
-		add(getJPanelButtons(), gbc_jPanelButtons);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.baseUI.options.AbstractOptionTab#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return Language.translate(OPTIONS_TAB_TITLE, Language.EN);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.baseUI.options.AbstractOptionTab#getTabToolTipText()
+	 */
+	@Override
+	public String getTabToolTipText() {
+		return Language.translate(OPTIONS_TAB_TOOLTIP_TEXT, Language.EN);
 	}
 
 	private JLabel getJLabelIssuerURI() {
@@ -232,14 +245,14 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 	}
 	private JLabel getJLabelLocalCallbackServer() {
 		if (jLabelLocalCallbackServer == null) {
-			jLabelLocalCallbackServer = new JLabel("Callback Server Settings");
+			jLabelLocalCallbackServer = new JLabel("Local HTTP Callback Server:");
 			jLabelLocalCallbackServer.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelLocalCallbackServer;
 	}
 	private JLabel getJLabelLocalHTTPPort() {
 		if (jLabelLocalHTTPPort == null) {
-			jLabelLocalHTTPPort = new JLabel("Local HTTP Port:");
+			jLabelLocalHTTPPort = new JLabel("Port:");
 			jLabelLocalHTTPPort.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelLocalHTTPPort;
@@ -253,14 +266,14 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 	}
 	private JLabel getJLabelOIDCSettings() {
 		if (jLabelOIDCSettings == null) {
-			jLabelOIDCSettings = new JLabel("KeyCloak / OpenID Connect Settings:");
+			jLabelOIDCSettings = new JLabel("OpenID Connect Settings:");
 			jLabelOIDCSettings.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelOIDCSettings;
 	}
 	private JLabel getJLabelAuthenticationEndpoint() {
 		if (jLabelAuthenticationEndpoint == null) {
-			jLabelAuthenticationEndpoint = new JLabel("Authentication Endpoint:");
+			jLabelAuthenticationEndpoint = new JLabel("Endpoint:");
 			jLabelAuthenticationEndpoint.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelAuthenticationEndpoint;
@@ -272,30 +285,6 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 		}
 		return jTextFieldAuthenticationEndpoint;
 	}
-	private JPanel getJPanelButtons() {
-		if (jPanelButtons == null) {
-			jPanelButtons = new JPanel();
-			GridBagLayout gbl_jPanelButtons = new GridBagLayout();
-			gbl_jPanelButtons.columnWidths = new int[]{0, 0, 0};
-			gbl_jPanelButtons.rowHeights = new int[]{0, 0};
-			gbl_jPanelButtons.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-			gbl_jPanelButtons.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-			jPanelButtons.setLayout(gbl_jPanelButtons);
-			GridBagConstraints gbc_jButtonApply = new GridBagConstraints();
-			gbc_jButtonApply.anchor = GridBagConstraints.EAST;
-			gbc_jButtonApply.insets = new Insets(10, 0, 10, 15);
-			gbc_jButtonApply.gridx = 0;
-			gbc_jButtonApply.gridy = 0;
-			jPanelButtons.add(getJButtonApply(), gbc_jButtonApply);
-			GridBagConstraints gbc_jButtonCancel = new GridBagConstraints();
-			gbc_jButtonCancel.insets = new Insets(10, 15, 12, 0);
-			gbc_jButtonCancel.anchor = GridBagConstraints.WEST;
-			gbc_jButtonCancel.gridx = 1;
-			gbc_jButtonCancel.gridy = 0;
-			jPanelButtons.add(getJButtonCancel(), gbc_jButtonCancel);
-		}
-		return jPanelButtons;
-	}
 	private JButton getJButtonApply() {
 		if (jButtonApply == null) {
 			jButtonApply = new JButton("Apply");
@@ -305,23 +294,6 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 			jButtonApply.addActionListener(this);
 		}
 		return jButtonApply;
-	}
-	private JButton getJButtonCancel() {
-		if (jButtonCancel == null) {
-			jButtonCancel = new JButton("Cancel");
-			jButtonCancel.setPreferredSize(new Dimension(100, 26));
-			jButtonCancel.setForeground(AwbThemeColor.ButtonTextRed.getColor());
-			jButtonCancel.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonCancel.addActionListener(this);
-		}
-		return jButtonCancel;
-	}
-	private JButton getJButtonRestoreDefaults() {
-		if (jButtonRestoreDefaults == null) {
-			jButtonRestoreDefaults = new JButton(new ImageIcon(this.getClass().getResource(ICON_PATH_RESTORE_DEFAULTS)));
-			jButtonRestoreDefaults.addActionListener(this);
-		}
-		return jButtonRestoreDefaults;
 	}
 
 	/**
@@ -367,11 +339,6 @@ public class OIDCSettingsPanel extends JPanel implements ActionListener {
 			this.setFormToModel();
 			parent.setVisible(false);
 			this.getOidcSettings().storeToPreferences();
-		} else if (ae.getSource()==this.getJButtonCancel()) {
-			parent.setVisible(false);
-		} else if (ae.getSource()==this.getJButtonRestoreDefaults()) {
-			this.setOidcSettings(OIDCSettings.getDefaultSettings());
-			this.setModelToForm();
 		}
 	}
 	
