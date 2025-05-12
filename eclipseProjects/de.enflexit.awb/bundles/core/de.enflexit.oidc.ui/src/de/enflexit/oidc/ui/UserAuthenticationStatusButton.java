@@ -33,6 +33,8 @@ public class UserAuthenticationStatusButton extends JButton {
 	private ImageIcon imageIconLoggedIn;
 	private ImageIcon imageIconLoginPending;
 	
+	private AuthenticationState authenticationState;
+	
 	/**
 	 * Instantiates a new user authentication status button.
 	 */
@@ -69,6 +71,8 @@ public class UserAuthenticationStatusButton extends JButton {
 	 */
 	public void setAuthenticationState(AuthenticationState authenticationState) {
 		
+		this.authenticationState = authenticationState;
+		
 		switch(authenticationState) {
 		case LOGGED_IN:
 			String username;
@@ -96,8 +100,24 @@ public class UserAuthenticationStatusButton extends JButton {
 		
 	}
 	
+	/**
+	 * Checks if the application is currently in dark mode.
+	 * @return true, if is in dark mode
+	 */
 	private boolean isInDarkMode() {
 		return AwbLookAndFeelAdjustments.isDarkLookAndFeel();
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JButton#updateUI()
+	 */
+	@Override
+	public void updateUI() {
+		super.updateUI();
+		if (this.authenticationState==AuthenticationState.LOGGED_OUT) {
+			// --- If in logged out state, update the icon (other state icons are the same for light and dark mode)
+			this.setIcon(this.getImageIconLoggedOut());
+		}
 	}
 	
 }

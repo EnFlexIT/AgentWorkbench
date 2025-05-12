@@ -11,6 +11,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import de.enflexit.awb.core.jade.PortChecker;
 import de.enflexit.oidc.OIDCCallbackListener;
 import de.enflexit.oidc.httpCallback.PropertyContentProvider.FileToProvide;
 
@@ -21,6 +22,7 @@ import de.enflexit.oidc.httpCallback.PropertyContentProvider.FileToProvide;
 public class OIDCCallbackHTTPServer {
 	
 	private static final String URL_PREFIX = "/oauth/callback/";
+	private static final int DEFAULT_PORT = 8888;
 	
 	private int port;
 	private String callbackEndpoint;
@@ -43,8 +45,8 @@ public class OIDCCallbackHTTPServer {
 	 * @param callbackListener the callback listener
 	 */
 	public OIDCCallbackHTTPServer(int port, String callbackEndpoint, OIDCCallbackListener callbackListener) {
-		this.port = port;
-		this.callbackEndpoint = callbackEndpoint;
+		this.port = new PortChecker(DEFAULT_PORT).getFreePort();
+		this.callbackEndpoint = URL_PREFIX;
 		this.callbackListener = callbackListener;
 	}
 

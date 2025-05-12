@@ -10,7 +10,8 @@ Require-Bundle: oauth2-oidc-sdk,
  net.minidev.json-smart
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.oidc
-Import-Package: de.enflexit.common.swing,
+Import-Package: de.enflexit.awb.core.jade,
+ de.enflexit.common.swing,
  de.enflexit.language,
  org.eclipse.core.runtime.preferences,
  org.eclipse.equinox.security.storage,

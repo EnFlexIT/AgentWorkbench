@@ -37,12 +37,7 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 	private JTextField jTextFieldClientID;
 	private JLabel jLabelClientSecret;
 	private JTextField jTextFieldClientSecret;
-	private JLabel jLabelLocalCallbackServer;
-	private JLabel jLabelLocalHTTPPort;
-	private JTextField jTextFieldLocalHTTPPort;
 	private JLabel jLabelOIDCSettings;
-	private JLabel jLabelAuthenticationEndpoint;
-	private JTextField jTextFieldAuthenticationEndpoint;
 	private JButton jButtonApply;
 	
 	private OIDCSettings oidcSettings;
@@ -73,9 +68,9 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelOIDCSettings = new GridBagConstraints();
 		gbc_jLabelOIDCSettings.anchor = GridBagConstraints.SOUTHWEST;
@@ -85,90 +80,59 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 		gbc_jLabelOIDCSettings.gridy = 0;
 		add(getJLabelOIDCSettings(), gbc_jLabelOIDCSettings);
 		GridBagConstraints gbc_jButtonApply = new GridBagConstraints();
-		gbc_jButtonApply.insets = new Insets(20, 20, 0, 20);
+		gbc_jButtonApply.insets = new Insets(20, 20, 5, 20);
 		gbc_jButtonApply.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jButtonApply.gridx = 2;
 		gbc_jButtonApply.gridy = 0;
 		add(getJButtonApply(), gbc_jButtonApply);
 		GridBagConstraints gbc_jLabelIssuerURI = new GridBagConstraints();
-		gbc_jLabelIssuerURI.anchor = GridBagConstraints.EAST;
+		gbc_jLabelIssuerURI.anchor = GridBagConstraints.WEST;
 		gbc_jLabelIssuerURI.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelIssuerURI.gridx = 0;
 		gbc_jLabelIssuerURI.gridy = 1;
 		add(getJLabelIssuerURI(), gbc_jLabelIssuerURI);
 		GridBagConstraints gbc_jTextFieldIssuerURI = new GridBagConstraints();
 		gbc_jTextFieldIssuerURI.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldIssuerURI.insets = new Insets(5, 5, 5, 0);
+		gbc_jTextFieldIssuerURI.insets = new Insets(5, 5, 5, 5);
 		gbc_jTextFieldIssuerURI.gridx = 1;
 		gbc_jTextFieldIssuerURI.gridy = 1;
 		add(getJTextFieldIssuerURI(), gbc_jTextFieldIssuerURI);
 		GridBagConstraints gbc_jLabelRealmID = new GridBagConstraints();
-		gbc_jLabelRealmID.anchor = GridBagConstraints.EAST;
+		gbc_jLabelRealmID.anchor = GridBagConstraints.WEST;
 		gbc_jLabelRealmID.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelRealmID.gridx = 0;
 		gbc_jLabelRealmID.gridy = 2;
 		add(getJLabelRealmID(), gbc_jLabelRealmID);
 		GridBagConstraints gbc_jTextFieldRealmID = new GridBagConstraints();
 		gbc_jTextFieldRealmID.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldRealmID.insets = new Insets(5, 5, 5, 0);
+		gbc_jTextFieldRealmID.insets = new Insets(5, 5, 5, 5);
 		gbc_jTextFieldRealmID.gridx = 1;
 		gbc_jTextFieldRealmID.gridy = 2;
 		add(getJTextFieldRealmID(), gbc_jTextFieldRealmID);
 		GridBagConstraints gbc_jLabelClientID = new GridBagConstraints();
-		gbc_jLabelClientID.anchor = GridBagConstraints.EAST;
+		gbc_jLabelClientID.anchor = GridBagConstraints.WEST;
 		gbc_jLabelClientID.insets = new Insets(10, 20, 5, 5);
 		gbc_jLabelClientID.gridx = 0;
 		gbc_jLabelClientID.gridy = 3;
 		add(getJLabelClientID(), gbc_jLabelClientID);
 		GridBagConstraints gbc_jTextFieldClientID = new GridBagConstraints();
 		gbc_jTextFieldClientID.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldClientID.insets = new Insets(5, 5, 5, 0);
+		gbc_jTextFieldClientID.insets = new Insets(5, 5, 5, 5);
 		gbc_jTextFieldClientID.gridx = 1;
 		gbc_jTextFieldClientID.gridy = 3;
 		add(getJTextFieldClientID(), gbc_jTextFieldClientID);
 		GridBagConstraints gbc_jLabelClientSecret = new GridBagConstraints();
-		gbc_jLabelClientSecret.anchor = GridBagConstraints.EAST;
-		gbc_jLabelClientSecret.insets = new Insets(10, 20, 5, 5);
+		gbc_jLabelClientSecret.anchor = GridBagConstraints.WEST;
+		gbc_jLabelClientSecret.insets = new Insets(10, 20, 0, 5);
 		gbc_jLabelClientSecret.gridx = 0;
 		gbc_jLabelClientSecret.gridy = 4;
 		add(getJLabelClientSecret(), gbc_jLabelClientSecret);
 		GridBagConstraints gbc_jTextFieldClientSecret = new GridBagConstraints();
 		gbc_jTextFieldClientSecret.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldClientSecret.insets = new Insets(5, 5, 5, 0);
+		gbc_jTextFieldClientSecret.insets = new Insets(5, 5, 0, 5);
 		gbc_jTextFieldClientSecret.gridx = 1;
 		gbc_jTextFieldClientSecret.gridy = 4;
 		add(getJTextFieldClientSecret(), gbc_jTextFieldClientSecret);
-		GridBagConstraints gbc_jLabelLocalCallbackServer = new GridBagConstraints();
-		gbc_jLabelLocalCallbackServer.anchor = GridBagConstraints.WEST;
-		gbc_jLabelLocalCallbackServer.gridwidth = 2;
-		gbc_jLabelLocalCallbackServer.insets = new Insets(20, 20, 5, 5);
-		gbc_jLabelLocalCallbackServer.gridx = 0;
-		gbc_jLabelLocalCallbackServer.gridy = 5;
-		add(getJLabelLocalCallbackServer(), gbc_jLabelLocalCallbackServer);
-		GridBagConstraints gbc_jLabelLocalPort = new GridBagConstraints();
-		gbc_jLabelLocalPort.anchor = GridBagConstraints.EAST;
-		gbc_jLabelLocalPort.insets = new Insets(10, 20, 5, 5);
-		gbc_jLabelLocalPort.gridx = 0;
-		gbc_jLabelLocalPort.gridy = 6;
-		add(getJLabelLocalHTTPPort(), gbc_jLabelLocalPort);
-		GridBagConstraints gbc_jTextFieldLocalPort = new GridBagConstraints();
-		gbc_jTextFieldLocalPort.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldLocalPort.insets = new Insets(5, 5, 5, 0);
-		gbc_jTextFieldLocalPort.gridx = 1;
-		gbc_jTextFieldLocalPort.gridy = 6;
-		add(getJTextFieldLocalHTTPPort(), gbc_jTextFieldLocalPort);
-		GridBagConstraints gbc_jLabelAuthenticationEndpoint = new GridBagConstraints();
-		gbc_jLabelAuthenticationEndpoint.anchor = GridBagConstraints.EAST;
-		gbc_jLabelAuthenticationEndpoint.insets = new Insets(10, 20, 0, 5);
-		gbc_jLabelAuthenticationEndpoint.gridx = 0;
-		gbc_jLabelAuthenticationEndpoint.gridy = 7;
-		add(getJLabelAuthenticationEndpoint(), gbc_jLabelAuthenticationEndpoint);
-		GridBagConstraints gbc_jTextFieldAuthenticationEndpoint = new GridBagConstraints();
-		gbc_jTextFieldAuthenticationEndpoint.insets = new Insets(5, 5, 0, 0);
-		gbc_jTextFieldAuthenticationEndpoint.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldAuthenticationEndpoint.gridx = 1;
-		gbc_jTextFieldAuthenticationEndpoint.gridy = 7;
-		add(getJTextFieldAuthenticationEndpoint(), gbc_jTextFieldAuthenticationEndpoint);
 	}
 
 	/* (non-Javadoc)
@@ -243,47 +207,12 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 		}
 		return jTextFieldClientSecret;
 	}
-	private JLabel getJLabelLocalCallbackServer() {
-		if (jLabelLocalCallbackServer == null) {
-			jLabelLocalCallbackServer = new JLabel("Local HTTP Callback Server:");
-			jLabelLocalCallbackServer.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelLocalCallbackServer;
-	}
-	private JLabel getJLabelLocalHTTPPort() {
-		if (jLabelLocalHTTPPort == null) {
-			jLabelLocalHTTPPort = new JLabel("Port:");
-			jLabelLocalHTTPPort.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelLocalHTTPPort;
-	}
-	private JTextField getJTextFieldLocalHTTPPort() {
-		if (jTextFieldLocalHTTPPort == null) {
-			jTextFieldLocalHTTPPort = new JTextField();
-			jTextFieldLocalHTTPPort.setColumns(10);
-		}
-		return jTextFieldLocalHTTPPort;
-	}
 	private JLabel getJLabelOIDCSettings() {
 		if (jLabelOIDCSettings == null) {
 			jLabelOIDCSettings = new JLabel("OpenID Connect Settings:");
 			jLabelOIDCSettings.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelOIDCSettings;
-	}
-	private JLabel getJLabelAuthenticationEndpoint() {
-		if (jLabelAuthenticationEndpoint == null) {
-			jLabelAuthenticationEndpoint = new JLabel("Endpoint:");
-			jLabelAuthenticationEndpoint.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelAuthenticationEndpoint;
-	}
-	private JTextField getJTextFieldAuthenticationEndpoint() {
-		if (jTextFieldAuthenticationEndpoint == null) {
-			jTextFieldAuthenticationEndpoint = new JTextField();
-			jTextFieldAuthenticationEndpoint.setColumns(10);
-		}
-		return jTextFieldAuthenticationEndpoint;
 	}
 	private JButton getJButtonApply() {
 		if (jButtonApply == null) {
@@ -317,8 +246,6 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 		this.getJTextFieldRealmID().setText(this.getOidcSettings().getRealmID());
 		this.getJTextFieldClientID().setText(this.getOidcSettings().getClientID());
 		this.getJTextFieldClientSecret().setText(this.getOidcSettings().getClientSecret());
-		this.getJTextFieldLocalHTTPPort().setText(String.valueOf(this.getOidcSettings().getLocalHTTPPort()));
-		this.getJTextFieldAuthenticationEndpoint().setText(this.getOidcSettings().getAuthenticationEndpoint());
 	}
 	
 	private void setFormToModel() {
@@ -326,8 +253,6 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 		this.getOidcSettings().setRealmID(this.getJTextFieldRealmID().getText());
 		this.getOidcSettings().setClientID(this.getJTextFieldClientID().getText());
 		this.getOidcSettings().setClientSecret(this.getJTextFieldClientSecret().getText());
-		this.getOidcSettings().setLocalHTTPPort(Integer.parseInt(this.getJTextFieldLocalHTTPPort().getText()));
-		this.getOidcSettings().setAuthenticationEndpoint(this.getJTextFieldAuthenticationEndpoint().getText());
 	}
 
 	/* (non-Javadoc)
