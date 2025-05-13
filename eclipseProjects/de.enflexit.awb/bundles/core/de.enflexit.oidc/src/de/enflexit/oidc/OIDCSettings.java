@@ -14,7 +14,7 @@ public class OIDCSettings {
 	
 	private static final String DEFAULT_ISSUER_URL = "https://login.enflex.it";
 	private static final String DEFAULT_REALM_NAME = "enflexService";
-	private static final String DEFAULT_CLIENT_NAME = "AWB-Test";
+	private static final String DEFAULT_CLIENT_NAME = "Agent.Workbench";
 	private static final int DEFAULT_LOCAL_PORT = 8888;
 	private static final String DEFAULT_AUTHENTICATION_ENDPOINT = "/oauth/callback/";
 	
@@ -121,23 +121,6 @@ public class OIDCSettings {
 		this.authenticationEndpoint = authenticationEndpoint;
 	}
 	
-	/**
-	 * Initializes all settings with the default values specified in the constants above..
-	 */
-	private void initializeWithDefaults() {
-		this.setIssuerURL(DEFAULT_ISSUER_URL);
-		this.setRealmID(DEFAULT_REALM_NAME);
-		this.setClientID(DEFAULT_CLIENT_NAME);
-		this.setClientSecret(DEFAULT_CLIENT_SECRET);
-		this.setLocalHTTPPort(DEFAULT_LOCAL_PORT);
-		this.setAuthenticationEndpoint(DEFAULT_AUTHENTICATION_ENDPOINT);
-	}
-	
-	public static OIDCSettings getDefaultSettings() {
-		OIDCSettings defaultSettings = new OIDCSettings();
-		defaultSettings.initializeWithDefaults();
-		return defaultSettings;
-	}
 	
 	public static OIDCSettings loadFromPreferences() {
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PREFERENCES_NODE);

@@ -119,7 +119,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	private Window owner;
 
 	private String presetUsername;
-	private boolean inited = false;
+	private boolean isInitialized = false;
 
 	private File truststoreFile;
 
@@ -162,7 +162,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	private void checkForRefreshToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException, IOException {
 		RefreshToken refreshToken = this.loadRefreshToken();
 		if (refreshToken!=null) {
-			if (this.inited==false) {
+			if (this.isInitialized==false) {
 				this.init();
 			}
 			
@@ -205,6 +205,8 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	 */
 	public void setOIDCSettings(OIDCSettings oidcSettings) {
 		this.oidcSettings = oidcSettings;
+		// --- Force re-initialization --------------------
+		this.isInitialized = false;
 	}
 	
 	/**
@@ -407,7 +409,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		
 		oidcClient.setLocalCallbackURI(this.getLocalCallbackURL());
 		
-		inited = true;
+		isInitialized = true;
 	}
 	
 	private File getTrustStoreFile() {
@@ -438,7 +440,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	public void requestAuthorizationCode(boolean showLogin) {
 		
 		// --- Perform initialization tasks, if not done yet --------
-		if (!inited) {
+		if (!isInitialized) {
 			try {
 				this.init();
 			} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException e) {
@@ -559,7 +561,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	public boolean authorizeByUserAndPW(String username, String password) throws URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
 		
 		String authRedirection = "";
-		if (!inited) {
+		if (!isInitialized) {
 			this.init();
 		}
 

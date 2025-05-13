@@ -7,13 +7,12 @@ import java.awt.GridBagConstraints;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.Window;
-
 import javax.swing.JTextField;
 
 import de.enflexit.awb.baseUI.options.AbstractOptionTab;
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.language.Language;
+import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCSettings;
 
 import javax.swing.JButton;
@@ -41,7 +40,6 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 	private JButton jButtonApply;
 	
 	private OIDCSettings oidcSettings;
-	private Window parent;
 	
 	/**
 	 * Instantiates a new OIDC settings panel.
@@ -55,8 +53,7 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 	 * @param oidcSettings the oidc settings
 	 * @param parent the parent
 	 */
-	public OIDCSettingsOptionTab(OIDCSettings oidcSettings, Window parent) {
-		this.parent = parent;
+	public OIDCSettingsOptionTab(OIDCSettings oidcSettings) {
 		this.oidcSettings = oidcSettings;
 		this.initialize();
 		this.setModelToForm();
@@ -262,7 +259,7 @@ public class OIDCSettingsOptionTab extends AbstractOptionTab {
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonApply()) {
 			this.setFormToModel();
-			parent.setVisible(false);
+			OIDCAuthorization.getInstance().setOIDCSettings(this.getOidcSettings());
 			this.getOidcSettings().storeToPreferences();
 		}
 	}
