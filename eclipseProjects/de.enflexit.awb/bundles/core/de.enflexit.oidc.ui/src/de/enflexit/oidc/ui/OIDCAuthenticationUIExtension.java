@@ -11,25 +11,20 @@ import java.net.URISyntaxException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.oidc.AuthenticationStateListener;
 import de.enflexit.oidc.OIDCAuthorization;
-import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 import de.enflexit.oidc.OIDCSettings;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
-import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 
 /**
  * Adds a toolbar button and a menu for handling user authentication against keycloak.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class OIDCAuthenticationUIExtension extends MainWindowExtension implements ActionListener, AuthenticationStateListener {
+public class OIDCAuthenticationUIExtension extends MainWindowExtension implements ActionListener {
 	
 	private static final String ACTION_COMMAND_OIDC_SETTINGS = "Edit KeyCloak / OIDC Settings";
 	private static final String ACTION_COMMAND_ACCOUNT_PANEL = "Open KeyCloak Account Panel";
@@ -49,13 +44,8 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	 */
 	@Override
 	public void initialize() {
-		
 		this.setJButtonIdentityProvider(this.getAuthenticationStateButton());
-		
-		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, new JMenuItem(this.getActionOidcSettings()), null, SeparatorPosition.SeparatorInFrontOf);
-		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, new JMenuItem(this.getActionAccountPanel()), null, SeparatorPosition.NoSeparator);
-		
-		OIDCAuthorization.getInstance().addAuthenticationStateListener(this);
+		OIDCAuthorization.getInstance().addAuthenticationStateListener(this.getAuthenticationStateButton());
 	}
 	
 	private UserAuthenticationStatusButton getAuthenticationStateButton() {
@@ -130,15 +120,6 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.oidc.AuthenticationStateListener#authenticationStateChanged(de.enflexit.oidc.AuthenticationState)
-	 */
-	@Override
-	public void authenticationStateChanged(AuthenticationState authenticationState) {
-		this.getAuthenticationStateButton().setAuthenticationState(authenticationState);
-	}
-
-	
-	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
@@ -163,7 +144,9 @@ public class OIDCAuthenticationUIExtension extends MainWindowExtension implement
 	 * Shows the popup menu.
 	 */
 	private void showPopupMenu() {
-		this.getJPopupMenuAuthentication().show(this.getAuthenticationStateButton(), 0, this.getAuthenticationStateButton().getHeight());
+		// --- Align the menu to the right with the button ----------
+		int moveLeft = this.getJPopupMenuAuthentication().getPreferredSize().width - this.getAuthenticationStateButton().getWidth();
+		this.getJPopupMenuAuthentication().show(this.getAuthenticationStateButton(), -moveLeft, this.getAuthenticationStateButton().getHeight());
 	}
 
 	/**

@@ -16,7 +16,7 @@ public class OIDCSettingsOptionDialogExtension extends OptionDialogExtension {
 	@Override
 	public void initialize() {
 		OIDCSettings oidcSettings = OIDCAuthorization.getInstance().getOIDCSettings();
-		this.addOptionsTab(new OIDCSettingsOptionTab(oidcSettings, null));
+		this.addOptionsTab(new OIDCSettingsOptionTab(oidcSettings));
 	}
 
 }

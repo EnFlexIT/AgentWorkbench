@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.oidc.AuthenticationStateListener;
 import de.enflexit.oidc.OIDCAuthorization;
 import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
 
@@ -13,7 +14,7 @@ import de.enflexit.oidc.OIDCAuthorization.AuthenticationState;
  * A custom toolbar button that shows the current authentication state of the user, and allows logging in/out.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class UserAuthenticationStatusButton extends JButton {
+public class UserAuthenticationStatusButton extends JButton implements AuthenticationStateListener {
 	
 	private static final String ICON_PATH_LOGGED_IN ="/icons/UserLoggedIn.png";
 	private static final String ICON_PATH_LOGGED_OUT_LIGHT = "/icons/UserLoggedOutLight.png";
@@ -118,6 +119,14 @@ public class UserAuthenticationStatusButton extends JButton {
 			// --- If in logged out state, update the icon (other state icons are the same for light and dark mode)
 			this.setIcon(this.getImageIconLoggedOut());
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.oidc.AuthenticationStateListener#authenticationStateChanged(de.enflexit.oidc.OIDCAuthorization.AuthenticationState)
+	 */
+	@Override
+	public void authenticationStateChanged(AuthenticationState authenticationState) {
+		this.setAuthenticationState(authenticationState);
 	}
 	
 }
