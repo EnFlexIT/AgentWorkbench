@@ -10,7 +10,8 @@ import de.enflexit.common.properties.PropertyValue;
  */
 public abstract class DefaultWebApplication implements AwbWebApplication {
 
-	private Properties appProperties;
+	protected Properties appProperties;
+
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.webApp.AwbWebApplication#setProperties(de.enflexit.common.properties.Properties)
@@ -19,7 +20,7 @@ public abstract class DefaultWebApplication implements AwbWebApplication {
 	public void setProperties(Properties properties) {
 		this.appProperties = properties;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.webApp.AwbWebApplication#getProperties(de.enflexit.awb.ws.webApp.AwbWebApplication.PropertyType)
 	 */
@@ -61,7 +62,7 @@ public abstract class DefaultWebApplication implements AwbWebApplication {
 	 * @return true, if is public property
 	 */
 	private boolean isPublicProperty(String identifier) {
-		if (this.getPublicPropertyKeys()!=null && this.getPublicPropertyKeys().contains(identifier)==true) {
+		if (identifier!=null && identifier.isBlank()==false && this.getPublicPropertyKeys()!=null && this.getPublicPropertyKeys().contains(identifier)==true) {
 			return true;
 		}
 		return false;

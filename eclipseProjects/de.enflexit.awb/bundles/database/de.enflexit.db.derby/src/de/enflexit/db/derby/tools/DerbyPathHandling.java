@@ -1,4 +1,4 @@
-package de.enflexit.db.derby.server;
+package de.enflexit.db.derby.tools;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -6,6 +6,10 @@ import java.nio.file.Path;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.enflexit.common.ExecutionEnvironment;
 
 
 /**
@@ -20,8 +24,10 @@ import org.osgi.framework.FrameworkUtil;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class PathHandling {
+public class DerbyPathHandling {
 
+	static Logger LOGGER = LoggerFactory.getLogger(DerbyPathHandling.class);
+	
 	public static final String SUB_PATH_PROPERTIES = "properties";
 	public static final String SUB_PATH_DATABASE   = "db";
 
@@ -34,7 +40,7 @@ public class PathHandling {
 	 */
 	private static File getClassLocation(Class<?> clazz) {
 		
-		if (clazz==null) clazz = PathHandling.class;
+		if (clazz==null) clazz = DerbyPathHandling.class;
 		
 		File thisFile = new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath());
 		if (thisFile.getAbsolutePath().contains("%20")==true) {
@@ -51,10 +57,10 @@ public class PathHandling {
 	 * The class may be a located within a bundle (for *.jar-files) or in a directory (in a development environment).
 	 *
 	 * @param clazz the class belonging to the bundle to resolve a corresponding application base path.
-	 * If the specified class is <code>null</code>, the current class PathHandling will be used
+	 * If the specified class is <code>null</code>, the current class DerbyPathHandling will be used
 	 * @return the application base path
 	 */
-	static Path getApplicationBasePath(Class<?> clazz) {
+	public static Path getApplicationBasePath(Class<?> clazz) {
 		
 		boolean debug = false;
 		String baseDir = null;
@@ -63,8 +69,8 @@ public class PathHandling {
 			// ----------------------------------------------------------------			
 			// --- Get initial base directory by checking this class location -
 			// ----------------------------------------------------------------
-			if (clazz==null) clazz = PathHandling.class;
-			File thisFile = PathHandling.getClassLocation(clazz);
+			if (clazz==null) clazz = DerbyPathHandling.class;
+			File thisFile = DerbyPathHandling.getClassLocation(clazz);
 			
 			// ----------------------------------------------------------------
 			// --- Examine the path reference found --------------------------
@@ -94,27 +100,9 @@ public class PathHandling {
 		// --------------------------------------------------------------------
 		if (debug==true) {
 			Bundle bundle = FrameworkUtil.getBundle(clazz);
-			System.err.println("[" + PathHandling.class.getSimpleName() + "]  Base path for class out of bundle '" + bundle.getSymbolicName() + "' is '" + baseDir + "'");
+			System.err.println("[" + DerbyPathHandling.class.getSimpleName() + "]  Base path for class out of bundle '" + bundle.getSymbolicName() + "' is '" + baseDir + "'");
 		}
 		return Path.of(baseDir);
-	}
-	
-	/**
-	 * This method can be invoked in order to get the path to the property folder 'properties\'.
-	 * @param absolute set true if you want to get the full path to this 
-	 * @return the path reference to the property folder
-	 */
-	static Path getPropertiesPath(boolean absolute){
-		Path propPath = null;
-		if (absolute==true) { 
-			propPath =  PathHandling.getApplicationBasePath(null).resolve(SUB_PATH_PROPERTIES);
-		} else {
-			propPath = Path.of(SUB_PATH_PROPERTIES);	
-		}
-		// --- Create directory, if not already there -----
-		PathHandling.createDirectoryIfNotExists(propPath);
-
-		return propPath;
 	}
 	
 	/**
@@ -122,19 +110,18 @@ public class PathHandling {
 	 * @param absolute set true if you want to get the full path to this 
 	 * @return the path reference to the property folder
 	 */
-	static Path getDatabasePath(boolean absolute){
+	public static Path getDatabasePath(Class<?> clazz, boolean absolute){
 		Path dbPath = null;
 		if (absolute==true) { 
-			dbPath =  PathHandling.getApplicationBasePath(null).resolve(SUB_PATH_DATABASE);
+			dbPath =  DerbyPathHandling.getApplicationBasePath(clazz).resolve(SUB_PATH_DATABASE);
 		} else {
 			dbPath = Path.of(SUB_PATH_DATABASE);	
 		}
 		// --- Create directory, if not already there -----
-		PathHandling.createDirectoryIfNotExists(dbPath);
+		DerbyPathHandling.createDirectoryIfNotExists(dbPath);
 
 		return dbPath;
 	}
-	
 	/**
 	 * Creates the directory if not already there and thus required.
 	 * @param path the path

@@ -48,6 +48,14 @@ public class DerbyNetworkServer extends Thread {
 		derbyNetworkServerInstance = null;
 	}
 
+	/**
+	 * Checks if the Derby network server is currently executed.
+	 * @return true, if is executed
+	 */
+	public static boolean isExecuted() {
+		return derbyNetworkServerInstance!=null;
+	}
+
 
 	// ------------------------------------------------------------------------
 	// --- From here, instance handling ---------------------------------------

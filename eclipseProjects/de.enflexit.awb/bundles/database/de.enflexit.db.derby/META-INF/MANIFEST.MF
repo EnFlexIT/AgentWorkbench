@@ -30,6 +30,8 @@ Import-Package: de.enflexit.awb.core.jade,
  org.osgi.service.prefs,
  org.slf4j
 Export-Package: de.enflexit.db.derby,
+ de.enflexit.db.derby.server,
+ de.enflexit.db.derby.tools,
  org.apache.derby.agg,
  org.apache.derby.authentication,
  org.apache.derby.catalog,

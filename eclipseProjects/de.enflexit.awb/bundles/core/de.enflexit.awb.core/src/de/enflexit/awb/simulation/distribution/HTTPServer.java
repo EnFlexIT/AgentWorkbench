@@ -1451,10 +1451,14 @@ public class HTTPServer {
             int pos = host.indexOf(':');
             host = pos < 0 ? host : host.substring(0, pos);
             try {
-                return baseURL = new URL(secure ? "https" : "http", host, port, "");
-            } catch (MalformedURLException mue) {
+            	// --- Initial definition (prev. Java 20)
+            	// return baseURL = new URL(secure ? "https" : "http", host, port, "");
+            	String uriString = (secure ? "https" : "http") + "://" + host + ":" + port;
+            	baseURL = new URI(uriString).toURL();
+            	return baseURL;
+            } catch (MalformedURLException | URISyntaxException mue) {
                 return null;
-            }
+			}
         }
 
         /**

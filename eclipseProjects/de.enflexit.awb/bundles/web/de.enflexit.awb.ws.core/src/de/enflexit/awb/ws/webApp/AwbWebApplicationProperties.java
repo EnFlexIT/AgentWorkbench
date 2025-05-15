@@ -13,6 +13,7 @@ import java.util.List;
 import de.enflexit.awb.ws.core.JettyWebApplicationSettings.UpdateStrategy;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.properties.Properties;
+import de.enflexit.db.derby.server.DerbyNetworkServerProperties;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import jakarta.xml.bind.JAXBContext;
@@ -40,6 +41,7 @@ public class AwbWebApplicationProperties {
 
 	public static final String DEFAULT_WEB_APP_DOWNLOAD_URL = "web.app.download-url";
 	public static final String DEFAULT_WEB_APP_UPDATE_STRATEGY = "web.app.update-strategy";
+	public static final String DEFAULT_WEB_APP_DATABASE_PROPERTIES = "web.app.db-properties";
 	
 	private String webAppName;
 	private Properties properties;
@@ -106,7 +108,25 @@ public class AwbWebApplicationProperties {
 		if (idList.contains(DEFAULT_WEB_APP_DOWNLOAD_URL)==false)		webAppProps.setStringValue(DEFAULT_WEB_APP_DOWNLOAD_URL, "");
 		if (idList.contains(DEFAULT_WEB_APP_UPDATE_STRATEGY)==false)	webAppProps.setStringValue(DEFAULT_WEB_APP_UPDATE_STRATEGY, UpdateStrategy.Automatic.toString());
 		
-		// --- DB-settings --------------------------------
+		// --- Derby DB-settings --------------------------
+		if (idList.contains(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_START_SERVER)==false)	webAppProps.setBooleanValue(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_START_SERVER, false);
+		
+		if (idList.contains(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_HOST)==false)			webAppProps.setStringValue(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_HOST, "localhost");
+		if (idList.contains(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_PORT)==false)			webAppProps.setIntegerValue(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_PORT, 1527);
+		
+		if (idList.contains(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_USERNAME)==false)		webAppProps.setStringValue(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_USERNAME, "awb");
+		if (idList.contains(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_PASSWORD)==false)		webAppProps.setStringValue(DerbyNetworkServerProperties.DERBY_SERVER_PREFERENCES_PASSWORD, "awb");
+		
+		// --- General DB-connection settings -------------
+		String[] defaultDatabaseProperties = new String[6]; 
+		defaultDatabaseProperties[0] = HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass;
+		defaultDatabaseProperties[1] = HibernateDatabaseService.HIBERNATE_PROPERTY_URL;
+		defaultDatabaseProperties[2] = HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog;
+		defaultDatabaseProperties[3] = HibernateDatabaseService.HIBERNATE_PROPERTY_UserName;
+		defaultDatabaseProperties[4] = HibernateDatabaseService.HIBERNATE_PROPERTY_Password;
+		if (idList.contains(DEFAULT_WEB_APP_DATABASE_PROPERTIES)==false)	webAppProps.setStringValue(DEFAULT_WEB_APP_DATABASE_PROPERTIES, String.join(",", defaultDatabaseProperties));
+		
+		// --- If no DB settings could be found -----------
 		boolean containsDbEntries = idList.contains(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
 		if (containsDbEntries==false) {
 			// --- Get available DB systems ---------------
@@ -127,11 +147,10 @@ public class AwbWebApplicationProperties {
 				}
 				
 			} else {
-				AwbWebApplicationManager.LOGGER.error("Not a single database service could be found: Add one of the available database systems to the activated bundles");
+				AwbWebApplicationManager.LOGGER.error("Not a single database service could be found: Add at least one of the available database system bundles to the activated bundles");
 				
 			}
 		}
-		
 	}
 	
 	

@@ -57,11 +57,19 @@ public class CustomDerbyServerConfiguration implements CustomDatabaseConfigurati
 		DerbyNetworkServerProperties dnsConfigCurr = new DerbyNetworkServerProperties();
 		DerbyNetworkServerProperties dnsConfigNew  = this.getUIComponent().getDerbyNetworkServerProperties();
 		if (dnsConfigNew.equals(dnsConfigCurr)==false) {
+			// --- Save and apply the new configuration -------------
 			success = dnsConfigNew.save();
 			if (dnsConfigNew.isStartDerbyNetworkServer()==true) {
+				// --- Start the server with the new configuration --
+				if (DerbyNetworkServer.isExecuted()==true) {
+					DerbyNetworkServer.terminate();
+				}
 				DerbyNetworkServer.execute();
+				
 			} else {
+				// --- If executed, stop the server------------------
 				DerbyNetworkServer.terminate();
+				
 			}
 		}
 		return success;
