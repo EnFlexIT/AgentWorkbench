@@ -292,7 +292,7 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Try to initialize a AwbWebApplication, if defined ----
-		AwbWebApplicationManager.initialize();
+		AwbWebApplicationManager.initialize(serverConfig);
 		
 		// ----------------------------------------------------------
 		// --- Create new server instance ---------------------------

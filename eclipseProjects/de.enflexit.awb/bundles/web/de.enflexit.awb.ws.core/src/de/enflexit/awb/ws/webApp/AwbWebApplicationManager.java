@@ -6,7 +6,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyServerManager;
+import de.enflexit.awb.ws.core.JettyWebApplicationSettings;
+import de.enflexit.awb.ws.core.JettyWebApplicationSettings.UpdateStrategy;
 import de.enflexit.awb.ws.webApp.AwbWebApplication.PropertyType;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.properties.Properties;
@@ -36,10 +39,11 @@ public class AwbWebApplicationManager {
 	/**
 	 * If provided by an OSIG service, initializes the first AwbWebApplication before
 	 * the {@link JettyServerManager} starts the Jetty server.
-	 * 
+	 *
+	 * @param jettyConfig the JettyConfiguration to work on
 	 * @see JettyServerManager#startServer(de.enflexit.awb.ws.core.JettyConfiguration)
 	 */
-	public static void initialize() {
+	public static void initialize(JettyConfiguration jettyConfig) {
 	
 		// --- If already defined, skip initialization --------------
 		if (AwbWebApplicationManager.isDefinedAwbWebApplication(false)==true) return;
@@ -72,6 +76,9 @@ public class AwbWebApplicationManager {
 			// --- Assign the properties to the web application -----
 			AwbWebApplicationManager.getAwbWebApplication().setProperties(webAppProperties);
 
+			// --- Apply web application properties -----------------
+			AwbWebApplicationManager.applyWebApplicationProperties(jettyConfig);
+			
 			// --- Apply database settings --------------------------
 			AwbWebApplicationManager.applyDatabaseSettings();
 			
@@ -146,7 +153,6 @@ public class AwbWebApplicationManager {
 		return true;
 	}
 	
-	
 	/**
 	 * Returns the properties of the web application.
 	 *
@@ -158,7 +164,49 @@ public class AwbWebApplicationManager {
 		return getAwbWebApplication().getProperties(typeOfProperty);
 	}
 
+	
+	/**
+	 * Apply web application properties.
+	 *
+	 * @param jettyWebApplicationSettings the jetty web application settings
+	 * @return true, if successful
+	 */
+	private static boolean applyWebApplicationProperties(JettyConfiguration jettyConfiguration) {
 
+		if (isDefinedAwbWebApplication(true)==false) return false;
+
+		// --- Get web application settings from JettyConfiguration------------
+		JettyWebApplicationSettings jettyWebApplicationSettings = jettyConfiguration.getWebApplicationSettings();
+		boolean isSaveChanges = false;
+		
+		// --- Get the web application properties first -----------------------
+		Properties webAppProperties = AwbWebApplicationManager.getWebApplicationProperties().getProperties();
+		
+		// --- Check for changes in the download URL --------------------------
+		String webAppDownloadURL = webAppProperties.getStringValue(AwbWebApplicationProperties.DEFAULT_WEB_APP_DOWNLOAD_URL);
+		String serverDownloadURL = jettyWebApplicationSettings.getDownloadURL();
+		if (webAppDownloadURL!=null && webAppDownloadURL.isBlank()==false && webAppDownloadURL.equals(serverDownloadURL)==false) {
+			jettyWebApplicationSettings.setDownloadURL(webAppDownloadURL);
+			isSaveChanges = true;
+		}
+		
+		// --- Check for update option ----------------------------------------
+		String webAppUStrategy = webAppProperties.getStringValue(AwbWebApplicationProperties.DEFAULT_WEB_APP_UPDATE_STRATEGY);
+		if (webAppUStrategy!=null && webAppUStrategy.isBlank()==false) {
+			UpdateStrategy webAppUpdateStratgy = UpdateStrategy.valueOf(webAppUStrategy); 
+			UpdateStrategy serverUpdateStratgy = jettyWebApplicationSettings.getUpdateStrategy();
+			if (webAppUpdateStratgy.equals(serverUpdateStratgy)==false) {
+				jettyWebApplicationSettings.setUpdateStrategy(webAppUpdateStratgy);
+				isSaveChanges = true;
+			}
+		}
+		
+		// --- Save changes ? -------------------------------------------------
+		if (isSaveChanges==true) {
+			jettyConfiguration.save();
+		}
+		return true;
+	}
 	/**
 	 * Apply database settings.
 	 * @return true, if successful
@@ -176,8 +224,6 @@ public class AwbWebApplicationManager {
 		
 		return success;
 	}
-
-	
 	/**
 	 * Applies the derby network server settings .
 	 * @return true, if successful
