@@ -120,6 +120,8 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 		this.setSize(new Dimension(600, 580));
 		this.setModal(true);
 		
+		this.setIconImage(HibernateStateVisualizer.getImageIcon("awb48.png").getImage());
+		
 		this.registerEscapeKeyStroke();
 		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
