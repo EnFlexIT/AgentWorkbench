@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.JEditorPane;
@@ -20,6 +23,7 @@ import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.simulation.logging.PrintStreamListener;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
 import de.enflexit.awb.simulation.logging.SysOutScanner;
+import de.enflexit.common.swing.AwbThemeColor;
 
 
 /**
@@ -33,6 +37,12 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 	private static final long serialVersionUID = 8836132571457271033L;
 	
 	private final String lineSeparator = System.getProperty("line.separator");
+	
+	private String fontFamily;// = "Consolas";//"Courier New";
+	private final int fontSize      = 13;
+	
+	
+	
 	private AttributeSet attribute;
 	private MutableAttributeSet black;
 	private MutableAttributeSet red;
@@ -63,6 +73,24 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 		this.setLocalConsole(isLocalConsole);
 		this.initialize();
 	}
+
+	/**
+	 * Returns the font family to be used for console print outs.
+	 * @return the font family
+	 */
+	private String getFontFamily() {
+		if (fontFamily==null) {
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			HashSet<String> ffNames = new HashSet<>(Arrays.asList(ge.getAvailableFontFamilyNames()));
+			if (fontFamily==null && ffNames.contains("Consolas")==true) {
+				fontFamily = "Consolas";	
+			}
+			if (fontFamily==null && ffNames.contains("Courier New")==true) {
+				fontFamily = "Courier New";
+			}
+		}
+		return fontFamily;
+	}
 	
 	/**
 	 * Initialises this
@@ -70,13 +98,13 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 	private void initialize() {
 		
 		black = new SimpleAttributeSet();
-	    StyleConstants.setForeground(black, Color.black);
-	    StyleConstants.setFontFamily(black, "Courier");
-	    StyleConstants.setFontSize(black, 11);
+	    StyleConstants.setForeground(black, AwbThemeColor.RegularText.getColor());
+	    StyleConstants.setFontFamily(black, this.getFontFamily());
+	    StyleConstants.setFontSize(black, this.fontSize);
 	    red = new SimpleAttributeSet();
 	    StyleConstants.setForeground(red, Color.red);
-	    StyleConstants.setFontFamily(red, "Courier");
-	    StyleConstants.setFontSize(red, 11);
+	    StyleConstants.setFontFamily(red, this.getFontFamily());
+	    StyleConstants.setFontSize(red, this.fontSize);
 	    
 	    this.setLayout(new BorderLayout());
 		this.setSize(400,100);
@@ -109,8 +137,7 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 		if (jEditorPaneOutput==null) {
 			jEditorPaneOutput = new JEditorPane();
 			jEditorPaneOutput.setContentType("text/html");
-			jEditorPaneOutput.setFont(new Font("Dialog", Font.PLAIN, 14));
-			jEditorPaneOutput.setBackground(new Color(255, 255, 255));
+			jEditorPaneOutput.setFont(new Font(this.getFontFamily(), Font.PLAIN, this.fontSize));
 			jEditorPaneOutput.setPreferredSize(new Dimension(400, 100));
 			jEditorPaneOutput.setEditable(false);
 		}
