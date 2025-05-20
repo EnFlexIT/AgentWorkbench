@@ -183,34 +183,20 @@
                 <key>_ServerWideSecurityConfiguration</key>
                 <value>
                     <contextPath>_ServerWideSecurityConfiguration</contextPath>
-                    <securityHandlerName>JwtSingleUserSecurityHandler</securityHandlerName>
-                    <securityHandlerActivated>false</securityHandlerActivated>
+                    <securityHandlerName>OIDCSecurityHandler</securityHandlerName>
+                    <securityHandlerActivated>true</securityHandlerActivated>
                     <securityHandlerConfiguration>
                         <entry>
-                            <key>JWT Issuer</key>
-                            <value>AWB</value>
+                            <key>ClientID</key>
+                            <value>Agent.Workbench</value>
                         </entry>
                         <entry>
-                            <key>JWT Secrete</key>
-                            <value>Das ist ein ganz langer Text, der geheim ist!</value>
+                            <key>ClientSecrete</key>
+                            <value>PeQ5NZeH4aGpr58knm2MviLA5IJ5uvY3</value>
                         </entry>
                         <entry>
-                            <key>JWT Token - Renew with every call</key>
-                        </entry>
-                        <entry>
-                            <key>JWT Token - Validity Period [Min]</key>
-                            <value>10</value>
-                        </entry>
-                        <entry>
-                            <key>JWT Verbose</key>
-                        </entry>
-                        <entry>
-                            <key>Password</key>
-                            <value>admin</value>
-                        </entry>
-                        <entry>
-                            <key>User Name</key>
-                            <value>admin</value>
+                            <key>Issuer</key>
+                            <value>https://login.enflex.it/realms/enflexService</value>
                         </entry>
                     </securityHandlerConfiguration>
                 </value>

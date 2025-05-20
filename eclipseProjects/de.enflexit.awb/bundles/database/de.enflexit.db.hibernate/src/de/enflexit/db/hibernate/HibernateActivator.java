@@ -56,6 +56,8 @@ public class HibernateActivator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		// --- Stop / Destroy the database connections --------------
+		HibernateUtilities.stop();
 	}
 
 }

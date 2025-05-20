@@ -51,7 +51,7 @@ public class ThemeOptions extends AbstractOptionTab {
 	 */
 	@Override
 	public String getTitle() {
-		return Application.getApplicationTitle() + " - Theme";
+		return "Theme";
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.common.swing.options.AbstractOptionTab#getTabToolTipText()

@@ -89,11 +89,6 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		String clientID = securityHandlerConfiguration.get(OIDCParameter.ClientID.getKey());
 		String clientSecret = securityHandlerConfiguration.get(OIDCParameter.ClientSecrete.getKey());
 
-		// --- For testing ------------------------------------------
-		issuer = "https://login.enflex.it/realms/enflexService/";
-		clientID = "Agent.Workbench";
-		clientSecret = "PeQ5NZeH4aGpr58knm2MviLA5IJ5uvY3";
-		
 		return new OIDCSecurityHandler(issuer, clientID, clientSecret, true);
 	}
 

@@ -33,7 +33,7 @@ public class ServerTreeCellRenderer implements TreeCellRenderer {
 		this.getJLabelDisplay().setToolTipText(stno.getToolTipText());
 		this.getJLabelDisplay().setIcon(stno.getNodeIcon());
 		
-		if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
+		if (AwbLookAndFeelAdjustments.isDarkLookAndFeel()==false) {
 			if (isSelected==true) {
 				this.getJLabelDisplay().setForeground(Color.WHITE);
 			} else {

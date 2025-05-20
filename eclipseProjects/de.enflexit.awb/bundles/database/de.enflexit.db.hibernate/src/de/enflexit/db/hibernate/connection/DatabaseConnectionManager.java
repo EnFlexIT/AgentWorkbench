@@ -10,7 +10,9 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.hibernate.cfg.Configuration;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -53,7 +55,20 @@ public class DatabaseConnectionManager {
 	 */
 	private void startHibernateDatabaseConnectionServiceTracker() {
 		if (dbConnectionsTracker==null) {
-			BundleContext context = FrameworkUtil.getBundle(HibernateUtilities.class).getBundleContext();
+			
+			// --- Get current bundle and ensure that it is in state ACTIVE ---
+			Bundle hibernateBundle = FrameworkUtil.getBundle(HibernateUtilities.class);
+			try {
+				int hState = hibernateBundle.getState();
+				if (hState==Bundle.RESOLVED || hState==Bundle.INSTALLED || hState==Bundle.STARTING) {
+					hibernateBundle.start();
+				}
+			} catch (BundleException bEx) {
+				bEx.printStackTrace();
+			}
+			
+			// --- Get BundleContext for the ServiceTracker -------------------
+			BundleContext context = hibernateBundle.getBundleContext();
 			dbConnectionsTracker = new HibernateDatabaseConnectionServiceTracker(context, HibernateDatabaseConnectionService.class, null);
 			dbConnectionsTracker.open();
 		}

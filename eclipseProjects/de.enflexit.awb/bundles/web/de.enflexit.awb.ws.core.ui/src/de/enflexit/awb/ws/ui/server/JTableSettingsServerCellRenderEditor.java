@@ -113,9 +113,10 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		comp.setOpaque(compColumn1.isOpaque());
 		comp.setForeground(compColumn1.getForeground());
 		comp.setBackground(compColumn1.getBackground());
-		if (row!=table.getSelectedRow() && row % 2==0) {
+		if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true && row!=table.getSelectedRow() && row % 2==0) {
 			comp.setBackground(Color.white);
 		}
+		
 		return comp;
 	}
 	

@@ -58,6 +58,12 @@ public class HibernateUtilities {
 		// --- Initiate DatabaseConnectionManager ---------
 		DatabaseConnectionManager.getInstance();
 	}
+	/**
+	 * Stops all active connections to databases (used while deactivating the hibernate plugin).
+	 */
+	public static void stop() {
+		HibernateUtilities.getSessionFactoryIDList().forEach(sf -> HibernateUtilities.closeSessionFactory(sf));
+	}
 	
 	/**
 	 * Returns the session factory monitor hash map.
