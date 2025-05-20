@@ -36,6 +36,7 @@ public class AwbLookAndFeelAdjustments {
 	private static boolean isFurtherLaFInstalled = false;
 	
 	private static Boolean isDarkLookAndFeel;
+	private static Boolean isFlatLookAndFeel;
 	
 	/**
 	 * Returns all installed look and feels.
@@ -107,6 +108,7 @@ public class AwbLookAndFeelAdjustments {
 				// --- Set the new LookAndFeel ----------------------
 				UIManager.setLookAndFeel(lafClassNameNew);
 				AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
+				AwbLookAndFeelAdjustments.isFlatLookAndFeel = null;
 			}
 			AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 			if (invoker!=null) {
@@ -120,6 +122,7 @@ public class AwbLookAndFeelAdjustments {
 				try {
 					UIManager.setLookAndFeel(lafClassNameOld);
 					AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
+					AwbLookAndFeelAdjustments.isFlatLookAndFeel = null;
 					AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
 					if (invoker!=null) {
 						SwingUtilities.updateComponentTreeUI(invoker);
@@ -142,6 +145,23 @@ public class AwbLookAndFeelAdjustments {
 			isDarkLookAndFeel = UIManager.getLookAndFeel().getClass().getName().equals(DARK_LOOK_AND_FEEL_CLASS);
 		}
 		return isDarkLookAndFeel;
+	}
+	/**
+	 * Checks if the current Look and feel is a flat look and feel.
+	 * @return true, if is flat look and feel
+	 */
+	public static boolean isFlatLookAndFeel() {
+		if (isFlatLookAndFeel==null) {
+			isFlatLookAndFeel = UIManager.getLookAndFeel().getClass().getName().equals(NIMBUS_LOOK_AND_FEEL_CLASS)==false;
+		}
+		return isFlatLookAndFeel;
+	}
+	/**
+	 * Checks if the current Look and feel is a flat look and feel.
+	 * @return true, if is flat look and feel
+	 */
+	public static boolean isNimbusLookAndFeel() {
+		return ! isFlatLookAndFeel();
 	}
 	
 	/**

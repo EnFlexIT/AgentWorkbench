@@ -82,7 +82,10 @@ public class ServerTreeNodeWebAppSettings extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public Icon getNodeIcon() {
-		return BundleHelper.getImageIcon("WebApp.png");
+		if (this.isRunningServer()==true) {
+			return BundleHelper.getImageIcon("WebAppGreen.png");
+		}
+		return BundleHelper.getImageIcon("WebAppRed.png");
 	}
 
 	/**

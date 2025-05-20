@@ -30,6 +30,7 @@ public class SecurityHandlerService {
 			localAwbSecurityHandlerServiceList.add(new SingleUserSecurityService());
 			localAwbSecurityHandlerServiceList.add(new SingleApiKeySecurityService());
 			localAwbSecurityHandlerServiceList.add(new JwtSingleUserSecurityService());
+			localAwbSecurityHandlerServiceList.add(new OIDCSecurityService());
 		}
 		return localAwbSecurityHandlerServiceList;
 	}

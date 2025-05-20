@@ -96,6 +96,7 @@ public class JDialogWsConfiguration extends JDialog implements ActionListener {
 		gbc_jTabbedPane.gridx = 0;
 		gbc_jTabbedPane.gridy = 0;
 		this.getContentPane().add(this.getJTabbedPane(), gbc_jTabbedPane);
+		
 		GridBagConstraints gbc_jButtonClose = new GridBagConstraints();
 		gbc_jButtonClose.insets = new Insets(0, 10, 15, 10);
 		gbc_jButtonClose.gridx = 0;

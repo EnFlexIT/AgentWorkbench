@@ -9,6 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 
 import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 
 /**
  * The Class ServerTreeCellRenderer.
@@ -31,10 +32,13 @@ public class ServerTreeCellRenderer implements TreeCellRenderer {
 		this.getJLabelDisplay().setText(stno.toString());
 		this.getJLabelDisplay().setToolTipText(stno.getToolTipText());
 		this.getJLabelDisplay().setIcon(stno.getNodeIcon());
-		if (isSelected==true) {
-			this.getJLabelDisplay().setForeground(Color.WHITE);
-		} else {
-			this.getJLabelDisplay().setForeground(Color.BLACK);
+		
+		if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
+			if (isSelected==true) {
+				this.getJLabelDisplay().setForeground(Color.WHITE);
+			} else {
+				this.getJLabelDisplay().setForeground(Color.BLACK);
+			}
 		}
 		return this.getJLabelDisplay();
 	}

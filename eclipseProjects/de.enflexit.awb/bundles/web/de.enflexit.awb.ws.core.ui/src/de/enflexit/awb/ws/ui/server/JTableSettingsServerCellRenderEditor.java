@@ -33,6 +33,7 @@ import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConstants;
 import de.enflexit.awb.ws.core.SSLJettyConfiguration;
 import de.enflexit.common.crypto.KeyStoreType;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
@@ -196,9 +197,11 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		}
 
 		// --- Set colors -------------------------------------------
-		comp.setOpaque(false);
-		comp.setForeground(Color.BLACK);
-		comp.setBackground(Color.WHITE);
+		if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
+//			comp.setOpaque(false);
+//			comp.setForeground(Color.BLACK);
+//			comp.setBackground(Color.WHITE);
+		}
 		return comp;
 
 	}
