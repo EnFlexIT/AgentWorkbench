@@ -558,20 +558,10 @@ public class JettyServerManager {
 		// --- Initiate the security handler ----------------------------------
 		try {
 
-			boolean isDevelopment = false;
-			if (isDevelopment==false) {
-				// --- Get handler from specified service ---------------------
-				SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(ssc.getSecurityHandlerConfiguration());
-				serCtxHandler.setSecurityHandler(securtiyHandler);
-				serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
-				
-			} else {
-				// --- TODO: Improve OpenIDSecurityHandler --------------------
-//				String issuer = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
-//				String clientId = "testclient";
-//				String clientSecret = "b3b651a0-66a7-435e-8f1c-b1460bbfe9e0";
-//				serCtxHandler.setSecurityHandler(new OpenIDSecurityHandler(issuer, clientId, clientSecret, true));
-			}
+			// --- Get handler from specified service -------------------------
+			SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(ssc.getSecurityHandlerConfiguration());
+			serCtxHandler.setSecurityHandler(securtiyHandler);
+			serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
 			
 		} catch (Exception ex) {
 			BundleHelper.systemPrintln(this, "Error while trying to secure servlet for context path '" + contextPath+ "':", true);
@@ -687,6 +677,9 @@ public class JettyServerManager {
 	 */
 	public boolean stopServer(String serverName) {
 		if (this.stopServer(this.getServer(serverName))==true) {
+			// --- Dispose the relevant AwbWebHandlerServices -------
+			this.disposeAwbWebHandlerServices(serverName);
+			// --- Unregister server instance -----------------------
 			this.unregisterServerInstances(serverName);
 			BundleHelper.systemPrintln(this, "Stopped  server '" + serverName + "'.", false);
 			return true;
@@ -704,9 +697,9 @@ public class JettyServerManager {
 		if (server==null) return false;
 		
 		try {
-			// --- Stop the server -----------------------
+			// --- Stop the server ----------------------------------
 			server.stop();
-			// --- Remove security handler ---------------
+			// --- Remove security handler -------------------------
 			List<Handler> handlerList = server.getHandlers();
 			this.removeSecurityHandler(handlerList);
 			this.removeCorsFilter(handlerList);
@@ -810,6 +803,18 @@ public class JettyServerManager {
 		} else if (handler instanceof Sequence) {
 			Sequence handlerCollection = (Sequence) handler;
 			this.removeCorsFilter(handlerCollection.getHandlers());
+		}
+	}
+	
+	/**
+	 * Removes the session handler from the specified handler array.
+	 * @param handlserServices the list of handler services
+	 */
+	private void disposeAwbWebHandlerServices(String serverName) {
+		try {
+			this.getAwbWebRegistry().getAwbWebHandlerService(serverName).forEach(hs -> hs.disposeHandler());
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	

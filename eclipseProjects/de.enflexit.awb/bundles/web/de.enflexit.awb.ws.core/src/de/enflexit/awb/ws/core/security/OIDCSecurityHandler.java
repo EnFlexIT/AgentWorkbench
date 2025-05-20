@@ -1,8 +1,5 @@
 package de.enflexit.awb.ws.core.security;
 
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.transport.HttpClientTransportOverHTTP;
-import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
@@ -11,10 +8,11 @@ import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.security.openid.OpenIdAuthenticator;
 import org.eclipse.jetty.security.openid.OpenIdConfiguration;
 import org.eclipse.jetty.security.openid.OpenIdLoginService;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
- * The Class OpenIDSecurityHandler ... TODO
+ * The Class OIDCSecurityHandler
+ * 
+ * Jetty sample can be found under: https://jetty.org/docs/jetty/12/programming-guide/security/openid-support.html
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -39,13 +37,13 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 		this.clientSecret = clientSecret;
 		
 		OpenIdConfiguration openIdConfig = new OpenIdConfiguration(this.issuer, this.clientId, this.clientSecret);
-		this.put("/auth/*", Constraint.ANY_USER);
 
 		// A nested LoginService is optional and used to specify known users with defined roles.
 		// This can be any instance of LoginService and is not restricted to be a HashLoginService.
-		HashLoginService nestedLoginService = new HashLoginService();
 		UserStore userStore = new UserStore();
 		userStore.addUser("<admin-user-subject-identifier>", null, new String[]{"admin"});
+
+		HashLoginService nestedLoginService = new HashLoginService();
 		nestedLoginService.setUserStore(userStore);
 
 		// Optional configuration to allow new users not listed in the nested LoginService to be authenticated.
@@ -61,21 +59,9 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 		    "/error", // Optional page where authentication errors are redirected.
 		    "/logoutRedirect" // Optional page where the user is redirected to this page after logout.
 		));
-
-//		server.insertHandler(new SessionHandler());
 		
-	}
-
-	/**
-	 * Returns the HTTP client to be used for the OpenID connection.
-	 *
-	 * @param isTrustAll the is trust all
-	 * @return the HTTP client
-	 */
-	private HttpClient getHTTPClient(boolean isTrustAll) {
-		ClientConnector connector = new ClientConnector();
-		connector.setSslContextFactory(new SslContextFactory.Client(isTrustAll));
-		return new HttpClient(new HttpClientTransportOverHTTP(connector));
+		
+		this.put("/*", Constraint.ANY_USER);
 	}
 
 }

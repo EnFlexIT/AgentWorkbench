@@ -64,7 +64,7 @@ public class DatabaseConnectionManager {
 					hibernateBundle.start();
 				}
 			} catch (BundleException bEx) {
-				bEx.printStackTrace();
+				//bEx.printStackTrace();
 			}
 			
 			// --- Get BundleContext for the ServiceTracker -------------------

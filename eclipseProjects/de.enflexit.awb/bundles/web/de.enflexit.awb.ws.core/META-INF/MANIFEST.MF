@@ -12,6 +12,7 @@ Service-Component: OSGI-INF/awbWebServerService.xml
 Require-Bundle: org.eclipse.osgi,
  org.eclipse.jetty.security,
  org.eclipse.jetty.server,
+ org.eclipse.jetty.session,
  org.eclipse.jetty.ee10.servlet,
  org.eclipse.jetty.ee10.servlets,
  org.eclipse.jetty.util,

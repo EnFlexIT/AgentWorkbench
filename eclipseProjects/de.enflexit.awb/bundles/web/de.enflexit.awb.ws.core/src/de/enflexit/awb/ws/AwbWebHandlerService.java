@@ -28,7 +28,6 @@ public interface AwbWebHandlerService {
 	 */
 	public default String getServerNameNotNull() {
 		return this.getServerName()==null ? AwbServer.NAME : this.getServerName();
-		
 	}
 	
 	/**
@@ -36,5 +35,10 @@ public interface AwbWebHandlerService {
 	 * @return the handler
 	 */
 	public Handler getHandler();
+	
+	/**
+	 * Has to dispose the current handler. Will be invoked during server shutdown.
+	 */
+	public void disposeHandler();
 	
 }

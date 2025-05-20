@@ -43,4 +43,12 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 		return servletContextHandler;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.AwbWebHandlerService#disposeHandler()
+	 */
+	@Override
+	public void disposeHandler() {
+		servletContextHandler = null;
+	}
+	
 }
