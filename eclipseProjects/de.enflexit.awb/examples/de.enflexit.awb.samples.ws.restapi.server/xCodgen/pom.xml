@@ -6,7 +6,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<openApiGeneratorVersion>6.5.0</openApiGeneratorVersion>
+		<openApiGeneratorVersion>7.6.0</openApiGeneratorVersion>
 		<yamlFile>RestApi.yaml</yamlFile>
 		<srcBasePackage>de.enflexit.awb.samples.ws.restapi.server.gen</srcBasePackage>
 	</properties>
@@ -29,7 +29,7 @@
 
 							<!-- For server code -->	
 							<generatorName>jaxrs-jersey</generatorName>
-							<library>jersey2</library>
+							<library>jersey3</library>
 							
 							<apiPackage>${srcBasePackage}</apiPackage>
 							<modelPackage>${srcBasePackage}.model</modelPackage>
