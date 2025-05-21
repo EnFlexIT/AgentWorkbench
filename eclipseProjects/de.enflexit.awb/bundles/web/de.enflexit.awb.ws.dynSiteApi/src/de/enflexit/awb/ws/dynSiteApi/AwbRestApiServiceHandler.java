@@ -45,6 +45,9 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 	 */
 	@Override
 	public void disposeHandler() {
+		if (this.servletContextHandler!=null) {
+			this.servletContextHandler.destroy();
+		}
 		this.servletContextHandler = null;
 	}
 }
