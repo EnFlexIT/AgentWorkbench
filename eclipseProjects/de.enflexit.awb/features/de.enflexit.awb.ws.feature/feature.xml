@@ -89,10 +89,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="de.enflexit.awb.ws.jetty"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.jetty.alpn.java.client"
          version="0.0.0"/>
 
