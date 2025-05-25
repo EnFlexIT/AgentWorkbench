@@ -40,6 +40,10 @@
          id="org.eclipse.rcp"
          version="0.0.0"/>
 
+   <includes
+         id="de.enflexit.db.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="de.enflexit.oidc" version="0.0.1" match="greaterOrEqual"/>
       <import plugin="de.enflexit.db.hibernate" version="5.2.16" match="greaterOrEqual"/>
