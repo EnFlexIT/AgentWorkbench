@@ -19,7 +19,7 @@
 		
 		<repository.subDir>${url.repository.snapshotDir}</repository.subDir>
 		<repository.domain>${url.repository.snapshotDomain}</repository.domain>
-		<repository.updateSite>${repository.domain}${repository.subDir}/p2.index</repository.updateSite>
+		<repository.updateSite>${repository.domain}${repository.subDir}p2.index</repository.updateSite>
 		
 	</properties>
 
