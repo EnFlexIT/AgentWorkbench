@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Language & Translation Bundle
+Bundle-Name: Language & Translation
 Bundle-SymbolicName: de.enflexit.language
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.language

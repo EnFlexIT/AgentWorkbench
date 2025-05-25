@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: de.enflexit.db.derby
 Bundle-ManifestVersion: 2
-Bundle-Name: Apache Derby - Integration
+Bundle-Name: Apache Derby
 Bundle-SymbolicName: de.enflexit.db.derby
 Bundle-Version: 10.17.1000000.qualifier
 Bundle-Vendor: EnFlex.IT

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: de.enflexit.awb.desktop.swt
 Bundle-ManifestVersion: 2
-Bundle-Name: Agent.Workbench - SWT Bundle
+Bundle-Name: AWB - Desktop Application (SWT)
 Bundle-SymbolicName: de.enflexit.awb.desktop.swt;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: EnFlex.IT

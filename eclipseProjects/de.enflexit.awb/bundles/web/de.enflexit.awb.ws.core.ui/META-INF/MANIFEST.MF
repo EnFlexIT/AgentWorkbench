@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: AWB - WS User Configuration Interface
+Bundle-Name: AWB WS-Core-UI
 Bundle-SymbolicName: de.enflexit.awb.ws.core.ui;singleton:=true
 Automatic-Module-Name: de.enflexit.awb.ws.core.ui
 Bundle-Version: 1.0.1.qualifier
