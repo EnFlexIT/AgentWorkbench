@@ -15,11 +15,11 @@
 		<target-platform-version>4.35.0-SNAPSHOT</target-platform-version>
 		
 		<url.repository.snapshotDomain>https://p2.enflex.it</url.repository.snapshotDomain>
-		<url.repository.snapshotDir>/awb/snapshots/</url.repository.snapshotDir>
+		<url.repository.snapshotDir>/awb/snapshots</url.repository.snapshotDir>
 		
 		<repository.subDir>${url.repository.snapshotDir}</repository.subDir>
 		<repository.domain>${url.repository.snapshotDomain}</repository.domain>
-		<repository.updateSite>${repository.domain}${repository.subDir}p2.index</repository.updateSite>
+		<repository.updateSite>${repository.domain}${repository.subDir}</repository.updateSite>
 		
 	</properties>
 
