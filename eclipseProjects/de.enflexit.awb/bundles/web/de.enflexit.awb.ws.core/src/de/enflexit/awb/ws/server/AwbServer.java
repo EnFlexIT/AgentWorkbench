@@ -8,6 +8,7 @@ import java.util.List;
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Handler.Sequence;
 import org.eclipse.jetty.server.Server;
@@ -18,12 +19,17 @@ import org.eclipse.jetty.util.resource.Resources;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.JettyCustomizer;
+import de.enflexit.awb.ws.core.JettySecuritySettings;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.model.HandlerHelper;
+import de.enflexit.awb.ws.core.security.OIDCSecurityHandler;
+import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 
 /**
  * The Class DefaultAwbServer.
@@ -75,10 +81,10 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.core.JettyCustomizer#customizeConfiguration(org.eclipse.jetty.server.Server, org.eclipse.jetty.server.handler.HandlerCollection)
+	 * @see de.enflexit.awb.ws.core.JettyCustomizer#customizeConfiguration(de.enflexit.awb.ws.core.JettyConfiguration, org.eclipse.jetty.server.Server, org.eclipse.jetty.server.Handler.Sequence)
 	 */
 	@Override
-	public Server customizeConfiguration(Server server, Sequence handlerCollection) {
+	public Server customizeConfiguration(JettyConfiguration jettyConfiguration, Server server, Sequence handlerCollection) {
 
 		// ----------------------------------------------------------
 		// --- Define ServletContextHandler for static content ------
@@ -101,6 +107,15 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         errorHandler.addErrorPage(404, "/"); // return root ... being index.html
         servletContextHandler.setErrorHandler(errorHandler);
         
+//        // --- Check to secure via OIDC/OAuth -----------------------
+//        ServletSecurityConfiguration securitySettiongs = jettyConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+//        if (securitySettiongs!=null && securitySettiongs.isSecurityHandlerActivated()==true && securitySettiongs.getSecurityHandlerName().equals(OIDCSecurityHandler.class.getSimpleName())==true) {
+//        	AwbSecurityHandlerService securityService = SecurityHandlerService.getAwbSecurityHandlerService(securitySettiongs.getSecurityHandlerName());
+//    		if (securityService!=null) {
+//    			SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(securitySettiongs.getSecurityHandlerConfiguration());
+//    			servletContextHandler.setSecurityHandler(securtiyHandler);
+//    		}
+//        }
         
 		// ----------------------------------------------------------
         // --- Define a ContextHandlerCollection --------------------
