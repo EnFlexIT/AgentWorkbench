@@ -5,7 +5,7 @@ pipeline {
       steps {
         echo 'Start Snapshot Build and Deployment of Agent.Workbench ...'
         sh 'mvn --version'
-        sh 'mvn clean install -P p2DeployClean -f eclipseProjects/de.enflexit.awb'
+        sh 'mvn clean install -P p2Deploy -f eclipseProjects/de.enflexit.awb'
         echo 'Build & Deployment of Agent.Workbench Snapshot is done!'
       }
     }

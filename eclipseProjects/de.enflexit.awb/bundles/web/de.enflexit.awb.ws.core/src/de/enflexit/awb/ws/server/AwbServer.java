@@ -107,15 +107,15 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         errorHandler.addErrorPage(404, "/"); // return root ... being index.html
         servletContextHandler.setErrorHandler(errorHandler);
         
-//        // --- Check to secure via OIDC/OAuth -----------------------
-//        ServletSecurityConfiguration securitySettiongs = jettyConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
-//        if (securitySettiongs!=null && securitySettiongs.isSecurityHandlerActivated()==true && securitySettiongs.getSecurityHandlerName().equals(OIDCSecurityHandler.class.getSimpleName())==true) {
-//        	AwbSecurityHandlerService securityService = SecurityHandlerService.getAwbSecurityHandlerService(securitySettiongs.getSecurityHandlerName());
-//    		if (securityService!=null) {
-//    			SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(securitySettiongs.getSecurityHandlerConfiguration());
-//    			servletContextHandler.setSecurityHandler(securtiyHandler);
-//    		}
-//        }
+        // --- Check to secure via OIDC/OAuth -----------------------
+        ServletSecurityConfiguration securitySettiongs = jettyConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+        if (securitySettiongs!=null && securitySettiongs.isSecurityHandlerActivated()==true && securitySettiongs.getSecurityHandlerName().equals(OIDCSecurityHandler.class.getSimpleName())==true) {
+        	AwbSecurityHandlerService securityService = SecurityHandlerService.getAwbSecurityHandlerService(securitySettiongs.getSecurityHandlerName());
+    		if (securityService!=null) {
+    			SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(securitySettiongs.getSecurityHandlerConfiguration());
+    			servletContextHandler.setSecurityHandler(securtiyHandler);
+    		}
+        }
         
 		// ----------------------------------------------------------
         // --- Define a ContextHandlerCollection --------------------
