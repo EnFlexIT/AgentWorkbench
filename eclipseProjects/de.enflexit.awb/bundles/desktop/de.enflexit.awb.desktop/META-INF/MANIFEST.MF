@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Automatic-Module-Name: de.enflexit.awb.desktop
 Bundle-ActivationPolicy: lazy
-Bundle-Name: AWB - Desktop Application (Swing)
+Bundle-Name: Desktop Application (Swing)
 Bundle-SymbolicName: de.enflexit.awb.desktop;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Export-Package: de.enflexit.awb.desktop,
