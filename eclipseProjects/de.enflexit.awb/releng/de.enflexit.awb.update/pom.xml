@@ -55,7 +55,6 @@
 									<source>
 										<repository>
 											<url>${repository.updateSite}</url>
-											<layout>p2</layout>
 										</repository>
 									</source>
 									<append>true</append>
