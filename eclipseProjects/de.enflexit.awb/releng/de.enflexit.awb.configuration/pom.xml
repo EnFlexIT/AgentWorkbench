@@ -159,6 +159,7 @@
 						<baselineRepositories>
 							<repository>
 								<url>${repository.updateSite}</url>
+								<layout>p2</layout>
 							</repository>
 						</baselineRepositories>
 					</configuration>
