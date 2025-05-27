@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Agent.Workbench - Base Ontology
+Bundle-Name: AWB - Base Ontology
 Bundle-SymbolicName: de.enflexit.awb.baseOntology
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT

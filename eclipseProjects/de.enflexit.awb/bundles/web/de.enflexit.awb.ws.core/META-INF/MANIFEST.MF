@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: AWB WS-Core Bundle
+Bundle-Name: AWB WS-Core
 Bundle-SymbolicName: de.enflexit.awb.ws.core;singleton:=true
 Bundle-Version: 11.0.14.qualifier
 Bundle-Vendor: EnFlex.IT

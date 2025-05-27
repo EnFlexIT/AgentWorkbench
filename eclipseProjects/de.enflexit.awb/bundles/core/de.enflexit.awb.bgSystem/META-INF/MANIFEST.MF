@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: AWB - Background System Bundle
+Bundle-Name: AWB - Background System
 Bundle-SymbolicName: de.enflexit.awb.bgSystem
 Automatic-Module-Name: de.enflexit.awb.bgSystem
 Bundle-Version: 1.0.0.qualifier

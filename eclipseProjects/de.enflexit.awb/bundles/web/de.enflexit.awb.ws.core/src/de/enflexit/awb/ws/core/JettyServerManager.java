@@ -281,29 +281,29 @@ public class JettyServerManager {
 	/**
 	 * Starts the server as specified by the {@link JettyConfiguration}.
 	 *
-	 * @param serverConfig the server configuration
+	 * @param jConfiguration the JettyConfiguration instance for the server configuration
 	 * @return true, if successful
 	 */
-	public boolean startServer(JettyConfiguration serverConfig) {
+	public boolean startServer(JettyConfiguration jConfiguration) {
 		
 		// ----------------------------------------------------------
 		// --- Check if the server is already running ---------------
-		if (this.getServerInstances(serverConfig.getServerName())!=null) return false;
+		if (this.getServerInstances(jConfiguration.getServerName())!=null) return false;
 		
 		// ----------------------------------------------------------
 		// --- Try to initialize a AwbWebApplication, if defined ----
-		AwbWebApplicationManager.initialize(serverConfig);
+		AwbWebApplicationManager.initialize(jConfiguration);
 		
 		// ----------------------------------------------------------
 		// --- Create new server instance ---------------------------
-		Server server = new Server(this.getThreadPool(serverConfig));
+		Server server = new Server(this.getThreadPool(jConfiguration));
 		
 		// ----------------------------------------------------------
 		// --- Read & set server configuration ----------------------
-		String[] keyArray = serverConfig.keySet().toArray(new String[serverConfig.keySet().size()]);
+		String[] keyArray = jConfiguration.keySet().toArray(new String[jConfiguration.keySet().size()]);
 		for (int i = 0; i < keyArray.length; i++) {
 			String key   = keyArray[i];
-			JettyAttribute<?> attribute = serverConfig.get(key);
+			JettyAttribute<?> attribute = jConfiguration.get(key);
 			if (attribute!=null && attribute.getValue()!=null) {
 				server.setAttribute(key, attribute.getValue());	
 			}
@@ -314,7 +314,7 @@ public class JettyServerManager {
 		boolean isStartHTTP  = (boolean) server.getAttribute(JettyConstants.HTTP_ENABLED.getJettyKey());
 		boolean isStartHTTPS = (boolean) server.getAttribute(JettyConstants.HTTPS_ENABLED.getJettyKey());
 		if (isStartHTTP==false && isStartHTTPS==false) {
-			String errorMsg = "Error in the configuration for server '" + serverConfig.getServerName() + "'!";
+			String errorMsg = "Error in the configuration for server '" + jConfiguration.getServerName() + "'!";
 			BundleHelper.systemPrintln(this, errorMsg, true);
 			throw new IllegalArgumentException("Neither HTTP nor HTTPS connections are enabled for the server!");
 		}
@@ -323,13 +323,13 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Set Handler according to configuration and services --
-		Handler initialHandler = serverConfig.getHandler();
+		Handler initialHandler = jConfiguration.getHandler();
 		Sequence hCollection = null;
-		if (serverConfig.isMutableHandlerCollection()==false) {
+		if (jConfiguration.isMutableHandlerCollection()==false) {
 			// --- NO handler collection ----------------------------
 			if (initialHandler==null) {
 				// --- Notify about the error -----------------------
-				String error = "No handler was specified, nor mutable handler collection was configured for server '" + serverConfig.getServerName() + "'.";
+				String error = "No handler was specified, nor mutable handler collection was configured for server '" + jConfiguration.getServerName() + "'.";
 				BundleHelper.systemPrintln(this, error, true);
 				return false;
 			} else {
@@ -342,7 +342,7 @@ public class JettyServerManager {
 			// --- USE Handler collection ---------------------------
 			if (initialHandler!=null) handlerList.add(initialHandler);
 			// --- Check for handler services -----------------------
-			List<AwbWebHandlerService> handlerServiceList = this.getAwbWebRegistry().getAwbWebHandlerService(serverConfig.getServerName());
+			List<AwbWebHandlerService> handlerServiceList = this.getAwbWebRegistry().getAwbWebHandlerService(jConfiguration.getServerName());
 			handlerServiceList.forEach(hService -> handlerList.add(hService.getHandler()));
 			// --- Add handler collection ---------------------------
 			hCollection = new Sequence(true, handlerList);
@@ -353,15 +353,15 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Check for a customizer -------------------------------
-		if (serverConfig.getJettyCustomizer()!=null) {
+		if (jConfiguration.getJettyCustomizer()!=null) {
 			try {
-				Server customServer = serverConfig.getJettyCustomizer().customizeConfiguration(server, hCollection);
+				Server customServer = jConfiguration.getJettyCustomizer().customizeConfiguration(jConfiguration, server, hCollection);
 				if (customServer!=null) {
 					server = customServer;
 				}
 				
 			} catch (Exception ex) {
-				String errorMsg = "Error while customizing server instance of server '" + serverConfig.getServerName() + "' - use standard configuration!";
+				String errorMsg = "Error while customizing server instance of server '" + jConfiguration.getServerName() + "' - use standard configuration!";
 				BundleHelper.systemPrintln(this, errorMsg, false);
 				ex.printStackTrace();
 			}
@@ -376,7 +376,7 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Secure the server ------------------------------------
-		JettySecuritySettings securitySettings = serverConfig.getSecuritySettings();
+		JettySecuritySettings securitySettings = jConfiguration.getSecuritySettings();
 		if (hCollection==null) {
 			this.secureHandler(initialHandler, securitySettings);
 		} else {
@@ -397,10 +397,10 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Execute the start of the server ----------------------
-		boolean isStarted = this.startConfiguredServer(server, serverConfig.getServerName());
+		boolean isStarted = this.startConfiguredServer(server, jConfiguration.getServerName());
 		if (isStarted==true) {
-			this.registerServerInstances(serverConfig.getServerName(), new JettyServerInstances(server, hCollection));
-			BundleHelper.systemPrintln(this, "Started server '" + serverConfig.getServerName() + "'.", false);
+			this.registerServerInstances(jConfiguration.getServerName(), new JettyServerInstances(server, hCollection));
+			BundleHelper.systemPrintln(this, "Started server '" + jConfiguration.getServerName() + "'.", false);
 		}
 		return isStarted;
 	}
