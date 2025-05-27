@@ -159,6 +159,16 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		return instance;
 	}
 	
+	/**
+	 * Checks for a stored refresh token. If found, tries to use it to re-authenticate the user.
+	 *
+	 * @throws KeyManagementException the key management exception
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 * @throws KeyStoreException the key store exception
+	 * @throws URISyntaxException the URI syntax exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void checkForRefreshToken() throws KeyManagementException, NoSuchAlgorithmException, CertificateException, KeyStoreException, URISyntaxException, IOException {
 		RefreshToken refreshToken = this.loadRefreshToken();
 		if (refreshToken!=null) {
@@ -318,13 +328,12 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 	}
 
 	/**
-	 * Gets the unique ID of the user authenticated.
-	 *
+	 * Gets the unique ID of the authenticated keycloak user.
 	 * @return the user ID
 	 * @throws OIDCProblemException if the token is not valid/the user is not authenticated yet
 	 * @throws URISyntaxException the URI syntax exception
 	 */
-	public String getUserID() throws OIDCProblemException, URISyntaxException {
+	public String getKeycloakUserID() throws OIDCProblemException, URISyntaxException {
 		return this.getOIDCClaim(OIDC_ID_CLAIM_USER_ID);
 	}
 	
@@ -362,10 +371,7 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		Map<String, Object> allClaims = getOIDCClient().getIdClaims().getClaims();
 		claimValue = (String) allClaims.get(oidcClaim);
 
-		if (claimValue != null) {
-			return claimValue;
-		}
-		return "";
+		return claimValue;
 	}
 
 	/**
