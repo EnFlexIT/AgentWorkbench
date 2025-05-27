@@ -1020,35 +1020,10 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 		
 	}
 	
-//	/**
-//	 * Loads the tokens from the Eclipse RCP secure preferences, if present.
-//	 * @throws StorageException the storage exception
-//	 * @throws ParseException the parse exception
-//	 * @throws ParseException the parse exception
-//	 * @throws ParseException the parse exception
-//	 * @throws URISyntaxException the URI syntax exception
-//	 */
-//	private void loadIDToken() {
-//		
-//		try {
-//			String idTokenSerialized = this.getTokenStore().get(PREFERENCES_KEY_ID_TOKEN, null);
-//			if (idTokenSerialized!=null && idTokenSerialized.isBlank()==false) {
-//				JWT idToken = JWTParser.parse(idTokenSerialized);
-//				if (idToken!=null) {
-//					System.out.println("Successfully loaded the ID token!");
-//					this.getOIDCClient().setIdToken(idToken);
-//					this.setAuthenticationState(AuthenticationState.LOGGED_IN);
-//				} else {
-//					System.out.println("Failed to load the ID token!");
-//				}
-//			}
-//		} catch (StorageException | java.text.ParseException e) {
-//			System.err.println("[" + this.getClass().getSimpleName() + "] Error loading the ID token from the local secure storage!");
-//			e.printStackTrace();
-//		}
-//		
-//	}
-	
+	/**
+	 * Gets the token store.
+	 * @return the token store
+	 */
 	private ISecurePreferences getTokenStore() {
 		if (tokenStore==null) {
 			tokenStore = SecurePreferencesFactory.getDefault().node(SECURE_PREFERENCES_TOKEN_PATH);
