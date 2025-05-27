@@ -20,6 +20,7 @@
 				<configuration>
 					<createArtifactRepository>true</createArtifactRepository>
 					<includeAllDependencies>true</includeAllDependencies>
+					<compress>false</compress>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -58,7 +59,8 @@
 										</repository>
 									</source>
 									<append>true</append>
-									<!-- <mirrorMetadataOnly>true</mirrorMetadataOnly> -->
+									<mirrorMetadataOnly>false</mirrorMetadataOnly>
+									<compress>false</compress>
 								</configuration>
 							</execution>
 						</executions>
