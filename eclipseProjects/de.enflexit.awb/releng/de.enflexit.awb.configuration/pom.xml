@@ -28,6 +28,7 @@
 			<id>p2EnFlexIT</id>
 			<name>EnFlex.IT p2 - Server</name>
 			<url>${url.repository.snapshotDomain}</url>
+			<layout>p2</layout>
 		</repository>
 	</distributionManagement>
 
