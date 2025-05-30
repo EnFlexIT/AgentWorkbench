@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent.Workbench-WS" uid="de.enflexit.awb.ws" id="de.enflexit.awb.ws.core.product" application="de.enflexit.awb.ws.core.application" version="1.0.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Agent.Workbench-WS" uid="de.enflexit.awb.ws" id="de.enflexit.awb.ws.core.product" application="de.enflexit.awb.ws.core.application" version="3.0.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/de.enflexit.awb.core/icons/awb128.png"/>

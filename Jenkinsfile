@@ -15,8 +15,12 @@ pipeline {
         echo 'Start extracting AWB Products ...'
         archiveArtifacts 'eclipseProjects/de.enflexit.awb/releng/de.enflexit.awb.product/target/products/de.enflexit.awb-*'
         archiveArtifacts 'eclipseProjects/de.enflexit.awb/releng/de.enflexit.awb.ws.product/target/products/de.enflexit.awb.ws-*'
+		archiveArtifacts 'eclipseProjects/de.enflexit.awb/bundles/de.enflexit.awb.help/target/de.enflexit.awb.help-*javadoc.zip'
       }
     }
 
   }
 }
+
+
+

@@ -4,16 +4,36 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Agent.Workbench - API Help
 Bundle-SymbolicName: de.enflexit.awb.help;singleton:=true
 Bundle-Vendor: EnFlex.IT
-Bundle-Version: 2.4.2.qualifier
+Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: de.enflexit.awb.core,
+Require-Bundle: de.enflexit.awb.baseOntology,
  de.enflexit.awb.baseUI,
+ de.enflexit.awb.bgSystem,
+ de.enflexit.awb.core,
+ de.enflexit.awb.remoteControl,
+ de.enflexit.awb.timeSeriesDataProvider,
+ de.enflexit.common,
+ de.enflexit.expression,
+ de.enflexit.geography,
+ de.enflexit.jade.tools,
+ de.enflexit.language,
+ de.enflexit.logging,
+ de.enflexit.oidc,
+ de.enflexit.oidc.ui,
+ de.enflexit.oshi,
+ org.awb.env.maps,
+ org.awb.env.networkModel,
+ de.enflexit.db.derby,
+ de.enflexit.db.hibernate,
+ de.enflexit.db.mariaDB,
+ de.enflexit.db.mySQL,
+ de.enflexit.db.postgres,
+ de.enflexit.db.ui,
  de.enflexit.awb.desktop,
  de.enflexit.awb.desktop.swt,
- de.enflexit.awb.bgSystem,
- de.enflexit.common,
- org.awb.env.networkModel,
- de.enflexit.db.hibernate,
- de.enflexit.db.mySQL,
- de.enflexit.oidc,
- org.eclipse.help
+ de.enflexit.awb.ws.client,
+ de.enflexit.awb.ws.core,
+ de.enflexit.awb.ws.core.ui,
+ de.enflexit.awb.ws.dynSiteApi,
+ de.enflexit.awb.ws.restapi,
+ de.enflexit.awb.ws.swagger2x
