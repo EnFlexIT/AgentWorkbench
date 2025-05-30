@@ -31,18 +31,40 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
  */
 public class AccessTokenVerifier {
 	
-	//TODO Get from the settings ------------------------------------
-	private static final String ISSUER_URL = "https://login.enflex.it/realms/enflexService";
-	//TODO obtain from the discovery endpoint instead --------------- 
-	private static final String KEYCLOAK_CERTIFICATES_URI = "https://login.enflex.it/realms/enflexService/protocol/openid-connect/certs";
+	private static final String DEFAULT_ISSUER_URL = "https://login.enflex.it/realms/enflexService";
+	private static final String DEFAULT_CERTIFICATES_ENDPOINT_PATH = "/protocol/openid-connect/certs";
 	
 	private ConfigurableJWTProcessor<SecurityContext> jwtProcessor;
 	private JWKSource<SecurityContext> jwkSource;
 	private JWSKeySelector<SecurityContext> keySelector;
-	private DefaultJWTClaimsVerifier<SecurityContext> claimsVerifier; 	
+	private DefaultJWTClaimsVerifier<SecurityContext> claimsVerifier;
+	
+	private String issuerURL;
+	private String certificatesEndpointPath;
 
 	private JWTClaimsSet claimsSet;
 	
+	private HashSet<String> requiredClaims;
+	
+	/**
+	 * Instantiates a new access token verifier, that uses the default issuer
+	 * URL and certificates endpoint path, as specified in the class constant.
+	 */
+	public AccessTokenVerifier() {
+	}
+
+	/**
+	 * Instantiates a new access token verifier, that uses the provided issuer URL
+	 * and certificates endpoint path..
+	 *
+	 * @param issuerURL the issuer URL
+	 * @param certificatesEndpointPath the certificates endpoint path
+	 */
+	public AccessTokenVerifier(String issuerURL, String certificatesEndpointPath) {
+		this.issuerURL = issuerURL;
+		this.certificatesEndpointPath = certificatesEndpointPath;
+	}
+
 	/**
 	 * Gets the jwt processor.
 	 * @return the jwt processor
@@ -69,8 +91,11 @@ public class AccessTokenVerifier {
 	 */
 	private JWKSource<SecurityContext> getJwkSource() throws URISyntaxException, MalformedURLException {
 		if (jwkSource==null) {
-			URI keycloakCertsURI = new URI(KEYCLOAK_CERTIFICATES_URI);
-			jwkSource = JWKSourceBuilder.create(keycloakCertsURI.toURL()).retrying(true).build();
+			
+			URI certificatesUri = this.getCertificatesURI();
+			if (certificatesUri!=null) {
+				jwkSource = JWKSourceBuilder.create(this.getCertificatesURI().toURL()).retrying(true).build();
+			}
 		}
 		return jwkSource;
 	}
@@ -96,22 +121,49 @@ public class AccessTokenVerifier {
 	 */
 	private DefaultJWTClaimsVerifier<SecurityContext> getClaimsVerifier() {
 		if (claimsVerifier==null) {
-			HashSet<String> requiredClaims = new HashSet<>(Arrays.asList(
-		        JWTClaimNames.SUBJECT,
-		        JWTClaimNames.ISSUED_AT,
-		        JWTClaimNames.EXPIRATION_TIME,
-		        JWTClaimNames.JWT_ID)
-			);
-			
-			JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().issuer(ISSUER_URL).build();
-			        
-			claimsVerifier = (new DefaultJWTClaimsVerifier<>(claimsSet, requiredClaims));
+			JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().issuer(this.getIssuerURL()).build();
+			claimsVerifier = (new DefaultJWTClaimsVerifier<>(claimsSet, this.getRequiredClaims()));
 		}
 		return claimsVerifier;
 	}
 	
 	/**
-	 * Verifies the provided access token.
+	 * Gets the required claims. If null, it is initialized with a set of default claims, namely the 
+	 * subject (= unique user ID), the JWT ID, and the times when the token was issued and when it expires.
+	 * @return the required claims
+	 */
+	public HashSet<String> getRequiredClaims() {
+		if (requiredClaims==null) {
+			// --- By default, require the subject (= unique user ID), the JWT ID, and the issue and expiration times.  
+			requiredClaims = new HashSet<String>(Arrays.asList(
+		        JWTClaimNames.SUBJECT,
+		        JWTClaimNames.ISSUED_AT,
+		        JWTClaimNames.EXPIRATION_TIME,
+		        JWTClaimNames.JWT_ID)
+			);
+		}
+		return requiredClaims;
+	}
+	
+	/**
+	 * Adds a claim to the list of required claims. Token verification will fail if required claims are not provided by the token.
+	 * @param claim the claim
+	 */
+	public void addRequiredClaim(String claim) {
+		this.getRequiredClaims().add(claim);
+	}
+	
+	/**
+	 * Sets the required claims.
+	 * @param requiredClaims the new required claims
+	 */
+	public void setRequiredClaims(HashSet<String> requiredClaims) {
+		this.requiredClaims = requiredClaims;
+	}
+	
+	/**
+	 * Verifies the provided access token, i.e. checks if it was issued by a
+	 * trusted server, provides all required claims and is not expired.
 	 * @param accessToken the access token
 	 * @return true, if the token is valid
 	 */
@@ -159,6 +211,8 @@ public class AccessTokenVerifier {
 	public String getKeycloakUserID() {
 		String keycloakUserID = null;
 		if (this.getClaimsSet()!=null) {
+			
+			// --- Try to extract the subject (= keycloak user ID) from the tokens claim set.
 			try {
 				keycloakUserID = this.getClaimsSet().getClaimAsString(JWTClaimNames.SUBJECT);
 			} catch (ParseException e) {
@@ -168,4 +222,48 @@ public class AccessTokenVerifier {
 		}
 		return keycloakUserID;
 	}
+	
+	/**
+	 * Gets the issuer URL.
+	 * @return the issuer URL
+	 */
+	private String getIssuerURL() {
+		if (issuerURL==null) {
+			return DEFAULT_ISSUER_URL;
+		} else {
+			return issuerURL;
+		}
+	}
+	
+	private String getCertificatesEndpointPath() {
+		if (certificatesEndpointPath==null) {
+			return DEFAULT_CERTIFICATES_ENDPOINT_PATH;
+		} else {
+			return certificatesEndpointPath;
+		}
+	}
+	
+	/**
+	 * Gets the URI to obtain the certificates from the keycloak server.
+	 * @return the certificates URI
+	 * @throws URISyntaxException the URI syntax exception
+	 */
+	private URI getCertificatesURI() throws URISyntaxException {
+		
+		// --- Get the URI and the relevant path strings ------------
+		URI issuerURI;
+		issuerURI = new URI(this.getIssuerURL());
+		String uriPath = issuerURI.getPath();
+		String endpointSubPath = this.getCertificatesEndpointPath();
+		
+		// --- Insert a slash if necessary --------------------------
+		if (uriPath.endsWith("/")==false && endpointSubPath.startsWith("/")==false) {
+			uriPath += "/";
+		}
+		
+		// --- Build and return the final URI -----------------------
+		uriPath += endpointSubPath;
+		return issuerURI.resolve(uriPath);
+	}
+	
 }
