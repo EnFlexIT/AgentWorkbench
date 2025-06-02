@@ -30,7 +30,7 @@ public class AwbLookAndFeelAdjustments {
 	public final static String LIGHT_LOOK_AND_FEEL_CLASS  = FlatLightLaf.class.getName();
 	public final static String DARK_LOOK_AND_FEEL_CLASS   = FlatDarkLaf.class.getName();
 
-	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = NIMBUS_LOOK_AND_FEEL_CLASS;
+	public final static String DEFAUL_LOOK_AND_FEEL_CLASS = LIGHT_LOOK_AND_FEEL_CLASS;
 	
 	private static boolean isFurtherLaFToInstall = true;
 	private static boolean isFurtherLaFInstalled = false;
