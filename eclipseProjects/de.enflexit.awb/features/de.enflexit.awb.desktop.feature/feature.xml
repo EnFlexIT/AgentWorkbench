@@ -120,4 +120,12 @@
          id="de.enflexit.awb.baseUI"
          version="0.0.0"/>
 
+   <plugin
+         id="de.enflexit.oidc"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.oidc.ui"
+         version="0.0.0"/>
+
 </feature>
