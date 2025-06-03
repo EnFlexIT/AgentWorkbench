@@ -1398,8 +1398,8 @@ import de.enflexit.language.Language;
 	@XmlTransient
 	public void setProjectFolder(String newProjectFolder) {
 		projectFolder = newProjectFolder;
-		setChanged();
-		notifyObservers(CHANGED_ProjectFolder);
+		this.setChanged();
+		this.notifyObservers(CHANGED_ProjectFolder);
 	}
 
 	/**
@@ -1418,6 +1418,13 @@ import de.enflexit.language.Language;
 			projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectFolder() + File.separator;
 		}
 		return projectFolderFullPath;
+	}
+	/**
+	 * Enables to set the full path of the project director.
+	 * @param projectFolderFullPath the new project folder full path
+	 */
+	public void setProjectFolderFullPath(String projectFolderFullPath) {
+		this.projectFolderFullPath = projectFolderFullPath;
 	}
 	
 	/**
@@ -1987,17 +1994,22 @@ import de.enflexit.language.Language;
 	 */
 	public void setTimeModelClass(String timeModelClass) {
 		this.timeModelClass = timeModelClass;
-		setUnsaved(true);
-		setChanged();
-		notifyObservers(CHANGED_TimeModelClass);
+		this.setUnsaved(true);
+		this.setChanged();
+		this.notifyObservers(CHANGED_TimeModelClass);
 	}
-
 	/**
 	 * Returns the time model class and configuration for this Project.
 	 * @return the time model class
 	 */
 	@XmlTransient
 	public String getTimeModelClass() {
+		// --- Consider legacy package for TimeModels ---------------
+		if (timeModelClass!=null && timeModelClass.startsWith("agentgui.simulationService.time.")==true) {
+			timeModelClass = timeModelClass.replace("agentgui.simulationService.time.", "de.enflexit.awb.simulation.environment.time.");
+			this.setUnsaved(true);
+			this.setChanged();
+		}
 		return timeModelClass;
 	}
 

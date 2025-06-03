@@ -26,7 +26,7 @@ import de.enflexit.awb.simulation.ontology.RemoteContainerConfig;
 public interface LoadServiceHelper extends ServiceHelper {
 
 	/** The name of this service. */
-	public static final String SERVICE_NAME = "de.enflexit.awb.simulation.LoadService";
+	public static final String SERVICE_NAME = LoadService.class.getName();
 	
 	
 	// --- Methods for agent and container handling -----------------

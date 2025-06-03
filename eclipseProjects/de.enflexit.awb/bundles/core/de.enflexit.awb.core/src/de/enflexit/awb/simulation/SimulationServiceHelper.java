@@ -25,31 +25,29 @@ import de.enflexit.awb.simulation.transaction.EnvironmentNotification;
  */
 public interface SimulationServiceHelper extends ServiceHelper {
 
-	/** The Constant SERVICE_NAME. */
-	public static final String SERVICE_NAME = "de.enflexit.awb.simulation.SimulationService";
+	public static final String SERVICE_NAME = SimulationService.class.getName();
+	public static final String SERVICE_NODE_DESCRIPTION_FILE = "AWB-Node.bin";
 	
-	/** The Constant SERVICE_NODE_DESCRIPTION_FILE. */
-	public static final String SERVICE_NODE_DESCRIPTION_FILE = "AgentGUINode.bin";
-	
-	// --- Methods for the synchronised time ------------------------
+	// --- Methods for the synchronized time ------------------------
 	/**
-	 * Returns the difference in milliseconds for synchronised time.
+	 * Returns the difference in milliseconds for synchronized time.
 	 *
-	 * @return the time difference milliseconds for synchronised time
+	 * @return the time difference milliseconds for synchronized time
 	 * @throws ServiceException the ServiceException
 	 */
 	public long getSynchTimeDifferenceMillis() throws ServiceException;
+	
 	/**
-	 * Returns the synchronised time in milliseconds.
+	 * Returns the synchronized time in milliseconds.
 	 *
-	 * @return the synchronised time in milliseconds
+	 * @return the synchronized time in milliseconds
 	 * @throws ServiceException the ServiceException
 	 */
 	public long getSynchTimeMillis() throws ServiceException;
 	/**
-	 * Returns the synchronised time as date.
+	 * Returns the synchronized time as date.
 	 *
-	 * @return the synchronised time date
+	 * @return the synchronized time date
 	 * @throws ServiceException the ServiceException
 	 */
 	public Date getSynchTimeDate() throws ServiceException;

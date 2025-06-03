@@ -14,7 +14,7 @@ de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing se
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be created.;;;
-de;<br>Kann der Name aus der Liste der Setups entfernt werden?;;;;
+de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
 de;AWB auf GitBook;AWB on GitBook;;;
 de;AWB auf GitHub;AWB on GitHub;;;
@@ -38,7 +38,7 @@ de;Agent.GUI Projekt-Datei;Agent.GUI project file
 de;Agent.GUI umschalten ?;Switch Agent.GUI ?
 de;Agent.Workbench - Anwendungsvisualisierungen;Agent.Workbench - Application Visualization;;;
 de;Agent.Workbench - Tray Icon anzeigen;Display Agent.Workbench - Tray Icon			;;;
-de;Agent.Workbench Projekt-Datei;;;;
+de;Agent.Workbench Projekt-Datei;Agent.Workbench Project-File;;;
 de;Agent:;Agent:
 de;Agent;agent
 de;AgentGUI - Standardeinstellungen verwenden;Use Agent.GUI defaults
@@ -70,7 +70,6 @@ de;Als Bild exportieren;Export as image;;;
 de;Als Projekt Start-Tab verwenden;Use as project start-tab;;;
 de;Alter Wert:;Old value:
 de;An Fenster anpassen;Fit to window;;;
-de;Angegebene Update-Site enthält keine Repositorydatei;;;;
 de;Ansicht wiederherstellen;Restore View;;;
 de;Ansicht:;View:
 de;Ansicht;View
@@ -206,7 +205,7 @@ de;Die Klasse vom Typ 'OntologyClassVisualisation' wurde nicht gefunden!;The cla
 de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.<br>Bitte wählen Sie einen anderen Speicherort.;The project repository must not be saved in the folder for projects.<br>Please, choose a different location.;;;
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Die angeforderte Ressource steht nicht mehr unter der gewählten Update-Site zur Verfügung und wurde umgeleitet;The requested resource is no longer available at the selected update site and has been redirected;;;
-de;Die angegebene Update-Site enthält keine Repositorydatei;;;;
+de;Die angegebene Update-Site enthält keine Repositorydatei;The specified update site does not contain a repository file;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;

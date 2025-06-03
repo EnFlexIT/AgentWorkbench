@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
@@ -17,13 +17,15 @@ import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
 import de.enflexit.awb.core.jade.NetworkAddresses;
 import de.enflexit.awb.core.jade.NetworkAddresses.NetworkAddress;
 import de.enflexit.awb.core.jade.PortChecker;
+import de.enflexit.awb.simulation.LoadService;
+import de.enflexit.awb.simulation.SimulationService;
+import de.enflexit.awb.simulation.logging.DebugService;
 import de.enflexit.language.Language;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlTransient;
-
-import jade.core.Profile;
-import jade.core.ProfileImpl;
 
 /**
  * With this class, the Profile of a new JADE-Container can be configured.
@@ -119,10 +121,11 @@ public class PlatformJadeConfig implements Serializable {
 	
 	@XmlElementWrapper(name = "serviceList")
 	@XmlElement(name="service")			
-	private ArrayList<String> useServiceList;
+	private ArrayList<String> serviceList;
+	@XmlTransient
+	private boolean isCorrectedServiceList;
 	@XmlTransient
 	private DefaultListModel<String> listModelServices;
-	
 	
 	/**
 	 * Default constructor of this class.
@@ -386,10 +389,28 @@ public class PlatformJadeConfig implements Serializable {
 	 * @return the service list
 	 */
 	public ArrayList<String> getServiceList() {
-		if (useServiceList==null) {
-			useServiceList = new ArrayList<>();
+		if (serviceList==null) {
+			serviceList = new ArrayList<>();
 		}
-		return useServiceList;
+		if (this.isCorrectedServiceList==false) {
+			// --- Check if the entries needs to be revised -------------------
+			for (int i = 0; i < serviceList.size(); i++) {
+				String serviceClassName = serviceList.get(i);
+				if (serviceClassName.startsWith("agentgui")==true) {
+					if (serviceClassName.endsWith(DebugService.class.getSimpleName())==true) {
+						serviceClassName = DebugService.class.getName();
+					} else if (serviceClassName.endsWith(SimulationService.class.getSimpleName())==true) {
+						serviceClassName = SimulationService.class.getName();
+					} else if (serviceClassName.endsWith(LoadService.class.getSimpleName())==true) {
+						serviceClassName = LoadService.class.getName();
+					}
+					serviceList.set(i, serviceClassName);
+				}
+			}
+			
+			this.isCorrectedServiceList = true;
+		}
+		return serviceList;
 	}
 	/**
 	 * Can be used to add a class reference to an extended JADE-BaseService.
@@ -438,8 +459,9 @@ public class PlatformJadeConfig implements Serializable {
 	 */
 	public String getServiceListArgument() {
 		String serviceListString = "";
-		for (int i = 0; i < this.getServiceList().size(); i++) {
-			String singeleService = this.getServiceList().get(i);
+		List<String> serviceList = this.getServiceList();
+		for (int i = 0; i < serviceList.size(); i++) {
+			String singeleService = serviceList.get(i);
 			if (singeleService.endsWith(";")==true) {
 				serviceListString += singeleService;
 			} else {
@@ -688,28 +710,21 @@ public class PlatformJadeConfig implements Serializable {
 	public DefaultListModel<String> getListModelServices() {
 		if (listModelServices==null) {
 			listModelServices = new DefaultListModel<String>();
-			Iterator<String> it = this.useServiceList.iterator();
-			while (it.hasNext()) {
-				listModelServices.addElement(it.next());
-			}
 			this.sortListModelServices();
 		}
 		return listModelServices;
 	}
-
 	/**
 	 * This method will sort the current list model for the chosen services.
 	 */
 	private void sortListModelServices() {
 		
-		if (useServiceList.size()>1) {
-			Vector<String> sorty = new Vector<String>(useServiceList);
-			Collections.sort(sorty);
-			this.listModelServices.removeAllElements();
-			for (int i = 0; i < sorty.size(); i++) {
-				this.listModelServices.addElement(sorty.get(i));
-			}
-		}
+		if (this.getServiceList().size()==0) return;
+		
+		this.listModelServices.removeAllElements();
+
+		Collections.sort(this.getServiceList()); 
+		this.getServiceList().forEach(serviceClass -> listModelServices.addElement(serviceClass));
 	}
 
 	/**

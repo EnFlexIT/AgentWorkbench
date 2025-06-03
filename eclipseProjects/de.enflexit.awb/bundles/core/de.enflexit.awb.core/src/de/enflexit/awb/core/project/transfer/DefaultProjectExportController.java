@@ -491,9 +491,13 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return true if successful
 	 */
 	private boolean performProjectModificationsForExport() {
+		
 		// --- Load the project file from the temp folder ---------
 		File projectFolder = this.getTempFolderPath().toFile();
+		String projectFolderPath = projectFolder.toString() + File.separator;
+
 		Project projectForExport = Project.load(projectFolder, false);
+		projectForExport.setProjectFolderFullPath(projectFolderPath);
 		
 		// --- Remove authorization settings ------------------------
 		if (this.getExportSettings().isIncludeAuthorizationSettings()==false) {

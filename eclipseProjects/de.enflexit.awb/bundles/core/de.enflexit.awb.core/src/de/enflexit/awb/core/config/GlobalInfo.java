@@ -761,8 +761,9 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * @return the server path for the resource distribution
 	 */
 	public String getResourceDistributionServerPath(boolean forceDirectoryCreation) {
-		String subPathServer = "resServer" + File.separator;
-		String returnPath = this.getFilePathAbsolute(subPathServer);
+		String subPathServer = "resServer";
+		String returnPath = this.getFilePathAbsolute(subPathServer).toString();
+		returnPath = returnPath.endsWith(File.separator)==true ? returnPath : returnPath + File.separator;
 		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
@@ -774,8 +775,9 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * @return path to the folder, where downloads will be saved ('/AgentGUI/fmDownload[PID]/')
 	 */
 	public String getResourceDistributionDownloadPath(boolean forceDirectoryCreation) {
-		String pathDownload = "resDownload" + File.separator;
-		String returnPath = this.getFilePathAbsolute(pathDownload);
+		String pathDownload = "resDownload";
+		String returnPath = this.getFilePathAbsolute(pathDownload).toString();
+		returnPath = returnPath.endsWith(File.separator)==true ? returnPath : returnPath + File.separator;
 		if (forceDirectoryCreation==true) this.createDirectoryIfRequired(returnPath);
 		return returnPath;
 	}
@@ -973,13 +975,13 @@ public class GlobalInfo implements ZoneIdResolver {
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
 	/**
-	 * This method will convert relative Agent.GUI paths to absolute paths. 
+	 * This method will convert relative AWB paths to absolute paths. 
 	 * (e. g. './AgentGUI/properties/' will be converted to 'D:/MyWorkspace/AgentGUI/properties')    
 	 * @param filePathRelative The relative path to convert
 	 * @return The absolute path of the given relative one 
 	 */
-	private String getFilePathAbsolute(String filePathRelative){
-		return this.getPathBaseDir() + filePathRelative;		
+	private Path getFilePathAbsolute(String filePathRelative) {
+		return this.getPathBaseDir().resolve(filePathRelative);		
 	}
 	// ---------------------------------------------------------
 	// ---------------------------------------------------------
