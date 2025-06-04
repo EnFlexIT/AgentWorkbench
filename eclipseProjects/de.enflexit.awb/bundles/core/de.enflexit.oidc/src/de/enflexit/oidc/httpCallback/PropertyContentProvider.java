@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -52,7 +53,7 @@ public class PropertyContentProvider {
 	 */
 	public enum FileToProvide {
 		LOGIN_SUCCESS_HTML("LogInSuccess.html"),
-		LOGO_PNG("favicon.png"),
+		LOGO_PNG("logo.png"),
 		BACKGROUND_JPG("background.jpg"),
 		FAVICON_PNG("favicon.png")
 		;
@@ -74,6 +75,8 @@ public class PropertyContentProvider {
 	private boolean debug = false;
 	private String propertyDirectoryInBundle;
 	private File propertyDirectory;
+	
+	private ArrayList<FileToProvide> filesFromBundle;
 	
 	/**
 	 * Instantiates a new property content provider.
@@ -172,6 +175,8 @@ public class PropertyContentProvider {
 					fos.write(buffer, 0, len);
 				}
 				
+				this.getFilesFromBundle().add(fileToProvide);
+				
 			} else {
 				// --- Could not find fileURL -------------
 				System.err.println(this.getClass().getSimpleName() + " could not find resource for '" + fileName + "'");
@@ -191,7 +196,45 @@ public class PropertyContentProvider {
 				ioEx.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Gets the files of files that were extracted from the bundle.
+	 * @return the files from bundle
+	 */
+	private ArrayList<FileToProvide> getFilesFromBundle() {
+		if (filesFromBundle==null) {
+			filesFromBundle = new ArrayList<PropertyContentProvider.FileToProvide>();
+		}
+		return filesFromBundle;
+	}
+	
+	/**
+	 * Deletes a file if it was previously extracted from the bundle. If not, the file is ignored.
+	 * Optionally, the folder containing the extracted files can be deleted to, if it is empty.
+	 * @param fileToProvide the file to be deleted
+	 * @param deleteFolderIfEmpty specifies if the folder should be deleted, too
+	 */
+	public void deleteIfFromBundle(FileToProvide fileToProvide, boolean deleteFolderIfEmpty) {
 		
+		// --- Only do something if the file was actually extracted from the bundle -----
+		if (this.getFilesFromBundle().contains(fileToProvide)) {
+			
+			// --- Delete the specified file ------------------------
+			Path propsFolderPath = PathHandling.getPropertiesPath(true);
+			File fileToDelete = propsFolderPath.resolve(fileToProvide.toString()).toFile();
+			if (fileToDelete.exists()) {
+				fileToDelete.delete();
+			}
+			
+			// --- If specified so, also delete the folder if it is empty -----  
+			if (deleteFolderIfEmpty==true) {
+				File propsFolder = propsFolderPath.toFile();
+				if (propsFolder.listFiles().length==0) {
+					propsFolder.delete();
+				}
+			}
+		}
 	}
 	
 }

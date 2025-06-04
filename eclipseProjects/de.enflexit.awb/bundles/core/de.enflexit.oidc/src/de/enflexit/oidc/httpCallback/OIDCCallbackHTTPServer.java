@@ -50,6 +50,10 @@ public class OIDCCallbackHTTPServer {
 		this.callbackListener = callbackListener;
 	}
 
+	/**
+	 * Gets the HTTP server.
+	 * @return the HTTP server
+	 */
 	private HttpServer getHttpServer() {
 		if (httpServer==null) {
 			try {
@@ -124,11 +128,31 @@ public class OIDCCallbackHTTPServer {
 	 * Makes sure the callback page is available. If the server is started from a jar bundle, it is copied to the application's properties folder.
 	 */
 	private void prepareCallbackPage() {
-		File propFile = PathHandling.getPropertiesPath(true).toFile();
-		propertyContentProvider = new PropertyContentProvider(propFile);
 		for (FileToProvide fileToProvide : FileToProvide.values()) {
-			propertyContentProvider.checkAndProvidePropertyContent(fileToProvide, false);
+			this.getPropertyContentProvider().checkAndProvidePropertyContent(fileToProvide, false);
 		}
+	}
+	
+	/**
+	 * If the files for the page were extracted from the bundle, this method deletes the extracted files and the containing folder.
+	 */
+	private void disposeCallbackPage() {
+		for (FileToProvide fileToProvide : FileToProvide.values()) {
+			this.getPropertyContentProvider().deleteIfFromBundle(fileToProvide, true);
+		}
+	}
+	
+	/**
+	 * Gets the property content provider.
+	 *
+	 * @return the property content provider
+	 */
+	private PropertyContentProvider getPropertyContentProvider() {
+		if (propertyContentProvider==null) {
+			File propFile = PathHandling.getPropertiesPath(true).toFile();
+			propertyContentProvider = new PropertyContentProvider(propFile);
+		}
+		return propertyContentProvider;
 	}
 	
 	/**
@@ -162,7 +186,7 @@ public class OIDCCallbackHTTPServer {
 			}
 			
 			httpServer.stop(60);
-//			this.disposeCallbackPage();
+			this.disposeCallbackPage();
 		}
 	}
 	
@@ -202,64 +226,5 @@ public class OIDCCallbackHTTPServer {
 		}
 		return supportedMimeTypes;
 	}
-	
-//	private class StaticFileHandler implements HttpHandler {
-//		
-//		private String filesystemRoot;
-//	    private String urlPrefix;
-//	    private String directoryIndex;
-//
-//		public StaticFileHandler(String filesystemRoot, String urlPrefix, String directoryIndex) {
-//			try {
-//				this.filesystemRoot = new File(filesystemRoot).getCanonicalPath();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			this.urlPrefix = urlPrefix;
-//			this.directoryIndex = directoryIndex;
-//		}
-//
-//
-//		@Override
-//		public void handle(HttpExchange exchange) throws IOException {
-//			String wholeUrlPath = exchange.getRequestURI().getPath();
-//	        if (wholeUrlPath.endsWith("/")) {
-//	            wholeUrlPath += directoryIndex;
-//	        }
-//	        
-//	        String urlPath = wholeUrlPath.substring(urlPrefix.length());
-//	        File file = PathHandling.getPropertiesPath(true).resolve(urlPath).toFile();
-//	        File canonicalFile;
-//	        canonicalFile = file.getCanonicalFile();
-//	        
-//	        FileInputStream fis;
-//	        try {
-//	            fis = new FileInputStream(canonicalFile);
-//	        } catch (FileNotFoundException e) {
-//	            // The file may also be forbidden to us instead of missing, but we're leaking less information this way 
-//	        	String errorContent = "File not found";
-//	        	exchange.getResponseHeaders().set("Content-Type", "text/plain");
-//	        	exchange.sendResponseHeaders(404, errorContent.length());
-//	        	OutputStream os = exchange.getResponseBody();
-//	            os.write(errorContent.getBytes());
-//	            os.close();
-//	            return;
-//	        }
-//	        
-//	        String mimeType = OIDCCallbackHTTPServer.this.getMimeTypeForFile(canonicalFile.getName());
-//	        exchange.getRequestHeaders().set("Content-Type", mimeType);
-//	        exchange.sendResponseHeaders(200, canonicalFile.length());            
-//            OutputStream os = exchange.getResponseBody();
-//            byte[] buf = new byte[4096];
-//            int n;
-//            while ((n = fis.read(buf)) >= 0) {
-//                os.write(buf, 0, n);
-//            }
-//            os.close();
-//            fis.close();
-//		}
-//		
-//	}
 	
 }
