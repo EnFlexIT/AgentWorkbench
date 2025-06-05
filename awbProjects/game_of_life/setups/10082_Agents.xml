@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulationSetup>
+    <agentSetup>
+        <agent>
+            <postionNo>1</postionNo>
+            <listMembership>01 AgentStartManual</listMembership>
+            <agentClassReference>gol.SimService.agents.SimulationManager</agentClassReference>
+            <startAsName>SiMa</startAsName>
+        </agent>
+    </agentSetup>
+    <timeModelSettings>
+        <entry>
+            <key>CounterStart</key>
+            <value>1</value>
+        </entry>
+        <entry>
+            <key>CounterStop</key>
+            <value>9999</value>
+        </entry>
+        <entry>
+            <key>CounterCurrent</key>
+            <value>0</value>
+        </entry>
+    </timeModelSettings>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
+</simulationSetup>

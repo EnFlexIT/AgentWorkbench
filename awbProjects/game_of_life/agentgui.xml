@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Game of Life</projectName>
+    <projectDescription>## Game of Life
+
+This is the AWB implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) that relies on agents.
+
+Here, each cell of the game board will be represented by an individual agent, while each\
+agent follows the rules of the game and defines the corresponding cell as 'dead' or 'alive'.\
+For the detailted rules and further information follow the the above link.
+
+![Glider Gun](./images/Gospers_glider_gun.gif "A single Gosper's glider gun creating gliders")\
+The image above shows a so-called glider gun. In a cellular automaton, a gun is a pattern with\
+a main part that repeats periodically and that also periodically emits so called spaceships.
+
+Although this information also can be found in the above linked article, we here basically wanted\
+to show that images can be integrated in a project description as well as Hyperlinks.  
+
+
+
+</projectDescription>
     <projectStartTab>2|3</projectStartTab>
     <projectView>Developer</projectView>
     <projectTreeVisible>true</projectTreeVisible>
-    <projectTabHeaderVisible>true</projectTabHeaderVisible>
+    <projectTabHeaderVisible>false</projectTabHeaderVisible>
     <version>2.2.0.20220708-1000</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1733820185724</updateDateLastChecked>
+    <updateDateLastChecked>1749140308243</updateDateLastChecked>
     <updateAuthorization>
         <authorizationType>NONE</authorizationType>
     </updateAuthorization>
@@ -38,10 +56,10 @@
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
-            <service>agentgui.logging.DebugService</service>
-            <service>agentgui.simulationService.LoadService</service>
+            <service>de.enflexit.awb.simulation.LoadService</service>
+            <service>de.enflexit.awb.simulation.SimulationService</service>
+            <service>de.enflexit.awb.simulation.logging.DebugService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
@@ -101,8 +119,9 @@
     <projectProperties>
         <propertyMap/>
     </projectProperties>
-    <simulationSetupCurrent>0128 Agents</simulationSetupCurrent>
-    <timeModelClass>agentgui.simulationService.time.TimeModelStroke</timeModelClass>
+    <simulationSetupCurrent>0968 Agents</simulationSetupCurrent>
+    <timeModelClass>de.enflexit.awb.simulation.environment.time.TimeModelStroke</timeModelClass>
+    <projectFolderFullPath>D:\20_GIT\01_AWB\awbProjects\game_of_life\</projectFolderFullPath>
     <simulationSetups>
         <entry>
             <key>0018 Agents</key>
@@ -135,6 +154,10 @@
         <entry>
             <key>0968 Agents</key>
             <value>0968_agents.xml</value>
+        </entry>
+        <entry>
+            <key>10082 Agents</key>
+            <value>10082_Agents.xml</value>
         </entry>
         <entry>
             <key>1250 Agents</key>

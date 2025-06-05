@@ -526,7 +526,7 @@ public abstract class BaseLoadBalancing extends OneShotBehaviour implements Base
 			System.out.println("Can not start remote container - LoadService is not running!");
 			return null;
 		}
-		if (numberOfContainer<=0) return null;
+		if (numberOfContainer<0) return null;
 		
 		// --- Start the required number of container --------------------
 		for (int i = 0; i < numberOfContainer; i++) {

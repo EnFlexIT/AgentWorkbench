@@ -183,20 +183,34 @@
                 <key>_ServerWideSecurityConfiguration</key>
                 <value>
                     <contextPath>_ServerWideSecurityConfiguration</contextPath>
-                    <securityHandlerName>OIDCSecurityHandler</securityHandlerName>
+                    <securityHandlerName>JwtSingleUserSecurityHandler</securityHandlerName>
                     <securityHandlerActivated>true</securityHandlerActivated>
                     <securityHandlerConfiguration>
                         <entry>
-                            <key>ClientID</key>
-                            <value>Agent.Workbench</value>
+                            <key>JWT Issuer</key>
+                            <value>AWB</value>
                         </entry>
                         <entry>
-                            <key>ClientSecrete</key>
-                            <value>PeQ5NZeH4aGpr58knm2MviLA5IJ5uvY3</value>
+                            <key>JWT Secrete</key>
+                            <value>irgendeinlangesWortMit dem dasSystemetwasverschlüssenlnkann</value>
                         </entry>
                         <entry>
-                            <key>Issuer</key>
-                            <value>https://login.enflex.it/realms/enflexService</value>
+                            <key>JWT Token - Renew with every call</key>
+                        </entry>
+                        <entry>
+                            <key>JWT Token - Validity Period [Min]</key>
+                            <value>10</value>
+                        </entry>
+                        <entry>
+                            <key>JWT Verbose</key>
+                        </entry>
+                        <entry>
+                            <key>Password</key>
+                            <value>admin</value>
+                        </entry>
+                        <entry>
+                            <key>User Name</key>
+                            <value>admin</value>
                         </entry>
                     </securityHandlerConfiguration>
                 </value>

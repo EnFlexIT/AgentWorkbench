@@ -71,6 +71,13 @@
 					<version>2.1.1</version>
 					<type>jar</type>
 				</dependency>
+				<!-- Markdown-Support -->
+				<dependency>
+					<groupId>org.commonmark</groupId>
+					<artifactId>commonmark</artifactId>
+					<version>0.24.0</version>
+					<type>jar</type>
+				</dependency>
 				<dependency>
 					<groupId>jakarta.persistence</groupId>
 					<artifactId>jakarta.persistence-api</artifactId>

@@ -707,6 +707,14 @@ public class GlobalInfo implements ZoneIdResolver {
 		return filePropProjectsDirectory;
 	}
 	/**
+	 * Will return the path to the project folder ('./projects').
+	 * @return the path to the project folder
+	 */
+	public Path getPathProjectsAsPath() {
+		return Path.of(this.getPathProjects(true));
+	}
+	
+	/**
 	 * Returns the default projects directory.
 	 * @return the default projects directory
 	 */

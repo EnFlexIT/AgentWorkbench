@@ -116,7 +116,7 @@ public class StartAndBalancing extends StaticLoadBalancingBase {
 			// --- Startargument zusammenbauen ------------
 			// --- Die Nachbarn, die interessant sind -----
 			Object startArg[] = new Object[2];
-			startArg[0] = getNeighbourVector(agentName);
+			startArg[0] = this.getNeighbourVector(agentName);
 			startArg[1] = agentState;
 			
 			// --- Agenten starten ------------------------ 

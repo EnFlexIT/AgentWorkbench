@@ -338,9 +338,15 @@ public abstract class EnvironmentController extends Observable implements Observ
 	 * @param environmentModel the new environment model
 	 */
 	public void setEnvironmentModel(EnvironmentModel environmentModel) {
-		this.setTimeModel(environmentModel.getTimeModel());
-		this.setDisplayEnvironmentModel(environmentModel.getDisplayEnvironment());
-		this.setAbstractEnvironmentModel(environmentModel.getAbstractEnvironment());
+		if (environmentModel==null) {
+			this.setTimeModel(null);
+			this.setDisplayEnvironmentModel(null);
+			this.setAbstractEnvironmentModel(null);
+		} else {
+			this.setTimeModel(environmentModel.getTimeModel());
+			this.setDisplayEnvironmentModel(environmentModel.getDisplayEnvironment());
+			this.setAbstractEnvironmentModel(environmentModel.getAbstractEnvironment());
+		}
 	}
 	/**
 	 * Returns the current instances of the EnvironmentModel.

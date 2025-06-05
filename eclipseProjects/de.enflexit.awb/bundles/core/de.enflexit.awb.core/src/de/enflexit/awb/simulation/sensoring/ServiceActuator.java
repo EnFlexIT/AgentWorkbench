@@ -288,7 +288,12 @@ public class ServiceActuator extends Thread {
 		ServiceSensor[] sensors = this.getServiceSensorArray();
 		AID[] sensorAgents = new AID[sensors.length];
 		for (int i = 0; i < sensors.length; i++) {
-			sensorAgents[i] = sensors[i].getServiceSensor().getAID();
+			ServiceSensor serviceSensor = sensors[i];
+			if (serviceSensor==null) {
+				sensorAgents[i] = null;
+			} else {
+				sensorAgents[i] = serviceSensor.getServiceSensor().getAID();
+			}
 		}
 		return sensorAgents;
 	}

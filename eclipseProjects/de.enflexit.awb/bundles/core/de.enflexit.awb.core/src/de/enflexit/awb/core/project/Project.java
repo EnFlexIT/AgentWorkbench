@@ -59,6 +59,7 @@ import de.enflexit.common.AbstractUserObject;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.Observable;
 import de.enflexit.common.PathHandling;
+import de.enflexit.common.StringHelper;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.http.WebResourcesAuthorization;
@@ -1356,6 +1357,9 @@ import de.enflexit.language.Language;
 	 * @param newProjectDescription the projectDescription to set
 	 */
 	public void setProjectDescription(String newProjectDescription) {
+
+		if (StringHelper.isEqualString(newProjectDescription, this.projectDescription)==true) return;
+		
 		projectDescription = newProjectDescription;
 		setUnsaved(true);
 		setChanged();

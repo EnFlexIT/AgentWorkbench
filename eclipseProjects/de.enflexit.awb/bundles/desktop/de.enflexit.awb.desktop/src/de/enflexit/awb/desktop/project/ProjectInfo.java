@@ -9,8 +9,10 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -18,13 +20,15 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import org.commonmark.node.Image;
+import org.commonmark.node.Node;
+import org.commonmark.renderer.html.AttributeProvider;
 
 import de.enflexit.awb.baseUI.dialogs.AuthenticatationDialog;
 import de.enflexit.awb.core.config.GlobalInfo;
@@ -33,6 +37,7 @@ import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.common.swing.markdown.MarkdownEditViewer;
 import de.enflexit.language.Language;
 
 /**
@@ -40,7 +45,7 @@ import de.enflexit.language.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProjectInfo extends JPanel implements Observer, ActionListener {
+public class ProjectInfo extends JPanel implements Observer, ActionListener, AttributeProvider {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -54,8 +59,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 	private JTextField jTextFieldProjectName;
 	
 	private JLabel jLableDescription;
-	private JScrollPane jScrollPane;
-	private JTextArea jTextAreaProjectDescription;
+	private MarkdownEditViewer jTextAreaProjectDescription;
 	private boolean isPauseProjectDescriptionDocumentListener;
 	
 	private JLabel jLabelStartTab;
@@ -142,7 +146,7 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		gbc_ProjectDescriptionScrollPane.gridy = 1;
 		gbc_ProjectDescriptionScrollPane.insets = new Insets(0, 0, 5, 10);
 		gbc_ProjectDescriptionScrollPane.gridx = 1;
-		this.add(this.getJScrollPane(), gbc_ProjectDescriptionScrollPane);
+		this.add(this.getJTextAreaProjectDescription(), gbc_ProjectDescriptionScrollPane);
 		
 		GridBagConstraints gbcProjectFolderLable = new GridBagConstraints();
 		gbcProjectFolderLable.gridx = 0;
@@ -229,23 +233,12 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		}
 		return jLableDescription; 
 	}
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setViewportView(this.getJTextAreaProjectDescription());
-			jScrollPane.setPreferredSize(new Dimension(300, 300));
-		}
-		return jScrollPane;
-	}
-	private JTextArea getJTextAreaProjectDescription() {
+
+	private MarkdownEditViewer getJTextAreaProjectDescription() {
 		if (jTextAreaProjectDescription == null) {
-			jTextAreaProjectDescription = new JTextArea();
+			jTextAreaProjectDescription = new MarkdownEditViewer(this);
 			jTextAreaProjectDescription.setText(this.currProject.getProjectDescription());
-			jTextAreaProjectDescription.setColumns(0);
-			jTextAreaProjectDescription.setLineWrap(true);
-			jTextAreaProjectDescription.setWrapStyleWord(true);
-			jTextAreaProjectDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextAreaProjectDescription.setCaretPosition(0);
+			jTextAreaProjectDescription.setFont(new Font("Verdana", Font.PLAIN, 14));
 			jTextAreaProjectDescription.getDocument().addDocumentListener(new DocumentListener() {
 				public void removeUpdate(DocumentEvent e) {
 					this.setProjectDescription();
@@ -265,6 +258,32 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 		}
 		return jTextAreaProjectDescription;
 	}
+	/* (non-Javadoc)
+	 * @see org.commonmark.renderer.html.AttributeProvider#setAttributes(org.commonmark.node.Node, java.lang.String, java.util.Map)
+	 */
+	@Override
+	public void setAttributes(Node node, String tagName, Map<String, String> attributes) {
+		
+		if (node instanceof Image==false) return;
+
+		// --- Check if image source is in the projects directory -------------
+		String imgSrc = attributes.get("src");
+		if (imgSrc.startsWith("http://") || imgSrc.startsWith("https://")) return;
+		
+		// --- Remove possible prefixes ---------------------------------------
+		if (imgSrc.startsWith("/")==true) imgSrc = imgSrc.substring(1);
+		if (imgSrc.startsWith("./")==true) imgSrc = imgSrc.substring(2);
+		
+		// --- Check if the file can be found in the project directory --------
+		Path projectPath = Path.of(this.currProject.getProjectFolderFullPath());
+		Path imagePath = projectPath.resolve(imgSrc);
+		if (imagePath.toFile().exists()==false) return;
+
+		// --- Found image file in directory, adjust attribute value ----------
+		String imgAttributeValue = "file:" + imagePath.toString();
+		attributes.put("src", imgAttributeValue);
+	}
+	
 	
 	private JLabel getJLabelProjectFolder() {
 		if (jLableProjectFolder==null) {
@@ -765,4 +784,5 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Invalid value specified for auto update configuration!");
 		}
 	}
+	
 }  
