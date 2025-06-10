@@ -4,7 +4,7 @@ Bundle-Name: Rest Sample Bundle
 Bundle-SymbolicName: de.enflexit.awb.samples.ws.api
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.samples.ws.api
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbWebHandlerApiService.xml
 Require-Bundle: jakarta.servlet-api,

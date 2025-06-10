@@ -4,7 +4,7 @@ Bundle-Name: AWB WS-Rest API Bundle
 Bundle-SymbolicName: de.enflexit.awb.samples.ws.restapi.client
 Bundle-Version: 0.3.0.qualifier
 Automatic-Module-Name: de.enflexit.awb.samples.ws.restapi.client
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/apiRegistrationService.xml

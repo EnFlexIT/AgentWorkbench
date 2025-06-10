@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.enflexit.awb.samples.SimService
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Automatic-Module-Name: de.enflexit.awb.samples.SimService
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: de.enflexit.awb.samples.simulationService,
  de.enflexit.awb.samples.simulationService.classLoadService
 Import-Package: agentgui.ontology,

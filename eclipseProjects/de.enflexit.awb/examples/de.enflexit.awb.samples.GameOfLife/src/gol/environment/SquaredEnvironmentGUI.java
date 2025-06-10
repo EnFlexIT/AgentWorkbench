@@ -1,7 +1,6 @@
 package gol.environment;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -13,11 +12,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
-import de.enflexit.awb.core.environment.EnvironmentPanel;
-import de.enflexit.awb.core.project.DistributionSetup;
-import de.enflexit.common.Observable;
-import de.enflexit.common.swing.AwbThemeColor;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -25,6 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
+
+import de.enflexit.awb.core.environment.EnvironmentPanel;
+import de.enflexit.awb.core.project.DistributionSetup;
+import de.enflexit.common.Observable;
+import de.enflexit.common.swing.AwbThemeColor;
 
 
 public class SquaredEnvironmentGUI extends EnvironmentPanel implements ActionListener {

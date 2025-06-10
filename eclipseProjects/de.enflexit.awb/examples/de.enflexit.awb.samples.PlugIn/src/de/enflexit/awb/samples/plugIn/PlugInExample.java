@@ -24,7 +24,7 @@ public class PlugInExample extends PlugIn {
 
 	private static String plugInName= "PlugIn-Example";
 	
-	private JMenu myMenu = new MyMenu("! My-Menue !");
+	private JMenu myMenu = new MyMenu("! My-Menu !");
 	
 	
 	public PlugInExample(Project currProject) {
