@@ -719,7 +719,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			return;
 		}
 		// --- Add the component --------------------------
-		this.addJMenuItemComponent((JMenu)myMenuItemComponent, (JComponent)myMenuItemComponent, indexPosition);
+		this.addJMenuItemComponent((JMenu)menu2add2, (JComponent)myMenuItemComponent, indexPosition);
 	}
 	/**
 	 * This method can be used in order to add an individual JMmenuItem at a specified index position of the given menu.

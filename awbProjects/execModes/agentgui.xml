@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
-    <projectName>DummyProject</projectName>
+    <projectName>PlugIn Example Projec</projectName>
+    <projectDescription>### PlugIn-Test Project
+
+With this project, we demonstrate the possibility to extend the MainWindow as well as the projects-UI.\
+The source-code can be found in the corresponding example project ['de.enflexit.awb.samples.PlugIn'](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/de.enflexit.awb/examples/de.enflexit.awb.samples.PlugIn)\
+in the AWB git-repository.
+ 
+Above you can find the menu **'!My-Menu!'**, while thereto below you'l find **'My customized button'**.
+
+The project tree on the left correlates to the project tabs and and their sub-tabs. Here, we added\
+**!My Setup-Tag!** as an additional main tab of the project, while we also added a main-tab / sub-tab\
+example further below. 
+
+Since the project-UI and the related **_Project_** datatype are connected using the well-known MVC-pattern,\
+it is possible to change an attribte value and display changes immediately. As an example simply change the\
+**Project Title**; you'll see you changes directly in the prosject tree on the left. 
+
+Such changes are propagated by using notifications to so-called observers. These notifications are shown\
+in the text areas in the tab **!My Tab Single!** and in the **Observer-Output** Tab under the tab\
+**!My Tab with Sub Tabs!**.
+
+This project also provides a very simple agent with a _TickerBehaviour_. It counts each 'tick' and prints\
+something to the console.
+</projectDescription>
+    <projectStartTab>0</projectStartTab>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>true</projectTabHeaderVisible>
+    <version>0.1.0.20250610-1010</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>?</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateDateLastChecked>0</updateDateLastChecked>
+    <updateAuthorization>
+        <authorizationType>NONE</authorizationType>
+    </updateAuthorization>
     <projectFeatures/>
-    <plugins/>
+    <plugins>
+        <className>de.enflexit.awb.samples.plugIn.PlugInExample</className>
+    </plugins>
     <subOntologies/>
     <agentStartConfiguration>
         <agentVector/>
@@ -21,15 +51,17 @@
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
-            <service>agentgui.simulationService.LoadService</service>
-            <service>agentgui.simulationService.SimulationService</service>
+            <service>de.enflexit.awb.simulation.LoadService</service>
+            <service>de.enflexit.awb.simulation.SimulationService</service>
+            <service>de.enflexit.awb.simulation.logging.DebugService</service>
             <service>jade.core.event.NotificationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
-            <service>agentgui.logging.DebugService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <additionalRemoteContainerTimeOutInSeconds>0</additionalRemoteContainerTimeOutInSeconds>
         <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
+        <distributeAllProjectResources>false</distributeAllProjectResources>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
@@ -143,7 +175,11 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
+    <projectProperties>
+        <propertyMap/>
+    </projectProperties>
     <simulationSetupCurrent>default</simulationSetupCurrent>
+    <projectFolderFullPath>D:\20_GIT\01_AWB\awbProjects\execModes\</projectFolderFullPath>
     <simulationSetups>
         <entry>
             <key>default</key>

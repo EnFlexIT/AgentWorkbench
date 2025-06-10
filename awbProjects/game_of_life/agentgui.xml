@@ -3,7 +3,7 @@
     <projectName>Game of Life</projectName>
     <projectDescription>## Game of Life
 
-This is the AWB implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) that relies on agents.
+This is the **AWB** implementation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) that relies on agents.
 
 Here, each cell of the game board will be represented by an individual agent, while each\
 agent follows the rules of the game and defines the corresponding cell as 'dead' or 'alive'.\
@@ -117,9 +117,24 @@ to show that images can be integrated in a project description as well as Hyperl
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
     <projectProperties>
-        <propertyMap/>
+        <propertyMap>
+            <entry>
+                <key>example.config.testwert</key>
+                <value>
+                    <valueClass>String</valueClass>
+                    <valueString>Hallo Tibbi</valueString>
+                </value>
+            </entry>
+            <entry>
+                <key>example.config.value</key>
+                <value>
+                    <valueClass>String</valueClass>
+                    <valueString>Hallo Nico</valueString>
+                </value>
+            </entry>
+        </propertyMap>
     </projectProperties>
-    <simulationSetupCurrent>0968 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>1458 Agents</simulationSetupCurrent>
     <timeModelClass>de.enflexit.awb.simulation.environment.time.TimeModelStroke</timeModelClass>
     <projectFolderFullPath>D:\20_GIT\01_AWB\awbProjects\game_of_life\</projectFolderFullPath>
     <simulationSetups>
