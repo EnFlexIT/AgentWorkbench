@@ -27,7 +27,7 @@ to show that images can be integrated in a project description as well as Hyperl
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1749140308243</updateDateLastChecked>
+    <updateDateLastChecked>1749548150815</updateDateLastChecked>
     <updateAuthorization>
         <authorizationType>NONE</authorizationType>
     </updateAuthorization>
@@ -117,22 +117,7 @@ to show that images can be integrated in a project description as well as Hyperl
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
     <projectProperties>
-        <propertyMap>
-            <entry>
-                <key>example.config.testwert</key>
-                <value>
-                    <valueClass>String</valueClass>
-                    <valueString>Hallo Tibbi</valueString>
-                </value>
-            </entry>
-            <entry>
-                <key>example.config.value</key>
-                <value>
-                    <valueClass>String</valueClass>
-                    <valueString>Hallo Nico</valueString>
-                </value>
-            </entry>
-        </propertyMap>
+        <propertyMap/>
     </projectProperties>
     <simulationSetupCurrent>1458 Agents</simulationSetupCurrent>
     <timeModelClass>de.enflexit.awb.simulation.environment.time.TimeModelStroke</timeModelClass>

@@ -36,6 +36,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -453,6 +455,8 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 						columnClass = String.class;
 						break;
 					case COLUMN_PropertyType:
+						columnClass = String.class;
+						break;
 					case COLUMN_PropertyValue:
 						columnClass = PropertyValue.class;
 						break;
@@ -465,9 +469,36 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 				}
 				@Override
 				public boolean isCellEditable(int row, int column) {
-					return false;
+					if (column<=2) return false;
+					return true;
 				}
 			};
+			
+			// --- Add a TableModelListener to react on changed values --------
+			tableModelProperties.addTableModelListener(new TableModelListener() {
+				@Override
+				public void tableChanged(TableModelEvent tme) {
+
+					if (tme.getType()==TableModelEvent.UPDATE) {
+						
+						int col = tme.getColumn();
+						int row = tme.getFirstRow();
+
+						JTable tbProps = PropertiesPanel.this.getJTableProperties();
+						
+						String identifier = (String) tbProps.getValueAt(row, COLUMN_PropertyName);
+		        		if (identifier==null) {
+		        			identifier = (String) tbProps.getValueAt(row, COLUMN_DisplayInstruction);
+		        		}
+						PropertyValue pValue = (PropertyValue) tbProps.getValueAt(row, col);
+						PropertiesPanel.this.getProperties().setValue(identifier, pValue);
+						
+						// --- Update view of properties editor -------------------
+			        	PropertiesPanel.this.getJPanelPropertiesEdit().setIdentifier(identifier);
+					}
+				}
+			});
+			
 		}
 		return tableModelProperties;
 	}
@@ -486,6 +517,10 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 			// --- Configure the editor and the renderer of the cells ---------
 			TableColumnModel tcm = jTableProperties.getColumnModel();
 			TableColumn tc = null;
+			
+			// --- Define PropertyCellEditor ----------------------------------
+			jTableProperties.setDefaultEditor(PropertyValue.class, new PropertyValueCellEditor());
+			jTableProperties.putClientProperty("terminateEditOnFocusLost", true);
 			
 			// --- Define PropertyCellRenderer --------------------------------
 			PropertyCellRenderer propRenderer = new PropertyCellRenderer();

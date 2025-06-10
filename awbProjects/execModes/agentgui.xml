@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
-    <projectName>PlugIn Example Projec</projectName>
-    <projectDescription>### PlugIn-Test Project
+    <projectName>PlugIn-Example Project</projectName>
+    <projectDescription>### PlugIn-Example Project
 
 With this project, we demonstrate the possibility to extend the MainWindow as well as the projects-UI.\
 The source-code can be found in the corresponding example project ['de.enflexit.awb.samples.PlugIn'](https://github.com/EnFlexIT/AgentWorkbench/tree/master/eclipseProjects/de.enflexit.awb/examples/de.enflexit.awb.samples.PlugIn)\
@@ -176,7 +176,57 @@ something to the console.
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
     <projectProperties>
-        <propertyMap/>
+        <propertyMap>
+            <entry>
+                <key>topic.top-1.1-description</key>
+                <value>
+                    <valueClass>String</valueClass>
+                    <valueString>This is just a description for 'top 1'</valueString>
+                </value>
+            </entry>
+            <entry>
+                <key>topic.top-1.2-IntegerValue</key>
+                <value>
+                    <valueClass>Integer</valueClass>
+                    <valueString>42</valueString>
+                </value>
+            </entry>
+            <entry>
+                <key>topic.top-2.1-description</key>
+                <value>
+                    <valueClass>String</valueClass>
+                    <valueString>An explanation text for 'top 2'</valueString>
+                </value>
+            </entry>
+            <entry>
+                <key>topic.top-2.2-BooleanValue</key>
+                <value>
+                    <valueClass>Boolean</valueClass>
+                    <valueString>true</valueString>
+                </value>
+            </entry>
+            <entry>
+                <key>topic.top-2.3-DoubleValue</key>
+                <value>
+                    <valueClass>Double</valueClass>
+                    <valueString>3.1415</valueString>
+                </value>
+            </entry>
+            <entry>
+                <key>topic.top-2.4-Boobelan</key>
+                <value>
+                    <valueClass>Boolean</valueClass>
+                    <valueString>true</valueString>
+                </value>
+            </entry>
+            <entry>
+                <key>topic.top-2.5-Boolean</key>
+                <value>
+                    <valueClass>Boolean</valueClass>
+                    <valueString>false</valueString>
+                </value>
+            </entry>
+        </propertyMap>
     </projectProperties>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <projectFolderFullPath>D:\20_GIT\01_AWB\awbProjects\execModes\</projectFolderFullPath>

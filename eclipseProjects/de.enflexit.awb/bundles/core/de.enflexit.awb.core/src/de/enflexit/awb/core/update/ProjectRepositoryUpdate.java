@@ -350,12 +350,12 @@ public class ProjectRepositoryUpdate extends Thread {
 		}
 		
 		try {
-			ProjectRepository repo = this.getProjectRepository();
 			// --- Check if the repository can be loaded ----------------
+			ProjectRepository repo = this.getProjectRepository();
 			if (repo ==null) return;
+
 			// --- Check if an update is available ----------------------
 			update = repo.getProjectUpdate(this.currProject);
-		
 			if (update!=null) {
 				// --- An update is available ---------------------------
 				if (this.isConfirmedUserRequestForDownloadAndInstallation(update)==false) return;
@@ -653,9 +653,14 @@ public class ProjectRepositoryUpdate extends Thread {
 	 */
 	public ProjectRepository getProjectRepository() throws HttpURLConnectorException {
 		if (projectRepository==null && this.currProject.getUpdateSite()!=null) {
-			projectRepository = ProjectRepository.loadProjectRepository(this.currProject.getUpdateSite(), this.currProject.getUpdateAuthorization());
-			if (projectRepository==null) {
-				this.printSystemOutput("Could not access any projct repository!", true);
+			// --- Check update site for projects ------------------- 
+			String updateSite = this.currProject.getUpdateSite();
+			boolean isInvalidUpdateSite = updateSite==null || updateSite.trim().isBlank()==true || updateSite.equals("?")==true;
+			if (isInvalidUpdateSite==false) {
+				projectRepository = ProjectRepository.loadProjectRepository(updateSite, this.currProject.getUpdateAuthorization());
+				if (projectRepository==null) {
+					this.printSystemOutput("Could not access any project repository for updates!", false);
+				}
 			}
 		}
 		return projectRepository;

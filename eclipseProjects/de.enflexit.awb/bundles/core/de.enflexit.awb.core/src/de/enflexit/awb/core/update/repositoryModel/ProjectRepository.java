@@ -247,7 +247,7 @@ public class ProjectRepository implements Serializable {
 	 */
 	public static ProjectRepository loadProjectRepository(String fileReferenceOrLink, WebResourcesAuthorization auth) throws HttpURLConnectorException, IllegalArgumentException {
 		
-		if (fileReferenceOrLink==null) return null;
+		if (fileReferenceOrLink==null || fileReferenceOrLink.isBlank()==true || fileReferenceOrLink.equals("?")) return null;
 		
 		ProjectRepository projectRepository = null;
 		// --- Check if the update site is a web site URL -------
@@ -259,6 +259,7 @@ public class ProjectRepository implements Serializable {
 			if (projectRepository!=null) {
 				projectRepository.setWebRepository(true);
 			}
+			
 		} catch (MalformedURLException | URISyntaxException urlEx) {
 			urlEx.printStackTrace();
 		}

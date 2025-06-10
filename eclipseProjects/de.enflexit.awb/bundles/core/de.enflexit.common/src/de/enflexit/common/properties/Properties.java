@@ -93,10 +93,8 @@ public class Properties implements Serializable {
 		} else {
 			newPropValue = newValue==null ? null : new PropertyValue(newValue); 
 		}
-		PropertyValue prevPropValue = this.getPropertyMap().get(identifier);
-		if (newPropValue!=null && newPropValue.equals(prevPropValue)==true) return prevPropValue;
 		
-		prevPropValue = this.getPropertyMap().put(identifier, newPropValue);
+		PropertyValue prevPropValue = this.getPropertyMap().put(identifier, newPropValue);
 		// --- Notify listener ----------------------------
 		this.notifyListener(new PropertiesEvent(action, identifier, newPropValue));
 		return prevPropValue;

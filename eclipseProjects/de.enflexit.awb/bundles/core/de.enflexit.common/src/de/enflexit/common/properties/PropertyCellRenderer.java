@@ -10,6 +10,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import de.enflexit.common.properties.Properties.PropertyType;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
@@ -93,7 +94,15 @@ public class PropertyCellRenderer extends DefaultTableCellRenderer {
 		// --- Configure display component --------------------------
 		// ----------------------------------------------------------
 		JComponent displayComponent = jCheckBox==null ? jLabel : jCheckBox;
-		TableCellColorHelper.setTableCellRendererColors(displayComponent, row, isSelected);
+		if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
+			TableCellColorHelper.setTableCellRendererColors(displayComponent, row, isSelected);
+		} else if (jCheckBox!=null) {
+			if (isSelected==true) {
+				jCheckBox.setBackground(table.getSelectionBackground());
+			} else {
+				jCheckBox.setBackground(table.getBackground());
+			}
+		}
 		
 		return displayComponent; 
 	}
