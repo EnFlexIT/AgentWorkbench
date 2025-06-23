@@ -21,6 +21,8 @@
 	
 	<logger name="de.enflexit.eom.database" level="error" />
 
+	<logger name="org.eclipse.jetty.session" level="error" />
+
 	<logger name="de.enflexit.oshi" level="error" />
 	
   	<logger name="org.hibernate" level="error" />

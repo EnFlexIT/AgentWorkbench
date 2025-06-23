@@ -1,5 +1,6 @@
 package de.enflexit.db.hibernate.connection;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -120,26 +121,10 @@ public class DatabaseConnectionManager {
 			
 			// --- Get the necessary service instances ------------------------ 
 			String factoryID = connectionService.getFactoryID();
-			Configuration configuration = connectionService.getConfiguration();
+			Configuration configuration = this.getActualConfiguration(connectionService);
 
 			// --- Ensure that the connection is closed -----------------------
 			HibernateUtilities.closeSessionFactory(factoryID);
-			
-			// --- Load JDBC connection data ----------------------------------
-			this.loadDatabaseConfigurationProperties(factoryID, configuration);
-			
-			// --- Check general database settings ----------------------------
-			if (this.getGeneralDatabaseSettings()!=null && this.getGeneralDatabaseSettings().isUseForEveryFactory()==true) {
-				// --- Overwrite DB settings with general settings ------------
-				Properties propsToEdit = configuration.getProperties();
-				Properties propsToRead = this.getGeneralDatabaseSettings().getHibernateDatabaseSettings();
-				List<Object> keyList = new ArrayList<>(propsToRead.keySet());
-				for (int i = 0; i < keyList.size(); i++) {
-					String key = (String) keyList.get(i);
-					String value = propsToRead.getProperty(key);
-					propsToEdit.setProperty(key, value);
-				}
-			}
 			
 			// --- Add to the locally known list ------------------------------
 			this.getHibernateDatabaseConnectionServiceHashMap().put(factoryID, connectionService);
@@ -168,6 +153,66 @@ public class DatabaseConnectionManager {
 		HibernateUtilities.closeSessionFactory(factoryID);
 	}
 	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, handling of connection configurations -------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the actual configuration to be used for a {@link HibernateDatabaseConnectionService}
+	 * by also considering the general database settings.
+	 *
+	 * @param factoryID the factory ID
+	 * @return the configuration
+	 */
+	public Configuration getActualConfiguration(String factoryID) {
+		return this.getActualConfiguration(this.getHibernateDatabaseConnectionService(factoryID));
+	}
+	/**
+	 * Returns the actual configuration to be used for a {@link HibernateDatabaseConnectionService}
+	 * by also considering the general database settings.
+	 *
+	 * @param connectionService the connection service
+	 * @return the configuration
+	 */
+	public Configuration getActualConfiguration(HibernateDatabaseConnectionService connectionService) {
+		
+		// --- Get initial Configuration from service ---------------------
+		Configuration configuration = connectionService.getConfiguration();
+		
+		// --- Load JDBC connection data ----------------------------------
+		this.loadDatabaseConfigurationProperties(connectionService.getFactoryID(), configuration);
+		
+		// --- Check general database settings ----------------------------
+		if (this.getGeneralDatabaseSettings()!=null && this.getGeneralDatabaseSettings().isUseForEveryFactory()==true) {
+			// --- Overwrite DB settings with general settings ------------
+			Properties propsToEdit = configuration.getProperties();
+			Properties propsToRead = this.getGeneralDatabaseSettings().getHibernateDatabaseSettings();
+			List<Object> keyList = new ArrayList<>(propsToRead.keySet());
+			for (int i = 0; i < keyList.size(); i++) {
+				String key = (String) keyList.get(i);
+				String value = propsToRead.getProperty(key);
+				propsToEdit.setProperty(key, value);
+			}
+		}
+		return configuration;
+	}
+	
+	/**
+	 * Returns a driver instance for the specified session factory.
+	 *
+	 * @param sessionFactoryId the session factory id
+	 * @return the driver
+	 */
+	public Driver getDriver(String sessionFactoryId) {
+
+		Configuration dbConfig = this.getActualConfiguration(sessionFactoryId);
+		String driverClassName = dbConfig.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
+		
+		HibernateDatabaseService hDbService = HibernateUtilities.getDatabaseServiceByDriverClassName(driverClassName);
+		Driver driver = hDbService.getDriver(dbConfig.getProperties());
+		
+		return driver;
+	}
 
 	// ------------------------------------------------------------------------
 	// --- From here, handling of general database settings -------------------

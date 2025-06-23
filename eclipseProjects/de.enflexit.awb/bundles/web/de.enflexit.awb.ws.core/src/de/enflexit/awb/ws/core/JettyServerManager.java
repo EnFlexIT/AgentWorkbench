@@ -42,6 +42,7 @@ import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.security.NoSecurityHandler;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
+import de.enflexit.awb.ws.core.session.AWBSessionHandler;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
 
 /**
@@ -58,7 +59,6 @@ public class JettyServerManager {
 	private TreeMap<String, JettyServerInstances> jettyServerInstanceHash;
 	
 	private StartOn startOn;
-	
 	
 	// ----------------------------------------------------
 	// --- The singleton create / access area -------------
@@ -298,6 +298,10 @@ public class JettyServerManager {
 		// --- Create new server instance ---------------------------
 		Server server = new Server(this.getThreadPool(jConfiguration));
 		
+		// --- Add required beans for session handling --------------
+		AWBSessionHandler.addBeanSessionDataStoreFactory(server);
+		AWBSessionHandler.addBeanSessionCacheFactory(server);
+		
 		// ----------------------------------------------------------
 		// --- Read & set server configuration ----------------------
 		String[] keyArray = jConfiguration.keySet().toArray(new String[jConfiguration.keySet().size()]);
@@ -375,6 +379,16 @@ public class JettyServerManager {
 		}
 		
 		// ----------------------------------------------------------
+		// --- Set session handler for the server -------------------
+		// TODO
+		JettySecuritySettings securitySettings42 = jConfiguration.getSecuritySettings();
+		if (hCollection==null) {
+			this.setSessionHandler(initialHandler, securitySettings42);
+		} else {
+			this.setSessionHandler(hCollection, securitySettings42);
+		}
+		
+		// ----------------------------------------------------------
 		// --- Secure the server ------------------------------------
 		JettySecuritySettings securitySettings = jConfiguration.getSecuritySettings();
 		if (hCollection==null) {
@@ -401,6 +415,8 @@ public class JettyServerManager {
 		if (isStarted==true) {
 			this.registerServerInstances(jConfiguration.getServerName(), new JettyServerInstances(server, hCollection));
 			BundleHelper.systemPrintln(this, "Started server '" + jConfiguration.getServerName() + "'.", false);
+		} else {
+			BundleHelper.systemPrintln(this, "Server not started: '" + jConfiguration.getServerName() + "'.", true);
 		}
 		return isStarted;
 	}
@@ -517,6 +533,35 @@ public class JettyServerManager {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Secure the specified handler collection.
+	 *
+	 * @param hCollection the handler collection to secure
+	 * @param securitySettings the security settings
+	 */
+	private void setSessionHandler(Sequence hCollection, JettySecuritySettings securitySettings) {
+		List<Handler> handlerList = hCollection.getHandlers();
+		if (handlerList==null) return;
+		for (int i = 0; i < handlerList.size(); i++) {
+			this.setSessionHandler(handlerList.get(i), securitySettings);
+		}
+	}
+	/**
+	 * Secures the specified handler.
+	 *
+	 * @param handler the handler
+	 * @param securitySettings the security settings
+	 */
+	private void setSessionHandler(Handler handler, JettySecuritySettings securitySettings) {
+
+		if (handler==null) return;
+		if (! (handler instanceof ServletContextHandler)) return;
+		
+		// --- Get the servlet context handler to secure ----------------------
+		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
+		serCtxHandler.setSessionHandler(new AWBSessionHandler());
 	}
 	
 	/**
@@ -656,9 +701,9 @@ public class JettyServerManager {
 		}, "Jetty_" + serverName).start();
 		
 		// --- Wait for the start of the server ---------------------
-		long waitTime    = 5 * 1000; // --- maximum 5 s -------------
+		long waitTime    = 10 * 1000; // --- maximum 5 s -------------
  		long waitTimeEnd = System.currentTimeMillis() + waitTime;
-		while (server.isStarted()==false && System.currentTimeMillis()<=waitTimeEnd) {
+		while (server.isStarting() || (server.isStarted()==false && System.currentTimeMillis()<=waitTimeEnd)) {
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException iEx) {

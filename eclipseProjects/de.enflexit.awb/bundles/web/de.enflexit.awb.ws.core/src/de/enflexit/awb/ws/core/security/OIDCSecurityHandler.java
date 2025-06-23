@@ -55,9 +55,9 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 
 		// Configure an OpenIdAuthenticator.
 		this.setAuthenticator(new OpenIdAuthenticator(openIdConfig,
-		    "/j_security_check", // The path where the OIDC provider redirects back to Jetty.
-		    "/error", // Optional page where authentication errors are redirected.
-		    "/logoutRedirect" // Optional page where the user is redirected to this page after logout.
+		    "/j_security_check", 	// The path where the OIDC provider redirects back to Jetty.
+		    "/error", 				// Optional page where authentication errors are redirected.
+		    "/logoutRedirect" 		// Optional page where the user is redirected to this page after logout.
 		));
 		
 		

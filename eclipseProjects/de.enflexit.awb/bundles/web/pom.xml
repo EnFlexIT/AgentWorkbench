@@ -14,6 +14,7 @@
 	<modules>
 		<module>de.enflexit.awb.ws.client</module>
 		<module>de.enflexit.awb.ws.core</module>
+		<module>de.enflexit.awb.ws.core.db</module>
 		<module>de.enflexit.awb.ws.core.ui</module>
 		<module>de.enflexit.awb.ws.dynSiteApi</module>
 		<module>de.enflexit.awb.ws.restapi</module>

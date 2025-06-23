@@ -1,6 +1,8 @@
 package de.enflexit.db.hibernate;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,6 +22,38 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 	 * @return the message prefix
 	 */
 	protected abstract String getMessagePrefix();
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getDriver()
+	 */
+	@Override
+	public Driver getDriver(Properties hibernateProperties) {
+
+		String message = null;
+		if (hibernateProperties==null) {
+			message = "[" + this.getMessagePrefix() +"] No properties were specified for the connection!";
+			System.err.println(message);
+			return null;
+		}
+		
+		Driver driver = null;
+		try {
+			String driverClassName = hibernateProperties.getProperty(HIBERNATE_PROPERTY_DriverClass);
+			if (driverClassName!=null && driverClassName.isBlank()==false) {
+				// --- Try getting the driver instance ------------------------
+				Class<?> driverClass = Class.forName(driverClassName);
+				Object driverObject = driverClass.getDeclaredConstructor().newInstance();
+				if (driverObject instanceof Driver) {
+					driver = (Driver) driverObject; 
+				}
+			}
+
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return driver;
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getDatabaseConnection(java.util.Properties, java.util.Vector, boolean)
@@ -42,7 +76,8 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 		String pswd = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Password);
 
 		int lastSlash = url.lastIndexOf("/") + 1;
-		String urlWithoutDB = url.substring(0, lastSlash);
+		if (driverClass.startsWith("org.apache.derby")==true) lastSlash=-1;
+		String urlWithoutDB = lastSlash!=-1 ? url.substring(0, lastSlash) : url;
 		
 		try {
 			// --- Check for user name and password -----------------

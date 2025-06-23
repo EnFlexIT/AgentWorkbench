@@ -1,6 +1,7 @@
 package de.enflexit.db.hibernate;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -35,6 +36,14 @@ public interface HibernateDatabaseService {
 	 * @return the driver class name
 	 */
 	public String getDriverClassName();
+	
+	/**
+	 * Has to return a JDBC driver instance.
+	 *
+	 * @param hibernateProperties the hibernate properties
+	 * @return the driver
+	 */
+	public Driver getDriver(Properties hibernateProperties);
 	
 	/**
 	 * Has to return the default property settings for hibernate.

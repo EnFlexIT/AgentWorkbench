@@ -30,9 +30,10 @@ import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.model.HandlerHelper;
 import de.enflexit.awb.ws.core.security.OIDCSecurityHandler;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
+import de.enflexit.awb.ws.core.session.AWBSessionHandler;
 
 /**
- * The Class DefaultAwbServer.
+ * The Class for the default AWB Server.
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
@@ -101,7 +102,8 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         	System.err.println("[" + this.getClass().getSimpleName() + "] Resource is not a readable directory");
         }
         servletContextHandler.setBaseResource(resBase);
-
+        servletContextHandler.setSessionHandler(new AWBSessionHandler());
+        
         // --- Create error handler that's redirects to index.html --
         ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
         errorHandler.addErrorPage(404, "/"); // return root ... being index.html

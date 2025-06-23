@@ -3,7 +3,6 @@ package de.enflexit.awb.ws.restapi;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import de.enflexit.awb.ws.core.AbstractJerseyServletWrapper;
-import de.enflexit.awb.ws.restapi.gen.Bootstrap;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 
