@@ -23,6 +23,7 @@ import de.enflexit.awb.ws.core.model.AbstractServerTreeNodeObject;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSession;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeWebAppSettings;
 import de.enflexit.awb.ws.ui.WsConfigurationInterface;
 
@@ -49,6 +50,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			private JToolBarServer jToolBarServer;
 		
 		private JPanelSettingsServer jPanelSettingsServer;
+		private JPanelSettingsSession jPanelSettingsSession;
 		private JPanelSettingsSecurity jPanelSettingsSecurity;
 		private JPanelSettingsWebApplication jPanelSettingsWebApplication;
 		private JPanelSettingsHandler jPanelSettingsHandler;	
@@ -145,6 +147,9 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		} else if (serverTreeNodeObject instanceof ServerTreeNodeServerSecurity) {
 			// --- Show security panel ---------------------------------------- 
 			newServerTreeNodeServer = ((ServerTreeNodeServerSecurity) serverTreeNodeObject).getServerTreeNodeServer();
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeServerSession) {
+			// --- Show security panel ---------------------------------------- 
+			newServerTreeNodeServer = ((ServerTreeNodeServerSession) serverTreeNodeObject).getServerTreeNodeServer();
 		} else if (serverTreeNodeObject instanceof ServerTreeNodeWebAppSettings) {
 			// --- Show WebApp panel ------------------------------------------
 			newServerTreeNodeServer = ((ServerTreeNodeWebAppSettings) serverTreeNodeObject).getServerTreeNodeServer();
@@ -187,6 +192,12 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			settingsPanel = this.getJPanelSettingsSecurity();
 			settingsPanel.setServerTreeNodeServer(this.editServerTreeNodeServer);
 			this.getJPanelSettingsSecurity().setDataModel((ServerTreeNodeServerSecurity) serverTreeNodeObject);
+		
+		} else if (serverTreeNodeObject instanceof ServerTreeNodeServerSession) {
+			// --- Show session panel -----------
+			settingsPanel = this.getJPanelSettingsSession();
+			settingsPanel.setServerTreeNodeServer(this.editServerTreeNodeServer);
+			this.getJPanelSettingsSession().setDataModel((ServerTreeNodeServerSession) serverTreeNodeObject);
 			
 		} else if (serverTreeNodeObject instanceof ServerTreeNodeWebAppSettings) {
 			settingsPanel = this.getJPanelSettingsWebApplication();
@@ -225,6 +236,7 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		// --- Get current selections ---------------------
 		ServerTreeNodeServer stnServer = null;
 		ServerTreeNodeHandler stnHandler = null;
+		ServerTreeNodeServerSession stnSesseion = null;
 		ServerTreeNodeServerSecurity stnSecurity = null;
 		ServerTreeNodeWebAppSettings stnWebAppSettings = null;
 		
@@ -237,6 +249,9 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 		} else if (stnoSelected instanceof ServerTreeNodeServerSecurity) {
 			stnSecurity = (ServerTreeNodeServerSecurity) stnoSelected;
 			stnServer = stnSecurity.getServerTreeNodeServer();
+		} else if (stnoSelected instanceof ServerTreeNodeServerSession) {
+			stnSesseion = (ServerTreeNodeServerSession) stnoSelected;
+			stnServer = stnSesseion.getServerTreeNodeServer();
 		} else if (stnoSelected instanceof ServerTreeNodeWebAppSettings) {
 			stnWebAppSettings = (ServerTreeNodeWebAppSettings) stnoSelected;
 			stnServer = stnWebAppSettings.getServerTreeNodeServer();
@@ -345,6 +360,12 @@ public class JPanelServerConfiguration extends JPanel implements WsConfiguration
 			jPanelSettingsServer = new JPanelSettingsServer();
 		}
 		return jPanelSettingsServer;
+	}
+	private JPanelSettingsSession getJPanelSettingsSession() {
+		if (jPanelSettingsSession==null) {
+			jPanelSettingsSession = new JPanelSettingsSession();
+		}
+		return jPanelSettingsSession;
 	}
 	private JPanelSettingsSecurity getJPanelSettingsSecurity() {
 		if (jPanelSettingsSecurity==null) {

@@ -43,7 +43,8 @@ import de.enflexit.common.SerialClone;
     "mutableHandlerCollection",
     "jettySettings",
     "securitySettings",
-    "webApplicationSettings"
+    "webApplicationSettings",
+    "sessionSettings"
 })
 public class JettyConfiguration implements Serializable {
 
@@ -93,6 +94,7 @@ public class JettyConfiguration implements Serializable {
 
 	private TreeMap<String, JettyAttribute<?>> jettySettings;
 	
+	private JettySessionSettings sessionSettings;
 	private JettySecuritySettings securitySettings;
 	private JettyWebApplicationSettings webApplicationSettings;
 	
@@ -291,6 +293,24 @@ public class JettyConfiguration implements Serializable {
 	}
 	
 	/**
+	 * Returns the session settings.
+	 * @return the session settings
+	 */
+	public JettySessionSettings getSessionSettings() {
+		if (sessionSettings==null) {
+			sessionSettings = new JettySessionSettings();
+		}
+		return sessionSettings;
+	}
+	/**
+	 * Sets the session settings.
+	 * @param securitySettings the new jetty security settings
+	 */
+	public void setSessionSettings(JettySessionSettings jettySessionSettings) {
+		this.sessionSettings = jettySessionSettings;
+	}
+	
+	/**
 	 * Returns the security settings.
 	 * @return the security settings
 	 */
@@ -437,6 +457,7 @@ public class JettyConfiguration implements Serializable {
 		if (jcComp.getJettySettings().equals(this.getJettySettings())==false) return false;
 		if (jcComp.getSecuritySettings().equals(this.getSecuritySettings())==false) return false;
 		if (jcComp.getWebApplicationSettings().equals(this.getWebApplicationSettings())==false) return false;
+		if (jcComp.getSessionSettings().equals(this.getSessionSettings())==false) return false;
 		
 		if (jcComp.getHandler()!=this.getHandler()) return false;
 		if (jcComp.getJettyCustomizer()!=this.getJettyCustomizer()) return false;

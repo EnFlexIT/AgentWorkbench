@@ -43,7 +43,16 @@ public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribut
 	 * @param value the value
 	 */
 	public JettyAttribute(JettyConstants jettyConstant, Object value) {
-		this.setKey(jettyConstant.getJettyKey());
+		this(jettyConstant.getJettyKey(), value);
+	}
+	/**
+	 * Instantiates a new jetty parameter value.
+	 *
+	 * @param key the key
+	 * @param value the value
+	 */
+	public JettyAttribute(String key, Object value) {
+		this.setKey(key);
 		this.setValue(value);
 	}
 	
@@ -111,23 +120,62 @@ public class JettyAttribute<T> implements Serializable, Comparable<JettyAttribut
 		if (compObj==this) return true;
 
 		JettyAttribute<?> jaComp = (JettyAttribute<?>) compObj;
+		
+		// --- Key comparison ---------------------------------------
+		if (jaComp.getKey()==null && this.getKey()!=null) return false;
+		if (jaComp.getKey()!=null && this.getKey()==null) return false;
+		if (jaComp.getKey().equals(this.getKey())==false) return false;
+
+		// --- Value comparison ------------------------------------- 
+		if (jaComp.getValue()==null && this.getValue()!=null) return false;
+		if (jaComp.getValue()!=null && this.getValue()==null) return false;
 		if (jaComp.getValue()==null && this.getValue()==null) return true;
 		
 		JettyConstants jConst = JettyConstants.valueofJettyKey(this.getKey());
-		if (jConst.getTypeClass().equals(Boolean.class)) {
-			boolean boolComp = (Boolean) jaComp.getValue();
-			boolean boolThis = (Boolean) this.getValue();
-			if (boolComp!=boolThis) return false;
+		if (jConst!=null) {
+			if (jConst.getTypeClass().equals(Boolean.class)) {
+				boolean boolComp = (Boolean) jaComp.getValue();
+				boolean boolThis = (Boolean) this.getValue();
+				if (boolComp!=boolThis) return false;
+				
+			} else if (jConst.getTypeClass().equals(Integer.class)) {
+				Integer intComp = (Integer) jaComp.getValue();
+				Integer intThis = (Integer) this.getValue();
+				if (intComp.equals(intThis)==false) return false;
 			
-		} else if (jConst.getTypeClass().equals(Integer.class)) {
-			Integer intComp = (Integer) jaComp.getValue();
-			Integer intThis = (Integer) this.getValue();
-			if (intComp.equals(intThis)==false) return false;
+			} else if (jConst.getTypeClass().equals(Double.class)) {
+				Double intComp = (Double) jaComp.getValue();
+				Double intThis = (Double) this.getValue();
+				if (intComp.equals(intThis)==false) return false;
+				
+			} else if (jConst.getTypeClass().equals(String.class)) {
+				String stringComp = (String) jaComp.getValue();
+				String stringThis = (String) this.getValue();
+				if (stringComp.equals(stringThis)==false) return false;
+			}
 			
-		} else if (jConst.getTypeClass().equals(String.class)) {
-			String stringComp = (String) jaComp.getValue();
-			String stringThis = (String) this.getValue();
-			if (stringComp.equals(stringThis)==false) return false;
+		} else {
+			if (jaComp.getValue() instanceof Boolean) {
+				boolean boolComp = (Boolean) jaComp.getValue();
+				boolean boolThis = (Boolean) this.getValue();
+				if (boolComp!=boolThis) return false;
+				
+			} else if (jaComp.getValue() instanceof Integer) {
+				Integer intComp = (Integer) jaComp.getValue();
+				Integer intThis = (Integer) this.getValue();
+				if (intComp.equals(intThis)==false) return false;
+				
+			} else if (jaComp.getValue() instanceof Double) {
+				Double intComp = (Double) jaComp.getValue();
+				Double intThis = (Double) this.getValue();
+				if (intComp.equals(intThis)==false) return false;
+				
+			} else if (jaComp.getValue() instanceof String) {
+				String stringComp = (String) jaComp.getValue();
+				String stringThis = (String) this.getValue();
+				if (stringComp.equals(stringThis)==false) return false;
+			}
+			
 		}
 		return true;
 	}

@@ -380,12 +380,13 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Set session handler for the server -------------------
-		// TODO
-		JettySecuritySettings securitySettings42 = jConfiguration.getSecuritySettings();
-		if (hCollection==null) {
-			this.setSessionHandler(initialHandler, securitySettings42);
-		} else {
-			this.setSessionHandler(hCollection, securitySettings42);
+		JettySessionSettings sessionSettings = jConfiguration.getSessionSettings();
+		if (sessionSettings.isUseIndividualSettings()==true) {
+			if (hCollection==null) {
+				this.setSessionHandler(initialHandler, sessionSettings);
+			} else {
+				this.setSessionHandler(hCollection, sessionSettings);
+			}
 		}
 		
 		// ----------------------------------------------------------
@@ -541,27 +542,27 @@ public class JettyServerManager {
 	 * @param hCollection the handler collection to secure
 	 * @param securitySettings the security settings
 	 */
-	private void setSessionHandler(Sequence hCollection, JettySecuritySettings securitySettings) {
+	private void setSessionHandler(Sequence hCollection, JettySessionSettings sessionSettings) {
 		List<Handler> handlerList = hCollection.getHandlers();
 		if (handlerList==null) return;
 		for (int i = 0; i < handlerList.size(); i++) {
-			this.setSessionHandler(handlerList.get(i), securitySettings);
+			this.setSessionHandler(handlerList.get(i), sessionSettings);
 		}
 	}
 	/**
 	 * Secures the specified handler.
 	 *
 	 * @param handler the handler
-	 * @param securitySettings the security settings
+	 * @param sessionSettings the session settings
 	 */
-	private void setSessionHandler(Handler handler, JettySecuritySettings securitySettings) {
+	private void setSessionHandler(Handler handler, JettySessionSettings sessionSettings) {
 
 		if (handler==null) return;
 		if (! (handler instanceof ServletContextHandler)) return;
 		
 		// --- Get the servlet context handler to secure ----------------------
 		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
-		serCtxHandler.setSessionHandler(new AWBSessionHandler());
+		serCtxHandler.setSessionHandler(new AWBSessionHandler(sessionSettings));
 	}
 	
 	/**

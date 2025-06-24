@@ -1,6 +1,7 @@
 package de.enflexit.awb.ws.ui.server;
 
 import java.awt.Font;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -21,6 +22,8 @@ public class JTableSettingsServer extends JTable {
 	private static final long serialVersionUID = 2703332201281221367L;
 
 	private JettyConfiguration jettyConfiguration;
+	private TreeMap<String, JettyAttribute<?>> jettySettings;
+	
 	private DefaultTableModel tableModel;
 	
 	
@@ -91,10 +94,24 @@ public class JTableSettingsServer extends JTable {
 	private void fillTableModel() {
 		// --- Clear table model --------------------------
 		this.getTableModel().setRowCount(0);
-		if (this.getJettyConfiguration()==null) return;
-		// --- Fill each list element into table model ----
-		this.getJettyConfiguration().getJettySettingsSorted().forEach((JettyAttribute<?> ja) -> this.addToTableModel(ja));
+		
+		// --- For a JettyConfiguration ------------------- 
+		if (this.getJettyConfiguration()!=null) {
+			// --- Fill each element into table model -----
+			this.getJettyConfiguration().getJettySettingsSorted().forEach((JettyAttribute<?> ja) -> this.addToTableModel(ja));
+			return;
+		}
+		
+		// --- For SessionSettings ------------------------
+		TreeMap<String, JettyAttribute<?>> jettySettings = this.getJettySettings(); 
+		if (jettySettings!=null) {
+			for (String key : jettySettings.keySet()) {
+				this.addToTableModel(jettySettings.get(key));
+			}
+			return;
+		}
 	}
+	
 	/**
 	 * Adds the specified JettyAttribute to the table model.
 	 * @param jettyAttribute the jetty attribute
@@ -120,6 +137,22 @@ public class JTableSettingsServer extends JTable {
 	 */
 	public JettyConfiguration getJettyConfiguration() {
 		return jettyConfiguration;
+	}
+	
+	/**
+	 * Sets the jetty settings as a TreeMap.
+	 * @param jettySettings the new jetty settings
+	 */
+	public void setJettySettings(TreeMap<String, JettyAttribute<?>> jettySettings) {
+		this.jettySettings = jettySettings;
+		this.fillTableModel();
+	}
+	/**
+	 * Returns the session settings.
+	 * @return the session settings
+	 */
+	public TreeMap<String, JettyAttribute<?>> getJettySettings() {
+		return jettySettings;
 	}
 	
 }

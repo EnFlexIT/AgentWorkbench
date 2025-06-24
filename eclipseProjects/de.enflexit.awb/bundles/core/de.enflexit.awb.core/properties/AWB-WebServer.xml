@@ -57,7 +57,7 @@
             <key>cors.filter.enabled</key>
             <value>
                 <key>cors.filter.enabled</key>
-                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
             </value>
         </entry>
         <entry>
@@ -207,4 +207,93 @@
         <downloadURL>https://p2.enflex.it/web/emsPortal/</downloadURL>
         <updateStrategy>Automatic</updateStrategy>
     </webApplicationSettings>
+    <sessionSettings>
+        <useIndividualSettings>true</useIndividualSettings>
+        <settings>
+            <entry>
+                <key>a) Session Cookie (the session identifier for cookies)</key>
+                <value>
+                    <key>a) Session Cookie (the session identifier for cookies)</key>
+                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">AWB_SESSIONID</value>
+                </value>
+            </entry>
+            <entry>
+                <key>b) Session ID Path Parameter Name (the session identifier for path parameter)</key>
+                <value>
+                    <key>b) Session ID Path Parameter Name (the session identifier for path parameter)</key>
+                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">awb_sessionid</value>
+                </value>
+            </entry>
+            <entry>
+                <key>c) Using Cookies (determines whether the SessionHandler uses cookies)</key>
+                <value>
+                    <key>c) Using Cookies (determines whether the SessionHandler uses cookies)</key>
+                    <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                </value>
+            </entry>
+            <entry>
+                <key>d) Max Cookie Age (seconds that the session cookie will be valid)</key>
+                <value>
+                    <key>d) Max Cookie Age (seconds that the session cookie will be valid)</key>
+                    <value xsi:type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">600</value>
+                </value>
+            </entry>
+            <entry>
+                <key>e) Max Inactive Interval (seconds after which an unused session may be scavenged)</key>
+                <value>
+                    <key>e) Max Inactive Interval (seconds after which an unused session may be scavenged)</key>
+                    <value xsi:type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">720</value>
+                </value>
+            </entry>
+            <entry>
+                <key>f) Refresh Cookie Age (seconds to reset the session cookie, if 'MaxCookieAge' is non-zero)</key>
+                <value>
+                    <key>f) Refresh Cookie Age (seconds to reset the session cookie, if 'MaxCookieAge' is non-zero)</key>
+                    <value xsi:type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">60</value>
+                </value>
+            </entry>
+            <entry>
+                <key>g) Session Domain</key>
+                <value>
+                    <key>g) Session Domain</key>
+                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">localhost</value>
+                </value>
+            </entry>
+            <entry>
+                <key>h) Session Path</key>
+                <value>
+                    <key>h) Session Path</key>
+                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">/</value>
+                </value>
+            </entry>
+            <entry>
+                <key>i) Same Site (NONE, STRICT or LAX)</key>
+                <value>
+                    <key>i) Same Site (NONE, STRICT or LAX)</key>
+                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">STRICT</value>
+                </value>
+            </entry>
+            <entry>
+                <key>j) Secure Request Only</key>
+                <value>
+                    <key>j) Secure Request Only</key>
+                    <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                </value>
+            </entry>
+            <entry>
+                <key>k) Checking Remote Session ID Encoding</key>
+                <value>
+                    <key>k) Checking Remote Session ID Encoding</key>
+                    <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
+                </value>
+            </entry>
+            <entry>
+                <key>l) Http Only (session cookie will not be exposed to client-side)</key>
+                <value>
+                    <key>l) Http Only (session cookie will not be exposed to client-side)</key>
+                    <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                </value>
+            </entry>
+        </settings>
+    </sessionSettings>
 </jettyConfiguration>

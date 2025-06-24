@@ -102,7 +102,9 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         	System.err.println("[" + this.getClass().getSimpleName() + "] Resource is not a readable directory");
         }
         servletContextHandler.setBaseResource(resBase);
-        servletContextHandler.setSessionHandler(new AWBSessionHandler());
+        if (jettyConfiguration.getSessionSettings().isUseIndividualSettings()==true) {
+        	servletContextHandler.setSessionHandler(new AWBSessionHandler(jettyConfiguration.getSessionSettings()));
+        }
         
         // --- Create error handler that's redirects to index.html --
         ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();

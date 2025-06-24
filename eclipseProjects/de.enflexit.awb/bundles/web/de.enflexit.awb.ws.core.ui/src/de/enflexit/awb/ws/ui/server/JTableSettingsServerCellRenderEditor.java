@@ -97,6 +97,8 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 					comp = this.getJCheckBox((boolean) jettyAttribute.getValue());
 				} else if (jettyConstant.getTypeClass().equals(Integer.class)) {
 					comp = this.getJLabel(((Integer) jettyAttribute.getValue()) + "");
+				} else if (jettyConstant.getTypeClass().equals(Double.class)) {
+					comp = this.getJLabel(((Double) jettyAttribute.getValue()) + "");
 				} else if (jettyConstant.getTypeClass().equals(String.class)) {
 					comp = this.getJLabel((String) jettyAttribute.getValue());
 				}
@@ -106,7 +108,20 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		
 		// --- Still no component defined? --------------------------
 		if (comp==null) {
-			comp = this.getJLabel(jettyAttribute.getValue().toString());
+
+			if (jettyAttribute.getValue() instanceof Boolean) {
+				comp = this.getJCheckBox((boolean) jettyAttribute.getValue());
+			} else if (jettyAttribute.getValue() instanceof Integer) {
+				comp = this.getJLabel(((Integer) jettyAttribute.getValue()) + "");
+			} else if (jettyAttribute.getValue() instanceof Double) {
+				comp = this.getJLabel(((Double) jettyAttribute.getValue()) + "");
+			} else {
+				String stringValue = "";
+				if (jettyAttribute.getValue()!=null) {
+					stringValue = jettyAttribute.getValue().toString();
+				}
+				comp = this.getJLabel(stringValue);
+			}
 		}
 
 		// --- Set colors -------------------------------------------
@@ -152,56 +167,80 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		
 		this.editorJTable = table;
 		this.editorJettyAttribute = (JettyAttribute<?>) value;
+		
 		JettyConstants jettyConstant = this.editorJettyAttribute.getJettyConstant();
+		String valueString = this.editorJettyAttribute.getValue()==null ? "" : this.editorJettyAttribute.getValue().toString();
 		
 		JComponent comp = null;
 
-		// --- Check for special editor types first ----------------- 
-		switch (jettyConstant) {
-		case SSL_KEYSTORE:
-			this.editKeyStoreFile(this.editorJettyAttribute, table.getParent().getParent());
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					JTableSettingsServerCellRenderEditor.this.fireEditingStopped();
-					JTableSettingsServerCellRenderEditor.this.editorJTable.repaint();
-				}
-			});
-			break;
-
-		case SSL_KEYSTORETYPE:
-			comp = this.createEditorJComboBox(this.editorJettyAttribute);
-			break;
-
-		case SSL_PASSWORD:
-		case SSL_KEYPASSWORD:
-			comp = this.createEditorJPasswordFiled((String) this.editorJettyAttribute.getValue());
-			break;
-		
-		default:
-			break;
-		}
-		
-		// --- Check for type in jetty constants --------------------
-		if (comp==null) {
-			if (jettyConstant.getTypeClass().equals(Boolean.class)) {
-				comp = this.createEditorJCheckBox((boolean) this.editorJettyAttribute.getValue());
-			} else if (jettyConstant.getTypeClass().equals(Integer.class)) {
-				comp = this.createEditorJTextFieldInteger(((Integer) this.editorJettyAttribute.getValue()));
-			} else if (jettyConstant.getTypeClass().equals(String.class)) {
-				comp = this.createEditorJTextFieldString((String) this.editorJettyAttribute.getValue());
+		if (jettyConstant!=null) {
+			// --- Check for special editor types first -------------
+			switch (jettyConstant) {
+			case SSL_KEYSTORE:
+				this.editKeyStoreFile(this.editorJettyAttribute, table.getParent().getParent());
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JTableSettingsServerCellRenderEditor.this.fireEditingStopped();
+						JTableSettingsServerCellRenderEditor.this.editorJTable.repaint();
+					}
+				});
+				break;
+				
+			case SSL_KEYSTORETYPE:
+				comp = this.createEditorJComboBox(this.editorJettyAttribute);
+				break;
+				
+			case SSL_PASSWORD:
+			case SSL_KEYPASSWORD:
+				comp = this.createEditorJPasswordFiled((String) this.editorJettyAttribute.getValue());
+				break;
+				
+			default:
+				break;
 			}
-			// --- Still no component? ------------------------------
+			
+			// --- Check for type in jetty constants ----------------
 			if (comp==null) {
-				comp = this.getJLabel(this.editorJettyAttribute.getValue().toString());
+				if (jettyConstant.getTypeClass().equals(Boolean.class)) {
+					comp = this.createEditorJCheckBox((boolean) this.editorJettyAttribute.getValue());
+				} else if (jettyConstant.getTypeClass().equals(Integer.class)) {
+					comp = this.createEditorJTextFieldInteger(((Integer) this.editorJettyAttribute.getValue()));
+				} else if (jettyConstant.getTypeClass().equals(Double.class)) {
+					comp = this.createEditorJTextFieldDouble(((Double) this.editorJettyAttribute.getValue()));
+				} else if (jettyConstant.getTypeClass().equals(String.class)) {
+					comp = this.createEditorJTextFieldString(valueString);
+				}
+				// --- Still no component? --------------------------
+				if (comp==null) {
+					comp = this.getJLabel(valueString);
+				}
 			}
+			
+		} else {
+			// --- Jetty Constant is null ---------------------------
+			if (this.editorJettyAttribute.getValue() instanceof Boolean) {
+				comp = this.createEditorJCheckBox((boolean) this.editorJettyAttribute.getValue());
+			} else if (this.editorJettyAttribute.getValue() instanceof Integer) {
+				comp = this.createEditorJTextFieldInteger(((Integer) this.editorJettyAttribute.getValue()));
+			} else if (this.editorJettyAttribute.getValue() instanceof Double) {
+				comp = this.createEditorJTextFieldDouble(((Double) this.editorJettyAttribute.getValue()));
+			} else if (this.editorJettyAttribute.getValue() instanceof String) {
+				comp = this.createEditorJTextFieldString(valueString);
+			}
+			// --- Still no component? --------------------------
+			if (comp==null) {
+				comp = this.getJLabel(valueString);
+			}
+			
 		}
 
+		
 		// --- Set colors -------------------------------------------
 		if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
-//			comp.setOpaque(false);
-//			comp.setForeground(Color.BLACK);
-//			comp.setBackground(Color.WHITE);
+			comp.setOpaque(false);
+			comp.setForeground(Color.BLACK);
+			comp.setBackground(Color.WHITE);
 		}
 		return comp;
 
@@ -392,7 +431,7 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 					try {
 						newValue = Integer.parseInt(newValueString);
 					} catch (Exception ex) {
-						ex.printStackTrace();
+						//ex.printStackTrace();
 					}
 				}
 				@SuppressWarnings("unchecked")
@@ -403,6 +442,44 @@ public class JTableSettingsServerCellRenderEditor extends AbstractCellEditor imp
 		});
 		return jTextFieldInteger;
 	}
+	
+	private JTextField createEditorJTextFieldDouble(Double number) {
+		JTextField jTextFieldInteger = new JTextField();
+		jTextFieldInteger.setText(number.toString());
+		jTextFieldInteger.setBorder(BorderFactory.createEmptyBorder());
+		jTextFieldInteger.addKeyListener(new KeyAdapter4Numbers(true));
+		jTextFieldInteger.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent de) {
+				this.updateJettyAttribute(de);
+			}
+			@Override
+			public void insertUpdate(DocumentEvent de) {
+				this.updateJettyAttribute(de);
+			}
+			@Override
+			public void changedUpdate(DocumentEvent de) {
+				this.updateJettyAttribute(de);
+			}
+			private void updateJettyAttribute(DocumentEvent de) {
+				String newValueString = JTableSettingsServerCellRenderEditor.this.getText(de.getDocument());
+				Double newValue = 0.0;
+				if (newValueString!=null && newValueString.isEmpty()==false) {
+					try {
+						newValue = Double.parseDouble(newValueString);
+					} catch (Exception ex) {
+						//ex.printStackTrace();
+					}
+				}
+				@SuppressWarnings("unchecked")
+				JettyAttribute<Double> jaString = (JettyAttribute<Double>) JTableSettingsServerCellRenderEditor.this.editorJettyAttribute;
+				jaString.setValue(newValue);
+				
+			}
+		});
+		return jTextFieldInteger;
+	}
+	
 	private String getText(Document doc) {
 		String txt;
 		try {

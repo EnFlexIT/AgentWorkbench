@@ -11,6 +11,9 @@ import org.eclipse.jetty.session.JDBCSessionDataStoreFactory;
 import org.eclipse.jetty.session.NullSessionCacheFactory;
 import org.eclipse.jetty.session.SessionCache;
 
+import de.enflexit.awb.ws.core.JettyAttribute;
+import de.enflexit.awb.ws.core.JettySessionSettings;
+
 /**
  * The Class AWBSessionHandler.
  *
@@ -19,38 +22,98 @@ import org.eclipse.jetty.session.SessionCache;
 public class AWBSessionHandler extends SessionHandler {
 
 	public static final String SESSION_TABLE_NAME = "web_sessions";
-	
-	public AWBSessionHandler() {
-		
-		this.setDefaults();
-		
-	}
-	
-	/**
-	 * Sets the defaults.
-	 */
-	private void setDefaults() {
-		
-		this.setCheckingRemoteSessionIdEncoding(false);
-		this.setMaxInactiveInterval(600);
-		
-		this.setHttpOnly(false);
-		this.setRefreshCookieAge(-1);
-		
-		this.setSameSite(SameSite.STRICT);
-		
-		this.setSecureRequestOnly(true);
-		
-		this.setSessionCookie("AWB_SESSIONID");
-		this.setSessionIdPathParameterName("awb_sessionid");
-		this.setSessionTrackingModes(DEFAULT_SESSION_TRACKING_MODES);
 
-		this.setUsingCookies(true);
+	/**
+	 * Instantiates a new AWB session handler.
+	 * @param sessionSettings the session settings
+	 */
+	public AWBSessionHandler(JettySessionSettings sessionSettings) {
+		if (sessionSettings.isUseIndividualSettings()==true) {
+			this.applySessionSettings(sessionSettings);
+		}
+	}
+	/**
+	 * Applies the specified JettySessionSettings.
+	 * @param sessionSettings the session settings
+	 */
+	private void applySessionSettings(JettySessionSettings sessionSettings) {
 		
-		this.setMaxCookieAge(600);
+		// --- setCheckingRemoteSessionIdEncoding() ---------------------------
+		JettyAttribute<?> setCheckingRemoteSessionIdEncoding = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_CHECKING_REMOTE_SESSION_ID_ENCODING);
+		if (setCheckingRemoteSessionIdEncoding!=null && setCheckingRemoteSessionIdEncoding.getValue()!=null) {
+			this.setCheckingRemoteSessionIdEncoding((Boolean)setCheckingRemoteSessionIdEncoding.getValue());
+		}
 		
-		this.setSessionDomain(__DefaultSessionDomain);
-		this.setSessionPath("/");
+		// --- setMaxInactiveInterval() ---------------------------------------
+		JettyAttribute<?> setMaxInactiveInterval = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_MAX_INACTIVE_INTERVAL);
+		if (setMaxInactiveInterval!=null && setMaxInactiveInterval.getValue()!=null) {
+			this.setMaxInactiveInterval((int)setMaxInactiveInterval.getValue());
+		}
+		
+		// --- setCheckingRemoteSessionIdEncoding() ---------------------------
+		JettyAttribute<?> setHttpOnly = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_HTTP_ONLY);
+		if (setHttpOnly!=null && setHttpOnly.getValue()!=null) {
+			this.setHttpOnly((Boolean)setHttpOnly.getValue());
+		}
+		
+		// --- setRefreshCookieAge() ------------------------------------------
+		JettyAttribute<?> setRefreshCookieAge = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_REFRESH_COOKIE_AGE);
+		if (setRefreshCookieAge!=null && setRefreshCookieAge.getValue()!=null) {
+			this.setRefreshCookieAge((Integer)setRefreshCookieAge.getValue());
+		}
+
+		// --- setSameSite() --------------------------------------------------
+		JettyAttribute<?> setSameSite = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_SAME_SITE);
+		if (setSameSite!=null && setSameSite.getValue()!=null) {
+			SameSite sSite = SameSite.from(setSameSite.getValue().toString());
+			if (sSite!=null) this.setSameSite(sSite);
+		}
+		
+		// --- setSecureRequestOnly() -----------------------------------------
+		JettyAttribute<?> setSecureRequestOnly = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_SECURE_REQUEST_ONLY);
+		if (setSecureRequestOnly!=null && setSecureRequestOnly.getValue()!=null) {
+			this.setSecureRequestOnly((Boolean)setSecureRequestOnly.getValue());
+		}
+
+		// --- setSessionCookie() ---------------------------------------------
+		JettyAttribute<?> setSessionCookie = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_SESSION_COOKIE);
+		if (setSessionCookie!=null && setSessionCookie.getValue()!=null) {
+			this.setSessionCookie((String)setSessionCookie.getValue());
+		}
+		
+		// --- setSessionCookie() ---------------------------------------------
+		JettyAttribute<?> setSessionIdPathParameterName = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_SESSION_ID_PATH_PARAMETER_NAME);
+		if (setSessionIdPathParameterName!=null && setSessionIdPathParameterName.getValue()!=null) {
+			this.setSessionIdPathParameterName((String)setSessionIdPathParameterName.getValue());
+		}
+
+		// --- setSessionTrackingModes() --------------------------------------
+		this.setSessionTrackingModes(DEFAULT_SESSION_TRACKING_MODES);
+		
+		// --- setUsingCookies() ----------------------------------------------
+		JettyAttribute<?> setUsingCookies = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_USING_COOKIES);
+		if (setUsingCookies!=null && setUsingCookies.getValue()!=null) {
+			this.setUsingCookies((Boolean)setUsingCookies.getValue());
+		}
+
+		// --- setMaxCookieAge() ----------------------------------------------
+		JettyAttribute<?> setMaxCookieAge = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_MAX_COOKIE_AGE);
+		if (setMaxCookieAge!=null && setMaxCookieAge.getValue()!=null) {
+			this.setMaxCookieAge((Integer)setMaxCookieAge.getValue());
+		}
+		
+		// --- setSessionDomain() ---------------------------------------------
+		JettyAttribute<?> setSessionDomain = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_SESSION_DOMAIN);
+		if (setSessionDomain!=null && setSessionDomain.getValue()!=null) {
+			this.setSessionDomain((String)setSessionDomain.getValue());
+		}
+		
+		// --- setSessionPath() ----------------------------------------------
+		JettyAttribute<?> setSessionPath = sessionSettings.getSessionAttribute(JettySessionSettings.KEY_SET_SESSION_PATH);
+		if (setSessionPath!=null && setSessionPath.getValue()!=null) {
+			this.setSessionPath((String)setSessionPath.getValue());
+		}
+		
 	}
 	
 	
@@ -63,7 +126,7 @@ public class AWBSessionHandler extends SessionHandler {
 	 */
 	public static void addBeanSessionCacheFactory(Server server) {
 		
-		boolean isUseNullSessionCache = true;
+		boolean isUseNullSessionCache = false;
 		
 		AbstractSessionCacheFactory cacheFactory = null;
 		if (isUseNullSessionCache==true) {

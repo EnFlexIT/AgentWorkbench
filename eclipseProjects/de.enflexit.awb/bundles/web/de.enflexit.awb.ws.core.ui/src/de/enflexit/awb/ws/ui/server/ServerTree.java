@@ -21,6 +21,7 @@ import de.enflexit.awb.ws.core.model.ServerTreeNodeHandler;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeRoot;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServer;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSecurity;
+import de.enflexit.awb.ws.core.model.ServerTreeNodeServerSession;
 import de.enflexit.awb.ws.core.model.ServerTreeNodeWebAppSettings;
 
 /**
@@ -140,9 +141,11 @@ public class ServerTree extends JTree {
 
 		// --- Add web application node -------------------
 		serverNode.add(new DefaultMutableTreeNode(new ServerTreeNodeWebAppSettings(stnServer)));
-		
 		// --- Add server security node -------------------
 		serverNode.add(new DefaultMutableTreeNode(new ServerTreeNodeServerSecurity(stnServer)));
+		// --- Add session node ---------------------------
+		serverNode.add(new DefaultMutableTreeNode(new ServerTreeNodeServerSession(stnServer)));
+
 		// --- Add the handler to the server node --------- 
 		HandlerHelper.getHandlerTrees(serverInstances, handlerServiceList).forEach((DefaultMutableTreeNode treeNode) -> serverNode.add(treeNode));
 	}

@@ -4,16 +4,15 @@ import javax.swing.Icon;
 
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
-import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.awb.ws.core.JettyServerInstances;
-import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
+import de.enflexit.awb.ws.core.JettySessionSettings;
 
 /**
- * The Class ServerTreeNodeServer.
+ * The Class ServerTreeNodeServerSession.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
+public class ServerTreeNodeServerSession extends AbstractServerTreeNodeObject {
 
 	private ServerTreeNodeServer serverTreeNodeServer;
 	
@@ -23,7 +22,7 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	 * @param serverServiceWrapper the server service wrapper
 	 * @param jettyServerInstances the jetty server instances
 	 */
-	public ServerTreeNodeServerSecurity(ServerTreeNodeServer serverTreeNodeServer) {
+	public ServerTreeNodeServerSession(ServerTreeNodeServer serverTreeNodeServer) {
 		this.serverTreeNodeServer = serverTreeNodeServer;
 	}
 
@@ -67,7 +66,7 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public String toString() {
-		return "<html><b>Server-wide Security Settings</b></html>";
+		return "<html><b>Session Settings</b></html>";
 	}
 	
 	/* (non-Javadoc)
@@ -75,7 +74,7 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public String getToolTipText() {
-		return "<html><b>Security Settings for server '" + this.getJettyConfiguration().getServerName() + "'</html>";
+		return "<html><b>Session Settings for server '" + this.getJettyConfiguration().getServerName() + "'</html>";
 	}
 
 	/* (non-Javadoc)
@@ -83,18 +82,14 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	 */
 	@Override
 	public Icon getNodeIcon() {
-		ServletSecurityConfiguration securityConfig = this.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
-		if (securityConfig==null || securityConfig.isSecurityHandlerActivated()==false) {
-			if (this.isRunningServer() == true) {
-				return BundleHelper.getImageIcon("LockOpen.png");
-			}
-			return BundleHelper.getImageIcon("LockOpenRed.png");
+		boolean isUseIndividualSettings = this.getSessionSettings().isUseIndividualSettings();
+		if (isUseIndividualSettings==false) {
+			return BundleHelper.getImageIcon("SessionGrey.png");
 		}
-		
-		if (this.isRunningServer() == true) {
-			return BundleHelper.getImageIcon("LockClosed.png");
+		if (this.isRunningServer()==true) {
+			return BundleHelper.getImageIcon("SessionGreen.png");
 		}
-		return BundleHelper.getImageIcon("LockClosedRed.png");
+		return BundleHelper.getImageIcon("SessionRed.png");
 	}
 
 	/**
@@ -106,13 +101,12 @@ public class ServerTreeNodeServerSecurity extends AbstractServerTreeNodeObject {
 	public JettyConfiguration getJettyConfiguration() {
 		return this.getServerTreeNodeServer().getJettyConfiguration();
 	}
-	
 	/**
-	 * Returns the security settings for the whole server.
-	 * @return the security settings
+	 * Returns the session settings for the whole server.
+	 * @return the session settings
 	 */
-	public JettySecuritySettings getSecuritySettings() {
-		return this.getJettyConfiguration().getSecuritySettings();
+	public JettySessionSettings getSessionSettings() {
+		return this.getJettyConfiguration().getSessionSettings();
 	}
 	
 	/**
