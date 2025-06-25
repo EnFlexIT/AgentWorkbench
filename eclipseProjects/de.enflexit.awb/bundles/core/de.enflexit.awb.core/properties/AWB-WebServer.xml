@@ -256,7 +256,7 @@
                 <key>g) Session Domain</key>
                 <value>
                     <key>g) Session Domain</key>
-                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">localhost</value>
+                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></value>
                 </value>
             </entry>
             <entry>
@@ -270,7 +270,7 @@
                 <key>i) Same Site (NONE, STRICT or LAX)</key>
                 <value>
                     <key>i) Same Site (NONE, STRICT or LAX)</key>
-                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">STRICT</value>
+                    <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></value>
                 </value>
             </entry>
             <entry>

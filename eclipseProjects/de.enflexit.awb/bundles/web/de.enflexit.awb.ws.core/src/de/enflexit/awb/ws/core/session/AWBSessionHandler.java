@@ -138,11 +138,11 @@ public class AWBSessionHandler extends SessionHandler {
 		cacheFactory.setEvictionPolicy(SessionCache.NEVER_EVICT);
 		//Only useful with the EVICT_ON_INACTIVE policy
 		cacheFactory.setSaveOnInactiveEviction(true);
-		
-		cacheFactory.setFlushOnResponseCommit(true);
-		cacheFactory.setInvalidateOnShutdown(false);
-		cacheFactory.setRemoveUnloadableSessions(true);
 		cacheFactory.setSaveOnCreate(true);
+
+		cacheFactory.setRemoveUnloadableSessions(true);
+		cacheFactory.setInvalidateOnShutdown(false);
+		cacheFactory.setFlushOnResponseCommit(true);
 
 		server.addBean(cacheFactory);
 	}
