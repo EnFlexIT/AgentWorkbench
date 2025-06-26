@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.Authenticator;
-import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.ServerAuthException;
 import org.eclipse.jetty.security.UserIdentity;
@@ -44,11 +43,8 @@ public class SingleApiKeySecurityHandler extends SecurityHandler.PathMapped impl
 		
 		this.setAuthenticator(this);
 		
-		if (this.isSecured()==true) {
-			this.put("/*", Constraint.ANY_USER);
-		} else {
-			this.put("/*", Constraint.ALLOWED);
-		}
+		SecurityHandlerService.putPathsToSecurityHandler(this, this.isSecured());
+		
 	}
 
 	/**

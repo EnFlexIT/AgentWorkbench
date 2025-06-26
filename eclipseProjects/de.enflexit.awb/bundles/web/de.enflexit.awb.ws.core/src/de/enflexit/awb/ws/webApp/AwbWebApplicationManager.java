@@ -6,10 +6,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.JettyWebApplicationSettings;
 import de.enflexit.awb.ws.core.JettyWebApplicationSettings.UpdateStrategy;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
+import de.enflexit.awb.ws.server.AwbServer;
 import de.enflexit.awb.ws.webApp.AwbWebApplication.PropertyType;
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.properties.Properties;
@@ -161,9 +165,36 @@ public class AwbWebApplicationManager {
 	 */
 	public static Properties getProperties(PropertyType typeOfProperty) {
 		if (isDefinedAwbWebApplication(true)==false) return null;
-		return getAwbWebApplication().getProperties(typeOfProperty);
+		
+		Properties props = getAwbWebApplication().getProperties(typeOfProperty);
+		if (props==null) {
+			props = new Properties();
+		}
+		
+		// --- Add some mandatory information here ----------------------  
+		AwbWebApplicationManager.addSystemProperties(props);
+		
+		
+		return props;
 	}
-
+	/**
+	 * Adds some mandatory system properties.
+	 */
+	private static void addSystemProperties(Properties props) {
+	
+		// --- Security Handler Name --------------------------------
+		if (props.contains(JettySecuritySettings.ID_SERVER_SECURITY)==false) {
+			AwbWebServerServiceWrapper seseWrapper = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME);
+			JettySecuritySettings sSettings = seseWrapper.getJettyConfiguration().getSecuritySettings();
+			ServletSecurityConfiguration secConfig = sSettings.getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+			String sHandlerName = secConfig.getSecurityHandlerName();
+			props.setStringValue(JettySecuritySettings.ID_SERVER_SECURITY, sHandlerName);
+		}
+		
+		// --- To be continued --------------------------------------
+		
+	}
+	
 	
 	/**
 	 * Apply web application properties.

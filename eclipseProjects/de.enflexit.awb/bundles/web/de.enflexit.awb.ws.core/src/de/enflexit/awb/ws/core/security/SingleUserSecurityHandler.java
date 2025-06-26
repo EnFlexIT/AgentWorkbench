@@ -4,7 +4,6 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.IdentityService;
 import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.SecurityHandler;
@@ -47,11 +46,7 @@ public class SingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		this.setAuthenticator(new BasicAuthenticator());
 		this.setLoginService(new SingleUserLoginService());
         
-		if (this.isSecured()==true) {
-			this.put("/*", Constraint.ANY_USER);
-		} else {
-			this.put("/*", Constraint.ALLOWED);
-		}
+		SecurityHandlerService.putPathsToSecurityHandler(this, this.isSecured());
 	}
 
 	/**

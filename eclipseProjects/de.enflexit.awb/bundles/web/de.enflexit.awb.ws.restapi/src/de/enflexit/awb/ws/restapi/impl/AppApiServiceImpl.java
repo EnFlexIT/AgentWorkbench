@@ -1,6 +1,10 @@
 package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
+import java.util.Map;
+
+import org.eclipse.jetty.security.openid.OpenIdCredentials;
+import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
 
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.ApiResponseMessage;
@@ -30,15 +34,63 @@ public class AppApiServiceImpl extends AppApiService {
     	Principal principal = securityContext.getUserPrincipal();
     	
     	// --- Create the properties to return ----------------------
-    	Properties props = null;
+    	de.enflexit.common.properties.Properties awbProps = null;
     	if (principal==null) {
-    		props = PropertyConverter.toWebRestProperties(AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.PublicProperties));
+    		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.PublicProperties);
     	} else {
-    		props = PropertyConverter.toWebRestProperties(AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties));
+    		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties);
+    		this.addOIDCPrincipalInformation(principal, awbProps);
     	}
-    	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(props).build();
+
+    	// --- Convert response -------------------------------------
+    	Properties endpointProps = PropertyConverter.toWebRestProperties(awbProps);
+    	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(endpointProps).build();
     }
     
+    /**
+     * Adds the principal information.
+     *
+     * @param principal the principal
+     * @param props the Properties of the common bundle
+     */
+    private void addOIDCPrincipalInformation(Principal principal, de.enflexit.common.properties.Properties awbProps) {
+    	
+    	if (principal==null || awbProps==null) return;
+    	if (principal instanceof OpenIdUserPrincipal == false) return;
+    	
+    	try {
+
+    		OpenIdUserPrincipal oidUP = (OpenIdUserPrincipal) principal;
+    		OpenIdCredentials credentials = oidUP.getCredentials();
+			
+    		Map<String,Object> claims = credentials.getClaims();
+    		//claims.keySet().forEach(key -> System.out.println(key + ": " + claims.get(key)));
+
+    		String name = (String) claims.get("name");
+    		awbProps.setStringValue("_oidc.name", name);
+    		
+    		String preferredUsername = (String) claims.get("preferred_username");
+    		awbProps.setStringValue("_oidc.preferred_username", preferredUsername);
+    		
+    		String givenName = (String) claims.get("given_name");
+    		awbProps.setStringValue("_oidc.given_name", givenName);
+    		
+    		String familyName = (String) claims.get("family_name");
+    		awbProps.setStringValue("_oidc.family_name", familyName);
+    		
+    		String email = (String) claims.get("email");
+    		awbProps.setStringValue("_oidc.email", email);
+    		
+    		boolean email_verified = (Boolean)claims.get("email_verified");
+    		awbProps.setBooleanValue("_oidc.email_verified", email_verified);
+    		
+    		String locale = (String) claims.get("locale");
+    		awbProps.setStringValue("_oidc.locale", locale);
+    		
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+    }
     
     
     /* (non-Javadoc)

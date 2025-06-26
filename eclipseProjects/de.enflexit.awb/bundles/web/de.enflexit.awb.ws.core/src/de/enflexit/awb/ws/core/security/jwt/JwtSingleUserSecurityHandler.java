@@ -8,7 +8,6 @@ import java.util.function.Function;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
 import org.eclipse.jetty.security.LoginService;
@@ -18,6 +17,8 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Session;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
+
+import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 
 
 /**
@@ -55,11 +56,7 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		this.setIdentityService(new DefaultIdentityService());
 		this.setLoginService(new JwtLoginService());
 		
-		if (this.isSecured()==true) {
-			this.put("/*", Constraint.ANY_USER);
-		} else {
-			this.put("/*", Constraint.ALLOWED);
-		}
+		SecurityHandlerService.putPathsToSecurityHandler(this, this.isSecured());
 		
 	}
 	

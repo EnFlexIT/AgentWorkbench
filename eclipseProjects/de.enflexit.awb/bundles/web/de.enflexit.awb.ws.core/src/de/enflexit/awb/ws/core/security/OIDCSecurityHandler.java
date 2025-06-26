@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.core.security;
 
-import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.SecurityHandler;
@@ -36,32 +35,32 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 		
-		OpenIdConfiguration openIdConfig = new OpenIdConfiguration(this.issuer, this.clientId, this.clientSecret);
-
-		// A nested LoginService is optional and used to specify known users with defined roles.
-		// This can be any instance of LoginService and is not restricted to be a HashLoginService.
+		// --- A nested LoginService is optional and used to specify known users with defined roles. ----------------------------
+		// --- This can be any instance of LoginService and is not restricted to be a HashLoginService. -------------------------
 		UserStore userStore = new UserStore();
-		userStore.addUser("<admin-user-subject-identifier>", null, new String[]{"admin"});
+		userStore.addUser("<awb-admin-user-subject-identifier>", null, new String[]{"admin"});
 
 		HashLoginService nestedLoginService = new HashLoginService();
 		nestedLoginService.setUserStore(userStore);
 
-		// Optional configuration to allow new users not listed in the nested LoginService to be authenticated.
+		// --- Optional configuration to allow new users not listed in the nested LoginService to be authenticated. -------------
+		OpenIdConfiguration openIdConfig = new OpenIdConfiguration(this.issuer, this.clientId, this.clientSecret);
 		openIdConfig.setAuthenticateNewUsers(true);
-
-		// An OpenIdLoginService should be used which can optionally wrap the nestedLoginService to support roles.
+		openIdConfig.setLogoutWhenIdTokenIsExpired(true);
+		
+		// --- An OpenIdLoginService should be used which can optionally wrap the nestedLoginService to support roles. ----------
 		LoginService loginService = new OpenIdLoginService(openIdConfig, nestedLoginService);
 		this.setLoginService(loginService);
 
-		// Configure an OpenIdAuthenticator.
 		this.setAuthenticator(new OpenIdAuthenticator(openIdConfig,
-		    "/j_security_check", 	// The path where the OIDC provider redirects back to Jetty.
-		    "/error", 				// Optional page where authentication errors are redirected.
-		    "/logoutRedirect" 		// Optional page where the user is redirected to this page after logout.
+		    "/j_security_check", 	// --- The path where the OIDC provider redirects back to Jetty.
+		    "/error", 				// --- Optional page where authentication errors are redirected.
+		    "/logoutRedirect" 		// --- Optional page where the user is redirected to this page after logout.
 		));
 		
+		// --- Use central method to secure the individual paths ----------------------------------------------------------------
+		SecurityHandlerService.putPathsToSecurityHandler(this, true);
 		
-		this.put("/*", Constraint.ANY_USER);
 	}
-
+	
 }

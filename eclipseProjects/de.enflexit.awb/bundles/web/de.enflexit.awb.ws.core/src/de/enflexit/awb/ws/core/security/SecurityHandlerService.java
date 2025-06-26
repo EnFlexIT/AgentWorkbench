@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.jetty.security.Constraint;
+import org.eclipse.jetty.security.SecurityHandler;
+
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService;
@@ -79,4 +82,23 @@ public class SecurityHandlerService {
 	}
 	
 
+	/**
+	 * Puts the public or restricted paths to the specified security handler.
+	 *
+	 * @param sHandler the s handler
+	 * @param isSecured the is secured
+	 */
+	public static void putPathsToSecurityHandler(SecurityHandler.PathMapped sHandler, boolean isSecured) {
+		
+		if (sHandler==null) return;
+
+		if (isSecured==true) {
+			sHandler.put("/*", Constraint.ANY_USER);
+			sHandler.put("/favicon.ico", Constraint.ALLOWED);
+			sHandler.put("/app/settings/*", Constraint.ALLOWED);
+		} else {
+			sHandler.put("/*", Constraint.ALLOWED);
+		}
+	}
+	
 }
