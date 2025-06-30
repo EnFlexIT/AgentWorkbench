@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.openid.OpenIdAuthenticator;
+import org.eclipse.jetty.security.openid.OpenIdConfiguration;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 
@@ -44,6 +46,9 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 			return null;
 		}
 	}
+	
+	private static boolean useOneAuth = false;
+	private static OpenIdAuthenticator openIdAuthenticator;
 	
 	
 	/* (non-Javadoc)
@@ -89,7 +94,39 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		String clientID = securityHandlerConfiguration.get(OIDCParameter.ClientID.getKey());
 		String clientSecret = securityHandlerConfiguration.get(OIDCParameter.ClientSecrete.getKey());
 
+		if (useOneAuth==true) {
+			// --- Only used in the context of development tests ----
+			OpenIdConfiguration openIdConfig = new OpenIdConfiguration(issuer, clientID, clientSecret);
+			return new OIDCSecurityHandler(openIdConfig, OIDCSecurityService.getOpenIdAuthenticator(openIdConfig));
+		}
+		// --- The regular way to create an OIDCSecurityHandler -----
 		return new OIDCSecurityHandler(issuer, clientID, clientSecret, true);
 	}
-
+	
+	/**
+	 * Resets the  OpenIdAuthenticator.
+	 */
+	public static void resetOpenIdAuthenticator() {
+		OIDCSecurityService.setOpenIdAuthenticator(null);
+	}
+	/**
+	 * Returns the current OpenIdAuthenticator.
+	 *
+	 * @param openIdConfig the open id config
+	 * @return the open id authenticator
+	 */
+	private static OpenIdAuthenticator getOpenIdAuthenticator(OpenIdConfiguration openIdConfig) {
+		if (openIdAuthenticator==null) {
+			openIdAuthenticator = new OpenIdAuthenticator(openIdConfig, "/j_security_check", "/error", "/logoutRedirect");
+		}
+		return openIdAuthenticator;
+	}
+	/**
+	 * Sets the open id authenticator.
+	 * @param openIdAuthenticator the new open id authenticator
+	 */
+	private static void setOpenIdAuthenticator(OpenIdAuthenticator openIdAuthenticator) {
+		OIDCSecurityService.openIdAuthenticator = openIdAuthenticator;
+	}
+	
 }

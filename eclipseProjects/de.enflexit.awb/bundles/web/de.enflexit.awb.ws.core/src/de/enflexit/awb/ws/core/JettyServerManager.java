@@ -41,6 +41,7 @@ import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.security.NoSecurityHandler;
+import de.enflexit.awb.ws.core.security.OIDCSecurityService;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 import de.enflexit.awb.ws.core.session.AWBSessionHandler;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
@@ -299,6 +300,7 @@ public class JettyServerManager {
 		Server server = new Server(this.getThreadPool(jConfiguration));
 		
 		// --- Add required beans for session handling --------------
+		AWBSessionHandler.addSessionIdManager(server);
 		AWBSessionHandler.addBeanSessionDataStoreFactory(server);
 		AWBSessionHandler.addBeanSessionCacheFactory(server);
 		
@@ -727,6 +729,9 @@ public class JettyServerManager {
 			this.disposeAwbWebHandlerServices(serverName);
 			// --- Unregister server instance -----------------------
 			this.unregisterServerInstances(serverName);
+			// --- Reset the OpenIdAuthenticator --------------------
+			OIDCSecurityService.resetOpenIdAuthenticator();
+			
 			BundleHelper.systemPrintln(this, "Stopped  server '" + serverName + "'.", false);
 			return true;
 		}

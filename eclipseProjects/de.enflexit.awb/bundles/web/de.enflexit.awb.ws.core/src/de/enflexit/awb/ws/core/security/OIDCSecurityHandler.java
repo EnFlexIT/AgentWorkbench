@@ -1,7 +1,6 @@
 package de.enflexit.awb.ws.core.security;
 
 import org.eclipse.jetty.security.HashLoginService;
-import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.security.openid.OpenIdAuthenticator;
@@ -17,9 +16,22 @@ import org.eclipse.jetty.security.openid.OpenIdLoginService;
  */
 public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 
-	private final String issuer;
-	private final String clientId;
-	private final String clientSecret;
+	
+	public OIDCSecurityHandler(OpenIdConfiguration openIdConfig, OpenIdAuthenticator openIdAuth) {
+		
+		// --- Optional configuration to allow new users not listed in the nested LoginService to be authenticated. -------------
+		openIdConfig.setAuthenticateNewUsers(true);
+		openIdConfig.setLogoutWhenIdTokenIsExpired(true);
+		
+		// --- An OpenIdLoginService should be used which can optionally wrap the nestedLoginService to support roles. ----------
+		this.setLoginService(new OpenIdLoginService(openIdConfig, this.createNestedLoginService()));
+
+		// --- Add the specified OpenIdAuthenticator ----------------------------------------------------------------------------
+		this.setAuthenticator(openIdAuth);
+				
+		// --- Use central method to secure the individual paths ----------------------------------------------------------------
+		SecurityHandlerService.putPathsToSecurityHandler(this, true);
+	}
 	
 	/**
 	 * Instantiates a new OpenIDSecurityHandler where access is granted, if the specified OpenID issuer provides access.
@@ -31,26 +43,13 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 	 */
 	public OIDCSecurityHandler(String issuer, String clientId, String clientSecret, boolean isTrustAll) {
 		
-		this.issuer = issuer;
-		this.clientId = clientId;
-		this.clientSecret = clientSecret;
-		
-		// --- A nested LoginService is optional and used to specify known users with defined roles. ----------------------------
-		// --- This can be any instance of LoginService and is not restricted to be a HashLoginService. -------------------------
-		UserStore userStore = new UserStore();
-		userStore.addUser("<awb-admin-user-subject-identifier>", null, new String[]{"admin"});
-
-		HashLoginService nestedLoginService = new HashLoginService();
-		nestedLoginService.setUserStore(userStore);
-
 		// --- Optional configuration to allow new users not listed in the nested LoginService to be authenticated. -------------
-		OpenIdConfiguration openIdConfig = new OpenIdConfiguration(this.issuer, this.clientId, this.clientSecret);
+		OpenIdConfiguration openIdConfig = new OpenIdConfiguration(issuer, clientId, clientSecret);
 		openIdConfig.setAuthenticateNewUsers(true);
 		openIdConfig.setLogoutWhenIdTokenIsExpired(true);
 		
 		// --- An OpenIdLoginService should be used which can optionally wrap the nestedLoginService to support roles. ----------
-		LoginService loginService = new OpenIdLoginService(openIdConfig, nestedLoginService);
-		this.setLoginService(loginService);
+		this.setLoginService(new OpenIdLoginService(openIdConfig, this.createNestedLoginService()));
 
 		this.setAuthenticator(new OpenIdAuthenticator(openIdConfig,
 		    "/j_security_check", 	// --- The path where the OIDC provider redirects back to Jetty.
@@ -60,7 +59,24 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 		
 		// --- Use central method to secure the individual paths ----------------------------------------------------------------
 		SecurityHandlerService.putPathsToSecurityHandler(this, true);
+	}
+	
+	
+	/**
+	 * Creates a nested login service.
+	 * @return the nested login service
+	 */
+	private HashLoginService createNestedLoginService() {
 		
+		// --- A nested LoginService is optional and used to specify known users with defined roles. ----------------------------
+		// --- This can be any instance of LoginService and is not restricted to be a HashLoginService. -------------------------
+		UserStore userStore = new UserStore();
+		userStore.addUser("<awb-admin-user-subject-identifier>", null, new String[]{"admin"});
+
+		HashLoginService nestedLoginService = new HashLoginService();
+		nestedLoginService.setUserStore(userStore);
+		
+		return nestedLoginService;
 	}
 	
 }

@@ -25,6 +25,7 @@ import org.hibernate.mapping.Value;
  */
 public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrategyStandard {
 
+	private boolean isDebug = false;
 	
 	/* (non-Javadoc)
 	 * @see org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard#orderTableColumns(org.hibernate.mapping.Table, org.hibernate.boot.Metadata)
@@ -35,15 +36,24 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 		// --- Get attribute positions ------------------------------
 		List<String> entityAttribteList = this.getEntityAttributeList(table, metadata);
 		
+		if (this.isDebug==true) {
+			System.out.println("[" + this.getClass().getSimpleName() + "] Adjusting column order for table '" + table.getName() + "'");
+			System.out.println("[" + this.getClass().getSimpleName() + "] Attribute order in class:");
+			System.out.println("[" + this.getClass().getSimpleName() + "] " + String.join(", ", entityAttribteList));
+		}
+		
 		if (entityAttribteList!=null) {
 			// --- Sort with the help of the local comparator -------
 			final ArrayList<Column> orderedColumns = new ArrayList<>(table.getColumns());
 			orderedColumns.sort(new ColumnComparator(entityAttribteList));
+			if (this.isDebug==true) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Column order after sorting:");
+				System.out.println("[" + this.getClass().getSimpleName() + "] " + String.join(", ", entityAttribteList));
+			}
 			return orderedColumns;
 		}
 		return super.orderTableColumns(table, metadata);
 	}
-	
 	/**
 	 * Returns the entity attribute list in the natural order.
 	 *
@@ -69,7 +79,6 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 		}
 		return attributeList;
 	}
-	
 	/**
 	 * Return the Hibernate persistent class from table.
 	 *

@@ -6,6 +6,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.session.AbstractSessionCacheFactory;
 import org.eclipse.jetty.session.DatabaseAdaptor;
 import org.eclipse.jetty.session.DefaultSessionCacheFactory;
+import org.eclipse.jetty.session.DefaultSessionIdManager;
+import org.eclipse.jetty.session.HouseKeeper;
 import org.eclipse.jetty.session.JDBCSessionDataStore.SessionTableSchema;
 import org.eclipse.jetty.session.JDBCSessionDataStoreFactory;
 import org.eclipse.jetty.session.NullSessionCacheFactory;
@@ -121,6 +123,24 @@ public class AWBSessionHandler extends SessionHandler {
 	// --- From here, static configuration methods ------------------
 	// --------------------------------------------------------------
 	/**
+	 * Adds the session id manager as a server bean.
+	 * @param server the server
+	 */
+	public static void addSessionIdManager(Server server) {
+		
+		DefaultSessionIdManager idMgr = new DefaultSessionIdManager(server);
+
+		HouseKeeper houseKeeper = new HouseKeeper();
+		houseKeeper.setSessionIdManager(idMgr);
+		// set the frequency of scavenge cycles
+		// houseKeeper.setIntervalSec(600L);
+		
+		idMgr.setWorkerName("awb_0");
+		idMgr.setSessionHouseKeeper(houseKeeper);
+		server.addBean(idMgr, true);
+	}
+	
+	/**
 	 * Adds the session cache factory.
 	 * @param server the server instance
 	 */
@@ -137,7 +157,7 @@ public class AWBSessionHandler extends SessionHandler {
 
 		cacheFactory.setEvictionPolicy(SessionCache.NEVER_EVICT);
 		//Only useful with the EVICT_ON_INACTIVE policy
-		cacheFactory.setSaveOnInactiveEviction(true);
+		cacheFactory.setSaveOnInactiveEviction(false);
 		cacheFactory.setSaveOnCreate(true);
 
 		cacheFactory.setRemoveUnloadableSessions(true);

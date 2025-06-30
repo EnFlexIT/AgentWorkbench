@@ -15,6 +15,7 @@ import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.SecurityContext;
 
 /**
@@ -66,6 +67,9 @@ public class AppApiServiceImpl extends AppApiService {
     		Map<String,Object> claims = credentials.getClaims();
     		//claims.keySet().forEach(key -> System.out.println(key + ": " + claims.get(key)));
 
+    		String id = (String) claims.get("sub");
+    		awbProps.setStringValue("_oidc.id", id);
+    		
     		String name = (String) claims.get("name");
     		awbProps.setStringValue("_oidc.name", name);
     		
@@ -101,7 +105,10 @@ public class AppApiServiceImpl extends AppApiService {
         
     	// --- Check who is the user --------------------------------
     	Principal principal = securityContext.getUserPrincipal();
-    	    	
+    	if (principal==null) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
+    	}
+    	
     	// TODO
     	
     	
