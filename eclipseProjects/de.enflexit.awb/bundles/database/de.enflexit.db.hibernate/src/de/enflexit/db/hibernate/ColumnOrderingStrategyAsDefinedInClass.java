@@ -183,7 +183,7 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 			String columnNameToLower = columnName.toLowerCase();
 			String columnNameWithoutUnderscore = columnNameToLower.replace("_", "");
 					
-			boolean isBoolean = javaType.equals(Boolean.TYPE);
+			boolean isBoolean = javaType!=null ? javaType.equals(Boolean.TYPE) : false;
 			
 			for (String toCheck : this.entityAttribteList) {
 				String toCheckToLower = toCheck.toLowerCase();

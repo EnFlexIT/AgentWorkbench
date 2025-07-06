@@ -2,9 +2,6 @@ package de.enflexit.awb.ws.core.db.dataModel;
 
 import java.util.Set;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,24 +10,26 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 /**
- * The Class WebUser.
- *
+ * The Class WebUserRole.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-@Table(name = "web_role")
-public class WebRole {
+@Table(name = "web_user_role")
+public class WebUserRole {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "id_web_role", nullable=false)
+	@Column(name = "id_web_user_role", nullable=false)
 	private Integer id;
 	
 	private String role;
 
-	@ManyToMany(mappedBy = "roles")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@ManyToMany(mappedBy = "userRoles")
 	private Set<WebUser> usersInRole;
+	
+	@ManyToMany(mappedBy = "webUserRoles")
+	private Set<WebUserRight> webUserRights;
+	
 	
 	/**
 	 * Gets the id.

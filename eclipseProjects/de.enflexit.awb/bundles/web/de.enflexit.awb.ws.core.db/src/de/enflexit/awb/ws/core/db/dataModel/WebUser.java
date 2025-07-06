@@ -1,17 +1,17 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.time.Instant;
 import java.util.Set;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -28,9 +28,10 @@ public class WebUser {
 	@Column(name="id_web_user", nullable=false)
 	private Integer id;
 	
-	@Column(unique = true, nullable=false)
+	@Column(name="sso_id", unique = true, nullable=false)
 	private String sso_id;
 	
+	@Column(name = "preferred_username")
 	private String preferredUsername;
 
 	private String name;
@@ -38,18 +39,26 @@ public class WebUser {
 	private String familyName;
 
 	private String email;
+	@Column(name = "email_is_verified")
 	private boolean email_verified;
 
 	private String locale;
 
+	@Column(name = "date_first_access")
+	private Instant dateFirstAccess;
+	@Column(name = "date_last_access")
+	private Instant dateLastAccess;
+	
 	@ManyToMany
 	@JoinTable(
 		name = "web_users_in_roles",
-		joinColumns = @JoinColumn(name= "id_web_user"),
-		inverseJoinColumns = @JoinColumn(name="id_web_role")
+		joinColumns = @JoinColumn(name= "id_web_user", foreignKey = @ForeignKey(name="FK_WEB_USER", foreignKeyDefinition = "FOREIGN KEY (ID_WEB_USER) REFERENCES WEB_USER(ID_WEB_USER) ON DELETE CASCADE")),
+		inverseJoinColumns = @JoinColumn(name="id_web_role", foreignKey = @ForeignKey(name="FK_WEBÛSER__ROLE", foreignKeyDefinition = "FOREIGN KEY (ID_WEB_ROLE) REFERENCES WEB_USER_ROLE(ID_WEB_USER_ROLE) ON DELETE CASCADE"))
 	)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Set<WebRole> roles;
+	private Set<WebUserRole> userRoles;
+	
+	@OneToMany(mappedBy = "webUser")
+	private Set<WebUserGroupRole> webUserGroupRoles;
 	
 	
 	/**
@@ -189,18 +198,64 @@ public class WebUser {
 	}
 	
 	/**
-	 * Returns the roles of the current user.
-	 * @return the roles
+	 * Returns the first access date.
+	 * @return the first access
 	 */
-	public Set<WebRole> getRoles() {
-		return roles;
+	public Instant getDateFirstAccess() {
+		return dateFirstAccess;
 	}
 	/**
-	 * Sets the roles of the current user.
-	 * @param roles the new roles
+	 * Sets the first access date.
+	 * @param dateFirstAccess the new first access
 	 */
-	public void setRoles(Set<WebRole> roles) {
-		this.roles = roles;
+	public void setDateFirstAccess(Instant firstAccess) {
+		this.dateFirstAccess = firstAccess;
+	}
+	
+	/**
+	 * Returns the last access.
+	 * @return the last access
+	 */
+	public Instant getDateLastAccess() {
+		return dateLastAccess;
+	}
+	/**
+	 * Sets the last access.
+	 * @param dateLastAccess the new last access
+	 */
+	public void setDateLastAccess(Instant lastAccess) {
+		this.dateLastAccess = lastAccess;
+	}
+	
+	
+	/**
+	 * Returns the userRoles of the current user.
+	 * @return the userRoles
+	 */
+	public Set<WebUserRole> getUserRoles() {
+		return userRoles;
+	}
+	/**
+	 * Sets the userRoles of the current user.
+	 * @param userRoles the new userRoles
+	 */
+	public void setUserRoles(Set<WebUserRole> userRoles) {
+		this.userRoles = userRoles;
+	}
+
+	/**
+	 * Sets the web user group rights.
+	 * @param webUserGroupRoles the new web user group rights
+	 */
+	public void setWebUserGroupRights(Set<WebUserGroupRole> webUserGroupRoles) {
+		this.webUserGroupRoles = webUserGroupRoles;
+	}
+	/**
+	 * Returns the web user group rights.
+	 * @return the web user group rights
+	 */
+	public Set<WebUserGroupRole> getWebUserGroupRights() {
+		return webUserGroupRoles;
 	}
 	
 }

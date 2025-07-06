@@ -1,6 +1,8 @@
 package de.enflexit.awb.ws.core.db;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.hibernate.Session;
@@ -129,16 +131,37 @@ public class WebAppDatabaseConnectionService implements HibernateDatabaseConnect
 			conf.addResource(mappingResource);
 		}
 		
+		// --- Just for a stepwise development and verification ---------------
+		List<String> excludeList = new ArrayList<>();
+		//excludeList.add("WebGroup");
+		//excludeList.add("WebGroupRole");
+		//excludeList.add("WebGroupRight");
+		
 		Vector<String> modelClasses = new Vector<>(bundleWiring.listResources(modelClassesPackage, "*.class", BundleWiring.LISTRESOURCES_LOCAL));
 		for (int i = 0; i < modelClasses.size(); i++) {
 			try {
+				
 				String modelClassName = modelClasses.get(i).replace("/", ".").replace(".class", "");
+				if (excludeList.size()>0 && this.isExcludedClass(modelClassName, excludeList)==true) continue;
+				
 				Class<?> modelClass = Class.forName(modelClassName);
 				conf.addAnnotatedClass(modelClass);
+				
 			} catch (ClassNotFoundException cnfEx) {
 				cnfEx.printStackTrace();
 			}
 		}
+	}
+	/**
+	 * Checks if the excludeList contains the specified class name.
+	 *
+	 * @param className the class name
+	 * @param excludeList the exclude list
+	 * @return true, if is excluded class
+	 */
+	private boolean isExcludedClass(String className, List<String> excludeList) {
+		String simpleClassName = className.substring(className.lastIndexOf(".")+1);
+		return excludeList.contains(simpleClassName);
 	}
 	
 	// ------------------------------------------------------------------------
