@@ -696,7 +696,7 @@ public class JettyServerManager {
 
 					// --- Shutdown Agent.Workbench ??? -------------
 					if (Application.getGlobalInfo().getAWBProduct()==AWBProduct.WEB) {
-						System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Failure while starting server - shuting down " + Application.getGlobalInfo().getApplicationTitle() + " ... ");
+						System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Failure while starting server - shutting down " + Application.getGlobalInfo().getApplicationTitle() + " ... ");
 						Application.stop();
 					}
 				}
