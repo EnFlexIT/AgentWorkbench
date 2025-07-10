@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,21 +21,22 @@ public class WebUserGroupRole {
 
 	@Id
 	@ManyToOne
-	@JoinColumn(name = "id_web_user", referencedColumnName = "id_web_user")
+	@JoinColumn(name = "id_web_user", referencedColumnName = "id_web_user", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (ID_WEB_USER) REFERENCES WEB_USER(ID_WEB_USER) ON DELETE CASCADE"))
 	private WebUser webUser;
 
 	@Id
 	@ManyToOne
-	@JoinColumn(name = "id_web_group", referencedColumnName = "id_web_group")
+	@JoinColumn(name = "id_web_group", referencedColumnName = "id_web_group", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (ID_WEB_GROUP) REFERENCES WEB_GROUP(ID_WEB_GROUP) ON DELETE CASCADE"))
 	private WebGroup webGroup;
 	
 	@Id
 	@ManyToOne
-	@JoinColumn(name = "id_web_group_role", referencedColumnName = "id_web_group_role")
+	@JoinColumn(name = "id_web_group_role", referencedColumnName = "id_web_group_role", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (ID_WEB_GROUP_ROLE) REFERENCES WEB_GROUP_ROLE(ID_WEB_GROUP_ROLE) ON DELETE CASCADE"))
 	private WebGroupRole webGroupRole;
 
 	@Column(name = "date_granted")
 	private Instant dateGranted;
+	
 	
 	/**
 	 * Gets the web user.

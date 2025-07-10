@@ -111,6 +111,7 @@ public class WebAppDatabaseConnectionService implements HibernateDatabaseConnect
 	 */
 	private void addColumnOrderingStrategy(Configuration configuration) {
 		configuration.setColumnOrderingStrategy(new ColumnOrderingStrategyAsDefinedInClass());
+		//configuration.setColumnOrderingStrategy(new ColumnOrderingStrategyStandard());
 	}
 	
 	/**
@@ -134,15 +135,19 @@ public class WebAppDatabaseConnectionService implements HibernateDatabaseConnect
 		// --- Just for a stepwise development and verification ---------------
 		List<String> excludeList = new ArrayList<>();
 		//excludeList.add("WebGroup");
-		//excludeList.add("WebGroupRole");
 		//excludeList.add("WebGroupRight");
+		//excludeList.add("WebGroupRole");
+		//excludeList.add("WebUser");
+		//excludeList.add("WebUserGroupRole");
+		//excludeList.add("WebUserRight");
+		//excludeList.add("WebUserRole");
 		
 		Vector<String> modelClasses = new Vector<>(bundleWiring.listResources(modelClassesPackage, "*.class", BundleWiring.LISTRESOURCES_LOCAL));
 		for (int i = 0; i < modelClasses.size(); i++) {
 			try {
 				
 				String modelClassName = modelClasses.get(i).replace("/", ".").replace(".class", "");
-				if (excludeList.size()>0 && this.isExcludedClass(modelClassName, excludeList)==true) continue;
+				if (excludeList!=null && excludeList.size()>0 && this.isExcludedClass(modelClassName, excludeList)==true) continue;
 				
 				Class<?> modelClass = Class.forName(modelClassName);
 				conf.addAnnotatedClass(modelClass);
