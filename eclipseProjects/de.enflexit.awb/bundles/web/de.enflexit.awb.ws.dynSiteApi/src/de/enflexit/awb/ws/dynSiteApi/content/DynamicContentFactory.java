@@ -61,9 +61,6 @@ public class DynamicContentFactory {
 		scImage.setUpdatePeriodInSeconds(updatePeriodInSeconds);
 		scImage.setEditable(isEditable);
 		
-		scImage.setWidth(width);
-		scImage.setHeight(height);
-		
 		scImage.setMimeType(mimeType);
 		scImage.setDataInB64(dataInBase64);
 		return scImage;

@@ -16,54 +16,67 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentProperties
+ * ValuePair
  */
 @JsonPropertyOrder({
-  SiteContentProperties.JSON_PROPERTY_PROPERTY_ENTRIES
+  ValuePair.JSON_PROPERTY_X_VALUE,
+  ValuePair.JSON_PROPERTY_Y_VALUE
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-09T11:20:39.473761300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentProperties extends AbstractSiteContent  {
-  public static final String JSON_PROPERTY_PROPERTY_ENTRIES = "propertyEntries";
-  @JsonProperty(JSON_PROPERTY_PROPERTY_ENTRIES)
-  private List<@Valid PropertyEntry> propertyEntries = new ArrayList<>();
+public class ValuePair   {
+  public static final String JSON_PROPERTY_X_VALUE = "xValue";
+  @JsonProperty(JSON_PROPERTY_X_VALUE)
+  private BigDecimal xValue;
 
-  public SiteContentProperties propertyEntries(List<@Valid PropertyEntry> propertyEntries) {
-    this.propertyEntries = propertyEntries;
-    return this;
-  }
+  public static final String JSON_PROPERTY_Y_VALUE = "yValue";
+  @JsonProperty(JSON_PROPERTY_Y_VALUE)
+  private BigDecimal yValue;
 
-  public SiteContentProperties addPropertyEntriesItem(PropertyEntry propertyEntriesItem) {
-    if (this.propertyEntries == null) {
-      this.propertyEntries = new ArrayList<>();
-    }
-    this.propertyEntries.add(propertyEntriesItem);
+  public ValuePair xValue(BigDecimal xValue) {
+    this.xValue = xValue;
     return this;
   }
 
   /**
-   * Get propertyEntries
-   * @return propertyEntries
+   * Get xValue
+   * @return xValue
    **/
-  @JsonProperty(value = "propertyEntries")
+  @JsonProperty(value = "xValue")
   @Schema(required = true, description = "")
   @NotNull @Valid 
-  public List<@Valid PropertyEntry> getPropertyEntries() {
-    return propertyEntries;
+  public BigDecimal getxValue() {
+    return xValue;
   }
 
-  public void setPropertyEntries(List<@Valid PropertyEntry> propertyEntries) {
-    this.propertyEntries = propertyEntries;
+  public void setxValue(BigDecimal xValue) {
+    this.xValue = xValue;
+  }
+
+  public ValuePair yValue(BigDecimal yValue) {
+    this.yValue = yValue;
+    return this;
+  }
+
+  /**
+   * Get yValue
+   * @return yValue
+   **/
+  @JsonProperty(value = "yValue")
+  @Schema(required = true, description = "")
+  @NotNull @Valid 
+  public BigDecimal getyValue() {
+    return yValue;
+  }
+
+  public void setyValue(BigDecimal yValue) {
+    this.yValue = yValue;
   }
 
 
@@ -75,21 +88,23 @@ public class SiteContentProperties extends AbstractSiteContent  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentProperties siteContentProperties = (SiteContentProperties) o;
-    return super.equals(o) && Objects.equals(this.propertyEntries, siteContentProperties.propertyEntries);
+    ValuePair valuePair = (ValuePair) o;
+    return Objects.equals(this.xValue, valuePair.xValue) &&
+        Objects.equals(this.yValue, valuePair.yValue);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), propertyEntries);
+    return Objects.hash(xValue, yValue);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentProperties {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    propertyEntries: ").append(toIndentedString(propertyEntries)).append("\n");
+    sb.append("class ValuePair {\n");
+    
+    sb.append("    xValue: ").append(toIndentedString(xValue)).append("\n");
+    sb.append("    yValue: ").append(toIndentedString(yValue)).append("\n");
     sb.append("}");
     return sb.toString();
   }

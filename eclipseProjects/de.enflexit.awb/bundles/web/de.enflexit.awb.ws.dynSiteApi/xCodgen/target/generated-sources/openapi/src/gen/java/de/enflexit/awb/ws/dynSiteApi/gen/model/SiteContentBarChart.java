@@ -16,8 +16,8 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentLineChart;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,35 +27,60 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentTimeSeriesChart
+ * SiteContentBarChart
  */
 @JsonPropertyOrder({
-  SiteContentTimeSeriesChart.JSON_PROPERTY_TIME_FORMAT
+  SiteContentBarChart.JSON_PROPERTY_X_AXIS_LABEL,
+  SiteContentBarChart.JSON_PROPERTY_Y_AXIS_LABEL
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-09T11:20:39.473761300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentTimeSeriesChart extends SiteContentLineChart  {
-  public static final String JSON_PROPERTY_TIME_FORMAT = "timeFormat";
-  @JsonProperty(JSON_PROPERTY_TIME_FORMAT)
-  private String timeFormat;
+public class SiteContentBarChart extends AbstractSiteContentChart  {
+  public static final String JSON_PROPERTY_X_AXIS_LABEL = "xAxisLabel";
+  @JsonProperty(JSON_PROPERTY_X_AXIS_LABEL)
+  private String xAxisLabel;
 
-  public SiteContentTimeSeriesChart timeFormat(String timeFormat) {
-    this.timeFormat = timeFormat;
+  public static final String JSON_PROPERTY_Y_AXIS_LABEL = "yAxisLabel";
+  @JsonProperty(JSON_PROPERTY_Y_AXIS_LABEL)
+  private String yAxisLabel;
+
+  public SiteContentBarChart xAxisLabel(String xAxisLabel) {
+    this.xAxisLabel = xAxisLabel;
     return this;
   }
 
   /**
-   * Get timeFormat
-   * @return timeFormat
+   * Get xAxisLabel
+   * @return xAxisLabel
    **/
-  @JsonProperty(value = "timeFormat")
+  @JsonProperty(value = "xAxisLabel")
   @Schema(required = true, description = "")
   @NotNull 
-  public String getTimeFormat() {
-    return timeFormat;
+  public String getxAxisLabel() {
+    return xAxisLabel;
   }
 
-  public void setTimeFormat(String timeFormat) {
-    this.timeFormat = timeFormat;
+  public void setxAxisLabel(String xAxisLabel) {
+    this.xAxisLabel = xAxisLabel;
+  }
+
+  public SiteContentBarChart yAxisLabel(String yAxisLabel) {
+    this.yAxisLabel = yAxisLabel;
+    return this;
+  }
+
+  /**
+   * Get yAxisLabel
+   * @return yAxisLabel
+   **/
+  @JsonProperty(value = "yAxisLabel")
+  @Schema(required = true, description = "")
+  @NotNull 
+  public String getyAxisLabel() {
+    return yAxisLabel;
+  }
+
+  public void setyAxisLabel(String yAxisLabel) {
+    this.yAxisLabel = yAxisLabel;
   }
 
 
@@ -67,21 +92,23 @@ public class SiteContentTimeSeriesChart extends SiteContentLineChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentTimeSeriesChart siteContentTimeSeriesChart = (SiteContentTimeSeriesChart) o;
-    return super.equals(o) && Objects.equals(this.timeFormat, siteContentTimeSeriesChart.timeFormat);
+    SiteContentBarChart siteContentBarChart = (SiteContentBarChart) o;
+    return super.equals(o) && Objects.equals(this.xAxisLabel, siteContentBarChart.xAxisLabel) &&
+        Objects.equals(this.yAxisLabel, siteContentBarChart.yAxisLabel);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), timeFormat);
+    return Objects.hash(super.hashCode(), xAxisLabel, super.hashCode(), yAxisLabel);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentTimeSeriesChart {\n");
+    sb.append("class SiteContentBarChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    timeFormat: ").append(toIndentedString(timeFormat)).append("\n");
+    sb.append("    xAxisLabel: ").append(toIndentedString(xAxisLabel)).append("\n");
+    sb.append("    yAxisLabel: ").append(toIndentedString(yAxisLabel)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -26,23 +26,13 @@ import jakarta.validation.Valid;
  * SiteContentImage
  */
 @JsonPropertyOrder({
-  SiteContentImage.JSON_PROPERTY_DATA_IN_B64,
-  SiteContentImage.JSON_PROPERTY_WIDTH,
-  SiteContentImage.JSON_PROPERTY_HEIGHT
+  SiteContentImage.JSON_PROPERTY_DATA_IN_B64
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-29T10:05:32.007037200+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-09T11:20:39.473761300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class SiteContentImage extends SiteContentMedia  {
   public static final String JSON_PROPERTY_DATA_IN_B64 = "dataInB64";
   @JsonProperty(JSON_PROPERTY_DATA_IN_B64)
   private String dataInB64;
-
-  public static final String JSON_PROPERTY_WIDTH = "width";
-  @JsonProperty(JSON_PROPERTY_WIDTH)
-  private Integer width;
-
-  public static final String JSON_PROPERTY_HEIGHT = "height";
-  @JsonProperty(JSON_PROPERTY_HEIGHT)
-  private Integer height;
 
   public SiteContentImage dataInB64(String dataInB64) {
     this.dataInB64 = dataInB64;
@@ -64,46 +54,6 @@ public class SiteContentImage extends SiteContentMedia  {
     this.dataInB64 = dataInB64;
   }
 
-  public SiteContentImage width(Integer width) {
-    this.width = width;
-    return this;
-  }
-
-  /**
-   * Get width
-   * @return width
-   **/
-  @JsonProperty(value = "width")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getWidth() {
-    return width;
-  }
-
-  public void setWidth(Integer width) {
-    this.width = width;
-  }
-
-  public SiteContentImage height(Integer height) {
-    this.height = height;
-    return this;
-  }
-
-  /**
-   * Get height
-   * @return height
-   **/
-  @JsonProperty(value = "height")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public Integer getHeight() {
-    return height;
-  }
-
-  public void setHeight(Integer height) {
-    this.height = height;
-  }
-
 
   @Override
   public boolean equals(Object o) {
@@ -114,14 +64,12 @@ public class SiteContentImage extends SiteContentMedia  {
       return false;
     }
     SiteContentImage siteContentImage = (SiteContentImage) o;
-    return super.equals(o) && Objects.equals(this.dataInB64, siteContentImage.dataInB64) &&
-        Objects.equals(this.width, siteContentImage.width) &&
-        Objects.equals(this.height, siteContentImage.height);
+    return super.equals(o) && Objects.equals(this.dataInB64, siteContentImage.dataInB64);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), dataInB64, super.hashCode(), width, super.hashCode(), height);
+    return Objects.hash(super.hashCode(), dataInB64);
   }
 
   @Override
@@ -130,8 +78,6 @@ public class SiteContentImage extends SiteContentMedia  {
     sb.append("class SiteContentImage {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    dataInB64: ").append(toIndentedString(dataInB64)).append("\n");
-    sb.append("    width: ").append(toIndentedString(width)).append("\n");
-    sb.append("    height: ").append(toIndentedString(height)).append("\n");
     sb.append("}");
     return sb.toString();
   }

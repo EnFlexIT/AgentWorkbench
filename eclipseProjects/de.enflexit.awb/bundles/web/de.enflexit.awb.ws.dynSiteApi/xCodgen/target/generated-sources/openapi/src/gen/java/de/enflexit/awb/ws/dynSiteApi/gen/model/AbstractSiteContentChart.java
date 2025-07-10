@@ -20,7 +20,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
@@ -29,14 +33,99 @@ import jakarta.validation.Valid;
  * AbstractSiteContentChart
  */
 @JsonPropertyOrder({
+  AbstractSiteContentChart.JSON_PROPERTY_TITLE,
+  AbstractSiteContentChart.JSON_PROPERTY_SHOW_LEGEND,
+  AbstractSiteContentChart.JSON_PROPERTY_DATA_SERIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-29T10:05:32.007037200+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-09T11:20:39.473761300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
+  @JsonSubTypes.Type(value = SiteContentBarChart.class, name = "SiteContentBarChart"),
+  @JsonSubTypes.Type(value = SiteContentLineChart.class, name = "SiteContentLineChart"),
+  @JsonSubTypes.Type(value = SiteContentPieChart.class, name = "SiteContentPieChart"),
   @JsonSubTypes.Type(value = SiteContentTimeSeriesChart.class, name = "SiteContentTimeSeriesChart"),
-  @JsonSubTypes.Type(value = SiteContentXYChart.class, name = "SiteContentXYChart"),
 })
 
 public class AbstractSiteContentChart extends AbstractSiteContent  {
+  public static final String JSON_PROPERTY_TITLE = "title";
+  @JsonProperty(JSON_PROPERTY_TITLE)
+  private String title;
+
+  public static final String JSON_PROPERTY_SHOW_LEGEND = "showLegend";
+  @JsonProperty(JSON_PROPERTY_SHOW_LEGEND)
+  private Boolean showLegend;
+
+  public static final String JSON_PROPERTY_DATA_SERIES = "dataSeries";
+  @JsonProperty(JSON_PROPERTY_DATA_SERIES)
+  private List<@Valid DataSeries> dataSeries = new ArrayList<>();
+
+  public AbstractSiteContentChart title(String title) {
+    this.title = title;
+    return this;
+  }
+
+  /**
+   * Get title
+   * @return title
+   **/
+  @JsonProperty(value = "title")
+  @Schema(required = true, description = "")
+  @NotNull 
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public AbstractSiteContentChart showLegend(Boolean showLegend) {
+    this.showLegend = showLegend;
+    return this;
+  }
+
+  /**
+   * Get showLegend
+   * @return showLegend
+   **/
+  @JsonProperty(value = "showLegend")
+  @Schema(description = "")
+  
+  public Boolean getShowLegend() {
+    return showLegend;
+  }
+
+  public void setShowLegend(Boolean showLegend) {
+    this.showLegend = showLegend;
+  }
+
+  public AbstractSiteContentChart dataSeries(List<@Valid DataSeries> dataSeries) {
+    this.dataSeries = dataSeries;
+    return this;
+  }
+
+  public AbstractSiteContentChart addDataSeriesItem(DataSeries dataSeriesItem) {
+    if (this.dataSeries == null) {
+      this.dataSeries = new ArrayList<>();
+    }
+    this.dataSeries.add(dataSeriesItem);
+    return this;
+  }
+
+  /**
+   * Get dataSeries
+   * @return dataSeries
+   **/
+  @JsonProperty(value = "dataSeries")
+  @Schema(required = true, description = "")
+  @NotNull @Valid 
+  public List<@Valid DataSeries> getDataSeries() {
+    return dataSeries;
+  }
+
+  public void setDataSeries(List<@Valid DataSeries> dataSeries) {
+    this.dataSeries = dataSeries;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -46,12 +135,15 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AbstractSiteContentChart abstractSiteContentChart = (AbstractSiteContentChart) o;return super.equals(o);
+    AbstractSiteContentChart abstractSiteContentChart = (AbstractSiteContentChart) o;
+    return super.equals(o) && Objects.equals(this.title, abstractSiteContentChart.title) &&
+        Objects.equals(this.showLegend, abstractSiteContentChart.showLegend) &&
+        Objects.equals(this.dataSeries, abstractSiteContentChart.dataSeries);
   }
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return Objects.hash(super.hashCode(), title, super.hashCode(), showLegend, super.hashCode(), dataSeries);
   }
 
   @Override
@@ -59,6 +151,9 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     StringBuilder sb = new StringBuilder();
     sb.append("class AbstractSiteContentChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    title: ").append(toIndentedString(title)).append("\n");
+    sb.append("    showLegend: ").append(toIndentedString(showLegend)).append("\n");
+    sb.append("    dataSeries: ").append(toIndentedString(dataSeries)).append("\n");
     sb.append("}");
     return sb.toString();
   }
