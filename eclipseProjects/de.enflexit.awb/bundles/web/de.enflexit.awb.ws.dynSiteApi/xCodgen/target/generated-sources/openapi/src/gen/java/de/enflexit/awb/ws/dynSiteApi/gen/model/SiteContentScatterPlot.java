@@ -17,18 +17,22 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentXYChart
+ * SiteContentScatterPlot
  */
 @JsonPropertyOrder({
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-09T11:05:24.064981300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentXYChart extends AbstractSiteContentChart  {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-17T17:38:27.629521900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class SiteContentScatterPlot extends AbstractSiteContentChart  {
 
   @Override
   public boolean equals(Object o) {
@@ -38,7 +42,7 @@ public class SiteContentXYChart extends AbstractSiteContentChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentXYChart siteContentXYChart = (SiteContentXYChart) o;return super.equals(o);
+    SiteContentScatterPlot siteContentScatterPlot = (SiteContentScatterPlot) o;return super.equals(o);
   }
 
   @Override
@@ -49,7 +53,7 @@ public class SiteContentXYChart extends AbstractSiteContentChart  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentXYChart {\n");
+    sb.append("class SiteContentScatterPlot {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("}");
     return sb.toString();

@@ -16,42 +16,42 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentText
+ * ValuePairDateTime
  */
 @JsonPropertyOrder({
-  SiteContentText.JSON_PROPERTY_TEXT
+  ValuePairDateTime.JSON_PROPERTY_ISO_DATE_TIME
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-17T17:38:27.629521900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentText extends SiteContentMedia  {
-  public static final String JSON_PROPERTY_TEXT = "text";
-  @JsonProperty(JSON_PROPERTY_TEXT)
-  private String text;
+public class ValuePairDateTime extends AbstractValuePair  {
+  public static final String JSON_PROPERTY_ISO_DATE_TIME = "isoDateTime";
+  @JsonProperty(JSON_PROPERTY_ISO_DATE_TIME)
+  private String isoDateTime;
 
-  public SiteContentText text(String text) {
-    this.text = text;
+  public ValuePairDateTime isoDateTime(String isoDateTime) {
+    this.isoDateTime = isoDateTime;
     return this;
   }
 
   /**
-   * Get text
-   * @return text
+   * Get isoDateTime
+   * @return isoDateTime
    **/
-  @JsonProperty(value = "text")
+  @JsonProperty(value = "isoDateTime")
   @Schema(required = true, description = "")
   @NotNull 
-  public String getText() {
-    return text;
+  public String getIsoDateTime() {
+    return isoDateTime;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  public void setIsoDateTime(String isoDateTime) {
+    this.isoDateTime = isoDateTime;
   }
 
 
@@ -63,21 +63,21 @@ public class SiteContentText extends SiteContentMedia  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentText siteContentText = (SiteContentText) o;
-    return super.equals(o) && Objects.equals(this.text, siteContentText.text);
+    ValuePairDateTime valuePairDateTime = (ValuePairDateTime) o;
+    return super.equals(o) && Objects.equals(this.isoDateTime, valuePairDateTime.isoDateTime);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), text);
+    return Objects.hash(super.hashCode(), isoDateTime);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentText {\n");
+    sb.append("class ValuePairDateTime {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    text: ").append(toIndentedString(text)).append("\n");
+    sb.append("    isoDateTime: ").append(toIndentedString(isoDateTime)).append("\n");
     sb.append("}");
     return sb.toString();
   }

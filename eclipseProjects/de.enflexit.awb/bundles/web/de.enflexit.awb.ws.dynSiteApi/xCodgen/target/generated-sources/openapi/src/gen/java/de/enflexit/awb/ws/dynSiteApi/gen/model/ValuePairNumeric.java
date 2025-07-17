@@ -16,30 +16,25 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * ValuePair
+ * ValuePairNumeric
  */
 @JsonPropertyOrder({
-  ValuePair.JSON_PROPERTY_X_VALUE,
-  ValuePair.JSON_PROPERTY_Y_VALUE
+  ValuePairNumeric.JSON_PROPERTY_X_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-09T11:20:39.473761300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class ValuePair   {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-17T17:38:27.629521900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class ValuePairNumeric extends AbstractValuePair  {
   public static final String JSON_PROPERTY_X_VALUE = "xValue";
   @JsonProperty(JSON_PROPERTY_X_VALUE)
-  private BigDecimal xValue;
+  private Double xValue;
 
-  public static final String JSON_PROPERTY_Y_VALUE = "yValue";
-  @JsonProperty(JSON_PROPERTY_Y_VALUE)
-  private BigDecimal yValue;
-
-  public ValuePair xValue(BigDecimal xValue) {
+  public ValuePairNumeric xValue(Double xValue) {
     this.xValue = xValue;
     return this;
   }
@@ -50,33 +45,13 @@ public class ValuePair   {
    **/
   @JsonProperty(value = "xValue")
   @Schema(required = true, description = "")
-  @NotNull @Valid 
-  public BigDecimal getxValue() {
+  @NotNull 
+  public Double getxValue() {
     return xValue;
   }
 
-  public void setxValue(BigDecimal xValue) {
+  public void setxValue(Double xValue) {
     this.xValue = xValue;
-  }
-
-  public ValuePair yValue(BigDecimal yValue) {
-    this.yValue = yValue;
-    return this;
-  }
-
-  /**
-   * Get yValue
-   * @return yValue
-   **/
-  @JsonProperty(value = "yValue")
-  @Schema(required = true, description = "")
-  @NotNull @Valid 
-  public BigDecimal getyValue() {
-    return yValue;
-  }
-
-  public void setyValue(BigDecimal yValue) {
-    this.yValue = yValue;
   }
 
 
@@ -88,23 +63,21 @@ public class ValuePair   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValuePair valuePair = (ValuePair) o;
-    return Objects.equals(this.xValue, valuePair.xValue) &&
-        Objects.equals(this.yValue, valuePair.yValue);
+    ValuePairNumeric valuePairNumeric = (ValuePairNumeric) o;
+    return super.equals(o) && Objects.equals(this.xValue, valuePairNumeric.xValue);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(xValue, yValue);
+    return Objects.hash(super.hashCode(), xValue);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValuePair {\n");
-    
+    sb.append("class ValuePairNumeric {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    xValue: ").append(toIndentedString(xValue)).append("\n");
-    sb.append("    yValue: ").append(toIndentedString(yValue)).append("\n");
     sb.append("}");
     return sb.toString();
   }

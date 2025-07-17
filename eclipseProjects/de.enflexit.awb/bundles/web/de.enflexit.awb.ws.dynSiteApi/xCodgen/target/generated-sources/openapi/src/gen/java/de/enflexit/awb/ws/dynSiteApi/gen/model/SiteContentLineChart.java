@@ -30,82 +30,32 @@ import jakarta.validation.Valid;
  * SiteContentLineChart
  */
 @JsonPropertyOrder({
-  SiteContentLineChart.JSON_PROPERTY_X_AXIS_LABEL,
-  SiteContentLineChart.JSON_PROPERTY_Y_AXIS_LABEL,
-  SiteContentLineChart.JSON_PROPERTY_Y_AXIS_LABEL_SECONDARY
+  SiteContentLineChart.JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-09T11:20:39.473761300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-17T17:38:27.629521900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class SiteContentLineChart extends AbstractSiteContentChart  {
-  public static final String JSON_PROPERTY_X_AXIS_LABEL = "xAxisLabel";
-  @JsonProperty(JSON_PROPERTY_X_AXIS_LABEL)
-  private String xAxisLabel;
+  public static final String JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL = "secondaryYAxisLabel";
+  @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL)
+  private String secondaryYAxisLabel;
 
-  public static final String JSON_PROPERTY_Y_AXIS_LABEL = "yAxisLabel";
-  @JsonProperty(JSON_PROPERTY_Y_AXIS_LABEL)
-  private String yAxisLabel;
-
-  public static final String JSON_PROPERTY_Y_AXIS_LABEL_SECONDARY = "yAxisLabelSecondary";
-  @JsonProperty(JSON_PROPERTY_Y_AXIS_LABEL_SECONDARY)
-  private String yAxisLabelSecondary;
-
-  public SiteContentLineChart xAxisLabel(String xAxisLabel) {
-    this.xAxisLabel = xAxisLabel;
+  public SiteContentLineChart secondaryYAxisLabel(String secondaryYAxisLabel) {
+    this.secondaryYAxisLabel = secondaryYAxisLabel;
     return this;
   }
 
   /**
-   * Get xAxisLabel
-   * @return xAxisLabel
+   * Get secondaryYAxisLabel
+   * @return secondaryYAxisLabel
    **/
-  @JsonProperty(value = "xAxisLabel")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getxAxisLabel() {
-    return xAxisLabel;
-  }
-
-  public void setxAxisLabel(String xAxisLabel) {
-    this.xAxisLabel = xAxisLabel;
-  }
-
-  public SiteContentLineChart yAxisLabel(String yAxisLabel) {
-    this.yAxisLabel = yAxisLabel;
-    return this;
-  }
-
-  /**
-   * Get yAxisLabel
-   * @return yAxisLabel
-   **/
-  @JsonProperty(value = "yAxisLabel")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getyAxisLabel() {
-    return yAxisLabel;
-  }
-
-  public void setyAxisLabel(String yAxisLabel) {
-    this.yAxisLabel = yAxisLabel;
-  }
-
-  public SiteContentLineChart yAxisLabelSecondary(String yAxisLabelSecondary) {
-    this.yAxisLabelSecondary = yAxisLabelSecondary;
-    return this;
-  }
-
-  /**
-   * Get yAxisLabelSecondary
-   * @return yAxisLabelSecondary
-   **/
-  @JsonProperty(value = "yAxisLabelSecondary")
+  @JsonProperty(value = "secondaryYAxisLabel")
   @Schema(description = "")
   
-  public String getyAxisLabelSecondary() {
-    return yAxisLabelSecondary;
+  public String getSecondaryYAxisLabel() {
+    return secondaryYAxisLabel;
   }
 
-  public void setyAxisLabelSecondary(String yAxisLabelSecondary) {
-    this.yAxisLabelSecondary = yAxisLabelSecondary;
+  public void setSecondaryYAxisLabel(String secondaryYAxisLabel) {
+    this.secondaryYAxisLabel = secondaryYAxisLabel;
   }
 
 
@@ -118,14 +68,12 @@ public class SiteContentLineChart extends AbstractSiteContentChart  {
       return false;
     }
     SiteContentLineChart siteContentLineChart = (SiteContentLineChart) o;
-    return super.equals(o) && Objects.equals(this.xAxisLabel, siteContentLineChart.xAxisLabel) &&
-        Objects.equals(this.yAxisLabel, siteContentLineChart.yAxisLabel) &&
-        Objects.equals(this.yAxisLabelSecondary, siteContentLineChart.yAxisLabelSecondary);
+    return super.equals(o) && Objects.equals(this.secondaryYAxisLabel, siteContentLineChart.secondaryYAxisLabel);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), xAxisLabel, super.hashCode(), yAxisLabel, super.hashCode(), yAxisLabelSecondary);
+    return Objects.hash(super.hashCode(), secondaryYAxisLabel);
   }
 
   @Override
@@ -133,9 +81,7 @@ public class SiteContentLineChart extends AbstractSiteContentChart  {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentLineChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    xAxisLabel: ").append(toIndentedString(xAxisLabel)).append("\n");
-    sb.append("    yAxisLabel: ").append(toIndentedString(yAxisLabel)).append("\n");
-    sb.append("    yAxisLabelSecondary: ").append(toIndentedString(yAxisLabelSecondary)).append("\n");
+    sb.append("    secondaryYAxisLabel: ").append(toIndentedString(secondaryYAxisLabel)).append("\n");
     sb.append("}");
     return sb.toString();
   }
