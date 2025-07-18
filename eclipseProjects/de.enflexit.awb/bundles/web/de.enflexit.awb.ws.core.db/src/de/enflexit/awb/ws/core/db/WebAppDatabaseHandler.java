@@ -81,9 +81,136 @@ public class WebAppDatabaseHandler {
 			this.dispose();
 		}
 	}
+
+	// --------------------------------------------------------------
+	// --- From here, generically working on concrete data ----------
+	// --------------------------------------------------------------	
+	/**
+	 * Saves or updates the specified {@link entityInstance}.
+	 * @param entityInstance the JettySession instance to save or update
+	 */
+	public <EntityInstance> boolean dbSaveOrUpdateEntityInstance(EntityInstance entityInstance) {
+		
+		boolean successful= false;
+		Session session = this.getSession();
+		if (session!=null) {
+			
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				session.persist(entityInstance);
+				session.flush();
+				transaction.commit();
+				successful = true;
+				
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				ex.printStackTrace();
+				successful = false;
+				
+			} finally {
+				session.clear();
+			}
+		}
+		return successful;
+	}
+	
+	/**
+	 * Loads an entity instance by its ID from the database.
+	 *
+	 * @param <EntityClass> the generic entity instance to load
+	 * @param entityClass the entity class
+	 * @param entityID the entity ID
+	 * @return the entity instance found in the database
+	 */
+	public <EntityInstance> EntityInstance dbLoadEntityInstance(Class<EntityInstance> entityClass, String entityID) {
+		
+		EntityInstance siteMenu =  null;
+		Session session = this.getSession();
+		if (session!=null) {
+		
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				siteMenu = session.get(entityClass, entityID);
+				transaction.commit();
+				
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				ex.printStackTrace();
+			} finally {
+				session.clear();
+			}
+		}
+		return siteMenu;
+	}
+	
+	/**
+	 * Returns the list of all background system platforms.
+	 *
+	 * @param <EntityInstance> the generic type
+	 * @param entityClass the entity class
+	 * @return the JettySession list
+	 */
+	public <EntityInstance> List<EntityInstance> dbLoadEntityInstanceList(Class<EntityInstance> entityClass) {
+		
+		List<EntityInstance> entityInstanceList =  null;
+		Session session = this.getSession();
+		if (session!=null) {
+		
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				
+				Query<EntityInstance> query = session.createQuery("from " + entityClass.getSimpleName(), entityClass);
+				entityInstanceList = query.list();
+				transaction.commit();
+				
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				ex.printStackTrace();
+			} finally {
+				session.clear();
+			}
+		}
+		return entityInstanceList;
+	}
+	
+	/**
+	 * Deletes the specified entity instance.
+	 *
+	 * @param <EntityInstance> the generic type
+	 * @param entityInstance the entity instance
+	 * @return true, if successful
+	 */
+	public <EntityInstance> boolean dbDeleteEntityInstance(EntityInstance entityInstance) {
+		
+		boolean successful = false;
+		Session session = this.getSession();
+		if (session!=null) {
+			
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				session.remove(entityInstance);
+				session.flush();
+				transaction.commit();
+				successful = true;
+				
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				ex.printStackTrace();
+				successful = false;
+			} finally {
+				session.clear();
+			}
+		}
+		return successful;
+	}
+	
 	
 	// --------------------------------------------------------------
-	// --- From here, working on data -------------------------------
+	// --- From here, working on concrete data ----------------------
 	// --------------------------------------------------------------	
 	/**
 	 * Saves or updates the specified {@link BgSystemPlatform}.
@@ -174,34 +301,6 @@ public class WebAppDatabaseHandler {
 	}
 	
 	/**
-	 * Clears the table for the BgSystemPlatform.
-	 * @return the int
-	 */
-	public int clearBgSystemPlatformTable(){
-	    
-	    int noOfDeletations = -1;
-		Session session = this.getSession();
-		if (session!=null) {
-			
-			Transaction transaction = null;
-			try {
-				transaction = session.beginTransaction();
-				MutationQuery query = session.createMutationQuery("DELETE FROM BgSystemPlatform");
-			    noOfDeletations = query.executeUpdate();
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				ex.printStackTrace();
-			} finally {
-				session.clear();
-			}
-		}
-		return noOfDeletations;
-	}
-	
-	
-	/**
 	 * Returns the list of all background system platforms.
 	 * @return the JettySession list
 	 */
@@ -246,7 +345,7 @@ public class WebAppDatabaseHandler {
 			try {
 				transaction = session.beginTransaction();
 				// --- Clear the table first ------------------------
-				MutationQuery query = session.createMutationQuery("DELETE FROM BgSystemPlatform");
+				MutationQuery query = session.createMutationQuery("DELETE FROM JettySessions");
 				query.executeUpdate();
 				
 				// --- Save all platforms out of the list -----------  

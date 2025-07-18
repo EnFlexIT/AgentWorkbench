@@ -9,9 +9,9 @@ import jakarta.ws.rs.core.Variant;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
-import de.enflexit.awb.ws.dynSiteApi.gen.GetContentApi;
+import de.enflexit.awb.ws.dynSiteApi.gen.ContentApi;
 import de.enflexit.awb.ws.dynSiteApi.gen.JacksonJsonProvider;
-import de.enflexit.awb.ws.dynSiteApi.gen.SetContentApi;
+import de.enflexit.awb.ws.dynSiteApi.gen.MenuApi;
 
 
 /**
@@ -45,8 +45,8 @@ public class RestApiConfiguration extends ResourceConfig {
 	private void configureEndpoints() {
 		this.register(JacksonJsonProvider.class);
 	
-		this.register(GetContentApi.class);
-		this.register(SetContentApi.class);
+		this.register(ContentApi.class);
+		this.register(MenuApi.class);
 	}
 	
 	/**

@@ -1,13 +1,16 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -25,9 +28,13 @@ public class SiteMenu {
 	@Column(name = "id_site_menu")
 	private Integer id;
 
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "id_site_menu_parent")
+	private SiteMenu parentMenu;
+	
 	@OneToMany
 	@JoinColumn(name = "id_site_menu_parent", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (ID_SITE_MENU_PARENT) REFERENCES SITE_MENU(ID_SITE_MENU) ON DELETE CASCADE"))
-	private Set<SiteMenu> childMenu;
+	private List<SiteMenu> childMenus;
 	
 	private int position;
 	private String caption;
@@ -62,18 +69,33 @@ public class SiteMenu {
 	}
 
 	/**
-	 * Returns the child menu.
-	 * @return the childMenu
+	 * Returns the parent menu.
+	 * @return the parent menu
 	 */
-	public Set<SiteMenu> getChildMenu() {
-		return childMenu;
+	public SiteMenu getParentMenu() {
+		return parentMenu;
+	}
+	/**
+	 * Sets the parent menu.
+	 * @param parentMenu the new parent menu
+	 */
+	public void setParentMenu(SiteMenu parentMenu) {
+		this.parentMenu = parentMenu;
+	}
+	
+	/**
+	 * Returns the child menu.
+	 * @return the childMenus
+	 */
+	public List<SiteMenu> getChildMenus() {
+		return childMenus;
 	}
 	/**
 	 * Sets the child menu.
-	 * @param childMenu the childMenu to set
+	 * @param childMenus the childMenus to set
 	 */
-	public void setChildMenu(Set<SiteMenu> childMenu) {
-		this.childMenu = childMenu;
+	public void setChildMenu(List<SiteMenu> childMenus) {
+		this.childMenus = childMenus;
 	}
 
 	/**

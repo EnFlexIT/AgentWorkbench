@@ -2,8 +2,8 @@ package de.enflexit.awb.ws.dynSiteApi;
 
 import java.util.HashMap;
 
-import de.enflexit.awb.ws.dynSiteApi.impl.GetContentApiServiceImpl;
-import de.enflexit.awb.ws.dynSiteApi.impl.SetContentApiServiceImpl;
+import de.enflexit.awb.ws.dynSiteApi.impl.ContentApiServiceImpl;
+import de.enflexit.awb.ws.dynSiteApi.impl.MenuApiServiceImpl;
 
 
 /**
@@ -20,8 +20,8 @@ public class ServletInitParameter extends HashMap<String, String>{
 	 */
 	public ServletInitParameter() {
 
-		this.put("GetContentApi.implementation", GetContentApiServiceImpl.class.getName());
-		this.put("SetContentApi.implementation", SetContentApiServiceImpl.class.getName());
+		this.put("ContentApi.implementation", ContentApiServiceImpl.class.getName());
+		this.put("MenuApi.implementation", MenuApiServiceImpl.class.getName());
 		
 	}
 }

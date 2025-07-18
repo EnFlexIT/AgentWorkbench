@@ -1,6 +1,3 @@
-/*
- * 
- */
 package de.enflexit.awb.ws.dynSiteApi.content;
 
 import java.util.List;

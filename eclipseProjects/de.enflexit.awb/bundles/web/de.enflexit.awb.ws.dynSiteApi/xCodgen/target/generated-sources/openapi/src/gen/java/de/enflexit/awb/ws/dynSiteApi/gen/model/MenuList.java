@@ -16,42 +16,53 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentText
+ * MenuList
  */
 @JsonPropertyOrder({
-  SiteContentText.JSON_PROPERTY_TEXT
+  MenuList.JSON_PROPERTY_MENU_LIST
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-13T19:06:46.391675500+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentText extends SiteContentMedia  {
-  public static final String JSON_PROPERTY_TEXT = "text";
-  @JsonProperty(JSON_PROPERTY_TEXT)
-  private String text;
+public class MenuList   {
+  public static final String JSON_PROPERTY_MENU_LIST = "menuList";
+  @JsonProperty(JSON_PROPERTY_MENU_LIST)
+  private List<@Valid MenuItem> menuList = new ArrayList<>();
 
-  public SiteContentText text(String text) {
-    this.text = text;
+  public MenuList menuList(List<@Valid MenuItem> menuList) {
+    this.menuList = menuList;
+    return this;
+  }
+
+  public MenuList addMenuListItem(MenuItem menuListItem) {
+    if (this.menuList == null) {
+      this.menuList = new ArrayList<>();
+    }
+    this.menuList.add(menuListItem);
     return this;
   }
 
   /**
-   * Get text
-   * @return text
+   * Get menuList
+   * @return menuList
    **/
-  @JsonProperty(value = "text")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getText() {
-    return text;
+  @JsonProperty(value = "menuList")
+  @Schema(description = "")
+  @Valid 
+  public List<@Valid MenuItem> getMenuList() {
+    return menuList;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  public void setMenuList(List<@Valid MenuItem> menuList) {
+    this.menuList = menuList;
   }
 
 
@@ -63,21 +74,21 @@ public class SiteContentText extends SiteContentMedia  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentText siteContentText = (SiteContentText) o;
-    return super.equals(o) && Objects.equals(this.text, siteContentText.text);
+    MenuList menuList = (MenuList) o;
+    return Objects.equals(this.menuList, menuList.menuList);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), text);
+    return Objects.hash(menuList);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentText {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    text: ").append(toIndentedString(text)).append("\n");
+    sb.append("class MenuList {\n");
+    
+    sb.append("    menuList: ").append(toIndentedString(menuList)).append("\n");
     sb.append("}");
     return sb.toString();
   }
