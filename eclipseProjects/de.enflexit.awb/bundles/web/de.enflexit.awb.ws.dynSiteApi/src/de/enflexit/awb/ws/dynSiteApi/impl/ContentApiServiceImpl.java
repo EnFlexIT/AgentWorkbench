@@ -129,6 +129,10 @@ public class ContentApiServiceImpl extends ContentApiService {
 		return pieChart;
 	}
 
+	/**
+	 * Creates an example time series chart.
+	 * @return the site content time series chart
+	 */
 	private SiteContentTimeSeriesChart createExampleTimeSeriesChart() {
 		List<AbstractValuePair> entries = new ArrayList<AbstractValuePair>();
 		entries.add(DynamicContentFactory.createValuePairDateTime("18.07.2025 00:00", "dd.MM.yyyy HH:mm", 492.8666667));

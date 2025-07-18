@@ -302,6 +302,12 @@ public class DynamicContentFactory {
 		return valuePair;
 	}
 	
+	/**
+	 * Creates a date time value pair instance, getting the date from a java timestamp.
+	 * @param timestamp the timestamp
+	 * @param value the value
+	 * @return the value pair date time
+	 */
 	public static ValuePairDateTime createValuePairDateTime(long timestamp, double value) {
 		ValuePairDateTime valuePair = new ValuePairDateTime();
 		String isoDateTimeString = getIsoDateTimeFormatter().format(Instant.ofEpochMilli(timestamp));
@@ -310,6 +316,13 @@ public class DynamicContentFactory {
 		return valuePair;
 	}
 	
+	/**
+	 * Creates a new DynamicContent object.
+	 * @param dateTime the date time
+	 * @param dateFormat the date format
+	 * @param value the value
+	 * @return the value pair date time
+	 */
 	public static ValuePairDateTime createValuePairDateTime(String dateTime, String dateFormat, double value) {
 		ValuePairDateTime valuePair = new ValuePairDateTime();
 		valuePair.setIsoDateTime(translateToIsoDateTime(dateTime, dateFormat));
@@ -329,14 +342,23 @@ public class DynamicContentFactory {
 		valuePair.setValue(value);
 		return valuePair;
 	}
-		
 	
+	/**
+	 * Translates a formatted date time string to the ISO format.
+	 * @param dateTime the date time
+	 * @param timeFormat the time format
+	 * @return the string
+	 */
 	private static String translateToIsoDateTime(String dateTime, String timeFormat) {
 		DateTimeFormatter parseFormatter = DateTimeFormatter.ofPattern(timeFormat).withZone(ZoneId.systemDefault());
 		Instant instant = Instant.from(parseFormatter.parse(dateTime));
 		return getIsoDateTimeFormatter().format(instant);
 	}
 	
+	/**
+	 * Gets a {@link DateTimeFormatter} for the ISO format, with the current system timezone
+	 * @return the iso date time formatter
+	 */
 	private static DateTimeFormatter getIsoDateTimeFormatter() {
 		if (dateTimeFormatter==null) {
 			dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.systemDefault());
