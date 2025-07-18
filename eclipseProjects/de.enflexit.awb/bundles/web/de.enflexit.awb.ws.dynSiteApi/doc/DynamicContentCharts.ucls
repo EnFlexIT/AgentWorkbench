@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractSiteContent.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="600" y="80"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractSiteContentChart.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="600" y="195"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentLineChart" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentLineChart.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="234" y="346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTimeSeriesChart" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentTimeSeriesChart.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="235" y="532"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentBarChart" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentBarChart.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="697" y="346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentPieChart" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentPieChart.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="955" y="346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/DataSeries.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="969" y="195"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentScatterPlot" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentScatterPlot.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="461" y="346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractValuePair.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1339" y="195"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.ValuePairNumeric" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValuePairNumeric.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1232" y="346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="de.enflexit.awb.ws.dynSiteApi.gen.model.ValuePairCategory" 
+    project="de.enflexit.awb.ws.dynSiteApi" 
+    file="/de.enflexit.awb.ws.dynSiteApi/xCodgen/target/generated-sources/openapi/src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValuePairCategory.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1476" y="346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <generalization id="12">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <association id="13">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="14" name="dataSeries">        
+        <position height="0" width="0" x="-6" y="1"/>      
+      </attribute>      
+      <multiplicity id="15" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-6" y="1"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="16">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="17">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="18">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="20">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <association id="22">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="23" name="entries"/>      
+      <multiplicity id="24" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="25">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
