@@ -38,8 +38,10 @@ public class AppApiServiceImpl extends AppApiService {
     	de.enflexit.common.properties.Properties awbProps = null;
     	if (principal==null) {
     		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.PublicProperties);
+    		awbProps.setBooleanValue("_Authenticated", false);
     	} else {
     		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties);
+    		awbProps.setBooleanValue("_Authenticated", true);
     		this.addOIDCPrincipalInformation(principal, awbProps);
     	}
 
