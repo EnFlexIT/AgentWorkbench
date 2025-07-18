@@ -35,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the content API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:22:31.214228+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class ContentApi  {
 
    private final ContentApiService delegate;
@@ -65,7 +65,7 @@ public class ContentApi  {
     @Path("/{menuID}")
     @Produces({ "application/json" })
     @Operation(summary = "Returns the content for the specified ID", description = "", responses = {
-            @ApiResponse(responseCode = "200", description = "Success - Content", content = 
+            @ApiResponse(responseCode = "200", description = "List of content elements", content = 
                 @Content(schema = @Schema(implementation = SiteContentList.class))),
             }, tags={  }) 
     public Response contentMenuIDGet(@Schema(description= "numeric ID of the content", required = true) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)

@@ -39,7 +39,7 @@ import jakarta.validation.Valid;
   AbstractSiteContentChart.JSON_PROPERTY_Y_AXIS_LABEL,
   AbstractSiteContentChart.JSON_PROPERTY_DATA_SERIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:22:31.214228+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = SiteContentBarChart.class, name = "SiteContentBarChart"),
   @JsonSubTypes.Type(value = SiteContentLineChart.class, name = "SiteContentLineChart"),

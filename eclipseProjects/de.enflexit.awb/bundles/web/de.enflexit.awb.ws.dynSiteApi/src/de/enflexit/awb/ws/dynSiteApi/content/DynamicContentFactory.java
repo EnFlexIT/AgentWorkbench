@@ -121,8 +121,6 @@ public class DynamicContentFactory {
 	// ------------------------------------------
 	// --- Chart-related factory methods --------
 	// ------------------------------------------
-	
-	
 	/**
 	 * Creates a new line chart instance.
 	 * @param uniqueContentID the unique content ID

@@ -1,3 +1,4 @@
+.openapi-generator-ignore
 README.md
 pom.xml
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/ApiException.java
@@ -5,6 +6,8 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/ApiOriginFilter.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/ApiResponseMessage.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/ContentApi.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/ContentApiService.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/ContentElementApi.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/ContentElementApiService.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/JacksonJsonProvider.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/LocalDateProvider.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/MenuApi.java
@@ -38,7 +41,9 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValuePairNumeric.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValueType.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/Bootstrap.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/factories/ContentApiServiceFactory.java
+src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/factories/ContentElementApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/factories/MenuApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/impl/ContentApiServiceImpl.java
+src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/impl/ContentElementApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/impl/MenuApiServiceImpl.java
 src/main/webapp/WEB-INF/web.xml

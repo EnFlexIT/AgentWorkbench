@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentList.JSON_PROPERTY_CONTENT_LIST
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:22:31.214228+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class SiteContentList   {
   public static final String JSON_PROPERTY_CONTENT_LIST = "contentList";
   @JsonProperty(JSON_PROPERTY_CONTENT_LIST)
