@@ -30,59 +30,9 @@ import jakarta.validation.Valid;
  * SiteContentBarChart
  */
 @JsonPropertyOrder({
-  SiteContentBarChart.JSON_PROPERTY_X_AXIS_LABEL,
-  SiteContentBarChart.JSON_PROPERTY_Y_AXIS_LABEL
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-13T19:06:46.391675500+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:19:40.518876+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class SiteContentBarChart extends AbstractSiteContentChart  {
-  public static final String JSON_PROPERTY_X_AXIS_LABEL = "xAxisLabel";
-  @JsonProperty(JSON_PROPERTY_X_AXIS_LABEL)
-  private String xAxisLabel;
-
-  public static final String JSON_PROPERTY_Y_AXIS_LABEL = "yAxisLabel";
-  @JsonProperty(JSON_PROPERTY_Y_AXIS_LABEL)
-  private String yAxisLabel;
-
-  public SiteContentBarChart xAxisLabel(String xAxisLabel) {
-    this.xAxisLabel = xAxisLabel;
-    return this;
-  }
-
-  /**
-   * Get xAxisLabel
-   * @return xAxisLabel
-   **/
-  @JsonProperty(value = "xAxisLabel")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getxAxisLabel() {
-    return xAxisLabel;
-  }
-
-  public void setxAxisLabel(String xAxisLabel) {
-    this.xAxisLabel = xAxisLabel;
-  }
-
-  public SiteContentBarChart yAxisLabel(String yAxisLabel) {
-    this.yAxisLabel = yAxisLabel;
-    return this;
-  }
-
-  /**
-   * Get yAxisLabel
-   * @return yAxisLabel
-   **/
-  @JsonProperty(value = "yAxisLabel")
-  @Schema(required = true, description = "")
-  @NotNull 
-  public String getyAxisLabel() {
-    return yAxisLabel;
-  }
-
-  public void setyAxisLabel(String yAxisLabel) {
-    this.yAxisLabel = yAxisLabel;
-  }
-
 
   @Override
   public boolean equals(Object o) {
@@ -92,14 +42,12 @@ public class SiteContentBarChart extends AbstractSiteContentChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentBarChart siteContentBarChart = (SiteContentBarChart) o;
-    return super.equals(o) && Objects.equals(this.xAxisLabel, siteContentBarChart.xAxisLabel) &&
-        Objects.equals(this.yAxisLabel, siteContentBarChart.yAxisLabel);
+    SiteContentBarChart siteContentBarChart = (SiteContentBarChart) o;return super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), xAxisLabel, super.hashCode(), yAxisLabel);
+    return super.hashCode();
   }
 
   @Override
@@ -107,8 +55,6 @@ public class SiteContentBarChart extends AbstractSiteContentChart  {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentBarChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    xAxisLabel: ").append(toIndentedString(xAxisLabel)).append("\n");
-    sb.append("    yAxisLabel: ").append(toIndentedString(yAxisLabel)).append("\n");
     sb.append("}");
     return sb.toString();
   }

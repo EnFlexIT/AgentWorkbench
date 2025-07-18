@@ -35,13 +35,16 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   AbstractSiteContentChart.JSON_PROPERTY_TITLE,
   AbstractSiteContentChart.JSON_PROPERTY_SHOW_LEGEND,
+  AbstractSiteContentChart.JSON_PROPERTY_X_AXIS_LABEL,
+  AbstractSiteContentChart.JSON_PROPERTY_Y_AXIS_LABEL,
   AbstractSiteContentChart.JSON_PROPERTY_DATA_SERIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-13T19:06:46.391675500+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:19:40.518876+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = SiteContentBarChart.class, name = "SiteContentBarChart"),
   @JsonSubTypes.Type(value = SiteContentLineChart.class, name = "SiteContentLineChart"),
   @JsonSubTypes.Type(value = SiteContentPieChart.class, name = "SiteContentPieChart"),
+  @JsonSubTypes.Type(value = SiteContentScatterPlot.class, name = "SiteContentScatterPlot"),
   @JsonSubTypes.Type(value = SiteContentTimeSeriesChart.class, name = "SiteContentTimeSeriesChart"),
 })
 
@@ -53,6 +56,14 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_SHOW_LEGEND = "showLegend";
   @JsonProperty(JSON_PROPERTY_SHOW_LEGEND)
   private Boolean showLegend;
+
+  public static final String JSON_PROPERTY_X_AXIS_LABEL = "xAxisLabel";
+  @JsonProperty(JSON_PROPERTY_X_AXIS_LABEL)
+  private String xAxisLabel;
+
+  public static final String JSON_PROPERTY_Y_AXIS_LABEL = "yAxisLabel";
+  @JsonProperty(JSON_PROPERTY_Y_AXIS_LABEL)
+  private String yAxisLabel;
 
   public static final String JSON_PROPERTY_DATA_SERIES = "dataSeries";
   @JsonProperty(JSON_PROPERTY_DATA_SERIES)
@@ -98,6 +109,46 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     this.showLegend = showLegend;
   }
 
+  public AbstractSiteContentChart xAxisLabel(String xAxisLabel) {
+    this.xAxisLabel = xAxisLabel;
+    return this;
+  }
+
+  /**
+   * Get xAxisLabel
+   * @return xAxisLabel
+   **/
+  @JsonProperty(value = "xAxisLabel")
+  @Schema(description = "")
+  
+  public String getxAxisLabel() {
+    return xAxisLabel;
+  }
+
+  public void setxAxisLabel(String xAxisLabel) {
+    this.xAxisLabel = xAxisLabel;
+  }
+
+  public AbstractSiteContentChart yAxisLabel(String yAxisLabel) {
+    this.yAxisLabel = yAxisLabel;
+    return this;
+  }
+
+  /**
+   * Get yAxisLabel
+   * @return yAxisLabel
+   **/
+  @JsonProperty(value = "yAxisLabel")
+  @Schema(description = "")
+  
+  public String getyAxisLabel() {
+    return yAxisLabel;
+  }
+
+  public void setyAxisLabel(String yAxisLabel) {
+    this.yAxisLabel = yAxisLabel;
+  }
+
   public AbstractSiteContentChart dataSeries(List<@Valid DataSeries> dataSeries) {
     this.dataSeries = dataSeries;
     return this;
@@ -138,12 +189,14 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     AbstractSiteContentChart abstractSiteContentChart = (AbstractSiteContentChart) o;
     return super.equals(o) && Objects.equals(this.title, abstractSiteContentChart.title) &&
         Objects.equals(this.showLegend, abstractSiteContentChart.showLegend) &&
+        Objects.equals(this.xAxisLabel, abstractSiteContentChart.xAxisLabel) &&
+        Objects.equals(this.yAxisLabel, abstractSiteContentChart.yAxisLabel) &&
         Objects.equals(this.dataSeries, abstractSiteContentChart.dataSeries);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), title, super.hashCode(), showLegend, super.hashCode(), dataSeries);
+    return Objects.hash(super.hashCode(), title, super.hashCode(), showLegend, super.hashCode(), xAxisLabel, super.hashCode(), yAxisLabel, super.hashCode(), dataSeries);
   }
 
   @Override
@@ -153,6 +206,8 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    showLegend: ").append(toIndentedString(showLegend)).append("\n");
+    sb.append("    xAxisLabel: ").append(toIndentedString(xAxisLabel)).append("\n");
+    sb.append("    yAxisLabel: ").append(toIndentedString(yAxisLabel)).append("\n");
     sb.append("    dataSeries: ").append(toIndentedString(dataSeries)).append("\n");
     sb.append("}");
     return sb.toString();

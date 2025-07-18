@@ -35,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the content API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-13T19:06:46.391675500+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:19:40.518876+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class ContentApi  {
 
    private final ContentApiService delegate;

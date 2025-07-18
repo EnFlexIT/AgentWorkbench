@@ -14,44 +14,52 @@
 package de.enflexit.awb.ws.dynSiteApi.gen.model;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentText
+ * AbstractValuePair
  */
 @JsonPropertyOrder({
-  SiteContentText.JSON_PROPERTY_TEXT
+  AbstractValuePair.JSON_PROPERTY_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:19:40.518876+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentText extends SiteContentMedia  {
-  public static final String JSON_PROPERTY_TEXT = "text";
-  @JsonProperty(JSON_PROPERTY_TEXT)
-  private String text;
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:19:40.518876+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = ValuePairCategory.class, name = "Category"),
+  @JsonSubTypes.Type(value = ValuePairDateTime.class, name = "DateTime"),
+  @JsonSubTypes.Type(value = ValuePairNumeric.class, name = "Numeric"),
+})
 
-  public SiteContentText text(String text) {
-    this.text = text;
+public class AbstractValuePair   {
+  public static final String JSON_PROPERTY_VALUE = "value";
+  @JsonProperty(JSON_PROPERTY_VALUE)
+  private Double value;
+
+  public AbstractValuePair value(Double value) {
+    this.value = value;
     return this;
   }
 
   /**
-   * Get text
-   * @return text
+   * Get value
+   * @return value
    **/
-  @JsonProperty(value = "text")
+  @JsonProperty(value = "value")
   @Schema(required = true, description = "")
   @NotNull 
-  public String getText() {
-    return text;
+  public Double getValue() {
+    return value;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  public void setValue(Double value) {
+    this.value = value;
   }
 
 
@@ -63,21 +71,21 @@ public class SiteContentText extends SiteContentMedia  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentText siteContentText = (SiteContentText) o;
-    return super.equals(o) && Objects.equals(this.text, siteContentText.text);
+    AbstractValuePair abstractValuePair = (AbstractValuePair) o;
+    return Objects.equals(this.value, abstractValuePair.value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), text);
+    return Objects.hash(value);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentText {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    text: ").append(toIndentedString(text)).append("\n");
+    sb.append("class AbstractValuePair {\n");
+    
+    sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("}");
     return sb.toString();
   }

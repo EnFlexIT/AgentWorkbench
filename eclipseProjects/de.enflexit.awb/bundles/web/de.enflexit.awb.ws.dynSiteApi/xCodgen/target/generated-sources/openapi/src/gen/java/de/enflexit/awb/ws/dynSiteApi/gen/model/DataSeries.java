@@ -16,7 +16,7 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.ValuePair;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,22 +30,22 @@ import jakarta.validation.Valid;
  */
 @JsonPropertyOrder({
   DataSeries.JSON_PROPERTY_LABEL,
-  DataSeries.JSON_PROPERTY_USE_SECONDARY_Y_AXIS,
+  DataSeries.JSON_PROPERTY_SECONDARY_Y_AXIS,
   DataSeries.JSON_PROPERTY_ENTRIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-13T19:06:46.391675500+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:19:40.518876+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class DataSeries   {
   public static final String JSON_PROPERTY_LABEL = "label";
   @JsonProperty(JSON_PROPERTY_LABEL)
   private String label;
 
-  public static final String JSON_PROPERTY_USE_SECONDARY_Y_AXIS = "useSecondaryYAxis";
-  @JsonProperty(JSON_PROPERTY_USE_SECONDARY_Y_AXIS)
-  private Boolean useSecondaryYAxis;
+  public static final String JSON_PROPERTY_SECONDARY_Y_AXIS = "secondaryYAxis";
+  @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS)
+  private Boolean secondaryYAxis = false;
 
   public static final String JSON_PROPERTY_ENTRIES = "entries";
   @JsonProperty(JSON_PROPERTY_ENTRIES)
-  private List<@Valid ValuePair> entries = new ArrayList<>();
+  private List<@Valid AbstractValuePair> entries = new ArrayList<>();
 
   public DataSeries label(String label) {
     this.label = label;
@@ -67,32 +67,32 @@ public class DataSeries   {
     this.label = label;
   }
 
-  public DataSeries useSecondaryYAxis(Boolean useSecondaryYAxis) {
-    this.useSecondaryYAxis = useSecondaryYAxis;
+  public DataSeries secondaryYAxis(Boolean secondaryYAxis) {
+    this.secondaryYAxis = secondaryYAxis;
     return this;
   }
 
   /**
-   * Get useSecondaryYAxis
-   * @return useSecondaryYAxis
+   * Get secondaryYAxis
+   * @return secondaryYAxis
    **/
-  @JsonProperty(value = "useSecondaryYAxis")
+  @JsonProperty(value = "secondaryYAxis")
   @Schema(description = "")
   
-  public Boolean getUseSecondaryYAxis() {
-    return useSecondaryYAxis;
+  public Boolean getSecondaryYAxis() {
+    return secondaryYAxis;
   }
 
-  public void setUseSecondaryYAxis(Boolean useSecondaryYAxis) {
-    this.useSecondaryYAxis = useSecondaryYAxis;
+  public void setSecondaryYAxis(Boolean secondaryYAxis) {
+    this.secondaryYAxis = secondaryYAxis;
   }
 
-  public DataSeries entries(List<@Valid ValuePair> entries) {
+  public DataSeries entries(List<@Valid AbstractValuePair> entries) {
     this.entries = entries;
     return this;
   }
 
-  public DataSeries addEntriesItem(ValuePair entriesItem) {
+  public DataSeries addEntriesItem(AbstractValuePair entriesItem) {
     if (this.entries == null) {
       this.entries = new ArrayList<>();
     }
@@ -107,11 +107,11 @@ public class DataSeries   {
   @JsonProperty(value = "entries")
   @Schema(required = true, description = "")
   @NotNull @Valid 
-  public List<@Valid ValuePair> getEntries() {
+  public List<@Valid AbstractValuePair> getEntries() {
     return entries;
   }
 
-  public void setEntries(List<@Valid ValuePair> entries) {
+  public void setEntries(List<@Valid AbstractValuePair> entries) {
     this.entries = entries;
   }
 
@@ -126,13 +126,13 @@ public class DataSeries   {
     }
     DataSeries dataSeries = (DataSeries) o;
     return Objects.equals(this.label, dataSeries.label) &&
-        Objects.equals(this.useSecondaryYAxis, dataSeries.useSecondaryYAxis) &&
+        Objects.equals(this.secondaryYAxis, dataSeries.secondaryYAxis) &&
         Objects.equals(this.entries, dataSeries.entries);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(label, useSecondaryYAxis, entries);
+    return Objects.hash(label, secondaryYAxis, entries);
   }
 
   @Override
@@ -141,7 +141,7 @@ public class DataSeries   {
     sb.append("class DataSeries {\n");
     
     sb.append("    label: ").append(toIndentedString(label)).append("\n");
-    sb.append("    useSecondaryYAxis: ").append(toIndentedString(useSecondaryYAxis)).append("\n");
+    sb.append("    secondaryYAxis: ").append(toIndentedString(secondaryYAxis)).append("\n");
     sb.append("    entries: ").append(toIndentedString(entries)).append("\n");
     sb.append("}");
     return sb.toString();

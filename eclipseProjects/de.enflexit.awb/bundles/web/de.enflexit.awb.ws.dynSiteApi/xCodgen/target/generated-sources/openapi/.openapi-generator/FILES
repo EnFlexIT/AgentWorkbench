@@ -15,6 +15,7 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/RFC3339DateFormat.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/StringUtil.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractSiteContent.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractSiteContentChart.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractValuePair.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/DataSeries.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/MenuItem.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/MenuList.java
@@ -27,10 +28,13 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentListUpdate.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentMedia.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentPieChart.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentProperties.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentScatterPlot.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentTable.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentText.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentTimeSeriesChart.java
-src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValuePair.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValuePairCategory.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValuePairDateTime.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValuePairNumeric.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValueType.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/Bootstrap.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/factories/ContentApiServiceFactory.java

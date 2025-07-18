@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
   MenuItem.JSON_PROPERTY_PATH_CAPTION,
   MenuItem.JSON_PROPERTY_PATH_POSITION
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-13T19:06:46.391675500+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T08:19:40.518876+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class MenuItem   {
   public static final String JSON_PROPERTY_MENU_I_D = "menuID";
   @JsonProperty(JSON_PROPERTY_MENU_I_D)
