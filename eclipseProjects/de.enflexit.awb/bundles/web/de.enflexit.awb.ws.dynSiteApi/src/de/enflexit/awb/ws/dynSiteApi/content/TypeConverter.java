@@ -81,13 +81,13 @@ public class TypeConverter {
 		ArrayList<String> pathPostionList = new ArrayList<>();
 		int depth = 1;
 		
-		pathIDList.add(String.format("%02d", siteMenuWork.getId()));
+		pathIDList.add(String.valueOf(siteMenuWork.getId()));
 		pathCaptionList.add(siteMenuWork.getCaption());
 		pathPostionList.add(String.format("%02d", siteMenuWork.getPosition()));
 		
 		while (siteMenuWork.getParentMenu()!=null) {
 			siteMenuWork = siteMenuWork.getParentMenu();
-			pathIDList.add(String.format("%02d", siteMenuWork.getId()));	
+			pathIDList.add(String.valueOf(siteMenuWork.getId()));	
 			pathCaptionList.add(siteMenuWork.getCaption());
 			pathPostionList.add(String.format("%02d", siteMenuWork.getPosition()));
 			depth++;
