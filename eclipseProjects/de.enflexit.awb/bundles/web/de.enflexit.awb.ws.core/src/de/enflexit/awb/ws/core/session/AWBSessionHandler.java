@@ -146,13 +146,18 @@ public class AWBSessionHandler extends SessionHandler {
 	 */
 	public static void addBeanSessionCacheFactory(Server server) {
 		
+		boolean isUseAWBSessionCache = true;
 		boolean isUseNullSessionCache = false;
 		
 		AbstractSessionCacheFactory cacheFactory = null;
-		if (isUseNullSessionCache==true) {
+		if (isUseAWBSessionCache==false && isUseNullSessionCache==true) {
 			cacheFactory = new NullSessionCacheFactory();
 		} else {
-			cacheFactory = new DefaultSessionCacheFactory();
+			if (isUseAWBSessionCache==true) {
+				cacheFactory = new AWBSessionCacheFactory();
+			} else {
+				cacheFactory = new DefaultSessionCacheFactory();
+			}
 		}
 
 		cacheFactory.setEvictionPolicy(SessionCache.NEVER_EVICT);

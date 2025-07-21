@@ -3,6 +3,7 @@ package de.enflexit.awb.ws.restapi.impl;
 import java.security.Principal;
 
 import org.eclipse.jetty.security.UserPrincipal;
+import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
 
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
@@ -27,7 +28,6 @@ import jakarta.ws.rs.core.SecurityContext;
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2024-01-30T22:47:52.734099700+01:00[Europe/Berlin]")
 public class UserApiImpl extends UserApiService {
     
-	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.restapi.gen.UserApiService#loginUser(javax.ws.rs.core.SecurityContext)
 	 */
@@ -40,11 +40,16 @@ public class UserApiImpl extends UserApiService {
 			return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
 		}
 		
+		// --- For known Principals ---------------------------------
 		if (principal instanceof JwtPrincipal jwtPrincipal) {
 			// --- Get the JWT String from principal ----------------
 			String bearerString = "Bearer " + jwtPrincipal.getJwtToken();
 			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(bearerString).build();
+		} else if (principal instanceof OpenIdUserPrincipal openIdPrincipal) {
+			String bearerString = "Bearer " + openIdPrincipal.getCredentials().getResponse().get("access_token");
+			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(bearerString).build();
 		}
+
 		// --- Fallback return that does make no sense  -------------
 		return Response.status(Status.ACCEPTED).entity(new ApiResponseMessage(ApiResponseMessage.OK, principal.getName())).build();
 	}

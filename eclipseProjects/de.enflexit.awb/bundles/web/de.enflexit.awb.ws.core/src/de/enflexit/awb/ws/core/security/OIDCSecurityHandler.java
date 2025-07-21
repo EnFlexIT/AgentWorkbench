@@ -17,6 +17,12 @@ import org.eclipse.jetty.security.openid.OpenIdLoginService;
 public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 
 	
+	/**
+	 * Instantiates a new OIDC security handler.
+	 *
+	 * @param openIdConfig the open id config
+	 * @param openIdAuth the open id auth
+	 */
 	public OIDCSecurityHandler(OpenIdConfiguration openIdConfig, OpenIdAuthenticator openIdAuth) {
 		
 		// --- Optional configuration to allow new users not listed in the nested LoginService to be authenticated. -------------

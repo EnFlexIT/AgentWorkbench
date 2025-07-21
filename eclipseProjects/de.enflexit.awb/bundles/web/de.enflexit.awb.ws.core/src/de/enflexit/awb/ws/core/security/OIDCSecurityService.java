@@ -47,7 +47,7 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		}
 	}
 	
-	private static boolean useOneAuth = false;
+	private static boolean useOneAuthenticator = false;
 	private static OpenIdAuthenticator openIdAuthenticator;
 	
 	
@@ -94,7 +94,7 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		String clientID = securityHandlerConfiguration.get(OIDCParameter.ClientID.getKey());
 		String clientSecret = securityHandlerConfiguration.get(OIDCParameter.ClientSecrete.getKey());
 
-		if (useOneAuth==true) {
+		if (useOneAuthenticator==true) {
 			// --- Only used in the context of development tests ----
 			OpenIdConfiguration openIdConfig = new OpenIdConfiguration(issuer, clientID, clientSecret);
 			return new OIDCSecurityHandler(openIdConfig, OIDCSecurityService.getOpenIdAuthenticator(openIdConfig));

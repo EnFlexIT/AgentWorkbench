@@ -65,10 +65,17 @@ public class AppApiServiceImpl extends AppApiService {
 
     		OpenIdUserPrincipal oidUP = (OpenIdUserPrincipal) principal;
     		OpenIdCredentials credentials = oidUP.getCredentials();
-			
-    		Map<String,Object> claims = credentials.getClaims();
+    		
+    		Map<String, Object> claims = credentials.getClaims();
     		//claims.keySet().forEach(key -> System.out.println(key + ": " + claims.get(key)));
+    		Map<String, Object> response = credentials.getResponse();
+    		//response.keySet().forEach(key -> System.out.println(key + ": " + response.get(key)));
+    		
+    		
+    		String bearer = (String) response.get("access_token");
+    		awbProps.setStringValue("_oidc.bearer", bearer);
 
+    		
     		String id = (String) claims.get("sub");
     		awbProps.setStringValue("_oidc.id", id);
     		
