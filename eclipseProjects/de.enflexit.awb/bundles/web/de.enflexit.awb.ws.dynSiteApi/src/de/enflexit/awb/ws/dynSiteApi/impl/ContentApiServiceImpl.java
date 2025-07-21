@@ -12,6 +12,8 @@ import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentBarChart;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentLineChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentListUpdate;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentPieChart;
@@ -102,6 +104,8 @@ public class ContentApiServiceImpl extends ContentApiService {
 		case -4:
 			scList.addContentListItem(this.createExamplePieChart());
 			scList.addContentListItem(this.createExampleTimeSeriesChart());
+			scList.addContentListItem(this.createExampleBarChart());
+			scList.addContentListItem(this.createExampleLineChart());
 			break;
 						
 		default:
@@ -122,7 +126,7 @@ public class ContentApiServiceImpl extends ContentApiService {
 		entries.add(DynamicContentFactory.createValuePairCategory("Erneuerbare", 284.0));
 		entries.add(DynamicContentFactory.createValuePairCategory("Sonstige", 79.2));
 		
-		List<DataSeries> series = DynamicContentFactory.createDataSeriesList("Strommix Detschland 2024 (Mrd. kWh)", entries);
+		List<DataSeries> series = DynamicContentFactory.createDataSeriesList("Strommix Deutschland 2024 (Mrd. kWh)", entries);
 		
 		SiteContentPieChart pieChart = DynamicContentFactory.createSiteContentPieChart(1, 0, false, series, null, false);
 		
@@ -235,6 +239,67 @@ public class ContentApiServiceImpl extends ContentApiService {
 		
 		SiteContentTimeSeriesChart tsChart = DynamicContentFactory.createSiteContentTimeSeriesChart(2, 0, false, DynamicContentFactory.createDataSeriesList("Power Consumption(W)", entries), "Power Consumption", false, "Time", "P(W)", null, "HH:mm");
 		return tsChart;
+	}
+	
+	/**
+	 * Creates an example bar chart.
+	 * @return the bar chart
+	 */
+	private SiteContentBarChart createExampleBarChart() {
+		List<AbstractValuePair> entries = new ArrayList<AbstractValuePair>();
+		entries.add(DynamicContentFactory.createValuePairCategory("Mo", 13549.35));
+		entries.add(DynamicContentFactory.createValuePairCategory("Di", 12528.15));
+		entries.add(DynamicContentFactory.createValuePairCategory("Mi", 13820.68333));
+		entries.add(DynamicContentFactory.createValuePairCategory("Do", 11762.65));
+		entries.add(DynamicContentFactory.createValuePairCategory("Fr", 16106.18333));
+		entries.add(DynamicContentFactory.createValuePairCategory("Sa", 14111.83333));
+		entries.add(DynamicContentFactory.createValuePairCategory("So", 19691.8));
+
+		SiteContentBarChart barChart = DynamicContentFactory.createSiteContentBarChart(3, 0, false, DynamicContentFactory.createDataSeriesList("Energy Consumption by Day", entries), "Energy Consumption by Day", false, "Week Day", "Electricity consumption (kWh)", null);
+		return barChart;
+	}
+	
+	/**
+	 * Creates an example line chart.
+	 * @return the site content line chart
+	 */
+	private SiteContentLineChart createExampleLineChart() {
+		List<AbstractValuePair> powerEntries = new ArrayList<AbstractValuePair>();
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(0, 0));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(10, 21.36));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(20, 10.74275508));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(30, 12.29845321));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(40, 12.44655635));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(50, 14.0189442));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(60, 14.18850521));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(70, 15.69219974));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(80, 15.81594016));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(90, 17.45706539));
+		powerEntries.add(DynamicContentFactory.createValuePairNumeric(100, 17.50336054));
+		
+		List<AbstractValuePair> sludgeEntries = new ArrayList<AbstractValuePair>();
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0, 0));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.1, 129.24));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.2, 258.48));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.3, 387.72));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.4, 516.96));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.5, 646.2));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.6, 775.44));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.7, 904.68));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.8, 1033.92));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(0.9, 1163.16));
+		sludgeEntries.add(DynamicContentFactory.createValuePairNumeric(1, 1292.4));
+		
+		DataSeries powerDataSeries = DynamicContentFactory.createDataSeries("Electricity consumption (kW)", powerEntries);
+		DataSeries sludgeDataSeries = DynamicContentFactory.createDataSeries("Sludge throughput (kg)", sludgeEntries, true);
+		
+		ArrayList<DataSeries> seriesList = new ArrayList<DataSeries>();
+		seriesList.add(powerDataSeries);
+		seriesList.add(sludgeDataSeries);
+		
+		SiteContentLineChart lineChart = DynamicContentFactory.createSiteContentLineChart(4, 0, false, seriesList, "Decanter Stats", true, "Operating Point (%)", "Electricity (kW)", "Sludge(kg)"); 
+		
+		return lineChart;
 	}
 	
 }
