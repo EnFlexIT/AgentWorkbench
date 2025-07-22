@@ -63,10 +63,11 @@ public class AppApiServiceImpl extends AppApiService {
     	if (principal==null) {
     		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.PublicProperties);
     		awbProps.setBooleanValue("_Authenticated", false);
+    		this.addSessionInformation(request, awbProps);
     	} else {
     		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties);
     		awbProps.setBooleanValue("_Authenticated", true);
-    		this.addSessionID(request, awbProps);
+    		this.addSessionInformation(request, awbProps);
     		this.addOIDCPrincipalInformation(principal, awbProps);
     	}
     	
@@ -82,7 +83,7 @@ public class AppApiServiceImpl extends AppApiService {
      * @param awbProps the awb props
      * @return the string
      */
-    private void addSessionID(HttpServletRequest request, de.enflexit.common.properties.Properties awbProps) {
+    private void addSessionInformation(HttpServletRequest request, de.enflexit.common.properties.Properties awbProps) {
     	
     	if (request==null || awbProps==null) return;
     	
