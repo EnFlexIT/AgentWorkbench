@@ -55,6 +55,7 @@ public class RestApiConfiguration extends ResourceConfig {
 		this.register(VersionApi.class);
 	}
 	
+	
 	/**
 	 * Configure swagger.
 	 */

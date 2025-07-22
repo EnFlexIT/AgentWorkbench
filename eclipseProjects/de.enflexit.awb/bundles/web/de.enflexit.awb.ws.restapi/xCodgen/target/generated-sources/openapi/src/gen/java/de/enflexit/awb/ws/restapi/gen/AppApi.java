@@ -23,6 +23,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
@@ -34,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the app API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-29T11:33:26.991574300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-22T11:27:46.290405300+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class AppApi  {
 
    private final AppApiService delegate;
@@ -69,9 +70,9 @@ public class AppApi  {
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "info", }) 
-    public Response getAppSettings(@Context SecurityContext securityContext)
+    public Response getAppSettings(@Context HttpServletRequest request, @Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getAppSettings(securityContext);
+        return delegate.getAppSettings(request, securityContext);
     }
 
     @jakarta.ws.rs.PUT
