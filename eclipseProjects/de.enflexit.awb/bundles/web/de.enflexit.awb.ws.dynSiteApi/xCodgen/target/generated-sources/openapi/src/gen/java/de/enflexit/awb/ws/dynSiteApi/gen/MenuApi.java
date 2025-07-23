@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the menu API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class MenuApi  {
 
    private final MenuApiService delegate;
@@ -66,8 +66,8 @@ public class MenuApi  {
             @ApiResponse(responseCode = "202", description = "The menus to be seen by the current user", content = 
                 @Content(schema = @Schema(implementation = MenuList.class))),
             }, tags={  }) 
-    public Response menuGet(@Context SecurityContext securityContext)
+    public Response menuGet(@Schema(description = "the language locale to use") @QueryParam("lang")  String lang,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.menuGet(securityContext);
+        return delegate.menuGet(lang, securityContext);
     }
 }

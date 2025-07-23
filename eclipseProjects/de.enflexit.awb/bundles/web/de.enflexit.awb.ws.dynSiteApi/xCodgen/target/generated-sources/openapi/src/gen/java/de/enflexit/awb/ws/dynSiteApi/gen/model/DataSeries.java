@@ -33,7 +33,7 @@ import jakarta.validation.Valid;
   DataSeries.JSON_PROPERTY_SECONDARY_Y_AXIS,
   DataSeries.JSON_PROPERTY_ENTRIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class DataSeries   {
   public static final String JSON_PROPERTY_LABEL = "label";
   @JsonProperty(JSON_PROPERTY_LABEL)

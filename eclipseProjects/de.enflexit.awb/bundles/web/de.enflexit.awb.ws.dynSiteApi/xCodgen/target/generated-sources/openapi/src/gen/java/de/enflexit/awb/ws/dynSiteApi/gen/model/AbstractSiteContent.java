@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
   AbstractSiteContent.JSON_PROPERTY_EDITABLE,
   AbstractSiteContent.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = AbstractSiteContentChart.class, name = "AbstractSiteContentChart"),
   @JsonSubTypes.Type(value = SiteContentMedia.class, name = "SiteContentMedia"),

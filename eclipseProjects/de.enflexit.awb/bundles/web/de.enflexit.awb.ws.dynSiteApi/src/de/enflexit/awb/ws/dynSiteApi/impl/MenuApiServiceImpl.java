@@ -25,18 +25,17 @@ public class MenuApiServiceImpl extends MenuApiService {
 	 * @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#menuGet(jakarta.ws.rs.core.SecurityContext)
 	 */
 	@Override
-	public Response menuGet(SecurityContext securityContext) throws NotFoundException {
+	public Response menuGet(String language, SecurityContext securityContext) throws NotFoundException {
 		
 		// --- Get menus from database --------------------------------------------------
 		WebAppDatabaseHandler dbHandler = new WebAppDatabaseHandler();
 		List<SiteMenu> dbMenuList = dbHandler.dbLoadEntityInstanceList(SiteMenu.class);
-		List<MenuItem> menuItemList = TypeConverter.getMenuItemList(dbMenuList);
+		List<MenuItem> menuItemList = TypeConverter.getMenuItemList(dbMenuList, language);
 		
 		// --- Prepare return type ------------------------------------------------------
 		MenuList menuList = new MenuList();
 		menuList.setMenuList(menuItemList);
 		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(menuItemList).build();
-		//return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Unknown menueID!")).build();
 	}
 		
 }

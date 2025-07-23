@@ -22,7 +22,7 @@ public class TypeConverter {
 	 * @param siteMenuList the site menu list
 	 * @return the menu item
 	 */
-	public static List<MenuItem> getMenuItemList(List<SiteMenu> siteMenuList) {
+	public static List<MenuItem> getMenuItemList(List<SiteMenu> siteMenuList, String language) {
 		
 		// --- Place everything into a HashMap ------------
 		HashMap<Integer, SiteMenu> siteMenuHashMap = new HashMap<>();
@@ -33,10 +33,10 @@ public class TypeConverter {
 		List<MenuItem> restMenuItemList = new ArrayList<>();
 		for (SiteMenu dbSiteMenu : siteMenuList) {
 
-			MenuPathDescriptor mpd = TypeConverter.getPathDescription(dbSiteMenu, siteMenuHashMap);
+			MenuPathDescriptor mpd = TypeConverter.getPathDescription(dbSiteMenu, siteMenuHashMap, language);
 			maxDepth = Math.max(maxDepth, mpd.getDepth());
 
-			MenuItem restMenuItem = TypeConverter.getMenuItem(dbSiteMenu, mpd.getPathID(), mpd.getPathCaption(), mpd.getPathPosition());
+			MenuItem restMenuItem = TypeConverter.getMenuItem(dbSiteMenu, language, mpd.getPathID(), mpd.getPathCaption(), mpd.getPathPosition());
 			restMenuItemList.add(restMenuItem);
 		}
 		
@@ -65,12 +65,14 @@ public class TypeConverter {
 	}
 	
 	/**
-	 * Returns the path for the specified SiteMenu, derived from the HashMap 
+	 * Returns the path for the specified SiteMenu, derived from the HashMap .
+	 *
 	 * @param siteMenu the site menu
 	 * @param siteMenuHashMap the site menu hash map
-	 * @return the path
+	 * @param language the language
+	 * @return the MenuPathDescriptor
 	 */
-	private static MenuPathDescriptor getPathDescription(SiteMenu siteMenu, HashMap<Integer, SiteMenu> siteMenuHashMap) {
+	private static MenuPathDescriptor getPathDescription(SiteMenu siteMenu, HashMap<Integer, SiteMenu> siteMenuHashMap, String language) {
 		
 		if (siteMenu==null) return null;
 		
@@ -82,13 +84,13 @@ public class TypeConverter {
 		int depth = 1;
 		
 		pathIDList.add(String.valueOf(siteMenuWork.getId()));
-		pathCaptionList.add(siteMenuWork.getCaption());
+		pathCaptionList.add(siteMenuWork.getCaption(language));
 		pathPostionList.add(String.format("%02d", siteMenuWork.getPosition()));
 		
 		while (siteMenuWork.getParentMenu()!=null) {
 			siteMenuWork = siteMenuWork.getParentMenu();
 			pathIDList.add(String.valueOf(siteMenuWork.getId()));	
-			pathCaptionList.add(siteMenuWork.getCaption());
+			pathCaptionList.add(siteMenuWork.getCaption(language));
 			pathPostionList.add(String.format("%02d", siteMenuWork.getPosition()));
 			depth++;
 		}
@@ -115,12 +117,13 @@ public class TypeConverter {
 	 * without setting the path or the parentID.
 	 *
 	 * @param siteMenu the site menu
+	 * @param language the language
 	 * @param path the path
 	 * @param pathCaption the path caption
 	 * @param pathPosition the path position
 	 * @return the menu item
 	 */
-	private static MenuItem getMenuItem(SiteMenu siteMenu, String path, String pathCaption, String pathPosition) {
+	private static MenuItem getMenuItem(SiteMenu siteMenu, String language, String path, String pathCaption, String pathPosition) {
 		
 		MenuItem menuItem = new MenuItem();
 		menuItem.setMenuID(siteMenu.getId());
@@ -130,7 +133,7 @@ public class TypeConverter {
 		
 		menuItem.setPosition(siteMenu.getPosition());
 		menuItem.setIsHeadMenu(siteMenu.isHeadMenu());
-		menuItem.setCaption(siteMenu.getCaption());
+		menuItem.setCaption(siteMenu.getCaption(language));
 		menuItem.setPathID(path);
 		menuItem.setPathCaption(pathCaption);
 		menuItem.setPathPosition(pathPosition);

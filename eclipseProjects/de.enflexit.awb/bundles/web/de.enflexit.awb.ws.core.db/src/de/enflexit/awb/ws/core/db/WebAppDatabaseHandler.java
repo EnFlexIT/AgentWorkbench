@@ -146,13 +146,24 @@ public class WebAppDatabaseHandler {
 	}
 	
 	/**
-	 * Returns the list of all background system platforms.
+	 * Returns the list of all entity instance in the database table .
 	 *
 	 * @param <EntityInstance> the generic type
 	 * @param entityClass the entity class
 	 * @return the JettySession list
 	 */
 	public <EntityInstance> List<EntityInstance> dbLoadEntityInstanceList(Class<EntityInstance> entityClass) {
+		return this.dbLoadEntityInstanceList("from " + entityClass.getSimpleName(), entityClass);
+	}
+	/**
+	 * Returns the list of all entity instance in the database table.
+	 *
+	 * @param <EntityInstance> the generic type
+	 * @param queryString the query string
+	 * @param entityClass the entity class
+	 * @return the JettySession list
+	 */
+	public <EntityInstance> List<EntityInstance> dbLoadEntityInstanceList(String queryString, Class<EntityInstance> entityClass) {
 		
 		List<EntityInstance> entityInstanceList =  null;
 		Session session = this.getSession();
@@ -162,7 +173,7 @@ public class WebAppDatabaseHandler {
 			try {
 				transaction = session.beginTransaction();
 				
-				Query<EntityInstance> query = session.createQuery("from " + entityClass.getSimpleName(), entityClass);
+				Query<EntityInstance> query = session.createQuery(queryString, entityClass);
 				entityInstanceList = query.list();
 				transaction.commit();
 				
@@ -175,6 +186,7 @@ public class WebAppDatabaseHandler {
 		}
 		return entityInstanceList;
 	}
+	
 	
 	/**
 	 * Deletes the specified entity instance.

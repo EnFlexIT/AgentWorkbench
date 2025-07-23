@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * The Class SiteMenu.
@@ -48,7 +50,9 @@ public class SiteMenu {
 	
 	@OneToMany(mappedBy = "siteMenu")
 	private Set<SiteMenuTranslation> translations;
-
+	@Transient
+	private HashMap<String, String> translationHashMap;
+	
 	@OneToMany(mappedBy = "siteMenu")
 	private Set<SiteMenuContent> siteContentMenu;
 	
@@ -156,6 +160,32 @@ public class SiteMenu {
 	 */
 	public void setAccessRightLevel(int accessRightLevel) {
 		this.accessRightLevel = accessRightLevel;
+	}
+	
+	
+	/**
+	 * Returns the caption in the designate language.
+	 *
+	 * @param language the language
+	 * @return the caption
+	 */
+	public String getCaption(String language) {
+		
+		if (language.toLowerCase().equals("en")==true) return this.getCaption();
+		
+		String translation = this.getTranslationHashMap().get(language.toLowerCase());
+		return translation==null ? this.getCaption() : translation;
+	}
+	/**
+	 * Returns a hash map that enable faster translations.
+	 * @return the translation hash map
+	 */
+	private HashMap<String, String> getTranslationHashMap() {
+		if (translationHashMap==null) {
+			translationHashMap = new HashMap<>();
+			this.getTranslations().forEach(smt -> translationHashMap.put(smt.getLocale().toLowerCase(), smt.getCaptionTranslated()));
+		}
+		return translationHashMap;
 	}
 	
 	/**
