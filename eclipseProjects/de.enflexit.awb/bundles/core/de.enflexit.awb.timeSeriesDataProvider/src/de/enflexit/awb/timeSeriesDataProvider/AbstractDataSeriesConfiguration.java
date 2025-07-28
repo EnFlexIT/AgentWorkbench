@@ -1,11 +1,9 @@
-package de.enflexit.awb.timeSeriesDataProvider.dataModel;
+package de.enflexit.awb.timeSeriesDataProvider;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 
 /**
  * Abstract superclass for the configuration of a single data source for the {@link TimeSeriesDataProvider}. 

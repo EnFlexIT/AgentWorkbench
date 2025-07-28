@@ -17,3 +17,4 @@ Import-Package: de.enflexit.awb.baseUI,
  de.enflexit.common.swing,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation
+Require-Bundle: org.postgresql.jdbc

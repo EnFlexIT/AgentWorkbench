@@ -25,4 +25,14 @@ public abstract class AbstractDataSource {
 	 */
 	public abstract List<Double> getDataSeriesValues(String seriesName);
 	
+	/**
+	 * Gets the values for the specified time range .
+	 *
+	 * @param seriesName the series name
+	 * @param timestampFrom The timestamp to start from
+	 * @param timestampTo The timestamp to end with
+	 * @return The list of values. Might be empty if the series does not contain any values for the specified time range.
+	 */
+	public abstract List<TimeValuePair> getValuesForTimeRange(String seriesName, long timestampFrom, long timestampTo);
+	
 }

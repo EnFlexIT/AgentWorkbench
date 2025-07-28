@@ -1,11 +1,9 @@
-package de.enflexit.awb.timeSeriesDataProvider.gui;
+package de.enflexit.awb.timeSeriesDataProvider.jdbc.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
@@ -17,49 +15,46 @@ import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSeriesConfiguration;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 /**
- * GUI panel for configuring a single CSV data seties.
+ * A panel for configuring JDBC-based data series.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionListener, PropertyChangeListener {
+public class JDBCDataSeriesConfigurationPanel extends JPanel implements ActionListener, PropertyChangeListener {
 	
-	private static final long serialVersionUID = 5580007635919268803L;
+	private static final long serialVersionUID = -4344439482955233575L;
 	
-	private JLabel jLabelCsvDataSeries;
+	private static final String COMBO_BOX_NO_SELECTION = "--- Please Select ---";
+	
+	private JLabel jLabelDataSeriesConfiguration;
 	private JLabel jLabelSeriesName;
 	private JTextField jTextFieldSeriesName;
 	private JLabel jLabelDataColumn;
 	private JComboBox<String> jComboBoxDataColumn;
 	
-	private CsvDataSeriesConfiguration currentSeriesConfiguration;
+	private JDBCDataSeriesConfiguration currentSeriesConfiguration;
 	
 	/**
-	 * Instantiates a new csv data series configuration panel.
-	 * Just added for Window builder compatibility, please use the constructor below!
+	 * Instantiates a new JDBC data series configuration panel.
 	 */
-	@Deprecated
-	public CsvDataSeriesConfigurationPanel() {
+	public JDBCDataSeriesConfigurationPanel() {
 		initialize();
 	}
-	
 	/**
-	 * Instantiates a new csv data series configuration panel.
-	 * @param parentPanel the parent panel
+	 * Sets the column names.
+	 * @param columnNames the new column names
 	 */
-	public CsvDataSeriesConfigurationPanel(CsvDataSourceConfigurationPanel parentPanel) {
-		this.initialize();
+	public void setColumnNames(Vector<String> columnNames) {
+		this.updateComboBoxModel(columnNames);
 	}
 	
-
 	/**
-	 * Initializes the GUI components.
+	 * Initializes the UI components.
 	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -68,15 +63,15 @@ public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionLis
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		GridBagConstraints gbc_jLabelCsvDataSeries = new GridBagConstraints();
-		gbc_jLabelCsvDataSeries.anchor = GridBagConstraints.WEST;
-		gbc_jLabelCsvDataSeries.gridwidth = 3;
-		gbc_jLabelCsvDataSeries.insets = new Insets(5, 5, 5, 5);
-		gbc_jLabelCsvDataSeries.gridx = 0;
-		gbc_jLabelCsvDataSeries.gridy = 0;
-		add(getJLabelCsvDataSeries(), gbc_jLabelCsvDataSeries);
+		GridBagConstraints gbc_jLabelDataSeriesConfiguration = new GridBagConstraints();
+		gbc_jLabelDataSeriesConfiguration.anchor = GridBagConstraints.WEST;
+		gbc_jLabelDataSeriesConfiguration.gridwidth = 2;
+		gbc_jLabelDataSeriesConfiguration.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelDataSeriesConfiguration.gridx = 0;
+		gbc_jLabelDataSeriesConfiguration.gridy = 0;
+		add(getJLabelDataSeriesConfiguration(), gbc_jLabelDataSeriesConfiguration);
 		GridBagConstraints gbc_jLabelSeriesName = new GridBagConstraints();
-		gbc_jLabelSeriesName.insets = new Insets(0, 5, 0, 5);
+		gbc_jLabelSeriesName.insets = new Insets(5, 5, 0, 5);
 		gbc_jLabelSeriesName.anchor = GridBagConstraints.EAST;
 		gbc_jLabelSeriesName.gridx = 0;
 		gbc_jLabelSeriesName.gridy = 1;
@@ -88,23 +83,23 @@ public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionLis
 		gbc_jTextFieldSeriesName.gridy = 1;
 		add(getJTextFieldSeriesName(), gbc_jTextFieldSeriesName);
 		GridBagConstraints gbc_jLabelDataColumn = new GridBagConstraints();
-		gbc_jLabelDataColumn.insets = new Insets(0, 5, 0, 5);
 		gbc_jLabelDataColumn.anchor = GridBagConstraints.EAST;
+		gbc_jLabelDataColumn.insets = new Insets(5, 5, 0, 5);
 		gbc_jLabelDataColumn.gridx = 2;
 		gbc_jLabelDataColumn.gridy = 1;
 		add(getJLabelDataColumn(), gbc_jLabelDataColumn);
-		GridBagConstraints gbc_jComboBoxDataColumn = new GridBagConstraints();
-		gbc_jComboBoxDataColumn.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jComboBoxDataColumn.gridx = 3;
-		gbc_jComboBoxDataColumn.gridy = 1;
-		add(getJComboBoxDataColumn(), gbc_jComboBoxDataColumn);
+		GridBagConstraints gbc_jCompoBoxDataColumn = new GridBagConstraints();
+		gbc_jCompoBoxDataColumn.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jCompoBoxDataColumn.gridx = 3;
+		gbc_jCompoBoxDataColumn.gridy = 1;
+		add(getJComboBoxDataColumn(), gbc_jCompoBoxDataColumn);
 	}
 	
 	/**
 	 * Gets the series configuration.
 	 * @return the series configuration
 	 */
-	public CsvDataSeriesConfiguration getCurrentSeriesConfiguration() {
+	public JDBCDataSeriesConfiguration getCurrentSeriesConfiguration() {
 		return currentSeriesConfiguration;
 	}
 
@@ -112,33 +107,39 @@ public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionLis
 	 * Sets the series configuration.
 	 * @param seriesConfiguration the new series configuration
 	 */
-	public void setCurrentSeriesConfiguration(CsvDataSeriesConfiguration seriesConfiguration) {
+	public void setCurrentSeriesConfiguration(JDBCDataSeriesConfiguration seriesConfiguration) {
 		this.currentSeriesConfiguration = seriesConfiguration;
 		if (seriesConfiguration!=null) {
 			this.getJTextFieldSeriesName().setText(seriesConfiguration.getName());
 			this.getJTextFieldSeriesName().setEditable(true);
 			this.getJTextFieldSeriesName().setEnabled(true);
-			if (seriesConfiguration.getDataColumn()<=this.getJComboBoxDataColumn().getItemCount()) {
-				this.getJComboBoxDataColumn().setSelectedIndex(seriesConfiguration.getDataColumn());
-			}
 			this.getJComboBoxDataColumn().setEnabled(true);
+			this.getJComboBoxDataColumn().setSelectedItem(seriesConfiguration.getDataColumn());
 		} else {
 			this.getJTextFieldSeriesName().setText(null);
 			this.getJTextFieldSeriesName().setEditable(false);
+			this.getJComboBoxDataColumn().setSelectedItem(COMBO_BOX_NO_SELECTION);
 			this.getJComboBoxDataColumn().setEnabled(false);
 		}
 	}
 
-	// ------------------------------------------------------------------------
-	// --- From here, private getter methods for the GUI components -----------
 
-	private JLabel getJLabelCsvDataSeries() {
-		if (jLabelCsvDataSeries == null) {
-			jLabelCsvDataSeries = new JLabel("CSV Data Series Configuration");
-			jLabelCsvDataSeries.setFont(new Font("Dialog", Font.BOLD, 12));
+	/**
+	 * Gets the j label data series configuration.
+	 * @return the j label data series configuration
+	 */
+	private JLabel getJLabelDataSeriesConfiguration() {
+		if (jLabelDataSeriesConfiguration == null) {
+			jLabelDataSeriesConfiguration = new JLabel("Data Series Configuration");
+			jLabelDataSeriesConfiguration.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return jLabelCsvDataSeries;
+		return jLabelDataSeriesConfiguration;
 	}
+	
+	/**
+	 * Gets the j label series name.
+	 * @return the j label series name
+	 */
 	private JLabel getJLabelSeriesName() {
 		if (jLabelSeriesName == null) {
 			jLabelSeriesName = new JLabel("Series Name:");
@@ -146,6 +147,11 @@ public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionLis
 		}
 		return jLabelSeriesName;
 	}
+	
+	/**
+	 * Gets the j text field series name.
+	 * @return the j text field series name
+	 */
 	private JTextField getJTextFieldSeriesName() {
 		if (jTextFieldSeriesName == null) {
 			jTextFieldSeriesName = new JTextField();
@@ -156,21 +162,26 @@ public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionLis
 			jTextFieldSeriesName.addFocusListener(new FocusAdapter() {
 				@Override
 				public void focusLost(FocusEvent fe) {
-					CsvDataSeriesConfigurationPanel.this.renameSeries();
+					JDBCDataSeriesConfigurationPanel.this.renameSeries();
 				}
 			});
-			// --- Trigger rename when enter was pressed ------------
-			jTextFieldSeriesName.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyReleased(KeyEvent ke) {
-					if (ke.getKeyCode()==KeyEvent.VK_ENTER) {
-						CsvDataSeriesConfigurationPanel.this.renameSeries();
-					}
-				}
-			});
+//			// --- Trigger rename when enter was pressed ------------
+//			jTextFieldSeriesName.addKeyListener(new KeyAdapter() {
+//				@Override
+//				public void keyReleased(KeyEvent ke) {
+//					if (ke.getKeyCode()==KeyEvent.VK_ENTER) {
+//						JDBCDataSeriesConfigurationPanel.this.renameSeries();
+//					}
+//				}
+//			});
 		}
 		return jTextFieldSeriesName;
 	}
+	
+	/**
+	 * Gets the j label data column.
+	 * @return the j label data column
+	 */
 	private JLabel getJLabelDataColumn() {
 		if (jLabelDataColumn == null) {
 			jLabelDataColumn = new JLabel("Data Column:");
@@ -178,9 +189,15 @@ public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionLis
 		}
 		return jLabelDataColumn;
 	}
+	
+	/**
+	 * Gets the j combo box data column.
+	 * @return the j combo box data column
+	 */
 	private JComboBox<String> getJComboBoxDataColumn() {
 		if (jComboBoxDataColumn == null) {
-			jComboBoxDataColumn = new JComboBox<>();
+			jComboBoxDataColumn = new JComboBox<String>();
+			this.updateComboBoxModel(null);
 			jComboBoxDataColumn.addActionListener(this);
 			jComboBoxDataColumn.setEnabled(false);
 		}
@@ -188,52 +205,43 @@ public class CsvDataSeriesConfigurationPanel extends JPanel implements ActionLis
 	}
 	
 	/**
-	 * Rebuilds the combo box model for the column selection.
-	 * @param newTableModel the new table model
+	 * Updates the combo box model.
+	 * @param columnNames the column names
 	 */
-	private void rebuildComboBoxModel(DefaultTableModel newTableModel) {
-		DefaultComboBoxModel<String> comboBoxModel = null;
-		Vector<String> columnNames = new Vector<>();
-		columnNames.add("-");
-		if (newTableModel!=null) {
-			for (int i=1; i<newTableModel.getColumnCount(); i++) {
-				columnNames.add(newTableModel.getColumnName(i));
-			}
-			comboBoxModel = new DefaultComboBoxModel<>(columnNames);
+	private void updateComboBoxModel(Vector<String> columnNames) {
+		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<String>();
+		comboBoxModel.addElement(COMBO_BOX_NO_SELECTION);
+		if (columnNames!=null) {
+			comboBoxModel.addAll(columnNames);
 		}
 		this.getJComboBoxDataColumn().setModel(comboBoxModel);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// TODO Auto-generated method stub
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
-	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource()==this.getJComboBoxDataColumn()) {
-			this.currentSeriesConfiguration.setDataColumn(this.getJComboBoxDataColumn().getSelectedIndex());
-		}
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 	}
-
-	/* (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 */
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(CsvDataSourceConfigurationPanel.TABLEMODEL_CHANGED)) {
-			// --- Rebuild the combo box model based on the new table model ---
-			DefaultTableModel tableModel = (DefaultTableModel) evt.getNewValue();
-			this.rebuildComboBoxModel(tableModel);
-		}
-	}
-
+	
 	/**
-	 * Sets the name of the current data series according to the text field.
+	 * Renames the currently selected data series.
 	 */
-	private void renameSeries() {
+	protected void renameSeries() {
 		String textFieldContent = this.getJTextFieldSeriesName().getText();
 		// --- Check if the name actually changed to avoid unnecessary change events.
 		if (this.currentSeriesConfiguration.getName().equals(textFieldContent)==false) {
 			this.currentSeriesConfiguration.setName(this.getJTextFieldSeriesName().getText());
 		}
 	}
+	
 }
