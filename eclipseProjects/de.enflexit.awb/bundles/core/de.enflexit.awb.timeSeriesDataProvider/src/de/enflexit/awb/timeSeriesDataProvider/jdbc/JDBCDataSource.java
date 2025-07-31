@@ -1,14 +1,18 @@
 package de.enflexit.awb.timeSeriesDataProvider.jdbc;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
 import de.enflexit.awb.timeSeriesDataProvider.TimeValuePair;
+import de.enflexit.common.ServiceFinder;
+import de.enflexit.db.hibernate.HibernateDatabaseService;
 
 /**
  * This class implements a JDBC-based time series data source
@@ -60,7 +64,7 @@ public class JDBCDataSource extends AbstractDataSource {
 	public void setSourceConfiguration(JDBCDataScourceConfiguration sourceConfiguration) {
 		this.sourceConfiguration = sourceConfiguration;
 	}
-
+	
 	/**
 	 * Gets the connection state.
 	 * @return the connection state
@@ -81,40 +85,29 @@ public class JDBCDataSource extends AbstractDataSource {
 	 * @return The connection. Might be null if not connected yet.
 	 */
 	public Connection getConnection() {
+		if (connection==null) {
+			
+			HibernateDatabaseService dbService = this.getDbService(this.sourceConfiguration.getDbmsName());
+			if (dbService!=null) {
+				connection = dbService.getDatabaseConnection(this.getSourceConfiguration().getDatabaseSettings(), new  Vector<String>(), true);
+				this.setConnectionState(connection!=null ? ConnectionState.CONNECTED : ConnectionState.ERROR);
+			}
+		}
 		return connection;
 	}
-
-	/**
-	 * Connect to the database.
-	 * @return true, if successful
-	 */
-	public boolean connectToDatabase() {
-		boolean success = false;
-		try {
-			Class.forName("org.postgresql.Driver");
-			connection = DriverManager.getConnection(this.sourceConfiguration.getJdbcURL());
-			this.setConnectionState(ConnectionState.CONNECTED);
-			success = true;
-		} catch (SQLException e) {
-			this.setConnectionState(ConnectionState.ERROR);
-			System.err.println("[" + this.getClass().getSimpleName() + "] Connection could not be established!");
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			this.setConnectionState(ConnectionState.ERROR);
-			System.err.println("[" + this.getClass().getSimpleName() + "] Driver class not found");
-			e.printStackTrace();
-		}
-		return success;
-	}
-	
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#getValue(java.lang.String, long)
 	 */
 	@Override
 	public Double getValue(String seriesName, long timestamp) {
-		// TODO Auto-generated method stub
-		return null;
+		JDBCDataSeries dataSeries = this.getDataSeriesMap().get(seriesName);
+		if (dataSeries!=null) {
+			return dataSeries.getSingleValue(timestamp);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No time series named " + seriesName + " found for data source " + this.getSourceConfiguration().getName());
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -131,8 +124,13 @@ public class JDBCDataSource extends AbstractDataSource {
 	 */
 	@Override
 	public List<TimeValuePair> getValuesForTimeRange(String seriesName, long timestampFrom, long timestampTo) {
-		// TODO Auto-generated method stub
-		return null;
+		JDBCDataSeries dataSeries = this.getDataSeriesMap().get(seriesName);
+		if (dataSeries!=null) {
+			return dataSeries.getValuesForTimeRange(timestampFrom, timestampTo);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No time series named " + seriesName + " found for data source " + this.getSourceConfiguration().getName());
+			return null;
+		}
 	}
 
 	/**
@@ -152,5 +150,92 @@ public class JDBCDataSource extends AbstractDataSource {
 	 */
 	public void addDataSeries(JDBCDataSeries dataSeries) {
 		this.getDataSeriesMap().put(dataSeries.getName(), dataSeries);
+	}
+	
+	/**
+	 * Gets the {@link HibernateDatabaseService} implementation for the specified DBMS.
+	 * @param dbmsName the dbms name
+	 * @return the service implementation, null if not found
+	 */
+	private HibernateDatabaseService getDbService(String dbmsName) {
+		List<HibernateDatabaseService> serviceList =  ServiceFinder.findServices(HibernateDatabaseService.class);
+		for (HibernateDatabaseService dbService : serviceList) {
+			if (dbService.getDatabaseSystemName().equals(dbmsName)) {
+				return dbService;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Gets the name of the database table or view for this data source.
+	 * @return the database table
+	 */
+	public String getDatabaseTable() {
+		return this.getSourceConfiguration().getTableName();
+	}
+	
+	/**
+	 * Gets the name of the date time column.
+	 * @return the column name
+	 */
+	public String getDateTimeColumn() {
+		return this.getSourceConfiguration().getDateTimeColumn();
+	}
+	
+	/**
+	 * Gets the number of rows for the table/view assigned to this data source.
+	 * @return the number of rows
+	 */
+	public int getNumberOfRows() {
+		int numOfEntries = 0;
+		try {
+			String querySQL = "SELECT COUNT(*) FROM " + this.getDatabaseTable();
+			Statement statement = this.getConnection().createStatement();
+			ResultSet resultSet = statement.executeQuery(querySQL);
+			if (resultSet.next()) {
+				numOfEntries = resultSet.getInt(1);
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return numOfEntries;
+	}
+	
+	public long getFirstTimestamp() {
+		long firstTimestamp = 0;
+		try {
+			String querySQL = "SELECT MIN(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+			Statement statement = this.getConnection().createStatement();
+			ResultSet resultSet = statement.executeQuery(querySQL);
+			if (resultSet.next()) {
+				firstTimestamp = resultSet.getTimestamp(1).getTime();
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return firstTimestamp;
+	}
+	
+	public long getLastTimestamp() {
+		long firstTimestamp = 0;
+		try {
+			String querySQL = "SELECT MAX(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+			Statement statement = this.getConnection().createStatement();
+			ResultSet resultSet = statement.executeQuery(querySQL);
+			if (resultSet.next()) {
+				firstTimestamp = resultSet.getTimestamp(1).getTime();
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return firstTimestamp;
 	}
 }

@@ -1,5 +1,9 @@
 package de.enflexit.awb.timeSeriesDataProvider.jdbc;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
@@ -14,8 +18,10 @@ public class JDBCDataSeries {
 	private JDBCDataSource dataSource;
 	
 	private String name;
-	private String databaseTable;
 	private String dataColumn;
+	
+	private PreparedStatement selectSingleValueStatement;
+	private PreparedStatement selectValueRangeStatement;
 	
 	/**
 	 * Instantiates a new JDBC data series.
@@ -26,11 +32,29 @@ public class JDBCDataSeries {
 	}
 
 	/**
-	 * Gets the value pair for a specified point in time.
+	 * Gets the value for a specified point in time.
 	 * @param timestamp the timestamp
-	 * @return the value pair
+	 * @return the value
 	 */
-	public TimeValuePair getValuePair(long timestamp) {
+	public Double getSingleValue(long timestamp) {
+		try {
+			Timestamp sqlTimestamp = new Timestamp(timestamp);
+			this.getSelectSingleValueStatement().setTimestamp(1, sqlTimestamp);
+			if (this.getSelectSingleValueStatement().execute()==true) {
+				ResultSet resultSet = this.getSelectSingleValueStatement().getResultSet();
+				if (resultSet.next()==true) {
+					double value = resultSet.getDouble(this.getDataColumn());
+					return value;
+				} else {
+					System.out.println("[" + this.getClass().getSimpleName() + "] No value found for the provided timestamp");
+				}
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] The database query returned no result!");
+			}
+		} catch (SQLException e) {
+			System.err.println("[" +this.getClass().getSimpleName() + "] An error occured when execuing the database query!");
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -40,8 +64,34 @@ public class JDBCDataSeries {
 	 * @param to the to
 	 * @return the value pairs
 	 */
-	public ArrayList<TimeValuePair> getValuePairs(long from, long to){
-		return null;
+	public ArrayList<TimeValuePair> getValuesForTimeRange(long from, long to){
+		
+		ArrayList<TimeValuePair> resultList = null;
+		
+		try {
+			Timestamp timestampFrom = new Timestamp(from);
+			Timestamp timestampTo = new Timestamp(to);
+			this.getSelectValueRangeStatement().setTimestamp(1, timestampFrom);
+			this.getSelectValueRangeStatement().setTimestamp(2, timestampTo);
+			
+			if (this.getSelectValueRangeStatement().execute()==true) {
+				ResultSet resultSet = this.getSelectValueRangeStatement().getResultSet();
+				resultList = new ArrayList<TimeValuePair>();
+				while (resultSet.next()) {
+					Timestamp timestamp = resultSet.getTimestamp(this.getDataSource().getDateTimeColumn());
+					double value = resultSet.getDouble(this.getDataColumn());
+					
+					resultList.add(new TimeValuePair(timestamp.getTime(), value));
+				}
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] The database query returned no result!");
+			}
+			
+		} catch (SQLException e) {
+			System.err.println("[" +this.getClass().getSimpleName() + "] An error occured when execuing the database query!");
+			e.printStackTrace();
+		}
+		return resultList;
 	}
 	
 	/**
@@ -60,22 +110,6 @@ public class JDBCDataSeries {
 	}
 
 	/**
-	 * Gets the database table.
-	 * @return the database table
-	 */
-	public String getDatabaseTable() {
-		return databaseTable;
-	}
-
-	/**
-	 * Sets the database table.
-	 * @param databaseTable the new database table
-	 */
-	public void setDatabaseTable(String databaseTable) {
-		this.databaseTable = databaseTable;
-	}
-
-	/**
 	 * Gets the data column.
 	 * @return the data column
 	 */
@@ -90,23 +124,63 @@ public class JDBCDataSeries {
 	public void setDataColumn(String dataColumn) {
 		this.dataColumn = dataColumn;
 	}
+	
+	/**
+	 * Gets the parent data source.
+	 * @return the data source
+	 */
+	public JDBCDataSource getDataSource() {
+		return dataSource;
+	}
 
 	/**
-	 * Creates an sql query for a single value.
-	 * @param timestamp the timestamp
-	 * @return the string
+	 * Sets the parent data source.
+	 * @param dataSource the new data source
 	 */
-	private String createSqlQueryForSingleValue(long timestamp) {
-		return null;
+	public void setDataSource(JDBCDataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 	
 	/**
-	 * Creates an SQL query for a time range.
-	 * @param timeFrom the first time stamp to include
-	 * @param timeTo the last time stamp to include
-	 * @return the string
+	 * Gets the name of the database table or view.
+	 * @return the database table
 	 */
-	private String createSqlQueryForTimeRange(long timeFrom, long timeTo) {
-		return null;
+	private String getDatabaseTable() {
+		return this.getDataSource().getDatabaseTable();
 	}
+	
+	/**
+	 * Gets the name of the date time column.
+	 * @return the date time column
+	 */
+	private String getDateTimeColumn() {
+		return this.getDataSource().getDateTimeColumn();
+	}
+
+	/**
+	 * Gets a {@link PreparedStatement} to query a single value.
+	 * @return the statement
+	 * @throws SQLException the SQL exception
+	 */
+	private  PreparedStatement getSelectSingleValueStatement() throws SQLException {
+		if (selectSingleValueStatement==null) {
+			String statementString = "SELECT " + this.getDataColumn() + " FROM " + this.getDatabaseTable() + " WHERE " + this.getDateTimeColumn() + " = ?";
+			selectSingleValueStatement = this.getDataSource().getConnection().prepareStatement(statementString);
+		}
+		return selectSingleValueStatement;
+	}
+	
+	/**
+	 * Gets a {@link PreparedStatement} to query a range of values.
+	 * @return the statement
+	 * @throws SQLException the SQL exception
+	 */
+	private PreparedStatement getSelectValueRangeStatement() throws SQLException {
+		if (selectValueRangeStatement==null) {
+			String statementString = "SELECT " + this.getDateTimeColumn() + ", " + this.getDataColumn() + " FROM " + this.getDatabaseTable() + " WHERE " + this.getDateTimeColumn() + " BETWEEN ? and ? ";
+			selectValueRangeStatement = this.getDataSource().getConnection().prepareStatement(statementString);
+		}
+		return selectValueRangeStatement;
+	}
+	
 }

@@ -1,5 +1,7 @@
 package de.enflexit.awb.timeSeriesDataProvider.jdbc;
 
+import java.util.Properties;
+
 import javax.swing.ImageIcon;
 
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
@@ -16,8 +18,9 @@ public class JDBCDataScourceConfiguration extends AbstractDataSourceConfiguratio
 	private static final String ICON_PATH_WHITE = "/icons/DataBaseWhite.png";
 	private static final String ICON_PATH_BLACK = "/icons/DataBaseBlack.png";
 	private static final String ICON_PATH_GREY = "/icons/DataBaseGrey.png";
-	
-	private String jdbcURL;
+
+	private String dbmsName;
+	private Properties databaseSettings;
 	private String tableName;
 	private String dateTimeColumn; 
 
@@ -36,21 +39,35 @@ public class JDBCDataScourceConfiguration extends AbstractDataSourceConfiguratio
 		}
 		return new ImageIcon(this.getClass().getResource(iconPath));
 	}
-
+	
 	/**
-	 * Gets the JDBC URL for this data source.
-	 * @return the jdbc URL
+	 * Gets the DBMS name.
+	 * @return the DBMS name
 	 */
-	public String getJdbcURL() {
-		return jdbcURL;
+	public String getDbmsName() {
+		return dbmsName;
 	}
-
 	/**
-	 * Sets the JDBC URL for this data source.
-	 * @param jdbcURL the new jdbc URL
+	 * Sets the DBMS name.
+	 * @param dbmsName the new DBMS name
 	 */
-	public void setJdbcURL(String jdbcURL) {
-		this.jdbcURL = jdbcURL;
+	public void setDbmsName(String dbmsName) {
+		this.dbmsName = dbmsName;
+	}
+	
+	/**
+	 * Gets the database settings.
+	 * @return the database settings
+	 */
+	public Properties getDatabaseSettings() {
+		return databaseSettings;
+	}
+	/**
+	 * Sets the database settings.
+	 * @param databaseSettings the new database settings
+	 */
+	public void setDatabaseSettings(Properties databaseSettings) {
+		this.databaseSettings = databaseSettings;
 	}
 
 	/**
