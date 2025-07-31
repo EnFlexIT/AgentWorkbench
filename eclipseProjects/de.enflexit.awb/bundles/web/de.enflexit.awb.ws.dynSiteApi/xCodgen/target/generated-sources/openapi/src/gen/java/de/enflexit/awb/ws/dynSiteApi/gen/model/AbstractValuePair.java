@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   AbstractValuePair.JSON_PROPERTY_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = ValuePairCategory.class, name = "Category"),
   @JsonSubTypes.Type(value = ValuePairDateTime.class, name = "DateTime"),

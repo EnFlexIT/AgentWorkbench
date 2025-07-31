@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentTimeSeriesChart.JSON_PROPERTY_TIME_FORMAT
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-18T09:11:14.660026+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class SiteContentTimeSeriesChart extends SiteContentLineChart  {
   public static final String JSON_PROPERTY_TIME_FORMAT = "timeFormat";
   @JsonProperty(JSON_PROPERTY_TIME_FORMAT)
