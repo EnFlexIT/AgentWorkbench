@@ -1,0 +1,91 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.enflexit.awg</groupId>
+	<artifactId>de.enflexit.ssi.core.depPull</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<flatlafVersion>3.6</flatlafVersion>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>${flatlafVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf-intellij-themes</artifactId>
+			<version>${flatlafVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>${flatlafVersion}</version>
+			<classifier>linux-x86_64</classifier>
+			<type>so</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>${flatlafVersion}</version>
+			<classifier>macos-arm64</classifier>
+			<type>dylib</type>
+		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>${flatlafVersion}</version>
+			<classifier>macos-x86_64</classifier>
+			<type>dylib</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>${flatlafVersion}</version>
+			<classifier>windows-arm64</classifier>
+			<type>dll</type>
+		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>${flatlafVersion}</version>
+			<classifier>windows-x86_64</classifier>
+			<type>dll</type>
+		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>${flatlafVersion}</version>
+			<classifier>windows-x86</classifier>
+			<type>dll</type>
+		</dependency>
+		
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.2.0</version>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<description>Execute this Maven POM to download all Jung libs and its
+		dependencies to the directory '/target/dependency' by calling
+
+		a) mvn dependency:copy-dependencies
+		(for the jar-files) or
+		b) mvn dependency:copy-dependencies -Dclassifier=sources
+		(for the jar-sources)</description>
+</project>
