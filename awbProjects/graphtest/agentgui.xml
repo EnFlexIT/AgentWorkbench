@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>GraphTest</projectName>
+    <projectStartTab>2|3</projectStartTab>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>false</projectTabHeaderVisible>
     <versionTag>Complete Project</versionTag>
@@ -64,6 +65,7 @@
     </projectProperties>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <timeModelClass>de.enflexit.awb.simulation.environment.time.TimeModelDiscrete</timeModelClass>
+    <projectFolderFullPath>D:\20_GIT\01_AWB\awbProjects\graphtest\</projectFolderFullPath>
     <simulationSetups>
         <entry>
             <key>default</key>

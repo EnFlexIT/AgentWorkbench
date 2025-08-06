@@ -1,7 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <generalGraphSettings4MAS>
     <componentSorting>Alphanumeric</componentSorting>
-    <currentCTS/>
+    <currentCTS>
+        <entry>
+            <key>AWB-Green</key>
+            <value>
+                <color>-16777216</color>
+                <domain>Default Domain</domain>
+                <edgeImage>/img/AWB-Green.png</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>AWB-Red</key>
+            <value>
+                <color>-16777216</color>
+                <domain>Default Domain</domain>
+                <edgeImage>/img/AWB-Red.png</edgeImage>
+                <edgeWidth>2.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
+            <key>No-Image Component</key>
+            <value>
+                <color>-13421569</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>20.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.DistributionNode</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+    </currentCTS>
     <domainSettings>
         <entry>
             <key>Default Domain</key>
