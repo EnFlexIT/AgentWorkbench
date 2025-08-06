@@ -900,6 +900,7 @@ en;;Polyline Edge;;;
 en;;ProjectRepositoryAuthorization must not be null.;;;
 en;;Quadratic Curve Edge;;;
 en;;Refresh Thread Measurement;;;
+en;;Remove current icon;;;
 en;;Runtime Visualization Updates;;;
 en;;Save Credentials;;;
 en;;Set timed display time;;;

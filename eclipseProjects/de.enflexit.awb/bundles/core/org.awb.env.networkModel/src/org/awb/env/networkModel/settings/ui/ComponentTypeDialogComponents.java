@@ -70,6 +70,7 @@ import org.awb.env.networkModel.settings.ComponentTypeSettings;
 import org.awb.env.networkModel.settings.GeneralGraphSettings4MAS;
 
 import de.enflexit.language.Language;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.JComboBoxWide;
 import de.enflexit.common.swing.TableCellEditor4Color;
 import de.enflexit.common.swing.TableCellRenderer4Color;
@@ -387,8 +388,10 @@ public class ComponentTypeDialogComponents extends JPanel implements ActionListe
 			
 			//Set up renderer and editor for show label
 			TableColumn showLabelClassColumn = tcm.getColumn(getColumnHeaderIndexComponents(COL_ShowLabel));
-			showLabelClassColumn.setCellEditor(new TableCellRenderEditor4CheckBox());
-			showLabelClassColumn.setCellRenderer(new TableCellRenderEditor4CheckBox());
+			if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
+				showLabelClassColumn.setCellEditor(new TableCellRenderEditor4CheckBox());
+				showLabelClassColumn.setCellRenderer(new TableCellRenderEditor4CheckBox());
+			}
 			showLabelClassColumn.setMinWidth(80);
 			showLabelClassColumn.setMaxWidth(80);
 

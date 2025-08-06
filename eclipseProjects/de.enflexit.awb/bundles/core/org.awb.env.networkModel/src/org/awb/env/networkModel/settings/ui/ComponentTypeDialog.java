@@ -474,7 +474,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 * @return cell editor for the class selection
 	 */
 	public TableCellEditor4ClassSelector getAgentClassesCellEditor(){
-		if(agentClassesCellEditor == null){
+		if (agentClassesCellEditor == null){
 			agentClassesCellEditor = new TableCellEditor4ClassSelector((Window)Application.getMainWindow(), Agent.class, "", "", Language.translate("Agenten"), true);
 		}
 		return agentClassesCellEditor;
@@ -484,7 +484,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 * @return cell editor for the class selection
 	 */
 	public TableCellEditor4ClassSelector getAdapterClassesCellEditor(){
-		if(adapterClassesCellEditor == null){
+		if (adapterClassesCellEditor == null){
 			adapterClassesCellEditor = new TableCellEditor4ClassSelector((Window)Application.getMainWindow(), NetworkComponentAdapter.class, "", "", Language.translate("Erweiterungsadapter für Netzwerkkomponenten"), true);
 		}
 		return adapterClassesCellEditor;
@@ -494,7 +494,7 @@ public class ComponentTypeDialog extends JDialog implements ActionListener {
 	 * @return cell editor for the class selection
 	 */
 	public TableCellEditor4ClassSelector getPrototypeClassesCellEditor(){
-		if(prototypeClassesCellEditor == null){
+		if (prototypeClassesCellEditor == null){
 			prototypeClassesCellEditor = new TableCellEditor4ClassSelector((Window)Application.getMainWindow(), AbstractGraphElementPrototype.class, "", "", Language.translate("Graph-Prototypen"), false);
 		}
 		return prototypeClassesCellEditor;

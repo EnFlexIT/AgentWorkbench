@@ -52,6 +52,7 @@ import org.awb.env.networkModel.settings.ui.ComponentTypeListElement;
 
 import com.google.common.base.Function;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.LayeredIcon;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -101,7 +102,8 @@ public class AddComponentVisViewer<V, E> extends VisualizationViewer<GraphNode, 
 		
 	    this.setGraphMouse(pgm);
 	    this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-	    this.setBackground(Color.WHITE);
+		this.setBackground(AwbThemeColor.Canvas_Background.getColor());
+	    
 	    this.setSize(new Dimension(150, 150));
 	    this.setPreferredSize(new Dimension(250, 250));
 	    

@@ -54,7 +54,7 @@ public final class TableCellColorHelper {
 	 * @param isSelected the indicator, if the row is selected
 	 */
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected) {
-		if (isEnabledTableCellColorHelper==false) return;
+		if (isEnabledTableCellColorHelper==false || AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==false) return;
 		setTableCellRendererColors(comp, row, isSelected, TableCellColorHelper.TB_BACKGROUND);
 	}
 	
@@ -68,7 +68,7 @@ public final class TableCellColorHelper {
 	 */
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected, Color tableBgColor) {
 
-		if (isEnabledTableCellColorHelper==false) return;
+		if (isEnabledTableCellColorHelper==false || AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==false) return;
 		// --- do the settings --------------
 		comp.setOpaque(true);
 		if (isSelected == true) {
@@ -126,8 +126,7 @@ public final class TableCellColorHelper {
 		
 		color = TB_TEXTFOREGROUND_SELECTED;
 		System.out.println("TB_TEXTFOREGROUND_SELECTED => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
-		
 	}
 
 
-} // end color sub class
+}

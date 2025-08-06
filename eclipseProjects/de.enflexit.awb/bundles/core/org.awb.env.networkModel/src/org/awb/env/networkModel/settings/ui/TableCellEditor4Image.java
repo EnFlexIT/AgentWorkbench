@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package org.awb.env.networkModel.settings.ui;
 
 import java.awt.Component;
@@ -47,6 +19,7 @@ import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.PathHandling;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.imageFileSelection.ImageFileView;
 import de.enflexit.common.swing.imageFileSelection.ImageFilterAll;
 import de.enflexit.common.swing.imageFileSelection.ImagePreview;
@@ -179,7 +152,6 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	 * @return the file chooser
 	 */
 	private JFileChooser getFileChooser() {
-		
 		if (this.fileChooser==null) {
 			
 			if (this.ctsDialog !=null) {
@@ -198,9 +170,15 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	        fileChooser.setAccessory(new ImagePreview(fileChooser));
 	        
 	        // --- Add a button in order to remove current image ----
-	        JPanel panel3_1 = (JPanel) fileChooser.getComponent(3);
-	        JPanel panel3_2 = (JPanel) panel3_1.getComponent(3);
-	        panel3_2.add(this.getJButtonRemove(), 1);
+	        JPanel panelBase = null;
+	        if (AwbLookAndFeelAdjustments.isFlatLookAndFeel()==false) {
+	        	panelBase = (JPanel) fileChooser.getComponent(3);
+	        } else {
+	        	JPanel panel0 = (JPanel) fileChooser.getComponent(0);
+	        	panelBase = (JPanel) panel0.getComponent(3);
+	        }
+	        JPanel panelBase_3 = (JPanel) panelBase.getComponent(3);
+	        panelBase_3.add(this.getJButtonRemove(), 1);
 	        
 	        if (this.ctsDialog!=null) {
 	        	this.ctsDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	
@@ -216,7 +194,7 @@ public class TableCellEditor4Image extends AbstractCellEditor implements TableCe
 	private JButton getJButtonRemove() {
 		if (jButtonRemove==null) {
 			jButtonRemove = new JButton();
-			jButtonRemove.setText(Language.translate("Remove current image", Language.EN));
+			jButtonRemove.setText(Language.translate("Remove current icon", Language.EN));
 			jButtonRemove.addActionListener(this);	
 		}
 		return jButtonRemove;

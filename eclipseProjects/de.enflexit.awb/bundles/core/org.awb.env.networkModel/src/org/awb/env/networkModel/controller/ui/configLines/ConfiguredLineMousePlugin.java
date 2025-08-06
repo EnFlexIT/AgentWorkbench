@@ -489,11 +489,13 @@ public class ConfiguredLineMousePlugin extends PickingGraphMousePlugin<GraphNode
 			boolean snapToGrid = layoutSettings.isSnap2Grid();
 			double snapRaster = layoutSettings.getSnapRaster();
 			
+			boolean isUseTransformerForGraphNodeGeoPosition = false;
+
 			Set<GraphNode> pickedNodes = this.getVisViewer().getPickedVertexState().getPicked();
 			for (GraphNode pickedNode: pickedNodes) {
 				// --- Get the position of the node ---------------------------
 				Point2D newPosInLayout = this.getVisViewer().getGraphLayout().apply(pickedNode);
-				if (this.getGraphNodePositionTransformer() instanceof TransformerForGraphNodeGeoPosition && false) {
+				if (isUseTransformerForGraphNodeGeoPosition==true && this.getGraphNodePositionTransformer() instanceof TransformerForGraphNodeGeoPosition) {
 					// --- We're getting nearly UTM coordinates here ! --------
 					newPosInLayout = this.getCoordinateDirectionTransformer().inverseTransform(newPosInLayout);
 					MapSettings ms = this.getGraphNodePositionTransformer().getMapSettings();

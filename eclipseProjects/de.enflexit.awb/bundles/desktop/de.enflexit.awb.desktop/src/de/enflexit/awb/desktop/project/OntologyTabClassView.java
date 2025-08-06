@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.awb.desktop.project;
 
 import java.awt.Dimension;
@@ -54,13 +26,13 @@ public class OntologyTabClassView extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private JLabel jLabelClassNameCaption = null;
-	private JTextField jTextFieldClassName = null;
-	private JTable jTableClassSlots = null;
-	private JScrollPane JScrollPaneClassSlots = null;
-	private JLabel jLabelClassDescCaption = null;
-	private JTextField jTextFieldClassDescription1 = null;
-	private JLabel jLabelDummy = null;
+	private JLabel jLabelClassNameCaption;
+	private JTextField jTextFieldClassName;
+	private JTable jTableClassSlots;
+	private JScrollPane JScrollPaneClassSlots;
+	private JLabel jLabelClassDescCaption;
+	private JTextField jTextFieldClassDescription;
+	private JLabel jLabelDummy;
 	
 	private DefaultMutableTreeNode currOntoNode;
 	private OntologyClassTreeObject currOntoObject;
@@ -177,12 +149,12 @@ public class OntologyTabClassView extends JPanel {
 	 * @return javax.swing.JTextField	
 	 */
 	private JTextField getJTextFieldClassDescription1() {
-		if (jTextFieldClassDescription1 == null) {
-			jTextFieldClassDescription1 = new JTextField();
-			jTextFieldClassDescription1.setPreferredSize(new Dimension(120, 26));
-			jTextFieldClassDescription1.setVisible(false);
+		if (jTextFieldClassDescription == null) {
+			jTextFieldClassDescription = new JTextField();
+			jTextFieldClassDescription.setPreferredSize(new Dimension(120, 26));
+			jTextFieldClassDescription.setVisible(false);
 		}
-		return jTextFieldClassDescription1;
+		return jTextFieldClassDescription;
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+}

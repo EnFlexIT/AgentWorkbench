@@ -248,11 +248,11 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
 			// --- Define the column widths -------------------------
 			TableColumnModel colModel = jTableComponents.getColumnModel();
 			colModel.getColumn(0).setPreferredWidth(40);
-			colModel.getColumn(0).setCellRenderer(new NetworkComponentTablePanelEditID());
-			colModel.getColumn(0).setCellEditor(new NetworkComponentTablePanelEditID());			
+			//colModel.getColumn(0).setCellRenderer(new NetworkComponentTablePanelEditID());
+			//colModel.getColumn(0).setCellEditor(new NetworkComponentTablePanelEditID());			
 			
 			colModel.getColumn(1).setPreferredWidth(40);
-			colModel.getColumn(1).setCellRenderer(new NetworkComponentTablePanelEditID());
+			//colModel.getColumn(1).setCellRenderer(new NetworkComponentTablePanelEditID());
 			
     	    // --- Check for NetworkComponentTableService -----------
     	    for (int i = 0; i < this.getNetworkComponentTableServiceList().size(); i++) {
@@ -327,7 +327,11 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     	    // --- Set DataVector -----------------------------------
     	    componentsTableModel = new DefaultTableModel(null, titles) {
     			private static final long serialVersionUID = 1636744550817904118L;
-    			@Override
+
+    			/* (non-Javadoc)
+			     * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+			     */
+			    @Override
     			public boolean isCellEditable(int row, int col) {
     			    if (NetworkComponentTablePanel.this.editingEnabled==true) {
     			    	// --- Decide when cell editing is allowed --
@@ -346,6 +350,15 @@ public class NetworkComponentTablePanel extends JPanel implements TableModelList
     			    }
     			    return false;
     			}
+    			
+    			/* (non-Javadoc)
+			     * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+			     */
+			    @Override
+    			public Class<?> getColumnClass(int columnIndex) {
+    				return String.class;
+    			}
+    			
     	    };
     		
     	}

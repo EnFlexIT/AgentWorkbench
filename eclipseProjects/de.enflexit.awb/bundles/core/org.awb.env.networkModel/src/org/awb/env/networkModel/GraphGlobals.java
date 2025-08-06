@@ -1,12 +1,9 @@
 package org.awb.env.networkModel;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileFilter;
 
@@ -16,6 +13,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
+
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.PathHandling;
@@ -135,70 +133,6 @@ public final class GraphGlobals {
 		return imageIcon;
     }
 	
- 	
- 	/**
-	 * Searches and returns the image url for the specified image reference.
-	 *
-	 * @param imageRef the image reference
-	 * @return the URL of the image 
-	 */
-	public static URL getImageURL(String imageRef){
-		
-		// --- Abort URL generation ---------------------------------
-		if (imageRef.equals(MISSING_ICON)==true) return null;
-
-		// --- Resource by the class loader, as configured ----------
-		URL url = GraphGlobals.class.getClass().getResource(imageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-		
-		// --- Prepare folder for projects and project name ---------
-		String projectsFolder = Application.getGlobalInfo().getPathProjects();
-		projectsFolder = projectsFolder.replace("\\", "/");
-		String projectName = Application.getProjectFocused().getProjectFolder();
-				
-		// --- Default: by file, in projects, relative --------------
-		String extImageRef = (projectsFolder + "/" + projectName + imageRef).replace("//", "/");
-		url = getURLfromPath(extImageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-
-		// --- Alternative: by file, in projects, absolute ----------
-		extImageRef = (projectsFolder + imageRef).replace("//", "/");
-		url = getURLfromPath(extImageRef);
-		if (url!=null && isUrlPointToImage(url)) return url;
-		
-		// --- Nothing found ----------------------------------------
-		return null;
-	}
-	/**
-	 * Gets the URL from path.
-	 *
-	 * @param path the path
-	 * @return the URl from provided path - can be null
-	 */
-	public static URL getURLfromPath(String path) {
-		URL url = null;
-		try {
-			url = new URL("file", null, -1, path);
-		} catch (MalformedURLException urlEx) {
-			//urlEx.printStackTrace();
-		}
-		return url;
-	}
-	/**
-	 * Checks if the provided URL points to an image file.
-	 *
-	 * @param url the url
-	 * @return true, if the provided url point to an image
-	 */
-	public static boolean isUrlPointToImage(URL url) {
-		try {
-			return ImageIO.read(url)!=null;
-		} catch (IOException e) {
-			//e.printStackTrace();
-			//nothing to do, as expected to fail
-		}
-		return false;
-	}
  	
 	// ------------------------------------------------------------------------
  	// --- Some help method to create a simple FileFilter ---------------------

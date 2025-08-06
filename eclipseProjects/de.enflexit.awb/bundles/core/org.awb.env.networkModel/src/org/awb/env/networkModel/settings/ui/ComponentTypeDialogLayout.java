@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package org.awb.env.networkModel.settings.ui;
 
 import java.awt.Dimension;
@@ -69,6 +41,7 @@ import org.awb.env.networkModel.settings.LayoutSettings.EdgeShape;
 
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.JComboBoxWide;
 
 /**
@@ -303,7 +276,9 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			});
 			
 			TableColumn colGeoLayout = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_GeoLayout));
-			colGeoLayout.setCellRenderer(new TableCellRenderEditor4CheckBox());
+			if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
+				colGeoLayout.setCellRenderer(new TableCellRenderEditor4CheckBox());
+			}
 			colGeoLayout.setCellEditor(checkBoxVisEdit);
 			colGeoLayout.setMinWidth(90);
 			colGeoLayout.setPreferredWidth(100);
@@ -316,8 +291,10 @@ public class ComponentTypeDialogLayout extends JPanel implements ActionListener 
 			colYDirection.setCellEditor(new TableCellEditor4Combo(this.getJComboBoxCoordinateSystemYDirection()));
 			
 			TableColumn colSnapToGrid = tcm.getColumn(getColumnHeaderIndexLayouts(COL_L_SnapToGrid));
-			colSnapToGrid.setCellRenderer(new TableCellRenderEditor4CheckBox());
-			colSnapToGrid.setCellEditor(new TableCellRenderEditor4CheckBox());
+			if (AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) {
+				colSnapToGrid.setCellRenderer(new TableCellRenderEditor4CheckBox());
+				colSnapToGrid.setCellEditor(new TableCellRenderEditor4CheckBox());
+			}
 			colSnapToGrid.setMinWidth(90);
 			colSnapToGrid.setPreferredWidth(100);
 			colSnapToGrid.setMaxWidth(120);

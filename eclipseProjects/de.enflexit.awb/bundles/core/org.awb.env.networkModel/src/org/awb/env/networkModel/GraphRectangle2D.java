@@ -12,7 +12,6 @@ import de.enflexit.geography.coordinates.AbstractCoordinate;
 import de.enflexit.geography.coordinates.WGS84LatLngCoordinate;
 import edu.uci.ics.jung.graph.Graph;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GraphRectangle2D provides some help methods to investigate 
  * the size and the position of a {@link Graph} or a set of {@link GraphNode}s.

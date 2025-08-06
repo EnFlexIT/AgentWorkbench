@@ -991,7 +991,7 @@ public class SimulationSetup implements PropertiesListener {
 		// --- Find the element to rename -------
 		AgentClassElement4SimStart ace4ss = this.getAgentClassElement4SimStart(oldAgentName);
 		// --- Check if the new name is unused --
-		if (this.isAgentNameExists(newAgentName)==false) {
+		if (ace4ss!=null && this.isAgentNameExists(newAgentName)==false) {
 			// --- Rename in list element -------
 			ace4ss.setStartAsName(newAgentName);
 			// --- Prepare info for observer ----

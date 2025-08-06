@@ -33,6 +33,7 @@ import java.awt.Font;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.NumberEditor;
@@ -42,6 +43,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.common.swing.AwbThemeColor;
 
 /**
  * The Class TableCellEditor4Spinner.
@@ -98,16 +102,31 @@ public class TableCellEditor4Spinner extends AbstractCellEditor implements Table
 		}
 		return jSpinner;
 	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+	 */
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		JComponent comp = (JComponent) table.getCellRenderer(row, 0);
 		this.getJSpinner().setValue(value);
+		this.getJSpinner().setBackground(comp.getBackground());
 		return this.getJSpinner();
 	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
+	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		this.getJSpinner().setValue(value);
+		this.getJSpinner().setBackground(AwbThemeColor.Canvas_Background.getColor());
 		return this.getJSpinner();
 	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.CellEditor#getCellEditorValue()
+	 */
 	@Override
 	public Object getCellEditorValue() {
 		return this.getJSpinner().getValue();
