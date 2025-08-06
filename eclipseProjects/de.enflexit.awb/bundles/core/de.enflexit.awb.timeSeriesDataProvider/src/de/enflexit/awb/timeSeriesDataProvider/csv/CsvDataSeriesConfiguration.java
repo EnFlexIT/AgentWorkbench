@@ -1,4 +1,6 @@
-package de.enflexit.awb.timeSeriesDataProvider.dataModel;
+package de.enflexit.awb.timeSeriesDataProvider.csv;
+
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeriesConfiguration;
 
 /**
  * {@link AbstractDataSeriesConfiguration} for CSV-based data.

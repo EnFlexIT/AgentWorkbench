@@ -8,7 +8,9 @@ import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration;
+
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 
 /**
  * Custom tree cell renderer, showing individual icons for the different data source types.
@@ -45,7 +47,7 @@ public class TimeSeriesConfigTreeCellRenderer extends DefaultTreeCellRenderer {
 		JLabel rendererLabel = null;
 		if (treeNode.getUserObject() instanceof AbstractDataSourceConfiguration) {
 			AbstractDataSourceConfiguration dsConfig = (AbstractDataSourceConfiguration) treeNode.getUserObject();
-			ImageIcon dsIcon = dsConfig.getImageIcon(isSelected);
+			ImageIcon dsIcon = dsConfig.getImageIcon(isSelected, AwbLookAndFeelAdjustments.isDarkLookAndFeel());
 			if (dsIcon!=null) {
 				rendererLabel = new JLabel();
 				rendererLabel.setIcon(dsIcon);
@@ -53,11 +55,23 @@ public class TimeSeriesConfigTreeCellRenderer extends DefaultTreeCellRenderer {
 				if (isSelected==true) {
 					rendererLabel.setForeground(Color.WHITE);
 				} else {
-					rendererLabel.setForeground(Color.BLACK);
+					rendererLabel.setForeground(this.getForegroundColor());
 				}
 			}
 		}
 		return rendererLabel;
+	}
+	
+	/**
+	 * Gets the foreground color for light or dark mode.
+	 * @return the foreground color
+	 */
+	private Color getForegroundColor() {
+		if (AwbLookAndFeelAdjustments.isDarkLookAndFeel()==true) {
+			return Color.LIGHT_GRAY;
+		} else {
+			return Color.BLACK;
+		}
 	}
 
 }

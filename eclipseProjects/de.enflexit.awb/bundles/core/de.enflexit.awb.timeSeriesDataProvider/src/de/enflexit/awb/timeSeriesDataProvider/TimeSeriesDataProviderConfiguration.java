@@ -14,11 +14,10 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
-
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSeriesConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataScourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSeriesConfiguration;
 
 @XmlRootElement
 public class TimeSeriesDataProviderConfiguration implements Serializable {
@@ -165,9 +164,12 @@ public class TimeSeriesDataProviderConfiguration implements Serializable {
 			ArrayList<Class<?>>contextClassesList = new ArrayList<>();
 			contextClassesList.add(TimeSeriesDataProviderConfiguration.class);
 			contextClassesList.add(AbstractDataSourceConfiguration.class);
-			contextClassesList.add(CsvDataSourceConfiguration.class);
 			contextClassesList.add(AbstractDataSeriesConfiguration.class);
+			contextClassesList.add(CsvDataSourceConfiguration.class);
 			contextClassesList.add(CsvDataSeriesConfiguration.class);
+			contextClassesList.add(JDBCDataScourceConfiguration.class);
+			contextClassesList.add(JDBCDataSeriesConfiguration.class);
+			
 			contextClasses = contextClassesList.toArray(new Class<?>[contextClassesList.size()]);
 		}
 		return contextClasses;

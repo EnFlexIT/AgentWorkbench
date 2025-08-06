@@ -1,4 +1,4 @@
-package de.enflexit.awb.timeSeriesDataProvider.gui;
+package de.enflexit.awb.timeSeriesDataProvider.csv.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
-import javax.swing.JPanel;
-
 import java.awt.Dimension;
 
 import javax.swing.event.DocumentEvent;
@@ -28,8 +26,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeriesConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSeriesConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.gui.AbstractDataSourceConfigurationPanel;
 import de.enflexit.common.GlobalRuntimeValues;
 
 import javax.swing.JLabel;
@@ -53,7 +54,7 @@ import javax.swing.JCheckBox;
  * GUI panel for the configuration of a {@link CsvDataSeriesConfiguration}
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class CsvDataSourceConfigurationPanel extends JPanel implements ActionListener, DocumentListener {
+public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigurationPanel implements ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = 4169129076658770744L;
 	
@@ -100,16 +101,6 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	public CsvDataSourceConfigurationPanel() {
 		this.initialize();
 		this.setComponentsEnabled(false);
-	}
-	
-	/**
-	 * Instantiates a new csv data source configuration panel, and 
-	 * initializes it with the provided {@link CsvDataSourceConfiguration}.
-	 * @param dataSourceConfiguration the data source configuration
-	 */
-	public CsvDataSourceConfigurationPanel(CsvDataSourceConfiguration dataSourceConfiguration) {
-		this.initialize();
-		this.setCurrentDataSourceConfiguration(dataSourceConfiguration);
 	}
 	
 	/**
@@ -246,7 +237,7 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 			this.setComponentsEnabled(false);
 		}
 		
-		this.getSeriesConfigurationPanel().setCurrentSeriesConfiguration(null);
+//		this.getSeriesConfigurationPanel().setCurrentSeriesConfiguration(null);
 	}
 	
 	/**
@@ -578,7 +569,7 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 	}
 	private CsvDataSeriesConfigurationPanel getSeriesConfigurationPanel() {
 		if (seriesConfigurationPanel == null) {
-			seriesConfigurationPanel = new CsvDataSeriesConfigurationPanel(this);
+			seriesConfigurationPanel = new CsvDataSeriesConfigurationPanel();
 			this.addPropertyChangeListener(seriesConfigurationPanel);
 		}
 		return seriesConfigurationPanel;
@@ -752,6 +743,36 @@ public class CsvDataSourceConfigurationPanel extends JPanel implements ActionLis
 			seriesConfiguration.setName(seriesName);
 			seriesConfiguration.setDataColumn(i);
 			this.currentSourceConfiguration.addDataSeriesConfiguration(seriesConfiguration);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.gui.AbstractDataSourceConfigurationPanel#getDataSourceConfiguraiton()
+	 */
+	@Override
+	public AbstractDataSourceConfiguration getDataSourceConfiguraiton() {
+		return this.getCurrentDataSourceConfiguration();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.gui.AbstractDataSourceConfigurationPanel#setDataSourceConfiguration(de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration)
+	 */
+	@Override
+	public void setDataSourceConfiguration(AbstractDataSourceConfiguration dataSourceConfiguration) {
+		if (dataSourceConfiguration==null || dataSourceConfiguration instanceof CsvDataSourceConfiguration) {
+			this.setCurrentDataSourceConfiguration((CsvDataSourceConfiguration) dataSourceConfiguration);
+		} else {
+			throw new IllegalArgumentException("The provided data source configuration is not for a CSV data source!");
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.gui.AbstractDataSourceConfigurationPanel#setDataSeriesConfiguration(de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration)
+	 */
+	@Override
+	public void setDataSeriesConfiguration(AbstractDataSeriesConfiguration seriesConfiguraiton) {
+		if (seriesConfiguraiton instanceof CsvDataSeriesConfiguration) {
+			this.setDataSeriesConfiguration((CsvDataSeriesConfiguration)seriesConfiguraiton);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package de.enflexit.awb.timeSeriesDataProvider.dataModel;
+package de.enflexit.awb.timeSeriesDataProvider;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -162,5 +162,11 @@ public abstract class AbstractDataSourceConfiguration implements Serializable, P
 	 * @param isSelected specifies if the data source is currently selected
 	 * @return the image icon
 	 */
-	public abstract ImageIcon getImageIcon(boolean isSelected);
+	public abstract ImageIcon getImageIcon(boolean isSelected, boolean isDarkMode);
+	
+	/**
+	 * Creates a data source according to this configuration
+	 * @return the abstract data source
+	 */
+	public abstract AbstractDataSource createDataSource();
 }

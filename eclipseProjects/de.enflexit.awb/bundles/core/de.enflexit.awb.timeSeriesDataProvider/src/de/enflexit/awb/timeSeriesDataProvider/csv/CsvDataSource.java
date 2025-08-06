@@ -1,4 +1,4 @@
-package de.enflexit.awb.timeSeriesDataProvider;
+package de.enflexit.awb.timeSeriesDataProvider.csv;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
+
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
+import de.enflexit.awb.timeSeriesDataProvider.TimeValuePair;
 import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.NumberHelper;
 
@@ -286,6 +287,15 @@ public class CsvDataSource extends AbstractDataSource {
 			this.getValuesByTimeHashMap().put(timestamp, valuesHashMap);
 		}
 		return valuesHashMap;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#getValuesForTimeRange(java.lang.String, long, long)
+	 */
+	@Override
+	public List<TimeValuePair> getValuesForTimeRange(String seriesName, long timestampFrom, long timestampTo) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

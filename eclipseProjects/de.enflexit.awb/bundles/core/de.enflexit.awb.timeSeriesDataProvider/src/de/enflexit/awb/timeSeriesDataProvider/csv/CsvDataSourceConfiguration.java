@@ -1,4 +1,4 @@
-package de.enflexit.awb.timeSeriesDataProvider.dataModel;
+package de.enflexit.awb.timeSeriesDataProvider.csv;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import javax.swing.ImageIcon;
 
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration;
 
 /**
  * This class contains the configuration of a CSV-based data source. 
@@ -15,8 +17,9 @@ public class CsvDataSourceConfiguration extends AbstractDataSourceConfiguration 
 
 	private static final long serialVersionUID = 1236384812660513627L;
 	
-	private static final String ICON_PATH_SELECTED = "/icons/CSVFileWhite.png";
-	private static final String ICON_PATH_NOT_SELECTED = "/icons/CSVFileBlack.png";
+	private static final String ICON_PATH_WHITE = "/icons/CSVFileWhite.png";
+	private static final String ICON_PATH_BLACK = "/icons/CSVFileBlack.png";
+	private static final String ICON_PATH_GREY = "/icons/CSVFileGrey.png";
 	
 	private String csvFilePath;
 	
@@ -130,14 +133,24 @@ public class CsvDataSourceConfiguration extends AbstractDataSourceConfiguration 
 	 * @see de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration#getImageIcon(boolean)
 	 */
 	@Override
-	public ImageIcon getImageIcon(boolean isSelected) {
+	public ImageIcon getImageIcon(boolean isSelected, boolean isDarkMode) {
 		String iconPath;
 		if (isSelected==true) {
-			iconPath = ICON_PATH_SELECTED;
+			iconPath = ICON_PATH_WHITE;
+		} else if (isDarkMode==true) {
+			iconPath = ICON_PATH_GREY;
 		} else {
-			iconPath = ICON_PATH_NOT_SELECTED;
+			iconPath = ICON_PATH_BLACK;
 		}
 		return new ImageIcon(this.getClass().getResource(iconPath));
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration#createDataSource()
+	 */
+	@Override
+	public AbstractDataSource createDataSource() {
+		return new CsvDataSource(this);
 	}
 	
 }

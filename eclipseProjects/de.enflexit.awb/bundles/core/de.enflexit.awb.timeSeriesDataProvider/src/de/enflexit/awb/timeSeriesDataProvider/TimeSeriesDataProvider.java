@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSeriesConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.AbstractDataSourceConfiguration;
-import de.enflexit.awb.timeSeriesDataProvider.dataModel.CsvDataSourceConfiguration;
 
 /**
  * The {@link TimeSeriesDataProvider} can be used to provide time series based data, like 
@@ -221,7 +218,7 @@ public class TimeSeriesDataProvider implements PropertyChangeListener{
 		if (dataSource==null) {
 			for (AbstractDataSourceConfiguration sourceConfig : this.getConfiguration().getDataSourceConfigurations()) {
 				if (sourceConfig.getName().equals(sourceName)) {
-					dataSource = this.initializeDataSource(sourceConfig);
+					dataSource = sourceConfig.createDataSource();
 					this.getDataSourcesByName().put(sourceConfig.getName(), dataSource);
 					break;
 				}
@@ -231,18 +228,6 @@ public class TimeSeriesDataProvider implements PropertyChangeListener{
 		return dataSource;
 	}
 	
-	/**
-	 * Initializes a data source.
-	 * @param sourceConfig the data source configuration
-	 * @return the abstract data source
-	 */
-	private AbstractDataSource initializeDataSource(AbstractDataSourceConfiguration sourceConfig) {
-		AbstractDataSource dataSource = null;
-		if (sourceConfig instanceof CsvDataSourceConfiguration) {
-			dataSource = new CsvDataSource((CsvDataSourceConfiguration) sourceConfig);
-		}
-		return dataSource;
-	}
 	
 	/**
 	 * Gets the value for the specified time from the specified series. May return null if either 
