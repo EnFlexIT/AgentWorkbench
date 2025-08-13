@@ -119,6 +119,7 @@ public final class TableCellColorHelper {
 	 */
 	public static void setTableBackAndForeGroundToTableDefinition(JTable table, JComponent component, boolean isSelected) {
 
+		if (table==null || component==null || AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==true) return;
 		if (isSelected) {
 			component.setBackground(table.getSelectionBackground());
 			component.setForeground(table.getSelectionForeground());
