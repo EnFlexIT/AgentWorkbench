@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComponent;
+import javax.swing.JTable;
 import javax.swing.UIManager;
 
 /**
@@ -55,7 +56,7 @@ public final class TableCellColorHelper {
 	 */
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected) {
 		if (isEnabledTableCellColorHelper==false || AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==false) return;
-		setTableCellRendererColors(comp, row, isSelected, TableCellColorHelper.TB_BACKGROUND);
+		TableCellColorHelper.setTableCellRendererColors(comp, row, isSelected, TableCellColorHelper.TB_BACKGROUND);
 	}
 	
 	/**
@@ -69,6 +70,7 @@ public final class TableCellColorHelper {
 	public static void setTableCellRendererColors(JComponent comp, int row, boolean isSelected, Color tableBgColor) {
 
 		if (isEnabledTableCellColorHelper==false || AwbLookAndFeelAdjustments.isNimbusLookAndFeel()==false) return;
+		
 		// --- do the settings --------------
 		comp.setOpaque(true);
 		if (isSelected == true) {
@@ -107,6 +109,26 @@ public final class TableCellColorHelper {
 
 	}
 	
+	
+	/**
+	 * Sets the table back- and foreground according to the table definition.
+	 *
+	 * @param table the table
+	 * @param component the component to be used for displaying or editing
+	 * @param isSelected the is selected
+	 */
+	public static void setTableBackAndForeGroundToTableDefinition(JTable table, JComponent component, boolean isSelected) {
+
+		if (isSelected) {
+			component.setBackground(table.getSelectionBackground());
+			component.setForeground(table.getSelectionForeground());
+		} else {
+			component.setBackground(table.getBackground());
+			component.setForeground(table.getForeground());
+		}
+	}
+	
+	
 	/**
 	 * Prints the color settings for table cells.
 	 */
@@ -127,6 +149,5 @@ public final class TableCellColorHelper {
 		color = TB_TEXTFOREGROUND_SELECTED;
 		System.out.println("TB_TEXTFOREGROUND_SELECTED => " + " new Color(" + color.getRed() + ", " + color.getGreen() + ", " + color.getBlue() + ");");
 	}
-
 
 }

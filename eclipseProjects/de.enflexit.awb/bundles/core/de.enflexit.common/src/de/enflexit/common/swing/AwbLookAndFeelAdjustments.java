@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -18,6 +19,8 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+
+import de.enflexit.common.images.ImageHelper;
 
 /**
  * The Class AwbLookAndFeelAdjustments.
@@ -162,6 +165,17 @@ public class AwbLookAndFeelAdjustments {
 	 */
 	public static boolean isNimbusLookAndFeel() {
 		return ! isFlatLookAndFeel();
+	}
+	
+	/**
+	 * Returns the negative image for the dark look and feel (if dark LnF is selected).
+	 *
+	 * @param icon the icon
+	 * @return the negative image for dark look and feel
+	 */
+	public static ImageIcon getNegativeImageForDarkLookAndFeel(ImageIcon icon) {
+		if (icon==null || AwbLookAndFeelAdjustments.isDarkLookAndFeel()==false) return icon;
+		return ImageHelper.getNegativeImage(icon);
 	}
 	
 	/**

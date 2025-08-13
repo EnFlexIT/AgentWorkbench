@@ -18,6 +18,11 @@ public enum AwbThemeColor {
 	
 	Canvas_Background(Color.white, new Color(70, 73, 75)),
 	
+	Chart_Background(Color.white, new Color(70, 73, 75)),
+	Chart_GridLine(Color.BLACK, Color.WHITE),
+	Chart_Text(Color.BLACK, Color.WHITE),
+	
+	
 	Graph_Node(new Color(230, 230, 230), new Color(230, 230, 230)),
 	Graph_Edge(new Color(80, 80, 80), new Color(230, 230, 230)),
 	

@@ -46,6 +46,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.common.BundleHelper;
 import de.enflexit.common.properties.PropertiesTree.PropertyNodeUserObject;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.JTreeUtil;
 
 
@@ -361,7 +362,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 		if (jToggleButtonTreeView == null) {
 			jToggleButtonTreeView = new JToggleButton();
 			jToggleButtonTreeView.setSelected(true);
-			jToggleButtonTreeView.setIcon(BundleHelper.getImageIcon("TreeView.png"));
+			jToggleButtonTreeView.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("TreeView.png")));
 			jToggleButtonTreeView.setToolTipText("Switch to tree view");
 			jToggleButtonTreeView.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonTreeView.addActionListener(this);
@@ -371,7 +372,7 @@ public class PropertiesPanel extends JPanel implements ActionListener, Propertie
 	private JToggleButton getJToggleButtonListView() {
 		if (jToggleButtonListView == null) {
 			jToggleButtonListView = new JToggleButton();
-			jToggleButtonListView.setIcon(BundleHelper.getImageIcon("ListView.png"));
+			jToggleButtonListView.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("ListView.png")));
 			jToggleButtonListView.setToolTipText("Switch to list view");
 			jToggleButtonListView.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonListView.addActionListener(this);

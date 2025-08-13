@@ -1,6 +1,5 @@
 package de.enflexit.common.properties;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -23,6 +22,7 @@ import javax.swing.JTextField;
 
 import de.enflexit.common.properties.Properties.PropertyType;
 import de.enflexit.common.properties.PropertiesEvent.Action;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 
 /**
@@ -325,7 +325,7 @@ public class PropertiesEditPanel extends JPanel implements ActionListener {
 	private JButton getJButtonOk() {
 		if (jButtonOk == null) {
 			jButtonOk = new JButton("Update");
-			jButtonOk.setForeground(new Color(0, 128, 0));
+			jButtonOk.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonOk.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonOk.setPreferredSize(new Dimension(185, 26));
 			jButtonOk.addActionListener(this);

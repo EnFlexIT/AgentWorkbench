@@ -3,12 +3,15 @@ package de.enflexit.awb.ws.dynSiteApi.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.dynSiteApi.RestApiConfiguration;
 import de.enflexit.awb.ws.dynSiteApi.content.DynamicContentFactory;
 import de.enflexit.awb.ws.dynSiteApi.content.ImageHelper;
+import de.enflexit.awb.ws.dynSiteApi.content.TypeConverter;
 import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
 import de.enflexit.awb.ws.dynSiteApi.gen.ContentApiService;
 import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
@@ -35,6 +38,11 @@ public class ContentApiServiceImpl extends ContentApiService {
 	 */
 	@Override
 	public Response contentPut(SiteContentListUpdate siteContentListUpdate, SecurityContext securityContext) throws NotFoundException {
+		
+		Integer menuID = siteContentListUpdate.getMenuID();
+		List<AbstractSiteContent> siteContentList = siteContentListUpdate.getContentList();
+		
+		List<SiteContent> dbSiteContentList = TypeConverter.getDBSiteContentList(siteContentList);
 		
 		
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();

@@ -6,6 +6,8 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import javax.swing.ImageIcon;
+
 /**
  * The Class ImageHelper provides selected static help methods to work with images and icons.
  *
@@ -51,6 +53,48 @@ public class ImageHelper {
 		}
 		return image;
 	}
+	
+	/**
+	 * Returns the negative image.
+	 *
+	 * @param image the buffered image
+	 * @return the negative image
+	 */
+	public static ImageIcon getNegativeImage(ImageIcon iIcon) {
+		if (iIcon==null) return null;
+		return new ImageIcon(ImageHelper.getNegativeImage(ImageHelper.convertToBufferedImage(iIcon.getImage())));
+	}
+	/**
+	 * Returns the negative image.
+	 *
+	 * @param image the buffered image
+	 * @return the negative image
+	 */
+	public static BufferedImage getNegativeImage(BufferedImage image) {
+
+		if (image==null) return null;
+		
+		BufferedImage negative = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int p = image.getRGB(x, y);
+                int a = (p >> 24) & 0xff;
+                int r = (p >> 16) & 0xff;
+                int g = (p >> 8) & 0xff;
+                int b = p & 0xff;
+
+                // subtract RGB from 255
+                r = 255 - r;
+                g = 255 - g;
+                b = 255 - b;
+
+                // set new RGB value
+                p = (a << 24) | (r << 16) | (g << 8) | b;
+                negative.setRGB(x, y, p);
+            }
+        }
+		return negative;
+	} 	
 	/**
 	 * Scales the buffered image by its height and it width with the specified scale multiplier.
 	 * @param scrImage        the buffered image
@@ -79,6 +123,7 @@ public class ImageHelper {
 			scaledImage = scrImage;
 		}
 	    return scaledImage;
-	} 	
+	}
+
 	
 }

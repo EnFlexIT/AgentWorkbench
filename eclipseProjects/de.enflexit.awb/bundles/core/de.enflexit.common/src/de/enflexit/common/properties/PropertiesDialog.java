@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 
 import de.enflexit.common.BundleHelper;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
@@ -51,7 +52,7 @@ public class PropertiesDialog extends JDialog {
 	private void initialize() {
 		
 		this.setTitle(this.title);
-		this.setIconImage(BundleHelper.getImageIcon("MBsettings.png").getImage());
+		this.setIconImage(new AwbThemeImageIcon(BundleHelper.getImageIcon("MBsettings.png")).getImage());
 		
 		this.setModal(true);
 		this.setModalityType(ModalityType.APPLICATION_MODAL);

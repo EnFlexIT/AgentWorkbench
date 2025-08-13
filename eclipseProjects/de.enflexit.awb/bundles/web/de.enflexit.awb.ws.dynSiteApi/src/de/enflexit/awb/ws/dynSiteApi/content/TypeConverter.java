@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentText;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 
@@ -16,22 +18,25 @@ import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
  */
 public class TypeConverter {
 
+	// --------------------------------------------------------------------------------------------
+	// --- From here, static help method to handle menu items and lists ---------------------------
+	// --------------------------------------------------------------------------------------------	
 	/**
 	 * Returns the list of menu items derived from the specified list of DB SiteMenu's.
 	 *
-	 * @param siteMenuList the site menu list
+	 * @param dbSiteMenuList the database site menu list
 	 * @return the menu item
 	 */
-	public static List<MenuItem> getMenuItemList(List<SiteMenu> siteMenuList, String language) {
+	public static List<MenuItem> getMenuItemList(List<SiteMenu> dbSiteMenuList, String language) {
 		
 		// --- Place everything into a HashMap ------------
 		HashMap<Integer, SiteMenu> siteMenuHashMap = new HashMap<>();
-		siteMenuList.forEach(sm -> siteMenuHashMap.put(sm.getId(), sm));
+		dbSiteMenuList.forEach(sm -> siteMenuHashMap.put(sm.getId(), sm));
 		
 		// --- Run through the list of SiteMenu -----------
 		int maxDepth = 0;
 		List<MenuItem> restMenuItemList = new ArrayList<>();
-		for (SiteMenu dbSiteMenu : siteMenuList) {
+		for (SiteMenu dbSiteMenu : dbSiteMenuList) {
 
 			MenuPathDescriptor mpd = TypeConverter.getPathDescription(dbSiteMenu, siteMenuHashMap, language);
 			maxDepth = Math.max(maxDepth, mpd.getDepth());
@@ -63,7 +68,6 @@ public class TypeConverter {
 		
 		return restMenuItemList;
 	}
-	
 	/**
 	 * Returns the path for the specified SiteMenu, derived from the HashMap .
 	 *
@@ -146,7 +150,7 @@ public class TypeConverter {
 	 * @param menuItem the menu item
 	 * @return the site menu
 	 */
-	public static SiteMenu getSiteMenu(MenuItem menuItem) {
+	public static SiteMenu getDBSiteMenu(MenuItem menuItem) {
 		
 		SiteMenu siteMenu = new SiteMenu();
 		
@@ -154,6 +158,52 @@ public class TypeConverter {
 		return siteMenu;
 	}
 	
+
+	// --------------------------------------------------------------------------------------------
+	// --- From here, static help method to handle site content -----------------------------------
+	// --------------------------------------------------------------------------------------------	
+	/**
+	 * Returns the specified list to a database site content list.
+	 *
+	 * @param siteContentList the site content list
+	 * @return the DB site content list
+	 */
+	public static List<SiteContent> getDBSiteContentList(List<de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent> siteContentList) {
+		
+		if (siteContentList==null || siteContentList.size()==0) return null;
+		
+		List<SiteContent> dbSiteContentList =  new ArrayList<>();
+		siteContentList.forEach(asc -> {
+			SiteContent dbSiteContent = TypeConverter.getDBSiteContent(asc);
+			if (dbSiteContent!=null) {
+				dbSiteContentList.add(dbSiteContent);	
+			}
+		});
+		return dbSiteContentList;
+	}
 	
+	/**
+	 * Returns the specified list to a database site content list.
+	 *
+	 * @param siteContent the site content
+	 * @return the DB site content list
+	 */
+	public static SiteContent getDBSiteContent(de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent siteContent) {
+		
+		SiteContent dbSiteContent = null;
+		
+		if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText scText) {
+			dbSiteContent = new de.enflexit.awb.ws.core.db.dataModel.SiteContentText();
+			
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage scImage) {
+
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties scProperties) {
+
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable scTable) {
+			
+		}
+		
+		return dbSiteContent;
+	}
 	
 }
