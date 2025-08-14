@@ -1,5 +1,15 @@
 package de.enflexit.expression.gui;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -13,17 +23,6 @@ import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
 import de.enflexit.language.Language;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 /**
  * The Class ExpressionEditorDialog.
@@ -75,7 +74,7 @@ public class ExpressionEditorDialog extends JDialog implements ActionListener{
 	 * @param context the expression context
 	 * @param isModal the indicator to open the dialog in a modal manner or not
 	 */
-	public ExpressionEditorDialog(Window ownerWindow, Expression expression, ExpressionContext context ,boolean isModal) {
+	public ExpressionEditorDialog(Window ownerWindow, Expression expression, ExpressionContext context, boolean isModal) {
 		super(ownerWindow);
 		this.initialize();
 		this.setModal(isModal);
