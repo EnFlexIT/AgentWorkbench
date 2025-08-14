@@ -1413,6 +1413,15 @@ import de.enflexit.language.Language;
 	public String getProjectFolder() {
 		return projectFolder;
 	}
+	
+	/**
+	 * Enables to set the full path of the project director.
+	 * @param projectFolderFullPath the new project folder full path
+	 */
+	@XmlTransient
+	public void setProjectFolderFullPath(String projectFolderFullPath) {
+		this.projectFolderFullPath = projectFolderFullPath;
+	}
 	/**
 	 * Returns the absolute location of project directory as full path.
 	 * @return the ProjectFolderFullPath
@@ -1422,13 +1431,6 @@ import de.enflexit.language.Language;
 			projectFolderFullPath = Application.getGlobalInfo().getPathProjects() + this.getProjectFolder() + File.separator;
 		}
 		return projectFolderFullPath;
-	}
-	/**
-	 * Enables to set the full path of the project director.
-	 * @param projectFolderFullPath the new project folder full path
-	 */
-	public void setProjectFolderFullPath(String projectFolderFullPath) {
-		this.projectFolderFullPath = projectFolderFullPath;
 	}
 	
 	/**
