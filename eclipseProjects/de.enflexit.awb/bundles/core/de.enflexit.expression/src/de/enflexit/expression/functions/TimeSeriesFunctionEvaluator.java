@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.enflexit.expression.ExpressionData;
+import de.enflexit.expression.ExpressionData.DataColumn;
 import de.enflexit.expression.ExpressionData.DataType;
 import de.enflexit.expression.ExpressionResult;
 
@@ -148,6 +149,12 @@ public class TimeSeriesFunctionEvaluator {
 
 		ExpressionData timeSeries = parameters.get(0);
 		
+		if (this.isDescending(timeSeries)==true) {
+			for (DataColumn dataColumn : timeSeries.getDataColumnList()) {
+				dataColumn.reverseDataList();
+			}
+		}
+		
 		int numberOfSteps = this.getIntegerValueFromParameter(parameters.get(3));
 		long stepLength = (endTime-startTime) / (numberOfSteps-1);
 		
@@ -175,6 +182,15 @@ public class TimeSeriesFunctionEvaluator {
 		
 		ExpressionData expressionResult = new ExpressionData(stepValues);
 		return expressionResult;
+	}
+	
+	private boolean isDescending(ExpressionData timeSeries) {
+		List<Long> timeStamps = timeSeries.getDataColumn(0).getLongList();
+		if (timeStamps.size()<=1) {
+			return false;
+		} else {
+			return timeStamps.get(0)>timeStamps.get(1);
+		}
 	}
 	
 	/**

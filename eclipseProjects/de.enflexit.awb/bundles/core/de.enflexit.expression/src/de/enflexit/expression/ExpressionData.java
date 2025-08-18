@@ -1,6 +1,7 @@
 package de.enflexit.expression;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -1114,6 +1115,22 @@ public class ExpressionData {
 				return (List<Double>) list;
 			}
 			return null;
+		}
+		
+		/**
+		 * Reverses the order of the data list.
+		 */
+		public void reverseDataList() {
+			if (this.isList()==true) {
+				Collections.reverse(this.getList());
+			} else if (this.isArray()) {
+				Object[] array = (Object[]) this.colData;
+				for (int i = 0; i < array.length / 2; i++) {
+			        Object temp = array[i];
+			        array[i] = array[array.length - 1 - i];
+			        array[array.length - 1 - i] = temp;
+			    }
+			}
 		}
 	} // end sub class
 
