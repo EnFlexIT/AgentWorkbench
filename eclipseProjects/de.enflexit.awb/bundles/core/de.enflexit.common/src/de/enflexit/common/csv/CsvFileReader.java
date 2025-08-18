@@ -14,7 +14,7 @@ import java.util.Vector;
  */
 public class CsvFileReader {
 	
-	private static final String DEFAULT_SEPARATOR = ";";
+	public static final String DEFAULT_SEPARATOR = ";";
 
 	private String columnSeparator;
 	

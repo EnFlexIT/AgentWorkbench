@@ -288,4 +288,12 @@ public class CsvDataControllerPanel extends JPanel implements ActionListener, Ob
 		}
 	}
 	
+	public boolean isHeadlineConfigured() {
+		return this.getJCheckBoxHasHeadlines().isSelected();
+	}
+	
+	public String getSelectedSeparator() {
+		return (String) this.getJComboBoxSeparator().getSelectedItem();
+	}
+	
 }
