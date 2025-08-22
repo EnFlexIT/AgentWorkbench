@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -20,6 +21,7 @@ import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.expression.Expression;
 import de.enflexit.expression.ExpressionContext;
+import de.enflexit.expression.ExpressionValidatorExtension;
 
 /**
  * The ExpressionEditorWidget can be used to edit and validate an expression directly,
@@ -42,6 +44,8 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	private ExpressionContext expressionContext;
 	
 	private ExpressionServiceFilter libraryFilter;
+	
+	private ArrayList<ExpressionValidatorExtension> validatorExtensions;
 	
 	/**
 	 * Instantiates a new expression editor widget.
@@ -114,11 +118,28 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 	 * Validates the expression, sets the icon of the validation button according to the result.
 	 */
 	private void validateExpression() {
-		if (this.expression!=null && this.expression.hasErrors()==false) {
-			this.getJButtonValidate().setIcon(ImageHelper.getImageIcon("CheckGreen.png"));
+		
+		boolean isValid;
+		
+		if (expression==null) {
+			isValid = false;
 		} else {
-			this.getJButtonValidate().setIcon(ImageHelper.getImageIcon("CheckRed.png"));
+			// --- Check for syntax errors ----------------
+			isValid = !expression.hasErrors();
+			if (isValid==true) {
+				// --- Perform additional validations, if configured
+				for (ExpressionValidatorExtension validatorExtension : this.getValidatorExtensions()) {
+					if (validatorExtension.validate()==false) {
+						isValid = false;
+						break;
+					}
+				}
+			} else {
+				System.out.println("[" + this.getClass().getSimpleName() + "] The expression " + this.getExpression().getExpressionString() + " has syntax errors!");
+			}
 		}
+		
+		this.getJButtonValidate().setIcon(ImageHelper.getImageIcon(isValid ? "CheckGreen.png" : "CheckRed.png"));
 	}
 	
 	/**
@@ -229,6 +250,32 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		this.libraryFilter = libraryFilter;
 	}
 	
+	/**
+	 * Gets the registered validator extensions.
+	 * @return the validator extensions
+	 */
+	private ArrayList<ExpressionValidatorExtension> getValidatorExtensions() {
+		if (validatorExtensions==null) {
+			validatorExtensions = new ArrayList<ExpressionValidatorExtension>();
+		}
+		return validatorExtensions;
+	}
+	
+	/**
+	 * Adds a new validator extension.
+	 * @param validatorExtension the validator extension
+	 */
+	public void addValidatorExtension(ExpressionValidatorExtension validatorExtension) {
+		this.getValidatorExtensions().add(validatorExtension);
+	}
+	
+	/**
+	 * Removes a validator extension.
+	 * @param validatorExtension the validator extension
+	 */
+	public void removeValidatorExtension(ExpressionValidatorExtension validatorExtension) {
+		this.getValidatorExtensions().remove(validatorExtension);
+	}
 	
 	
 }
