@@ -277,5 +277,14 @@ public class ExpressionEditorWidget extends JPanel implements ActionListener {
 		this.getValidatorExtensions().remove(validatorExtension);
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setEnabled(boolean)
+	 */
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.getJTextFieldExpression().setEnabled(enabled);
+		this.getJButtonEditor().setEnabled(enabled);
+		this.getJButtonValidate().setEnabled(enabled);
+	}
 	
 }
