@@ -192,7 +192,7 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		gbc_jButtonFormatCheck.gridy = 3;
 		add(getJButtonFormatCheck(), gbc_jButtonFormatCheck);
 		GridBagConstraints gbc_jScrollPaneCsvDataTable = new GridBagConstraints();
-		gbc_jScrollPaneCsvDataTable.insets = new Insets(0, 0, 5, 0);
+		gbc_jScrollPaneCsvDataTable.insets = new Insets(5, 5, 5, 5);
 		gbc_jScrollPaneCsvDataTable.gridwidth = 5;
 		gbc_jScrollPaneCsvDataTable.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneCsvDataTable.gridx = 0;

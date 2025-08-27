@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -28,6 +30,7 @@ import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSource;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSource.ConnectionState;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
+import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 
 import java.awt.GridBagLayout;
@@ -122,7 +125,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		gbc_jLabelSourceName.gridy = 1;
 		add(getJLabelSourceName(), gbc_jLabelSourceName);
 		GridBagConstraints gbc_jTextFieldSourceName = new GridBagConstraints();
-		gbc_jTextFieldSourceName.gridwidth = 4;
+		gbc_jTextFieldSourceName.gridwidth = 3;
 		gbc_jTextFieldSourceName.insets = new Insets(0, 0, 5, 0);
 		gbc_jTextFieldSourceName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldSourceName.gridx = 1;
@@ -135,14 +138,14 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		add(getJLabelDBSettings(), gbc_jLabelDBSettings);
 		GridBagConstraints gbc_jButtonConfigDialog = new GridBagConstraints();
 		gbc_jButtonConfigDialog.anchor = GridBagConstraints.WEST;
-		gbc_jButtonConfigDialog.insets = new Insets(0, 5, 5, 5);
+		gbc_jButtonConfigDialog.insets = new Insets(5, 5, 5, 5);
 		gbc_jButtonConfigDialog.gridx = 0;
 		gbc_jButtonConfigDialog.gridy = 3;
 		add(getJButtonConfigDialog(), gbc_jButtonConfigDialog);
 		GridBagConstraints gbc_jLabelCurrentDBConfig = new GridBagConstraints();
 		gbc_jLabelCurrentDBConfig.anchor = GridBagConstraints.WEST;
 		gbc_jLabelCurrentDBConfig.gridwidth = 2;
-		gbc_jLabelCurrentDBConfig.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelCurrentDBConfig.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelCurrentDBConfig.gridx = 1;
 		gbc_jLabelCurrentDBConfig.gridy = 3;
 		add(getJLabelCurrentDBConfig(), gbc_jLabelCurrentDBConfig);
@@ -197,7 +200,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		gbc_jLabelStatistics.gridy = 6;
 		add(getJLabelStatistics(), gbc_jLabelStatistics);
 		GridBagConstraints gbc_jScrollPaneDataTable = new GridBagConstraints();
-		gbc_jScrollPaneDataTable.insets = new Insets(0, 0, 5, 0);
+		gbc_jScrollPaneDataTable.insets = new Insets(5, 5, 5, 5);
 		gbc_jScrollPaneDataTable.gridwidth = 5;
 		gbc_jScrollPaneDataTable.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneDataTable.gridx = 0;
@@ -234,9 +237,19 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		if (jTextFieldSourceName == null) {
 			jTextFieldSourceName = new JTextField();
 			jTextFieldSourceName.addFocusListener(new FocusAdapter() {
+				// --- Change name when leaving the field
 				@Override
 				public void focusLost(FocusEvent fe) {
 					JDBCDataSourceConfigurationPanel.this.renameDataSource();
+				}
+			});
+			jTextFieldSourceName.addKeyListener(new KeyAdapter() {
+				// --- Change name when pressing enter
+				@Override
+				public void keyReleased(KeyEvent ke) {
+					if (ke.getKeyCode()==KeyEvent.VK_ENTER) {
+						JDBCDataSourceConfigurationPanel.this.renameDataSource();
+					}
 				}
 			});
 			jTextFieldSourceName.setColumns(10);
@@ -502,6 +515,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 
 	/**
 	 * Connects to the configured database.
+	 * @throws SQLException 
 	 */
 	private void establishConnection() {
 		// --- Establish the JDBC connection ----------------------------------
@@ -524,15 +538,25 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		this.updateConnectionStateLabel(dataSource.getConnectionState());
 	}
 	
+	/**
+	 * Gets and displays some statistical information on the table data.
+	 * @return the statistics
+	 */
 	private void getStatistics() {
 		int numOfRows = this.getDataSource().getNumberOfRows();
+
+		// --- If possible, determine the earliest and latest entry
+		String timeRangeString = "";
 		long firstTimestamp = this.getDataSource().getFirstTimestamp();
 		long lastTImestamp = this.getDataSource().getLastTimestamp();
-
-		Instant firstInstand = Instant.ofEpochMilli(firstTimestamp);
-		Instant lastInstant = Instant.ofEpochMilli(lastTImestamp);
+		if (firstTimestamp>=0 && lastTImestamp>=0) {
+			Instant firstInstand = Instant.ofEpochMilli(firstTimestamp);
+			Instant lastInstant = Instant.ofEpochMilli(lastTImestamp);
+			timeRangeString = " between " + this.getDateTimeFormatter().format(firstInstand) + " and " + this.getDateTimeFormatter().format(lastInstant);
+		}
 		
-		String statisticsString = "The selected table contains " + numOfRows + " rows between " + this.getDateTimeFormatter().format(firstInstand) + " and " + this.getDateTimeFormatter().format(lastInstant);
+		// --- Compose and display the statistics string
+		String statisticsString = "The selected table contains " + numOfRows + " rows" + timeRangeString;
 		this.getJLabelStatistics().setText(statisticsString);
 	}
 
@@ -555,7 +579,8 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 				Vector<String> tablesList = new Vector<String>();
 				tablesList.add("--- Please Select ---");
 				DatabaseMetaData dbMetaData = this.getConnection().getMetaData();
-				try (ResultSet rs = dbMetaData.getTables(null, "public", "%", null) ){
+				String catalog = this.getSourceConfiguration().getDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog);
+				try (ResultSet rs = dbMetaData.getTables(catalog, "public", "%", null) ){
 					while(rs.next()) {
 						tablesList.add(rs.getString("TABLE_NAME"));
 					}
@@ -648,7 +673,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	 */
 	private String findDateTimeColumn(ResultSetMetaData resultSetMetaData) throws SQLException {
 		for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
-			if (resultSetMetaData.getColumnTypeName(i).equals("timestamp")) {
+			if (resultSetMetaData.getColumnTypeName(i).equalsIgnoreCase("timestamp")) {
 				return resultSetMetaData.getColumnName(i);
 			}
 		}

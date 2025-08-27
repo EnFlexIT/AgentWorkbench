@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeriesConfiguration;
@@ -83,13 +84,22 @@ public class JDBCDataSource extends AbstractDataSource {
 	/**
 	 * Gets the database connection.
 	 * @return The connection. Might be null if not connected yet.
+	 * @throws SQLException 
 	 */
 	public Connection getConnection() {
 		if (connection==null) {
 			
 			HibernateDatabaseService dbService = this.getDbService(this.sourceConfiguration.getDbmsName());
 			if (dbService!=null) {
-				connection = dbService.getDatabaseConnection(this.getSourceConfiguration().getDatabaseSettings(), new  Vector<String>(), true);
+				Properties databaseSettings = this.getSourceConfiguration().getDatabaseSettings();
+				connection = dbService.getDatabaseConnection(databaseSettings, new  Vector<String>(), true);
+				
+				try {
+					connection.setCatalog(databaseSettings.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
+				} catch (SQLException e) {
+					System.err.println("[" + this.getClass().getSimpleName() + "] Database does not exist!");
+					e.printStackTrace();
+				}
 				this.setConnectionState(connection!=null ? ConnectionState.CONNECTED : ConnectionState.ERROR);
 			}
 		}
@@ -205,36 +215,48 @@ public class JDBCDataSource extends AbstractDataSource {
 		return numOfEntries;
 	}
 	
+	/**
+	 * Gets the earliest timestamp from the tables date/time column.
+	 * @return the first timestamp
+	 */
 	public long getFirstTimestamp() {
-		long firstTimestamp = 0;
-		try {
-			String querySQL = "SELECT MIN(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
-			Statement statement = this.getConnection().createStatement();
-			ResultSet resultSet = statement.executeQuery(querySQL);
-			if (resultSet.next()) {
-				firstTimestamp = resultSet.getTimestamp(1).getTime();
-			} else {
-				System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+		long firstTimestamp = -1;
+		if (this.getDateTimeColumn()!=null) {
+			try {
+				String querySQL = "SELECT MIN(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+				Statement statement = this.getConnection().createStatement();
+				ResultSet resultSet = statement.executeQuery(querySQL);
+				if (resultSet.next()) {
+					firstTimestamp = resultSet.getTimestamp(1).getTime();
+				} else {
+					System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return firstTimestamp;
 	}
 	
+	/**
+	 * Gets the latest timestamp from the tables date/time column.
+	 * @return the last timestamp
+	 */
 	public long getLastTimestamp() {
 		long firstTimestamp = 0;
-		try {
-			String querySQL = "SELECT MAX(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
-			Statement statement = this.getConnection().createStatement();
-			ResultSet resultSet = statement.executeQuery(querySQL);
-			if (resultSet.next()) {
-				firstTimestamp = resultSet.getTimestamp(1).getTime();
-			} else {
-				System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+		if (this.getDateTimeColumn()!=null) {
+			try {
+				String querySQL = "SELECT MAX(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+				Statement statement = this.getConnection().createStatement();
+				ResultSet resultSet = statement.executeQuery(querySQL);
+				if (resultSet.next()) {
+					firstTimestamp = resultSet.getTimestamp(1).getTime();
+				} else {
+					System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return firstTimestamp;
 	}

@@ -77,7 +77,7 @@ public class JDBCDataSeriesConfigurationPanel extends JPanel implements ActionLi
 		gbc_jLabelSeriesName.gridy = 1;
 		add(getJLabelSeriesName(), gbc_jLabelSeriesName);
 		GridBagConstraints gbc_jTextFieldSeriesName = new GridBagConstraints();
-		gbc_jTextFieldSeriesName.insets = new Insets(0, 0, 0, 5);
+		gbc_jTextFieldSeriesName.insets = new Insets(5, 0, 0, 5);
 		gbc_jTextFieldSeriesName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldSeriesName.gridx = 1;
 		gbc_jTextFieldSeriesName.gridy = 1;
@@ -89,6 +89,7 @@ public class JDBCDataSeriesConfigurationPanel extends JPanel implements ActionLi
 		gbc_jLabelDataColumn.gridy = 1;
 		add(getJLabelDataColumn(), gbc_jLabelDataColumn);
 		GridBagConstraints gbc_jCompoBoxDataColumn = new GridBagConstraints();
+		gbc_jCompoBoxDataColumn.insets = new Insets(5, 0, 0, 0);
 		gbc_jCompoBoxDataColumn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jCompoBoxDataColumn.gridx = 3;
 		gbc_jCompoBoxDataColumn.gridy = 1;
