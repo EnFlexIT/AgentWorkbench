@@ -1,7 +1,5 @@
 package de.enflexit.awb.timeSeriesDataProvider.csv;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries;
@@ -38,24 +36,14 @@ public class CsvDataSeries extends AbstractDataSeries {
 	 */
 	@Override
 	public long getFirstTimeStamp() {
-		Collection<Long> timeStamps = this.parentSource.getAllTimeStamps();
-		if (timeStamps!=null && timeStamps.isEmpty()==false) {
-			return Collections.min(this.parentSource.getAllTimeStamps());
-		} else {
-			return 0;
-		}
+		return this.parentSource.getFirstTimeStamp();
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries#getLastTimeStamp()
 	 */
 	@Override
 	public long getLastTimeStamp() {
-		Collection<Long> timeStamps = this.parentSource.getAllTimeStamps();
-		if (timeStamps!=null && timeStamps.isEmpty()==false) {
-			return Collections.max(this.parentSource.getAllTimeStamps());
-		} else {
-			return 0;
-		}
+		return this.parentSource.getLastTimeStamp();
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries#getNumberOfEntries()

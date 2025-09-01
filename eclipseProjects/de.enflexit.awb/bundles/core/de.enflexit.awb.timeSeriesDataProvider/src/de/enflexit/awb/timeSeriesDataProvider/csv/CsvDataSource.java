@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -310,8 +311,83 @@ public class CsvDataSource extends AbstractDataSource {
 	 */
 	@Override
 	public List<TimeValuePair> getValuesForTimeRange(String seriesName, long timestampFrom, long timestampTo) {
-		// TODO Auto-generated method stub
-		return null;
+		List<TimeValuePair> valuesForRange = new ArrayList<TimeValuePair>();
+		Integer columnIndex = this.getDataColumnForSeries(seriesName);
+		if (columnIndex!=null) {
+			
+			// --- Collect all values between the specified times -------------
+			for (Vector<Number> dataRow : this.getCsvData()) {
+				long rowTimestamp = dataRow.get(0).longValue();
+				if (rowTimestamp>=timestampFrom && rowTimestamp <= timestampTo) {
+					double rowValue = dataRow.get(columnIndex).doubleValue();
+					valuesForRange.add(new TimeValuePair(rowTimestamp, rowValue));
+				} else if (rowTimestamp>timestampTo) {
+					// --- Since the order is ascending, no more matches to be expected
+					break;
+				}
+			}
+			
+			// --- If there was no exact match, try to include the next earlier value to cover the whole range
+			if (valuesForRange.get(0).getTimestamp()>timestampFrom) {
+				TimeValuePair tvpBefore = this.getNextEarlierValue(columnIndex, timestampFrom);
+				if (tvpBefore!=null) {
+					valuesForRange.add(0, tvpBefore);
+				} else {
+					System.err.println("[" + this.getClass().getSimpleName() + "] This data source contains no values before " + this.getDateTimeFormatter().format(Instant.ofEpochMilli(timestampFrom)));
+				}
+			}
+			// --- If there was no exact match, try to include the next later value to cover the whole range
+			if (valuesForRange.get(valuesForRange.size()-1).getTimestamp()<timestampTo) {
+				TimeValuePair tvpAfter = this.getNextLaterValue(columnIndex, timestampTo);
+				if (tvpAfter!=null) {
+					valuesForRange.add(tvpAfter);
+				} else {
+					System.err.println("[" + this.getClass().getSimpleName() + "] This data source contains no values after " + this.getDateTimeFormatter().format(Instant.ofEpochMilli(timestampTo)));
+				}
+			}
+			
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No data column found for series name " + seriesName);
+		}
+		return valuesForRange;
+	}
+	
+	/**
+	 * Gets the next earlier value before the specified timestamp.
+	 * @param columnIndex the column index for the data series
+	 * @param timestamp the timestamp
+	 * @return the next earlier value
+	 */
+	private TimeValuePair getNextEarlierValue(int columnIndex, long timestamp) {
+		TimeValuePair tvp = null;
+		// --- getDataRowIndex already returns the next earlier row index if no exact match was found
+		int rowIndexFound = this.getDataRowIndex(timestamp);
+		Vector<Number> rowFound = this.getCsvData().get(rowIndexFound);
+		if (rowFound.get(0).longValue()<timestamp) {
+			// --- Since it could also be an exact match, check if it is really earlier
+			long timestampBefore = rowFound.get(0).longValue();
+			double valueBefore = rowFound.get(columnIndex).doubleValue();
+			tvp = new TimeValuePair(timestampBefore, valueBefore);
+		}
+		return tvp;
+	}
+	
+	/**
+	 * Gets the next later value after the specified timestamp.
+	 * @param seriesName the series name
+	 * @param timestamp the timestamp
+	 * @return the next later value
+	 */
+	private TimeValuePair getNextLaterValue(int columnIndex, long timestamp) {
+		TimeValuePair tvp = null;
+		int rowIndexForTimestamp = this.getDataRowIndex(timestamp);
+		if (rowIndexForTimestamp<this.getCsvData().size()-1) {
+			Vector<Number> rowAfter = this.getCsvData().get(rowIndexForTimestamp+1);
+			long timestampAfter = rowAfter.get(0).longValue();
+			double valueAfter = rowAfter.get(columnIndex).doubleValue();
+			tvp = new TimeValuePair(timestampAfter, valueAfter);
+		}
+		return tvp;
 	}
 
 	/* (non-Javadoc)
@@ -352,6 +428,24 @@ public class CsvDataSource extends AbstractDataSource {
 	@Override
 	public AbstractDataSourceConfiguration getSourceConfiguration() {
 		return this.sourceConfiguration;
+	}
+	
+	/**
+	 * Gets the first time stamp this data source contains entries for.
+	 * @return the first time stamp
+	 */
+	public long getFirstTimeStamp() {
+		Number firstRowTime = this.getCsvData().get(0).get(0);
+		return firstRowTime.longValue();
+	}
+	
+	/**
+	 * Gets the last time stamp this data source contains entries for.
+	 * @return the last time stamp
+	 */
+	public long getLastTimeStamp() {
+		Number lastRowTime = this.getCsvData().get(this.getCsvData().size()-1).get(0);
+		return lastRowTime.longValue();
 	}
 	
 }
