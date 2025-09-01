@@ -267,4 +267,16 @@ public class TimeSeriesDataProvider implements PropertyChangeListener{
 		this.dataSourcesBySeriesName = null;
 	}
 	
+	/**
+	 * Gets a list of the configured data sources.
+	 * @return the data source names
+	 */
+	public List<String> getAvailableDataSourceNames(){
+		ArrayList<String> sourceNames = new ArrayList<String>();
+		for (AbstractDataSourceConfiguration dsConfig :this.getConfiguration().getDataSourceConfigurations()) {
+			sourceNames.add(dsConfig.getName());
+		}
+		return sourceNames;
+	}
+	
 }

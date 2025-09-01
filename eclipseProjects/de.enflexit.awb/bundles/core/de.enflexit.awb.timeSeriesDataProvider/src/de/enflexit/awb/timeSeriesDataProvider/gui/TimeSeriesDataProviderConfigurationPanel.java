@@ -15,10 +15,13 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import java.awt.Insets;
+import java.awt.Window;
+
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -35,9 +38,12 @@ import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProviderConfiguratio
 import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.csv.gui.CsvDataSourceConfigurationPanel;
+import de.enflexit.awb.timeSeriesDataProvider.gui.exploration.TimeSeriesDataExplorationPanel;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataScourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.gui.JDBCDataSourceConfigurationPanel;
-import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.common.swing.AwbThemeImageIcon;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JSeparator;
@@ -55,14 +61,16 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private static final long serialVersionUID = -7240796684633097667L;
 	
 	private static final Dimension buttonSize = new Dimension(26, 26);
-	private static final String ICON_PATH_NEW_CSV_SOURCE_BLACK = "/icons/NewCSVFileBlack.png";
-	private static final String ICON_PATH_NEW_CSV_SOURCE_WHITE = "/icons/NewCSVFileWhite.png";
-	private static final String ICON_PATH_NEW_DB_SOURCE_BLACK = "/icons/NewDataBaseBlack.png";
-	private static final String ICON_PATH_NEW_DB_SOURCE_WHITE = "/icons/NewDataBaseWhite.png";
+	private static final String ICON_PATH_NEW_CSV_SOURCE_LIGHT_MODE = "/icons/NewCsvFileBlack.png";
+	private static final String ICON_PATH_NEW_CSV_SOURCE_DARK_MODE = "/icons/NewCsvFileGrey.png";
+	private static final String ICON_PATH_NEW_DB_SOURCE_LIGHT_MODE = "/icons/NewDatabaseBlack.png";
+	private static final String ICON_PATH_NEW_DB_SOURCE_DARK_MODE = "/icons/NewDatabaseGrey.png";
 	private static final String ICON_PATH_NEW_WEB_SOURCE = "/icons/WebNew.png";
 	private static final String ICON_PATH_REMOVE = "/icons/Delete.png";
 	private static final String ICON_PATH_ADD_SERIES = "/icons/ListPlus.png";
 	private static final String ICON_PATH_REMOVE_SERIES = "/icons/ListMinus.png";
+	private static final String ICON_PATH_EXPERIMENTS_LIGHT_MODE = "/icons/TelescopeBlack.png";
+	private static final String ICON_PATH_EXPERIMENTS_DARK_MODE = "/icons/TelescopeGrey.png";
 	
 	private JToolBar toolBar;
 	private JButton jButtonAddCsvDataSource;
@@ -75,7 +83,6 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private DefaultMutableTreeNode rootNode;
 	private DefaultTreeModel treeModel;
 	private AbstractDataSourceConfigurationPanel dataSourceConfigPanel;
-	private JSeparator separator;
 	private JButton jButtonAddSeries;
 	private JButton jButtonRemoveSeries;
 	
@@ -84,6 +91,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private JSplitPane jSplitPaneMainPanel;
 	private JLabel jLabelDataSources;
 	private JLabel jLabelDataSeries;
+	private JButton jButtonExperimentsPanel;
+	
+	private JDialog explorationDialog;
 	
 	/**
 	 * Instantiates a new weather data provider configuration panel.
@@ -129,10 +139,12 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			toolBar.add(getJButtonAddDbDataSource());
 //			toolBar.add(getJButtonAddWebDataSource());
 			toolBar.add(getJButtonDeleteDataSource());
-			toolBar.add(getSeparator());
+			toolBar.add(getNewVerticalSeparator());
 			toolBar.add(getJLabelDataSeries());
 			toolBar.add(getJButtonAddSeries());
 			toolBar.add(getJButtonRemoveSeries());
+			toolBar.add(getNewVerticalSeparator());
+			toolBar.add(getJButtonExperimentsPanel());
 			
 		}
 		return toolBar;
@@ -140,8 +152,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private JButton getJButtonAddCsvDataSource() {
 		if (jButtonAddCsvDataSource == null) {
 			jButtonAddCsvDataSource = new JButton();
-			String iconPath = AwbLookAndFeelAdjustments.isDarkLookAndFeel() ? ICON_PATH_NEW_CSV_SOURCE_WHITE : ICON_PATH_NEW_CSV_SOURCE_BLACK;
-			jButtonAddCsvDataSource.setIcon(new ImageIcon(this.getClass().getResource(iconPath)));
+			jButtonAddCsvDataSource.setIcon(this.getThemedIcon(ICON_PATH_NEW_CSV_SOURCE_LIGHT_MODE, ICON_PATH_NEW_CSV_SOURCE_DARK_MODE));
 			jButtonAddCsvDataSource.setToolTipText("Create a new data source based on a CSV file");
 			jButtonAddCsvDataSource.setPreferredSize(buttonSize);
 			jButtonAddCsvDataSource.addActionListener(this);
@@ -151,8 +162,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private JButton getJButtonAddDbDataSource() {
 		if (jButtonAddDbDataSource == null) {
 			jButtonAddDbDataSource = new JButton();
-			String iconPath = AwbLookAndFeelAdjustments.isDarkLookAndFeel() ? ICON_PATH_NEW_DB_SOURCE_WHITE : ICON_PATH_NEW_DB_SOURCE_BLACK;
-			jButtonAddDbDataSource.setIcon(new ImageIcon(this.getClass().getResource(iconPath)));
+			jButtonAddDbDataSource.setIcon(this.getThemedIcon(ICON_PATH_NEW_DB_SOURCE_LIGHT_MODE, ICON_PATH_NEW_DB_SOURCE_DARK_MODE));
 			jButtonAddDbDataSource.setToolTipText("Create a new data source based on a database query");
 			jButtonAddDbDataSource.setPreferredSize(buttonSize);
 			jButtonAddDbDataSource.addActionListener(this);
@@ -180,14 +190,6 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			jButtonDeleteDataSource.addActionListener(this);
 		}
 		return jButtonDeleteDataSource;
-	}
-
-	private JSeparator getSeparator() {
-		if (separator == null) {
-			separator = new JSeparator();
-			separator.setOrientation(SwingConstants.VERTICAL);
-		}
-		return separator;
 	}
 
 	private JButton getJButtonAddSeries() {
@@ -456,7 +458,27 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			if (this.getDataSourceConfigPanel().getDataSourceConfiguraiton() instanceof CsvDataSourceConfiguration) {
 				this.addNewCsvDataSeries();
 			}
+		} else if (ae.getSource()==this.getJButtonExperimentsPanel()) {
+			this.showExplorationDialog();
 		}
+	}
+	
+	/**
+	 * Shows the experiments panel to test data sources.
+	 */
+	private void showExplorationDialog() {
+		if (explorationDialog==null) {
+			Window owner = null;
+			if (Application.getMainWindow()!=null) {
+				owner = (Window) Application.getMainWindow();
+			}
+			explorationDialog = new JDialog(owner);
+			explorationDialog.setTitle("Explore Time Series Data");
+			explorationDialog.setContentPane(new TimeSeriesDataExplorationPanel());
+			explorationDialog.setSize(600, 400);
+		}
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(explorationDialog, JDialogPosition.ParentCenter);
+		explorationDialog.setVisible(true);
 	}
 
 	/* (non-Javadoc)
@@ -484,7 +506,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) selectedNode.getParent();
 			if (parentNode!=null && parentNode.getUserObject()!=this.selectedDataSource) {
 				AbstractDataSourceConfiguration dataSourceConfiguration = (AbstractDataSourceConfiguration) parentNode.getUserObject();
-				this.selectedDataSource = dataSourceConfiguration;
+				this.setSelectedDataSource(dataSourceConfiguration);
 				this.getDataSourceConfigPanel().setDataSourceConfiguration(dataSourceConfiguration);
 			}
 			
@@ -582,8 +604,37 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	private JLabel getJLabelDataSeries() {
 		if (jLabelDataSeries == null) {
 			jLabelDataSeries = new JLabel(" Data Series");
+			jLabelDataSeries.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelDataSeries;
 	}
 	
+	private JSeparator getNewVerticalSeparator() {
+		JSeparator separator = new JSeparator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		return separator;
+	}
+	private JButton getJButtonExperimentsPanel() {
+		if (jButtonExperimentsPanel == null) {
+			jButtonExperimentsPanel = new JButton();
+			jButtonExperimentsPanel.setIcon(this.getThemedIcon(ICON_PATH_EXPERIMENTS_LIGHT_MODE, ICON_PATH_EXPERIMENTS_DARK_MODE));
+			jButtonExperimentsPanel.setToolTipText("Open the experimentation panel to test your data series");
+			jButtonExperimentsPanel.setPreferredSize(buttonSize);
+			jButtonExperimentsPanel.setEnabled(true);
+			jButtonExperimentsPanel.addActionListener(this);
+		}
+		return jButtonExperimentsPanel;
+	}
+	
+	/**
+	 * Creates a themed icon, using the provided URLs for light and dark mode images
+	 * @param lightModeImageURL the light mode image URL
+	 * @param darkModeImageURL the dark mode image URL
+	 * @return the themed icon
+	 */
+	private AwbThemeImageIcon getThemedIcon(String lightModeImageURL, String darkModeImageURL) {
+		ImageIcon lightModeIcon = new ImageIcon(this.getClass().getResource(lightModeImageURL)); 
+		ImageIcon darkModeIcon = new ImageIcon(this.getClass().getResource(darkModeImageURL));
+		return new AwbThemeImageIcon(lightModeIcon, darkModeIcon);
+	}
 }

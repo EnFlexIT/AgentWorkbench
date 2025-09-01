@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -169,4 +170,16 @@ public abstract class AbstractDataSourceConfiguration implements Serializable, P
 	 * @return the abstract data source
 	 */
 	public abstract AbstractDataSource createDataSource();
+	
+	/**
+	 * Gets a list of all configured data series for this data source.
+	 * @return the data series names
+	 */
+	public List<String> getDataSeriesNames(){
+		ArrayList<String> seriesNames = new ArrayList<String>();
+		for (AbstractDataSeriesConfiguration seriesConfig : this.getDataSeriesConfigurations()) {
+			seriesNames.add(seriesConfig.getName());
+		}
+		return seriesNames;
+	}
 }

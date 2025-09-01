@@ -35,4 +35,35 @@ public abstract class AbstractDataSource {
 	 */
 	public abstract List<TimeValuePair> getValuesForTimeRange(String seriesName, long timestampFrom, long timestampTo);
 	
+	/**
+	 * Gets the data series with the specified name.
+	 * @param seriesName the series name
+	 * @return the data series
+	 */
+	public abstract AbstractDataSeries getDataSeries(String seriesName);
+	
+	/**
+	 * Checks if this data source is available to provide data.
+	 * @return true, if is available
+	 */
+	public abstract boolean isAvailable();
+
+	/**
+	 * Gets the configuration for this data source.
+	 * @return the source configuration
+	 */
+	public abstract AbstractDataSourceConfiguration getSourceConfiguration();
+	
+	/**
+	 * Gets the data source name.
+	 * @return the name
+	 */
+	public String getName() {
+		if (this.getSourceConfiguration()!=null) {
+			return this.getSourceConfiguration().getName();
+		} else {
+			return null;
+		}
+	}
+	
 }

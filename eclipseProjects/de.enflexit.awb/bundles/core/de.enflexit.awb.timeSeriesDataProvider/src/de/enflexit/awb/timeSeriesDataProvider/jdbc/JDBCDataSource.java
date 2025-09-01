@@ -32,6 +32,9 @@ public class JDBCDataSource extends AbstractDataSource {
 	
 	private HashMap<String, JDBCDataSeries> dataSeriesMap;
 	
+	private Long firstTimeStamp;
+	private Long lastTimeStamp;
+	
 	/**
 	 * Instantiates a new JDBC data source.
 	 * @param sourceConfiguration the source configuration
@@ -50,10 +53,10 @@ public class JDBCDataSource extends AbstractDataSource {
 		this.setConnectionState(ConnectionState.NOT_CONNECTED);
 	}
 
-	/**
-	 * Gets the source configuration.
-	 * @return the source configuration
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#getSourceConfiguration()
 	 */
+	@Override
 	public JDBCDataScourceConfiguration getSourceConfiguration() {
 		return sourceConfiguration;
 	}
@@ -94,11 +97,13 @@ public class JDBCDataSource extends AbstractDataSource {
 				Properties databaseSettings = this.getSourceConfiguration().getDatabaseSettings();
 				connection = dbService.getDatabaseConnection(databaseSettings, new  Vector<String>(), true);
 				
-				try {
-					connection.setCatalog(databaseSettings.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
-				} catch (SQLException e) {
-					System.err.println("[" + this.getClass().getSimpleName() + "] Database does not exist!");
-					e.printStackTrace();
+				if(connection!=null) {
+					try {
+						connection.setCatalog(databaseSettings.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
+					} catch (SQLException e) {
+						System.err.println("[" + this.getClass().getSimpleName() + "] Database does not exist!");
+						e.printStackTrace();
+					}
 				}
 				this.setConnectionState(connection!=null ? ConnectionState.CONNECTED : ConnectionState.ERROR);
 			}
@@ -113,11 +118,14 @@ public class JDBCDataSource extends AbstractDataSource {
 	public Double getValue(String seriesName, long timestamp) {
 		JDBCDataSeries dataSeries = this.getDataSeriesMap().get(seriesName);
 		if (dataSeries!=null) {
-			return dataSeries.getSingleValue(timestamp);
+			TimeValuePair tvp = dataSeries.getValueForTime(timestamp);
+			if (tvp!=null) {
+				return dataSeries.getValueForTime(timestamp).getValue();
+			}
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] No time series named " + seriesName + " found for data source " + this.getSourceConfiguration().getName());
-			return null;
 		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -162,6 +170,14 @@ public class JDBCDataSource extends AbstractDataSource {
 		this.getDataSeriesMap().put(dataSeries.getName(), dataSeries);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#getDataSeries(java.lang.String)
+	 */
+	@Override
+	public JDBCDataSeries getDataSeries(String seriesName) {
+		return this.getDataSeriesMap().get(seriesName);
+	}
+
 	/**
 	 * Gets the {@link HibernateDatabaseService} implementation for the specified DBMS.
 	 * @param dbmsName the dbms name
@@ -220,22 +236,29 @@ public class JDBCDataSource extends AbstractDataSource {
 	 * @return the first timestamp
 	 */
 	public long getFirstTimestamp() {
-		long firstTimestamp = -1;
-		if (this.getDateTimeColumn()!=null) {
-			try {
-				String querySQL = "SELECT MIN(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
-				Statement statement = this.getConnection().createStatement();
-				ResultSet resultSet = statement.executeQuery(querySQL);
-				if (resultSet.next()) {
-					firstTimestamp = resultSet.getTimestamp(1).getTime();
-				} else {
-					System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+		if (this.firstTimeStamp==null) {
+			if (this.getDateTimeColumn()!=null) {
+				try {
+					String querySQL = "SELECT MIN(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+					Statement statement = this.getConnection().createStatement();
+					ResultSet resultSet = statement.executeQuery(querySQL);
+					if (resultSet.next()) {
+						this.firstTimeStamp = resultSet.getTimestamp(1).getTime();
+					} else {
+						System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		}
-		return firstTimestamp;
+		
+		if (this.firstTimeStamp!=null) {
+			return this.firstTimeStamp.longValue();
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Unable to determine the first time stamp for data source " + this.getName());
+			return -1;
+		}
 	}
 	
 	/**
@@ -243,21 +266,40 @@ public class JDBCDataSource extends AbstractDataSource {
 	 * @return the last timestamp
 	 */
 	public long getLastTimestamp() {
-		long firstTimestamp = 0;
-		if (this.getDateTimeColumn()!=null) {
-			try {
-				String querySQL = "SELECT MAX(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
-				Statement statement = this.getConnection().createStatement();
-				ResultSet resultSet = statement.executeQuery(querySQL);
-				if (resultSet.next()) {
-					firstTimestamp = resultSet.getTimestamp(1).getTime();
-				} else {
-					System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+		
+		if (this.lastTimeStamp==null) {
+			if (this.getDateTimeColumn()!=null) {
+				try {
+					String querySQL = "SELECT MAX(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+					Statement statement = this.getConnection().createStatement();
+					ResultSet resultSet = statement.executeQuery(querySQL);
+					if (resultSet.next()) {
+						this.lastTimeStamp = resultSet.getTimestamp(1).getTime();
+					} else {
+						System.err.println("[" + this.getClass().getSimpleName() + "] The database query did not return any results!");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		}
-		return firstTimestamp;
+		
+		if (this.lastTimeStamp!=null) {
+			return this.lastTimeStamp.longValue();
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Unable to determine the last time stamp for data source " + this.getName());
+			return -1;
+		}
+		
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#isAvailable()
+	 */
+	@Override
+	public boolean isAvailable() {
+		return (this.getConnection()!=null);
+	}
+
+	
 }

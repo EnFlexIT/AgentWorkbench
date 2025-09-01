@@ -41,6 +41,20 @@ public class TimeSeriesDataProviderConfiguration implements Serializable {
 		}
 		return dataSourceConfigurations;
 	}
+	
+	/**
+	 * Gets the data source configuration with the specified name.
+	 * @param dataSourceName the data source name
+	 * @return the data source configuration, null if not found
+	 */
+	public AbstractDataSourceConfiguration getDataSourceConfiguration(String dataSourceName) {
+		for (AbstractDataSourceConfiguration sourceConfig : this.getDataSourceConfigurations()) {
+			if (sourceConfig.getName().equals(dataSourceName)) {
+				return sourceConfig;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Sets the data source configurations.

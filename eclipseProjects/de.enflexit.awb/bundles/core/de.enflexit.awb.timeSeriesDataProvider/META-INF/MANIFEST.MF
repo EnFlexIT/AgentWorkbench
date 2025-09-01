@@ -6,7 +6,8 @@ Bundle-SymbolicName: de.enflexit.awb.timeSeriesDataProvider;singleton:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Bundle-Version: 1.0.0.qualifier
-Export-Package: de.enflexit.awb.timeSeriesDataProvider
+Export-Package: de.enflexit.awb.timeSeriesDataProvider,
+ de.enflexit.awb.timeSeriesDataProvider.gui
 Import-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.baseUI.systemtray,

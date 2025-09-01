@@ -15,9 +15,9 @@ public class JDBCDataScourceConfiguration extends AbstractDataSourceConfiguratio
 	
 	private static final long serialVersionUID = 4864231784777194491L;
 	
-	private static final String ICON_PATH_WHITE = "/icons/DataBaseWhite.png";
-	private static final String ICON_PATH_BLACK = "/icons/DataBaseBlack.png";
-	private static final String ICON_PATH_GREY = "/icons/DataBaseGrey.png";
+	private static final String ICON_PATH_WHITE = "/icons/DatabaseWhite.png";
+	private static final String ICON_PATH_BLACK = "/icons/DatabaseBlack.png";
+	private static final String ICON_PATH_GREY = "/icons/DatabaseGrey.png";
 
 	private String dbmsName;
 	private Properties databaseSettings;

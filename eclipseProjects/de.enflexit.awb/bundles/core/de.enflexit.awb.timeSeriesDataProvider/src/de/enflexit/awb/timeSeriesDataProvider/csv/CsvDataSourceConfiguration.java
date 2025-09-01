@@ -17,9 +17,9 @@ public class CsvDataSourceConfiguration extends AbstractDataSourceConfiguration 
 
 	private static final long serialVersionUID = 1236384812660513627L;
 	
-	private static final String ICON_PATH_WHITE = "/icons/CSVFileWhite.png";
-	private static final String ICON_PATH_BLACK = "/icons/CSVFileBlack.png";
-	private static final String ICON_PATH_GREY = "/icons/CSVFileGrey.png";
+	private static final String ICON_PATH_WHITE = "/icons/CsvFileWhite.png";
+	private static final String ICON_PATH_BLACK = "/icons/CsvFileBlack.png";
+	private static final String ICON_PATH_GREY = "/icons/CsvFileGrey.png";
 	
 	private String csvFilePath;
 	

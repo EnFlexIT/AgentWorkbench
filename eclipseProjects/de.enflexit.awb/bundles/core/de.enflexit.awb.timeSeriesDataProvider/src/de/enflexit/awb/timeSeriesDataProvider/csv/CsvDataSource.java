@@ -7,12 +7,14 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.TimeValuePair;
 import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.NumberHelper;
@@ -30,6 +32,7 @@ public class CsvDataSource extends AbstractDataSource {
 	private DateTimeFormatter dateTimeFormatter;
 	
 	private HashMap<String, Integer> dataColumns;
+	private HashMap<String, CsvDataSeries> dataSeriesHashMap;
 	
 	private ConcurrentHashMap<Long, HashMap<String, Double>> valuesByTimeHashMap;
 	
@@ -60,7 +63,10 @@ public class CsvDataSource extends AbstractDataSource {
 				value = valuesForTimestamp.get(seriesName);
 				if (value==null) {
 					// --- Get the value from the CSV data instead ----------
-					value = this.getValueFromCsvData(seriesName, timestamp);
+					TimeValuePair tvp = this.getValueFromCsvData(seriesName, timestamp);
+					if (tvp!=null) {
+						value = tvp.getValue();
+					}
 					// --- Remember for faster access -----------------------
 					valuesForTimestamp.put(seriesName, value);
 				}
@@ -76,8 +82,8 @@ public class CsvDataSource extends AbstractDataSource {
 	 * @param timestamp the timestamp
 	 * @return the value
 	 */
-	private Double getValueFromCsvData(String seriesName, long timestamp) {
-		Double value = null;
+	private TimeValuePair getValueFromCsvData(String seriesName, long timestamp) {
+		TimeValuePair value = null;
 		Integer columnIndex = this.getDataColumnForSeries(seriesName);
 		if (columnIndex!=null) {
 			int rowIndex = this.getDataRowIndex(timestamp);
@@ -86,7 +92,9 @@ public class CsvDataSource extends AbstractDataSource {
 				this.lastUsedRowIndex = rowIndex;
 				if (dataRow!=null) {
 					if (columnIndex!=null && columnIndex < dataRow.size()) {
-						value = dataRow.get(this.getDataColumnForSeries(seriesName)).doubleValue();
+						double val = dataRow.get(this.getDataColumnForSeries(seriesName)).doubleValue();
+						long csvTimestamp = dataRow.get(0).longValue();
+						value = new TimeValuePair(csvTimestamp, val);
 					}
 				}
 			}
@@ -276,6 +284,14 @@ public class CsvDataSource extends AbstractDataSource {
 	}
 	
 	/**
+	 * Gets the all time Stamps this data source contains values for.
+	 * @return the all time Stamps
+	 */
+	public Collection<Long> getAllTimeStamps(){
+		return this.getValuesByTimeHashMap().keySet();
+	}
+	
+	/**
 	 * Gets the values for a specific timestamp from the HashMap.
 	 * @param timestamp the timestamp
 	 * @return the values for timestamp
@@ -296,6 +312,46 @@ public class CsvDataSource extends AbstractDataSource {
 	public List<TimeValuePair> getValuesForTimeRange(String seriesName, long timestampFrom, long timestampTo) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#getDataSeries(java.lang.String)
+	 */
+	@Override
+	public CsvDataSeries getDataSeries(String seriesName) {
+		CsvDataSeries dataSeries = this.getDataSeriesHashMap().get(seriesName);
+		if (dataSeries==null && this.sourceConfiguration.getDataSeriesNames().contains(seriesName)) {
+			dataSeries = new CsvDataSeries(seriesName, this);
+		}
+		return dataSeries;
+	}
+	
+	/**
+	 * Gets the data series hash map.
+	 *
+	 * @return the data series hash map
+	 */
+	private HashMap<String, CsvDataSeries> getDataSeriesHashMap() {
+		if (dataSeriesHashMap==null) {
+			dataSeriesHashMap = new HashMap<String, CsvDataSeries>();
+		}
+		return dataSeriesHashMap;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#isAvailable()
+	 */
+	@Override
+	public boolean isAvailable() {
+		return (this.getCsvData()!=null);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource#getSourceConfiguration()
+	 */
+	@Override
+	public AbstractDataSourceConfiguration getSourceConfiguration() {
+		return this.sourceConfiguration;
 	}
 	
 }
