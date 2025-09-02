@@ -156,7 +156,12 @@ public class TimeSeriesFunctionEvaluator {
 		}
 		
 		int numberOfSteps = this.getIntegerValueFromParameter(parameters.get(3));
-		long stepLength = (endTime-startTime) / (numberOfSteps-1);
+		long stepLength;
+		if (numberOfSteps>1) {
+			stepLength = (endTime-startTime) / (numberOfSteps-1);
+		} else {
+			stepLength = endTime-startTime;
+		}
 		
 		Double[] stepValues = new Double[numberOfSteps];
 		
