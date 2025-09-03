@@ -479,6 +479,26 @@
 				</dependency>
 			</dependencies>
 		</location>
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, JPMML-dependencies 				             -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<location includeConfigurePhase="true" includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>org.jpmml</groupId>
+					<artifactId>pmml-evaluator</artifactId>
+					<version>1.7.4</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.jpmml</groupId>
+					<artifactId>pmml-model</artifactId>
+					<version>1.7.4</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
 
 	</locations>
 
