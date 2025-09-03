@@ -178,24 +178,27 @@ public class JDBCDataSeries extends AbstractDataSeries {
 					resultList.add(new TimeValuePair(timestamp.getTime(), value));
 				}
 				
-				// --- Check if the time range boundaries are actually part of the result
-				TimeValuePair firstEntry = resultList.get(0);
-				if (firstEntry.getTimestamp()>timeFrom) {
-					// --- Add the next earlier value to cover the whole time range
-					TimeValuePair nextEarlierValue = this.getClosestValueBefore(timestampFrom);
-					if (nextEarlierValue!=null) {
-						resultList.add(0, nextEarlierValue);
+				if (resultList.size()>0) {
+					// --- Check if the time range boundaries are actually part of the result
+					TimeValuePair firstEntry = resultList.get(0);
+					if (firstEntry.getTimestamp()>timeFrom) {
+						// --- Add the next earlier value to cover the whole time range
+						TimeValuePair nextEarlierValue = this.getClosestValueBefore(timestampFrom);
+						if (nextEarlierValue!=null) {
+							resultList.add(0, nextEarlierValue);
+						}
+					}
+					
+					TimeValuePair lastEntry = resultList.get(resultList.size()-1);
+					if (lastEntry.getTimestamp()<timeTo) {
+						// --- Add the next later value to cover the whole time range
+						TimeValuePair nextLaterEntry = this.getClosestValueAfter(timestampTo);
+						if (nextLaterEntry!=null) {
+							resultList.add(nextLaterEntry);
+						}
 					}
 				}
 				
-				TimeValuePair lastEntry = resultList.get(resultList.size()-1);
-				if (lastEntry.getTimestamp()<timeTo) {
-					// --- Add the next later value to cover the whole time range
-					TimeValuePair nextLaterEntry = this.getClosestValueAfter(timestampTo);
-					if (nextLaterEntry!=null) {
-						resultList.add(nextLaterEntry);
-					}
-				}
 				
 				
 			} else {
