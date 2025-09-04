@@ -507,7 +507,6 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			if (parentNode!=null && parentNode.getUserObject()!=this.selectedDataSource) {
 				AbstractDataSourceConfiguration dataSourceConfiguration = (AbstractDataSourceConfiguration) parentNode.getUserObject();
 				this.setSelectedDataSource(dataSourceConfiguration);
-				this.getDataSourceConfigPanel().setDataSourceConfiguration(dataSourceConfiguration);
 			}
 			
 			// --- Set the series data to the config panel ------
