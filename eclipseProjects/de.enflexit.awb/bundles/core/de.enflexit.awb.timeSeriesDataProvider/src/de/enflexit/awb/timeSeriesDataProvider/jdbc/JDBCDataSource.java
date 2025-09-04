@@ -95,16 +95,7 @@ public class JDBCDataSource extends AbstractDataSource {
 			HibernateDatabaseService dbService = this.getDbService(this.sourceConfiguration.getDbmsName());
 			if (dbService!=null) {
 				Properties databaseSettings = this.getSourceConfiguration().getDatabaseSettings();
-				connection = dbService.getDatabaseConnection(databaseSettings, new  Vector<String>(), true);
-				
-				if(connection!=null) {
-					try {
-						connection.setCatalog(databaseSettings.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
-					} catch (SQLException e) {
-						System.err.println("[" + this.getClass().getSimpleName() + "] Database does not exist!");
-						e.printStackTrace();
-					}
-				}
+				connection = dbService.getDatabaseConnection(databaseSettings, new  Vector<String>(), false, false);
 				this.setConnectionState(connection!=null ? ConnectionState.CONNECTED : ConnectionState.ERROR);
 			}
 		}

@@ -72,6 +72,16 @@ public interface HibernateDatabaseService {
 	public Connection getDatabaseConnection(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole);
 	
 	/**
+	 * Creates a database connection as specified by the provided hibernate properties. While the other getConnection method always removes the DB from the JDBC URL, that is optional with this method.
+	 * @param hibernateProperties the hibernate properties
+	 * @param userMessageVector the user message vector
+	 * @param isPrintToConole the is print to conole
+	 * @param removeDbFromUrl specifies if the database should be removed from the JDBC URL
+	 * @return the database connection
+	 */
+	public Connection getDatabaseConnection(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole, boolean removeDbFromUrl);
+	
+	/**
 	 * Has to return the list of databases database list.
 	 *
 	 * @param connection the connection
