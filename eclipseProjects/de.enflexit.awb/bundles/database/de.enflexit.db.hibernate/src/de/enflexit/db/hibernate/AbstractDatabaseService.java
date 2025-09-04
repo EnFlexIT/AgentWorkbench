@@ -77,6 +77,9 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 
 		int lastSlash = url.lastIndexOf("/") + 1;
 		if (driverClass.startsWith("org.apache.derby")==true) lastSlash=-1;
+		
+		// --- Don't remove the DB for postgres, since it will connect to the default DB then and not allow to change this 
+		if (driverClass.startsWith("org.postgresql")==true) lastSlash=-1;
 		String urlWithoutDB = lastSlash!=-1 ? url.substring(0, lastSlash) : url;
 		
 		try {

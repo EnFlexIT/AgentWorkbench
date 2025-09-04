@@ -579,12 +579,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 				Vector<String> tablesList = new Vector<String>();
 				tablesList.add("--- Please Select ---");
 				DatabaseMetaData dbMetaData = this.getConnection().getMetaData();
-				String catalog = null;
-				
-				// --- Unfortunately necessary, since catalog switching isn't possible for postgres
-				if (this.isPostGresConnection()==false) {
-					catalog = this.getSourceConfiguration().getDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog);
-				}
+				String catalog = this.getSourceConfiguration().getDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog);
 				String[] typeFilter = {"TABLE", "VIEW"};
 				try (ResultSet rs = dbMetaData.getTables(catalog, "public", "%", typeFilter) ){
 					while(rs.next()) {
@@ -598,15 +593,6 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Checks if this data source uses a postgres connection
-	 * @return true, if is postgres connection
-	 */
-	private boolean isPostGresConnection() {
-		String driverClass =this.getDataSource().getSourceConfiguration().getDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
-		return driverClass.equals("org.postgresql.Driver");
 	}
 	
 	/**
