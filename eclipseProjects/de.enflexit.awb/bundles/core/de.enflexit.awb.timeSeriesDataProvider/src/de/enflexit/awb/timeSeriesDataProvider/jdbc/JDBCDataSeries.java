@@ -110,7 +110,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 				double resultValue = resultSet.getDouble(this.getDataColumn());
 				tvp = new TimeValuePair(resultTime, resultValue);
 			} else {
-				System.out.println("[" + this.getClass().getSimpleName() + "] No value found for the provided timestamp");
+				System.err.println("[" + this.getClass().getSimpleName() + "] No value found for the provided timestamp");
 			}
 		}
 		
@@ -134,7 +134,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 				double resultValue = resultSet.getDouble(this.getDataColumn());
 				tvp = new TimeValuePair(resultTime, resultValue);
 			} else {
-				System.out.println("[" + this.getClass().getSimpleName() + "] No value found for the provided timestamp");
+				System.err.println("[" + this.getClass().getSimpleName() + "] No value found for the provided timestamp");
 			}
 		}
 		
@@ -322,7 +322,6 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	private PreparedStatement getSelectValueRangeStatement() throws SQLException {
 		if (statementSelectValueRange==null) {
 			String statementString = "SELECT \"" + this.getDateTimeColumn() + "\", \"" + this.getDataColumn() + "\" FROM \"" + this.getDatabaseTable() + "\" WHERE \"" + this.getDateTimeColumn() + "\" BETWEEN ? and ? ORDER BY \"" + this.getDateTimeColumn() + "\" ASC";
-			System.out.println(statementString);
 			statementSelectValueRange = this.getDataSource().getConnection().prepareStatement(statementString);
 		}
 		return statementSelectValueRange;

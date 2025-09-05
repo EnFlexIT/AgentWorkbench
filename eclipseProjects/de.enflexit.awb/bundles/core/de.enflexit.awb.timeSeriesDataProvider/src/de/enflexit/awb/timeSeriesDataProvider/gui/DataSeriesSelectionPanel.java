@@ -8,10 +8,12 @@ import javax.swing.JPanel;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
+import de.enflexit.common.swing.JComboBoxWide;
 
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 
@@ -41,7 +43,7 @@ public class DataSeriesSelectionPanel extends JPanel implements ActionListener {
 	private ImageIcon imageIconNotAvailable;
 	private ImageIcon imageIconNotSelected;
 	private JLabel jLabelDataSeries;
-	private JComboBox<String> jComboBoxDataSeries;
+	private JComboBoxWide<String> jComboBoxDataSeries;
 	private DefaultComboBoxModel<String>  dataSeriesComboBoxModel;
 	
 	private AbstractDataSource selectedDataSource;
@@ -148,10 +150,12 @@ public class DataSeriesSelectionPanel extends JPanel implements ActionListener {
 		}
 		return jLabelDataSeries;
 	}
-	private JComboBox<String> getJComboBoxDataSeries() {
+	private JComboBoxWide<String> getJComboBoxDataSeries() {
 		if (jComboBoxDataSeries == null) {
-			jComboBoxDataSeries = new JComboBox<String>();
-			jComboBoxDataSeries.setModel(this.getDataSeriesComboBoxModel());
+			jComboBoxDataSeries = new JComboBoxWide<String>(this.getDataSeriesComboBoxModel());
+			jComboBoxDataSeries.setMaximumRowCount(18);
+			jComboBoxDataSeries.setPreferredSize(new Dimension(205, 26));
+			jComboBoxDataSeries.setMaximumSize(new Dimension(205, 26));
 			jComboBoxDataSeries.addActionListener(this);
 		}
 		return jComboBoxDataSeries;
