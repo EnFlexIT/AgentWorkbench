@@ -230,7 +230,7 @@ public class JDBCDataSource extends AbstractDataSource {
 		if (this.firstTimeStamp==null) {
 			if (this.getDateTimeColumn()!=null) {
 				try {
-					String querySQL = "SELECT MIN(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+					String querySQL = "SELECT MIN(\"" + this.getDateTimeColumn() + "\") FROM \"" + this.getDatabaseTable() + "\"";
 					Statement statement = this.getConnection().createStatement();
 					ResultSet resultSet = statement.executeQuery(querySQL);
 					if (resultSet.next()) {
@@ -261,7 +261,7 @@ public class JDBCDataSource extends AbstractDataSource {
 		if (this.lastTimeStamp==null) {
 			if (this.getDateTimeColumn()!=null) {
 				try {
-					String querySQL = "SELECT MAX(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+					String querySQL = "SELECT MAX(\"" + this.getDateTimeColumn() + "\") FROM \"" + this.getDatabaseTable() + "\"";
 					Statement statement = this.getConnection().createStatement();
 					ResultSet resultSet = statement.executeQuery(querySQL);
 					if (resultSet.next()) {

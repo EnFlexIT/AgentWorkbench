@@ -282,7 +282,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	 */
 	private  PreparedStatement getSelectSingleValueStatement() throws SQLException {
 		if (statementSelectSingleValue==null) {
-			String statementString = "SELECT " + this.getDateTimeColumn() + ", " + this.getDataColumn() + " FROM " + this.getDatabaseTable() + " WHERE " + this.getDateTimeColumn() + " = ?";
+			String statementString = "SELECT \"" + this.getDateTimeColumn() + "\", \"" + this.getDataColumn() + "\" FROM \"" + this.getDatabaseTable() + "\" WHERE \"" + this.getDateTimeColumn() + "\" = ?";
 			statementSelectSingleValue = this.getDataSource().getConnection().prepareStatement(statementString);
 		}
 		return statementSelectSingleValue;
@@ -295,7 +295,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	 */
 	private PreparedStatement getStatementSelectClosestValueBefore() throws SQLException {
 		if (statementSelectClosestValueBefore==null) {
-			String statementString = "SELECT " + this.getDateTimeColumn() + ", " + this.getDataColumn() + " FROM " + this.getDatabaseTable() + " WHERE " + this.getDateTimeColumn() + " < ? ORDER BY " + this.getDateTimeColumn() + " DESC LIMIT 1";
+			String statementString = "SELECT \"" + this.getDateTimeColumn() + "\", \"" + this.getDataColumn() + "\" FROM \"" + this.getDatabaseTable() + "\" WHERE \"" + this.getDateTimeColumn() + "\" < ? ORDER BY \"" + this.getDateTimeColumn() + "\" DESC LIMIT 1";
 			statementSelectClosestValueBefore = this.getDataSource().getConnection().prepareStatement(statementString);
 		}
 		return statementSelectClosestValueBefore;
@@ -308,7 +308,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	 */
 	private PreparedStatement getStatementSelectClosestValueAfter() throws SQLException {
 		if (statementSelectClosestValueAfter==null) {
-			String statementString = "SELECT " + this.getDateTimeColumn() + ", " + this.getDataColumn() + " FROM " + this.getDatabaseTable() + " WHERE " + this.getDateTimeColumn() + " > ? ORDER BY " + this.getDateTimeColumn() + " ASC LIMIT 1";
+			String statementString = "SELECT \"" + this.getDateTimeColumn() + "\", \"" + this.getDataColumn() + "\" FROM \"" + this.getDatabaseTable() + "\" WHERE \"" + this.getDateTimeColumn() + "\" > ? ORDER BY \"" + this.getDateTimeColumn() + "\" ASC LIMIT 1";
 			statementSelectClosestValueAfter = this.getDataSource().getConnection().prepareStatement(statementString);
 		}
 		return statementSelectClosestValueAfter;
@@ -321,7 +321,8 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	 */
 	private PreparedStatement getSelectValueRangeStatement() throws SQLException {
 		if (statementSelectValueRange==null) {
-			String statementString = "SELECT " + this.getDateTimeColumn() + ", " + this.getDataColumn() + " FROM " + this.getDatabaseTable() + " WHERE " + this.getDateTimeColumn() + " BETWEEN ? and ? ORDER BY " + this.getDateTimeColumn() + " ASC";
+			String statementString = "SELECT \"" + this.getDateTimeColumn() + "\", \"" + this.getDataColumn() + "\" FROM \"" + this.getDatabaseTable() + "\" WHERE \"" + this.getDateTimeColumn() + "\" BETWEEN ? and ? ORDER BY \"" + this.getDateTimeColumn() + "\" ASC";
+			System.out.println(statementString);
 			statementSelectValueRange = this.getDataSource().getConnection().prepareStatement(statementString);
 		}
 		return statementSelectValueRange;
@@ -333,7 +334,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	@Override
 	public long getFirstTimeStamp() {
 		long firstTimeLong = 0;
-		String statementString = "SELECT MIN(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+		String statementString = "SELECT MIN(\"" + this.getDateTimeColumn() + "\") FROM \"" + this.getDatabaseTable() + "\"";
 		try {
 			ResultSet queryResult = this.executeQuery(statementString);
 			if (queryResult!=null && queryResult.next()) {
@@ -354,7 +355,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	@Override
 	public long getLastTimeStamp() {
 		long lastTimeLong = 0;
-		String statementString = "SELECT MAX(" + this.getDateTimeColumn() + ") FROM " + this.getDatabaseTable();
+		String statementString = "SELECT MAX(\"" + this.getDateTimeColumn() + "\") FROM \"" + this.getDatabaseTable() + "\"";
 		try {
 			ResultSet queryResult = this.executeQuery(statementString);
 			if (queryResult!=null && queryResult.next()) {
@@ -375,7 +376,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	@Override
 	public int getNumberOfEntries() {
 		int numEntries = 0;
-		String statementString = "SELECT COUNT(*) FROM " + this.getDatabaseTable();
+		String statementString = "SELECT COUNT(*) FROM \"" + this.getDatabaseTable() + "\"";
 		try {
 			ResultSet queryResult = this.executeQuery(statementString);
 			if (queryResult!=null && queryResult.next()) {
