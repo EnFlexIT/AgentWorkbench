@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
@@ -28,6 +29,7 @@ public class JDBCDataSeries extends AbstractDataSeries {
 	private PreparedStatement statementSelectClosestValueAfter;
 	
 	private HashMap<Long, TimeValuePair> valueCache;
+	private boolean preLoadDone;
 	
 	/**
 	 * Instantiates a new JDBC data series.
@@ -37,7 +39,6 @@ public class JDBCDataSeries extends AbstractDataSeries {
 		this.dataSource = dataSource;
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries#getValue(long)
 	 */
@@ -404,6 +405,20 @@ public class JDBCDataSeries extends AbstractDataSeries {
 			return null;
 		}
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries#preCacheValues(long, long)
+	 */
+	@Override
+	public void preLoadValues(long timeFrom, long timeTo) {
+		if (preLoadDone==false) {
+			List<TimeValuePair> valuesForTimeRange = this.getValuesForTimeRange(timeFrom, timeTo);
+			for (TimeValuePair tvp : valuesForTimeRange) {
+				this.getValueCache().put(tvp.getTimestamp(), tvp);
+			}
+			preLoadDone = true;
+		}
 	}
 	
 }

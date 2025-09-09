@@ -185,12 +185,16 @@ public class DataSeriesSelectionPanel extends JPanel implements ActionListener {
 		this.selectedDataSource = dataSource;
 		
 		// --- If the source was not set from the combo box, update the selection
+		this.pauseListener = true;
 		String currentSelection = (String) this.getJComboBoxDataSource().getSelectedItem();
-		if (dataSource!=null && currentSelection.equals(dataSource.getName())==false) {
-			this.pauseListener = true;
-			this.getJComboBoxDataSource().setSelectedItem(dataSource.getName());
-			this.pauseListener = false;
+		if (dataSource!=null) {
+			if (currentSelection.equals(dataSource.getName())==false) {
+				this.getJComboBoxDataSource().setSelectedItem(dataSource.getName());
+			}
+		} else {
+			this.getJComboBoxDataSource().setSelectedItem(COMBOBOX_ENTRY_NOTHING_SELECTED);
 		}
+		this.pauseListener = false;
 		
 		this.setAvailabilityLabelState();
 		
@@ -217,8 +221,12 @@ public class DataSeriesSelectionPanel extends JPanel implements ActionListener {
 		
 		// --- If the series was not set from the combo box, update the selection   
 		String currentSelection = (String) this.getJComboBoxDataSeries().getSelectedItem();
-		if (dataSeries!=null && currentSelection.equals(dataSeries.getName())==false) {
-			this.getJComboBoxDataSeries().setSelectedItem(dataSeries.getName());
+		if (dataSeries!=null) {
+			if (currentSelection.equals(dataSeries.getName())==false) {
+				this.getJComboBoxDataSeries().setSelectedItem(dataSeries.getName());
+			}
+		} else {
+			this.getJComboBoxDataSeries().setSelectedItem(COMBOBOX_ENTRY_NOTHING_SELECTED);
 		}
 	}
 	

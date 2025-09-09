@@ -46,4 +46,11 @@ public abstract class AbstractDataSeries {
 	 * @return the values
 	 */
 	public abstract List<TimeValuePair> getValuesForTimeRange(long timestampFrom, long timestampTo);
+	
+	/**
+	 * Pre-chache values for the specified time-range.
+	 * @param timeFrom the time from which to cache values
+	 * @param timeTo the time to which to cache values
+	 */
+	public abstract void preLoadValues(long timeFrom, long timeTo);
 }

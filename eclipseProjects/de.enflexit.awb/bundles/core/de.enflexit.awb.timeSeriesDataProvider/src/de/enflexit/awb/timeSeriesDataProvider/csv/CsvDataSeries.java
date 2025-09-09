@@ -72,4 +72,12 @@ public class CsvDataSeries extends AbstractDataSeries {
 		return this.parentSource.getValuesForTimeRange(this.getName(), timestampFrom, timestampTo);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries#preCacheValues(long, long)
+	 */
+	@Override
+	public void preLoadValues(long timeFrom, long timeTo) {
+		// --- Not required here, since the whole data set is kept in memory anyway.
+	}
+
 }
