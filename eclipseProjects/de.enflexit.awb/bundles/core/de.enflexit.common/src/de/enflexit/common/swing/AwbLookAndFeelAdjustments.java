@@ -175,7 +175,7 @@ public class AwbLookAndFeelAdjustments {
 	 */
 	public static ImageIcon getNegativeImageForDarkLookAndFeel(ImageIcon icon) {
 		if (icon==null || AwbLookAndFeelAdjustments.isDarkLookAndFeel()==false) return icon;
-		return ImageHelper.getNegativeImage(icon);
+		return ImageHelper.getNegativeImageIcon(icon);
 	}
 	
 	/**

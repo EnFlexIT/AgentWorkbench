@@ -18,8 +18,32 @@ public class AwbThemeImageIcon extends ImageIcon {
 
 	private static final long serialVersionUID = 3546265878162117304L;
 	
-	private ImageIcon darkThemeImageIcon;
-
+	private Image darkThemeImage;
+	
+	
+	/**
+	 * Instantiates a new AWB theme image icon by generating a negative for the specified light theme image icon. 
+	 *
+	 * @param lightThemeImage the light theme image icon
+	 */
+	public AwbThemeImageIcon(Image lightThemeImage) {
+		this(lightThemeImage, null);
+	}
+	/**
+	 * Instantiates a new AWB theme image icon.
+	 *
+	 * @param lightThemeImage the light theme image icon
+	 * @param darkThemeImage the dark theme image icon
+	 */
+	public AwbThemeImageIcon(Image lightThemeImage, Image darkThemeImage) {
+		super(lightThemeImage, null);
+		if (darkThemeImage!=null) {
+			this.darkThemeImage = darkThemeImage;
+		} else {
+			this.darkThemeImage = ImageHelper.getNegativeImage(lightThemeImage);
+		}
+	}
+	
 	/**
 	 * Instantiates a new AWB theme image icon by generating a negative for the specified light theme image icon. 
 	 *
@@ -37,11 +61,12 @@ public class AwbThemeImageIcon extends ImageIcon {
 	public AwbThemeImageIcon(ImageIcon lightThemeImageIcon, ImageIcon darkThemeImageIcon) {
 		super(lightThemeImageIcon.getImage(), lightThemeImageIcon.getDescription());
 		if (darkThemeImageIcon!=null) {
-			this.darkThemeImageIcon = darkThemeImageIcon;
+			this.darkThemeImage = darkThemeImageIcon.getImage();
 		} else {
-			this.darkThemeImageIcon = ImageHelper.getNegativeImage(lightThemeImageIcon);
+			this.darkThemeImage = ImageHelper.getNegativeImage(lightThemeImageIcon);
 		}
 	}
+
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.ImageIcon#getImage()
@@ -49,7 +74,7 @@ public class AwbThemeImageIcon extends ImageIcon {
 	@Override
 	public Image getImage() {
 		if (AwbLookAndFeelAdjustments.isDarkLookAndFeel()==true) {
-			return darkThemeImageIcon.getImage();
+			return darkThemeImage;
 		}
 		return super.getImage();
 	}

@@ -55,15 +55,47 @@ public class ImageHelper {
 	}
 	
 	/**
-	 * Returns the negative image.
+	 * Returns the negative image icon.
 	 *
 	 * @param image the buffered image
 	 * @return the negative image
 	 */
-	public static ImageIcon getNegativeImage(ImageIcon iIcon) {
+	public static ImageIcon getNegativeImageIcon(ImageIcon iIcon) {
 		if (iIcon==null) return null;
-		return new ImageIcon(ImageHelper.getNegativeImage(ImageHelper.convertToBufferedImage(iIcon.getImage())));
+		return ImageHelper.getNegativeImageIcon(iIcon.getImage());
 	}
+	/**
+	 * Returns the negative image icon.
+	 *
+	 * @param image to build the negative from
+	 * @return the negative image
+	 */
+	public static ImageIcon getNegativeImageIcon(Image image) {
+		if (image==null) return null;
+		return new ImageIcon(ImageHelper.getNegativeImage(image));
+	}
+	
+	/**
+	 * Returns the negative image.
+	 *
+	 * @param iIcon the ImageIcon to build the negative from
+	 * @return the negative image
+	 */
+	public static Image getNegativeImage(ImageIcon iIcon) {
+		if (iIcon==null) return null;
+		return ImageHelper.getNegativeImage(iIcon.getImage());
+	}
+	/**
+	 * Returns the negative image.
+	 *
+	 * @param image to build the negative from
+	 * @return the negative image
+	 */
+	public static Image getNegativeImage(Image image) {
+		if (image==null) return null;
+		return ImageHelper.getNegativeImage(ImageHelper.convertToBufferedImage(image));
+	}
+	
 	/**
 	 * Returns the negative image.
 	 *
