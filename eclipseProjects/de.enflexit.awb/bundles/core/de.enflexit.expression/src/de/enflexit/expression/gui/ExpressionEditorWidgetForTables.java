@@ -1,6 +1,7 @@
 package de.enflexit.expression.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -56,7 +58,7 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		gbc_jTextFieldExpression.gridy = 0;
 		add(getJTextFieldExpression(), gbc_jTextFieldExpression);
 		GridBagConstraints gbc_jButtonExpressionEditor = new GridBagConstraints();
-		gbc_jButtonExpressionEditor.anchor = GridBagConstraints.WEST;
+		gbc_jButtonExpressionEditor.fill = GridBagConstraints.VERTICAL;
 		gbc_jButtonExpressionEditor.gridx = 1;
 		gbc_jButtonExpressionEditor.gridy = 0;
 		add(getJButtonExpressionEditor(), gbc_jButtonExpressionEditor);
@@ -91,9 +93,14 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 	private JButton getJButtonExpressionEditor() {
 		if (jButtonExpressionEditor == null) {
 			jButtonExpressionEditor = new JButton();
-//			jButtonExpressionEditor.setIcon(new ImageIcon(this.getClass().getResource(ICON_PATH_EDIT_BUTTON)));
 			jButtonExpressionEditor.setToolTipText("Open Expression Editor");
 			jButtonExpressionEditor.addActionListener(this);
+//			int preferredWidth = 26;
+//			int preferredHeight = this.getHeight();
+			Dimension buttonSize = new Dimension(16, 16);
+			jButtonExpressionEditor.setSize(buttonSize);
+			jButtonExpressionEditor.setPreferredSize(buttonSize);
+			jButtonExpressionEditor.setMaximumSize(buttonSize);
 		}
 		return jButtonExpressionEditor;
 	}
@@ -151,8 +158,6 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		this.expressionContext = expressionContext;
 	}
 	
-	
-	
 	/**
 	 * Gets the expression library filter.
 	 * @return the expression library filter
@@ -206,6 +211,30 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 		if (this.expression!=null) {
 			this.getJTextFieldExpression().setText(this.expression.getExpressionString());
 			this.setToolTipText(this.expression.getExpressionString());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#setToolTipText(java.lang.String)
+	 */
+	@Override
+	public void setToolTipText(String text) {
+		// --- Set for the text field only, while the button keeps its tool tip text
+		this.getJTextFieldExpression().setToolTipText(text);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#getToolTipText(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public String getToolTipText(MouseEvent me) {
+		//TODO figure out how to determine the actual button bounds
+		if (this.getComponentAt(me.getPoint())==this.getJButtonExpressionEditor()) {
+			// --- Return the button's tooltip text if inside the button
+			return this.getJButtonExpressionEditor().getToolTipText();
+		} else {
+			// --- Return the textfields tooltip text (=the expression) otherwise
+			return this.getJTextFieldExpression().getToolTipText();
 		}
 	}
 }
