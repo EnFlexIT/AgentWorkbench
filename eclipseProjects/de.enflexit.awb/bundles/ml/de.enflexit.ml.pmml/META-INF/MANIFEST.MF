@@ -4,9 +4,7 @@ Bundle-Name: Pmml
 Bundle-SymbolicName: de.enflexit.ml.pmml;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.ml.pmml.evaluator
-Import-Package: org.dmg.pmml;version="[1.6.0,2.0.0)",
- org.jpmml.evaluator;version="[1.6.0,2.0.0)",
- org.osgi.framework;version="1.10.0"
+Import-Package: org.osgi.framework;version="1.10.0"
 Bundle-Vendor: EnFlex.IT
 Require-Bundle: org.eclipse.swt,
  org.eclipse.jface,
@@ -15,4 +13,8 @@ Require-Bundle: org.eclipse.swt,
  de.enflexit.awb.core,
  de.enflexit.common
 Automatic-Module-Name: de.enflexit.ml.pmml
+Bundle-ClassPath: lib/guava-33.4.8-jre.jar,
+ lib/pmml-evaluator-1.7.4.jar,
+ lib/pmml-model-1.7.4.jar,
+ .
 Bundle-RequiredExecutionEnvironment: JavaSE-21
