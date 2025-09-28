@@ -2,22 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>de.enflexit.awb.bundles</artifactId>
+	<artifactId>de.enflexit.awb.bundles.ml</artifactId>
 	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>de.enflexit.awb</groupId>
-		<artifactId>de.enflexit.awb.root</artifactId>
+		<artifactId>de.enflexit.awb.bundles</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<modules>
-		<module>database</module>
-		<module>core</module>
-		<module>ml</module>
-		<module>desktop</module>
-		<module>web</module>
-
-		<module>de.enflexit.awb.help</module>
+		<module>de.enflexit.ml.pmml</module>
 	</modules>
 </project>
