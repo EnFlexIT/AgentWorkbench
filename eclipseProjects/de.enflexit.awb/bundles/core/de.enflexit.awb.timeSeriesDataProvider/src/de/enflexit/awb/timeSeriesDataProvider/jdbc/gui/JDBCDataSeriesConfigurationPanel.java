@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
@@ -166,15 +168,15 @@ public class JDBCDataSeriesConfigurationPanel extends JPanel implements ActionLi
 					JDBCDataSeriesConfigurationPanel.this.renameSeries();
 				}
 			});
-//			// --- Trigger rename when enter was pressed ------------
-//			jTextFieldSeriesName.addKeyListener(new KeyAdapter() {
-//				@Override
-//				public void keyReleased(KeyEvent ke) {
-//					if (ke.getKeyCode()==KeyEvent.VK_ENTER) {
-//						JDBCDataSeriesConfigurationPanel.this.renameSeries();
-//					}
-//				}
-//			});
+			// --- Trigger rename when enter was pressed ------------
+			jTextFieldSeriesName.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent ke) {
+					if (ke.getKeyCode()==KeyEvent.VK_ENTER) {
+						JDBCDataSeriesConfigurationPanel.this.renameSeries();
+					}
+				}
+			});
 		}
 		return jTextFieldSeriesName;
 	}

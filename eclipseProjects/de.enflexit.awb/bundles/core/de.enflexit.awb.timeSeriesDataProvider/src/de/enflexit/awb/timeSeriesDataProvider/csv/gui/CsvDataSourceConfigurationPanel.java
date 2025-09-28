@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider.ConfigurationScope;
 import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.csv.CsvDataSourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.gui.AbstractDataSourceConfigurationPanel;
@@ -94,6 +95,8 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	private JButton jButtonAutoGenerate;
 	
 	private boolean pauseReload;
+	private JLabel jLabelConfigurationScope;
+	private JComboBox<ConfigurationScope> jComboBoxConfigurationScope;
 	
 	/**
 	 * Instantiates a new csv data source configuration panel.
@@ -108,9 +111,9 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelCsvDataSource = new GridBagConstraints();
@@ -121,30 +124,30 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		gbc_jLabelCsvDataSource.gridy = 0;
 		add(getJLabelCsvDataSource(), gbc_jLabelCsvDataSource);
 		GridBagConstraints gbc_jLabelDataSourceName = new GridBagConstraints();
-		gbc_jLabelDataSourceName.insets = new Insets(0, 5, 5, 5);
+		gbc_jLabelDataSourceName.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelDataSourceName.anchor = GridBagConstraints.EAST;
 		gbc_jLabelDataSourceName.gridx = 0;
 		gbc_jLabelDataSourceName.gridy = 1;
 		add(getJLabelDataSourceName(), gbc_jLabelDataSourceName);
 		GridBagConstraints gbc_jTextFieldDataSourceName = new GridBagConstraints();
 		gbc_jTextFieldDataSourceName.gridwidth = 2;
-		gbc_jTextFieldDataSourceName.insets = new Insets(0, 0, 5, 5);
+		gbc_jTextFieldDataSourceName.insets = new Insets(5, 0, 5, 5);
 		gbc_jTextFieldDataSourceName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldDataSourceName.gridx = 1;
 		gbc_jTextFieldDataSourceName.gridy = 1;
 		add(getJTextFieldDataSourceName(), gbc_jTextFieldDataSourceName);
-		GridBagConstraints gbc_jCheckBoxHasHeadline = new GridBagConstraints();
-		gbc_jCheckBoxHasHeadline.anchor = GridBagConstraints.WEST;
-		gbc_jCheckBoxHasHeadline.insets = new Insets(0, 0, 5, 5);
-		gbc_jCheckBoxHasHeadline.gridx = 3;
-		gbc_jCheckBoxHasHeadline.gridy = 1;
-		add(getJCheckBoxHasHeadline(), gbc_jCheckBoxHasHeadline);
-		GridBagConstraints gbc_jButtonAutoGenerate = new GridBagConstraints();
-		gbc_jButtonAutoGenerate.anchor = GridBagConstraints.WEST;
-		gbc_jButtonAutoGenerate.insets = new Insets(0, 0, 5, 0);
-		gbc_jButtonAutoGenerate.gridx = 4;
-		gbc_jButtonAutoGenerate.gridy = 1;
-		add(getJButtonAutoGenerate(), gbc_jButtonAutoGenerate);
+		GridBagConstraints gbc_jLabelConfigurationScope = new GridBagConstraints();
+		gbc_jLabelConfigurationScope.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelConfigurationScope.gridx = 3;
+		gbc_jLabelConfigurationScope.gridy = 1;
+		add(getJLabelConfigurationScope(), gbc_jLabelConfigurationScope);
+		GridBagConstraints gbc_jComboBoxConfigurationScope = new GridBagConstraints();
+		gbc_jComboBoxConfigurationScope.gridwidth = 2;
+		gbc_jComboBoxConfigurationScope.insets = new Insets(5, 0, 5, 5);
+		gbc_jComboBoxConfigurationScope.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jComboBoxConfigurationScope.gridx = 4;
+		gbc_jComboBoxConfigurationScope.gridy = 1;
+		add(getJComboBoxConfigurationScope(), gbc_jComboBoxConfigurationScope);
 		GridBagConstraints gbc_jLabelFileName = new GridBagConstraints();
 		gbc_jLabelFileName.anchor = GridBagConstraints.EAST;
 		gbc_jLabelFileName.insets = new Insets(0, 5, 5, 5);
@@ -169,11 +172,23 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		gbc_jLabelColumnSeparator.gridy = 2;
 		add(getJLabelColumnSeparator(), gbc_jLabelColumnSeparator);
 		GridBagConstraints gbc_jComboBoxColumnSeparator = new GridBagConstraints();
-		gbc_jComboBoxColumnSeparator.insets = new Insets(0, 0, 5, 0);
+		gbc_jComboBoxColumnSeparator.insets = new Insets(0, 0, 5, 5);
 		gbc_jComboBoxColumnSeparator.anchor = GridBagConstraints.WEST;
 		gbc_jComboBoxColumnSeparator.gridx = 4;
 		gbc_jComboBoxColumnSeparator.gridy = 2;
 		add(getJComboBoxColumnSeparator(), gbc_jComboBoxColumnSeparator);
+		GridBagConstraints gbc_jCheckBoxHasHeadline = new GridBagConstraints();
+		gbc_jCheckBoxHasHeadline.anchor = GridBagConstraints.WEST;
+		gbc_jCheckBoxHasHeadline.insets = new Insets(0, 0, 5, 5);
+		gbc_jCheckBoxHasHeadline.gridx = 5;
+		gbc_jCheckBoxHasHeadline.gridy = 2;
+		add(getJCheckBoxHasHeadline(), gbc_jCheckBoxHasHeadline);
+		GridBagConstraints gbc_jButtonAutoGenerate = new GridBagConstraints();
+		gbc_jButtonAutoGenerate.anchor = GridBagConstraints.WEST;
+		gbc_jButtonAutoGenerate.insets = new Insets(0, 0, 5, 0);
+		gbc_jButtonAutoGenerate.gridx = 6;
+		gbc_jButtonAutoGenerate.gridy = 2;
+		add(getJButtonAutoGenerate(), gbc_jButtonAutoGenerate);
 		GridBagConstraints gbc_jLabelDateFormat = new GridBagConstraints();
 		gbc_jLabelDateFormat.anchor = GridBagConstraints.EAST;
 		gbc_jLabelDateFormat.insets = new Insets(0, 5, 5, 5);
@@ -192,14 +207,14 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		gbc_jButtonFormatCheck.gridy = 3;
 		add(getJButtonFormatCheck(), gbc_jButtonFormatCheck);
 		GridBagConstraints gbc_jScrollPaneCsvDataTable = new GridBagConstraints();
-		gbc_jScrollPaneCsvDataTable.insets = new Insets(5, 5, 5, 5);
-		gbc_jScrollPaneCsvDataTable.gridwidth = 5;
+		gbc_jScrollPaneCsvDataTable.insets = new Insets(5, 5, 5, 0);
+		gbc_jScrollPaneCsvDataTable.gridwidth = 7;
 		gbc_jScrollPaneCsvDataTable.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneCsvDataTable.gridx = 0;
 		gbc_jScrollPaneCsvDataTable.gridy = 4;
 		add(getJScrollPaneCsvDataTable(), gbc_jScrollPaneCsvDataTable);
 		GridBagConstraints gbc_seriesConfigurationPanel = new GridBagConstraints();
-		gbc_seriesConfigurationPanel.gridwidth = 5;
+		gbc_seriesConfigurationPanel.gridwidth = 7;
 		gbc_seriesConfigurationPanel.fill = GridBagConstraints.BOTH;
 		gbc_seriesConfigurationPanel.gridx = 0;
 		gbc_seriesConfigurationPanel.gridy = 5;
@@ -465,6 +480,25 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		}
 		return jTextFieldDataSourceName;
 	}
+	private JLabel getJLabelConfigurationScope() {
+		if (jLabelConfigurationScope == null) {
+			jLabelConfigurationScope = new JLabel("Store at:");
+			jLabelConfigurationScope.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelConfigurationScope;
+	}
+
+	private JComboBox<ConfigurationScope> getJComboBoxConfigurationScope() {
+		if (jComboBoxConfigurationScope == null) {
+			jComboBoxConfigurationScope = new JComboBox<>();
+			jComboBoxConfigurationScope.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxConfigurationScope.setModel(new DefaultComboBoxModel<ConfigurationScope>(ConfigurationScope.values()));
+			jComboBoxConfigurationScope.setToolTipText("Decide where to store the data source. If stored in the application, it will be available independently of the current project. If stored in the project, it is limited to that project, but can easily be shared together with it.");
+			jComboBoxConfigurationScope.addActionListener(this);
+		}
+		return jComboBoxConfigurationScope;
+	}
+
 	private JLabel getJLabelDateFormat() {
 		if (jLabelDateFormat == null) {
 			jLabelDateFormat = new JLabel("Date Format:");

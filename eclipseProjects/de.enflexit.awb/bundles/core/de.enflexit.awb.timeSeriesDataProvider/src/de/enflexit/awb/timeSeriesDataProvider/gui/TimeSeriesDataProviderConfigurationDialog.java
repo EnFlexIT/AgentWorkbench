@@ -95,7 +95,6 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 	
 	/**
 	 * Gets the ok button.
-	 *
 	 * @return the ok button
 	 */
 	private JButton getBtnOk() {
@@ -131,7 +130,7 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getBtnOk()) {
-			TimeSeriesDataProvider.getInstance().storeConfigurationsList();
+			TimeSeriesDataProvider.getInstance().storeProviderConfigurations();
 			TimeSeriesDataProvider.getInstance().resetDataSources();
 			this.dispose();
 		} else if(ae.getSource()==this.getBtnCancel()) {

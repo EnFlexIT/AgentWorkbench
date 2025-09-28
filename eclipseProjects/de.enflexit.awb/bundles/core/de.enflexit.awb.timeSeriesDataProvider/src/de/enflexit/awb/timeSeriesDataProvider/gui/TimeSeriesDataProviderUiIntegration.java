@@ -9,14 +9,13 @@ import javax.swing.JButton;
 import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.core.ApplicationListener;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 
 /**
  * This class is responsible for the integration of the {@link TimeSeriesDataProvider} into the Agent.Workbench UI.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension implements ActionListener, ApplicationListener {
+public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension implements ActionListener {
 	
 	private static final String ICON_PATH = "/icons/TSDProvider.png";
 	
@@ -32,7 +31,6 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 	@Override
 	public void initialize() {
 		this.addToolbarComponent(this.getToolbarButton(), 8, SeparatorPosition.NoSeparator);
-		Application.addApplicationListener(this);
 	}
 	
 	/**
@@ -44,7 +42,6 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 			toolbarButton = new JButton(this.getImageIcon());
 			toolbarButton.setToolTipText("Configure global time series data sources.");
 			toolbarButton.addActionListener(this);
-			toolbarButton.setEnabled(this.isProjectLoaded());
 		}
 		return toolbarButton;
 	}
@@ -73,26 +70,6 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 			}
 		}
 		return configurationDialog;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
-	 */
-	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
-		switch (event.getApplicationEvent()) {
-		case ApplicationEvent.PROJECT_LOADED:
-		case ApplicationEvent.PROJECT_CLOSED:
-			this.getToolbarButton().setEnabled(this.isProjectLoaded());
-		}
-	}
-	
-	/**
-	 * Checks if a project is currently loaded.
-	 * @return true, if is project loaded
-	 */
-	private boolean isProjectLoaded() {
-		return Application.getProjectFocused()!=null;
 	}
 
 }
