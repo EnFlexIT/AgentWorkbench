@@ -311,8 +311,10 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 					sourceConfig.setColumnSeparator(";");
 					
 					// --- Add it to the data model -------------------------------
+					this.pauseListener = true;
 					TimeSeriesDataProvider.getInstance().addDataSourceConfiguration(sourceConfig);
-//					this.createAndAddTreeNode(sourceConfig);
+					this.pauseListener = false;
+					this.createAndAddTreeNode(sourceConfig);
 				}
 			}
 		}
@@ -325,7 +327,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		JDBCDataScourceConfiguration sourceConfig = new JDBCDataScourceConfiguration();
 		sourceConfig.setName("New JDBC data source");
 		sourceConfig.setConfigurationScope(ConfigurationScope.APPLICATION);
+		this.pauseListener = true;
 		TimeSeriesDataProvider.getInstance().addDataSourceConfiguration(sourceConfig);
+		this.pauseListener = false;
 		this.createAndAddTreeNode(sourceConfig);
 		
 	}
@@ -441,7 +445,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		
 		// --- Remove the node and the corresponding data source --------------
 		if (doDelete==true) {
-//			this.getRootNode().remove(dataSourceNode);
+			this.getRootNode().remove(dataSourceNode);
 			TimeSeriesDataProvider.getInstance().removeDataSource(dataSourceToDelete.getName());
 			this.getTreeModel().reload(this.getRootNode());
 		}
