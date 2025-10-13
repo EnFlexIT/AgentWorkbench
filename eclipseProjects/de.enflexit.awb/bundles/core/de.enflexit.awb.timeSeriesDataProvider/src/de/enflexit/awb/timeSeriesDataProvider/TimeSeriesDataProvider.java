@@ -167,7 +167,25 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		// --- Pass rename events on to the listeners -----
+		if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SOURCE_RENAMED)) {
+			// --- Since data sources and configurations are stored  
+			String oldName = (String) evt.getOldValue();
+			String newName = (String) evt.getNewValue();
+			this.updateHashMapKeys(oldName, newName);
+		}
 		this.notifyListeners(evt);
+	}
+	
+	/**
+	 * Changes the hashmap keys for configuration and source if a data source was renamed
+	 * @param oldName the old name
+	 * @param newName the new name
+	 */
+	private void updateHashMapKeys(String oldName, String newName) {
+		AbstractDataSourceConfiguration sourceConfig = this.getDataSourceConfigurations().remove(oldName);
+		this.getDataSourceConfigurations().put(newName, sourceConfig);
+		AbstractDataSource dataSource = this.getDataSourcesByName().remove(oldName);
+		this.getDataSourcesByName().put(newName, dataSource);
 	}
 	
 	/**
@@ -186,11 +204,14 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 			return configFile;
 			
 		} else {
-//			System.err.println("[" + this.getClass().getSimpleName() + "] No project loaded, unable load project-specific time series configuration.");
 			return null;
 		}
 	}
 	
+	/**
+	 * Gets the data sources configuration file for the application scope.
+	 * @return the application scope configuration file
+	 */
 	public File getApplicationScopeConfigurationFile() {
 		File configFile = null;
 		Path propertiesPath = Application.getGlobalInfo().getPathProperty(true);
@@ -198,9 +219,15 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 		return configFile;
 	}
 	
+	/**
+	 * Stores the current time series provider configurations.
+	 */
 	public void storeProviderConfigurations() {
+		
+		// --- Handle the different scopes separately
 		for (ConfigurationScope configScope : ConfigurationScope.values()) {
 			
+			// --- Collect all configurations for this scope ------------------
 			ArrayList<AbstractDataSourceConfiguration> configsForScope = new ArrayList<AbstractDataSourceConfiguration>();
 			for(AbstractDataSourceConfiguration sourceConfig : this.getDataSourceConfigurations().values()) {
 				if (sourceConfig.getConfigurationScope()==configScope) {
@@ -208,6 +235,7 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 				}
 			}
 			
+			// --- Determine the corresponding file, store the configuraitons 
 			File configFile = this.getProviderConfigurationFile(configScope);
 			if (configsForScope.size()>0) {
 				if (configFile!=null) {
@@ -218,7 +246,7 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 					System.err.println("[" + this.getClass().getSimpleName() + "] No config file specified for configuration scope " + configScope);
 				}
 			} else if (configsForScope.size()==0 && configFile.exists()) {
-				// --- If there are no configs but an existing config file, delete the file 
+				// --- If there are no configurations but an existing config file, delete the file 
 				configFile.delete();
 			}
 			

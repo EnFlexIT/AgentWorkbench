@@ -94,7 +94,7 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	private CsvDataSeriesConfigurationPanel seriesConfigurationPanel;
 	private JButton jButtonAutoGenerate;
 	
-	private boolean pauseReload;
+	private boolean pauseListener;
 	private JLabel jLabelConfigurationScope;
 	private JComboBox<ConfigurationScope> jComboBoxConfigurationScope;
 	
@@ -229,7 +229,7 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		this.currentSourceConfiguration = dataSourceConfiguration;
 		
 		if (dataSourceConfiguration!=null) {
-			if (this.pauseReload==false) {
+			if (this.pauseListener==false) {
 				this.setCsvDataFile(dataSourceConfiguration.getCsvFile());
 			}
 			
@@ -290,6 +290,9 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		}
 	}
 	
+	/**
+	 * Removes empty columns from the data set.
+	 */
 	private void removeEmptyColumns() {
 		
 		if (this.csvData!=null) {
@@ -328,6 +331,11 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		}
 	}
 	
+	/**
+	 * Gets the index for the column with the specified name.
+	 * @param columnHeader the column header
+	 * @return the index for column, -1 if not found
+	 */
 	private int getIndexForColumn(String columnHeader) {
 		if (this.csvData!=null) {
 			for (int i=0; i<this.getCsvData().get(0).size();i++) {
@@ -464,7 +472,9 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 			jTextFieldDataSourceName.addFocusListener(new FocusAdapter() {
 				@Override
 				public void focusLost(FocusEvent fe) {
-					CsvDataSourceConfigurationPanel.this.renameDataSource();
+					if (pauseListener==false) {
+						CsvDataSourceConfigurationPanel.this.renameDataSource();
+					}
 				}
 			});
 			
@@ -609,6 +619,10 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		return seriesConfigurationPanel;
 	}
 
+	/**
+	 * Sets the components enabled.
+	 * @param enabled the new components enabled
+	 */
 	private void setComponentsEnabled(boolean enabled) {
 		this.getJTextFieldDataSourceName().setEnabled(enabled);
 		this.getJTextFieldFileName().setEnabled(enabled);
@@ -732,12 +746,13 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	private void renameDataSource() {
 		
 		// --- Suppress unnecessary reloads of the CSV file.
-		this.pauseReload = true;
-		String textFieldContent = this.getJTextFieldDataSourceName().getText();
-		if (this.currentSourceConfiguration.getName().equals(textFieldContent)==false) {
-			this.currentSourceConfiguration.setName(this.getJTextFieldDataSourceName().getText());
+		this.pauseListener = true;
+		String newName = this.getJTextFieldDataSourceName().getText();
+		if (super.renameDataSource(newName)==false) {
+			// If the name was rejected, return to the textfield
+			this.getJTextFieldDataSourceName().requestFocus();
 		}
-		this.pauseReload = false;
+		this.pauseListener = false;
 	}
 
 	/**
@@ -784,7 +799,7 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	 * @see de.enflexit.awb.timeSeriesDataProvider.gui.AbstractDataSourceConfigurationPanel#getDataSourceConfiguraiton()
 	 */
 	@Override
-	public AbstractDataSourceConfiguration getDataSourceConfiguraiton() {
+	public AbstractDataSourceConfiguration getDataSourceConfiguration() {
 		return this.getCurrentDataSourceConfiguration();
 	}
 

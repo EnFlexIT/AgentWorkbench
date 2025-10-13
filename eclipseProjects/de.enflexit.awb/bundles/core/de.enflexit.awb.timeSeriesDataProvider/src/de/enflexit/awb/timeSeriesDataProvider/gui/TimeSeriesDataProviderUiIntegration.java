@@ -10,6 +10,7 @@ import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 
 /**
  * This class is responsible for the integration of the {@link TimeSeriesDataProvider} into the Agent.Workbench UI.
@@ -19,7 +20,7 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 	
 	private static final String ICON_PATH = "/icons/TSDProvider.png";
 	
-	private ImageIcon imageIcon;
+	private AwbThemeImageIcon imageIcon;
 	private JButton toolbarButton;
 	private TimeSeriesDataProviderConfigurationDialog configurationDialog;
 
@@ -50,9 +51,9 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 	 * Gets the image icon.
 	 * @return the image icon
 	 */
-	private ImageIcon getImageIcon() {
+	private AwbThemeImageIcon getImageIcon() {
 		if (imageIcon==null) {
-			imageIcon = new ImageIcon(this.getClass().getResource(ICON_PATH));
+			imageIcon = new AwbThemeImageIcon(new ImageIcon(this.getClass().getResource(ICON_PATH)));
 		}
 		return imageIcon;
 	}
