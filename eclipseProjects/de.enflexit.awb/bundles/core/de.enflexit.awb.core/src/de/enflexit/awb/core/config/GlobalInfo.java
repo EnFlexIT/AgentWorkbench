@@ -68,9 +68,11 @@ public class GlobalInfo implements ZoneIdResolver {
 	private final static String localPathImageAWB = "/icons/";
 	private final static String localPathImageIntern = "/icons/core/";
 	
-	public final static String DEFAULT_AWB_PROJECT_REPOSITORY = "https://p2.enflex.it/awbProjectRepository/";
+	public static final String DEFAULT_AWB_PROJECT_REPOSITORY = "https://p2.enflex.it/awbProjectRepository/";
 	public static final String DEFAULT_OIDC_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 
+	public static final String SECURED_PROPERTIES_FILE_NAME = "secured.properties";
+	
 	private final static String newLineSeparator = System.getProperty("line.separator");
 	
 	private static Color localColorMenuHighLight;
@@ -1195,7 +1197,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public SecuredProperties getSecuredProperties() {
 		if (securedProperties==null) {
-			securedProperties = new SecuredProperties(this.getPathProperty(true).resolve("secure.store"));
+			securedProperties = new SecuredProperties(this.getPathProperty(true).resolve(SECURED_PROPERTIES_FILE_NAME));
 			
 			// ------------------------------------------------------
 			// --- Put test data? -----------------------------------
@@ -1206,11 +1208,11 @@ public class GlobalInfo implements ZoneIdResolver {
 				// --- Saved in the file root without node --------------------
 				String mySecret = this.securedProperties.getString(null, "mySecret", null);
 				if (mySecret==null) {
-					this.securedProperties.putString(null, "mySecret", "Das ist Geheimnis");
-					System.out.println("Saved test value at root level!");
+					this.securedProperties.putString(null, "mySecret", "This is my secret!");
+					System.out.println("[" + this.getClass().getSimpleName() + "] Saved test value at root level!");
 					mySecret = this.securedProperties.getString(null, "mySecret", null);
 				}
-				System.out.println("Secured test value string: " +  mySecret);
+				System.out.println("[" + this.getClass().getSimpleName() + "] Secured test value string: " +  mySecret);
 
 				// --- Saved in one node of the file --------------------------
 				String nodeName = GlobalInfo.getSymbolicBundleName().replace(".", "/");
@@ -1218,10 +1220,10 @@ public class GlobalInfo implements ZoneIdResolver {
 				String nodeSecreteValue = this.securedProperties.getString(nodeName, nodeSecreteKey, null);
 				if (nodeSecreteValue==null) {
 					this.securedProperties.putString(nodeName, nodeSecreteKey, "This is my node secrete !");
-					System.out.println("Saved test value for node '" + nodeName + "'!");
+					System.out.println("[" + this.getClass().getSimpleName() + "] Saved test value for node '" + nodeName + "'!");
 				}
 				nodeSecreteValue = this.securedProperties.getString(nodeName, nodeSecreteKey, null);
-				System.out.println("Secured test value for node '" + nodeName + "': " +  nodeSecreteValue);
+				System.out.println("[" + this.getClass().getSimpleName() + "] Secured test value for node '" + nodeName + "': " +  nodeSecreteValue);
 			}
 			// ------------------------------------------------------
 		}
