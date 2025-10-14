@@ -8,7 +8,7 @@ import java.awt.Color;
  */
 public enum AwbThemeColor {
 
-	RegularText(Color.BLACK, Color.WHITE),
+	RegularText(Color.BLACK, new Color(221, 221, 221)),
 	
 	ButtonTextRed(new Color(153, 0, 0), new Color(255, 0, 0)),
 	ButtonTextGreen(new Color(0, 153, 0), new Color(0, 189, 0)),
@@ -20,7 +20,7 @@ public enum AwbThemeColor {
 	
 	Chart_Background(Color.white, new Color(70, 73, 75)),
 	Chart_GridLine(Color.BLACK, Color.WHITE),
-	Chart_Text(Color.BLACK, Color.WHITE),
+	Chart_Text(Color.BLACK, new Color(221, 221, 221)),
 	
 	
 	Graph_Node(new Color(230, 230, 230), new Color(230, 230, 230)),
