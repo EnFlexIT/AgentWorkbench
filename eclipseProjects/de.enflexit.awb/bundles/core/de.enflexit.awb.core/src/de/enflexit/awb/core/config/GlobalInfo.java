@@ -27,6 +27,7 @@ import org.osgi.framework.Version;
 
 import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.BenchmarkMeasurement;
 import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
 import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentType;
@@ -35,15 +36,16 @@ import de.enflexit.awb.core.environment.EnvironmentTypes;
 import de.enflexit.awb.core.jade.JadeUrlConfiguration;
 import de.enflexit.awb.core.project.PlatformJadeConfig;
 import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
+import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.simulation.environment.time.TimeModel;
 import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
-import de.enflexit.awb.core.project.Project;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.VersionInfo;
 import de.enflexit.common.ZoneIdResolver;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
+import de.enflexit.common.crypto.SecuredProperties;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.language.Language;
 import jade.core.Agent;
@@ -148,6 +150,7 @@ public class GlobalInfo implements ZoneIdResolver {
 
 	// --- BundleProperties and VersionInfo -------------------------
 	private BundleProperties bundleProperties;
+	private SecuredProperties securedProperties;
 	private VersionInfo versionInfo;
 
 	/**
@@ -231,6 +234,7 @@ public class GlobalInfo implements ZoneIdResolver {
 			
 			this.getVersionInfo();
 			this.getBundleProperties();
+			this.getSecuredProperties();
 			this.setApplicationsLookAndFeel();
 			
 			// --- Some debug stuff -----------------------
@@ -1130,12 +1134,6 @@ public class GlobalInfo implements ZoneIdResolver {
 		}
 		return bundleProperties;
 	}
-	/**
-	 * Persist (saves) the current configuration by saving the preferences.
-	 */
-	public void doSaveConfiguration() {
-		this.getBundleProperties().save();
-	}
 	
 	public void putStringToConfiguration(String key, String value) {
 		this.getBundleProperties().getEclipsePreferences().put(key, value);
@@ -1180,6 +1178,56 @@ public class GlobalInfo implements ZoneIdResolver {
 	public byte[] getByteArryFromConfiguration(String key, byte[] defaultValue) {
 		return this.getBundleProperties().getEclipsePreferences().getByteArray(key, defaultValue);
 	}
+	
+	
+	/**
+	 * Persist (saves) the current configuration by saving the {@link BundleProperties} and the {@link SecuredProperties}.
+	 */
+	public void doSaveConfiguration() {
+		this.getBundleProperties().save();
+		this.getSecuredProperties().save();
+	}
+	
+	
+	/**
+	 * Returns the secured AWB properties that are in fact {@link ISecurePreferences}.
+	 * @return the secured properties
+	 */
+	public SecuredProperties getSecuredProperties() {
+		if (securedProperties==null) {
+			securedProperties = new SecuredProperties(this.getPathProperty(true).resolve("secure.store"));
+			
+			// ------------------------------------------------------
+			// --- Put test data? -----------------------------------
+			// ------------------------------------------------------
+			boolean isPutSecuredTestData = true;
+			if (isPutSecuredTestData==true) {
+				
+				// --- Saved in the file root without node --------------------
+				String mySecret = this.securedProperties.getString(null, "mySecret", null);
+				if (mySecret==null) {
+					this.securedProperties.putString(null, "mySecret", "Das ist Geheimnis");
+					System.out.println("Saved test value at root level!");
+					mySecret = this.securedProperties.getString(null, "mySecret", null);
+				}
+				System.out.println("Secured test value string: " +  mySecret);
+
+				// --- Saved in one node of the file --------------------------
+				String nodeName = GlobalInfo.getSymbolicBundleName().replace(".", "/");
+				String nodeSecreteKey   = "node.secrete";
+				String nodeSecreteValue = this.securedProperties.getString(nodeName, nodeSecreteKey, null);
+				if (nodeSecreteValue==null) {
+					this.securedProperties.putString(nodeName, nodeSecreteKey, "This is my node secrete !");
+					System.out.println("Saved test value for node '" + nodeName + "'!");
+				}
+				nodeSecreteValue = this.securedProperties.getString(nodeName, nodeSecreteKey, null);
+				System.out.println("Secured test value for node '" + nodeName + "': " +  nodeSecreteValue);
+			}
+			// ------------------------------------------------------
+		}
+		return securedProperties;
+	}
+	
 	
 	/**
 	 * Returns the symbolic bundle name of the core bundle.
