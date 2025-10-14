@@ -642,7 +642,23 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource()==this.getJButtonFormatCheck()) {
+		if (ae.getSource()==this.getJComboBoxConfigurationScope()) {
+			ConfigurationScope configScope = (ConfigurationScope) this.getJComboBoxConfigurationScope().getSelectedItem();
+			
+			// --- Some checks required if project scope was chosen
+			if (configScope==ConfigurationScope.PROJECT) {
+				if (Application.getProjectFocused()==null) {
+					JOptionPane.showMessageDialog(this, "No active project, storing in project scope is not possible!", "No active Project!", JOptionPane.ERROR_MESSAGE);
+					this.getJComboBoxConfigurationScope().setSelectedItem(ConfigurationScope.APPLICATION);
+					return;
+				} else {
+					if (this.isInProjectFolder(this.getCsvDataFile())==false) {
+						JOptionPane.showMessageDialog(this, "The chosen file is not inside the project folder! Since project scope configurations are shared with the project, this is likely to cause problems!", "File not in project folder!", JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			}
+			this.getDataSourceConfiguration().setConfigurationScope(configScope);
+		} else if (ae.getSource()==this.getJButtonFormatCheck()) {
 			this.checkTimeFormat();
 		} else if (ae.getSource()==this.getJCheckBoxHasHeadline()) {
 			this.getCurrentDataSourceConfiguration().setHeadline(this.getJCheckBoxHasHeadline().isSelected());
@@ -655,7 +671,7 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 			this.chooseCsvFile();
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
 	 */

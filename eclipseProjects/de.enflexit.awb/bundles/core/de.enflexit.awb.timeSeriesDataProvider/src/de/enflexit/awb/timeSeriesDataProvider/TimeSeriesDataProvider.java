@@ -227,6 +227,8 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 		// --- Handle the different scopes separately
 		for (ConfigurationScope configScope : ConfigurationScope.values()) {
 			
+			if (configScope==ConfigurationScope.PROJECT && Application.getProjectFocused()==null) continue;
+			
 			// --- Collect all configurations for this scope ------------------
 			ArrayList<AbstractDataSourceConfiguration> configsForScope = new ArrayList<AbstractDataSourceConfiguration>();
 			for(AbstractDataSourceConfiguration sourceConfig : this.getDataSourceConfigurations().values()) {

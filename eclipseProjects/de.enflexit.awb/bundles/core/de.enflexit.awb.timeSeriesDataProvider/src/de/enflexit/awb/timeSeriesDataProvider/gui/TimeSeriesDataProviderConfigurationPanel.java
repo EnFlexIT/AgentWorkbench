@@ -5,7 +5,8 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -27,6 +28,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -276,7 +278,19 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 	 */
 	private DefaultMutableTreeNode getRootNode() {
 		if (rootNode==null) {
-			rootNode= new DefaultMutableTreeNode("Configured Data Sources");
+			
+			rootNode= new ChildSortingTreeNode("Configured Data Sources", new Comparator<Object>() {
+
+				/* (non-Javadoc)
+				 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+				 */
+				@Override
+				public int compare(Object o1, Object o2) {
+					String o1String = o1.toString();
+					String o2String = o2.toString();
+					return o1String.compareTo(o2String);
+				}
+			});
 		}
 		return rootNode;
 	}
@@ -314,7 +328,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		
 		return sourceNode;
 	}
-
+	
 	private AbstractDataSourceConfigurationPanel getDataSourceConfigPanel() {
 		if (dataSourceConfigPanel == null) {
 			if (this.selectedDataSource==null) {
@@ -324,7 +338,6 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		return dataSourceConfigPanel;
 	}
 	
-
 	// ------------------------------------------------------------------------
 	// --- From here, methods to handle data sources and series ---------------
 	
@@ -339,9 +352,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		if(jFileChooserImportCSV.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File csvFile = jFileChooserImportCSV.getSelectedFile();
 			Application.getGlobalInfo().setLastSelectedFolder(csvFile.getParent());
-			if (this.isInProjectFolder(csvFile)==false) {
-				JOptionPane.showMessageDialog(this, "Please choose a file that is located inside the project folder!", "Invalid location", JOptionPane.WARNING_MESSAGE);
-			} else {
+//			if (this.isInProjectFolder(csvFile)==false) {
+//				JOptionPane.showMessageDialog(this, "Please choose a file that is located inside the project folder!", "Invalid location", JOptionPane.WARNING_MESSAGE);
+//			} else {
 				if (csvFile!=null && csvFile.exists()) {
 					// --- Create an initial CSV data source configuration --------
 					CsvDataSourceConfiguration sourceConfig = new CsvDataSourceConfiguration();
@@ -357,7 +370,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 					this.pauseListener = false;
 					this.createAndAddTreeNode(sourceConfig);
 				}
-			}
+//			}
 		}
 	}
 	
@@ -403,17 +416,6 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		this.getDataSourceTree().setSelectionPath(new TreePath(seletionPath));
 	}
 	
-	/**
-	 * Checks if the specified file is inside the project folder (including subfolders).
-	 * @param file the file
-	 * @return true, if the file is inside the project folder
-	 */
-	private boolean isInProjectFolder(File file) {
-		Path filePath = file.toPath();
-		Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
-		return filePath.startsWith(projectFolderPath);
-	}
-
 	/**
 	 * Adds a new csv data series.
 	 */
@@ -682,6 +684,33 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 		ImageIcon lightModeIcon = new ImageIcon(this.getClass().getResource(lightModeImageURL)); 
 		ImageIcon darkModeIcon = new ImageIcon(this.getClass().getResource(darkModeImageURL));
 		return new AwbThemeImageIcon(lightModeIcon, darkModeIcon);
+	}
+	
+	/**
+	 * {@link DefaultMutableTreeNode} that sorts its children alphabetically.
+	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+	 */
+	public class ChildSortingTreeNode extends DefaultMutableTreeNode {
+		private static final long serialVersionUID = 5078008392709634221L;
+		
+		private final Comparator<Object> comparator;
+
+		public ChildSortingTreeNode(Object userObject, Comparator<Object> comparator) {
+			super(userObject);
+			this.comparator = comparator;
+		}
+
+		public ChildSortingTreeNode(Object userObject) {
+			this(userObject, null);
+		}
+
+		@Override
+		public void add(MutableTreeNode newChild) {
+			super.add(newChild);
+			if (this.comparator != null) {
+				Collections.sort(this.children, this.comparator);
+			}
+		}
 	}
 	
 }

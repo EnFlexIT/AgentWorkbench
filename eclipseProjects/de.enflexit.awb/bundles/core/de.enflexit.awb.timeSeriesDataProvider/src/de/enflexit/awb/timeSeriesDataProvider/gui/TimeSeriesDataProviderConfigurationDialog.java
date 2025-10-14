@@ -136,7 +136,6 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getBtnOk()) {
 			TimeSeriesDataProvider.getInstance().storeProviderConfigurations();
-			TimeSeriesDataProvider.getInstance().resetDataSources();
 			this.dispose();
 		} else if(ae.getSource()==this.getBtnCancel()) {
 			this.dispose();

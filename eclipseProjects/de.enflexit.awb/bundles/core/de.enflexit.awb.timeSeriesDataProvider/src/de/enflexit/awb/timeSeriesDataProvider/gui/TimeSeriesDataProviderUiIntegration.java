@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
@@ -18,20 +17,27 @@ import de.enflexit.common.swing.AwbThemeImageIcon;
  */
 public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension implements ActionListener {
 	
-	private static final String ICON_PATH = "/icons/TSDProvider.png";
+	private static final String ICON_PATH_LIGHT_MODE = "/icons/TimeSeriesChartBlack.png";
+	private static final String ICON_PATH_DARK_MODE = "/icons/TimeSeriesChartGrey.png";
 	
 	private AwbThemeImageIcon imageIcon;
 	private JButton toolbarButton;
 	private TimeSeriesDataProviderConfigurationDialog configurationDialog;
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.getConfigurationDialog().setVisible(true);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.baseUI.mainWindow.MainWindowExtension#initialize()
+	 */
 	@Override
 	public void initialize() {
-		this.addToolbarComponent(this.getToolbarButton(), 8, SeparatorPosition.NoSeparator);
+		this.addToolbarComponent(this.getToolbarButton(), null, null);
 	}
 	
 	/**
@@ -53,7 +59,9 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 	 */
 	private AwbThemeImageIcon getImageIcon() {
 		if (imageIcon==null) {
-			imageIcon = new AwbThemeImageIcon(new ImageIcon(this.getClass().getResource(ICON_PATH)));
+			ImageIcon lightModeIcon = new ImageIcon(this.getClass().getResource(ICON_PATH_LIGHT_MODE));
+			ImageIcon darkModeIcon = new ImageIcon(this.getClass().getResource(ICON_PATH_DARK_MODE));
+			imageIcon = new AwbThemeImageIcon(lightModeIcon, darkModeIcon);
 		}
 		return imageIcon;
 	}

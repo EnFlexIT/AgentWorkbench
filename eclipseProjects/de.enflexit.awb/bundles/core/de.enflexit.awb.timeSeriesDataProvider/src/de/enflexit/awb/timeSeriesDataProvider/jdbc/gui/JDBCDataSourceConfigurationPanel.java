@@ -29,6 +29,7 @@ import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataScourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSource;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSource.ConnectionState;
+import de.enflexit.common.swing.JComboBoxWide;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
@@ -36,7 +37,10 @@ import de.enflexit.db.hibernate.gui.DatabaseSettings;
 
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridBagConstraints;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Window;
@@ -78,9 +82,9 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	private JLabel jLabelDataSelection;
 	private JButton jButtonAutoCreateSeries;
 	private JLabel jLabelSelectTable;
-	private JComboBox<String> jComboBoxSelectTable;
+	private JComboBoxWide<String> jComboBoxSelectTable;
 	private JLabel jLabelSelectDateTimeColumn;
-	private JComboBox<String> jComboBoxSelectDateTimeColumn;
+	private JComboBoxWide<String> jComboBoxSelectDateTimeColumn;
 	private JScrollPane jScrollPaneDataTable;
 	
 	private JTable jTableDataTable;
@@ -179,7 +183,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		gbc_jLabelDataSelection.gridy = 4;
 		add(getJLabelDataSelection(), gbc_jLabelDataSelection);
 		GridBagConstraints gbc_jLabelSelectTable = new GridBagConstraints();
-		gbc_jLabelSelectTable.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelSelectTable.anchor = GridBagConstraints.WEST;
 		gbc_jLabelSelectTable.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelSelectTable.gridx = 0;
 		gbc_jLabelSelectTable.gridy = 5;
@@ -191,7 +195,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		gbc_jComboBoxSelectTable.gridy = 5;
 		add(getJComboBoxSelectTable(), gbc_jComboBoxSelectTable);
 		GridBagConstraints gbc_jLabelSelectDateTimeColumn = new GridBagConstraints();
-		gbc_jLabelSelectDateTimeColumn.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelSelectDateTimeColumn.anchor = GridBagConstraints.WEST;
 		gbc_jLabelSelectDateTimeColumn.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelSelectDateTimeColumn.gridx = 2;
 		gbc_jLabelSelectDateTimeColumn.gridy = 5;
@@ -342,9 +346,11 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		}
 		return jLabelSelectTable;
 	}
-	private JComboBox<String> getJComboBoxSelectTable() {
+	private JComboBoxWide<String> getJComboBoxSelectTable() {
 		if (jComboBoxSelectTable == null) {
-			jComboBoxSelectTable = new JComboBox<String>();
+			jComboBoxSelectTable = new JComboBoxWide<String>();
+			jComboBoxSelectTable.setPreferredSize(new Dimension(150, 26));
+			jComboBoxSelectTable.setMaximumSize(new Dimension(150, 26));
 			jComboBoxSelectTable.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jComboBoxSelectTable.setModel(this.createComboBoxModel(true, null));
 			jComboBoxSelectTable.setEnabled(false);
@@ -360,9 +366,11 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		}
 		return jLabelSelectDateTimeColumn;
 	}
-	private JComboBox<String> getJComboBoxSelectDateTimeColumn() {
+	private JComboBoxWide<String> getJComboBoxSelectDateTimeColumn() {
 		if (jComboBoxSelectDateTimeColumn == null) {
-			jComboBoxSelectDateTimeColumn = new JComboBox<String>();
+			jComboBoxSelectDateTimeColumn = new JComboBoxWide<String>();
+			jComboBoxSelectDateTimeColumn.setPreferredSize(new Dimension(150, 26));
+			jComboBoxSelectDateTimeColumn.setMaximumSize(new Dimension(150, 26));
 			jComboBoxSelectDateTimeColumn.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jComboBoxSelectDateTimeColumn.setModel(this.createComboBoxModel(true, null));
 			jComboBoxSelectDateTimeColumn.setEnabled(false);
@@ -529,9 +537,17 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	public void actionPerformed(ActionEvent ae) {
 		if (this.pauseListener==false) {
 			if (ae.getSource()==this.getJComboBoxConfigurationScope()) {
+				
+				// --- Project scope not possible if no project is loaded
+				ConfigurationScope configScope = (ConfigurationScope) this.getJComboBoxConfigurationScope().getSelectedItem();
+				if (configScope==ConfigurationScope.PROJECT && Application.getProjectFocused()==null) {
+					JOptionPane.showMessageDialog(this, "No active project, storing in project scope is not possible!", "No active Project!", JOptionPane.ERROR_MESSAGE);
+					this.getJComboBoxConfigurationScope().setSelectedItem(ConfigurationScope.APPLICATION);
+					return;
+				}
 				this.sourceConfiguration.setConfigurationScope((ConfigurationScope) this.getJComboBoxConfigurationScope().getSelectedItem());
+				
 			} else if (ae.getSource()==this.getJComboBoxSelectTable()) {
-				// --- Enable the load data button if a table is selected
 				String selectedTable = this.getJComboBoxSelectTable().getItemAt(this.getJComboBoxSelectTable().getSelectedIndex());
 				if (selectedTable.equals(COMBO_BOX_NO_SELECTION)==false) {
 					this.sourceConfiguration.setTableName(selectedTable);
@@ -543,6 +559,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 				}
 				this.loadPreviewData();
 				this.getStatistics();
+				
 			} else if (ae.getSource()==this.getJComboBoxSelectDateTimeColumn()) {
 				String selectedColumn = (String) this.getJComboBoxSelectDateTimeColumn().getSelectedItem();
 				if (selectedColumn.equals(COMBO_BOX_NO_SELECTION)==false) {
@@ -552,6 +569,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 					this.getSourceConfiguration().setDateTimeColumn(null);
 					this.getJButtonAutoCreateSeries().setEnabled(false);
 				}
+				
 			} else if (ae.getSource()==this.getJButtonAutoCreateSeries()) {
 				this.autoCreateDataSeries();
 			} else if (ae.getSource()==this.getJButtonConfigDialog()) {
