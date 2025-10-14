@@ -1,8 +1,10 @@
 package de.enflexit.awb.timeSeriesDataProvider.gui;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 import de.enflexit.common.swing.AwbThemeColor;
@@ -17,10 +19,11 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.BorderLayout;
 
 /**
- * A configuration dialog for the weather data provider.
+ * A configuration dialog for the {@link TimeSeriesDataProvider}.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class TimeSeriesDataProviderConfigurationDialog extends JDialog implements ActionListener {
@@ -33,7 +36,7 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 	private JButton btnCancel;
 	
 	/**
-	 * Instantiates a new weather data provider configuration dialog.
+	 * Instantiates a new time series data provider configuration dialog.
 	 */
 	public TimeSeriesDataProviderConfigurationDialog(Window owner) {
 		super(owner);
@@ -46,9 +49,11 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 	private void initialize() {
 		this.setTitle("Time Series Data Provider Configuration");
 		this.setSize(1200, 800);
-		getContentPane().setLayout(new BorderLayout(0, 0));
-		getContentPane().add(getConfigurationPanel());
-		getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
+		this.getContentPane().setLayout(new BorderLayout(0, 0));
+		this.getContentPane().add(getConfigurationPanel());
+		this.getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
+		
+		this.registerEscapeKeyStroke();
 		
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
@@ -138,4 +143,17 @@ public class TimeSeriesDataProviderConfigurationDialog extends JDialog implement
 		}
 		
 	}
+	
+	/**
+     * Registers the escape key stroke in order to close this dialog.
+     */
+    private void registerEscapeKeyStroke() {
+    	final ActionListener listener = new ActionListener() {
+            public final void actionPerformed(final ActionEvent e) {
+            	TimeSeriesDataProviderConfigurationDialog.this.setVisible(false);
+            }
+        };
+        final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, true);
+        this.getRootPane().registerKeyboardAction(listener, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
 }

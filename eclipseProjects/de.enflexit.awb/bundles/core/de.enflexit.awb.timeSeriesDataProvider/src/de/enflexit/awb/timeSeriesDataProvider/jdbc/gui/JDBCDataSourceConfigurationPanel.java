@@ -67,7 +67,6 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	
 	private JDBCDataScourceConfiguration sourceConfiguration;
 	private JDBCDataSource dataSource;
-//	private Connection connection;
 	
 	private JLabel jLabelJDBCDataSource;
 	private JLabel jLabelSourceName;
@@ -198,7 +197,6 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		gbc_jLabelSelectDateTimeColumn.gridy = 5;
 		add(getJLabelSelectDateTimeColumn(), gbc_jLabelSelectDateTimeColumn);
 		GridBagConstraints gbc_jComboBoxSelectDateTimeColumn = new GridBagConstraints();
-		gbc_jComboBoxSelectDateTimeColumn.gridwidth = 2;
 		gbc_jComboBoxSelectDateTimeColumn.insets = new Insets(5, 0, 5, 5);
 		gbc_jComboBoxSelectDateTimeColumn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jComboBoxSelectDateTimeColumn.gridx = 3;
@@ -206,19 +204,19 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		add(getJComboBoxSelectDateTimeColumn(), gbc_jComboBoxSelectDateTimeColumn);
 		GridBagConstraints gbc_jButtonAutoCreateSeries = new GridBagConstraints();
 		gbc_jButtonAutoCreateSeries.anchor = GridBagConstraints.WEST;
-		gbc_jButtonAutoCreateSeries.insets = new Insets(0, 0, 5, 0);
-		gbc_jButtonAutoCreateSeries.gridx = 5;
+		gbc_jButtonAutoCreateSeries.insets = new Insets(5, 0, 5, 5);
+		gbc_jButtonAutoCreateSeries.gridx = 4;
 		gbc_jButtonAutoCreateSeries.gridy = 5;
 		add(getJButtonAutoCreateSeries(), gbc_jButtonAutoCreateSeries);
 		GridBagConstraints gbc_jLabelStatistics = new GridBagConstraints();
 		gbc_jLabelStatistics.anchor = GridBagConstraints.WEST;
 		gbc_jLabelStatistics.gridwidth = 6;
-		gbc_jLabelStatistics.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelStatistics.insets = new Insets(5, 5, 5, 0);
 		gbc_jLabelStatistics.gridx = 0;
 		gbc_jLabelStatistics.gridy = 6;
 		add(getJLabelStatistics(), gbc_jLabelStatistics);
 		GridBagConstraints gbc_jScrollPaneDataTable = new GridBagConstraints();
-		gbc_jScrollPaneDataTable.insets = new Insets(5, 5, 5, 5);
+		gbc_jScrollPaneDataTable.insets = new Insets(5, 5, 5, 0);
 		gbc_jScrollPaneDataTable.gridwidth = 6;
 		gbc_jScrollPaneDataTable.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneDataTable.gridx = 0;
@@ -260,7 +258,9 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 				// --- Change name when leaving the field
 				@Override
 				public void focusLost(FocusEvent fe) {
-					JDBCDataSourceConfigurationPanel.this.renameDataSource();
+					if (pauseListener==false) {
+						JDBCDataSourceConfigurationPanel.this.renameDataSource();
+					}
 				}
 			});
 			jTextFieldSourceName.addKeyListener(new KeyAdapter() {
@@ -277,6 +277,25 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		return jTextFieldSourceName;
 	}
 	
+	private JLabel getJLabelStoreAt() {
+		if (jLabelStoreAt == null) {
+			jLabelStoreAt = new JLabel("Store at");
+			jLabelStoreAt.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelStoreAt;
+	}
+
+	private JComboBox<ConfigurationScope> getJComboBoxConfigurationScope() {
+		if (jComboBoxConfigurationScope == null) {
+			jComboBoxConfigurationScope = new JComboBox<>();
+			jComboBoxConfigurationScope.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxConfigurationScope.setModel(new DefaultComboBoxModel<TimeSeriesDataProvider.ConfigurationScope>(ConfigurationScope.values()));
+			jComboBoxConfigurationScope.setToolTipText("Decide where to store the data source. If stored in the application, it will be available independently of the current project. If stored in the project, it is limited to that project, but can easily be shared together with it.");
+			jComboBoxConfigurationScope.addActionListener(this);
+		}
+		return jComboBoxConfigurationScope;
+	}
+
 	private JLabel getJLabelDBSettings() {
 		if (jLabelDBSettings == null) {
 			jLabelDBSettings = new JLabel("Databse Settings");
@@ -323,6 +342,17 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		}
 		return jLabelSelectTable;
 	}
+	private JComboBox<String> getJComboBoxSelectTable() {
+		if (jComboBoxSelectTable == null) {
+			jComboBoxSelectTable = new JComboBox<String>();
+			jComboBoxSelectTable.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxSelectTable.setModel(this.createComboBoxModel(true, null));
+			jComboBoxSelectTable.setEnabled(false);
+			jComboBoxSelectTable.addActionListener(this);
+		}
+		return jComboBoxSelectTable;
+	}
+
 	private JLabel getJLabelSelectDateTimeColumn() {
 		if (jLabelSelectDateTimeColumn == null) {
 			jLabelSelectDateTimeColumn = new JLabel("Select Date/Time Column");
@@ -351,6 +381,14 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		return jButtonAutoCreateSeries;
 	}
 	
+	private JLabel getJLabelStatistics() {
+		if (jLabelStatistics == null) {
+			jLabelStatistics = new JLabel("");
+			jLabelStatistics.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelStatistics;
+	}
+
 	private JScrollPane getJScrollPaneDataTable() {
 		if (jScrollPaneDataTable == null) {
 			jScrollPaneDataTable = new JScrollPane();
@@ -375,7 +413,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	 * @see de.enflexit.awb.timeSeriesDataProvider.gui.AbstractDataSourceConfigurationPanel#getDataSourceConfiguraiton()
 	 */
 	@Override
-	public AbstractDataSourceConfiguration getDataSourceConfiguraiton() {
+	public AbstractDataSourceConfiguration getDataSourceConfiguration() {
 		return this.getSourceConfiguration();
 	}
 
@@ -457,21 +495,13 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	 * Changes the name of the current data source.
 	 */
 	private void renameDataSource() {
-		String textFieldContent = this.getJTextFieldSourceName().getText();
-		if (this.sourceConfiguration.getName().equals(textFieldContent)==false) {
-			this.sourceConfiguration.setName(this.getJTextFieldSourceName().getText());
+		String newName = this.getJTextFieldSourceName().getText();
+		this.pauseListener = true;
+		if (super.renameDataSource(newName)==false) {
+			// If the name was rejected, return to the textfield
+			this.getJTextFieldSourceName().requestFocus();
 		}
-	}
-	
-	private JComboBox<String> getJComboBoxSelectTable() {
-		if (jComboBoxSelectTable == null) {
-			jComboBoxSelectTable = new JComboBox<String>();
-			jComboBoxSelectTable.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jComboBoxSelectTable.setModel(this.createComboBoxModel(true, null));
-			jComboBoxSelectTable.setEnabled(false);
-			jComboBoxSelectTable.addActionListener(this);
-		}
-		return jComboBoxSelectTable;
+		this.pauseListener = false;
 	}
 	
 	/**
@@ -612,7 +642,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 		}
 		
 		// --- Compose and display the statistics string
-		String statisticsString = "The selected table contains " + numOfRows + " rows" + timeRangeString;
+		String statisticsString = "The selected table contains " + numOfRows + " rows" + timeRangeString + ", showing the first " + NUMBER_OF_PREVIEW_ROWS;
 		this.getJLabelStatistics().setText(statisticsString);
 	}
 
@@ -774,7 +804,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 				JDBCDataSeriesConfiguration seriesConfig = new JDBCDataSeriesConfiguration();
 				seriesConfig.setName(columnName);
 				seriesConfig.setDataColumn(columnName);
-				this.getDataSourceConfiguraiton().addDataSeriesConfiguration(seriesConfig);
+				this.getDataSourceConfiguration().addDataSeriesConfiguration(seriesConfig);
 			}
 		}
 	}
@@ -835,29 +865,5 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 			dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss").withZone(ZoneId.systemDefault());
 		}
 		return dateTimeFormatter;
-	}
-	private JLabel getJLabelStatistics() {
-		if (jLabelStatistics == null) {
-			jLabelStatistics = new JLabel("");
-			jLabelStatistics.setFont(new Font("Dialog", Font.PLAIN, 12));
-		}
-		return jLabelStatistics;
-	}
-	private JLabel getJLabelStoreAt() {
-		if (jLabelStoreAt == null) {
-			jLabelStoreAt = new JLabel("Store at");
-			jLabelStoreAt.setFont(new Font("Dialog", Font.PLAIN, 12));
-		}
-		return jLabelStoreAt;
-	}
-	private JComboBox<ConfigurationScope> getJComboBoxConfigurationScope() {
-		if (jComboBoxConfigurationScope == null) {
-			jComboBoxConfigurationScope = new JComboBox<>();
-			jComboBoxConfigurationScope.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jComboBoxConfigurationScope.setModel(new DefaultComboBoxModel<TimeSeriesDataProvider.ConfigurationScope>(ConfigurationScope.values()));
-			jComboBoxConfigurationScope.setToolTipText("Decide where to store the data source. If stored in the application, it will be available independently of the current project. If stored in the project, it is limited to that project, but can easily be shared together with it.");
-			jComboBoxConfigurationScope.addActionListener(this);
-		}
-		return jComboBoxConfigurationScope;
 	}
 }
