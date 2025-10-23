@@ -38,4 +38,7 @@
             <value>1505080800000</value>
         </entry>
     </timeModelSettings>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
 </simulationSetup>

@@ -20,6 +20,8 @@ import org.awb.env.networkModel.controller.GraphEnvironmentController;
 import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.settings.ui.ComponentTypeDialog;
 
+import de.enflexit.common.swing.AwbThemeImageIcon;
+
 /**
  * Is used in the {@link ComponentTypeDialog}.
  *
@@ -52,7 +54,7 @@ public class NetworkComponentTablePanelEditButton extends AbstractCellEditor imp
 		JComponent comp = (JComponent) table.getCellRenderer(row, 0);
 		
 		JButton jButtonRendered = new JButton();
-		jButtonRendered.setIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "EditNetComp.png")));
+		jButtonRendered.setIcon(new AwbThemeImageIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "EditNetComp.png"))));
 		jButtonRendered.setToolTipText("Edit data model ...");
 		jButtonRendered.setBackground(comp.getBackground());
 		return jButtonRendered;
@@ -67,7 +69,7 @@ public class NetworkComponentTablePanelEditButton extends AbstractCellEditor imp
     	this.netCompID = (String)table.getValueAt(row, 0);
         
     	JButton jButtonEdit = new JButton();
-		jButtonEdit.setIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "EditNetComp.png")));
+		jButtonEdit.setIcon(new AwbThemeImageIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "EditNetComp.png"))));
 		jButtonEdit.setToolTipText("Edit data model ...");
 		jButtonEdit.setBackground(comp.getBackground());
 		jButtonEdit.addActionListener(this);

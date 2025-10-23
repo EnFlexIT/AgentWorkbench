@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Vector;
 
@@ -33,6 +34,7 @@ import org.osgi.framework.Version;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
 import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.environment.EnvironmentController;
 import de.enflexit.awb.core.environment.EnvironmentController.PersistenceStrategy;
@@ -61,6 +63,7 @@ import de.enflexit.common.Observable;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.StringHelper;
 import de.enflexit.common.classLoadService.ObjectInputStreamForClassLoadService;
+import de.enflexit.common.crypto.SecuredProperties;
 import de.enflexit.common.featureEvaluation.FeatureInfo;
 import de.enflexit.common.http.WebResourcesAuthorization;
 import de.enflexit.common.http.WebResourcesAuthorization.AuthorizationType;
@@ -237,6 +240,9 @@ import de.enflexit.language.Language;
 	@XmlElement(name = "projectProperties")
 	private Properties properties;
 	
+	@XmlTransient private SecuredProperties securedProperties;
+		
+	
 	/**
 	 * This field can be used in order to provide customized objects during
 	 * the runtime of a project. This will be not stored within the file 'agentgui.xml' 
@@ -349,6 +355,7 @@ import de.enflexit.language.Language;
 		// --- Check/create default folders -------------------------
 		project.setProjectFolder(projectSubDirectory);
 		project.checkAndCreateProjectsDirectoryStructure();
+		project.getSecuredProperties();
 		
 		// ----------------------------------------------------------
 		// --- Install required features if necessary ---------------
@@ -2138,7 +2145,47 @@ import de.enflexit.language.Language;
 	public void onPropertiesEvent(PropertiesEvent propertiesEvent) {
 		this.setChangedAndNotify(CHANGED_ProjectProperties);
 	}
+	
+	
+	/**
+	 * Returns the secured AWB properties that are in fact {@link ISecurePreferences}.
+	 * @return the secured properties
+	 */
+	public SecuredProperties getSecuredProperties() {
+		if (securedProperties==null) {
+			securedProperties = new SecuredProperties(Path.of(this.getProjectSecurityFolderFullPath()).resolve(GlobalInfo.SECURED_PROPERTIES_FILE_NAME));
+			
+			// ------------------------------------------------------
+			// --- Put test data? -----------------------------------
+			// ------------------------------------------------------
+			boolean isPutSecuredTestData = true;
+			if (isPutSecuredTestData==true) {
+				
+				// --- Saved in the file root without node --------------------
+				String mySecret = this.securedProperties.getString(null, "mySecret", null);
+				if (mySecret==null) {
+					this.securedProperties.putString(null, "mySecret", "This is my secret!");
+					System.out.println("[" + this.getClass().getSimpleName() + "] Saved test value at root level!");
+					mySecret = this.securedProperties.getString(null, "mySecret", null);
+				}
+				System.out.println("[" + this.getClass().getSimpleName() + "] Secured test value string: " +  mySecret);
 
+				// --- Saved in one node of the file --------------------------
+				String nodeName = GlobalInfo.getSymbolicBundleName().replace(".", "/");
+				String nodeSecreteKey   = "node.secrete";
+				String nodeSecreteValue = this.securedProperties.getString(nodeName, nodeSecreteKey, null);
+				if (nodeSecreteValue==null) {
+					this.securedProperties.putString(nodeName, nodeSecreteKey, "This is my node secrete !");
+					System.out.println("[" + this.getClass().getSimpleName() + "] Saved test value for node '" + nodeName + "'!");
+				}
+				nodeSecreteValue = this.securedProperties.getString(nodeName, nodeSecreteKey, null);
+				System.out.println("[" + this.getClass().getSimpleName() + "] Secured test value for node '" + nodeName + "': " +  nodeSecreteValue);
+			}
+			// ------------------------------------------------------
+		}
+		return securedProperties;
+	}
+	
 	
 	/**
 	 * Returns the user runtime object.

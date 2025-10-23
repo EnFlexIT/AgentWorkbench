@@ -101,7 +101,7 @@ public class TimeSeriesDataProviderConfiguration implements Serializable {
 	 */
 	public static TimeSeriesDataProviderConfiguration loadDataSourceConfigurationsList(File configurationFile) {
 		TimeSeriesDataProviderConfiguration configuration = null;
-		if (configurationFile.exists()) {
+		if (configurationFile!=null && configurationFile.exists()) {
 			try {
 				JAXBContext context = JAXBContext.newInstance(getContextClasses());
 				Unmarshaller unmarshaller = context.createUnmarshaller();

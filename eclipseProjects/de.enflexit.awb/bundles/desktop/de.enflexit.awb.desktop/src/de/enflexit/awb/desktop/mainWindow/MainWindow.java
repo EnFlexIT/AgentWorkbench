@@ -25,6 +25,7 @@ import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -71,6 +72,7 @@ import de.enflexit.awb.simulation.logging.SysOutBoard;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.AwbLookAndFeelInfo;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.JFrameSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
@@ -762,7 +764,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainProject.setText(Language.translate("Projekte"));
 			jMenuMainProject.add(new CWMenuItem("ProjectNew", Language.translate("Neues Projekt"), "MBnew.png"));
 			jMenuMainProject.add(new CWMenuItem("ProjectOpen", Language.translate("Projekt öffnen"), "MBopen.png"));
-			jMenuMainProject.add(new CWMenuItem("ProjectClose", Language.translate("Projekt schließen"), "MBclose.png"));
+			jMenuMainProject.add(new CWMenuItem("ProjectClose", Language.translate("Projekt schließen"), new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBclose.png")) ));
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add(new CWMenuItem("ProjectSave", Language.translate("Projekt speichern"), "MBsave.png"));
 			jMenuMainProject.addSeparator();
@@ -774,7 +776,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainProject.addSeparator();
 			jMenuMainProject.add(new CWMenuItem("ProjectDelete", Language.translate("Projekt löschen"), "Delete.png"));
 			jMenuMainProject.addSeparator();
-			jMenuMainProject.add(new CWMenuItem("ApplicationQuit", Language.translate("Beenden"), null));
+			jMenuMainProject.add(new CWMenuItem("ApplicationQuit", Language.translate("Beenden")));
 		}
 		return jMenuMainProject;
 	}
@@ -952,10 +954,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuExtra.add(jMenuExtraLnF);
 
 			jMenuExtra.addSeparator();
-			jMenuExtra.add(new CWMenuItem("ExtraBenchmark", "SciMark 2.0 - Benchmark", null));
+			jMenuExtra.add(new CWMenuItem("ExtraBenchmark", "SciMark 2.0 - Benchmark"));
 
 			jMenuExtra.addSeparator();
-			jMenuExtra.add(new CWMenuItem("ExtraOptions", Language.translate("Optionen"), null));
+			jMenuExtra.add(new CWMenuItem("ExtraOptions", Language.translate("Optionen")));
 
 		}
 		return jMenuExtra;
@@ -982,7 +984,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		}
 
 		jMenuExtraLang.addSeparator();
-		jMenuExtraLang.add(new CWMenuItem("ExtraTranslation", Language.translate("Übersetzen ..."), null));
+		jMenuExtraLang.add(new CWMenuItem("ExtraTranslation", Language.translate("Übersetzen ...")));
 
 	}
 
@@ -1129,7 +1131,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainHelp.add(new CWMenuItem("HelpAWB-GitBook", Language.translate("AWB auf GitBook"), "GitBook.png"));
 			jMenuMainHelp.addSeparator();
 			jMenuMainHelp.add(new CWMenuItem("HelpUpdate", Language.translate("Nach Update suchen") + " !", "Update.png"));
-			jMenuMainHelp.add(new CWMenuItem("HelpAWBChanges", Language.translate("Letzte Änderungen"), null));
+			jMenuMainHelp.add(new CWMenuItem("HelpAWBChanges", Language.translate("Letzte Änderungen")));
 			jMenuMainHelp.addSeparator();
 			//jMenuMainHelp.add(new CWMenuItem("EclipsePreferences", "Preferences", null));
 			jMenuMainHelp.add(new CWMenuItem("EclipseWindow", "Eclipse Window", "eclipse.png"));
@@ -1149,12 +1151,35 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		 * Instantiates a new cW menu item.
 		 *
 		 * @param actionCommand the action command
-		 * @param Text the text
+		 * @param caption the caption text
+		 * @param icon the icon
+		 */
+		private CWMenuItem(String actionCommand, String caption) {
+			this(actionCommand, caption, (String)null);
+		}
+		/**
+		 * Instantiates a new cW menu item.
+		 *
+		 * @param actionCommand the action command
+		 * @param caption the caption text
+		 * @param icon the icon
+		 */
+		private CWMenuItem(String actionCommand, String caption, Icon icon) {
+			this.setActionCommand(actionCommand);
+			this.setText(caption);
+			if (icon!=null) this.setIcon(icon);
+			this.addActionListener(this);
+		}
+		/**
+		 * Instantiates a new cW menu item.
+		 *
+		 * @param actionCommand the action command
+		 * @param caption the caption text
 		 * @param imgName the img name
 		 */
-		private CWMenuItem(String actionCommand, String Text, String imgName) {
-
-			this.setText(Text);
+		private CWMenuItem(String actionCommand, String caption, String imgName) {
+			this.setActionCommand(actionCommand);
+			this.setText(caption);
 			if (imgName!=null) {
 				try {
 					if (imgName.equals("awb16.png")) {
@@ -1162,13 +1187,11 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 					} else {
 						this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
 					}
-					
 				} catch (Exception err) {
 					System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
 				}
 			}
 			this.addActionListener(this);
-			this.setActionCommand(actionCommand);
 		}
 
 		/* (non-Javadoc)

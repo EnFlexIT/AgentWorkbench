@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration;
+import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider.ConfigurationScope;
 
 /**
  * This class contains the configuration of a CSV-based data source. 
@@ -57,7 +58,8 @@ public class CsvDataSourceConfiguration extends AbstractDataSourceConfiguration 
 	 * @param csvFilePath the new csv file path
 	 */
 	public void setCsvFilePath(Path csvFilePath) {
-		if (csvFilePath.isAbsolute()) {
+		if (csvFilePath.isAbsolute() && this.getConfigurationScope()==ConfigurationScope.PROJECT) {
+			// --- Convert project scope files to relative paths to make them work on other machines
 			this.csvFilePath = this.convertToRelativePath(csvFilePath).toString();
 		} else {
 			this.csvFilePath = csvFilePath.toString();
@@ -125,8 +127,14 @@ public class CsvDataSourceConfiguration extends AbstractDataSourceConfiguration 
 	 * @return the csv file
 	 */
 	public File getCsvFile() {
-		Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
-		return projectFolderPath.resolve(this.getCsvFilePath()).toFile();
+		File csvFile;
+		if (this.getConfigurationScope()==ConfigurationScope.PROJECT) {
+			Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
+			csvFile = projectFolderPath.resolve(this.getCsvFilePath()).toFile();
+		} else {
+			csvFile = new File(this.getCsvFilePath());
+		}
+		return csvFile;
 	}
 	
 	/* (non-Javadoc)

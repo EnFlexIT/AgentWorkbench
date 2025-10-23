@@ -6,33 +6,38 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.core.ApplicationListener;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 
 /**
  * This class is responsible for the integration of the {@link TimeSeriesDataProvider} into the Agent.Workbench UI.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension implements ActionListener, ApplicationListener {
+public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension implements ActionListener {
 	
-	private static final String ICON_PATH = "/icons/TSDProvider.png";
+	private static final String ICON_PATH_LIGHT_MODE = "/icons/TimeSeriesChartBlack.png";
+	private static final String ICON_PATH_DARK_MODE = "/icons/TimeSeriesChartGrey.png";
 	
-	private ImageIcon imageIcon;
+	private AwbThemeImageIcon imageIcon;
 	private JButton toolbarButton;
 	private TimeSeriesDataProviderConfigurationDialog configurationDialog;
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.getConfigurationDialog().setVisible(true);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.baseUI.mainWindow.MainWindowExtension#initialize()
+	 */
 	@Override
 	public void initialize() {
-		this.addToolbarComponent(this.getToolbarButton(), 8, SeparatorPosition.NoSeparator);
-		Application.addApplicationListener(this);
+		this.addToolbarComponent(this.getToolbarButton(), null, null);
 	}
 	
 	/**
@@ -44,7 +49,6 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 			toolbarButton = new JButton(this.getImageIcon());
 			toolbarButton.setToolTipText("Configure global time series data sources.");
 			toolbarButton.addActionListener(this);
-			toolbarButton.setEnabled(this.isProjectLoaded());
 		}
 		return toolbarButton;
 	}
@@ -53,9 +57,11 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 	 * Gets the image icon.
 	 * @return the image icon
 	 */
-	private ImageIcon getImageIcon() {
+	private AwbThemeImageIcon getImageIcon() {
 		if (imageIcon==null) {
-			imageIcon = new ImageIcon(this.getClass().getResource(ICON_PATH));
+			ImageIcon lightModeIcon = new ImageIcon(this.getClass().getResource(ICON_PATH_LIGHT_MODE));
+			ImageIcon darkModeIcon = new ImageIcon(this.getClass().getResource(ICON_PATH_DARK_MODE));
+			imageIcon = new AwbThemeImageIcon(lightModeIcon, darkModeIcon);
 		}
 		return imageIcon;
 	}
@@ -73,26 +79,6 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 			}
 		}
 		return configurationDialog;
-	}
-
-	/* (non-Javadoc)
-	 * @see agentgui.core.application.ApplicationListener#onApplicationEvent(agentgui.core.application.ApplicationListener.ApplicationEvent)
-	 */
-	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
-		switch (event.getApplicationEvent()) {
-		case ApplicationEvent.PROJECT_LOADED:
-		case ApplicationEvent.PROJECT_CLOSED:
-			this.getToolbarButton().setEnabled(this.isProjectLoaded());
-		}
-	}
-	
-	/**
-	 * Checks if a project is currently loaded.
-	 * @return true, if is project loaded
-	 */
-	private boolean isProjectLoaded() {
-		return Application.getProjectFocused()!=null;
 	}
 
 }

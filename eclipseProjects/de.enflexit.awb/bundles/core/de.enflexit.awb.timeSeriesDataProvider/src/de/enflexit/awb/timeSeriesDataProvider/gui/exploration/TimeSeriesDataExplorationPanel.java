@@ -2,6 +2,8 @@ package de.enflexit.awb.timeSeriesDataProvider.gui.exploration;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +23,7 @@ import javax.swing.JRadioButton;
 
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
+import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSourceConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 import de.enflexit.awb.timeSeriesDataProvider.TimeValuePair;
 
@@ -36,7 +39,7 @@ import javax.swing.table.DefaultTableModel;
  * A UI panel to explore the configured data sources and series.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class TimeSeriesDataExplorationPanel extends JPanel implements ActionListener {
+public class TimeSeriesDataExplorationPanel extends JPanel implements ActionListener, PropertyChangeListener {
 	
 	private static final long serialVersionUID = -6759695015854586392L;
 	private static final String COMBOBOX_ENTRY_NOTHING_SELECTED = " --- Please Select ---";
@@ -83,8 +86,12 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 	public TimeSeriesDataExplorationPanel() {
 		this.initialize();
 		this.setSelectedDataSource(null);
+		TimeSeriesDataProvider.getInstance().addPropertyChangeListener(this);
 	}
 	
+	/**
+	 * Initializes the GUI components.
+	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0};
@@ -190,6 +197,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		add(getJScrollPaneResultsTable(), gbc_jScrollPaneResultsTable);
 	}
 
+	/**
+	 * Gets the j label data source.
+	 * @return the j label data source
+	 */
 	private JLabel getJLabelDataSource() {
 		if (jLabelDataSource == null) {
 			jLabelDataSource = new JLabel("Data Source:");
@@ -197,6 +208,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jLabelDataSource;
 	}
+	/**
+	 * Gets the j combo box data source.
+	 * @return the j combo box data source
+	 */
 	private JComboBox<String> getJComboBoxDataSource() {
 		if (jComboBoxDataSource == null) {
 			jComboBoxDataSource = new JComboBox<String>();
@@ -205,6 +220,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jComboBoxDataSource;
 	}
+	/**
+	 * Gets the j label availability.
+	 * @return the j label availability
+	 */
 	private JLabel getJLabelAvailability() {
 		if (jLabelAvailability == null) {
 			jLabelAvailability = new JLabel("<availability>");
@@ -212,24 +231,40 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jLabelAvailability;
 	}
+	/**
+	 * Gets the image icon available.
+	 * @return the image icon available
+	 */
 	private ImageIcon getImageIconAvailable() {
 		if (imageIconAvailable==null) {
 			imageIconAvailable = new ImageIcon(this.getClass().getResource(ICON_PATH_SOURCE_AVAILABLE));
 		}
 		return imageIconAvailable;
 	}
+	/**
+	 * Gets the image icon not available.
+	 * @return the image icon not available
+	 */
 	private ImageIcon getImageIconNotAvailable() {
 		if (imageIconNotAvailable==null) {
 			imageIconNotAvailable = new ImageIcon(this.getClass().getResource(ICON_PATH_SOURCE_NOT_AVAILABLE));
 		}
 		return imageIconNotAvailable;
 	}
+	/**
+	 * Gets the image icon not selected.
+	 * @return the image icon not selected
+	 */
 	private ImageIcon getImageIconNotSelected() {
 		if (imageIconNotSelected==null) {
 			imageIconNotSelected = new ImageIcon(this.getClass().getResource(ICON_PATH_SOURCE_NOT_SELECTED));
 		}
 		return imageIconNotSelected;
 	}
+	/**
+	 * Gets the j label data series.
+	 * @return the j label data series
+	 */
 	private JLabel getJLabelDataSeries() {
 		if (jLabelDataSeries == null) {
 			jLabelDataSeries = new JLabel("Data Series:");
@@ -237,6 +272,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jLabelDataSeries;
 	}
+	/**
+	 * Gets the j combo box data series.
+	 * @return the j combo box data series
+	 */
 	private JComboBox<String> getJComboBoxDataSeries() {
 		if (jComboBoxDataSeries == null) {
 			jComboBoxDataSeries = new JComboBox<String>();
@@ -245,6 +284,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jComboBoxDataSeries;
 	}
+	/**
+	 *
+	 * @return the j radio button single value
+	 */
 	private JRadioButton getJRadioButtonSingleValue() {
 		if (jRadioButtonSingleValue == null) {
 			jRadioButtonSingleValue = new JRadioButton("SingleValue");
@@ -255,6 +298,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jRadioButtonSingleValue;
 	}
+	/**
+	 * Gets the j radio button value range.
+	 * @return the j radio button value range
+	 */
 	private JRadioButton getJRadioButtonValueRange() {
 		if (jRadioButtonValueRange == null) {
 			jRadioButtonValueRange = new JRadioButton("Value Range");
@@ -264,12 +311,20 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jRadioButtonValueRange;
 	}
+	/**
+	 * Gets the single value or range group.
+	 * @return the single value or range group
+	 */
 	private ButtonGroup getSingleValueOrRangeGroup() {
 		if (singleOrRangeButtonGroup==null) {
 			singleOrRangeButtonGroup = new ButtonGroup();
 		}
 		return singleOrRangeButtonGroup;
 	}
+	/**
+	 * Gets the j label request.
+	 * @return the j label request
+	 */
 	private JLabel getJLabelRequest() {
 		if (jLabelRequest == null) {
 			jLabelRequest = new JLabel("Request:");
@@ -277,6 +332,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jLabelRequest;
 	}
+	/**
+	 * Gets the j label from.
+	 * @return the j label from
+	 */
 	private JLabel getJLabelFrom() {
 		if (jLabelFrom == null) {
 			jLabelFrom = new JLabel("At / From:");
@@ -284,12 +343,20 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jLabelFrom;
 	}
+	/**
+	 * Gets the date time widget from.
+	 * @return the date time widget from
+	 */
 	private DateTimeWidget getDateTimeWidgetFrom() {
 		if (dateTimeWidgetFrom == null) {
 			dateTimeWidgetFrom = new DateTimeWidget();
 		}
 		return dateTimeWidgetFrom;
 	}
+	/**
+	 * Gets the j label to.
+	 * @return the j label to
+	 */
 	private JLabel getJLabelTo() {
 		if (jLabelTo == null) {
 			jLabelTo = new JLabel("To:");
@@ -297,6 +364,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jLabelTo;
 	}
+	/**
+	 * Gets the date time widget to.
+	 * @return the date time widget to
+	 */
 	private DateTimeWidget getDateTimeWidgetTo() {
 		if (dateTimeWidgetTo == null) {
 			dateTimeWidgetTo = new DateTimeWidget();
@@ -304,6 +375,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return dateTimeWidgetTo;
 	}
+	/**
+	 * Gets the j button request data.
+	 * @return the j button request data
+	 */
 	private JButton getJButtonRequestData() {
 		if (jButtonRequestData == null) {
 			jButtonRequestData = new JButton("Request Data");
@@ -313,6 +388,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jButtonRequestData;
 	}
+	/**
+	 * Gets the j label result info.
+	 * @return the j label result info
+	 */
 	private JLabel getJLabelResultInfo() {
 		if (jLabelResultInfo == null) {
 			jLabelResultInfo = new JLabel("");
@@ -320,6 +399,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jLabelResultInfo;
 	}
+	/**
+	 * Gets the j scroll pane results table.
+	 * @return the j scroll pane results table
+	 */
 	private JScrollPane getJScrollPaneResultsTable() {
 		if (jScrollPaneResultsTable == null) {
 			jScrollPaneResultsTable = new JScrollPane();
@@ -327,6 +410,10 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 		}
 		return jScrollPaneResultsTable;
 	}
+	/**
+	 * Gets the j table results.
+	 * @return the j table results
+	 */
 	private JTable getJTableResults() {
 		if (jTableResults == null) {
 			jTableResults = new JTable();
@@ -517,5 +604,40 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 			dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss").withZone(ZoneId.systemDefault());
 		}
 		return dateTimeFormatter;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// --- Rebuild the combo box model if a data source was added, removed or renamed
+		if (evt.getPropertyName().equals(TimeSeriesDataProvider.DATA_SOURCE_ADDED) || evt.getPropertyName().equals(TimeSeriesDataProvider.DATA_SOURCE_REMOVED) || evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SOURCE_RENAMED)) {
+			this.rebuildDataSourceComboBoxModel();
+		}
+	}
+	
+	/**
+	 * Rebuild data source combo box model.
+	 */
+	private void rebuildDataSourceComboBoxModel() {
+		String currentSelection = (String) this.getJComboBoxDataSource().getSelectedItem();
+		this.dataSourceComboBoxModel = null;
+		this.getJComboBoxDataSource().setModel(this.getDataSourceComboBoxModel());
+		
+		// --- If the previously selected data source is still in the new model, restore the selection
+		for (int i=0; i<this.getJComboBoxDataSource().getItemCount(); i++) {
+			Object itemAtIndex = this.getJComboBoxDataSource().getItemAt(i);
+			if (itemAtIndex.equals(currentSelection)) {
+				int seriesIndex = this.getJComboBoxDataSeries().getSelectedIndex();
+				this.getJComboBoxDataSource().setSelectedIndex(i);
+				this.getJComboBoxDataSeries().setSelectedIndex(seriesIndex);
+				return;
+			}
+		}
+		
+		// --- If not, clear the data series selection too
+		this.getJComboBoxDataSeries().setSelectedItem(COMBOBOX_ENTRY_NOTHING_SELECTED);
+		
 	}
 }

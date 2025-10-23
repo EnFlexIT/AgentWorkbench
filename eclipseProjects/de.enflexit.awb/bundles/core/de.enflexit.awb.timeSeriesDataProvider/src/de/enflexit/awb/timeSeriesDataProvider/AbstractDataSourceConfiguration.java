@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+
+import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider.ConfigurationScope;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 
@@ -30,6 +32,8 @@ public abstract class AbstractDataSourceConfiguration implements Serializable, P
 	private ArrayList<AbstractDataSeriesConfiguration> dataSeriesConfigurations;
 	
 	private transient ArrayList<PropertyChangeListener> listeners;
+	
+	private transient ConfigurationScope configurationScope;
 	
 	/**
 	 * Gets the name of this data source.
@@ -182,4 +186,21 @@ public abstract class AbstractDataSourceConfiguration implements Serializable, P
 		}
 		return seriesNames;
 	}
+	
+	/**
+	 * Gets the configuration scope.
+	 * @return the configuration scope
+	 */
+	public ConfigurationScope getConfigurationScope() {
+		return configurationScope;
+	}
+	/**
+	 * Sets the configuration scope.
+	 * @param configurationScope the new configuration scope
+	 */
+	public void setConfigurationScope(ConfigurationScope configurationScope) {
+		this.configurationScope = configurationScope;
+	}
+	
+	
 }

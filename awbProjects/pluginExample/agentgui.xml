@@ -8,7 +8,7 @@
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1657471665324</updateDateLastChecked>
+    <updateDateLastChecked>1760430851475</updateDateLastChecked>
     <updateAuthorization>
         <authorizationType>NONE</authorizationType>
     </updateAuthorization>
@@ -19,7 +19,7 @@
     </plugins>
     <subOntologies>
         <subOntology>agentgui.ontology.AgentGUI_BaseOntology</subOntology>
-        <subOntology>agentgui.simulationService.ontology.AgentGUI_DistributionOntology</subOntology>
+        <subOntology>de.enflexit.awb.simulation.ontology.AWB_DistributionOntology</subOntology>
     </subOntologies>
     <agentStartConfiguration>
         <agentVector/>
@@ -32,14 +32,16 @@
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
-            <service>agentgui.simulationService.LoadService</service>
+            <service>de.enflexit.awb.simulation.LoadService</service>
+            <service>de.enflexit.awb.simulation.SimulationService</service>
             <service>jade.core.event.NotificationService</service>
-            <service>agentgui.simulationService.SimulationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <additionalRemoteContainerTimeOutInSeconds>0</additionalRemoteContainerTimeOutInSeconds>
         <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
+        <distributeAllProjectResources>false</distributeAllProjectResources>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>false</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
@@ -153,6 +155,9 @@
         <preventUsageOfAlreadyUsedComputers>false</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>true</showJADErmaGUI>
     </remoteContainerConfiguration>
+    <projectProperties>
+        <propertyMap/>
+    </projectProperties>
     <simulationSetupCurrent>test</simulationSetupCurrent>
     <simulationSetups>
         <entry>
