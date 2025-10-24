@@ -191,6 +191,17 @@ public class DesktopUiService implements AgentWorkbenchUI {
 		return null;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getAwbPasswordDialog(boolean)
+	 */
+	@Override
+	public char[] getPasswordFromAwbPasswordDialog(boolean isConfirmPassword, String windowTitle, String headerText) {
+		// --- Nothing to do here, since BaseUiService will create the component ----
+		return NOT_IMPLEMENTED_FOR_CHAR_ARRAY;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showMessageDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon)
 	 */
@@ -204,7 +215,7 @@ public class DesktopUiService implements AgentWorkbenchUI {
 	@Override
 	public int showOptionDialog(Object parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue) {
 		// --- Nothing to do here, since BaseUiService will create the component ----
-		return NOT_IMPLEMENTED;
+		return NOT_IMPLEMENTED_FOR_INT;
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showInputDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon, java.lang.Object[], java.lang.Object)

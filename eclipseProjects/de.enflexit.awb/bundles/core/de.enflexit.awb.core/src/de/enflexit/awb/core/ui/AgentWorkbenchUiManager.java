@@ -626,6 +626,40 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI, SwingToSwtConn
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getPasswordFromAwbPasswordDialog(boolean, java.lang.String, java.lang.String)
+	 */
+	public char[] getPasswordFromAwbPasswordDialog(boolean isConfirmPassword, String windowTitle, String headerText) {
+
+		if (this.isMissingAwbUIServce()==true) return null;
+		
+		int noOfUiImpls = this.getNumberOfUiImplementations();
+		if (noOfUiImpls > 1) {
+			// --- Check service instances --------------------------
+			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
+				char[] pswdArray = awbUI.getPasswordFromAwbPasswordDialog(isConfirmPassword, windowTitle, headerText);
+				if (pswdArray!=null) {
+					if (pswdArray==NOT_IMPLEMENTED_FOR_CHAR_ARRAY) {
+						noOfUiImpls--;
+						continue;
+					}
+					// --- Return the password that was entered -----
+					return pswdArray;
+				}
+			}
+			// --- Write error if nothing was shown -----------------
+			if (noOfUiImpls>1) {
+				LOGGER.error("Found " + noOfUiImpls + " UI-implementations but no implementation for method showInputDialog( ... )!");
+			}
+			
+		} else {
+			return this.getAgentWorkbenchUiList().get(0).getPasswordFromAwbPasswordDialog(isConfirmPassword, windowTitle, headerText);
+		}
+		return null;
+		
+		
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#showMessageDialog(java.lang.Object, java.lang.Object, java.lang.String, int, javax.swing.Icon)
@@ -650,7 +684,7 @@ public class AgentWorkbenchUiManager implements AgentWorkbenchUI, SwingToSwtConn
 			// --- Check service instances --------------------------
 			for (AgentWorkbenchUI awbUI : this.getAgentWorkbenchUiList()) {
 				int singleServiceAnswer = awbUI.showOptionDialog(parentComponent, message, title, optionType, messageType, icon, options, initialValue);
-				if (singleServiceAnswer!=NOT_IMPLEMENTED) {
+				if (singleServiceAnswer!=NOT_IMPLEMENTED_FOR_INT) {
 					return singleServiceAnswer;
 				}
 			}

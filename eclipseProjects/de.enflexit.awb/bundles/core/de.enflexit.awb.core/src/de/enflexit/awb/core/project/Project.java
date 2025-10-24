@@ -18,16 +18,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Vector;
 
+import javax.crypto.spec.PBEKeySpec;
 import javax.swing.JDesktopPane;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementWrapper;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
@@ -74,6 +68,14 @@ import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.PropertiesEvent;
 import de.enflexit.common.properties.PropertiesListener;
 import de.enflexit.language.Language;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * This is the class, which holds all necessary informations about a project.<br>
@@ -2153,7 +2155,40 @@ import de.enflexit.language.Language;
 	 */
 	public SecuredProperties getSecuredProperties() {
 		if (securedProperties==null) {
-			securedProperties = new SecuredProperties(Path.of(this.getProjectSecurityFolderFullPath()).resolve(GlobalInfo.SECURED_PROPERTIES_FILE_NAME));
+			
+			String globalSecNodePath = "project/" + this.getProjectFolder();
+			String globalSecStoreKey = "securedProperties.password";
+			
+			PBEKeySpec pswdSpec = null;
+			Path secStoragePath = Path.of(this.getProjectSecurityFolderFullPath()).resolve(GlobalInfo.SECURED_PROPERTIES_FILE_NAME);
+			if (secStoragePath.toFile().exists()==false) {
+				// --------------------------------------------------------------------------------
+				// --- No secure storage was created yet, requires manual password generation -----
+				// --------------------------------------------------------------------------------
+				pswdSpec = this.getPasswordSpecificationFromUser(true);
+				Application.getGlobalInfo().getSecuredProperties().putString(globalSecNodePath, globalSecStoreKey, String.valueOf(pswdSpec.getPassword()));
+				
+			} else {
+				// --------------------------------------------------------------------------------
+				// --- Storage available, get password from global secure storage -----------------
+				// --------------------------------------------------------------------------------
+				String pswd = Application.getGlobalInfo().getSecuredProperties().getString(globalSecNodePath, globalSecStoreKey, null);
+				if (pswd!=null && pswd.isBlank()==false) {
+					pswdSpec = new PBEKeySpec(pswd.toCharArray());
+				} else {
+					pswdSpec = this.getPasswordSpecificationFromUser(false);
+					Application.getGlobalInfo().getSecuredProperties().putString(globalSecNodePath, globalSecStoreKey, String.valueOf(pswdSpec.getPassword()));
+				}
+			}
+			
+			// --- Get secured storage instance ---------------------
+			securedProperties = new SecuredProperties(secStoragePath, pswdSpec);
+			if (securedProperties.isCorrectPassword()==false) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] The password to decrypt the projects secured properties is not correct!");
+				Application.getGlobalInfo().getSecuredProperties().getSecuredProperties().node(globalSecNodePath).remove(globalSecStoreKey);
+				securedProperties = null;
+				return null;
+			}
 			
 			// ------------------------------------------------------
 			// --- Put test data? -----------------------------------
@@ -2184,6 +2219,23 @@ import de.enflexit.language.Language;
 			// ------------------------------------------------------
 		}
 		return securedProperties;
+	}
+	/**
+	 * Returns the password specification from the user or uses a system specific default password.
+	 *
+	 * @param isConfirmPassword the is confirm password
+	 * @return the password specification from user
+	 */
+	private PBEKeySpec getPasswordSpecificationFromUser(boolean isConfirmPassword) {
+		
+		PBEKeySpec pswdSpec = null;
+		char[] pswdArray = AgentWorkbenchUiManager.getInstance().getPasswordFromAwbPasswordDialog(isConfirmPassword, "Enter Password", "Password for file './" + this.getProjectFolder() + "/" + DEFAULT_SUB_FOLDER_SECURITY + "/" + GlobalInfo.SECURED_PROPERTIES_FILE_NAME + "':");
+		if (pswdArray==null) {
+			pswdSpec = SecuredProperties.getDefaultPassword();
+		} else {
+			pswdSpec = new PBEKeySpec(pswdArray);
+		}
+		return pswdSpec;
 	}
 	
 	

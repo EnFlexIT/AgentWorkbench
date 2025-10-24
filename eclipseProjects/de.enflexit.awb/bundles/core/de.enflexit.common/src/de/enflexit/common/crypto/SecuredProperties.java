@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.crypto.spec.PBEKeySpec;
 
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.equinox.security.storage.provider.IProviderHints;
 
 /**
  * The Class SecuredProperties.
@@ -16,14 +21,17 @@ import org.eclipse.equinox.security.storage.StorageException;
 public class SecuredProperties {
 
 	private Path secureStoragePath;
+	private PBEKeySpec secureStoragePswdSpec;
+	
 	private ISecurePreferences securedProperties;
 	
 	/**
 	 * Instantiates a new secured properties.
 	 * @param secureStoragePath the secure storage path
 	 */
-	public SecuredProperties(Path secureStoragePath) {
+	public SecuredProperties(Path secureStoragePath, PBEKeySpec secureStoragePswdSpec) {
 		this.secureStoragePath =  secureStoragePath;
+		this.secureStoragePswdSpec = secureStoragePswdSpec;
 		if (this.secureStoragePath==null) {
 			throw new NullPointerException("The storage path is not allowed to be null!");
 		}
@@ -38,20 +46,28 @@ public class SecuredProperties {
 			try {
 				
 				URL propURL = this.secureStoragePath.toUri().toURL();
-				securedProperties = SecurePreferencesFactory.open(propURL, null);
+				
+				Map<Object, Object> options = new HashMap<>();
+				if (this.secureStoragePswdSpec!=null) options.put(IProviderHints.DEFAULT_PASSWORD, this.secureStoragePswdSpec);
+				
+				securedProperties = SecurePreferencesFactory.open(propURL, options);
 				if (secureStoragePath.toFile().exists()==false) {
+					// --- Ensure that the file will be created ---------------
 					securedProperties.flush();
+					// --- Place a test value into the storage ----------------
+					securedProperties.put(this.getClass().getSimpleName(), this.getClass().getName(), true);
 				}
 				
 			} catch (MalformedURLException mUrlEx) {
 				mUrlEx.printStackTrace();
 			} catch (IOException ioEx) {
 				ioEx.printStackTrace();
+			} catch (StorageException stEx) {
+				stEx.printStackTrace();
 			}
 		}
 		return securedProperties;
 	}
-	
 	/**
 	 * Saves the secured properties .
 	 */
@@ -61,6 +77,22 @@ public class SecuredProperties {
 		} catch (IOException ioEx) {
 			ioEx.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Checks if is correct password.
+	 * @return true, if is correct password
+	 */
+	public boolean isCorrectPassword() {
+		
+		boolean isCorrectPassword = false;
+		try {
+			String className = this.getSecuredProperties().get(this.getClass().getSimpleName(), null);
+			isCorrectPassword = this.getClass().getName().equals(className);
+		} catch (StorageException stEx) {
+			stEx.printStackTrace();
+		}
+		return isCorrectPassword;
 	}
 	
 	
@@ -339,4 +371,30 @@ public class SecuredProperties {
 		return null;
 	}
 	
+	// ------------------------------------------------------------------------
+	// --- From here, static help methods -------------------------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns a local default password.
+	 *
+	 * @param isAskUser the indicator to ask the current user
+	 * @param parentWindow the parent window
+	 * @return the password
+	 */
+	public static PBEKeySpec getDefaultPassword() {
+		
+		String pswd = "";
+
+		// --- Generate a system dependent password ----------------- 
+		pswd += System.getProperty("os.name") + "-";
+		pswd += System.getProperty("os.arch") + "-";
+		pswd += System.getProperty("user.name") + "-";
+		pswd += System.getProperty("user.country") + "-";
+		pswd += System.getProperty("user.language") + "-";
+		pswd += System.getProperty("user.timezone");
+		
+		if (pswd==null || pswd.isBlank()==true) return null;
+		return new PBEKeySpec(pswd.toCharArray());
+	}
+
 }

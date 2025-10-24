@@ -18,7 +18,8 @@ import de.enflexit.awb.simulation.agents.LoadMeasureAgent;
  */
 public interface AgentWorkbenchUI {
 
-	public static final int NOT_IMPLEMENTED = -1024;
+	public static final int 	NOT_IMPLEMENTED_FOR_INT 		= -1024;
+	public static final char[] 	NOT_IMPLEMENTED_FOR_CHAR_ARRAY 	= "NOT_IMPLEMENTED".toCharArray();
 	
 	
 	public static Logger LOGGER = LoggerFactory.getLogger(AgentWorkbenchUI.class);
@@ -165,6 +166,17 @@ public interface AgentWorkbenchUI {
 	 * @return the awb monitoring dialog system load
 	 */
 	public AwbMonitoringDialogThreading getAwbMonitoringDialogThreading(LoadMeasureAgent lmAgent);
+	
+	
+	/**
+	 * Has to return a password by asking for an user input.
+	 *
+	 * @param isConfirmPassword indicator to confirm a password (by two fields)
+	 * @param windowTitle the window title
+	 * @param headerText the header text
+	 * @return the password
+	 */
+	public char[] getPasswordFromAwbPasswordDialog(boolean isConfirmPassword, String windowTitle, String headerText);
 	
 	
 	/**

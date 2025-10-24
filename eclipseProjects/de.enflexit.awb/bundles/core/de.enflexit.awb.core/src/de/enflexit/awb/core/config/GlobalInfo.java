@@ -1197,7 +1197,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public SecuredProperties getSecuredProperties() {
 		if (securedProperties==null) {
-			securedProperties = new SecuredProperties(this.getPathProperty(true).resolve(SECURED_PROPERTIES_FILE_NAME));
+			securedProperties = new SecuredProperties(this.getPathProperty(true).resolve(SECURED_PROPERTIES_FILE_NAME), SecuredProperties.getDefaultPassword());
 			
 			// ------------------------------------------------------
 			// --- Put test data? -----------------------------------

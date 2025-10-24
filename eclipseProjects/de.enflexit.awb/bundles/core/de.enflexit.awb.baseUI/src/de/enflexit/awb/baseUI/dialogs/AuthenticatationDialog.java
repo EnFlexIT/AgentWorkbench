@@ -107,7 +107,6 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	 */
 	public void initialize() {
 		
-		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};

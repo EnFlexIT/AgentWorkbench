@@ -11,6 +11,7 @@ import de.enflexit.awb.baseUI.console.JFrame4Consoles;
 import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.dialogs.AboutDialog;
 import de.enflexit.awb.baseUI.dialogs.BenchmarkMonitor;
+import de.enflexit.awb.baseUI.dialogs.PasswordDialog;
 import de.enflexit.awb.baseUI.dialogs.ProgressMonitor;
 import de.enflexit.awb.baseUI.dialogs.TranslationDialog;
 import de.enflexit.awb.baseUI.monitor.load.SystemLoadDialog;
@@ -49,6 +50,8 @@ public class BaseUiService implements AgentWorkbenchUI {
 	private OptionDialog optionDialog;
 	private TranslationDialog translationDialog;
 	private DatabaseConnectionSettingsDialog databaseDialog;
+	private PasswordDialog passwordDialog;
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getImplementationName()
@@ -301,6 +304,45 @@ public class BaseUiService implements AgentWorkbenchUI {
 	@Override
 	public AwbMonitoringDialogThreading getAwbMonitoringDialogThreading(LoadMeasureAgent lmAgent) {
 		return new ThreadMonitorDialog(lmAgent);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AgentWorkbenchUI#getAwbPasswordDialog(boolean)
+	 */
+	@Override
+	public char[] getPasswordFromAwbPasswordDialog(boolean isConfirmPassword, String windowTitle, String headerText) {
+		
+		if (passwordDialog!=null) {
+			if (passwordDialog.isVisible()==true) {
+				// --- Set focus again ----------
+				passwordDialog.requestFocus();
+				
+			} else {
+				// --- dispose it first --------- 
+				passwordDialog.dispose();
+				passwordDialog = null;
+			}
+		}
+		
+		if (Application.isRunningAsServer()==true || Application.isMainWindowInitiated()==false) {
+			passwordDialog = new PasswordDialog(null, isConfirmPassword, windowTitle, headerText);
+		} else {
+			passwordDialog = new PasswordDialog((Window) Application.getMainWindow(), isConfirmPassword, windowTitle, headerText);
+		}
+		
+		char[] pswdArray = null;
+		passwordDialog.setVisible(true);
+		// - - - - - - - - - - - - - - - - - - - -
+		if (passwordDialog!=null) {
+			if (passwordDialog.isCanceled()==false ) {
+				pswdArray = passwordDialog.getPassword();
+			}
+			passwordDialog.dispose();
+		}
+		passwordDialog = null;
+		
+		return pswdArray;
 	}
 	
 	

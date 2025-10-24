@@ -65,5 +65,6 @@ Import-Package: de.enflexit.language,
  jakarta.xml.bind.annotation.adapters,
  org.apache.commons.codec.binary,
  org.eclipse.equinox.security.storage,
+ org.eclipse.equinox.security.storage.provider;version="[1.0.0,2.0.0)",
  org.osgi.framework,
  org.osgi.service.component
