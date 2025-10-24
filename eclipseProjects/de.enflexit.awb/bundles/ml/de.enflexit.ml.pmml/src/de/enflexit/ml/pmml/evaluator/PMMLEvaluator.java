@@ -229,6 +229,8 @@ public class PMMLEvaluator {
 				if (predictedValue instanceof Number) {
 					return ((Number)predictedValue).doubleValue();
 				}
+			} else if (predictionObject instanceof Number) {
+				return ((Number) predictionObject).doubleValue();
 			}
 			System.err.println("[" + this.getClass().getSimpleName() + "] Unexpected type of prediction result!");
 			return null;
