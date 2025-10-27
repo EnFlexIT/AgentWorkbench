@@ -102,6 +102,14 @@ public abstract class AbstractDataSourceConfiguration implements Serializable, P
 		}
 	}
 	
+	/**
+	 * Removes the all data series from this data source.
+	 */
+	public void removeAllDataSeries() {
+		this.getDataSeriesConfigurations().clear();
+		this.notifyListeners(new PropertyChangeEvent(this, AbstractDataSourceConfiguration.DATA_SERIES_CLEARED, null, null));
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

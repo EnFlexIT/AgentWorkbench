@@ -20,6 +20,10 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Window;
 
+/**
+ * A simple dialog to select a data series from the time series provider.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class DataSeriesSelectionDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1733677067996570288L;
@@ -30,10 +34,17 @@ public class DataSeriesSelectionDialog extends JDialog implements ActionListener
 	
 	private boolean canceled;
 	
+	/**
+	 * Instantiates a new data series selection dialog.
+	 */
 	public DataSeriesSelectionDialog() {
 		initialize();
 	}
 	
+	/**
+	 * Instantiates a new data series selection dialog.
+	 * @param owner the owner
+	 */
 	public DataSeriesSelectionDialog(Window owner) {
 		super(owner);
 		this.initialize();

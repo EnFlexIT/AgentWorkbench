@@ -15,6 +15,7 @@ import java.sql.Statement;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -30,6 +31,7 @@ import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSeriesConfiguration;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSource;
 import de.enflexit.awb.timeSeriesDataProvider.jdbc.JDBCDataSource.ConnectionState;
 import de.enflexit.common.swing.JComboBoxWide;
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
@@ -754,11 +756,13 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 					DefaultTableModel tableModel = new DefaultTableModel(tableData, this.columnNames);
 					this.getJTableDataTable().setModel(tableModel);
 					
-					// --- Create a combo box model of the column names for selecting the date time column 
-					this.getJComboBoxSelectDateTimeColumn().setModel(this.createComboBoxModel(true, this.columnNames));
-					String dateTimeColumn = this.findDateTimeColumn(rsmd);
-					if (dateTimeColumn!=null) {
-						this.getJComboBoxSelectDateTimeColumn().setSelectedItem(dateTimeColumn);
+					// --- Create a combo box model of the column names for selecting the date time column
+					List<String> dateTimeColumns = this.findTimeStampColumns(rsmd);
+					if (dateTimeColumns.size()>0) {
+						this.getJComboBoxSelectDateTimeColumn().setModel(this.createComboBoxModel(true, dateTimeColumns));
+						this.getJComboBoxSelectDateTimeColumn().setSelectedItem(dateTimeColumns.get(0));
+					} else {
+						JOptionPane.showMessageDialog(OwnerDetection.getOwnerWindowForComponent(this), "Warning: The selected database table contains no date/time column!", "No date/time column!", JOptionPane.WARNING_MESSAGE);
 					}
 					this.getSeriesConfigurationPanel().setColumnNames(columnNames);
 				}
@@ -770,19 +774,19 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	}
 	
 	/**
-	 * Looks for a column containing date time values in the provided {@link ResultSetMetaData}.
-	 * If there is more than one, only the first will be found.
+	 * Find time stamp columns.
 	 * @param resultSetMetaData the result set meta data
-	 * @return the name of the column, null if none was found
+	 * @return the list
 	 * @throws SQLException the SQL exception
 	 */
-	private String findDateTimeColumn(ResultSetMetaData resultSetMetaData) throws SQLException {
+	private List<String> findTimeStampColumns(ResultSetMetaData resultSetMetaData) throws SQLException {
+		List<String> columnNames = new ArrayList<String>();
 		for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
 			if (resultSetMetaData.getColumnTypeName(i).equalsIgnoreCase("timestamp")) {
-				return resultSetMetaData.getColumnName(i);
+				columnNames.add(resultSetMetaData.getColumnName(i));
 			}
 		}
-		return null;
+		return columnNames;
 	}
 	
 	/**

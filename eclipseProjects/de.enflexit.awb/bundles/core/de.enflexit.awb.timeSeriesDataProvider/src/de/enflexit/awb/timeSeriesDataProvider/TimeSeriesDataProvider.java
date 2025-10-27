@@ -305,6 +305,21 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 		return dataSource;
 	}
 	
+	/**
+	 * Gets the specified data series.
+	 * @param dataSourceName the data source name
+	 * @param dataSeriesName the data series name
+	 * @return the data series, may be null if not found
+	 */
+	public AbstractDataSeries getDataSeries(String dataSourceName, String dataSeriesName) {
+		AbstractDataSource dataSource = this.getDataSource(dataSourceName);
+		if (dataSource!=null) {
+			return dataSource.getDataSeries(dataSeriesName);
+		} else {
+			return null;
+		}
+	}
+	
 	
 	/**
 	 * Resets all data sources.

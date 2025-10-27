@@ -620,6 +620,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 				TreePath parentPath = this.getDataSourceTree().getSelectionPath().getParentPath();
 				this.getDataSourceTree().expandPath(parentPath);
 				System.out.println("Data series removed");
+			} else if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SERIES_CLEARED)) {
+				DefaultMutableTreeNode sourceNode = (DefaultMutableTreeNode) this.getDataSourceTree().getSelectionPath().getLastPathComponent();
+				sourceNode.removeAllChildren();
 			} else if (evt.getPropertyName().equals(TimeSeriesDataProvider.DATA_SOURCE_ADDED)) {
 				AbstractDataSourceConfiguration newSourceConfig = (AbstractDataSourceConfiguration) evt.getNewValue();
 				this.getRootNode().add(this.createDataSourceNode(newSourceConfig));
