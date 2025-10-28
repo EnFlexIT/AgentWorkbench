@@ -52,10 +52,10 @@ public class SecuredProperties {
 				
 				securedProperties = SecurePreferencesFactory.open(propURL, options);
 				if (secureStoragePath.toFile().exists()==false) {
-					// --- Ensure that the file will be created ---------------
-					securedProperties.flush();
 					// --- Place a test value into the storage ----------------
 					securedProperties.put(this.getClass().getSimpleName(), this.getClass().getName(), true);
+					// --- Ensure that the file will be created ---------------
+					securedProperties.flush();
 				}
 				
 			} catch (MalformedURLException mUrlEx) {

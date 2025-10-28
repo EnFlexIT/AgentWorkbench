@@ -357,7 +357,6 @@ import jakarta.xml.bind.annotation.XmlTransient;
 		// --- Check/create default folders -------------------------
 		project.setProjectFolder(projectSubDirectory);
 		project.checkAndCreateProjectsDirectoryStructure();
-		project.getSecuredProperties();
 		
 		// ----------------------------------------------------------
 		// --- Install required features if necessary ---------------
@@ -2165,7 +2164,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 				// --------------------------------------------------------------------------------
 				// --- No secure storage was created yet, requires manual password generation -----
 				// --------------------------------------------------------------------------------
+				// --- Remove previously stored passwords (just in case) ------
+				Application.getGlobalInfo().getSecuredProperties().getSecuredProperties().node(globalSecNodePath).remove(globalSecStoreKey);
+				// --- Get password from user ---------------------------------
 				pswdSpec = this.getPasswordSpecificationFromUser(true);
+				// --- Save current password ----------------------------------
 				Application.getGlobalInfo().getSecuredProperties().putString(globalSecNodePath, globalSecStoreKey, String.valueOf(pswdSpec.getPassword()));
 				
 			} else {
@@ -2193,7 +2196,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			// ------------------------------------------------------
 			// --- Put test data? -----------------------------------
 			// ------------------------------------------------------
-			boolean isPutSecuredTestData = true;
+			boolean isPutSecuredTestData = false;
 			if (isPutSecuredTestData==true) {
 				
 				// --- Saved in the file root without node --------------------
