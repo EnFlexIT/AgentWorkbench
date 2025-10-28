@@ -75,9 +75,9 @@ public class PasswordDialog extends JDialog implements AwbPasswordDialog, Action
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon16());
 		this.setTitle("Enter Password");
 
-		this.setSize(new Dimension(400, 250));
+		this.setSize(new Dimension(400, 260));
 		if (this.isConfirmPassword==false) {
-			this.setSize(new Dimension(400, 209));
+			this.setSize(new Dimension(400, 219));
 		}
 		
 		this.setModal(true);
@@ -159,6 +159,8 @@ public class PasswordDialog extends JDialog implements AwbPasswordDialog, Action
 			jPasswordField1 = new JPasswordField();
 			jPasswordField1.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jPasswordField1.setPreferredSize(this.passwordFieldSize);
+			jPasswordField1.addActionListener(this);
+			jPasswordField1.setFocusable(true);
 		}
 		return jPasswordField1;
 	}
@@ -174,6 +176,8 @@ public class PasswordDialog extends JDialog implements AwbPasswordDialog, Action
 			jPasswordField2 = new JPasswordField();
 			jPasswordField2.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jPasswordField2.setPreferredSize(this.passwordFieldSize);
+			jPasswordField2.addActionListener(this);
+			jPasswordField2.setFocusable(true);
 		}
 		return jPasswordField2;
 	}
@@ -286,11 +290,18 @@ public class PasswordDialog extends JDialog implements AwbPasswordDialog, Action
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		
-		if (ae.getSource()==this.getJButtonOk()) {
+		if (ae.getSource()==this.getJPasswordField1()) {
+			this.getJPasswordField1().requestFocus();
+			
+		} else if (ae.getSource()==this.getJPasswordField2()) {
+			this.getJButtonOk().requestFocus();
+			this.getJButtonOk().doClick();
+			
+		} else if (ae.getSource()==this.getJButtonOk()) {
 			// --- Check for errors -----
 			String errMsg = this.isPasswordError();
 			if (errMsg!=null) {
-				JOptionPane.showMessageDialog(this.myOwner, errMsg, "Wrong or no password!", JOptionPane.ERROR_MESSAGE, null);
+				JOptionPane.showMessageDialog(this.myOwner, errMsg, "Insufficient password!", JOptionPane.ERROR_MESSAGE, null);
 				return;
 			}
 			
@@ -322,12 +333,74 @@ public class PasswordDialog extends JDialog implements AwbPasswordDialog, Action
 			}
 		}
 		
+		// --- Password policy ----------------------------
+		int minLength = 8;
+		int maxLength = 0;
+		boolean isUseSpecialCharacter = false;
 		
-		if (msg.isBlank()==true && pswd.length<6) {
-			msg = "The password entered is to short";
+		
+		if (msg.isBlank()==true && pswd.length < minLength) {
+			msg = "The password entered is to short! Minimum length is " + minLength;
 		}
-		
+		if (msg.isBlank()==true && maxLength>0 && pswd.length > maxLength) {
+			msg = "The password entered is to long! Maximum length is " + maxLength;
+		}
+
+		if (msg.isBlank()==true && this.isSufficientPassword(pswd, minLength, maxLength, isUseSpecialCharacter)==false) {
+			msg = "The password specified is insufficient! A password phrase requires:";
+
+			msg += "\n- a minimum of " + minLength + " characters";
+			msg += maxLength<=0 ? "," : " and a maximum of " + maxLength + " characters,";
+				
+			msg += "\n- at least one digit,";
+			msg += "\n- at least one lower case letter,";
+			msg += "\n- at least one upper case letter,";
+			
+			msg += isUseSpecialCharacter==false ? "" : "\n- at least one upper case letter,";  
+			msg += "\n- no spaces";
+		}
+
 		return msg.isBlank()==true ? null : msg;
+	}
+	
+	/**
+	 * Checks if is sufficient password.
+	 *
+	 * @param pswd the character array with the password
+	 * @param minLength the min length
+	 * @param maxLength the max length
+	 * @param isUseSpecialCharacter the is needed special character
+	 * @return true, if is sufficient password
+	 */
+	private boolean isSufficientPassword(char[] pswd, int minLength, int maxLength, boolean isUseSpecialCharacter) {
+		
+		boolean isSufficient = false;
+		try {
+			String password = String.valueOf(pswd);
+			if (password != null) {
+				
+				String MIN_LENGTH = "" + minLength + "";
+				String MAX_LENGTH = "" + (maxLength<=0 ? "" : maxLength) + "";
+				boolean SPECIAL_CHAR_NEEDED = isUseSpecialCharacter;
+
+				String ONE_DIGIT = "(?=.*[0-9])";
+				String LOWER_CASE = "(?=.*[a-z])";
+				String UPPER_CASE = "(?=.*[A-Z])";
+				
+				String SPECIAL_CHAR = SPECIAL_CHAR_NEEDED ? "(?=.*[@#$%^&+=])" : "";
+				String NO_SPACE = "(?=\\S+$)";
+
+				String MIN_MAX_CHAR = ".{" + MIN_LENGTH + "," + MAX_LENGTH + "}";
+				
+				String PATTERN = ONE_DIGIT + LOWER_CASE + UPPER_CASE + SPECIAL_CHAR + NO_SPACE + MIN_MAX_CHAR;
+
+				isSufficient = password.matches(PATTERN);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return isSufficient;
 	}
 	
 }

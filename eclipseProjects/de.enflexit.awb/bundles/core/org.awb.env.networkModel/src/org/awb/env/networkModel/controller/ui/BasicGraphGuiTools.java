@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -80,6 +81,7 @@ import de.enflexit.language.Language;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 
 /**
@@ -401,9 +403,34 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      * @return the new JButton
      */
     protected JToggleButton getNewJToggleButton(String imageName, String toolTipText, ActionListener actionListener) {
+    	Icon icon = null;
+    	if (imageName!=null && imageName.isEmpty()==false) {
+    		icon = new ImageIcon(this.getClass().getResource(this.pathImage + imageName));
+    	}
+    	return this.getNewJToggleButton(icon, toolTipText, actionListener);
+    }
+    /**
+     * Represents an internal factory method for new JToggleButton.
+     *
+     * @param icon the icon to be shown or <code>null</code>
+     * @param toolTipText the tool tip text
+     * @return the new JButton
+     */
+    protected JToggleButton getNewJToggleButton(Icon icon, String toolTipText) {
+    	return this.getNewJToggleButton(icon, toolTipText, null);
+    }
+    /**
+     * Represents an internal factory method for new JToggleButton.
+     *
+     * @param icon the icon to be shown or <code>null</code>
+     * @param toolTipText the tool tip text
+     * @param actionListener the action listener to use. If null, the local listener will be used.
+     * @return the new JButton
+     */
+    protected JToggleButton getNewJToggleButton(Icon icon, String toolTipText, ActionListener actionListener) {
     	JToggleButton newButton = new JToggleButton();
     	newButton.setPreferredSize(JBUTTON_SIZE);
-    	if (imageName!=null && imageName.isEmpty()==false) newButton.setIcon(new ImageIcon(this.getClass().getResource(this.pathImage + imageName)));
+    	if (icon!=null) newButton.setIcon(icon);
     	if (toolTipText!=null && toolTipText.isEmpty()==false) newButton.setToolTipText(toolTipText);
     	if (actionListener!=null) {
     		newButton.addActionListener(actionListener);
@@ -523,7 +550,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JToggleButton getJToggleButtonSatelliteView() {
 		if (jButtonSatelliteView == null) {
-		    jButtonSatelliteView = this.getNewJToggleButton("SatelliteView.png", Language.translate("Übersichtsfenster ein- und ausblenden"));
+		    jButtonSatelliteView = this.getNewJToggleButton(new AwbThemeImageIcon(GraphGlobals.getImageIcon("SatelliteView.png")), Language.translate("Übersichtsfenster ein- und ausblenden"));
 		}
 		return jButtonSatelliteView;
     }
@@ -534,7 +561,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonZoomFit2Window() {
 		if (jButtonZoomFit2Window == null) {
-		    jButtonZoomFit2Window = this.getNewJButton("FitSize.png", Language.translate("An Fenster anpassen"));
+		    jButtonZoomFit2Window = this.getNewJButton(new AwbThemeImageIcon(GraphGlobals.getImageIcon("FitSize.png")), Language.translate("An Fenster anpassen"));
 		}
 		return jButtonZoomFit2Window;
     }
@@ -545,7 +572,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonZoomOne2One() {
 		if (jButtonZoomOne2One == null) {
-		    jButtonZoomOne2One = this.getNewJButton("One2One.png", "1:1 - Zoom 100%");
+		    jButtonZoomOne2One = this.getNewJButton(new AwbThemeImageIcon(GraphGlobals.getImageIcon("One2One.png")), "1:1 - Zoom 100%");
 		}
 		return jButtonZoomOne2One;
     }
@@ -556,7 +583,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JButton getJButtonFocusNetworkComponent() {
 		if (jButtonFocusNetworkComponent == null) {
-			jButtonFocusNetworkComponent = this.getNewJButton("FocusComponent.png", Language.translate("Komponente zentrieren und fokussieren"));
+			jButtonFocusNetworkComponent = this.getNewJButton(new AwbThemeImageIcon(GraphGlobals.getImageIcon("FocusComponent.png")), Language.translate("Komponente zentrieren und fokussieren"));
 		}
 		return jButtonFocusNetworkComponent;
     }
@@ -611,7 +638,7 @@ public class BasicGraphGuiTools implements ActionListener, Observer {
      */
     private JToggleButton getJToggleMouseTransforming() {
 		if (jToggleMouseTransforming == null) {
-		    jToggleMouseTransforming = this.getNewJToggleButton("move.png", Language.translate("Switch to Transforming mode", Language.EN));
+		    jToggleMouseTransforming = this.getNewJToggleButton(new AwbThemeImageIcon(GraphGlobals.getImageIcon("move.png")), Language.translate("Switch to Transforming mode", Language.EN));
 		}
 		return jToggleMouseTransforming;
     }

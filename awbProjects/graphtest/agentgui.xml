@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>GraphTest</projectName>
+    <projectDescription>## Project __GraphTest__
+
+This is an Agent.Workbench (AWB) example project, enabling to play arround with the **Graph- and Network Environment** of AWB.
+
+To understand an **AWB - NetworkModel**, first, one should understand the concept and the relationship of i) **Domains or SubNetworks**,\
+ii) **NetworkComponents** and iii) **GraphElements**.
+
+In the context of an **AWB - NetworkModel**, the notions **Domain** and **SubNetwork** are used synounmiously. While "Domain" usually describes and \
+means an application domain, such as "Energy Tranding", "Traffic Research", "Public Administration" and many more. In the energy sector "Domain"\
+can be understood as a part domain, such as "district heating", "electrical networks" and "gas networks".  
+
+For such, and as part of an AWB NetworkModel, so-called **SubNetworks** can be defined, wherein **NetworkComponents** define parts of those SubNetworks.\
+In other words, an overall NetwokModel consistst of several SubNetworks. Thus, this very generic approach enables to define complex network models that \
+consisit of several parts, such as an overal energy scenario may consisits of an interconnected electrical, a gas and a district heat network.
+
+To define individual model representations of real-world entities, such as vehicles, persons, or energy systems</projectDescription>
     <projectStartTab>2|3</projectStartTab>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>false</projectTabHeaderVisible>
@@ -65,7 +81,6 @@
     </projectProperties>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <timeModelClass>de.enflexit.awb.simulation.environment.time.TimeModelDiscrete</timeModelClass>
-    <projectFolderFullPath>D:\20_GIT\01_AWB\awbProjects\graphtest\</projectFolderFullPath>
     <simulationSetups>
         <entry>
             <key>default</key>

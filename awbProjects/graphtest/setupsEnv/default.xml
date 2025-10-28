@@ -20,6 +20,16 @@
             </value>
         </entry>
         <entry>
+            <key>n10</key>
+            <value>
+                <id>n10</id>
+                <type>Connector</type>
+                <graphElementIDs>PP0</graphElementIDs>
+                <graphElementIDs>PP8</graphElementIDs>
+                <graphElementIDs>n10</graphElementIDs>
+            </value>
+        </entry>
+        <entry>
             <key>n2</key>
             <value>
                 <id>n2</id>

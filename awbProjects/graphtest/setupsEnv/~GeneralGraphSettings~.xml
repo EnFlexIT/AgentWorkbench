@@ -25,6 +25,17 @@
             </value>
         </entry>
         <entry>
+            <key>Connector</key>
+            <value>
+                <color>-16764007</color>
+                <domain>Default Domain</domain>
+                <edgeImage>MissingIcon</edgeImage>
+                <edgeWidth>10.0</edgeWidth>
+                <graphPrototype>org.awb.env.networkModel.prototypes.SimpleGraphElement</graphPrototype>
+                <showLabel>true</showLabel>
+            </value>
+        </entry>
+        <entry>
             <key>No-Image Component</key>
             <value>
                 <color>-13421569</color>
@@ -54,7 +65,7 @@
             <value>
                 <coordinateSystemXDirection>East</coordinateSystemXDirection>
                 <coordinateSystemYDirection>ClockwiseToX</coordinateSystemYDirection>
-                <edgeShape>Line</edgeShape>
+                <edgeShape>ConfigurableLine</edgeShape>
                 <geographicalLayout>false</geographicalLayout>
                 <layoutName>Default Layout</layoutName>
                 <snap2Grid>true</snap2Grid>
