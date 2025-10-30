@@ -1751,7 +1751,6 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	public void setProjectDesktop(JDesktopPane projectDesktop) {
 		this.projectDesktop = projectDesktop;
 	}
-
 	/**
 	 * Returns the project desktop for the current project. This JDesktopPane can be used in order 
 	 * to allow further user interactions within the project by using individual JInternalFrames. 
@@ -1856,8 +1855,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			this.environmentModelName = newEnvironmentModelName;
 			this.resetEnvironmentController();
 			this.setUnsaved(true);
-			setChanged();
-			notifyObservers(CHANGED_EnvironmentModelType);
+			this.setChanged();
+			this.notifyObservers(CHANGED_EnvironmentModelType);
 		}
 	}
 

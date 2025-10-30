@@ -58,9 +58,7 @@ import de.enflexit.common.swing.AwbTabbedPaneHeaderPainter;
 import de.enflexit.language.Language;
 
 /**
- * This extended JInternalFrame graphically encapsulates the the project in the main window (class CoreWindow)
- * 
- * @see MainWindow
+ * This extended JInternalFrame graphically encapsulates the the project in the {@link MainWindow}.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
@@ -746,12 +744,13 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 		this.setProjectTabHeaderVisible(this.currProject.isProjectTabHeaderVisible());
 		
 		this.setVisible(true);
-		this.moveToFront();
 
 		// --- Add this ProjectWindow to the JDesktopPane of the MainWindow ---
 		if (Application.isMainWindowInitiated()==true && Application.getMainWindow() instanceof MainWindow) {
 			((MainWindow)Application.getMainWindow()).getJDesktopPane4Projects().add(this);
 		}
+		this.moveToFront();
+		this.setMaximized();
 	}
 	
 	/* (non-Javadoc)
