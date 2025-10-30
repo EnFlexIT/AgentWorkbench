@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 
-import de.enflexit.awb.baseUI.SeparatorPosition;
+import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
@@ -26,9 +26,9 @@ public class UIIntegration extends MainWindowExtension {
 	 */
 	@Override
 	public void initialize() {
-		this.addTrayIconMenuItem(this.getTrayIconMenuItem(), 5, SeparatorPosition.NoSeparator);
-		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, this.getJMenuItem(), 6, SeparatorPosition.NoSeparator);
-		this.addToolbarComponent(this.getJButtonDatabaseSettings(), 7, SeparatorPosition.SeparatorAfter);
+		this.addTrayIconMenuItem(this.getTrayIconMenuItem(), 5, false);
+		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, this.getJMenuItem(), 6, false);
+		this.addToolbarComponent(this.getJButtonDatabaseSettings(), null, true, ToolBarGroup.ExtraTools);
 	}
 
 	/**

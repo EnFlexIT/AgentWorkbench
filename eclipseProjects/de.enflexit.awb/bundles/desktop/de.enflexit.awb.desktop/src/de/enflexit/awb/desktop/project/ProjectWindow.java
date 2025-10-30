@@ -291,8 +291,8 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 	@Override
 	public void setProjectTreeVisible(boolean isTreeVisible) {
 		if (isTreeVisible==false) {
-			this.reminderDividerLocation = this.getJSplitPaneProjectView().getDividerLocation();
-			this.reminderDividerSize = this.getJSplitPaneProjectView().getDividerSize();
+			if (this.getJSplitPaneProjectView().getDividerLocation() > 0)	this.reminderDividerLocation = this.getJSplitPaneProjectView().getDividerLocation();
+			if (this.getJSplitPaneProjectView().getDividerSize() > 0)		this.reminderDividerSize = this.getJSplitPaneProjectView().getDividerSize();
 			this.getJSplitPaneProjectView().setDividerLocation(0);
 			this.getJSplitPaneProjectView().setDividerSize(0);
 		} else {

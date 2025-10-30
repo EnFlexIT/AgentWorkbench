@@ -3,8 +3,6 @@ package de.enflexit.awb.baseUI.systemtray;
 import java.awt.MenuItem;
 import java.util.Vector;
 
-import de.enflexit.awb.baseUI.SeparatorPosition;
-
 /**
  * The Class TrayIconMenuExtension can be extended to define individual menus, menu items
  * and toolbar components to the Swing main window of Agent.Workbench.
@@ -29,14 +27,14 @@ public abstract class TrayIconMenuExtension implements AwbTrayIconMenuExtension 
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.baseUI.systemtray.AwbTrayIconMenuExtension#addTrayIconMenuItem(java.awt.MenuItem, java.lang.Integer, de.enflexit.awb.baseUI.SeparatorPosition)
+	 * @see de.enflexit.awb.baseUI.systemtray.AwbTrayIconMenuExtension#addTrayIconMenuItem(java.awt.MenuItem, java.lang.Integer, boolean)
 	 */
 	@Override
-	public void addTrayIconMenuItem(MenuItem tryIconMenuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {
+	public void addTrayIconMenuItem(MenuItem tryIconMenuItemToAdd, Integer indexPosition, boolean isUsePrefixSeparator) {
 		if (tryIconMenuItemToAdd==null) {
 			throw new NullPointerException("The menu item to be added is null.");
 		}
-		this.getTrayIconMenuItemVector().add(new TrayIconMenuItem(tryIconMenuItemToAdd, indexPosition, separatorPosition));
+		this.getTrayIconMenuItemVector().add(new TrayIconMenuItem(tryIconMenuItemToAdd, indexPosition, isUsePrefixSeparator));
 	}
 	
 }

@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
+import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
@@ -34,7 +35,7 @@ public class PMMLEvaluatorUIIntegration extends MainWindowExtension implements A
 	@Override
 	public void initialize() {
 		if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
-			this.addToolbarComponent(this.getToolbarButton(), null, null);
+			this.addToolbarComponent(this.getToolbarButton(), null, true, ToolBarGroup.NoGroup);
 		}
 	}
 	

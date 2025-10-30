@@ -3,8 +3,6 @@ package de.enflexit.awb.baseUI.systemtray;
 import java.awt.MenuItem;
 import java.util.Vector;
 
-import de.enflexit.awb.baseUI.SeparatorPosition;
-
 /**
  * The Class TrayIconMenuExtension can be extended to define individual menus, menu items
  * and toolbar components to the Swing main window of Agent.Workbench.
@@ -30,9 +28,9 @@ public interface AwbTrayIconMenuExtension {
 	 *
 	 * @param trayIconMenuItemToAdd the tray icon menu item to add
 	 * @param indexPosition the index position (may be <code>null</code> also)
-	 * @param separatorPosition the separator position  (may be <code>null</code> also)
+	 * @param isUsePrefixSeparator the indicator to use a prefix separator
 	 */
-	public void addTrayIconMenuItem(MenuItem trayIconMenuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition);
+	public void addTrayIconMenuItem(MenuItem trayIconMenuItemToAdd, Integer indexPosition, boolean isUsePrefixSeparator);
 	
 
 }

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-import de.enflexit.awb.baseUI.SeparatorPosition;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.baseUI.systemtray.AwbTrayIcon.TrayUsage;
 import de.enflexit.awb.core.Application;
@@ -142,10 +141,8 @@ public class TrayIconPopup extends PopupMenu implements ActionListener {
 					}
 					
 					// --- Add a separator also ? --------------- 
-					if (trayIconMenuItem.getSeparatorPosition()==SeparatorPosition.SeparatorInFrontOf) {
+					if (trayIconMenuItem.isUsePrefixSeparator()==true) {
 						this.getMenuItemVector().add(indexPosition, new MenuItem("-"));
-					} else if (trayIconMenuItem.getSeparatorPosition()==SeparatorPosition.SeparatorAfter) {
-						this.getMenuItemVector().add(indexPosition + 1, new MenuItem("-"));
 					}
 				} // end for
 			}

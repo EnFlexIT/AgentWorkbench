@@ -272,6 +272,13 @@ public class GraphEnvironmentController extends EnvironmentController {
 	protected void handleProjectNotification(Object updateObject) {
 		if (updateObject.equals(Project.PREPARE_FOR_SAVING)) {
 			this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Prepare4Saving));
+		} else if (updateObject==Project.VIEW_TabsLoaded ) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					GraphEnvironmentController.this.notifyObservers(new NetworkModelNotification(NetworkModelNotification.NETWORK_MODEL_Zoom_Fit2Window));
+				}
+			});
 		}
 	}
 	/* (non-Javadoc)

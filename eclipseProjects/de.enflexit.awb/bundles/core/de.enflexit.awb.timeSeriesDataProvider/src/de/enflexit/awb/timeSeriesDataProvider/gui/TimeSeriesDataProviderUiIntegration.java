@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
+import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
@@ -37,7 +39,7 @@ public class TimeSeriesDataProviderUiIntegration extends MainWindowExtension imp
 	 */
 	@Override
 	public void initialize() {
-		this.addToolbarComponent(this.getToolbarButton(), null, null);
+		this.addToolbarComponent(this.getToolbarButton(), null, false, ToolBarGroup.ExtraTools);
 	}
 	
 	/**

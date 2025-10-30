@@ -6,7 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import de.enflexit.awb.baseUI.SeparatorPosition;
+import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.systemtray.TrayIconMenuExtension;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 
@@ -91,14 +91,14 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 	 * @param indexPosition the index position for the menu item (may be <code>null</code> also)
 	 * @param separatorPosition the separator position (may be <code>null</code> also)
 	 */
-	protected void addJMenuItem(AwbMainWindowMenu workbenchMenuToAddTo, JMenuItem menuItemToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {
+	protected void addJMenuItem(AwbMainWindowMenu workbenchMenuToAddTo, JMenuItem menuItemToAdd, Integer indexPosition, boolean isUsePrefixSeparator) {
 		if (workbenchMenuToAddTo==null) {
 			throw new NullPointerException("The menu for the menu item to add was not specified.");
 		}
 		if (menuItemToAdd==null) {
 			throw new NullPointerException("The specified menu item to add is null.");
 		}
-		this.getMainWindowMenuItemVector().addElement(new MainWindowMenuItem(workbenchMenuToAddTo, menuItemToAdd, indexPosition, separatorPosition));
+		this.getMainWindowMenuItemVector().addElement(new MainWindowMenuItem(workbenchMenuToAddTo, menuItemToAdd, indexPosition, isUsePrefixSeparator));
 	}
 	
 	/**
@@ -111,21 +111,31 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		}
 		return mainWindowToolBarComponentVector;
 	}
+	
 	/**
 	 * Adds the specified toolbar component to the toolbar.
 	 *
 	 * @param toolbarComponentToAdd the toolbar component to add
 	 * @param indexPosition the index position of the component (may be <code>null</code> also)
-	 * @param separatorPosition the separator position (may be <code>null</code> also)
+	 * @param isUsePrefixSeparator the indicator to use prefix separator
 	 */
-	protected void addToolbarComponent(JComponent toolbarComponentToAdd, Integer indexPosition, SeparatorPosition separatorPosition) {
+	protected void addToolbarComponent(JComponent toolbarComponentToAdd, Integer indexPosition, boolean isUsePrefixSeparator) {
+		this.addToolbarComponent(toolbarComponentToAdd, indexPosition, isUsePrefixSeparator, null);
+	}
+	/**
+	 * Adds the specified toolbar component to the toolbar.
+	 *
+	 * @param toolbarComponentToAdd the toolbar component to add
+	 * @param indexPosition the index position of the component (may be <code>null</code> also)
+	 * @param isUsePrefixSeparator the indicator to use prefix separator
+	 * @param tbGrpoup the ToolBarGroup to which the component is to be added
+	 */
+	protected void addToolbarComponent(JComponent toolbarComponentToAdd, Integer indexPosition, boolean isUsePrefixSeparator, ToolBarGroup tbGrpoup) {
 		if (toolbarComponentToAdd==null) {
 			throw new NullPointerException("The specified toolbar component to add is null.");
 		}
-		this.getMainWindowToolBarComponentVector().addElement(new MainWindowToolbarComponent(toolbarComponentToAdd, indexPosition, separatorPosition));
+		this.getMainWindowToolBarComponentVector().addElement(new MainWindowToolbarComponent(toolbarComponentToAdd, indexPosition, isUsePrefixSeparator, tbGrpoup));
 	}
-	
-	
 	
 	
 	// ------------------------------------------------------------------------
@@ -169,13 +179,13 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		private AwbMainWindowMenu awbMainWindowMenu;
 		private JMenuItem jMenuItem;
 		private Integer indexPosition;
-		private SeparatorPosition separatorPosition;
+		private boolean isUsePrefixSeparator;
 		
-		public MainWindowMenuItem(AwbMainWindowMenu awbMainWindowMenu, JMenuItem menuItem, Integer indexPosition, SeparatorPosition separatorPosition) {
+		public MainWindowMenuItem(AwbMainWindowMenu awbMainWindowMenu, JMenuItem menuItem, Integer indexPosition, boolean isUsePrefixSeparator) {
 			this.setWorkbenchMenu(awbMainWindowMenu);
 			this.setJMenuItem(menuItem);
 			this.setIndexPosition(indexPosition);
-			this.setSeparatorPosition(separatorPosition);
+			this.setUsePrefixSeparator(isUsePrefixSeparator);
 		}
 		
 		public AwbMainWindowMenu getWorkbenchMenu() {
@@ -199,11 +209,11 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 			this.indexPosition = indexPosition;
 		}
 		
-		public SeparatorPosition getSeparatorPosition() {
-			return separatorPosition;
+		public boolean isUsePrefixSeparator() {
+			return isUsePrefixSeparator;
 		}
-		public void setSeparatorPosition(SeparatorPosition separatorPosition) {
-			this.separatorPosition = separatorPosition;
+		public void setUsePrefixSeparator(boolean isUsePrefixSeparator) {
+			this.isUsePrefixSeparator = isUsePrefixSeparator;
 		}
 	}
 
@@ -215,12 +225,14 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		
 		private JComponent jComponent;
 		private Integer indexPosition;
-		private SeparatorPosition separatorPosition;
-		
-		public MainWindowToolbarComponent(JComponent jComponent, Integer indexPosition, SeparatorPosition separatorPosition) {
+		private boolean isUsePrefixSeparator;
+		private ToolBarGroup toolBarGroup;
+
+		public MainWindowToolbarComponent(JComponent jComponent, Integer indexPosition, boolean isUsePrefixSeparator, ToolBarGroup toolBarGroup) {
 			this.setJComponent(jComponent);
 			this.setIndexPosition(indexPosition);
-			this.setSeparatorPosition(separatorPosition);
+			this.setToolBarGroup(toolBarGroup);
+			this.setUsePrefixSeparator(isUsePrefixSeparator);
 		}
 
 		public JComponent getJComponent() {
@@ -237,11 +249,18 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 			this.indexPosition = indexPosition;
 		}
 		
-		public SeparatorPosition getSeparatorPosition() {
-			return separatorPosition;
+		public boolean isUsePrefixSeparator() {
+			return isUsePrefixSeparator;
 		}
-		public void setSeparatorPosition(SeparatorPosition separatorPosition) {
-			this.separatorPosition = separatorPosition;
+		public void setUsePrefixSeparator(boolean isUsePrefixSeparator) {
+			this.isUsePrefixSeparator = isUsePrefixSeparator;
+		}
+		
+		public ToolBarGroup getToolBarGroup() {
+			return toolBarGroup;
+		}
+		public void setToolBarGroup(ToolBarGroup toolBarGroup) {
+			this.toolBarGroup = toolBarGroup;
 		}
 	}
 	

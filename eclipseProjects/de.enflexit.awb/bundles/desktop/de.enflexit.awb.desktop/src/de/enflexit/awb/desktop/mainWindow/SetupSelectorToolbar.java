@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 
+import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.SimulationSetup;
@@ -42,7 +43,7 @@ public class SetupSelectorToolbar implements ActionListener {
 	
 	private MyObserver myProjectMyObserver;
 	private MainWindow mainWindow;
-	private JToolBar jToolBar2Add2;
+	private MainWindowToolBar mainWindowToolBar;
 	
 	private JLabel jLabelSetupSelector;
 	private JComboBoxWide<String> jComboBoxSetupSelector;
@@ -60,9 +61,9 @@ public class SetupSelectorToolbar implements ActionListener {
 	 * @param mainWindow the main window
 	 * @param jToolBar2Add2 the JToolBar, on which the elements of this class are added
 	 */
-	public SetupSelectorToolbar(MainWindow mainWindow, JToolBar jToolBar2Add2) {
+	public SetupSelectorToolbar(MainWindow mainWindow, MainWindowToolBar jToolBar2Add2) {
 		this.mainWindow = mainWindow;
-		this.jToolBar2Add2 = jToolBar2Add2;
+		this.mainWindowToolBar = jToolBar2Add2;
 		this.initialize();
 	}
 	
@@ -71,14 +72,15 @@ public class SetupSelectorToolbar implements ActionListener {
 	 */
 	private void initialize() {
 		
-		this.jToolBar2Add2.add(this.getJLabel4SetupSelection());
-		this.jToolBar2Add2.add(this.getJComboBoxSetupSelector());
+		this.mainWindowToolBar.add(this.getJButtonSetupNew(), ToolBarGroup.SetupHandling);
+		this.mainWindowToolBar.add(this.getJButtonSetupDelete(), ToolBarGroup.SetupHandling);
+		this.mainWindowToolBar.add(new JToolBar.Separator(), ToolBarGroup.SetupHandling);
+
+		this.mainWindowToolBar.add(this.getJLabel4SetupSelection(), ToolBarGroup.SetupHandling);
+		this.mainWindowToolBar.add(this.getJComboBoxSetupSelector(), ToolBarGroup.SetupHandling);
 		
-		this.jToolBar2Add2.add(this.getJButtonSetupRename());
-		this.jToolBar2Add2.add(this.getJButtonSetupCopy());
-		this.jToolBar2Add2.add(this.getJButtonSetupNew());
-		this.jToolBar2Add2.add(this.getJButtonSetupDelete());
-		
+		this.mainWindowToolBar.add(this.getJButtonSetupRename(), ToolBarGroup.SetupHandling);
+		this.mainWindowToolBar.add(this.getJButtonSetupCopy(), ToolBarGroup.SetupHandling);
 		
 		// --- Translate ----------------------------------
 		this.getJComboBoxSetupSelector().setToolTipText(Language.translate("Setup auswählen"));
