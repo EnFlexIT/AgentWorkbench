@@ -64,8 +64,10 @@ import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
+import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.desktop.dialogs.StartAgentDialog;
+import de.enflexit.awb.desktop.project.ProjectWindow;
 import de.enflexit.awb.desktop.project.update.ProjectRepositoryExplorerDialog;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
@@ -1903,6 +1905,28 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	// --------------------------------------------------------------
 	// --- View adjustments for projects ------------------ Start ---
 	// --------------------------------------------------------------
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbMainWindow#addProjectWindow(de.enflexit.awb.core.ui.AwbProjectWindow)
+	 */
+	@Override
+	public void addProjectWindow(AwbProjectWindow projectWindow) {
+		
+		if (projectWindow==null || (projectWindow instanceof ProjectWindow)==false) return;
+		
+		// --- Add this ProjectWindow to the JDesktopPane of the MainWindow ---
+		ProjectWindow pw = (ProjectWindow) projectWindow;
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				pw.setVisible(true);
+				MainWindow.this.getJDesktopPane4Projects().add(pw);
+				pw.setFocus2StartTab();
+				pw.moveToFront();
+				pw.setMaximized();
+			}
+		});
+	}
 	/**
 	 * Configures the appearance of the application, depending on the current project configuration
 	 */

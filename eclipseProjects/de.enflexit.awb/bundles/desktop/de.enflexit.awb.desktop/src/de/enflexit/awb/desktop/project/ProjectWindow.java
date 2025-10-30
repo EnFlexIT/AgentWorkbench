@@ -41,7 +41,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.environment.EnvironmentController;
@@ -743,14 +742,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 		this.setProjectTreeVisible(this.currProject.isProjectTreeVisible());
 		this.setProjectTabHeaderVisible(this.currProject.isProjectTabHeaderVisible());
 		
-		this.setVisible(true);
-
-		// --- Add this ProjectWindow to the JDesktopPane of the MainWindow ---
-		if (Application.isMainWindowInitiated()==true && Application.getMainWindow() instanceof MainWindow) {
-			((MainWindow)Application.getMainWindow()).getJDesktopPane4Projects().add(this);
+		if (Application.isMainWindowInitiated()==true) {
+			Application.getMainWindow().addProjectWindow(this);
 		}
-		this.moveToFront();
-		this.setMaximized();
+		
 	}
 	
 	/* (non-Javadoc)
@@ -1010,7 +1005,7 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 	/**
 	 * Sets the focus to the defined projects start tab.
 	 */
-	private void setFocus2StartTab() {
+	public void setFocus2StartTab() {
 		this.startNode = this.getStartTabNode();
 		this.setFocus2Tab(this.startNode);
 	}

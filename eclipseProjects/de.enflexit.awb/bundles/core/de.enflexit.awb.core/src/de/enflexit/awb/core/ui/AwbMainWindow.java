@@ -61,6 +61,11 @@ public interface AwbMainWindow<MenueType, MenuItemType, ToolBarType, ToolBarComp
 	public void setIdentityProviderComponent(Object component);
 	
 
+	/**
+	 * Adds the specified project window to the main window.
+	 * @param projectWindow the project window to be shown
+	 */
+	public void addProjectWindow(AwbProjectWindow projectWindow);
 	
 	/**
 	 * Configures the appearance of the application, depending on the current project configuration
