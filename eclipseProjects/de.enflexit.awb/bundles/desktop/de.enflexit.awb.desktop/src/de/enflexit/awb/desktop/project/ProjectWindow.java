@@ -65,6 +65,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 
 	private static final long serialVersionUID = -1462483441246136949L;
 
+	private int reminderDividerLocation = 210;
+	private int reminderDividerSize = 10;
+	
 	private Project currProject;
 
 	private JPanel jPanelContent;
@@ -198,6 +201,10 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 			jSplitPaneProjectView.setDividerSize(10);
 			jSplitPaneProjectView.setLeftComponent(this.getJScrollPane());
 			jSplitPaneProjectView.setRightComponent(this.getJTabbedPaneProjectWindowTabs());
+			if (this.currProject.isProjectTreeVisible()==false) {
+				jSplitPaneProjectView.setDividerLocation(0);
+				jSplitPaneProjectView.setDividerSize(0);
+			}
 		}
 		return jSplitPaneProjectView;
 	}
@@ -283,13 +290,14 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 	 */
 	@Override
 	public void setProjectTreeVisible(boolean isTreeVisible) {
-		this.getJPanelContent().removeAll();
-		if (isTreeVisible==true) {
-			this.getJPanelContent().add(this.getJSplitPaneProjectView(), BorderLayout.CENTER);
-			this.getJSplitPaneProjectView().setLeftComponent(this.getJScrollPane());
-			this.getJSplitPaneProjectView().setRightComponent(this.getJTabbedPaneProjectWindowTabs());
+		if (isTreeVisible==false) {
+			this.reminderDividerLocation = this.getJSplitPaneProjectView().getDividerLocation();
+			this.reminderDividerSize = this.getJSplitPaneProjectView().getDividerSize();
+			this.getJSplitPaneProjectView().setDividerLocation(0);
+			this.getJSplitPaneProjectView().setDividerSize(0);
 		} else {
-			this.getJPanelContent().add(this.getJTabbedPaneProjectWindowTabs(), BorderLayout.CENTER);
+			this.getJSplitPaneProjectView().setDividerLocation(this.reminderDividerLocation);
+			this.getJSplitPaneProjectView().setDividerSize(this.reminderDividerSize);
 		}
 		this.getJPanelContent().validate();
 		this.getJPanelContent().repaint();
@@ -739,13 +747,6 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 
 		this.projectTreeExpand2Level(3, true);
 
-		this.setProjectTreeVisible(this.currProject.isProjectTreeVisible());
-		this.setProjectTabHeaderVisible(this.currProject.isProjectTabHeaderVisible());
-		
-		if (Application.isMainWindowInitiated()==true) {
-			Application.getMainWindow().addProjectWindow(this);
-		}
-		
 	}
 	
 	/* (non-Javadoc)

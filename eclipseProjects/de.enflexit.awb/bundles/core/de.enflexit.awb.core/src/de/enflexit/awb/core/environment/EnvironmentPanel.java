@@ -1,8 +1,9 @@
 package de.enflexit.awb.core.environment;
 
-import de.enflexit.common.Observer;
-
 import javax.swing.JPanel;
+
+import de.enflexit.awb.simulation.environment.EnvironmentModel;
+import de.enflexit.common.Observer;
 
 /**
  * In order to build an user interface, where environments can be defined by
@@ -14,13 +15,11 @@ public abstract class EnvironmentPanel extends JPanel implements Observer {
 
 	private static final long serialVersionUID = -5522022346976174783L;
 
-	/** The environment controller that is used for the management of the environment model. */
-	protected EnvironmentController environmentController = null;
-
+	protected EnvironmentController environmentController;
 	
 	/**
 	 * Constructor for displaying the current environment model during a running simulation.
-	 * @param controller the current EnvironmentController 
+	 * @param controller the current EnvironmentController that is used for the management of the {@link EnvironmentModel}
 	 */
 	public EnvironmentPanel(EnvironmentController controller){
 		super();

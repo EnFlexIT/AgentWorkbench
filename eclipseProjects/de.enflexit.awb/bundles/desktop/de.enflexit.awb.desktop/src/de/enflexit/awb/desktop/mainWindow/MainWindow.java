@@ -1919,11 +1919,19 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				pw.setVisible(true);
+
 				MainWindow.this.getJDesktopPane4Projects().add(pw);
+				
+				pw.setProjectTreeVisible(pw.getProject().isProjectTreeVisible());
+				pw.setProjectTabHeaderVisible(pw.getProject().isProjectTabHeaderVisible());
+
 				pw.setFocus2StartTab();
 				pw.moveToFront();
+				MainWindow.this.setProjectView();
 				pw.setMaximized();
+				
+				pw.setVisible(true);
+				
 			}
 		});
 	}
@@ -1940,6 +1948,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		this.setProjectView4DevOrUser();
 		// --- 4. Set project tabs visible or not -----------------------------
 		this.setProjectTabHeaderInVisible();
+		// --- 5. Repaint MainWindow ------------------------------------------
+		this.validate();
+		this.repaint();
 	}
 	
 	/**

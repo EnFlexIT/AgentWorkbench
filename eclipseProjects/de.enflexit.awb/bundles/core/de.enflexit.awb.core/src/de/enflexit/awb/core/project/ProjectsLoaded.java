@@ -198,9 +198,8 @@ public class ProjectsLoaded {
 		if (Application.getMainWindow()!=null) {
 
 			// --- Initiate project-window and the default tabs ---------------
-			newProject.setMaximized();
+			Application.getMainWindow().addProjectWindow(newProject.getProjectEditorWindow());
 			
-			this.setProjectView();
 			newProject.setChangedAndNotify(Project.VIEW_TabsLoaded);
 			newProject.plugInVectorInformSetupLoaded();
 			
