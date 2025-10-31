@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.jackson.feature"
       label="AWB Jackson-Feature"
-      version="2.18.3.qualifier"
+      version="2.20.0.qualifier"
       provider-name="Enflex.IT">
 
    <description url="http://www.example.com/description">
@@ -19,35 +19,35 @@
 
    <plugin
          id="com.fasterxml.jackson.core.jackson-annotations"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="com.fasterxml.jackson.core.jackson-core"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="com.fasterxml.jackson.core.jackson-databind"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="com.fasterxml.jackson.dataformat.jackson-dataformat-yaml"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="com.fasterxml.jackson.datatype.jackson-datatype-jsr310"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-base"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="com.fasterxml.jackson.module.jackson-module-jakarta-xmlbind-annotations"
-         version="2.18.3"/>
+         version="2.20.0"/>
 
    <plugin
          id="wrapped.org.openapitools.jackson-databind-nullable"

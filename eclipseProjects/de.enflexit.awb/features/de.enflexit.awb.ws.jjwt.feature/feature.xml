@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.jjwt.feature"
       label="AWB JJWT-Feature"
-      version="0.12.5.qualifier"
+      version="0.13.0.qualifier"
       provider-name="Enflex.IT">
 
    <description url="http://www.example.com/description">
