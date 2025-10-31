@@ -14,7 +14,6 @@
 	<modules>
 		<module>database</module>
 		<module>core</module>
-		<module>ml</module>
 		<module>desktop</module>
 		<module>web</module>
 
