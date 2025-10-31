@@ -3,11 +3,11 @@ package de.enflexit.awb.desktop.mainWindow;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.core.config.GlobalInfo;
-import de.enflexit.language.Language;
 
 /**
  * The Class MainWindowToolBarButton.
@@ -20,7 +20,7 @@ public class MainWindowToolBarButton extends JButton {
 	private ToolBarGroup toolBarGroup;
 	
 	/**
-	 * Instantiates a new j tool bar button.
+	 * Instantiates a new MainWindowToolBarButton.
 	 *
 	 * @param actionCommand the action command
 	 * @param alistener the ActionListener to be used
@@ -33,7 +33,7 @@ public class MainWindowToolBarButton extends JButton {
 		this(actionCommand, alistener, toolTipText, altText, imgName, null);
 	}
 	/**
-	 * Instantiates a new j tool bar button.
+	 * Instantiates a new MainWindowToolBarButton.
 	 *
 	 * @param actionCommand the action command
 	 * @param alistener the ActionListener to be used
@@ -43,24 +43,32 @@ public class MainWindowToolBarButton extends JButton {
 	 * @param buttonGroup the button group
 	 */
 	public MainWindowToolBarButton(String actionCommand, ActionListener alistener, String toolTipText, String altText, String imgName, ToolBarGroup buttonGroup) {
-
+		this(actionCommand, alistener, toolTipText, altText, GlobalInfo.getInternalImageIcon(imgName), buttonGroup);
+	}
+	
+	/**
+	 * Instantiates a new MainWindowToolBarButton.
+	 *
+	 * @param actionCommand the action command
+	 * @param alistener the ActionListener to be used
+	 * @param toolTipText the tool tip text
+	 * @param altText the alt text
+	 * @param imageIcon the image icon
+	 * @param buttonGroup the button group
+	 */
+	public MainWindowToolBarButton(String actionCommand, ActionListener alistener, String toolTipText, String altText, ImageIcon imageIcon, ToolBarGroup buttonGroup) {
+		
 		this.setText(altText);
 		this.setToolTipText(toolTipText);
 		this.setSize(36, 36);
 
-		if (imgName != null) {
+		if (imageIcon != null) {
 			this.setPreferredSize(new Dimension(26, 26));
+			this.setIcon(imageIcon);
 		} else {
 			this.setPreferredSize(null);
 		}
 
-		if (imgName != null) {
-			try {
-				this.setIcon(GlobalInfo.getInternalImageIcon(imgName));
-			} catch (Exception err) {
-				System.err.println(Language.translate("Fehler beim Laden des Bildes: ") + err.getMessage());
-			}
-		}
 		if (alistener!=null) {
 			this.addActionListener(alistener);
 		}

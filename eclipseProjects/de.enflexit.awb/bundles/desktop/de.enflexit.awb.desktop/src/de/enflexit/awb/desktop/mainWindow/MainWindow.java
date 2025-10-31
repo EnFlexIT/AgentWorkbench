@@ -891,7 +891,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainJade.add(new CWMenuItem("JadeStart", Language.translate("JADE starten"), "MBJadeOn.png"));
 			jMenuMainJade.add(new CWMenuItem("JadeStop", Language.translate("JADE stoppen"), "MBJadeOff.png"));
 			jMenuMainJade.addSeparator();
-			jMenuMainJade.add(new CWMenuItem("StartAgent", Language.translate("Starte Agenten"), "MBstartAgent.png"));
+			jMenuMainJade.add(new CWMenuItem("StartAgent", Language.translate("Starte Agenten"), new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBstartAgent_lm.png"), GlobalInfo.getInternalImageIcon("MBstartAgent_dm.png"))));
 			jMenuMainJade.addSeparator();
 			jMenuMainJade.add(new CWMenuItem("PopRMAStart", Language.translate("RMA (Remote Monitoring Agent) öffnen"), "MBJadeRMA.gif"));
 			jMenuMainJade.add(new CWMenuItem("PopSniffer", Language.translate("Sniffer-Agenten starten"), "MBJadeSniffer.gif"));
@@ -1413,8 +1413,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jToolBarApplication.add(new MainWindowToolBarButton("JadeStop", this.getMainToolBarActionListener(), Language.translate("JADE stoppen"), null, "MBJadeOff.png", ToolBarGroup.JadeControls));
 			jToolBarApplication.add(new JToolBar.Separator(), ToolBarGroup.JadeControls);
 
-			jToolBarApplication.add(new MainWindowToolBarButton("StartAgent", this.getMainToolBarActionListener(), Language.translate("Starte Agenten"), null, "MBstartAgent.png", ToolBarGroup.JadeControls));
-			jButtonJadeTools = new MainWindowToolBarButton("JadeTools", this.getMainToolBarActionListener(), Language.translate("JADE-Tools..."), null, "MBJadeTools.png", ToolBarGroup.JadeControls);
+			new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBstartAgent_lm.png"), GlobalInfo.getInternalImageIcon("MBstartAgent_dm.png"));
+			
+			jToolBarApplication.add(new MainWindowToolBarButton("StartAgent", this.getMainToolBarActionListener(), Language.translate("Starte Agenten"), null, new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBstartAgent_lm.png"), GlobalInfo.getInternalImageIcon("MBstartAgent_dm.png")), ToolBarGroup.JadeControls));
+			jButtonJadeTools = new MainWindowToolBarButton("JadeTools", this.getMainToolBarActionListener(), Language.translate("JADE-Tools..."), null, new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBJadeTools.png")), ToolBarGroup.JadeControls);
 			jButtonJadeTools.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -1443,7 +1445,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 
 			// --------------------------------------------
 			if (this.showTestMenuButton==true) {
-				jToolBarApplication.add(new MainWindowToolBarButton("Test", this.getMainToolBarActionListener(), Language.translate("Test"), "Funktion Testen", null, ToolBarGroup.NoGroup));
+				jToolBarApplication.add(new MainWindowToolBarButton("Test", this.getMainToolBarActionListener(), Language.translate("Test"), "Funktion Testen", (String)null, ToolBarGroup.NoGroup));
 			}
 			// --------------------------------------------
 			
