@@ -28,7 +28,7 @@ public class UIIntegration extends MainWindowExtension {
 	public void initialize() {
 		this.addTrayIconMenuItem(this.getTrayIconMenuItem(), 5, false);
 		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, this.getJMenuItem(), 6, false);
-		this.addToolbarComponent(this.getJButtonDatabaseSettings(), null, true, ToolBarGroup.ExtraTools);
+		this.addToolbarComponent(this.getJButtonDatabaseSettings(), null, false, ToolBarGroup.ExtraTools);
 	}
 
 	/**
