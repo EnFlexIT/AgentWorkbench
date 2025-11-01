@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
@@ -46,7 +47,7 @@ public class SetupSelectorToolbar implements ActionListener {
 	private MainWindowToolBar mainWindowToolBar;
 	
 	private JLabel jLabelSetupSelector;
-	private JComboBoxWide<String> jComboBoxSetupSelector;
+	private JComboBox<String> jComboBoxSetupSelector;
 	private DefaultComboBoxModel<String> jComboBoxModel4Setups; 
 	
 	private JButton jButtonSetupRename;
@@ -163,22 +164,23 @@ public class SetupSelectorToolbar implements ActionListener {
 		return jComboBoxModel4Setups;
 	}
 	/**
-	 * This method initialises jComboBoxSetupSelector	
+	 * This method initializes jComboBoxSetupSelector	
 	 * @return javax.swing.JComboBox	
 	 */
-	private JComboBoxWide<String> getJComboBoxSetupSelector() {
+	private JComboBox<String> getJComboBoxSetupSelector() {
 		if (jComboBoxSetupSelector == null) {
 			jComboBoxSetupSelector = new JComboBoxWide<String>(this.getComboBoxModel4Setups());
 			jComboBoxSetupSelector.setToolTipText("Setup auswählen");
 			jComboBoxSetupSelector.setMaximumRowCount(18);
 			jComboBoxSetupSelector.setPreferredSize(new Dimension(250, 26));
+			jComboBoxSetupSelector.setMinimumSize(new Dimension(250, 26));
 			jComboBoxSetupSelector.setMaximumSize(new Dimension(250, 26));
 			jComboBoxSetupSelector.addActionListener(this);
 		}
 		return jComboBoxSetupSelector;
 	}
 	/**
-	 * This method initialises jButtonSetupRename	
+	 * This method initializes jButtonSetupRename	
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getJButtonSetupRename() {
