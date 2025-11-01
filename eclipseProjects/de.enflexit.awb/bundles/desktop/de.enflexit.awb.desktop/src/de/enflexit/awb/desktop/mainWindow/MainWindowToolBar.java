@@ -104,8 +104,10 @@ public class MainWindowToolBar extends JToolBar {
 		Component compAdded = null;
 		JToolBar groupToolBar = this.getGroupToolBar(tbGroup);
 
-		// --- Remove separator first (last element) ------
-		if (groupToolBar.getComponentCount()>0) groupToolBar.remove(groupToolBar.getComponentCount()-1);
+		// --- Remove separator first (last element!) -----
+		if (groupToolBar.getComponentCount()>0 && this.isSeparatorElement(groupToolBar, groupToolBar.getComponentCount()-1)==true) {
+			groupToolBar.remove(groupToolBar.getComponentCount()-1);
+		}
 		// --- Add component to add -----------------------
 		if (groupIndex < 0 || groupIndex >= groupToolBar.getComponentCount() ) {
 			compAdded = groupToolBar.add(comp);
@@ -113,11 +115,31 @@ public class MainWindowToolBar extends JToolBar {
 			compAdded = groupToolBar.add(comp, groupIndex);
 		}
 		// --- Add separator as last element again --------
-		groupToolBar.addSeparator();
+		if (groupToolBar.getComponentCount()>0 && this.isSeparatorElement(groupToolBar, groupToolBar.getComponentCount()-1)==false) {
+			groupToolBar.addSeparator();
+		}
 
 		return compAdded;
 	}
-	
+	/**
+	 * Checks if the component at the specified index of the specified toolbar is a {@link Separator}.
+	 *
+	 * @param toolBar the tool bar to check in
+	 * @param index the index
+	 * @return true, if is separator element
+	 */
+	private boolean isSeparatorElement(JToolBar toolBar, int index) {
+		
+		if (toolBar==null || toolBar.getComponentCount()==0 || index<0 || index> toolBar.getComponentCount()-1) return false;
+		
+		boolean isSeparator = false;
+		try {
+			isSeparator = toolBar.getComponent(index) instanceof JToolBar.Separator;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return isSeparator;
+	}
 	
 	/**
 	 * Returns the ToolBarGroup for the specified component.

@@ -387,17 +387,20 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 					
 					this.addJToolbarComponent(mwToolbarComp.getJComponent(), mwToolbarComp.getIndexPosition(), tbGroup);
 					
-					// --- Add a separator also ? --------------- 
+					// --- Add a separator also ? -------------------
 					int indexPosition = this.getJToolBarApplication().getComponentIndex(mwToolbarComp.getJComponent());
-					if (mwToolbarComp.isUsePrefixSeparator()==true && indexPosition > 0) {
-						this.addToolbarComponent(new JToolBar.Separator(), indexPosition, tbGroup);
+					if (mwToolbarComp.isUsePrefixSeparator()==true) {
+						if (indexPosition == 0) {
+							this.addToolbarComponent(new JToolBar.Separator(), 1, tbGroup);
+						} else if (indexPosition > 0) {
+							this.addToolbarComponent(new JToolBar.Separator(), indexPosition, tbGroup);
+						}
 					}
-					
 				}
 			}
 			
 		} catch (Exception ex) {
-			System.err.println(mwExtension.getClass().getName() + ": Error while adding a menu item to the MainWindow.");
+			System.err.println(mwExtension.getClass().getName() + ": Error while adding a toolbar component to the MainWindow.");
 			ex.printStackTrace();
 		}
 		
