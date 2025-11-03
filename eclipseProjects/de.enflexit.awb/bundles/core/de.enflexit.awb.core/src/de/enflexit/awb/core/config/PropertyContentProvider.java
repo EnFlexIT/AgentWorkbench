@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import de.enflexit.awb.core.Application;
 import de.enflexit.common.PathHandling;
 
 /**
@@ -121,7 +120,7 @@ public class PropertyContentProvider {
 	private void extractFromBundle(FileToProvide fileToProvide) {
 
 		String fileName = fileToProvide.toString();
-		Path pathProperties = Application.getGlobalInfo().getPathProperty(true);
+		Path pathProperties = this.propertyDirectory.toPath();
 		String newfilePath = pathProperties.resolve(fileName).toString();
 		
 		if (this.debug) {
