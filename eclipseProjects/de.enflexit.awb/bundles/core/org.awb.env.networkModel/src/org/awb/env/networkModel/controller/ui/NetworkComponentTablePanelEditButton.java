@@ -9,7 +9,6 @@ import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -21,6 +20,7 @@ import org.awb.env.networkModel.controller.NetworkModelNotification;
 import org.awb.env.networkModel.settings.ui.ComponentTypeDialog;
 
 import de.enflexit.common.swing.AwbThemeImageIcon;
+import de.enflexit.common.swing.TableCellColorHelper;
 
 /**
  * Is used in the {@link ComponentTypeDialog}.
@@ -51,12 +51,13 @@ public class NetworkComponentTablePanelEditButton extends AbstractCellEditor imp
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		
-		JComponent comp = (JComponent) table.getCellRenderer(row, 0);
-		
 		JButton jButtonRendered = new JButton();
 		jButtonRendered.setIcon(new AwbThemeImageIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "EditNetComp.png"))));
 		jButtonRendered.setToolTipText("Edit data model ...");
-		jButtonRendered.setBackground(comp.getBackground());
+		
+		TableCellColorHelper.setTableCellRendererColors(jButtonRendered, row, isSelected);
+		TableCellColorHelper.setTableBackAndForeGroundToTableDefinition(table, jButtonRendered, isSelected);
+		
 		return jButtonRendered;
 	}
 	
@@ -65,14 +66,16 @@ public class NetworkComponentTablePanelEditButton extends AbstractCellEditor imp
      */
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
-    	JComponent comp = (JComponent) table.getCellRenderer(row, 0);
     	this.netCompID = (String)table.getValueAt(row, 0);
         
     	JButton jButtonEdit = new JButton();
 		jButtonEdit.setIcon(new AwbThemeImageIcon(new ImageIcon(this.getClass().getResource(GraphGlobals.getPathImages() + "EditNetComp.png"))));
 		jButtonEdit.setToolTipText("Edit data model ...");
-		jButtonEdit.setBackground(comp.getBackground());
 		jButtonEdit.addActionListener(this);
+		
+		TableCellColorHelper.setTableCellRendererColors(jButtonEdit, row, isSelected);
+		TableCellColorHelper.setTableBackAndForeGroundToTableDefinition(table, jButtonEdit, isSelected);
+		
 		return jButtonEdit;
     }
    
