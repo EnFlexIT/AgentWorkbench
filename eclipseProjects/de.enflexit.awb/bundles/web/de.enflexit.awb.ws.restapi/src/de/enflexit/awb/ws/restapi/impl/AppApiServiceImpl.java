@@ -56,7 +56,14 @@ public class AppApiServiceImpl extends AppApiService {
     public Response getAppSettings(HttpServletRequest request, SecurityContext securityContext) throws NotFoundException {
         
     	// --- Check who is the user --------------------------------
-    	Principal principal = securityContext.getUserPrincipal();
+    	Principal principal = null;
+    	try {
+    		principal = securityContext.getUserPrincipal();
+    	} catch (IllegalStateException isEx) {
+    		//isEx.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
     	
     	// --- Create the properties to return ----------------------
     	de.enflexit.common.properties.Properties awbProps = null;
