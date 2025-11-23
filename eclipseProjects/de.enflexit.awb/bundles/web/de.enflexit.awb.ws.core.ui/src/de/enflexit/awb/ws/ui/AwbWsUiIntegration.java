@@ -10,9 +10,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import de.enflexit.awb.baseUI.ToolBarGroup;
+
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyServerManager;
@@ -50,7 +51,7 @@ public class AwbWsUiIntegration extends MainWindowExtension implements ActionLis
 		switch (this.getWsUiIntegrationType()) {
 		case Application:
 			this.addJMenu(this.getJMenuWS(), 5);
-			this.addToolbarComponent(this.getToolBarButtonWsConfiguration(), 8, true, ToolBarGroup.ExtraTools);
+			this.addToolbarComponent(this.getToolBarButtonWsConfiguration(), 8, true, AwbMainWindowToolBarGroup.ExtraTools);
 			this.addTrayIconMenuItem(this.getTrayIconMenuItemWsConfiguration(), 4, true);
 			break;
 			

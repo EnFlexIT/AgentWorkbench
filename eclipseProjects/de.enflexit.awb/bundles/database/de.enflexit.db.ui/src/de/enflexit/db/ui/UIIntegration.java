@@ -8,11 +8,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 
-import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
+import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
 import de.enflexit.language.Language;
 
 public class UIIntegration extends MainWindowExtension {
@@ -28,7 +28,7 @@ public class UIIntegration extends MainWindowExtension {
 	public void initialize() {
 		this.addTrayIconMenuItem(this.getTrayIconMenuItem(), 5, false);
 		this.addJMenuItem(AwbMainWindowMenu.MenuExtra, this.getJMenuItem(), 6, false);
-		this.addToolbarComponent(this.getJButtonDatabaseSettings(), null, false, ToolBarGroup.ExtraTools);
+		this.addToolbarComponent(this.getJButtonDatabaseSettings(), null, false, AwbMainWindowToolBarGroup.ExtraTools);
 	}
 
 	/**

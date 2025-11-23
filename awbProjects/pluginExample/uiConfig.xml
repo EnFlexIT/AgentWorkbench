@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<awbUiConfiguration>
+    <applicationTitle>CPA: Customized Project Application</applicationTitle>
+    <applicationIconFileName>AWB-Green16.png</applicationIconFileName>
+    <hiddenMenus>
+        <hiddenMenu>MenuJade</hiddenMenu>
+        <hiddenMenu>MenuSimulation</hiddenMenu>
+    </hiddenMenus>
+    <hiddenToolbars>
+        <hiddenToolbar>SetupHandling</hiddenToolbar>
+        <hiddenToolbar>MAS_Monitoring</hiddenToolbar>
+        <hiddenToolbar>MAS_Control</hiddenToolbar>
+        <hiddenToolbar>JadeControls</hiddenToolbar>
+    </hiddenToolbars>
+    <hideProjectTree>false</hideProjectTree>
+    <hideProjectTabHeader>true</hideProjectTabHeader>
+    <hiddenProjectTabs>
+    	<hiddenProjectTab>Configuration_Agent_Load_Metric</hiddenProjectTab>
+    	<hiddenProjectTab>Runtime_Visualisation</hiddenProjectTab>
+    	<hiddenProjectTab>Project_Desktop</hiddenProjectTab>
+    </hiddenProjectTabs>
+</awbUiConfiguration>

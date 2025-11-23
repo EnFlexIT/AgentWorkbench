@@ -1,11 +1,11 @@
-package de.enflexit.awb.baseUI;
+package de.enflexit.awb.core.ui;
 
 /**
- * The Enumeration ToolBarGroup.
+ * The Enumeration AwbMainWindowToolBarGroup.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public enum ToolBarGroup {
+public enum AwbMainWindowToolBarGroup {
 	ProjectHandling,
 	ViewAdjustments,
 	SetupHandling,

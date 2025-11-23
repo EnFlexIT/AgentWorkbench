@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
 
 /**
  * The Class MainWindowToolBarButton.
@@ -17,7 +17,7 @@ public class MainWindowToolBarButton extends JButton {
 
 	private static final long serialVersionUID = 3182841608690374369L;
 
-	private ToolBarGroup toolBarGroup;
+	private AwbMainWindowToolBarGroup awbMainWindowToolBarGroup;
 	
 	/**
 	 * Instantiates a new MainWindowToolBarButton.
@@ -27,7 +27,7 @@ public class MainWindowToolBarButton extends JButton {
 	 * @param toolTipText the tool tip text
 	 * @param altText the alt text
 	 * @param imgName the img name
-	 * @param toolBarGroup the button group
+	 * @param awbMainWindowToolBarGroup the button group
 	 */
 	public MainWindowToolBarButton(String actionCommand, ActionListener alistener, String toolTipText, String altText, String imgName) {
 		this(actionCommand, alistener, toolTipText, altText, imgName, null);
@@ -42,7 +42,7 @@ public class MainWindowToolBarButton extends JButton {
 	 * @param imgName the img name
 	 * @param buttonGroup the button group
 	 */
-	public MainWindowToolBarButton(String actionCommand, ActionListener alistener, String toolTipText, String altText, String imgName, ToolBarGroup buttonGroup) {
+	public MainWindowToolBarButton(String actionCommand, ActionListener alistener, String toolTipText, String altText, String imgName, AwbMainWindowToolBarGroup buttonGroup) {
 		this(actionCommand, alistener, toolTipText, altText, GlobalInfo.getInternalImageIcon(imgName), buttonGroup);
 	}
 	
@@ -56,7 +56,7 @@ public class MainWindowToolBarButton extends JButton {
 	 * @param imageIcon the image icon
 	 * @param buttonGroup the button group
 	 */
-	public MainWindowToolBarButton(String actionCommand, ActionListener alistener, String toolTipText, String altText, ImageIcon imageIcon, ToolBarGroup buttonGroup) {
+	public MainWindowToolBarButton(String actionCommand, ActionListener alistener, String toolTipText, String altText, ImageIcon imageIcon, AwbMainWindowToolBarGroup buttonGroup) {
 		
 		this.setText(altText);
 		this.setToolTipText(toolTipText);
@@ -73,7 +73,7 @@ public class MainWindowToolBarButton extends JButton {
 			this.addActionListener(alistener);
 		}
 		this.setActionCommand(actionCommand);
-		this.toolBarGroup = buttonGroup;
+		this.awbMainWindowToolBarGroup = buttonGroup;
 		
 	}
 	
@@ -81,8 +81,8 @@ public class MainWindowToolBarButton extends JButton {
 	 * Returns the ButtonGroup that is the group to which this button belongs.
 	 * @return the button group
 	 */
-	public ToolBarGroup getToolBarGroup() {
-		return toolBarGroup;
+	public AwbMainWindowToolBarGroup getToolBarGroup() {
+		return awbMainWindowToolBarGroup;
 	}
 	
 }

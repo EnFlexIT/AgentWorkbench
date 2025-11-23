@@ -1,6 +1,7 @@
 package de.enflexit.awb.core;
 
 import java.awt.Desktop;
+import java.awt.Window;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,6 +11,8 @@ import java.util.Vector;
 
 import org.eclipse.equinox.app.IApplication;
 
+import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
+import agentgui.core.charts.xyChart.XyChartVisualisation;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
 import de.enflexit.awb.core.bundleEvaluation.BundleClassFilterCollector;
 import de.enflexit.awb.core.config.GlobalInfo;
@@ -35,6 +38,7 @@ import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 import de.enflexit.common.featureEvaluation.FeatureEvaluator;
+import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.language.Language;
 import de.enflexit.logging.LoggingWriter;
@@ -1122,8 +1126,15 @@ public class Application {
 	 * @param projectFocused the new project focused
 	 */
 	public static void setProjectFocused(Project projectFocused) {
+		
+		boolean isChanged = (projectFocused==null && Application.projectFocused!=null) ||
+							(projectFocused!=null && Application.projectFocused==null) ||
+							(projectFocused!=Application.projectFocused);
+		
 		Application.projectFocused = projectFocused;
-		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_FOCUSED, projectFocused));
+		if (isChanged==true) {
+			Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.PROJECT_FOCUSED, projectFocused));
+		}
 	}
 	/**
 	 * Returns the currently focused {@link Project}.
@@ -1138,14 +1149,16 @@ public class Application {
 	 */
 	public static void setOntologyVisualisationConfigurationToCommonBundle() {
 		
-//		// --- Add the known OntologyClassVisualisation's of Agent.Workbench --
-//		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
-//		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new XyChartVisualisation());
-//		
-//		// --- Set the current main window ------------------------------------
-//		OntologyVisualisationConfiguration.setApplicationTitle(Application.getGlobalInfo().getApplicationTitle());
-//		OntologyVisualisationConfiguration.setOwnerWindow(Application.getMainWindow());
-//		OntologyVisualisationConfiguration.setApplicationIconImage(GlobalInfo.getInternalImageAwbIcon16());
+		// --- Add the known OntologyClassVisualisation's of Agent.Workbench --
+		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new TimeSeriesVisualisation());
+		OntologyVisualisationConfiguration.registerOntologyClassVisualisation(new XyChartVisualisation());
+		
+		// --- Set the current main window ------------------------------------
+		OntologyVisualisationConfiguration.setApplicationTitle(Application.getGlobalInfo().getApplicationTitle());
+		OntologyVisualisationConfiguration.setApplicationIconImage(GlobalInfo.getInternalImageAwbIcon16());
+		if (Application.isMainWindowInitiated()==true && Application.getMainWindow() instanceof Window) {
+			OntologyVisualisationConfiguration.setOwnerWindow((Window) Application.getMainWindow());
+		}
 	}
 
 	
@@ -1185,8 +1198,8 @@ public class Application {
 	 * @param listener the listener to add
 	 */
 	public static void addApplicationListener(ApplicationListener listener) {
-		if (listener!=null && getApplicationListenerList().contains(listener)==false) {
-			getApplicationListenerList().add(listener);
+		if (listener!=null && Application.getApplicationListenerList().contains(listener)==false) {
+			Application.getApplicationListenerList().add(listener);
 		}
 	}
 	/**
@@ -1194,8 +1207,8 @@ public class Application {
 	 * @param listener the listener to remove
 	 */
 	public static void removeApplicationListener(ApplicationListener listener) {
-		if (listener!=null && getApplicationListenerList().contains(listener)==true) {
-			getApplicationListenerList().remove(listener);
+		if (listener!=null && Application.getApplicationListenerList().contains(listener)==true) {
+			Application.getApplicationListenerList().remove(listener);
 		}
 	}
 	/**
@@ -1206,7 +1219,7 @@ public class Application {
 		if (event==null) return;
 		for (int i = 0; i < getApplicationListenerList().size(); i++) {
 			try {
-				getApplicationListenerList().get(i).onApplicationEvent(event);;
+				Application.getApplicationListenerList().get(i).onApplicationEvent(event);;
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

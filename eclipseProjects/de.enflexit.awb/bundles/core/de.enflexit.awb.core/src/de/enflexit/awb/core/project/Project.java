@@ -49,6 +49,7 @@ import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindow.ProjectCloseUserFeedback;
+import de.enflexit.awb.core.ui.AwbUiConfiguration;
 import de.enflexit.awb.core.update.ProjectRepositoryExport;
 import de.enflexit.awb.core.update.ProjectRepositoryUpdate;
 import de.enflexit.common.AbstractUserObject;
@@ -164,6 +165,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	@XmlElement(name="projectView")				private String projectView;			// --- View for developer or end-user ---
 	@XmlElement(name="projectTreeVisible")		private boolean projectTreeVisible=true;
 	@XmlElement(name="projectTabHeaderVisible")	private boolean projectTabHeaderVisible=true;
+	
+	@XmlTransient private AwbUiConfiguration projectUiConfiguration;
 	
 	// --- Variables for the update and version handling ------------
 	@XmlTransient public static final String DEFAULT_VERSION_TAG = "Complete Project"; 
@@ -1806,6 +1809,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 		}
 	}
 	public boolean isProjectTreeVisible() {
+		boolean isHideProjectTree = this.getProjectUiConfiguration().isHideProjectTree();
+		if (isHideProjectTree==true) return false;
 		return projectTreeVisible;
 	}
 	
@@ -1815,6 +1820,11 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	public void toggleViewProjectTabHeader() {
 		this.setProjectTabHeaderVisible(!this.isProjectTabHeaderVisible());		
 	}
+	
+	/**
+	 * Sets the project tab header visible or not.
+	 * @param isProjectTabHeaderVisible the new project tab header visible
+	 */
 	@XmlTransient
 	public void setProjectTabHeaderVisible(boolean isProjectTabHeaderVisible) {
 		this.projectTabHeaderVisible = isProjectTabHeaderVisible;
@@ -1824,9 +1834,31 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			this.getProjectEditorWindow().setProjectTabHeaderVisible(isProjectTabHeaderVisible);
 		}
 	}
+	/**
+	 * Checks if is project tab headers are visible.
+	 * @return true, if is project tab header visible
+	 */
 	public boolean isProjectTabHeaderVisible() {
+		boolean isHideProjectTree = this.getProjectUiConfiguration().isHideTabHeader();
+		if (isHideProjectTree==true) return false;
 		return projectTabHeaderVisible;
 	}
+	
+	/**
+	 * Returns the projects UI configuration.
+	 * @return the AwbUiConfiguration for the current project
+	 */
+	@XmlTransient
+	public AwbUiConfiguration getProjectUiConfiguration() {
+		if (projectUiConfiguration==null) {
+			projectUiConfiguration = AwbUiConfiguration.load(this);
+			if (projectUiConfiguration==null) {
+				projectUiConfiguration = new AwbUiConfiguration(this);
+			}
+		}
+		return projectUiConfiguration;
+	}
+	
 	
 	/**
 	 * Sets the new environment model name.

@@ -49,6 +49,20 @@ public interface AwbProjectWindowTab {
 	 */
 	public String toString();
 
+	
+	/**
+	 * Sets the project tab ID.
+	 * @param projectTabID the new project tab ID
+	 */
+	public void setProjectTabID(AwbProjectTab projectTabID);
+	
+	/**
+	 * Gets the project tab ID.
+	 * @return the project tab ID
+	 */
+	public AwbProjectTab getProjectTabID();
+	
+	
 	/**
 	 * Sets the display type.
 	 * @param displayType the displayType to set
@@ -61,6 +75,7 @@ public interface AwbProjectWindowTab {
 	 */
 	public int getDisplayType();
 
+	
 	/**
 	 * Gets the title.
 	 * @return the title
@@ -73,6 +88,7 @@ public interface AwbProjectWindowTab {
 	 */
 	public void setTitle(String title);
 
+	
 	/**
 	 * Gets the icon.
 	 * @return the icon
@@ -85,6 +101,7 @@ public interface AwbProjectWindowTab {
 	 */
 	public void setIcon(Icon icon);
 
+	
 	/**
 	 * Gets the tip text.
 	 * @return the tipText
@@ -97,6 +114,7 @@ public interface AwbProjectWindowTab {
 	 */
 	public void setTipText(String tipText);
 
+	
 	/**
 	 * Gets the parent name.
 	 * @return the parentName
@@ -109,6 +127,7 @@ public interface AwbProjectWindowTab {
 	 */
 	public void setParentName(String parentName);
 
+	
 	/**
 	 * Returns the JComponent for the visualization.
 	 * @return the JComponent

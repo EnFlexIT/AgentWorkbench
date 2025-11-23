@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<awbUiConfiguration>
+    <applicationTitle>My Super-Dupa-App</applicationTitle>
+    <applicationIconFileName>StateWarning.png</applicationIconFileName>
+    <hiddenMenus>
+        <hiddenMenu>MenuView</hiddenMenu>
+        <hiddenMenu>MenuJade</hiddenMenu>
+        <hiddenMenu>MenuSimulation</hiddenMenu>
+        <hiddenMenu>MenuExtra</hiddenMenu>
+        <hiddenMenu>MenuWindows</hiddenMenu>
+        <hiddenMenu>MenuHelp</hiddenMenu>
+    </hiddenMenus>
+    <hiddenToolbars>
+        <hiddenToolbar>ViewAdjustments</hiddenToolbar>
+        <hiddenToolbar>SetupHandling</hiddenToolbar>
+        <hiddenToolbar>MAS_Monitoring</hiddenToolbar>
+        <hiddenToolbar>MAS_Control</hiddenToolbar>
+        <hiddenToolbar>JadeControls</hiddenToolbar>
+        <hiddenToolbar>ExtraTools</hiddenToolbar>
+    </hiddenToolbars>
+    <hideProjectTree>true</hideProjectTree>
+    <hideProjectTabHeader>true</hideProjectTabHeader>
+    <hiddenProjectTabs>
+    	<hiddenProjectTab>Configuration_Agent_Load_Metric</hiddenProjectTab>
+    	<hiddenProjectTab>Runtime_Visualisation</hiddenProjectTab>
+    	<hiddenProjectTab>Project_Desktop</hiddenProjectTab>
+    </hiddenProjectTabs>
+</awbUiConfiguration>

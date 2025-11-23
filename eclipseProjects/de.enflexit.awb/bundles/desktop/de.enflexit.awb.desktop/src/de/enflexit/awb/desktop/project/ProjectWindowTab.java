@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.ui.AwbProjectTab;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbProjectWindowTab;
 
@@ -23,6 +24,7 @@ public class ProjectWindowTab implements AwbProjectWindowTab {
 	private int displayType = 0;
 
 	private Project currProject;
+	private AwbProjectTab projectTabID;
 	
 	private String title;
 	private String tipText;
@@ -38,17 +40,33 @@ public class ProjectWindowTab implements AwbProjectWindowTab {
 	/**
 	 * Default constructor for this class.
 	 *
-	 * @param project the project
+	 * @param project the current project
 	 * @param displayType_DEV_or_USER the display type_ de v_or_ user
 	 * @param head_title the head_title
 	 * @param aTipText the a tip text
 	 * @param ico the icon
 	 * @param component the component
-	 * @param pareName the pare name
+	 * @param pareName the parent tabs name
 	 */
 	public ProjectWindowTab(Project project, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, JComponent component, String pareName) {
+		this(project, null, displayType_DEV_or_USER, head_title, aTipText, ico, component, pareName);
+	}
+	/**
+	 * Default constructor for this class.
+	 *
+	 * @param project the current project
+	 * @param projectTab the AwbProjectTab instance that identifies this tab
+	 * @param displayType_DEV_or_USER the display type_ de v_or_ user
+	 * @param head_title the head_title
+	 * @param aTipText the a tip text
+	 * @param ico the icon
+	 * @param component the component
+	 * @param pareName the parent tabs name
+	 */
+	public ProjectWindowTab(Project project, AwbProjectTab projectTabID, int displayType_DEV_or_USER, String head_title, String aTipText, Icon ico, JComponent component, String pareName) {
 		
 		this.currProject = project;		
+		this.projectTabID = projectTabID;
 		this.displayType = displayType_DEV_or_USER;
 		
 		this.title = head_title;
@@ -70,7 +88,6 @@ public class ProjectWindowTab implements AwbProjectWindowTab {
 		if (component instanceof TabForSubPanels) {
 			this.compForChildComp = ((TabForSubPanels) component).getJTabbedPane();	
 		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -115,6 +132,21 @@ public class ProjectWindowTab implements AwbProjectWindowTab {
 	@Override
 	public String toString() {
 		return this.title;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbProjectWindowTab#setProjectTabID(de.enflexit.awb.core.ui.AwbProjectTab)
+	 */
+	@Override
+	public void setProjectTabID(AwbProjectTab newProjectTabID) {
+		this.projectTabID = newProjectTabID;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbProjectWindowTab#getProjectTabID()
+	 */
+	@Override
+	public AwbProjectTab getProjectTabID() {
+		return this.projectTabID;
 	}
 	
 	/* (non-Javadoc)

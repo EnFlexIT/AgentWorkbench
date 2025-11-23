@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import javax.swing.JToolBar;
 
-import de.enflexit.awb.baseUI.ToolBarGroup;
+import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
 
 /**
  * The Class MainWindowToolBar organizes the AWB toolbar elements into groups.
@@ -15,7 +15,7 @@ public class MainWindowToolBar extends JToolBar {
 
 	private static final long serialVersionUID = 6033364534244260033L;
 
-	private HashMap<ToolBarGroup, JToolBar> toolbarButtonsListHashMap;
+	private HashMap<AwbMainWindowToolBarGroup, JToolBar> toolbarButtonsListHashMap;
 	
 	/**
 	 * Instantiates a new main window tool bar.
@@ -28,22 +28,24 @@ public class MainWindowToolBar extends JToolBar {
 	 * Returns the toolbar buttons list hash map.
 	 * @return the toolbar buttons list hash map
 	 */
-	private HashMap<ToolBarGroup, JToolBar> getToolbarButtonsListHashMap() {
+	private HashMap<AwbMainWindowToolBarGroup, JToolBar> getToolbarButtonsListHashMap() {
 		if (toolbarButtonsListHashMap==null) {
 			toolbarButtonsListHashMap = new HashMap<>();
-			for (ToolBarGroup tbGroup : ToolBarGroup.values()) {
+			for (AwbMainWindowToolBarGroup tbGroup : AwbMainWindowToolBarGroup.values()) {
 				this.getGroupToolBar(tbGroup);
 			}
 		}
 		return toolbarButtonsListHashMap;
 	}
 	/**
-	 * Returns the tool bar button list for the specified ToolBarGroup.
+	 * Returns the tool bar button list for the specified AwbMainWindowToolBarGroup.
 	 *
-	 * @param tbGroup the ToolBarGroup
+	 * @param tbGroup the AwbMainWindowToolBarGroup
 	 * @return the tool bar button list
 	 */
-	private JToolBar getGroupToolBar(ToolBarGroup tbGroup) {
+	JToolBar getGroupToolBar(AwbMainWindowToolBarGroup tbGroup) {
+		
+		if (tbGroup==null) return null;
 		JToolBar groupToolBar = this.getToolbarButtonsListHashMap().get(tbGroup);
 		if (groupToolBar==null) {
 			// --- Create a new group toolbar -------------
@@ -64,16 +66,16 @@ public class MainWindowToolBar extends JToolBar {
 	 */
 	@Override
 	public Component add(Component comp) {
-		return this.add(comp, (ToolBarGroup)null);
+		return this.add(comp, (AwbMainWindowToolBarGroup)null);
 	}
 	/**
 	 * Adds the specified component to the toolbar.
 	 *
 	 * @param comp the Component to add
-	 * @param tbGroup the ToolBarGroup
+	 * @param tbGroup the AwbMainWindowToolBarGroup
 	 * @return the component
 	 */
-	public Component add(Component comp, ToolBarGroup tbGroup) {
+	public Component add(Component comp, AwbMainWindowToolBarGroup tbGroup) {
 		return this.add(comp, -1, tbGroup);
 	}
 	/* (non-Javadoc)
@@ -81,24 +83,24 @@ public class MainWindowToolBar extends JToolBar {
 	 */
 	@Override
 	public Component add(Component comp, int groupIndex) {
-		return this.add(comp, groupIndex, (ToolBarGroup)null);
+		return this.add(comp, groupIndex, (AwbMainWindowToolBarGroup)null);
 	}
 	/**
 	 * Adds the specified component to the toolbar.
 	 *
 	 * @param comp the Component to add
 	 * @param groupIndex the index position
-	 * @param tbGroup the the ToolBarGroup
+	 * @param tbGroup the the AwbMainWindowToolBarGroup
 	 * @return the component
 	 */
-	public Component add(Component comp, int groupIndex, ToolBarGroup tbGroup) {
+	public Component add(Component comp, int groupIndex, AwbMainWindowToolBarGroup tbGroup) {
 		
-		// --- Get the relevant ToolBarGroup --------------
+		// --- Get the relevant AwbMainWindowToolBarGroup --------------
 		if (comp instanceof MainWindowToolBarButton) {
 			MainWindowToolBarButton tbButton = (MainWindowToolBarButton) comp;
 			tbGroup = tbButton.getToolBarGroup();
 		}
-		if (tbGroup==null) tbGroup = ToolBarGroup.NoGroup;
+		if (tbGroup==null) tbGroup = AwbMainWindowToolBarGroup.NoGroup;
 
 		// --- Add to the corresponding list --------------
 		Component compAdded = null;
@@ -142,14 +144,14 @@ public class MainWindowToolBar extends JToolBar {
 	}
 	
 	/**
-	 * Returns the ToolBarGroup for the specified component.
+	 * Returns the AwbMainWindowToolBarGroup for the specified component.
 	 *
 	 * @param comp the Component to be found
-	 * @return the hosting ToolBarGroup, if found
+	 * @return the hosting AwbMainWindowToolBarGroup, if found
 	 */
-	public ToolBarGroup getToolBarGroup(Component comp) {
+	public AwbMainWindowToolBarGroup getToolBarGroup(Component comp) {
 		
-		for (ToolBarGroup tbGroupWork : ToolBarGroup.values()) {
+		for (AwbMainWindowToolBarGroup tbGroupWork : AwbMainWindowToolBarGroup.values()) {
 			JToolBar tBar =  this.getGroupToolBar(tbGroupWork);
 			int compIndex = tBar.getComponentIndex(comp);
 			if (compIndex!=-1) {
@@ -164,7 +166,7 @@ public class MainWindowToolBar extends JToolBar {
 	@Override
 	public int getComponentIndex(Component comp) {
 		
-		for (ToolBarGroup tbGroupWork : ToolBarGroup.values()) {
+		for (AwbMainWindowToolBarGroup tbGroupWork : AwbMainWindowToolBarGroup.values()) {
 			JToolBar tBar =  this.getGroupToolBar(tbGroupWork);
 			int compIndex = tBar.getComponentIndex(comp);
 			if (compIndex!=-1) {

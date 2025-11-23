@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.nio.file.Path;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -48,7 +49,6 @@ import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.enflexit.awb.baseUI.ToolBarGroup;
 import de.enflexit.awb.baseUI.console.JPanelConsole;
 import de.enflexit.awb.baseUI.console.JTabbedPane4Consoles;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
@@ -56,6 +56,7 @@ import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowMenu;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowMenuItem;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowToolbarComponent;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationListener;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
 import de.enflexit.awb.core.jade.Platform.SystemAgent;
@@ -64,7 +65,10 @@ import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
+import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
+import de.enflexit.awb.core.ui.AwbProjectTab;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
+import de.enflexit.awb.core.ui.AwbUiConfiguration;
 import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.desktop.dialogs.StartAgentDialog;
 import de.enflexit.awb.desktop.project.ProjectWindow;
@@ -86,14 +90,16 @@ import de.enflexit.language.Language;
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem, JToolBar, JButton> {
+public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem, JToolBar, JButton>, ApplicationListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
-	
 	private final ImageIcon iconCloseDummy = GlobalInfo.getInternalImageIcon("MBdummy.png");
 
+	private String applicationTitle;
+	private AwbUiConfiguration awbUiConfiguration;
+	
 	private JFrameSizeAndPostionController sizeAndPositionController;
 	
 	private MainWindowStatusBar jPanelStatusBar;
@@ -172,8 +178,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// --- Proceed the MainWindow Extensions --------------------
 		this.proceedMainWindowExtensions();
 
+		// --- Load AwbUiConfiguration -------------------------
+		this.applyUiConfiguration();
 		
-		// --- Set size by using local Window controller ----------
+		// --- Set size by using local Window controller ------------
 		Dimension frameSize = this.getWindowSizeAndPostionController().getOptimalSize();
 		this.setPreferredSize(frameSize);
 		this.setSize(new Dimension(1200, 700));
@@ -187,6 +195,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// --- Place MainWindow center on screen --------------------
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
 		this.toFront();
+		
+		// --- Add the MainWindow as an Application Listener --------
+		Application.addApplicationListener(this);
 	}
 
 	/**
@@ -200,7 +211,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		this.getContentPane().add(this.getStatusBar(), BorderLayout.SOUTH);
 		this.getContentPane().add(this.getJSplit4ProjectDesktop());
 
-		// --- Maximze the JFrame, if configured in the GlobalInfo --
+		// --- Maximize JFrame, if configured in the GlobalInfo -----
 		if (Application.getGlobalInfo().isMaximzeMainWindow() == true) {
 			this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		}
@@ -259,6 +270,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	@Override
 	public void dispose() {
+		// --- Remove the MainWindow as an Application Listener -----
+		Application.removeApplicationListener(this);
+		// --- Just call super method -------------------------------
 		super.dispose();
 	}
 	
@@ -383,7 +397,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 				for (int i = 0; i < mwExtension.getMainWindowToolBarComponentVector().size(); i++) {
 					
 					MainWindowToolbarComponent mwToolbarComp = mwExtension.getMainWindowToolBarComponentVector().get(i);
-					ToolBarGroup tbGroup = mwToolbarComp.getToolBarGroup();
+					AwbMainWindowToolBarGroup tbGroup = mwToolbarComp.getToolBarGroup();
 					
 					this.addJToolbarComponent(mwToolbarComp.getJComponent(), mwToolbarComp.getIndexPosition(), tbGroup);
 					
@@ -413,6 +427,8 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	private JMenu getJMenuOfWorkbenchMenu(AwbMainWindowMenu wbMenu) {
 		
+		if (wbMenu==null) return null;
+		
 		JMenu jMenuWorkbench = null;
 		switch (wbMenu) {
 		case MenuProject:
@@ -441,6 +457,137 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	}
 	
 	/**
+	 * Returns the current AwbUiConfiguration.
+	 * @return the AwbUiConfiguration
+	 */
+	public AwbUiConfiguration getUiConfiguration() {
+		if (awbUiConfiguration==null) {
+			awbUiConfiguration = AwbUiConfiguration.load();
+			if (awbUiConfiguration==null) {
+				awbUiConfiguration = new AwbUiConfiguration(AwbUiConfiguration.getDefaultConfigurationFile());
+			}
+			
+			// ------------------------------------------------------
+			// --- Add test data? -----------------------------------
+			// ------------------------------------------------------
+			boolean addTestData = false;
+			if (addTestData==true) {
+				awbUiConfiguration.setApplicationTitle("My Super-Dupa-App");
+				awbUiConfiguration.setApplicationIconFileName("StateWarning.png");
+				
+				awbUiConfiguration.getHiddenMenus().add(AwbMainWindowMenu.MenuJade);
+				awbUiConfiguration.getHiddenMenus().add(AwbMainWindowMenu.MenuSimulation);
+				awbUiConfiguration.getHiddenMenus().add(AwbMainWindowMenu.MenuView);
+				awbUiConfiguration.getHiddenMenus().add(AwbMainWindowMenu.MenuExtra);
+				awbUiConfiguration.getHiddenMenus().add(AwbMainWindowMenu.MenuHelp);
+				awbUiConfiguration.getHiddenMenus().add(AwbMainWindowMenu.MenuWindows);
+				
+				awbUiConfiguration.getHiddenToolBarGroups().add(AwbMainWindowToolBarGroup.ViewAdjustments);
+				awbUiConfiguration.getHiddenToolBarGroups().add(AwbMainWindowToolBarGroup.SetupHandling);
+				awbUiConfiguration.getHiddenToolBarGroups().add(AwbMainWindowToolBarGroup.JadeControls);
+				awbUiConfiguration.getHiddenToolBarGroups().add(AwbMainWindowToolBarGroup.MAS_Control);
+				awbUiConfiguration.getHiddenToolBarGroups().add(AwbMainWindowToolBarGroup.MAS_Monitoring);
+				awbUiConfiguration.getHiddenToolBarGroups().add(AwbMainWindowToolBarGroup.ExtraTools);
+				
+				awbUiConfiguration.getHiddenProjectTabs().add(AwbProjectTab.Configuration_Agent_Load_Metric);
+				awbUiConfiguration.getHiddenProjectTabs().add(AwbProjectTab.Runtime_Visualisation);
+				awbUiConfiguration.getHiddenProjectTabs().add(AwbProjectTab.Project_Desktop);
+				
+				awbUiConfiguration.save();
+			}
+			// ------------------------------------------------------
+			
+		}
+		return awbUiConfiguration;
+	}
+	/**
+	 * Sets the current AwbUiConfiguration
+	 * @param newUiConfiguration the new AwbUiConfiguration
+	 */
+	private void setUiConfiguration(AwbUiConfiguration newUiConfiguration) {
+		this.awbUiConfiguration = newUiConfiguration;
+	}
+	
+	/**
+	 * Applies the current {@link AwbUiConfiguration}.
+	 */
+	public void applyUiConfiguration() {
+
+		// ------------------------------------------------
+		// --- Set application title ----------------------
+		String appTitle = this.getUiConfiguration().getApplicationTitle();
+		if (appTitle!=null && appTitle.isBlank()==false) {
+			this.setApplicationTitle(appTitle);
+		} else {
+			this.setApplicationTitle(null);
+		}
+		this.setTitelAddition(null);
+
+		// ------------------------------------------------
+		// --- set application icon -----------------------
+		String appIconFileName = this.getUiConfiguration().getApplicationIconFileName();
+		if (appIconFileName!=null && appIconFileName.isBlank()==false) {
+			try {
+				// --- Get path to properties image -------
+				File configDirectory = this.getUiConfiguration().getXmlConfigurationFile().getParentFile();
+				Path pathAppImage = configDirectory.toPath().resolve(appIconFileName);
+				if (pathAppImage.toFile().exists()==true) {
+					ImageIcon iIcon = new ImageIcon(pathAppImage.toString());
+					if (iIcon!=null) {
+						this.setIconImage(iIcon.getImage());
+					}
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
+		}
+		
+		// ------------------------------------------------
+		// --- Hide menus as configured -------------------
+		for (AwbMainWindowMenu menu : AwbMainWindowMenu.values()) {
+			JMenu jMenuToWorkOn = this.getJMenuOfWorkbenchMenu(menu);
+			if (jMenuToWorkOn!=null) {
+				boolean isToHide = this.getUiConfiguration().getHiddenMenus().contains(menu);
+				jMenuToWorkOn.setVisible(!isToHide);
+			}
+		}
+		
+		// ------------------------------------------------
+		// --- Hide toolbar groups as configured ----------
+		for (AwbMainWindowToolBarGroup tbg : AwbMainWindowToolBarGroup.values()) {
+			JToolBar jToolbarToWorkOn = this.getJToolBarApplication().getGroupToolBar(tbg);
+			if (jToolbarToWorkOn!=null) {
+				boolean isToHide = this.getUiConfiguration().getHiddenToolBarGroups().contains(tbg);
+				jToolbarToWorkOn.setVisible(!isToHide);
+			}
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ApplicationListener#onApplicationEvent(de.enflexit.awb.core.ApplicationListener.ApplicationEvent)
+	 */
+	@Override
+	public void onApplicationEvent(ApplicationEvent aEvent) {
+	
+		if (aEvent.getApplicationEvent()==ApplicationEvent.PROJECT_FOCUSED) {
+			// --- Check for new awbUiConfiguration -------
+			Project currProject = (Project) aEvent.getEventObject();
+			if (currProject!=null) {
+				this.setUiConfiguration(currProject.getProjectUiConfiguration());
+			} else {
+				this.setUiConfiguration(null);
+			}
+			// --- Apply new UI configuration -------------
+			this.applyUiConfiguration();
+		}
+	}
+	
+	
+	/**
 	 * Gets the status bar.
 	 * @return the status bar
 	 */
@@ -451,15 +598,34 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		return jPanelStatusBar;
 	}
 
+	/**
+	 * Returns the application title.
+	 * @return the application title
+	 */
+	private String getApplicationTitle() {
+		if (applicationTitle==null) {
+			applicationTitle = Application.getGlobalInfo().getApplicationTitle();
+		}
+		return applicationTitle;
+	}
+	/**
+	 * Sets the application title.
+	 * @param newApplicationTitle the new application title
+	 */
+	private void setApplicationTitle(String newApplicationTitle) {
+		applicationTitle = newApplicationTitle;
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AwbMainWindow#setTitelAddition(java.lang.String)
 	 */
 	@Override
 	public void setTitelAddition(String add2BasicTitel) {
-		if (add2BasicTitel != "") {
-			this.setTitle(Application.getGlobalInfo().getApplicationTitle() + ": " + add2BasicTitel);
+		if (add2BasicTitel!=null && add2BasicTitel.isBlank()==false) {
+			this.setTitle(this.getApplicationTitle() + ": " + add2BasicTitel);
 		} else {
-			this.setTitle(Application.getGlobalInfo().getApplicationTitle());
+			this.setTitle(this.getApplicationTitle());
 		}
 	}
 
@@ -1405,21 +1571,21 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jToolBarApplication.setFloatable(false);
 			jToolBarApplication.setRollover(true);
 			
-			jToolBarApplication.add(new MainWindowToolBarButton("New", this.getMainToolBarActionListener(), Language.translate("Neues Projekt"), null, "MBnew.png", ToolBarGroup.ProjectHandling));
-			jToolBarApplication.add(new MainWindowToolBarButton("Open", this.getMainToolBarActionListener(), Language.translate("Projekt öffnen"), null, "MBopen.png", ToolBarGroup.ProjectHandling));
-			jToolBarApplication.add(new MainWindowToolBarButton("Save", this.getMainToolBarActionListener(), Language.translate("Projekt speichern"), null, "MBsave.png", ToolBarGroup.ProjectHandling));
+			jToolBarApplication.add(new MainWindowToolBarButton("New", this.getMainToolBarActionListener(), Language.translate("Neues Projekt"), null, "MBnew.png", AwbMainWindowToolBarGroup.ProjectHandling));
+			jToolBarApplication.add(new MainWindowToolBarButton("Open", this.getMainToolBarActionListener(), Language.translate("Projekt öffnen"), null, "MBopen.png", AwbMainWindowToolBarGroup.ProjectHandling));
+			jToolBarApplication.add(new MainWindowToolBarButton("Save", this.getMainToolBarActionListener(), Language.translate("Projekt speichern"), null, "MBsave.png", AwbMainWindowToolBarGroup.ProjectHandling));
 
-			jToolBarApplication.add(new MainWindowToolBarButton("ViewConsole", this.getMainToolBarActionListener(), Language.translate("Konsole ein- oder ausblenden"), null, "MBConsole.png", ToolBarGroup.ViewAdjustments));
-			this.addJToolbarComponent(this.getJButtonProjectTree(), null, ToolBarGroup.ViewAdjustments);
+			jToolBarApplication.add(new MainWindowToolBarButton("ViewConsole", this.getMainToolBarActionListener(), Language.translate("Konsole ein- oder ausblenden"), null, "MBConsole.png", AwbMainWindowToolBarGroup.ViewAdjustments));
+			this.addJToolbarComponent(this.getJButtonProjectTree(), null, AwbMainWindowToolBarGroup.ViewAdjustments);
 
-			jToolBarApplication.add(new MainWindowToolBarButton("JadeStart", this.getMainToolBarActionListener(), Language.translate("JADE starten"), null, "MBJadeOn.png", ToolBarGroup.JadeControls));
-			jToolBarApplication.add(new MainWindowToolBarButton("JadeStop", this.getMainToolBarActionListener(), Language.translate("JADE stoppen"), null, "MBJadeOff.png", ToolBarGroup.JadeControls));
-			jToolBarApplication.add(new JToolBar.Separator(), ToolBarGroup.JadeControls);
+			jToolBarApplication.add(new MainWindowToolBarButton("JadeStart", this.getMainToolBarActionListener(), Language.translate("JADE starten"), null, "MBJadeOn.png", AwbMainWindowToolBarGroup.JadeControls));
+			jToolBarApplication.add(new MainWindowToolBarButton("JadeStop", this.getMainToolBarActionListener(), Language.translate("JADE stoppen"), null, "MBJadeOff.png", AwbMainWindowToolBarGroup.JadeControls));
+			jToolBarApplication.add(new JToolBar.Separator(), AwbMainWindowToolBarGroup.JadeControls);
 
 			new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBstartAgent_lm.png"), GlobalInfo.getInternalImageIcon("MBstartAgent_dm.png"));
 			
-			jToolBarApplication.add(new MainWindowToolBarButton("StartAgent", this.getMainToolBarActionListener(), Language.translate("Starte Agenten"), null, new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBstartAgent_lm.png"), GlobalInfo.getInternalImageIcon("MBstartAgent_dm.png")), ToolBarGroup.JadeControls));
-			jButtonJadeTools = new MainWindowToolBarButton("JadeTools", this.getMainToolBarActionListener(), Language.translate("JADE-Tools..."), null, new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBJadeTools.png")), ToolBarGroup.JadeControls);
+			jToolBarApplication.add(new MainWindowToolBarButton("StartAgent", this.getMainToolBarActionListener(), Language.translate("Starte Agenten"), null, new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBstartAgent_lm.png"), GlobalInfo.getInternalImageIcon("MBstartAgent_dm.png")), AwbMainWindowToolBarGroup.JadeControls));
+			jButtonJadeTools = new MainWindowToolBarButton("JadeTools", this.getMainToolBarActionListener(), Language.translate("JADE-Tools..."), null, new AwbThemeImageIcon(GlobalInfo.getInternalImageIcon("MBJadeTools.png")), AwbMainWindowToolBarGroup.JadeControls);
 			jButtonJadeTools.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -1436,19 +1602,19 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			this.getSetupSelectorToolbar();
 
 			// --- Simulation Buttons -----------
-			jButtonSimStart = new MainWindowToolBarButton("SimulationStart", this.getMainToolBarActionListener(), Language.translate("MAS-Start"), null, "MBLoadPlay.png", ToolBarGroup.MAS_Control);
+			jButtonSimStart = new MainWindowToolBarButton("SimulationStart", this.getMainToolBarActionListener(), Language.translate("MAS-Start"), null, "MBLoadPlay.png", AwbMainWindowToolBarGroup.MAS_Control);
 			jToolBarApplication.add(jButtonSimStart);
-			jButtonSimPause = new MainWindowToolBarButton("SimulationPause", this.getMainToolBarActionListener(), Language.translate("MAS-Pause"), null, "MBLoadPause.png", ToolBarGroup.MAS_Control);
+			jButtonSimPause = new MainWindowToolBarButton("SimulationPause", this.getMainToolBarActionListener(), Language.translate("MAS-Pause"), null, "MBLoadPause.png", AwbMainWindowToolBarGroup.MAS_Control);
 			jToolBarApplication.add(jButtonSimPause);
-			jButtonSimStop = new MainWindowToolBarButton("SimulationStop", this.getMainToolBarActionListener(), Language.translate("MAS-Stop"), null, "MBLoadStopRecord.png", ToolBarGroup.MAS_Control);
+			jButtonSimStop = new MainWindowToolBarButton("SimulationStop", this.getMainToolBarActionListener(), Language.translate("MAS-Stop"), null, "MBLoadStopRecord.png", AwbMainWindowToolBarGroup.MAS_Control);
 			jToolBarApplication.add(jButtonSimStop);
 
-			jToolBarApplication.add(new MainWindowToolBarButton("ContainerMonitoring", this.getMainToolBarActionListener(), Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png", ToolBarGroup.MAS_Monitoring));
-			jToolBarApplication.add(new MainWindowToolBarButton("ThreadMonitoring", this.getMainToolBarActionListener(), Language.translate("Thread-Monitor öffnen"), null, "MBclock.png", ToolBarGroup.MAS_Monitoring));
+			jToolBarApplication.add(new MainWindowToolBarButton("ContainerMonitoring", this.getMainToolBarActionListener(), Language.translate("Auslastungs-Monitor öffnen"), null, "MBLoadMonitor.png", AwbMainWindowToolBarGroup.MAS_Monitoring));
+			jToolBarApplication.add(new MainWindowToolBarButton("ThreadMonitoring", this.getMainToolBarActionListener(), Language.translate("Thread-Monitor öffnen"), null, "MBclock.png", AwbMainWindowToolBarGroup.MAS_Monitoring));
 
 			// --------------------------------------------
 			if (this.showTestMenuButton==true) {
-				jToolBarApplication.add(new MainWindowToolBarButton("Test", this.getMainToolBarActionListener(), Language.translate("Test"), "Funktion Testen", (String)null, ToolBarGroup.NoGroup));
+				jToolBarApplication.add(new MainWindowToolBarButton("Test", this.getMainToolBarActionListener(), Language.translate("Test"), "Funktion Testen", (String)null, AwbMainWindowToolBarGroup.NoGroup));
 			}
 			// --------------------------------------------
 			
@@ -1630,7 +1796,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 * @param indexPosition the index position
 	 * @param tbGroup the tb group
 	 */
-	public void addToolbarComponent(Object myComponent, int indexPosition, ToolBarGroup tbGroup) {
+	public void addToolbarComponent(Object myComponent, int indexPosition, AwbMainWindowToolBarGroup tbGroup) {
 		
 		if (myComponent ==null) {
 			LOGGER.error("No toolbar component was specified that is to be added to the main window toolbar.");
@@ -1646,7 +1812,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 * @param myComponent the my component
 	 * @param indexPosition the index position
 	 */
-	private void addJToolbarComponent(JComponent myComponent, Integer indexPosition, ToolBarGroup tbGroup) {
+	private void addJToolbarComponent(JComponent myComponent, Integer indexPosition, AwbMainWindowToolBarGroup tbGroup) {
 		int nElements = this.getJToolBarApplication().getComponentCount();
 		if (indexPosition==null || indexPosition==-1 || indexPosition > (nElements-1)) {
 			this.getJToolBarApplication().add(myComponent, tbGroup);
@@ -2063,4 +2229,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	// ----------------------------------------------------
 
 	
-} // -- End Class ---
+
+	
+}
