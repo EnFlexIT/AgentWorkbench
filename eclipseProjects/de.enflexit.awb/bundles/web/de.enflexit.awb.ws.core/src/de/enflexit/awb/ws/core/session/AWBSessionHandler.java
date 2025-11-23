@@ -1,5 +1,8 @@
 package de.enflexit.awb.ws.core.session;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.eclipse.jetty.ee10.servlet.SessionHandler;
 import org.eclipse.jetty.http.HttpCookie.SameSite;
 import org.eclipse.jetty.server.Server;
@@ -177,9 +180,19 @@ public class AWBSessionHandler extends SessionHandler {
 	 */
 	public static void addBeanSessionDataStoreFactory(Server server) {
 		
+		// --- Check if we have a valid connection ------------------
+		Connection connection = null;
+		AwbDatabaseAdaptorDataSource dbAdapterDataSource = new AwbDatabaseAdaptorDataSource();
+		try {
+			connection = dbAdapterDataSource.getConnection();
+		} catch (SQLException sqlEx) {
+			sqlEx.printStackTrace();
+		}
+		if (connection==null) return;
+		
 		// --- Create the DatabaseAdaptor --------------------------- 
-		DatabaseAdaptor driverAdaptor = new DatabaseAdaptor();
-		driverAdaptor.setDatasource(new AwbDatabaseAdaptorDataSource());
+		DatabaseAdaptor dbAdaptor = new DatabaseAdaptor();
+		dbAdaptor.setDatasource(dbAdapterDataSource);
 		
 		// --- Create the SessionTableSchema ------------------------ 
 		SessionTableSchema sts = new SessionTableSchema();
@@ -189,7 +202,7 @@ public class AWBSessionHandler extends SessionHandler {
 		JDBCSessionDataStoreFactory jdbcSessionDataStoreFactory = new JDBCSessionDataStoreFactory();
 		jdbcSessionDataStoreFactory.setSavePeriodSec(0);
 		jdbcSessionDataStoreFactory.setGracePeriodSec(3600);
-		jdbcSessionDataStoreFactory.setDatabaseAdaptor(driverAdaptor);
+		jdbcSessionDataStoreFactory.setDatabaseAdaptor(dbAdaptor);
 		jdbcSessionDataStoreFactory.setSessionTableSchema(sts);
 		
 		server.addBean(jdbcSessionDataStoreFactory);
