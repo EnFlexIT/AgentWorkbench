@@ -220,6 +220,9 @@ public class AwbUiConfiguration implements Serializable {
 	 */
 	@XmlTransient
 	public HashSet<AwbProjectTab> getHiddenProjectTabs() {
+		if (hiddenProjectTabs==null) {
+			hiddenProjectTabs = new HashSet<AwbProjectTab>();
+		}
 		return hiddenProjectTabs;
 	}
 	/**
