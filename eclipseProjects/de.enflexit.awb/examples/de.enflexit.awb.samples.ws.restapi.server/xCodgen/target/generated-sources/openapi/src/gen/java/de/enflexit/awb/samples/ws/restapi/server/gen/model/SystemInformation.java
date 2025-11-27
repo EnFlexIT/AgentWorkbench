@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import de.enflexit.awb.samples.ws.restapi.server.gen.model.NetworkConnection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
@@ -42,7 +43,7 @@ import jakarta.validation.Valid;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-11-25T18:29:52.472926+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class SystemInformation   {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
@@ -90,7 +91,7 @@ public class SystemInformation   {
 
   public static final String JSON_PROPERTY_NETWORK_CONNECTIONS = "networkConnections";
   @JsonProperty(JSON_PROPERTY_NETWORK_CONNECTIONS)
-  private List<NetworkConnection> networkConnections;
+  private List<@Valid NetworkConnection> networkConnections = new ArrayList<>();
 
   public SystemInformation osDescription(String osDescription) {
     this.osDescription = osDescription;
@@ -312,7 +313,7 @@ public class SystemInformation   {
     this.heapMemoryMaxInGB = heapMemoryMaxInGB;
   }
 
-  public SystemInformation networkConnections(List<NetworkConnection> networkConnections) {
+  public SystemInformation networkConnections(List<@Valid NetworkConnection> networkConnections) {
     this.networkConnections = networkConnections;
     return this;
   }
@@ -332,11 +333,11 @@ public class SystemInformation   {
   @JsonProperty(value = "networkConnections")
   @Schema(description = "")
   @Valid 
-  public List<NetworkConnection> getNetworkConnections() {
+  public List<@Valid NetworkConnection> getNetworkConnections() {
     return networkConnections;
   }
 
-  public void setNetworkConnections(List<NetworkConnection> networkConnections) {
+  public void setNetworkConnections(List<@Valid NetworkConnection> networkConnections) {
     this.networkConnections = networkConnections;
   }
 
@@ -350,18 +351,18 @@ public class SystemInformation   {
       return false;
     }
     SystemInformation systemInformation = (SystemInformation) o;
-    return Objects.equals(osDescription, systemInformation.osDescription) &&
-        Objects.equals(osManufacturer, systemInformation.osManufacturer) &&
-        Objects.equals(osFamilly, systemInformation.osFamilly) &&
-        Objects.equals(osVersion, systemInformation.osVersion) &&
-        Objects.equals(processorName, systemInformation.processorName) &&
-        Objects.equals(processorFrequenceInMhz, systemInformation.processorFrequenceInMhz) &&
-        Objects.equals(processorNoPhysical, systemInformation.processorNoPhysical) &&
-        Objects.equals(processorNoLogical, systemInformation.processorNoLogical) &&
-        Objects.equals(memoryTotalInGB, systemInformation.memoryTotalInGB) &&
-        Objects.equals(swapMemoryTotalInGB, systemInformation.swapMemoryTotalInGB) &&
-        Objects.equals(heapMemoryMaxInGB, systemInformation.heapMemoryMaxInGB) &&
-        Objects.equals(networkConnections, systemInformation.networkConnections);
+    return Objects.equals(this.osDescription, systemInformation.osDescription) &&
+        Objects.equals(this.osManufacturer, systemInformation.osManufacturer) &&
+        Objects.equals(this.osFamilly, systemInformation.osFamilly) &&
+        Objects.equals(this.osVersion, systemInformation.osVersion) &&
+        Objects.equals(this.processorName, systemInformation.processorName) &&
+        Objects.equals(this.processorFrequenceInMhz, systemInformation.processorFrequenceInMhz) &&
+        Objects.equals(this.processorNoPhysical, systemInformation.processorNoPhysical) &&
+        Objects.equals(this.processorNoLogical, systemInformation.processorNoLogical) &&
+        Objects.equals(this.memoryTotalInGB, systemInformation.memoryTotalInGB) &&
+        Objects.equals(this.swapMemoryTotalInGB, systemInformation.swapMemoryTotalInGB) &&
+        Objects.equals(this.heapMemoryMaxInGB, systemInformation.heapMemoryMaxInGB) &&
+        Objects.equals(this.networkConnections, systemInformation.networkConnections);
   }
 
   @Override

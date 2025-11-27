@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-11-25T18:29:52.472926+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class SystemLoad   {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
   @JsonProperty(JSON_PROPERTY_CPU_USAGE)
@@ -114,9 +114,9 @@ public class SystemLoad   {
       return false;
     }
     SystemLoad systemLoad = (SystemLoad) o;
-    return Objects.equals(cpuUsage, systemLoad.cpuUsage) &&
-        Objects.equals(memUsage, systemLoad.memUsage) &&
-        Objects.equals(heapUsage, systemLoad.heapUsage);
+    return Objects.equals(this.cpuUsage, systemLoad.cpuUsage) &&
+        Objects.equals(this.memUsage, systemLoad.memUsage) &&
+        Objects.equals(this.heapUsage, systemLoad.heapUsage);
   }
 
   @Override

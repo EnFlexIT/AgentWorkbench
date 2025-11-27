@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.samples.ws.restapi.server.gen.model.ExecutionState;
@@ -33,18 +34,19 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the state API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-11-25T18:29:52.472926+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class StateApi  {
+
    private final StateApiService delegate;
 
    public StateApi(@Context ServletConfig servletContext) {
-      StateApiService delegate = null;
 
+      StateApiService delegate = null;
       if (servletContext != null) {
          String implClass = servletContext.getInitParameter("StateApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (StateApiService) Class.forName(implClass).newInstance();
+               delegate = (StateApiService) Class.forName(implClass).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -54,28 +56,18 @@ public class StateApi  {
       if (delegate == null) {
          delegate = StateApiServiceFactory.getStateApi();
       }
-
       this.delegate = delegate;
    }
 
+
     @jakarta.ws.rs.GET
-    
-    
     @Produces({ "applicaion/json" })
-    @Operation(summary = "Returns the current AWB state", description = "", 
-        responses = {
-            @ApiResponse(responseCode = "200", description = "AWB-State", content = @Content(schema = @Schema(implementation = ExecutionState.class))),
-            }
-    , tags={ "admins", }) 
-//    ==> Previous Swagger1 annotations <==    
-//    @io.swagger.annotations.ApiOperation(value = "Returns the current AWB state", notes = "Returns the current state of Agent.Workbench consisiting information  about the execution mode, the currently open project and other. ", response = ExecutionState.class, authorizations = {
-//        @io.swagger.annotations.Authorization(value = "AwbApiKey")
-//    }, tags={ "admins", })
-//    @io.swagger.annotations.ApiResponses(value = {
-//        
-//        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = ExecutionState.class)
-//        
-//    })
+    @Operation(summary = "Returns the current AWB state", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "AWB-State", content = 
+                @Content(schema = @Schema(implementation = ExecutionState.class))),
+            },security = {
+            @SecurityRequirement(name = "AwbApiKey")
+        }, tags={ "admins", }) 
     public Response stateGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.stateGet(securityContext);

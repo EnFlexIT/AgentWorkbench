@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
   NetworkConnection.JSON_PROPERTY_TRAFFIC_SEND_IN_M_B,
   NetworkConnection.JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-11-25T18:29:52.472926+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class NetworkConnection   {
   public static final String JSON_PROPERTY_NAME = "name";
   @JsonProperty(JSON_PROPERTY_NAME)
@@ -214,13 +214,13 @@ public class NetworkConnection   {
       return false;
     }
     NetworkConnection networkConnection = (NetworkConnection) o;
-    return Objects.equals(name, networkConnection.name) &&
-        Objects.equals(displayName, networkConnection.displayName) &&
-        Objects.equals(macAddress, networkConnection.macAddress) &&
-        Objects.equals(ip4Addresses, networkConnection.ip4Addresses) &&
-        Objects.equals(ip6Addresses, networkConnection.ip6Addresses) &&
-        Objects.equals(trafficSendInMB, networkConnection.trafficSendInMB) &&
-        Objects.equals(trafficReceivedInMB, networkConnection.trafficReceivedInMB);
+    return Objects.equals(this.name, networkConnection.name) &&
+        Objects.equals(this.displayName, networkConnection.displayName) &&
+        Objects.equals(this.macAddress, networkConnection.macAddress) &&
+        Objects.equals(this.ip4Addresses, networkConnection.ip4Addresses) &&
+        Objects.equals(this.ip6Addresses, networkConnection.ip6Addresses) &&
+        Objects.equals(this.trafficSendInMB, networkConnection.trafficSendInMB) &&
+        Objects.equals(this.trafficReceivedInMB, networkConnection.trafficReceivedInMB);
   }
 
   @Override

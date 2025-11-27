@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.samples.ws.restapi.server.gen.model.SystemInformation;
@@ -33,18 +34,19 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the info API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2023-08-15T11:14:24.521899400+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-11-25T18:29:52.472926+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class InfoApi  {
+
    private final InfoApiService delegate;
 
    public InfoApi(@Context ServletConfig servletContext) {
-      InfoApiService delegate = null;
 
+      InfoApiService delegate = null;
       if (servletContext != null) {
          String implClass = servletContext.getInitParameter("InfoApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (InfoApiService) Class.forName(implClass).newInstance();
+               delegate = (InfoApiService) Class.forName(implClass).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -54,28 +56,18 @@ public class InfoApi  {
       if (delegate == null) {
          delegate = InfoApiServiceFactory.getInfoApi();
       }
-
       this.delegate = delegate;
    }
 
+
     @jakarta.ws.rs.GET
-    
-    
     @Produces({ "applicaion/json" })
-    @Operation(summary = "Returns system information", description = "", 
-        responses = {
-            @ApiResponse(responseCode = "200", description = "AWB-State", content = @Content(schema = @Schema(implementation = SystemInformation.class))),
-            }
-    , tags={ "admins", }) 
-//    ==> Previous Swagger1 annotations <==    
-//    @io.swagger.annotations.ApiOperation(value = "Returns system information", notes = "Returns Hardware and system  inforamtion. ", response = SystemInformation.class, authorizations = {
-//        @io.swagger.annotations.Authorization(value = "AwbApiKey")
-//    }, tags={ "admins", })
-//    @io.swagger.annotations.ApiResponses(value = {
-//        
-//        @io.swagger.annotations.ApiResponse(code = 200, message = "AWB-State", response = SystemInformation.class)
-//        
-//    })
+    @Operation(summary = "Returns system information", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "AWB-State", content = 
+                @Content(schema = @Schema(implementation = SystemInformation.class))),
+            },security = {
+            @SecurityRequirement(name = "AwbApiKey")
+        }, tags={ "admins", }) 
     public Response infoGet(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.infoGet(securityContext);

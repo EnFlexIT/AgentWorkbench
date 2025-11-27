@@ -22,8 +22,8 @@ import de.enflexit.awb.samples.ws.restapi.server.gen.StateApi;
 @ApplicationPath("/" + RestApiConfiguration.APPLICATION_CONTEXT_PATH)
 public class RestApiConfiguration extends ResourceConfig {
 
-	public static final String APPLICATION_NAME = "AWB - Rest API";
-	public static final String APPLICATION_CONTEXT_PATH = "api";
+	public static final String APPLICATION_NAME = "AWB - Sample Rest API";
+	public static final String APPLICATION_CONTEXT_PATH = "sample-rest-api";
 	
 	public static final String RESPONSE_ENCODING = "UTF-8";
 	public static final Locale RESPONSE_LOCALE= Locale.ENGLISH;
