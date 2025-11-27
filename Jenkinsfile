@@ -5,7 +5,7 @@ pipeline {
       steps {
         echo 'Start Snapshot Build and Deployment of Agent.Workbench ...'
         sh 'mvn --version'
-        sh 'mvn clean install -P p2Deploy -f eclipseProjects/de.enflexit.awb -Dtycho.localArtifacts=ignore -Dtycho.p2.transport.min-cache-minutes=0'
+        sh 'mvn clean install -e -P p2Deploy -f eclipseProjects/de.enflexit.awb -Dtycho.localArtifacts=ignore -Dtycho.p2.transport.min-cache-minutes=0'
         echo 'Build & Deployment of Agent.Workbench Snapshot is done!'
       }
     }
@@ -15,12 +15,9 @@ pipeline {
         echo 'Start extracting AWB Products ...'
         archiveArtifacts 'eclipseProjects/de.enflexit.awb/releng/de.enflexit.awb.product/target/products/de.enflexit.awb-*'
         archiveArtifacts 'eclipseProjects/de.enflexit.awb/releng/de.enflexit.awb.ws.product/target/products/de.enflexit.awb.ws-*'
-		archiveArtifacts 'eclipseProjects/de.enflexit.awb/bundles/de.enflexit.awb.help/target/de.enflexit.awb.help-*javadoc.zip'
+        archiveArtifacts 'eclipseProjects/de.enflexit.awb/bundles/de.enflexit.awb.help/target/de.enflexit.awb.help-*javadoc.zip'
       }
     }
 
   }
 }
-
-
-
