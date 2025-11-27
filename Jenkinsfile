@@ -5,7 +5,7 @@ pipeline {
       steps {
         echo 'Start Snapshot Build and Deployment of Agent.Workbench ...'
         sh 'mvn --version'
-        sh 'mvn clean install -X -P p2Deploy -f eclipseProjects/de.enflexit.awb -Dtycho.localArtifacts=ignore -Dtycho.p2.transport.min-cache-minutes=0'
+        sh 'mvn clean install -P p2Deploy -f eclipseProjects/de.enflexit.awb -Dtycho.localArtifacts=ignore -Dtycho.p2.transport.min-cache-minutes=0'
         echo 'Build & Deployment of Agent.Workbench Snapshot is done!'
       }
     }
