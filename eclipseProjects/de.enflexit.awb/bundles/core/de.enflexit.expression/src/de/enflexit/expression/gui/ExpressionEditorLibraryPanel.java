@@ -271,12 +271,28 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	}
 	private JList<String> getJListExpressions() {
 		if (jListExpressions == null) {
-			jListExpressions = new JList<String>();
+			
+			// --- Subclass to override the getToolTipText method --- ---------
+			jListExpressions = new JList<String>() {
+				private static final long serialVersionUID = 5435153037939202959L;
+				@Override
+				public String getToolTipText(MouseEvent me) {
+					// --- Show the full expression in the tool tip -----------
+		            int index = locationToIndex(me.getPoint());
+		            if (index > -1) {
+		               String item = getModel().getElementAt(index);
+		               return item;
+		            }
+		            return null;
+		         }
+			};
+			
 			jListExpressions.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListExpressions.addListSelectionListener(this);
 			jListExpressions.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent me) {
+					// --- On double click, insert the expression to the editor
 					if (me.getClickCount()==2) {
 						int index = getJListExpressions().locationToIndex(me.getPoint());
 						String clickedExpression = getJListExpressions().getModel().getElementAt(index);
@@ -371,16 +387,6 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
-	 */
-	@Override
-	public void valueChanged(ListSelectionEvent lse) {
-		if (lse.getSource()==this.getJListSubCategories()) {
-			String category = this.getJListSubCategories().getSelectedValue();
-			this.getJListExpressions().setModel(this.createExpressionsListModel(category));
-		}
-	}
 	/**
 	 * Creates the expressions list model.
 	 *
@@ -409,6 +415,17 @@ public class ExpressionEditorLibraryPanel extends JPanel implements TreeSelectio
 			}
 		}
 	}
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+	 */
+	@Override
+	public void valueChanged(ListSelectionEvent lse) {
+		if (lse.getSource()==this.getJListSubCategories()) {
+			String category = this.getJListSubCategories().getSelectedValue();
+			this.getJListExpressions().setModel(this.createExpressionsListModel(category));
+		}
+	}
+
 	/**
 	 * Creates the categories list model.
 	 * @return the default list model

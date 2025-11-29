@@ -658,7 +658,9 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 				this.dataSourceConfigPanel = new JDBCDataSourceConfigurationPanel();
 			}
 			this.getDataSourceConfigPanel().setDataSourceConfiguration(dataSourceConfiguration);
+			int dividerLocation = this.getJSplitPaneMainPanel().getDividerLocation();
 			this.getJSplitPaneMainPanel().setRightComponent(this.getDataSourceConfigPanel());
+			this.getJSplitPaneMainPanel().setDividerLocation(dividerLocation);
 		}
 	}
 	
