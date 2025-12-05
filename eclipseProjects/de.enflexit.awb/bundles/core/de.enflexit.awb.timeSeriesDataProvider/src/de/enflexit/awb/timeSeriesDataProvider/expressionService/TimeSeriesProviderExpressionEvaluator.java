@@ -2,9 +2,6 @@ package de.enflexit.awb.timeSeriesDataProvider.expressionService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
@@ -26,8 +23,6 @@ import de.enflexit.expression.UnknownExpressionException;
  */
 public class TimeSeriesProviderExpressionEvaluator implements ExpressionServiceEvaluator {
 	
-	private static final String MATCHING_AND_SPLITTING_REGEX = ExpressionTypeTimeSeriesProvider.TYPE_PREFIX + "!([A-Za-z_\\s]+)\\.([A-Za-z_\\s]+)_([A-Z]+)";
-	private Pattern matchAndSplitPattern;
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.expression.ExpressionServiceEvaluator#evaluate(de.enflexit.expression.Expression, de.enflexit.expression.ExpressionContext)
@@ -35,13 +30,17 @@ public class TimeSeriesProviderExpressionEvaluator implements ExpressionServiceE
 	@Override
 	public ExpressionResult evaluate(Expression expression, ExpressionContext context) throws UnknownExpressionException {
 		ExpressionResult result = null;
+		
+		// --- Identify the relevant parts of the expression
+		int typeSeparatorPos = expression.getExpressionString().indexOf('!');
+		int sourceSeparatorPos = expression.getExpressionString().indexOf('.');
+		int requestSeparatorPos = expression.getExpressionString().lastIndexOf('_');
 
-		// --- Use a RegEx to verify and split the expression -------
-		Matcher matcher = this.getMatchAndSplitPattern().matcher(expression.getExpressionString());
-		if (matcher.find()==true) {
-			String dataSourceName = matcher.group(1);
-			String dataSeriesName = matcher.group(2);
-			String requestType = matcher.group(3);
+		// --- Check if all required parts were found
+		if (typeSeparatorPos>-1 && sourceSeparatorPos>-1 && requestSeparatorPos>-1) {
+			String dataSourceName = expression.getExpressionString().substring(typeSeparatorPos+1, sourceSeparatorPos);
+			String dataSeriesName = expression.getExpressionString().substring(sourceSeparatorPos+1, requestSeparatorPos);
+			String requestType = expression.getExpressionString().substring(requestSeparatorPos+1);
 			
 			// --- Get the requested data source --------------------
 			AbstractDataSource dataSource = TimeSeriesDataProvider.getInstance().getDataSource(dataSourceName);
@@ -63,30 +62,19 @@ public class TimeSeriesProviderExpressionEvaluator implements ExpressionServiceE
 			// --- Obtain the requested entries ---------------------
 			if (requestType.equals("ALL")) {
 				result = this.getAllValues(dataSeries);
-			} else if(requestType.equals("RANGE")) {
+			} else if(requestType.startsWith("RANGE")) {
 				result = this.getRangeValues(dataSeries, parameters.get(0), parameters.get(1));
-			} else if(requestType.equals("SINGLE")) {
+			} else if(requestType.startsWith("SINGLE")) {
 				result = this.getSingleValue(dataSeries, parameters.get(0));
 			}
 			
 		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] " + expression.getExpressionString() + " is no valid time series provider expression, unable to evaluate!");
+			System.err.println("[" + this.getClass().getSimpleName() + "] Malformed time series provider expression: " + expression.getExpressionString() + ", unable to evaluate!");
 		}
 		
 		return result;
 	}
 
-	/**
-	 * Gets a RegEx pattern that verifies the form of the expression and splits it into parts for further evaluation. 
-	 * @return the match and split pattern
-	 */
-	private Pattern getMatchAndSplitPattern() {
-		if (matchAndSplitPattern==null) {
-			matchAndSplitPattern = Pattern.compile(MATCHING_AND_SPLITTING_REGEX);
-		}
-		return matchAndSplitPattern;
-	}
-	
 	/**
 	 * Evaluates all sub expressions providing parameter values.
 	 * @param expression the parent expression

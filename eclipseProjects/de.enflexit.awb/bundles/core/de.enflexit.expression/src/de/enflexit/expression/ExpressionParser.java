@@ -1,5 +1,7 @@
 package de.enflexit.expression;
 
+import java.util.Vector;
+
 import de.enflexit.expression.functions.ExpressionFunction;
 import de.enflexit.expression.functions.FunctionExpressionType;
 import de.enflexit.expression.math.MathExpressionType;
@@ -181,16 +183,44 @@ public class ExpressionParser {
 		int start = expressionFunction.indexOf(ExpressionService.EXPRESSION_FUNCTION_OPENING_DELIMITER) + 1;
 		int end = expressionFunction.lastIndexOf(ExpressionService.EXPRESSION_FUNCTION_CLOSING_DELIMITER);
 		
-		String  argumentString = expressionFunction.substring(start, end);
-		if (ExpressionFunction.getExpressionFunctionPrefix(argumentString)!=null) {
+		String  argumentsString = expressionFunction.substring(start, end);
+		if (ExpressionFunction.getExpressionFunctionPrefix(argumentsString)!=null) {
 			// --- Contains further expression functions -> parse -------------
-			expression.getSubExpressions().add(Expression.parse(argumentString));
+			//TODO check if here are more arguments behind this function
+			expression.getSubExpressions().add(Expression.parse(argumentsString));
 		} else {
-			// --- Contains only arguments -------------------------------------
-			String[] argumentArray = argumentString.split(String.valueOf(ExpressionService.EXPRESSION_FUNCTION_ARGUMENT_DELIMITER));
-			for (int i = 0; i < argumentArray.length; i++) {
-				expression.getSubExpressions().add(ExpressionParser.parse(argumentArray[i]));
+			
+			// --- Identify the arguments and extract them from the string 
+			Vector<String> arguments = new Vector<String>();
+			
+			int currArgStart = 0;
+			int currPos = 0;
+			
+			// --- Find the commas separating the arguments 
+			while(currPos<argumentsString.length()) {
+				char currChar = argumentsString.charAt(currPos);
+				
+				if (currPos==argumentsString.length()-1 && currPos!=currArgStart) {
+					// Reached the end of the string, treat the rest as the last argument
+					arguments.add(argumentsString.substring(currArgStart));
+				} else if (currChar==ExpressionService.EXPRESSION_FUNCTION_ARGUMENT_DELIMITER) {
+					// --- Found a comma ->  end of current argument 
+					arguments.add(argumentsString.substring(currArgStart, currPos));
+					currArgStart = currPos+1;	// Next argument starts after the comma
+					
+				} else if (currChar==ExpressionService.EXPRESSION_FUNCTION_OPENING_DELIMITER) {
+					// --- Found an opening bracket. Jump to the closing bracket -> treat everything in between (including argument lists of nested functions) as a part of this argument.  
+					int closingBracketPos = currPos + ExpressionParser.findClosingDelimiter(argumentsString.substring(currPos), ExpressionService.EXPRESSION_FUNCTION_OPENING_DELIMITER, ExpressionService.EXPRESSION_FUNCTION_CLOSING_DELIMITER);
+					currPos = closingBracketPos;
+				}
+				currPos++;
 			}
+			
+			// --- Add all found arguments as sub-expressions to the main expression
+			for(String argument : arguments) {
+				expression.getSubExpressions().add(ExpressionParser.parse(argument));
+			}
+			
 		}
 	}
 	
