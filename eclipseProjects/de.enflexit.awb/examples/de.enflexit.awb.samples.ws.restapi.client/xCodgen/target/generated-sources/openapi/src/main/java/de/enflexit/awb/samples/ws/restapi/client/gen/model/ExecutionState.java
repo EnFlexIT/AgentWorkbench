@@ -14,14 +14,15 @@
 package de.enflexit.awb.samples.ws.restapi.client.gen.model;
 
 import java.util.Objects;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 
@@ -33,21 +34,21 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
   ExecutionState.JSON_PROPERTY_EXECUTION_MODE,
   ExecutionState.JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class ExecutionState {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
    */
   public enum ExecutionModeEnum {
-    APPLICATION("APPLICATION"),
+    APPLICATION(String.valueOf("APPLICATION")),
     
-    SERVER("SERVER"),
+    SERVER(String.valueOf("SERVER")),
     
-    SERVER_MASTER("SERVER_MASTER"),
+    SERVER_MASTER(String.valueOf("SERVER_MASTER")),
     
-    SERVER_SLAVE("SERVER_SLAVE"),
+    SERVER_SLAVE(String.valueOf("SERVER_SLAVE")),
     
-    DEVICE_SYSTEM("DEVICE_SYSTEM");
+    DEVICE_SYSTEM(String.valueOf("DEVICE_SYSTEM"));
 
     private String value;
 
@@ -77,15 +78,16 @@ public class ExecutionState {
   }
 
   public static final String JSON_PROPERTY_EXECUTION_MODE = "executionMode";
+  @jakarta.annotation.Nullable
   private ExecutionModeEnum executionMode;
 
   /**
    * * &#39;SETUP&#39; - Runs the selected setup of an AWB projekt * &#39;AGENT&#39; - Runs one or more agents from an AWB project 
    */
   public enum DeviceSystemExecutionModeEnum {
-    SETUP("SETUP"),
+    SETUP(String.valueOf("SETUP")),
     
-    AGENT("AGENT");
+    AGENT(String.valueOf("AGENT"));
 
     private String value;
 
@@ -115,22 +117,23 @@ public class ExecutionState {
   }
 
   public static final String JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE = "deviceSystemExecutionMode";
+  @jakarta.annotation.Nullable
   private DeviceSystemExecutionModeEnum deviceSystemExecutionMode;
 
   public ExecutionState() { 
   }
 
-  public ExecutionState executionMode(ExecutionModeEnum executionMode) {
+  public ExecutionState executionMode(@jakarta.annotation.Nullable ExecutionModeEnum executionMode) {
     this.executionMode = executionMode;
     return this;
   }
 
-   /**
+  /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
    * @return executionMode
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_EXECUTION_MODE)
+  @JsonProperty(value = JSON_PROPERTY_EXECUTION_MODE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public ExecutionModeEnum getExecutionMode() {
@@ -138,24 +141,24 @@ public class ExecutionState {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_EXECUTION_MODE)
+  @JsonProperty(value = JSON_PROPERTY_EXECUTION_MODE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setExecutionMode(ExecutionModeEnum executionMode) {
+  public void setExecutionMode(@jakarta.annotation.Nullable ExecutionModeEnum executionMode) {
     this.executionMode = executionMode;
   }
 
 
-  public ExecutionState deviceSystemExecutionMode(DeviceSystemExecutionModeEnum deviceSystemExecutionMode) {
+  public ExecutionState deviceSystemExecutionMode(@jakarta.annotation.Nullable DeviceSystemExecutionModeEnum deviceSystemExecutionMode) {
     this.deviceSystemExecutionMode = deviceSystemExecutionMode;
     return this;
   }
 
-   /**
+  /**
    * * &#39;SETUP&#39; - Runs the selected setup of an AWB projekt * &#39;AGENT&#39; - Runs one or more agents from an AWB project 
    * @return deviceSystemExecutionMode
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE)
+  @JsonProperty(value = JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public DeviceSystemExecutionModeEnum getDeviceSystemExecutionMode() {
@@ -163,9 +166,9 @@ public class ExecutionState {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE)
+  @JsonProperty(value = JSON_PROPERTY_DEVICE_SYSTEM_EXECUTION_MODE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDeviceSystemExecutionMode(DeviceSystemExecutionModeEnum deviceSystemExecutionMode) {
+  public void setDeviceSystemExecutionMode(@jakarta.annotation.Nullable DeviceSystemExecutionModeEnum deviceSystemExecutionMode) {
     this.deviceSystemExecutionMode = deviceSystemExecutionMode;
   }
 

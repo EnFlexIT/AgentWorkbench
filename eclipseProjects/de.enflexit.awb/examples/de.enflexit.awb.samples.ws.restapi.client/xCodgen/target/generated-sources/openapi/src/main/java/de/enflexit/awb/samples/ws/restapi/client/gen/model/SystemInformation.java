@@ -14,9 +14,9 @@
 package de.enflexit.awb.samples.ws.restapi.client.gen.model;
 
 import java.util.Objects;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.enflexit.awb.samples.ws.restapi.client.gen.model.NetworkConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
@@ -46,58 +47,70 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class SystemInformation {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
+  @jakarta.annotation.Nullable
   private String osDescription;
 
   public static final String JSON_PROPERTY_OS_MANUFACTURER = "osManufacturer";
+  @jakarta.annotation.Nullable
   private String osManufacturer;
 
   public static final String JSON_PROPERTY_OS_FAMILLY = "osFamilly";
+  @jakarta.annotation.Nullable
   private String osFamilly;
 
   public static final String JSON_PROPERTY_OS_VERSION = "osVersion";
+  @jakarta.annotation.Nullable
   private String osVersion;
 
   public static final String JSON_PROPERTY_PROCESSOR_NAME = "processorName";
+  @jakarta.annotation.Nullable
   private String processorName;
 
   public static final String JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ = "processorFrequenceInMhz";
+  @jakarta.annotation.Nullable
   private Double processorFrequenceInMhz;
 
   public static final String JSON_PROPERTY_PROCESSOR_NO_PHYSICAL = "processorNoPhysical";
+  @jakarta.annotation.Nullable
   private Integer processorNoPhysical;
 
   public static final String JSON_PROPERTY_PROCESSOR_NO_LOGICAL = "processorNoLogical";
+  @jakarta.annotation.Nullable
   private Integer processorNoLogical;
 
   public static final String JSON_PROPERTY_MEMORY_TOTAL_IN_G_B = "memoryTotalInGB";
+  @jakarta.annotation.Nullable
   private Double memoryTotalInGB;
 
   public static final String JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B = "swapMemoryTotalInGB";
+  @jakarta.annotation.Nullable
   private Double swapMemoryTotalInGB;
 
   public static final String JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B = "heapMemoryMaxInGB";
+  @jakarta.annotation.Nullable
   private Double heapMemoryMaxInGB;
 
   public static final String JSON_PROPERTY_NETWORK_CONNECTIONS = "networkConnections";
-  private List<NetworkConnection> networkConnections;
+  @jakarta.annotation.Nullable
+  private List<NetworkConnection> networkConnections = new ArrayList<>();
 
   public SystemInformation() { 
   }
 
-  public SystemInformation osDescription(String osDescription) {
+  public SystemInformation osDescription(@jakarta.annotation.Nullable String osDescription) {
     this.osDescription = osDescription;
     return this;
   }
 
-   /**
+  /**
    * Get osDescription
    * @return osDescription
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
+  @JsonProperty(value = JSON_PROPERTY_OS_DESCRIPTION, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getOsDescription() {
@@ -105,24 +118,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
+  @JsonProperty(value = JSON_PROPERTY_OS_DESCRIPTION, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setOsDescription(String osDescription) {
+  public void setOsDescription(@jakarta.annotation.Nullable String osDescription) {
     this.osDescription = osDescription;
   }
 
 
-  public SystemInformation osManufacturer(String osManufacturer) {
+  public SystemInformation osManufacturer(@jakarta.annotation.Nullable String osManufacturer) {
     this.osManufacturer = osManufacturer;
     return this;
   }
 
-   /**
+  /**
    * Get osManufacturer
    * @return osManufacturer
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_OS_MANUFACTURER)
+  @JsonProperty(value = JSON_PROPERTY_OS_MANUFACTURER, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getOsManufacturer() {
@@ -130,24 +143,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_OS_MANUFACTURER)
+  @JsonProperty(value = JSON_PROPERTY_OS_MANUFACTURER, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setOsManufacturer(String osManufacturer) {
+  public void setOsManufacturer(@jakarta.annotation.Nullable String osManufacturer) {
     this.osManufacturer = osManufacturer;
   }
 
 
-  public SystemInformation osFamilly(String osFamilly) {
+  public SystemInformation osFamilly(@jakarta.annotation.Nullable String osFamilly) {
     this.osFamilly = osFamilly;
     return this;
   }
 
-   /**
+  /**
    * Get osFamilly
    * @return osFamilly
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_OS_FAMILLY)
+  @JsonProperty(value = JSON_PROPERTY_OS_FAMILLY, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getOsFamilly() {
@@ -155,24 +168,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_OS_FAMILLY)
+  @JsonProperty(value = JSON_PROPERTY_OS_FAMILLY, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setOsFamilly(String osFamilly) {
+  public void setOsFamilly(@jakarta.annotation.Nullable String osFamilly) {
     this.osFamilly = osFamilly;
   }
 
 
-  public SystemInformation osVersion(String osVersion) {
+  public SystemInformation osVersion(@jakarta.annotation.Nullable String osVersion) {
     this.osVersion = osVersion;
     return this;
   }
 
-   /**
+  /**
    * Get osVersion
    * @return osVersion
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_OS_VERSION)
+  @JsonProperty(value = JSON_PROPERTY_OS_VERSION, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getOsVersion() {
@@ -180,24 +193,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_OS_VERSION)
+  @JsonProperty(value = JSON_PROPERTY_OS_VERSION, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setOsVersion(String osVersion) {
+  public void setOsVersion(@jakarta.annotation.Nullable String osVersion) {
     this.osVersion = osVersion;
   }
 
 
-  public SystemInformation processorName(String processorName) {
+  public SystemInformation processorName(@jakarta.annotation.Nullable String processorName) {
     this.processorName = processorName;
     return this;
   }
 
-   /**
+  /**
    * Get processorName
    * @return processorName
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_NAME)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_NAME, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getProcessorName() {
@@ -205,24 +218,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_NAME)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_NAME, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setProcessorName(String processorName) {
+  public void setProcessorName(@jakarta.annotation.Nullable String processorName) {
     this.processorName = processorName;
   }
 
 
-  public SystemInformation processorFrequenceInMhz(Double processorFrequenceInMhz) {
+  public SystemInformation processorFrequenceInMhz(@jakarta.annotation.Nullable Double processorFrequenceInMhz) {
     this.processorFrequenceInMhz = processorFrequenceInMhz;
     return this;
   }
 
-   /**
+  /**
    * Get processorFrequenceInMhz
    * @return processorFrequenceInMhz
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Double getProcessorFrequenceInMhz() {
@@ -230,24 +243,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_FREQUENCE_IN_MHZ, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setProcessorFrequenceInMhz(Double processorFrequenceInMhz) {
+  public void setProcessorFrequenceInMhz(@jakarta.annotation.Nullable Double processorFrequenceInMhz) {
     this.processorFrequenceInMhz = processorFrequenceInMhz;
   }
 
 
-  public SystemInformation processorNoPhysical(Integer processorNoPhysical) {
+  public SystemInformation processorNoPhysical(@jakarta.annotation.Nullable Integer processorNoPhysical) {
     this.processorNoPhysical = processorNoPhysical;
     return this;
   }
 
-   /**
+  /**
    * Get processorNoPhysical
    * @return processorNoPhysical
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_PHYSICAL)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_NO_PHYSICAL, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Integer getProcessorNoPhysical() {
@@ -255,24 +268,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_PHYSICAL)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_NO_PHYSICAL, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setProcessorNoPhysical(Integer processorNoPhysical) {
+  public void setProcessorNoPhysical(@jakarta.annotation.Nullable Integer processorNoPhysical) {
     this.processorNoPhysical = processorNoPhysical;
   }
 
 
-  public SystemInformation processorNoLogical(Integer processorNoLogical) {
+  public SystemInformation processorNoLogical(@jakarta.annotation.Nullable Integer processorNoLogical) {
     this.processorNoLogical = processorNoLogical;
     return this;
   }
 
-   /**
+  /**
    * Get processorNoLogical
    * @return processorNoLogical
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_LOGICAL)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_NO_LOGICAL, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Integer getProcessorNoLogical() {
@@ -280,24 +293,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_PROCESSOR_NO_LOGICAL)
+  @JsonProperty(value = JSON_PROPERTY_PROCESSOR_NO_LOGICAL, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setProcessorNoLogical(Integer processorNoLogical) {
+  public void setProcessorNoLogical(@jakarta.annotation.Nullable Integer processorNoLogical) {
     this.processorNoLogical = processorNoLogical;
   }
 
 
-  public SystemInformation memoryTotalInGB(Double memoryTotalInGB) {
+  public SystemInformation memoryTotalInGB(@jakarta.annotation.Nullable Double memoryTotalInGB) {
     this.memoryTotalInGB = memoryTotalInGB;
     return this;
   }
 
-   /**
+  /**
    * Get memoryTotalInGB
    * @return memoryTotalInGB
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MEMORY_TOTAL_IN_G_B)
+  @JsonProperty(value = JSON_PROPERTY_MEMORY_TOTAL_IN_G_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Double getMemoryTotalInGB() {
@@ -305,24 +318,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MEMORY_TOTAL_IN_G_B)
+  @JsonProperty(value = JSON_PROPERTY_MEMORY_TOTAL_IN_G_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMemoryTotalInGB(Double memoryTotalInGB) {
+  public void setMemoryTotalInGB(@jakarta.annotation.Nullable Double memoryTotalInGB) {
     this.memoryTotalInGB = memoryTotalInGB;
   }
 
 
-  public SystemInformation swapMemoryTotalInGB(Double swapMemoryTotalInGB) {
+  public SystemInformation swapMemoryTotalInGB(@jakarta.annotation.Nullable Double swapMemoryTotalInGB) {
     this.swapMemoryTotalInGB = swapMemoryTotalInGB;
     return this;
   }
 
-   /**
+  /**
    * Get swapMemoryTotalInGB
    * @return swapMemoryTotalInGB
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B)
+  @JsonProperty(value = JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Double getSwapMemoryTotalInGB() {
@@ -330,24 +343,24 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B)
+  @JsonProperty(value = JSON_PROPERTY_SWAP_MEMORY_TOTAL_IN_G_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setSwapMemoryTotalInGB(Double swapMemoryTotalInGB) {
+  public void setSwapMemoryTotalInGB(@jakarta.annotation.Nullable Double swapMemoryTotalInGB) {
     this.swapMemoryTotalInGB = swapMemoryTotalInGB;
   }
 
 
-  public SystemInformation heapMemoryMaxInGB(Double heapMemoryMaxInGB) {
+  public SystemInformation heapMemoryMaxInGB(@jakarta.annotation.Nullable Double heapMemoryMaxInGB) {
     this.heapMemoryMaxInGB = heapMemoryMaxInGB;
     return this;
   }
 
-   /**
+  /**
    * Get heapMemoryMaxInGB
    * @return heapMemoryMaxInGB
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B)
+  @JsonProperty(value = JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Double getHeapMemoryMaxInGB() {
@@ -355,14 +368,14 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B)
+  @JsonProperty(value = JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setHeapMemoryMaxInGB(Double heapMemoryMaxInGB) {
+  public void setHeapMemoryMaxInGB(@jakarta.annotation.Nullable Double heapMemoryMaxInGB) {
     this.heapMemoryMaxInGB = heapMemoryMaxInGB;
   }
 
 
-  public SystemInformation networkConnections(List<NetworkConnection> networkConnections) {
+  public SystemInformation networkConnections(@jakarta.annotation.Nullable List<NetworkConnection> networkConnections) {
     this.networkConnections = networkConnections;
     return this;
   }
@@ -375,12 +388,12 @@ public class SystemInformation {
     return this;
   }
 
-   /**
+  /**
    * Get networkConnections
    * @return networkConnections
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_NETWORK_CONNECTIONS)
+  @JsonProperty(value = JSON_PROPERTY_NETWORK_CONNECTIONS, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public List<NetworkConnection> getNetworkConnections() {
@@ -388,9 +401,9 @@ public class SystemInformation {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_NETWORK_CONNECTIONS)
+  @JsonProperty(value = JSON_PROPERTY_NETWORK_CONNECTIONS, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setNetworkConnections(List<NetworkConnection> networkConnections) {
+  public void setNetworkConnections(@jakarta.annotation.Nullable List<NetworkConnection> networkConnections) {
     this.networkConnections = networkConnections;
   }
 

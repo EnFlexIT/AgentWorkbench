@@ -1,6 +1,6 @@
 # AdminsApi
 
-All URIs are relative to *http://localhost:8080/api*
+All URIs are relative to *https://localhost:8080/api*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
@@ -33,7 +33,7 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.AdminsApi;
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:8080/api");
+        defaultClient.setBasePath("https://localhost:8080/api");
         
         // Configure API key authorization: AwbApiKey
         ApiKeyAuth AwbApiKey = (ApiKeyAuth) defaultClient.getAuthentication("AwbApiKey");
@@ -102,7 +102,7 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.AdminsApi;
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:8080/api");
+        defaultClient.setBasePath("https://localhost:8080/api");
         
         // Configure API key authorization: AwbApiKey
         ApiKeyAuth AwbApiKey = (ApiKeyAuth) defaultClient.getAuthentication("AwbApiKey");
@@ -171,7 +171,7 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.AdminsApi;
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:8080/api");
+        defaultClient.setBasePath("https://localhost:8080/api");
         
         // Configure API key authorization: AwbApiKey
         ApiKeyAuth AwbApiKey = (ApiKeyAuth) defaultClient.getAuthentication("AwbApiKey");

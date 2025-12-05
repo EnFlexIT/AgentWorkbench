@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class AdminsApi {
   private ApiClient apiClient;
 
@@ -54,7 +54,8 @@ public class AdminsApi {
    * @return SystemInformation
    * @throws ApiException if fails to make API call
    * @http.response.details
-     <table summary="Response Details" border="1">
+     <table border="1">
+       <caption>Response Details</caption>
        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
        <tr><td> 200 </td><td> AWB-State </td><td>  -  </td></tr>
      </table>
@@ -71,7 +72,8 @@ public class AdminsApi {
    * @return ApiResponse&lt;SystemInformation&gt;
    * @throws ApiException if fails to make API call
    * @http.response.details
-     <table summary="Response Details" border="1">
+     <table border="1">
+       <caption>Response Details</caption>
        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
        <tr><td> 200 </td><td> AWB-State </td><td>  -  </td></tr>
      </table>
@@ -93,7 +95,8 @@ public class AdminsApi {
    * @return SystemLoad
    * @throws ApiException if fails to make API call
    * @http.response.details
-     <table summary="Response Details" border="1">
+     <table border="1">
+       <caption>Response Details</caption>
        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
        <tr><td> 200 </td><td> System Load </td><td>  -  </td></tr>
      </table>
@@ -108,7 +111,8 @@ public class AdminsApi {
    * @return ApiResponse&lt;SystemLoad&gt;
    * @throws ApiException if fails to make API call
    * @http.response.details
-     <table summary="Response Details" border="1">
+     <table border="1">
+       <caption>Response Details</caption>
        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
        <tr><td> 200 </td><td> System Load </td><td>  -  </td></tr>
      </table>
@@ -128,7 +132,8 @@ public class AdminsApi {
    * @return ExecutionState
    * @throws ApiException if fails to make API call
    * @http.response.details
-     <table summary="Response Details" border="1">
+     <table border="1">
+       <caption>Response Details</caption>
        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
        <tr><td> 200 </td><td> AWB-State </td><td>  -  </td></tr>
      </table>
@@ -145,7 +150,8 @@ public class AdminsApi {
    * @return ApiResponse&lt;ExecutionState&gt;
    * @throws ApiException if fails to make API call
    * @http.response.details
-     <table summary="Response Details" border="1">
+     <table border="1">
+       <caption>Response Details</caption>
        <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
        <tr><td> 200 </td><td> AWB-State </td><td>  -  </td></tr>
      </table>

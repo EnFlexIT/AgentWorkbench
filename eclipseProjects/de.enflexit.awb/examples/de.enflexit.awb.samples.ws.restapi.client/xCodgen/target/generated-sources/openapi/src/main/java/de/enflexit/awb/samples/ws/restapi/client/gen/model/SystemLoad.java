@@ -14,14 +14,15 @@
 package de.enflexit.awb.samples.ws.restapi.client.gen.model;
 
 import java.util.Objects;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 
@@ -34,31 +35,34 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
   SystemLoad.JSON_PROPERTY_MEM_USAGE,
   SystemLoad.JSON_PROPERTY_HEAP_USAGE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class SystemLoad {
   public static final String JSON_PROPERTY_CPU_USAGE = "cpuUsage";
+  @jakarta.annotation.Nullable
   private Float cpuUsage;
 
   public static final String JSON_PROPERTY_MEM_USAGE = "memUsage";
+  @jakarta.annotation.Nullable
   private Float memUsage;
 
   public static final String JSON_PROPERTY_HEAP_USAGE = "heapUsage";
+  @jakarta.annotation.Nullable
   private Float heapUsage;
 
   public SystemLoad() { 
   }
 
-  public SystemLoad cpuUsage(Float cpuUsage) {
+  public SystemLoad cpuUsage(@jakarta.annotation.Nullable Float cpuUsage) {
     this.cpuUsage = cpuUsage;
     return this;
   }
 
-   /**
+  /**
    * The CPU usage in percent
    * @return cpuUsage
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_CPU_USAGE)
+  @JsonProperty(value = JSON_PROPERTY_CPU_USAGE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Float getCpuUsage() {
@@ -66,24 +70,24 @@ public class SystemLoad {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_CPU_USAGE)
+  @JsonProperty(value = JSON_PROPERTY_CPU_USAGE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setCpuUsage(Float cpuUsage) {
+  public void setCpuUsage(@jakarta.annotation.Nullable Float cpuUsage) {
     this.cpuUsage = cpuUsage;
   }
 
 
-  public SystemLoad memUsage(Float memUsage) {
+  public SystemLoad memUsage(@jakarta.annotation.Nullable Float memUsage) {
     this.memUsage = memUsage;
     return this;
   }
 
-   /**
+  /**
    * The memory usage in percent
    * @return memUsage
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MEM_USAGE)
+  @JsonProperty(value = JSON_PROPERTY_MEM_USAGE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Float getMemUsage() {
@@ -91,24 +95,24 @@ public class SystemLoad {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MEM_USAGE)
+  @JsonProperty(value = JSON_PROPERTY_MEM_USAGE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMemUsage(Float memUsage) {
+  public void setMemUsage(@jakarta.annotation.Nullable Float memUsage) {
     this.memUsage = memUsage;
   }
 
 
-  public SystemLoad heapUsage(Float heapUsage) {
+  public SystemLoad heapUsage(@jakarta.annotation.Nullable Float heapUsage) {
     this.heapUsage = heapUsage;
     return this;
   }
 
-   /**
+  /**
    * The Heap usage in percen
    * @return heapUsage
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_HEAP_USAGE)
+  @JsonProperty(value = JSON_PROPERTY_HEAP_USAGE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Float getHeapUsage() {
@@ -116,9 +120,9 @@ public class SystemLoad {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_HEAP_USAGE)
+  @JsonProperty(value = JSON_PROPERTY_HEAP_USAGE, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setHeapUsage(Float heapUsage) {
+  public void setHeapUsage(@jakarta.annotation.Nullable Float heapUsage) {
     this.heapUsage = heapUsage;
   }
 

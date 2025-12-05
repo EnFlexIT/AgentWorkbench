@@ -12,7 +12,7 @@ info:
   version: 1.0.0
 servers:
 - description: AWB-Embedded System
-  url: http://localhost:8080/api
+  url: https://localhost:8080/api
 - description: SwaggerHub API Auto Mocking
   url: https://virtserver.swaggerhub.com/EnFlex.IT/AWB-Rest/1.0.0
 security:
@@ -33,12 +33,13 @@ paths:
           content:
             applicaion/json:
               schema:
-                $ref: '#/components/schemas/SystemInformation'
+                $ref: "#/components/schemas/SystemInformation"
           description: AWB-State
       summary: Returns system information
       tags:
       - admins
-      x-accepts: applicaion/json
+      x-accepts:
+      - applicaion/json
   /state:
     get:
       description: |
@@ -51,12 +52,13 @@ paths:
           content:
             applicaion/json:
               schema:
-                $ref: '#/components/schemas/ExecutionState'
+                $ref: "#/components/schemas/ExecutionState"
           description: AWB-State
       summary: Returns the current AWB state
       tags:
       - admins
-      x-accepts: applicaion/json
+      x-accepts:
+      - applicaion/json
   /load:
     get:
       description: |
@@ -66,12 +68,13 @@ paths:
           content:
             applicaion/json:
               schema:
-                $ref: '#/components/schemas/SystemLoad'
+                $ref: "#/components/schemas/SystemLoad"
           description: System Load
       summary: Returns the current System load
       tags:
       - admins
-      x-accepts: applicaion/json
+      x-accepts:
+      - applicaion/json
 components:
   schemas:
     SystemInformation:
@@ -107,7 +110,7 @@ components:
           type: number
         networkConnections:
           items:
-            $ref: '#/components/schemas/NetworkConnection'
+            $ref: "#/components/schemas/NetworkConnection"
           type: array
       type: object
     NetworkConnection:

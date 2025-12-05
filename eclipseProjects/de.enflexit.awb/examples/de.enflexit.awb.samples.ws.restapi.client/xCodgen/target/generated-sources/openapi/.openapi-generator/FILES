@@ -24,6 +24,8 @@ src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/JSON.java
 src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/JavaTimeFormatter.java
 src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/Pair.java
 src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/RFC3339DateFormat.java
+src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/RFC3339InstantDeserializer.java
+src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/RFC3339JavaTimeModule.java
 src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/ServerConfiguration.java
 src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/ServerVariable.java
 src/main/java/de/enflexit/awb/samples/ws/restapi/client/gen/handler/StringUtil.java

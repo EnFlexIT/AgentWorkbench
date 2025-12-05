@@ -32,7 +32,7 @@ public class ApiRegistrationService implements AwbApiRegistrationService {
 	 */
 	@Override
 	public String getDefaultServerURL() {
-		return "https://127.0.0.1:8080/api";
+		return "https://127.0.0.1:8080/sample-rest-api";
 	}
 	
 	/* (non-Javadoc)

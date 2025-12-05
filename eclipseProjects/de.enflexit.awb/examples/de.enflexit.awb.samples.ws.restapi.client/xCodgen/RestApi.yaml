@@ -15,7 +15,7 @@ info:
 
 # Servers
 servers:
-- url: http://localhost:8080/api
+- url: https://localhost:8080/api
   description: AWB-Embedded System
 - url: https://virtserver.swaggerhub.com/EnFlex.IT/AWB-Rest/1.0.0
   description: SwaggerHub API Auto Mocking

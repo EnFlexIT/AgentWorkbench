@@ -14,14 +14,15 @@
 package de.enflexit.awb.samples.ws.restapi.client.gen.model;
 
 import java.util.Objects;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
 
@@ -38,43 +39,50 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
   NetworkConnection.JSON_PROPERTY_TRAFFIC_SEND_IN_M_B,
   NetworkConnection.JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class NetworkConnection {
   public static final String JSON_PROPERTY_NAME = "name";
+  @jakarta.annotation.Nullable
   private String name;
 
   public static final String JSON_PROPERTY_DISPLAY_NAME = "displayName";
+  @jakarta.annotation.Nullable
   private String displayName;
 
   public static final String JSON_PROPERTY_MAC_ADDRESS = "macAddress";
+  @jakarta.annotation.Nullable
   private String macAddress;
 
   public static final String JSON_PROPERTY_IP4_ADDRESSES = "ip4Addresses";
+  @jakarta.annotation.Nullable
   private String ip4Addresses;
 
   public static final String JSON_PROPERTY_IP6_ADDRESSES = "ip6Addresses";
+  @jakarta.annotation.Nullable
   private String ip6Addresses;
 
   public static final String JSON_PROPERTY_TRAFFIC_SEND_IN_M_B = "trafficSendInMB";
+  @jakarta.annotation.Nullable
   private Double trafficSendInMB;
 
   public static final String JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B = "trafficReceivedInMB";
+  @jakarta.annotation.Nullable
   private Double trafficReceivedInMB;
 
   public NetworkConnection() { 
   }
 
-  public NetworkConnection name(String name) {
+  public NetworkConnection name(@jakarta.annotation.Nullable String name) {
     this.name = name;
     return this;
   }
 
-   /**
+  /**
    * Get name
    * @return name
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_NAME)
+  @JsonProperty(value = JSON_PROPERTY_NAME, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getName() {
@@ -82,24 +90,24 @@ public class NetworkConnection {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_NAME)
+  @JsonProperty(value = JSON_PROPERTY_NAME, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setName(String name) {
+  public void setName(@jakarta.annotation.Nullable String name) {
     this.name = name;
   }
 
 
-  public NetworkConnection displayName(String displayName) {
+  public NetworkConnection displayName(@jakarta.annotation.Nullable String displayName) {
     this.displayName = displayName;
     return this;
   }
 
-   /**
+  /**
    * Get displayName
    * @return displayName
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DISPLAY_NAME)
+  @JsonProperty(value = JSON_PROPERTY_DISPLAY_NAME, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getDisplayName() {
@@ -107,24 +115,24 @@ public class NetworkConnection {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_DISPLAY_NAME)
+  @JsonProperty(value = JSON_PROPERTY_DISPLAY_NAME, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDisplayName(String displayName) {
+  public void setDisplayName(@jakarta.annotation.Nullable String displayName) {
     this.displayName = displayName;
   }
 
 
-  public NetworkConnection macAddress(String macAddress) {
+  public NetworkConnection macAddress(@jakarta.annotation.Nullable String macAddress) {
     this.macAddress = macAddress;
     return this;
   }
 
-   /**
+  /**
    * Get macAddress
    * @return macAddress
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MAC_ADDRESS)
+  @JsonProperty(value = JSON_PROPERTY_MAC_ADDRESS, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getMacAddress() {
@@ -132,24 +140,24 @@ public class NetworkConnection {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MAC_ADDRESS)
+  @JsonProperty(value = JSON_PROPERTY_MAC_ADDRESS, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMacAddress(String macAddress) {
+  public void setMacAddress(@jakarta.annotation.Nullable String macAddress) {
     this.macAddress = macAddress;
   }
 
 
-  public NetworkConnection ip4Addresses(String ip4Addresses) {
+  public NetworkConnection ip4Addresses(@jakarta.annotation.Nullable String ip4Addresses) {
     this.ip4Addresses = ip4Addresses;
     return this;
   }
 
-   /**
+  /**
    * Get ip4Addresses
    * @return ip4Addresses
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_IP4_ADDRESSES)
+  @JsonProperty(value = JSON_PROPERTY_IP4_ADDRESSES, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getIp4Addresses() {
@@ -157,24 +165,24 @@ public class NetworkConnection {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_IP4_ADDRESSES)
+  @JsonProperty(value = JSON_PROPERTY_IP4_ADDRESSES, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setIp4Addresses(String ip4Addresses) {
+  public void setIp4Addresses(@jakarta.annotation.Nullable String ip4Addresses) {
     this.ip4Addresses = ip4Addresses;
   }
 
 
-  public NetworkConnection ip6Addresses(String ip6Addresses) {
+  public NetworkConnection ip6Addresses(@jakarta.annotation.Nullable String ip6Addresses) {
     this.ip6Addresses = ip6Addresses;
     return this;
   }
 
-   /**
+  /**
    * Get ip6Addresses
    * @return ip6Addresses
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_IP6_ADDRESSES)
+  @JsonProperty(value = JSON_PROPERTY_IP6_ADDRESSES, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public String getIp6Addresses() {
@@ -182,24 +190,24 @@ public class NetworkConnection {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_IP6_ADDRESSES)
+  @JsonProperty(value = JSON_PROPERTY_IP6_ADDRESSES, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setIp6Addresses(String ip6Addresses) {
+  public void setIp6Addresses(@jakarta.annotation.Nullable String ip6Addresses) {
     this.ip6Addresses = ip6Addresses;
   }
 
 
-  public NetworkConnection trafficSendInMB(Double trafficSendInMB) {
+  public NetworkConnection trafficSendInMB(@jakarta.annotation.Nullable Double trafficSendInMB) {
     this.trafficSendInMB = trafficSendInMB;
     return this;
   }
 
-   /**
+  /**
    * Get trafficSendInMB
    * @return trafficSendInMB
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_TRAFFIC_SEND_IN_M_B)
+  @JsonProperty(value = JSON_PROPERTY_TRAFFIC_SEND_IN_M_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Double getTrafficSendInMB() {
@@ -207,24 +215,24 @@ public class NetworkConnection {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_TRAFFIC_SEND_IN_M_B)
+  @JsonProperty(value = JSON_PROPERTY_TRAFFIC_SEND_IN_M_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setTrafficSendInMB(Double trafficSendInMB) {
+  public void setTrafficSendInMB(@jakarta.annotation.Nullable Double trafficSendInMB) {
     this.trafficSendInMB = trafficSendInMB;
   }
 
 
-  public NetworkConnection trafficReceivedInMB(Double trafficReceivedInMB) {
+  public NetworkConnection trafficReceivedInMB(@jakarta.annotation.Nullable Double trafficReceivedInMB) {
     this.trafficReceivedInMB = trafficReceivedInMB;
     return this;
   }
 
-   /**
+  /**
    * Get trafficReceivedInMB
    * @return trafficReceivedInMB
-  **/
+   */
   @jakarta.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B)
+  @JsonProperty(value = JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public Double getTrafficReceivedInMB() {
@@ -232,9 +240,9 @@ public class NetworkConnection {
   }
 
 
-  @JsonProperty(JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B)
+  @JsonProperty(value = JSON_PROPERTY_TRAFFIC_RECEIVED_IN_M_B, required = false)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setTrafficReceivedInMB(Double trafficReceivedInMB) {
+  public void setTrafficReceivedInMB(@jakarta.annotation.Nullable Double trafficReceivedInMB) {
     this.trafficReceivedInMB = trafficReceivedInMB;
   }
 

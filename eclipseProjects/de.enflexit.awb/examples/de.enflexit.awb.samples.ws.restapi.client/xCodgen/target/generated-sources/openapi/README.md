@@ -4,7 +4,9 @@ Agent.Workbench REST - API
 
 - API version: 1.0.0
 
-- Build date: 2023-08-04T15:46:53.838547300+02:00[Europe/Berlin]
+- Build date: 2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]
+
+- Generator version: 7.17.0
 
 This is the REST-API for Agent.Workbench in an embbedded system mode.
 
@@ -91,7 +93,7 @@ public class AdminsApiExample {
 
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("http://localhost:8080/api");
+        defaultClient.setBasePath("https://localhost:8080/api");
         
         // Configure API key authorization: AwbApiKey
         ApiKeyAuth AwbApiKey = (ApiKeyAuth) defaultClient.getAuthentication("AwbApiKey");
@@ -117,7 +119,7 @@ public class AdminsApiExample {
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://localhost:8080/api*
+All URIs are relative to *https://localhost:8080/api*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------

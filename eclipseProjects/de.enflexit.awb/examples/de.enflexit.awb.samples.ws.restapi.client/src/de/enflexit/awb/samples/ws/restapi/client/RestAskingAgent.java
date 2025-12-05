@@ -28,7 +28,7 @@ public class RestAskingAgent extends Agent {
 		AdminsApi api = new AdminsApi();
 			try {
 	
-				ApiKeyCredential apiKeyCredential = WsCredentialStore.getInstance().getCredential(new ApiKeyCredential(),ApiRegistrationService.class);
+				ApiKeyCredential apiKeyCredential = WsCredentialStore.getInstance().getCredential(new ApiKeyCredential(), ApiRegistrationService.class);
 	
 				ApiClient apiClient = api.getApiClient();
 				apiClient.setApiKeyPrefix(apiKeyCredential.getApiKeyPrefix());	
