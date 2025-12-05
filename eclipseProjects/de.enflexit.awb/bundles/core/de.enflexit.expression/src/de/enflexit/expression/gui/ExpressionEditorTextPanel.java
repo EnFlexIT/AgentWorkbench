@@ -348,19 +348,24 @@ public class ExpressionEditorTextPanel extends JPanel implements ActionListener 
 	 * @param subExpression the sub expression
 	 */
 	protected void highlightSubExpression(Expression subExpression) {
-		// --- Default: No selection --------------------------------
-		int selectFrom = 0;
-		int selectTo = 0;
 		
-		if (subExpression!=null) {
-			// --- Find the position of the sub-expression ----------
-			selectFrom = this.getJTextAreaExpression().getText().indexOf(subExpression.getExpressionString());
-			selectTo = selectFrom + subExpression.getExpressionString().length();
+		if(subExpression.getExpressionString().equals(this.getJTextAreaExpression().getText())) {
+			this.getJTextAreaExpression().selectAll();
+		} else {
+			// --- Default: No selection --------------------------------
+			int selectFrom = 0;
+			int selectTo = 0;
+			
+			if (subExpression!=null) {
+				// --- Find the position of the sub-expression ----------
+				selectFrom = this.getJTextAreaExpression().getText().indexOf(subExpression.getExpressionString());
+				selectTo = selectFrom + subExpression.getExpressionString().length();
+			}
+			
+			// --- Set/clear the selection --------------------------
+			this.getJTextAreaExpression().requestFocus();
+			this.highlightText(selectFrom, selectTo);
 		}
-		
-		// --- Set/clear the selection --------------------------
-		this.getJTextAreaExpression().requestFocus();
-		this.highlightText(selectFrom, selectTo);
 	}
 	
 	/**
