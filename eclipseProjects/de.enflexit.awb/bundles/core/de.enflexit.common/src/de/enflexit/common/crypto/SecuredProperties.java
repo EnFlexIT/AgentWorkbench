@@ -3,7 +3,9 @@ package de.enflexit.common.crypto;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -394,7 +396,9 @@ public class SecuredProperties {
 		pswd += System.getProperty("user.timezone");
 		
 		if (pswd==null || pswd.isBlank()==true) return null;
-		return new PBEKeySpec(pswd.toCharArray());
+		
+		String pswd64 = Base64.getEncoder().encodeToString(pswd.getBytes(StandardCharsets.UTF_8));
+		return new PBEKeySpec(pswd64.toCharArray());
 	}
 
 }
