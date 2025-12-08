@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AWB Example Database-Bundle
+Bundle-SymbolicName: de.enflexit.awb.samples.db
+Automatic-Module-Name: de.enflexit.awb.samples.db
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: EnFlex.IT
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate
+Export-Package: de.enflexit.awb.samples.db,
+ de.enflexit.awb.samples.db.dataModel
+Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
+Require-Bundle: de.enflexit.db.hibernate,
+ org.eclipse.osgi
+Import-Package: jakarta.persistence

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory name="BgSystem-SessionFactory">
+
+		<property name="hibernate.current_session_context_class">thread</property>
+		
+		<property name="hibernate.transform_hbm_xml.enabled">false</property>
+		
+		<property name="hibernate.connection.characterEncoding">utf8</property>
+		<property name="hibernate.connection.CharSet">utf8</property>
+		<property name="hibernate.connection.useUnicode">true</property>
+
+		<property name="hibernate.hbm2ddl.auto">create-only</property>
+		<!--  <property name="hibernate.hbm2ddl.auto">update</property> -->
+		<!--  <property name="hibernate.hbm2ddl.auto">create-drop</property> -->
+		
+		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.generate_statistics">false</property>
+		<property name="hibernate.connection.autocommit">false</property> 
+
+		<property name="hibernate.enable_lazy_load_no_trans">true</property>
+
+		<property name="hibernate.c3p0.min_size">3</property>
+		<property name="hibernate.c3p0.max_size">5</property>
+		<property name="hibernate.c3p0.max_statements">50</property>
+		<property name="hibernate.c3p0.idle_test_period">1800</property>
+		<property name="hibernate.c3p0.timeout">3600</property>
+		
+		<property name="hibernate.c3p0.maxStatementsPerConnection">50</property>
+		<property name="hibernate.c3p0.statementCacheNumDeferredCloseThreads">1</property>
+		
+		 
+	</session-factory>
+</hibernate-configuration>
