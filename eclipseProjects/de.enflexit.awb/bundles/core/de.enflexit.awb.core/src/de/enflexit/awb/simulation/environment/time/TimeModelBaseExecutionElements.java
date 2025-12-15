@@ -28,6 +28,8 @@ import de.enflexit.language.Language;
  */
 public abstract class TimeModelBaseExecutionElements implements ActionListener {
 
+	private static final int SEPARATOR_BEFORE_BUTTON_INDEX = 2;
+	
 	protected final static int ViewTIMER = 0;
 	protected final static int ViewCOUNTDOWN = 1;
 	protected int view = 0;
@@ -98,8 +100,10 @@ public abstract class TimeModelBaseExecutionElements implements ActionListener {
 	public void addToolbarElements(){
 		this.jToolBar4Elements.add(this.getJLabelIntro());
 		this.jToolBar4Elements.add(this.getJLabelTimeDisplay());
-		this.jToolBar4Elements.add(this.getSeparator(1));
 		this.jToolBar4Elements.add(this.getJButtonTimeConfig());	
+		
+		// The separator cannot be added at the end, would be removed by the MainWindowToolBar's add method otherwise when adding the next component 
+		this.jToolBar4Elements.add(this.getSeparator(1), SEPARATOR_BEFORE_BUTTON_INDEX);
 	}
 	
 	/**

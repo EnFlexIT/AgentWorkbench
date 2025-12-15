@@ -54,7 +54,7 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 		if (instance==null) {
 			instance = new TimeSeriesDataProvider();
 			instance.loadProviderConfigurations();
-			Application.addApplicationListener(instance);
+//			Application.addApplicationListener(instance);
 		}
 		return instance;
 	}
@@ -295,11 +295,13 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 		// --- If not, look for a matching configuration and initialize the source
 		if (dataSource==null) {
 			AbstractDataSourceConfiguration sourceConfig = this.getDataSourceConfigurations().get(sourceName);
-			if (sourceConfig.getName().equals(sourceName)) {
+			if (dataSource == null && sourceConfig!=null) {
 				dataSource = sourceConfig.createDataSource();
 				if (dataSource!=null) {
 					this.getDataSourcesByName().put(sourceConfig.getName(), dataSource);
 				}
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] No data source configuration found for " + sourceName);
 			}
 		}
 		return dataSource;
@@ -316,6 +318,7 @@ public class TimeSeriesDataProvider implements PropertyChangeListener, Applicati
 		if (dataSource!=null) {
 			return dataSource.getDataSeries(dataSeriesName);
 		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Unable to obtain data series " + dataSeriesName + ", ");
 			return null;
 		}
 	}

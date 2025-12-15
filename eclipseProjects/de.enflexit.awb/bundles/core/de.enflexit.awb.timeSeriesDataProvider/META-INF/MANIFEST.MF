@@ -5,6 +5,7 @@ Automatic-Module-Name: de.enflexit.awb.timeSeriesDataProvider
 Bundle-SymbolicName: de.enflexit.awb.timeSeriesDataProvider;singleton:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProviderActivator
 Bundle-Version: 1.0.0.qualifier
 Export-Package: de.enflexit.awb.timeSeriesDataProvider,
  de.enflexit.awb.timeSeriesDataProvider.expressionService,
@@ -18,7 +19,8 @@ Import-Package: de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.common,
  de.enflexit.common.swing,
  jakarta.xml.bind,
- jakarta.xml.bind.annotation
+ jakarta.xml.bind.annotation,
+ org.osgi.framework
 Require-Bundle: de.enflexit.db.hibernate,
  de.enflexit.expression
 Service-Component: OSGI-INF/timeSeriesProviderExpressionService.xml
