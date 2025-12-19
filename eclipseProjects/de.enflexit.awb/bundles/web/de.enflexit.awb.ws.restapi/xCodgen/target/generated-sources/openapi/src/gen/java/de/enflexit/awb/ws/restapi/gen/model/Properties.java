@@ -29,13 +29,38 @@ import jakarta.validation.Valid;
  * Properties
  */
 @JsonPropertyOrder({
+  Properties.JSON_PROPERTY_PERFORMATIVE,
   Properties.JSON_PROPERTY_PROPERTY_ENTRIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-22T11:28:21.945168200+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-12-19T14:09:40.842261300+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class Properties   {
+  public static final String JSON_PROPERTY_PERFORMATIVE = "performative";
+  @JsonProperty(JSON_PROPERTY_PERFORMATIVE)
+  private String performative = null;
+
   public static final String JSON_PROPERTY_PROPERTY_ENTRIES = "propertyEntries";
   @JsonProperty(JSON_PROPERTY_PROPERTY_ENTRIES)
   private List<@Valid PropertyEntry> propertyEntries = new ArrayList<>();
+
+  public Properties performative(String performative) {
+    this.performative = performative;
+    return this;
+  }
+
+  /**
+   * Get performative
+   * @return performative
+   **/
+  @JsonProperty(value = "performative")
+  @Schema(description = "")
+  
+  public String getPerformative() {
+    return performative;
+  }
+
+  public void setPerformative(String performative) {
+    this.performative = performative;
+  }
 
   public Properties propertyEntries(List<@Valid PropertyEntry> propertyEntries) {
     this.propertyEntries = propertyEntries;
@@ -75,12 +100,13 @@ public class Properties   {
       return false;
     }
     Properties properties = (Properties) o;
-    return Objects.equals(this.propertyEntries, properties.propertyEntries);
+    return Objects.equals(this.performative, properties.performative) &&
+        Objects.equals(this.propertyEntries, properties.propertyEntries);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(propertyEntries);
+    return Objects.hash(performative, propertyEntries);
   }
 
   @Override
@@ -88,6 +114,7 @@ public class Properties   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Properties {\n");
     
+    sb.append("    performative: ").append(toIndentedString(performative)).append("\n");
     sb.append("    propertyEntries: ").append(toIndentedString(propertyEntries)).append("\n");
     sb.append("}");
     return sb.toString();

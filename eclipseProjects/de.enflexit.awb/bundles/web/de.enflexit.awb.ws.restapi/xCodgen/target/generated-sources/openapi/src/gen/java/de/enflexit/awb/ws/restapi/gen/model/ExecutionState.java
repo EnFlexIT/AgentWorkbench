@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
   ExecutionState.JSON_PROPERTY_PROJECT,
   ExecutionState.JSON_PROPERTY_SETUP
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-22T11:28:21.945168200+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-12-19T14:09:40.842261300+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class ExecutionState   {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 

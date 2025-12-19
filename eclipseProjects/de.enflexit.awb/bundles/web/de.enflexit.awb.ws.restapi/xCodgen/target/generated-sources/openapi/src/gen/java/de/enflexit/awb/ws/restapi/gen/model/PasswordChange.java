@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
   PasswordChange.JSON_PROPERTY_PASSWORD_OLD,
   PasswordChange.JSON_PROPERTY_PASSWORD_NEW
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-22T11:28:21.945168200+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-12-19T14:09:40.842261300+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class PasswordChange   {
   public static final String JSON_PROPERTY_PASSWORD_OLD = "password_old";
   @JsonProperty(JSON_PROPERTY_PASSWORD_OLD)

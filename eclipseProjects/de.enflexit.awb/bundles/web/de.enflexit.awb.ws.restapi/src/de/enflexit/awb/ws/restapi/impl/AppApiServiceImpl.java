@@ -48,12 +48,30 @@ public class AppApiServiceImpl extends AppApiService {
 	 * </li><br>
 	 * Accordingly, the related or inherited classes need to adjusted.
 	 */
+	/* (non-Javadoc)
+     * @see de.enflexit.awb.ws.restapi.gen.AppApiService#setAppSettings(de.enflexit.awb.ws.restapi.gen.model.Properties, jakarta.ws.rs.core.SecurityContext)
+     */
+    @Override
+    public Response setAppSettings(Properties properties, SecurityContext securityContext) throws NotFoundException {
+        
+    	// --- Check who is the user --------------------------------
+    	Principal principal = securityContext.getUserPrincipal();
+    	if (principal==null) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
+    	}
+    	
+    	// TODO
+    	String performative = properties.getPerformative();
+    	
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    }
+
 	
     /* (non-Javadoc)
      * @see de.enflexit.awb.ws.restapi.gen.AppApiService#getAppSettings(jakarta.ws.rs.core.SecurityContext)
      */
     @Override
-    public Response getAppSettings(HttpServletRequest request, SecurityContext securityContext) throws NotFoundException {
+    public Response getAppSettings(String xPerformative, HttpServletRequest request, SecurityContext securityContext) throws NotFoundException {
         
     	// --- Check who is the user --------------------------------
     	Principal principal = null;
@@ -158,22 +176,4 @@ public class AppApiServiceImpl extends AppApiService {
 		}
     }
     
-    
-    /* (non-Javadoc)
-     * @see de.enflexit.awb.ws.restapi.gen.AppApiService#setAppSettings(de.enflexit.awb.ws.restapi.gen.model.Properties, jakarta.ws.rs.core.SecurityContext)
-     */
-    @Override
-    public Response setAppSettings(Properties properties, SecurityContext securityContext) throws NotFoundException {
-        
-    	// --- Check who is the user --------------------------------
-    	Principal principal = securityContext.getUserPrincipal();
-    	if (principal==null) {
-    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
-    	}
-    	
-    	// TODO
-    	
-    	
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-    }
 }
