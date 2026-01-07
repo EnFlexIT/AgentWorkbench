@@ -101,6 +101,17 @@ private static final String imagePackage = "/icons/";
 					bLocationFile = new File(bundleLocationURL.toURI());	
 				}
 				
+				// --- Check if file is directory -------------------
+				if (bLocationFile!=null && bLocationFile.isDirectory()==false) {
+					// --- Reduce to directory ----------------------
+					bLocationFile = bLocationFile.getParentFile();
+					// --- Something like a 'plugins' directory -----
+					if (bLocationFile.getParent()!=null) {
+						// --- Just move one directory up -----------
+						bLocationFile = bLocationFile.getParentFile();
+					}
+				}
+				
 				// --- Add the AWB_SERVER_ROOT_PATH -----------------
 				String webRootPath = bLocationFile.getAbsolutePath();
 				webRootPath += webRootPath.endsWith(File.separator) ? AwbServer.AWB_SERVER_ROOT_PATH : File.separator + AwbServer.AWB_SERVER_ROOT_PATH; 
