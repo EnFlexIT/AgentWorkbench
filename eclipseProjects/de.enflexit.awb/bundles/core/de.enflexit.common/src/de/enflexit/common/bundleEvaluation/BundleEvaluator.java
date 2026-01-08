@@ -1,31 +1,3 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
 package de.enflexit.common.bundleEvaluation;
 
 import java.io.File;
@@ -149,15 +121,12 @@ public class BundleEvaluator {
 			
 			bundleExcludeHashSet.add("com.fasterxml");
 			
-			bundleExcludeHashSet.add("jakarta.activation-api");
-			bundleExcludeHashSet.add("jakarta.annotation");
-			bundleExcludeHashSet.add("jakarta.annotation-api");
-			bundleExcludeHashSet.add("jakarta.inject");
-			bundleExcludeHashSet.add("jakarta.servlet");
-			bundleExcludeHashSet.add("jakarta.servlet-api");
-			bundleExcludeHashSet.add("jakarta.validation");
-			bundleExcludeHashSet.add("jakarta.ws.rs-api");
-			bundleExcludeHashSet.add("jakarta.xml");
+			bundleExcludeHashSet.add("bcpg");
+			bundleExcludeHashSet.add("bcpkix");
+			bundleExcludeHashSet.add("bcprov");
+			bundleExcludeHashSet.add("bcutil");
+
+			bundleExcludeHashSet.add("jakarta");
 			
 			bundleExcludeHashSet.add("javax.annotation");
 			bundleExcludeHashSet.add("javax.inject");
@@ -174,10 +143,11 @@ public class BundleEvaluator {
 			bundleExcludeHashSet.add("org.apache");
 			bundleExcludeHashSet.add("org.bouncycastle");
 			bundleExcludeHashSet.add("org.brotli.dec");
+			
+			bundleExcludeHashSet.add("org.commonmark");
 			bundleExcludeHashSet.add("org.cryptacular");
 			bundleExcludeHashSet.add("org.eclipse");
-			bundleExcludeHashSet.add("org.glassfish.jersey");
-			bundleExcludeHashSet.add("org.glassfish.hk2");
+			bundleExcludeHashSet.add("org.glassfish");
 			bundleExcludeHashSet.add("org.hamcrest.core");
 			bundleExcludeHashSet.add("org.jsr-305");
 			bundleExcludeHashSet.add("org.junit");
@@ -196,20 +166,25 @@ public class BundleEvaluator {
 			
 			bundleExcludeHashSet.add("wrapped");
 			
-			bundleExcludeHashSet.add("de.enflexit.api");
+			bundleExcludeHashSet.add("io.jsonwebtoken");
+			
 			bundleExcludeHashSet.add("de.enflexit.awb.ws.swagger1x");
 			bundleExcludeHashSet.add("de.enflexit.awb.ws.swagger2x");
 			bundleExcludeHashSet.add("de.enflexit.common");
+			
+			bundleExcludeHashSet.add("de.enflexit.db.derby");
 			bundleExcludeHashSet.add("de.enflexit.db.hibernate");
 			bundleExcludeHashSet.add("de.enflexit.db.mariaDB");
 			bundleExcludeHashSet.add("de.enflexit.db.mySQL");
 			bundleExcludeHashSet.add("de.enflexit.db.postgres");
+			
 			bundleExcludeHashSet.add("de.enflexit.jaxb.impl.binding");
 			bundleExcludeHashSet.add("de.enflexit.oidc");
 			bundleExcludeHashSet.add("de.enflexit.oshi");
 			
 			bundleExcludeHashSet.add("org.agentgui.lib.jung");
-			bundleExcludeHashSet.add("org.agentgui.lib.scimark");
+			bundleExcludeHashSet.add("de.enflexit.jfreechart");
+			
 			
 		}
 		return bundleExcludeHashSet;
@@ -433,7 +408,7 @@ public class BundleEvaluator {
 			if (debugShowBundlesIncluded==true) {
 				if (isExcludeBundleFromSearch==false) System.out.println("Included bundle " + bundle.getSymbolicName() + " - isNoBundleClassFilterAndNoFilterResultDefined=" + isNoBundleClassFilterAndNoFilterResultDefined);
 			} else {
-				if (isExcludeBundleFromSearch==true ) System.out.println("Excluded bundle " + bundle.getSymbolicName()  + " - isNoBundleClassFilterAndNoFilterResultDefined=" + isNoBundleClassFilterAndNoFilterResultDefined);
+				if (isExcludeBundleFromSearch==true ) System.out.println("Excluded bundle " + bundle.getSymbolicName() + " - isNoBundleClassFilterAndNoFilterResultDefined=" + isNoBundleClassFilterAndNoFilterResultDefined);
 			}
 		}
 		// ----------------------------------------------------------
