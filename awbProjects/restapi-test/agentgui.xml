@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>RestApi-Test</projectName>
-    <projectStartTab>2|0</projectStartTab>
+    <projectStartTab>2|1</projectStartTab>
     <projectTreeVisible>true</projectTreeVisible>
-    <projectTabHeaderVisible>true</projectTabHeaderVisible>
+    <projectTabHeaderVisible>false</projectTabHeaderVisible>
     <versionTag>Complete Project</versionTag>
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateDateLastChecked>0</updateDateLastChecked>
@@ -21,17 +21,19 @@
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
-            <service>agentgui.simulationService.LoadService</service>
-            <service>agentgui.simulationService.SimulationService</service>
+            <service>de.enflexit.awb.simulation.LoadService</service>
+            <service>de.enflexit.awb.simulation.SimulationService</service>
             <service>jade.core.event.NotificationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <additionalRemoteContainerTimeOutInSeconds>0</additionalRemoteContainerTimeOutInSeconds>
         <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
+        <distributeAllProjectResources>false</distributeAllProjectResources>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
-        <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
+        <dynamicLoadBalancingClass>de.enflexit.awb.simulation.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
         <evenDistribution>false</evenDistribution>
         <immediatelyStartLoadRecording>false</immediatelyStartLoadRecording>
         <loadRecordingInterval>500</loadRecordingInterval>
@@ -40,7 +42,7 @@
         <remoteOnly>true</remoteOnly>
         <showLoadMonitorAtPlatformStart>false</showLoadMonitorAtPlatformStart>
         <showThreadMonitorAtPlatformStart>false</showThreadMonitorAtPlatformStart>
-        <staticLoadBalancingClass>agentgui.simulationService.balancing.PredictiveStaticLoadBalancing</staticLoadBalancingClass>
+        <staticLoadBalancingClass>de.enflexit.awb.simulation.balancing.PredictiveStaticLoadBalancing</staticLoadBalancingClass>
         <useUserThresholds>true</useUserThresholds>
         <userThresholds>
             <thCpuH>80</thCpuH>
@@ -126,6 +128,9 @@
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
+    <projectProperties>
+        <propertyMap/>
+    </projectProperties>
     <simulationSetupCurrent>default</simulationSetupCurrent>
     <simulationSetups>
         <entry>

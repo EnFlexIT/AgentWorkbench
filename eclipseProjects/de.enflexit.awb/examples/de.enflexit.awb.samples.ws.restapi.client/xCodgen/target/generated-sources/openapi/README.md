@@ -4,7 +4,7 @@ Agent.Workbench REST - API
 
 - API version: 1.0.0
 
-- Build date: 2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]
+- Build date: 2026-01-22T21:28:25.665886600+01:00[Europe/Berlin]
 
 - Generator version: 7.17.0
 

@@ -464,7 +464,7 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 				
 				AbstractCredential credentiaLFound = this.getCredential(defaultCredentialName);
 				if (credentiaLFound==null) {
-			     credentiaLFound=this.getCredential(type, clientBundleName, defaultURL, defaultCredentialName);
+					credentiaLFound=this.getCredential(type, clientBundleName, defaultURL, defaultCredentialName);
 				}
 				if(credentiaLFound.isEmpty()) {
 					throw new IllegalArgumentException("The "+ credentiaLFound.getName()+" is empty, it needs to be filled!");
@@ -485,6 +485,9 @@ public class WsCredentialStore implements ApplicationListener,Serializable {
 	public AbstractCredential getCredential(String credentialName) {
 		if (credentialName==null || credentialName.isBlank()==true) return null;
 		for (AbstractCredential credential : this.getCredentialList()) {
+			// --- Avoids NullPointer -----------
+			if (credential==null || credential.getName()==null) continue;
+			// --- Check credential name -------- 
 			if (credential.getName().equals(credentialName)) {
 				return credential;
 			}

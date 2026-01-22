@@ -47,7 +47,7 @@ import de.enflexit.awb.samples.ws.restapi.client.gen.handler.JSON;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-12-04T18:03:19.389092500+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2026-01-22T21:28:25.665886600+01:00[Europe/Berlin]", comments = "Generator version: 7.17.0")
 public class SystemInformation {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   @jakarta.annotation.Nullable

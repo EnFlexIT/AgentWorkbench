@@ -99,6 +99,9 @@ public class WebApplicationUpdate {
 	 * @return the web application versions
 	 */
 	public static List<WebApplicationVersion> getWebApplicationVersions(String updateURLString) {
+
+		// --- Check validity of the update URL ---------------------
+		if (WebApplicationUpdate.isValidUpdateURL(updateURLString)==false) return null;
 		
 		// --- Try getting file list from download server -----------
 		WebApplicationUpdateList versionList = null;
