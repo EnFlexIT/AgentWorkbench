@@ -24,11 +24,12 @@
 						</goals>
 						<configuration>
 							<inputSpec>${project.basedir}/${yamlFile}</inputSpec>
-							<!-- For client code -->
-							<!-- <language>java</language> --> 
-
-							<!-- For server code -->	
 							<generatorName>java</generatorName>
+							<!--
+							<library>native</library>
+							<library>google-api-client</library>
+							<library>feign</library>
+							-->
 							<library>jersey3</library>
 							
 							<apiPackage>${srcBasePackage}</apiPackage>
@@ -40,7 +41,9 @@
 							<generateModelTests>false</generateModelTests>
 							<generateModelDocumentation>false</generateModelDocumentation>
 							<generateSupportingFiles>true</generateSupportingFiles>
+							
 							<configOptions>
+								<useJakartaEe>true</useJakartaEe>
 								<interfaceOnly>false</interfaceOnly>
 								<dateLibrary>java8</dateLibrary>
 							</configOptions>

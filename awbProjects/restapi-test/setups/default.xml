@@ -8,4 +8,7 @@
             <startAsName>ReAsAg</startAsName>
         </agent>
     </agentSetup>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
 </simulationSetup>

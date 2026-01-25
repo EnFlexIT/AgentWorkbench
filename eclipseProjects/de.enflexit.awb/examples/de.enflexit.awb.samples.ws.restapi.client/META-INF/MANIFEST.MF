@@ -9,20 +9,22 @@ Bundle-Vendor: EnFlex.IT
 Service-Component: OSGI-INF/awbClassLoadService.xml,
  OSGI-INF/apiRegistrationService.xml
 Require-Bundle: jakarta.ws.rs-api,
+ jakarta.inject.jakarta.inject-api,
+ jakarta.annotation-api,
  org.glassfish.jersey.core.jersey-client,
- org.glassfish.jersey.core.jersey-common,
+ org.glassfish.jersey.inject.jersey-hk2,
  org.glassfish.jersey.media.jersey-media-multipart,
  org.glassfish.jersey.media.jersey-media-json-jackson,
- com.fasterxml.jackson.core.jackson-annotations,
+ org.glassfish.jersey.core.jersey-common,
+ org.glassfish.hk2.osgi-resource-locator,
  com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-annotations,
  com.fasterxml.jackson.core.jackson-databind,
- com.fasterxml.jackson.datatype.jackson-datatype-jsr310,
  wrapped.org.openapitools.jackson-databind-nullable,
+ com.fasterxml.jackson.datatype.jackson-datatype-jsr310,
  de.enflexit.awb.ws.client,
  org.eclipse.osgi
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .,
- lib/jsr305-3.0.2.jar
 Export-Package: de.enflexit.awb.samples.ws.restapi.client,
  de.enflexit.awb.samples.ws.restapi.client.classLoadService,
  de.enflexit.awb.samples.ws.restapi.client.gen,
@@ -37,5 +39,4 @@ Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.simulation.environment.time,
  de.enflexit.common.classLoadService,
  jade.content.onto;version="[4.6.0,5.0.0)",
- jade.core,
- jakarta.annotation
+ jade.core
