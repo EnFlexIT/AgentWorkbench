@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -235,6 +236,7 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 			
 			// --- Set values to GUI components ---------------
 			this.getJTextFieldDataSourceName().setText(dataSourceConfiguration.getName());
+			this.getJComboBoxConfigurationScope().setSelectedItem(dataSourceConfiguration.getConfigurationScope());		
 			this.getJTextFieldFileName().setText(dataSourceConfiguration.getCsvFile().getName());
 			this.getJTextFieldDateFormat().setText(dataSourceConfiguration.getDateTimeFormat());
 			this.getJCheckBoxHasHeadline().setSelected(dataSourceConfiguration.isHeadline());
@@ -658,6 +660,7 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 				}
 			}
 			this.getDataSourceConfiguration().setConfigurationScope(configScope);
+			this.checkAndAdjustFilePath();
 		} else if (ae.getSource()==this.getJButtonFormatCheck()) {
 			this.checkTimeFormat();
 		} else if (ae.getSource()==this.getJCheckBoxHasHeadline()) {
@@ -669,6 +672,23 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		
 		else if (ae.getSource()==this.getJButtonLoad()) {
 			this.chooseCsvFile();
+		}
+	}
+	
+	/**
+	 *  CSV file paths should be relative to the project for project scope configurations, and absolute for
+	 *  application scope. This method checks if that is the case, and adjusts the path accordingly if not.  
+	 */
+	private void checkAndAdjustFilePath() {
+		CsvDataSourceConfiguration csvConfig = (CsvDataSourceConfiguration) this.getDataSourceConfiguration(); 
+		Path filePath = Paths.get(csvConfig.getCsvFilePath());
+		Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();
+		if (csvConfig.getConfigurationScope()==ConfigurationScope.APPLICATION && filePath.isAbsolute()==false) {
+			Path absolutePath = projectFolderPath.resolve(filePath);
+			csvConfig.setCsvFilePath(absolutePath);
+		} else if (csvConfig.getConfigurationScope()==ConfigurationScope.PROJECT && filePath.isAbsolute()==true) {
+			Path relativeFilePath = projectFolderPath.relativize(filePath);
+			csvConfig.setCsvFilePath(relativeFilePath);
 		}
 	}
 	
