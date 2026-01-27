@@ -1,13 +1,12 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
-
 import java.security.Principal;
 import java.util.Map;
 import java.util.function.Function;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;
 import org.eclipse.jetty.security.LoginService;
@@ -93,7 +92,7 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		@Override
 		public UserIdentity login(String username, Object credentials, Request request, Function<Boolean, Session> getOrCreateSession) {
 		
-			if (StringUtils.equals(JwtSingleUserSecurityHandler.this.login, username) && StringUtils.equals(JwtSingleUserSecurityHandler.this.password, String.valueOf(credentials))) {
+			if (Strings.CS.equals(JwtSingleUserSecurityHandler.this.login, username) && Strings.CS.equals(JwtSingleUserSecurityHandler.this.password, String.valueOf(credentials))) {
 				
 				final Credential credential = new Password(String.valueOf(credentials));
 				final JwtPrincipal principal   = new JwtPrincipal(username);

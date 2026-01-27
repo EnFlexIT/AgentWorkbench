@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
-import de.enflexit.awb.ws.core.db.dataModel.SiteContentText;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 
@@ -28,6 +27,10 @@ public class TypeConverter {
 	 * @return the menu item
 	 */
 	public static List<MenuItem> getMenuItemList(List<SiteMenu> dbSiteMenuList, String language) {
+		
+		// --- Fast exit ? --------------------------------
+		if (dbSiteMenuList==null) return null;
+		if (dbSiteMenuList.size()==0) return new ArrayList<>();
 		
 		// --- Place everything into a HashMap ------------
 		HashMap<Integer, SiteMenu> siteMenuHashMap = new HashMap<>();

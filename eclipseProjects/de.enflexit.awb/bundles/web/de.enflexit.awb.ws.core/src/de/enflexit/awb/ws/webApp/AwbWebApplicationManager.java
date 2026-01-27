@@ -164,7 +164,7 @@ public class AwbWebApplicationManager {
 	 * @return the properties
 	 */
 	public static Properties getProperties(PropertyType typeOfProperty) {
-		if (isDefinedAwbWebApplication(true)==false) return null;
+		if (isDefinedAwbWebApplication(true)==false) return new Properties();
 		
 		Properties props = getAwbWebApplication().getProperties(typeOfProperty);
 		if (props==null) {

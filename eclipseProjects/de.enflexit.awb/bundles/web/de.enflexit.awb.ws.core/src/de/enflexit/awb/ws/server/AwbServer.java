@@ -1,9 +1,11 @@
 package de.enflexit.awb.ws.server;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler;
@@ -26,11 +28,18 @@ import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.JettyCustomizer;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
+import de.enflexit.awb.ws.core.JettyWebApplicationSettings;
+import de.enflexit.awb.ws.core.JettyWebApplicationSettings.UpdateStrategy;
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.model.HandlerHelper;
 import de.enflexit.awb.ws.core.security.OIDCSecurityHandler;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityHandler;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 import de.enflexit.awb.ws.core.session.AWBSessionHandler;
+import de.enflexit.awb.ws.core.util.WebApplicationUpdate;
+import de.enflexit.awb.ws.core.util.WebApplicationUpdateProcess;
+import de.enflexit.awb.ws.core.util.WebApplicationVersion;
 
 /**
  * The Class for the default AWB Server.
@@ -43,6 +52,8 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 	public static final String AWB_SERVER_ROOT_PATH = "webRoot";
 	public static final String AWB_SERVER_DOWNLOAD_PATH = "webDownloads";
 	public static final String AWB_SERVER_WEB_APP_ARCHIVE_PATH = "webAppArchive";
+	
+	public static final String AWB_BASE_WEB_APP_DOWNLOAD_URL = "https://p2.enflex.it/web/baseTemplate/";
 	
 	private JettyConfiguration jettyConfiguration;
 	
@@ -97,6 +108,17 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         
         // --- Create web root resource -----------------------------
         Path webRootPath = this.getWebRootPathValidated();
+        
+        // --- Check if web root directory is empty -----------------
+        if (this.isEmptyWebRootPath(webRootPath)==true ) {
+    		// --- Install the base application (template) ----------
+    		this.installBaseApplication(jettyConfiguration);
+        } else {
+        	// --- Check to Update to the latest version ------------  
+        	this.checkAndInstallApplicationUpdate(jettyConfiguration);
+        }
+
+        // --- Create web root resource -----------------------------
         Resource resBase = ResourceFactory.of(servletContextHandler).newResource(webRootPath);
         if (Resources.isReadableDirectory(resBase)==false) {
         	System.err.println("[" + this.getClass().getSimpleName() + "] Resource is not a readable directory");
@@ -162,5 +184,98 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         }
         return webRootPath;
 	}
+	
+	/**
+	 * Checks if is empty web root path.
+	 *
+	 * @param webRootPath the web root pat
+	 * @return true, if is empty web root path
+	 */
+	private boolean isEmptyWebRootPath(Path webRootPath) {
+		
+		boolean isEmpty = true;
+		try {
+			isEmpty = (Files.list(webRootPath).findAny().isPresent() == false);
+		} catch (IOException ioEx) {
+			ioEx.printStackTrace();
+		}
+		return isEmpty;
+	}
+	/**
+	 * Checks if is empty configured download URL.
+	 *
+	 * @param jettyConfiguration the jetty configuration
+	 * @return true, if is empty configured download URL
+	 */
+	private boolean isEmptyConfiguredDownloadURL(JettyConfiguration jettyConfiguration) {
+		
+		if (jettyConfiguration==null || jettyConfiguration.getWebApplicationSettings()==null) return false;
+		
+		JettyWebApplicationSettings jwas = jettyConfiguration.getWebApplicationSettings();
+		return jwas.getDownloadURL()==null || jwas.getDownloadURL().isBlank(); 
+	}
+	/**
+	 * Install base application.
+	 */
+	private void installBaseApplication(JettyConfiguration jettyConfiguration) {
+		
+		// --- If webRoot directory is not empty, do nothing -------- 
+		if (this.isEmptyConfiguredDownloadURL(jettyConfiguration)==false) return; 
+		
+		// --- Adjust JettyConfiguration ----------------------------
+		// --- => Web application settings ------
+		jettyConfiguration.getWebApplicationSettings().setDownloadURL(AWB_BASE_WEB_APP_DOWNLOAD_URL);
+		jettyConfiguration.getWebApplicationSettings().setUpdateStrategy(UpdateStrategy.Automatic);
+
+		// --- => Security settings -------------
+		ServletSecurityConfiguration sConfig = jettyConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+		if (sConfig==null) {
+			sConfig = new ServletSecurityConfiguration();
+			jettyConfiguration.getSecuritySettings().setSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY, sConfig);
+		}
+		sConfig.setContextPath(JettySecuritySettings.ID_SERVER_SECURITY);
+		sConfig.setSecurityHandlerName(JwtSingleUserSecurityHandler.class.getSimpleName());
+		sConfig.setSecurityHandlerActivated(true);
+		
+		// --- => JWT settings ------------------
+		TreeMap<String, String> jwtPara = new TreeMap<>();
+		jwtPara.put(JwtParameter.JwtIssuer.getKey(), "AWB-Base-WebApp");
+		jwtPara.put(JwtParameter.JwtSecrete.getKey(), "-ThIs-Is-A-verY-LoNg-StRiNg-RePrESEnting-A-Default-SecreTe-4-ThE-JwT-ToKen-G@eNerAtiOn-");
+		jwtPara.put(JwtParameter.JwtRenew.getKey(), "false");
+		jwtPara.put(JwtParameter.JwtValidityPeriod.getKey(), "10");
+		jwtPara.put(JwtParameter.JwtVerbose.getKey(), "false");
+		jwtPara.put(JwtParameter.UserName.getKey(), "admin");
+		jwtPara.put(JwtParameter.Password.getKey(), "admin");
+		
+		sConfig.setSecurityHandlerConfiguration(jwtPara);
+		
+		jettyConfiguration.save();
+		
+		// --- Download from web and extract zip --------------------
+		WebApplicationVersion baseWebAppVersion = WebApplicationUpdate.getWebApplicationUpdate(AWB_BASE_WEB_APP_DOWNLOAD_URL);
+		if (baseWebAppVersion!=null) {
+			new WebApplicationUpdateProcess(baseWebAppVersion, null).start();
+		}
+	}
+	
+	/**
+	 * Check and install application update.
+	 * @param jettyConfiguration the jetty configuration
+	 */
+	private void checkAndInstallApplicationUpdate(JettyConfiguration jettyConfiguration) {
+		
+		if (this.isEmptyConfiguredDownloadURL(jettyConfiguration)==true) return;
+		
+		// --- Check update strategy --------------------------------
+		JettyWebApplicationSettings jwas = jettyConfiguration.getWebApplicationSettings();
+		if (jwas.getUpdateStrategy()!=null && jwas.getUpdateStrategy()!=UpdateStrategy.Automatic) return;
+
+		// --- Check for an update of the web application -----------
+		WebApplicationVersion webAppVersion = WebApplicationUpdate.getWebApplicationUpdate(jwas.getDownloadURL());
+		if (webAppVersion!=null) {
+			new WebApplicationUpdateProcess(webAppVersion, null).start();
+		}
+	}
+	
 	
 }
