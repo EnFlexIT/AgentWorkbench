@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/logback-classic-1.5.20.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback-core-1.5.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback-classic-1.5.26.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback-core-1.5.26.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/logback-classic-db-1.2.11.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/logback-core-db-1.2.11.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-2.0.17.jar"/>
