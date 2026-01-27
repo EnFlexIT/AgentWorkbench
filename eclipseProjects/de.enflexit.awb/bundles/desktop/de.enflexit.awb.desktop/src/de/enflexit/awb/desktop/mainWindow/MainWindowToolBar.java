@@ -129,35 +129,24 @@ public class MainWindowToolBar extends JToolBar {
 	 */
 	@Override
 	public void remove(Component comp) {
-		this.remove(comp, (AwbMainWindowToolBarGroup)null);
-	}
-	
-	/**
-	 * Removes a component from the specified {@link AwbMainWindowToolBarGroup}.
-	 * @param comp the component
-	 * @param tbGroup the tool bar group
-	 */
-	public void remove(Component comp, AwbMainWindowToolBarGroup tbGroup) {
-		
-		if (comp instanceof MainWindowToolBarButton) {
-			MainWindowToolBarButton tbButton = (MainWindowToolBarButton) comp;
-			tbGroup = tbButton.getToolBarGroup();
-		}
-		
-		if (tbGroup==null) tbGroup = AwbMainWindowToolBarGroup.NoGroup;
-		
-		JToolBar groupToolBar = this.getGroupToolBar(tbGroup);
-		if (groupToolBar!=null) {
-			groupToolBar.remove(comp);
-			
-			// --- If the toolbar is empty except for the final separator, remove that too
-			if (groupToolBar.getComponentCount()==1 && this.isSeparatorElement(groupToolBar, groupToolBar.getComponentCount()-1)==true) {
-				groupToolBar.remove(groupToolBar.getComponentCount()-1);
+		if (comp.getParent()==this) {
+			// --- Direct child of the main tool bar ----------------
+			super.remove(comp);
+		} else {
+			// --- Check the correct group tool bars -----------------
+			for (JToolBar groupToolBar : this.getToolbarButtonsListHashMap().values()) {
+				
+				if (comp.getParent()==groupToolBar) {
+					// --- Found -> remove --------------------------
+					groupToolBar.remove(comp);
+					// --- If the toolbar is now empty except for the final separator, remove that too
+					if (groupToolBar.getComponentCount()==1 && this.isSeparatorElement(groupToolBar, groupToolBar.getComponentCount()-1)==true) {
+						groupToolBar.remove(groupToolBar.getComponentCount()-1);
+					}
+				}
 			}
 		}
-		
 	}
-	
 	
 	/**
 	 * Checks if the component at the specified index of the specified toolbar is a {@link Separator}.

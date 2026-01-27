@@ -507,6 +507,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 			this.getRootNode().remove(dataSourceNode);
 			TimeSeriesDataProvider.getInstance().removeDataSource(dataSourceToDelete.getName());
 			this.getTreeModel().reload(this.getRootNode());
+			this.setSelectedDataSource(null);
 		}
 	}
 
