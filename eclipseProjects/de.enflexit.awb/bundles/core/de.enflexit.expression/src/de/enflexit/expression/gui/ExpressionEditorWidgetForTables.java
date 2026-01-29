@@ -237,4 +237,12 @@ public class ExpressionEditorWidgetForTables extends JPanel implements ActionLis
 			return this.getJTextFieldExpression().getToolTipText();
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#requestFocusInWindow()
+	 */
+	@Override
+	public boolean requestFocusInWindow() {
+		return this.getJTextFieldExpression().requestFocusInWindow();
+	}
 }
