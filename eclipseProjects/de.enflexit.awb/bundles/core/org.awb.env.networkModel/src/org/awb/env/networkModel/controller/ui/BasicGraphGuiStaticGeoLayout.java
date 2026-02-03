@@ -79,6 +79,8 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		Point2D visCenter = new Point2D.Double(visRect.getCenterX(), visRect.getCenterY());
 
 		AffineTransform trans = this.getBasicGraphGuiVisViewer().getOverallAffineTransform();
+		if (trans==null) return null;
+		
 		Point2D jungCenter  = null;
 		try {
 			jungCenter = trans.inverseTransform(visCenter, null);
@@ -123,15 +125,20 @@ public class BasicGraphGuiStaticGeoLayout extends BasicGraphGuiStaticLayout {
 		// --- Check if visual position has changed -----------------
 		boolean isChangedPos = false;
 		Point2D jungCenterPosition  = this.getJungCenterPosition();
-		if (this.lastJungCenterPosition==null) {
-			isChangedPos = true;
+		if (jungCenterPosition ==null) {
+			isChangedPos = false;
 		} else {
-			// --- Calculate distance moved -------------------------
-			double distancMoved = Point2D.distance(jungCenterPosition.getX(), jungCenterPosition.getY(), this.lastJungCenterPosition.getX(), this.lastJungCenterPosition.getY());
-			if (distancMoved>=this.moveDistanceToRefreshPositionsAt) {
+			if (this.lastJungCenterPosition==null) {
 				isChangedPos = true;
+			} else {
+				// --- Calculate distance moved -------------------------
+				double distancMoved = Point2D.distance(jungCenterPosition.getX(), jungCenterPosition.getY(), this.lastJungCenterPosition.getX(), this.lastJungCenterPosition.getY());
+				if (distancMoved>=this.moveDistanceToRefreshPositionsAt) {
+					isChangedPos = true;
+				}
 			}
 		}
+		
 		
 		// ----------------------------------------------------------
 		// --- Check if a refreshment is necessary ------------------

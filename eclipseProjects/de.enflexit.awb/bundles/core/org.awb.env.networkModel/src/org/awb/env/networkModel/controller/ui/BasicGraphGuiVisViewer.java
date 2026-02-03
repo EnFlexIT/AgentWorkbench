@@ -197,11 +197,14 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 	 * Can be used to explicitly render the graph.
 	 */
 	public void paintComponentRenderGraph() {
+		
+		Graphics graphics = null;
 		if (this.isDoubleBuffered()==true) {
-			super.paintComponent(this.getOffScreenGraphicsNotNull());
+			graphics = this.getOffScreenGraphicsNotNull();
 		} else {
-			super.paintComponent(this.getGraphics());
+			graphics = this.getGraphics();
 		}
+		if (graphics!=null) super.paintComponent(graphics);
 		this.getParent().repaint();
 	}
 	/**
@@ -444,6 +447,7 @@ public class BasicGraphGuiVisViewer<V,E> extends VisualizationViewer<V,E> {
 
         Graphics graphics = this.getGraphics();
         Graphics2D g2d = (Graphics2D) graphics;
+        if (g2d==null) return null;
         
         AffineTransform at = new AffineTransform();
         at.concatenate(g2d.getTransform());
