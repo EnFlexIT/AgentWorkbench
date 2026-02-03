@@ -106,13 +106,15 @@ public class DefaultProjectExportController implements ProjectExportController{
 			
 			// --- Select the export destination --------------------
 			JFileChooser chooser = this.getJFileChooser(project);
-			if (chooser.showSaveDialog((Component) Application.getMainWindow()) == JFileChooser.APPROVE_OPTION) {
+			int userAnswer = chooser.showSaveDialog((Component) Application.getMainWindow());
+			if (userAnswer == JFileChooser.APPROVE_OPTION) {
 				
 				File targetFile = chooser.getSelectedFile();
 				Application.getGlobalInfo().setLastSelectedFolder(targetFile.getParentFile());
 				
 				// --- Check if the file already exists -------------
 				if (targetFile.exists() == true) {
+					// --- Overwrite existing file? -----------------
 					String optionTitle = targetFile.getName() + ": " + Language.translate("Datei überschreiben?");
 					String optionMsg = Language.translate("Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?");
 					int answer = AwbMessageDialog.showConfirmDialog(projectExportDialog, optionMsg, optionTitle, AwbMessageDialog.YES_NO_OPTION);
@@ -125,7 +127,11 @@ public class DefaultProjectExportController implements ProjectExportController{
 				
 				// --- Set the target file --------------------------
 				this.exportSettings.setTargetFile(targetFile);
+				
+			} else if (userAnswer==JFileChooser.CANCEL_OPTION) {
+				return null;
 			}
+			
 		}
 		return this.exportSettings;
 	}
@@ -203,27 +209,26 @@ public class DefaultProjectExportController implements ProjectExportController{
 	 * @return the default file name
 	 */
 	protected String getProposedFileName(Project project) {
+
 		// --- Generate a file name proposition based on the export settings ---------------
-		StringBuffer proposedFileName = new StringBuffer();
-		proposedFileName.append(GlobalRuntimeValues.getLastSelectedDirectory());
-
+		String proposedFileName = GlobalRuntimeValues.getLastSelectedDirectory().toString();
+		proposedFileName = proposedFileName.endsWith(File.separator)==false ? proposedFileName + File.separator : proposedFileName;
+		
 		if (this.exportSettings.isIncludeInstallationPackage() == true) {
-
 			// --- Installation package ---------
-			proposedFileName.append(FILE_NAME_FOR_INSTALLATION_PACKAGE);
+			proposedFileName += FILE_NAME_FOR_INSTALLATION_PACKAGE;
 			if (this.exportSettings.getInstallationPackage().isForWindows() == true) {
-				proposedFileName.append(".zip");
+				proposedFileName += ".zip";
 			} else {
-				proposedFileName.append(".tar.gz");
+				proposedFileName += ".tar.gz";
 			}
 
 		} else {
-
 			// --- Project only -----------------
-			proposedFileName.append(project.getProjectFolder() + '.' + Application.getGlobalInfo().getFileEndProjectZip());
+			proposedFileName += project.getProjectFolder() + '.' + Application.getGlobalInfo().getFileEndProjectZip();
 
 		}
-		return proposedFileName.toString();
+		return proposedFileName;
 	}
 
 	/**
@@ -235,7 +240,7 @@ public class DefaultProjectExportController implements ProjectExportController{
 		List<FileNameExtensionFilter> filtersList = new ArrayList<FileNameExtensionFilter>();
 		// --- Prepare file type filters -----------------------------
 		String projectFileSuffix = Application.getGlobalInfo().getFileEndProjectZip();
-		FileNameExtensionFilter projectFileFilter = new FileNameExtensionFilter(Language.translate("Agent.GUI Projekt-Datei") + " (*." + projectFileSuffix + ")", projectFileSuffix);
+		FileNameExtensionFilter projectFileFilter = new FileNameExtensionFilter(Language.translate("Agent.Workbench Projekt-Datei") + " (*." + projectFileSuffix + ")", projectFileSuffix);
 		filtersList.add(projectFileFilter);
 		FileNameExtensionFilter zipFileFilter = new FileNameExtensionFilter(Language.translate("Zip-Datei") + " (*.zip)", "zip");
 		filtersList.add(zipFileFilter);

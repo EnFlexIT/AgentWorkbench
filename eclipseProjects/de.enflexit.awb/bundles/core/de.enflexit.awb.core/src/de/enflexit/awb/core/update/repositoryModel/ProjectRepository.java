@@ -375,6 +375,8 @@ public class ProjectRepository implements Serializable {
 	 * @return the location including repository file
 	 */
 	public static String getLocationPathIncludingRepositoryFile(String initialLocation, boolean isWebLink) {
+
+		if (initialLocation==null) return null;
 		String location = initialLocation;
 		if (location.endsWith(REPOSITORY_FILE_NAME)==false) {
 			String fileSeparator = File.separator;

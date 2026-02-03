@@ -34,11 +34,11 @@ import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
- * The Class AuthenticatationDialog.
+ * The Class AuthenticationDialog.
  * 
  * @author Alexander Graute - SOFTEC - University of Duisburg-Essen
  */
-public class AuthenticatationDialog extends JDialog implements ActionListener{
+public class AuthenticationDialog extends JDialog implements ActionListener{
 	
 	private static final long serialVersionUID = -6949198474833361353L;
 
@@ -72,7 +72,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	 * @param frame the frame
 	 * @param siteToContact the site to contact
 	 */
-	public AuthenticatationDialog(Frame frame, String siteToContact) {
+	public AuthenticationDialog(Frame frame, String siteToContact) {
 		this(frame, siteToContact, null);
 	}
 	/**
@@ -82,7 +82,7 @@ public class AuthenticatationDialog extends JDialog implements ActionListener{
 	 * @param authorization the update authorization
 	 * @param siteToContact the update site
 	 */
-	public AuthenticatationDialog(Frame frame, String siteToContact, WebResourcesAuthorization authorization) {
+	public AuthenticationDialog(Frame frame, String siteToContact, WebResourcesAuthorization authorization) {
 		super(frame);
 		
 		this.updateSite = siteToContact;

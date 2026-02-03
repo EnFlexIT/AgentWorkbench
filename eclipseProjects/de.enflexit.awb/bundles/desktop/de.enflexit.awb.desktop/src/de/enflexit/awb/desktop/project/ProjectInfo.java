@@ -30,9 +30,11 @@ import org.commonmark.node.Image;
 import org.commonmark.node.Node;
 import org.commonmark.renderer.html.AttributeProvider;
 
-import de.enflexit.awb.baseUI.dialogs.AuthenticatationDialog;
+import de.enflexit.awb.baseUI.dialogs.AuthenticationDialog;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.update.repositoryModel.ProjectRepository;
 import de.enflexit.common.Observable;
 import de.enflexit.common.Observer;
@@ -753,9 +755,15 @@ public class ProjectInfo extends JPanel implements Observer, ActionListener, Att
 	 * Show update settings dialog.
 	 */
 	private void showUpdateSettingsDialog() {
+
 		Frame owner = OwnerDetection.getOwnerFrameForComponent(this);
 		String siteToContact = ProjectRepository.getLocationPathIncludingRepositoryFile(this.currProject.getUpdateSite(), true);
-		AuthenticatationDialog dialog = new AuthenticatationDialog(owner, siteToContact, this.currProject.getUpdateAuthorization());
+		if (siteToContact==null || siteToContact.isBlank()==true) {
+			AgentWorkbenchUiManager.getInstance().showMessageDialog(owner, Language.translate("Please, specify the projects update-site first!", Language.EN), Language.translate("Missing Update-Site", Language.EN) + "!", AwbMessageDialog.WARNING_MESSAGE, null);
+			return;
+		}
+		// --- Configure authentication to access the repository ------------
+		AuthenticationDialog dialog = new AuthenticationDialog(owner, siteToContact, this.currProject.getUpdateAuthorization());
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
 		if (dialog.getSavedAuthorizationSettings()!=null) {
