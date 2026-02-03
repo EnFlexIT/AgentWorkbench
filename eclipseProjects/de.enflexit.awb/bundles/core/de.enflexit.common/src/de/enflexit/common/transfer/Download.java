@@ -65,13 +65,13 @@ public class Download {
 		
 		try {
 			//URL url = new URL(URLDecoder.decode(this.srcFileURL, StandardCharsets.UTF_8.toString()));
-			URL url = URI.create(srcFileURL).toURL();
-	        URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
-	        String urlStringCleaned = uri.toString();
+			String srcFileURLWithoutSpacces = this.srcFileURL.replace(" ", "%20");
+			URL url = URI.create(srcFileURLWithoutSpacces).toURL();
+	        String urlStringCleaned = url.toString();
 	        if (urlStringCleaned!=null && urlStringCleaned.equals(this.srcFileURL)==false) {
 	        	this.srcFileURL = urlStringCleaned;
 	        }
-		} catch (MalformedURLException | URISyntaxException urlEx) {
+		} catch (MalformedURLException urlEx) {
 			//urlEx.printStackTrace();
 		}
 	}
