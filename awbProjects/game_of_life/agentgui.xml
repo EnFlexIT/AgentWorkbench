@@ -23,11 +23,11 @@ to show that images can be integrated in a project description as well as Hyperl
     <projectView>Developer</projectView>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>false</projectTabHeaderVisible>
-    <version>2.2.0.20220708-1000</version>
+    <version>3.0.0.20260203-1800</version>
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1749548150815</updateDateLastChecked>
+    <updateDateLastChecked>1770139936211</updateDateLastChecked>
     <updateAuthorization>
         <authorizationType>NONE</authorizationType>
     </updateAuthorization>
@@ -119,9 +119,8 @@ to show that images can be integrated in a project description as well as Hyperl
     <projectProperties>
         <propertyMap/>
     </projectProperties>
-    <simulationSetupCurrent>1458 Agents</simulationSetupCurrent>
+    <simulationSetupCurrent>2048 Agents</simulationSetupCurrent>
     <timeModelClass>de.enflexit.awb.simulation.environment.time.TimeModelStroke</timeModelClass>
-    <projectFolderFullPath>D:\20_GIT\01_AWB\awbProjects\game_of_life\</projectFolderFullPath>
     <simulationSetups>
         <entry>
             <key>0018 Agents</key>

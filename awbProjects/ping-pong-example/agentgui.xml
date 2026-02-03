@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Ping-Pong-Example</projectName>
+    <projectDescription>## The Ping-Pon Example
+
+In this AWB project two agents playing Ping-Pong by exchanging messages using ACL.  
+Both setups provided do that, but setup 'Piong-Ontology' uses the 'Piong_Ontology' 
+(see Node/Tab 'Ontologies')</projectDescription>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>true</projectTabHeaderVisible>
+    <version>1.0.0.20260203-1900</version>
     <versionTag>Complete Project</versionTag>
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateDateLastChecked>0</updateDateLastChecked>
+    <updateAuthorization>
+        <authorizationType>NONE</authorizationType>
+    </updateAuthorization>
     <projectFeatures/>
     <plugins/>
     <subOntologies/>
@@ -20,14 +29,16 @@
         <mtpIpAddress>Auto-Configuration</mtpIpAddress>
         <mtpProtocol>HTTP</mtpProtocol>
         <serviceList>
-            <service>agentgui.simulationService.LoadService</service>
-            <service>agentgui.simulationService.SimulationService</service>
+            <service>de.enflexit.awb.simulation.LoadService</service>
+            <service>de.enflexit.awb.simulation.SimulationService</service>
             <service>jade.core.event.NotificationService</service>
             <service>jade.core.mobility.AgentMobilityService</service>
         </serviceList>
     </jadeConfiguration>
     <distributionSetup>
+        <additionalRemoteContainerTimeOutInSeconds>0</additionalRemoteContainerTimeOutInSeconds>
         <autoSaveRealMetricsOnSimStop>false</autoSaveRealMetricsOnSimStop>
+        <distributeAllProjectResources>false</distributeAllProjectResources>
         <doDynamicLoadBalancing>false</doDynamicLoadBalancing>
         <doStaticLoadBalancing>true</doStaticLoadBalancing>
         <dynamicLoadBalancingClass>agentgui.simulationService.balancing.DynamicLoadBalancing</dynamicLoadBalancingClass>
@@ -157,7 +168,10 @@
         <preventUsageOfAlreadyUsedComputers>true</preventUsageOfAlreadyUsedComputers>
         <showJADErmaGUI>false</showJADErmaGUI>
     </remoteContainerConfiguration>
-    <simulationSetupCurrent>Piong-Ontology</simulationSetupCurrent>
+    <projectProperties>
+        <propertyMap/>
+    </projectProperties>
+    <simulationSetupCurrent>Piong-Plain-Text</simulationSetupCurrent>
     <simulationSetups>
         <entry>
             <key>Piong-Ontology</key>

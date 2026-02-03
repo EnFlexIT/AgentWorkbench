@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<generalGraphSettings4MAS>
+    <componentSorting>Alphanumeric</componentSorting>
+    <currentCTS/>
+    <domainSettings>
+        <entry>
+            <key>Default Domain</key>
+            <value>
+                <clusterShape>Rectangle</clusterShape>
+                <showLabel>true</showLabel>
+                <vertexColor>-65536</vertexColor>
+                <vertexColorPicked>-256</vertexColorPicked>
+                <vertexSize>10</vertexSize>
+            </value>
+        </entry>
+    </domainSettings>
+    <layoutSettings>
+        <entry>
+            <key>znLKpSLasT</key>
+            <value>
+                <coordinateSystemXDirection>East</coordinateSystemXDirection>
+                <coordinateSystemYDirection>ClockwiseToX</coordinateSystemYDirection>
+                <edgeShape>Line</edgeShape>
+                <geographicalLayout>false</geographicalLayout>
+                <layoutName>Default Layout</layoutName>
+                <snap2Grid>true</snap2Grid>
+                <snapRaster>5.0</snapRaster>
+            </value>
+        </entry>
+    </layoutSettings>
+</generalGraphSettings4MAS>
