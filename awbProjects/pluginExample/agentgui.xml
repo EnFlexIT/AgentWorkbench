@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>AWB - PlugIn Example</projectName>
-    <projectDescription>Hello World</projectDescription>
+    <projectDescription>### AWB - Plugin Example
+
+With this Agent.Workbench project, we provide a couple of examples, showing  
+how to extend and customize the AWB desktop application through projects.
+
+Examples for customization can be found in the file 'uiConfig.xml', located in the project directory, that 
+- changes the application icon 
+- changes the application title 
+- hides a coulple of regular AWB menue and toolbar buttons
+
+Further, the plugin provided with the bundle 'de.enflexit.awb.samples.PlugIn' adds custom menus,  
+toolbar buttons and UI nodes in the project window. The corresponding source code can be found  
+in the Agentworkbench codes, under 'example'.</projectDescription>
     <projectStartTab>1|7</projectStartTab>
     <projectTreeVisible>true</projectTreeVisible>
     <projectTabHeaderVisible>true</projectTabHeaderVisible>
@@ -9,7 +21,7 @@
     <versionTag>Complete Project</versionTag>
     <updateSite>https://p2.enflex.it/awbProjectRepository/</updateSite>
     <updateAutoConfiguration>0</updateAutoConfiguration>
-    <updateDateLastChecked>1763900504814</updateDateLastChecked>
+    <updateDateLastChecked>1770144782927</updateDateLastChecked>
     <updateAuthorization>
         <authorizationType>NONE</authorizationType>
     </updateAuthorization>

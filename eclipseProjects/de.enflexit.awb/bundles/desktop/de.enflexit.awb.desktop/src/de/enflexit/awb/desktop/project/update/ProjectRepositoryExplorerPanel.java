@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import de.enflexit.awb.baseUI.dialogs.AuthenticatationDialog;
+import de.enflexit.awb.baseUI.dialogs.AuthenticationDialog;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.BundleProperties;
 import de.enflexit.awb.core.config.GlobalInfo;
@@ -488,7 +488,7 @@ public class ProjectRepositoryExplorerPanel extends JPanel implements ActionList
 		} catch (HttpURLConnectorAuthorizationException ex) {
 			// --- Open UpdateSettingsDialog if previous request returned an unauthorized response
 			Frame owner = OwnerDetection.getOwnerFrameForComponent(this);
-			AuthenticatationDialog dialog = new AuthenticatationDialog(owner, link, lastUsedAuthorization);
+			AuthenticationDialog dialog = new AuthenticationDialog(owner, link, lastUsedAuthorization);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setConfirmButtonText("Connect");
 			

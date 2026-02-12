@@ -14,4 +14,7 @@
             <startAsName>Pong</startAsName>
         </agent>
     </agentSetup>
+    <setupProperties>
+        <propertyMap/>
+    </setupProperties>
 </simulationSetup>

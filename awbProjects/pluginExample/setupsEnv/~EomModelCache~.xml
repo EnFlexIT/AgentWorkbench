@@ -2,6 +2,10 @@
 <eomModelCacheStructure>
     <setups>
         <entry>
+            <key>default</key>
+            <value/>
+        </entry>
+        <entry>
             <key>test</key>
             <value>
                 <networkElements>
