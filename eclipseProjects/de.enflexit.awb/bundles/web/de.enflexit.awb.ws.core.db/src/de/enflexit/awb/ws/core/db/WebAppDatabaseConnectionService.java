@@ -15,7 +15,7 @@ import org.osgi.framework.wiring.BundleWiring;
 import de.enflexit.db.hibernate.ColumnOrderingStrategyAsDefinedInClass;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
-import de.enflexit.db.userManagement.UserManagementHelper;
+import de.enflexit.db.userManagement.UserManagementDataModelHelper;
 
 /**
  * The Class WebAppDatabaseConnectionService provides static help functions 
@@ -159,7 +159,7 @@ public class WebAppDatabaseConnectionService implements HibernateDatabaseConnect
 		}
 		
 		// --- Load user management data model classes from separate bundle --- 
-		Vector<Class<?>> userManagementModelClasses = UserManagementHelper.getDataModelClassesList();
+		Vector<Class<?>> userManagementModelClasses = UserManagementDataModelHelper.getDataModelClassesList();
 		for (Class<?> umModelClass : userManagementModelClasses) {
 			conf.addAnnotatedClass(umModelClass);
 		}
