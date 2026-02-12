@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.core.db.dataModel;
+package de.enflexit.db.userManagement.dataModel;
 
 import java.util.Set;
 
@@ -13,17 +13,17 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 /**
- * The Class WebGroupRight.
+ * The Class WebUserRight.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-@Table(name = "web_group_right")
-public class WebGroupRight {
+@Table(name = "um_user_right")
+public class UserRight {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "id_web_group_right", nullable=false)
+	@Column(name = "id_user_right", nullable=false)
 	private Integer id;
 
 	private String description;
@@ -31,11 +31,11 @@ public class WebGroupRight {
 	
 	@ManyToMany
 	@JoinTable(
-			name = "web_group_rights_in_roles",
-			joinColumns = @JoinColumn(name= "id_web_group_right", foreignKey = @ForeignKey(name = "FK_WEB_GROUP_RIGHT_OF_WEB_GROUP_RIGHTS_IN_ROLES", foreignKeyDefinition = "FOREIGN KEY (ID_WEB_GROUP_RIGHT) REFERENCES WEB_GROUP_RIGHT(ID_WEB_GROUP_RIGHT) ON DELETE CASCADE")),
-			inverseJoinColumns = @JoinColumn(name="id_web_group_role", foreignKey = @ForeignKey(name = "FK_WEB_GROUP_ROLE_OF_WEB_GROUP_RIGHTS_IN_ROLES", foreignKeyDefinition = "FOREIGN KEY (ID_WEB_GROUP_ROLE) REFERENCES WEB_GROUP_ROLE(ID_WEB_GROUP_ROLE) ON DELETE CASCADE"))
+			name = "um_user_rights_in_roles",
+			joinColumns = @JoinColumn(name= "id_user_right", foreignKey = @ForeignKey(name = "FK_RIGHT", foreignKeyDefinition = "FOREIGN KEY (ID_USER_RIGHT) REFERENCES UM_USER_RIGHT(ID_USER_RIGHT) ON DELETE CASCADE")),
+			inverseJoinColumns = @JoinColumn(name="id_role", foreignKey = @ForeignKey(name = "FK_ROLE", foreignKeyDefinition = "FOREIGN KEY (ID_ROLE) REFERENCES UM_USER_Role(ID_USER_ROLE) ON DELETE CASCADE"))
 		)
-	private Set<WebGroupRole> webGroupRoles;
+	private Set<UserRole> userRoles;
 
 	
 	/**
@@ -83,19 +83,20 @@ public class WebGroupRight {
 		this.level = level;
 	}
 	
+	
 	/**
 	 * Gets the web user roles.
 	 * @return the webUserRoles
 	 */
-	public Set<WebGroupRole> getWebGroupRoles() {
-		return webGroupRoles;
+	public Set<UserRole> getUserRoles() {
+		return userRoles;
 	}
 	/**
-	 * Sets the web group roles.
-	 * @param webGroupRoles the new web user roles
+	 * Sets the web user roles.
+	 * @param userRoles the webUserRoles to set
 	 */
-	public void setWebGroupRoles(Set<WebGroupRole> webGroupRoles) {
-		this.webGroupRoles = webGroupRoles;
+	public void setUserRoles(Set<UserRole> userRoles) {
+		this.userRoles = userRoles;
 	}
 	
 }

@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.core.db.dataModel;
+package de.enflexit.db.userManagement.dataModel;
 
 import java.time.Instant;
 import java.util.Set;
@@ -16,20 +16,20 @@ import jakarta.persistence.Table;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-@Table(name = "web_group")
-public class WebGroup {
+@Table(name = "um_group")
+public class Group {
 
 	@Id
 	@GeneratedValue
-	@Column(name="id_web_group", nullable=false)
+	@Column(name="id_group", nullable=false)
 	private Integer id;
 
 	private String groupName;
 	@Column(name = "date_group_created")
 	private Instant dateGroupCreated;
 	
-	@OneToMany(mappedBy = "webGroup")
-	private Set<WebUserGroupRole> webUserGroupRoles;
+	@OneToMany(mappedBy = "group")
+	private Set<UserGroupRole> userGroupRoles;
 
 	
 	/**
@@ -78,18 +78,18 @@ public class WebGroup {
 	}
 	
 	/**
-	 * Returns the web user group rights.
-	 * @return the web user group rights
+	 * Returns the user group rights.
+	 * @return the user group rights
 	 */
-	public Set<WebUserGroupRole> getWebUserGroupRights() {
-		return webUserGroupRoles;
+	public Set<UserGroupRole> getUserGroupRights() {
+		return userGroupRoles;
 	}
 	/**
-	 * Sets the web user group rights.
-	 * @param webUserGroupRoles the new web user group rights
+	 * Sets the user group rights.
+	 * @param userGroupRoles the new user group rights
 	 */
-	public void setWebUserGroupRights(Set<WebUserGroupRole> webUserGroupRoles) {
-		this.webUserGroupRoles = webUserGroupRoles;
+	public void setUserGroupRights(Set<UserGroupRole> userGroupRoles) {
+		this.userGroupRoles = userGroupRoles;
 	}
 	
 }

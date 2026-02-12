@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.core.db.dataModel;
+package de.enflexit.db.userManagement.dataModel;
 
 import java.util.Set;
 
@@ -14,21 +14,21 @@ import jakarta.persistence.Table;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-@Table(name = "web_user_role")
-public class WebUserRole {
+@Table(name = "um_user_role")
+public class UserRole {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "id_web_user_role", nullable=false)
+	@Column(name = "id_user_role", nullable=false)
 	private Integer id;
 	
 	private String role;
 
 	@ManyToMany(mappedBy = "userRoles")
-	private Set<WebUser> usersInRole;
+	private Set<User> usersInRole;
 	
-	@ManyToMany(mappedBy = "webUserRoles")
-	private Set<WebUserRight> webUserRights;
+	@ManyToMany(mappedBy = "userRoles")
+	private Set<UserRight> userRights;
 	
 	
 	/**
@@ -65,14 +65,14 @@ public class WebUserRole {
 	 * Returns the users in the current role.
 	 * @return the users in role
 	 */
-	public Set<WebUser> getUsersInRole() {
+	public Set<User> getUsersInRole() {
 		return usersInRole;
 	}
 	/**
 	 * Sets the users in role.
 	 * @param usersInRole the new users in role
 	 */
-	public void setUsersInRole(Set<WebUser> usersInRole) {
+	public void setUsersInRole(Set<User> usersInRole) {
 		this.usersInRole = usersInRole;
 	}
 	

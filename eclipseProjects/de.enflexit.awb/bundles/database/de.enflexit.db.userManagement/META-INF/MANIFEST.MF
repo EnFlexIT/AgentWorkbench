@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: UserManagement
+Bundle-SymbolicName: de.enflexit.db.userManagement
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.enflexit.db.userManagement,
+ de.enflexit.db.userManagement.dataModel
+Import-Package: jakarta.persistence,
+ org.osgi.framework,
+ org.osgi.framework.wiring
+Bundle-Vendor: EnFlex.IT
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.jface,
+ de.enflexit.db.hibernate
+Automatic-Module-Name: de.enflexit.db.userManagement
+Bundle-RequiredExecutionEnvironment: JavaSE-21
