@@ -2,7 +2,7 @@ package de.enflexit.awb.ws.core.security;
 
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.Authenticator;
@@ -102,7 +102,7 @@ public class SingleApiKeySecurityHandler extends SecurityHandler.PathMapped impl
 			HttpFields httpFields = request.getHeaders();
 			apiKeyValueCheck = httpFields.get(this.getApiKeyName());
 		}
-		return apiKeyValueCheck!=null && StringUtils.equals(apiKeyValueCheck, this.getApiKeyValue());
+		return apiKeyValueCheck!=null && Strings.CS.equals(apiKeyValueCheck, this.getApiKeyValue());
 	}
 
 	

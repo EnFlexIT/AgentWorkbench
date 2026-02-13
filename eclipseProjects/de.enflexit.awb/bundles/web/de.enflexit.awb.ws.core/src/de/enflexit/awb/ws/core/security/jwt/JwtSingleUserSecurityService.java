@@ -94,9 +94,6 @@ public class JwtSingleUserSecurityService implements AwbSecurityHandlerService {
 	 */
 	@Override
 	public SecurityHandler getNewSecurityHandler(TreeMap<String, String> securityHandlerConfiguration) {
-		// --- Get the required parameter ---------------------------
-		String userName = securityHandlerConfiguration.get(JwtParameter.UserName.getKey());
-		String password = securityHandlerConfiguration.get(JwtParameter.Password.getKey());
 
 		// --- Set JWT configuration to system environment ----------
 		Map<String, String> jwtConfig = new HashMap<>();
@@ -109,7 +106,7 @@ public class JwtSingleUserSecurityService implements AwbSecurityHandlerService {
 		jwtConfig.put(JwtAuthenticator.JWT_VERBOSE, securityHandlerConfiguration.get(JwtParameter.JwtVerbose.getKey()));
 		
 		// --- Return the new instance of the SecurtiyHandler -------
-		return new JwtSingleUserSecurityHandler(userName, password, jwtConfig);
+		return new JwtSingleUserSecurityHandler(securityHandlerConfiguration, jwtConfig);
 	}
 
 	

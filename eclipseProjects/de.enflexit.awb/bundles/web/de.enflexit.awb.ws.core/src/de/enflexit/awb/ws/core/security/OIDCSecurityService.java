@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.openid.OpenIdAuthenticator;
 import org.eclipse.jetty.security.openid.OpenIdConfiguration;
+import org.eclipse.jetty.security.openid.OpenIdConfiguration.Builder;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 
@@ -96,7 +97,12 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 
 		if (useOneAuthenticator==true) {
 			// --- Only used in the context of development tests ----
-			OpenIdConfiguration openIdConfig = new OpenIdConfiguration(issuer, clientID, clientSecret);
+			Builder oidcBuilder = new Builder(issuer, clientID, clientSecret);
+			oidcBuilder.authenticateNewUsers(true);
+			oidcBuilder.logoutWhenIdTokenIsExpired(true);
+			
+			OpenIdConfiguration openIdConfig = oidcBuilder.build();
+			
 			return new OIDCSecurityHandler(openIdConfig, OIDCSecurityService.getOpenIdAuthenticator(openIdConfig));
 		}
 		// --- The regular way to create an OIDCSecurityHandler -----

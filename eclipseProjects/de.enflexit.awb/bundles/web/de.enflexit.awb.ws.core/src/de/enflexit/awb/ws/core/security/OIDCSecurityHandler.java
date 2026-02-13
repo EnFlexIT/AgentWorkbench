@@ -5,6 +5,7 @@ import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.security.openid.OpenIdAuthenticator;
 import org.eclipse.jetty.security.openid.OpenIdConfiguration;
+import org.eclipse.jetty.security.openid.OpenIdConfiguration.Builder;
 import org.eclipse.jetty.security.openid.OpenIdLoginService;
 
 /**
@@ -20,14 +21,10 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 	/**
 	 * Instantiates a new OIDC security handler.
 	 *
-	 * @param openIdConfig the open id config
+	 * @param oidcBuilder the open id config
 	 * @param openIdAuth the open id auth
 	 */
 	public OIDCSecurityHandler(OpenIdConfiguration openIdConfig, OpenIdAuthenticator openIdAuth) {
-		
-		// --- Optional configuration to allow new users not listed in the nested LoginService to be authenticated. -------------
-		openIdConfig.setAuthenticateNewUsers(true);
-		openIdConfig.setLogoutWhenIdTokenIsExpired(true);
 		
 		// --- An OpenIdLoginService should be used which can optionally wrap the nestedLoginService to support roles. ----------
 		this.setLoginService(new OpenIdLoginService(openIdConfig, this.createNestedLoginService()));
@@ -43,16 +40,18 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 	 * Instantiates a new OpenIDSecurityHandler where access is granted, if the specified OpenID issuer provides access.
 	 *
 	 * @param issuer the issuer
-	 * @param clientId the client id
+	 * @param clientID the client ID
 	 * @param clientSecret the client secret
 	 * @param isTrustAllSSL the is trust all SSL
 	 */
-	public OIDCSecurityHandler(String issuer, String clientId, String clientSecret, boolean isTrustAll) {
+	public OIDCSecurityHandler(String issuer, String clientID, String clientSecret, boolean isTrustAll) {
 		
 		// --- Optional configuration to allow new users not listed in the nested LoginService to be authenticated. -------------
-		OpenIdConfiguration openIdConfig = new OpenIdConfiguration(issuer, clientId, clientSecret);
-		openIdConfig.setAuthenticateNewUsers(true);
-		openIdConfig.setLogoutWhenIdTokenIsExpired(true);
+		Builder oidcBuilder = new Builder(issuer, clientID, clientSecret);
+		oidcBuilder.authenticateNewUsers(true);
+		oidcBuilder.logoutWhenIdTokenIsExpired(true);
+		
+		OpenIdConfiguration openIdConfig = oidcBuilder.build();
 		
 		// --- An OpenIdLoginService should be used which can optionally wrap the nestedLoginService to support roles. ----------
 		this.setLoginService(new OpenIdLoginService(openIdConfig, this.createNestedLoginService()));

@@ -3,7 +3,7 @@ package de.enflexit.awb.ws.core.security;
 import java.util.TreeMap;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.eclipse.jetty.security.IdentityService;
 import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.SecurityHandler;
@@ -104,7 +104,7 @@ public class SingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		@Override
 		public UserIdentity login(String username, Object credentials, Request request, Function<Boolean, Session> getOrCreateSession) {
 			
-			if (StringUtils.equals(SingleUserSecurityHandler.this.getUserName(), username) && StringUtils.equals(SingleUserSecurityHandler.this.getPassword(), String.valueOf(credentials))) {
+			if (Strings.CS.equals(SingleUserSecurityHandler.this.getUserName(), username) && Strings.CS.equals(SingleUserSecurityHandler.this.getPassword(), String.valueOf(credentials))) {
 				return new AwbUserIdentity(username, credentials, true);
 			}
 			return null;

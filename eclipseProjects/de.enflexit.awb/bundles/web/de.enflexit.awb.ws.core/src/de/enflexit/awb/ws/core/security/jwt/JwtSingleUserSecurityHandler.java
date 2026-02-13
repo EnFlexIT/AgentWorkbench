@@ -2,6 +2,7 @@ package de.enflexit.awb.ws.core.security.jwt;
 
 import java.security.Principal;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import javax.security.auth.Subject;
@@ -18,6 +19,7 @@ import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.security.Password;
 
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 
 
 /**
@@ -27,28 +29,25 @@ import de.enflexit.awb.ws.core.security.SecurityHandlerService;
  */
 public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 	
-	private final String login;
-	private final String password;
+	private TreeMap<String, String> securityHandlerConfiguration;
 	
 	/**
 	 * Instantiates a new SingleUserSecurityHandler that enables an unprotected access
 	 * to the underlying resources (no login and no password is required).
 	 */
 	public JwtSingleUserSecurityHandler() {
-		this(null, null, null);
+		this(null, null);
 	}
+	
 	/**
 	 * Instantiates a new SingleUserSecurityHandler where access is granted, if the login
 	 * information matching the specified login and password.
 	 *
-	 * @param login the login
-	 * @param password the password
-	 * @param jwtConfig the JWT configuration parameter
+	 * @param securityHandlerConfiguration the TreeMap of the AWB security handler configuration
+	 * @param jwtConfig the special JWT configuration parameter
 	 */
-	public JwtSingleUserSecurityHandler(String login, String password, Map<String, String> jwtConfig) {
-		this.login = login;
-		this.password = password;
-		
+	public JwtSingleUserSecurityHandler(TreeMap<String, String> securityHandlerConfiguration, Map<String, String> jwtConfig) {
+		this.securityHandlerConfiguration = securityHandlerConfiguration;
 		if (jwtConfig!=null) {
 			this.setAuthenticator(new JwtAuthenticator(jwtConfig));
 		}
@@ -56,7 +55,6 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		this.setLoginService(new JwtLoginService());
 		
 		SecurityHandlerService.putPathsToSecurityHandler(this, this.isSecured());
-		
 	}
 	
 	/**
@@ -64,11 +62,25 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 	 * @return true, if is secured
 	 */
 	private boolean isSecured() {
-		boolean isSecuredLogin    = this.login!=null && this.login.isBlank()==false;
-		boolean isSecuredPassword = this.password!=null && this.password.isBlank()==false;
+		boolean isSecuredLogin    = this.getJwtUserName()!=null && this.getJwtUserName().isBlank()==false;
+		boolean isSecuredPassword = this.getJwtPassword()!=null && this.getJwtPassword().isBlank()==false;
 		return isSecuredLogin & isSecuredPassword;
 	}
 
+	/**
+	 * Returns the JWT user name.
+	 * @return the JWT user name
+	 */
+	private String getJwtUserName() {
+		return this.securityHandlerConfiguration.get(JwtParameter.UserName.getKey());
+	}
+	/**
+	 * Returns the JWT password.
+	 * @return the JWT password
+	 */
+	private String getJwtPassword() {
+		return this.securityHandlerConfiguration.get(JwtParameter.Password.getKey());
+	}
 	
 	// --------------------------------------------------------------
 	// --- From here, the locally used JwtLoginService -------
@@ -92,7 +104,7 @@ public class JwtSingleUserSecurityHandler extends SecurityHandler.PathMapped {
 		@Override
 		public UserIdentity login(String username, Object credentials, Request request, Function<Boolean, Session> getOrCreateSession) {
 		
-			if (Strings.CS.equals(JwtSingleUserSecurityHandler.this.login, username) && Strings.CS.equals(JwtSingleUserSecurityHandler.this.password, String.valueOf(credentials))) {
+			if (Strings.CS.equals(JwtSingleUserSecurityHandler.this.getJwtUserName(), username) && Strings.CS.equals(JwtSingleUserSecurityHandler.this.getJwtPassword(), String.valueOf(credentials))) {
 				
 				final Credential credential = new Password(String.valueOf(credentials));
 				final JwtPrincipal principal   = new JwtPrincipal(username);
