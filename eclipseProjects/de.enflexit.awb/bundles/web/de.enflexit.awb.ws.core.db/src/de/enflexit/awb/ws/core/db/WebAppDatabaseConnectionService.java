@@ -158,11 +158,8 @@ public class WebAppDatabaseConnectionService implements HibernateDatabaseConnect
 			}
 		}
 		
-		// --- Load user management data model classes from separate bundle --- 
-		Vector<Class<?>> userManagementModelClasses = UserManagementDataModelHelper.getDataModelClassesList();
-		for (Class<?> umModelClass : userManagementModelClasses) {
-			conf.addAnnotatedClass(umModelClass);
-		}
+		// --- Load user management data model classes from separate bundle ---
+		UserManagementDataModelHelper.addUserManagementDataModelClasses(conf);
 	}
 	/**
 	 * Checks if the excludeList contains the specified class name.

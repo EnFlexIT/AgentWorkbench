@@ -2,25 +2,15 @@ package de.enflexit.db.userManagement;
 
 import java.util.Vector;
 
+import org.hibernate.cfg.Configuration;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
 /**
- * This helper class provides a static method to obtain a list of relevant data model classes, to include them
- * in the schema generation of hibernate-based database bundles. To use it in a database bundle based on the AWB
- * Tools blueprint, add the following code snippet at the end of the addMappingFileResources()-method of your 
- * HibernateDatabaseConnectionService implementation:     
- *
- *	private void addMappingFileResources(Configuration conf) {
- *
- *		... default code from the blueprint
- *
- *  	Vector<Class<?>> userManagementModelClasses = UserManagementHelper.getDataModelClassesList();
- *  	for (Class<?> umModelClass : userManagementModelClasses) {
- *  		conf.addAnnotatedClass(umModelClass);
- *  	}
- *  }
+ * This helper class provides static methods integrate the user management data model classes
+ * in bigernate-based database bundles. You can either obtain a list of classes to process it 
+ * yourself, or add the classes to your hibernate Configuration directly (recommended). 
  *   
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
@@ -66,5 +56,16 @@ public class UserManagementDataModelHelper {
 		}
 		
 		return modelClassesList;
+	}
+	
+	/**
+	 * Adds the user management data model classes to the provided hibernate configuration.
+	 * @param hibernateConfiguration the hibernate configuration
+	 */
+	public static void addUserManagementDataModelClasses(Configuration hibernateConfiguration) {
+		Vector<Class<?>> userManagementModelClasses = UserManagementDataModelHelper.getDataModelClassesList();
+		for (Class<?> umModelClass : userManagementModelClasses) {
+			hibernateConfiguration.addAnnotatedClass(umModelClass);
+		}
 	}
 }
