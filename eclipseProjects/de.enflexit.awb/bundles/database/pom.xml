@@ -18,5 +18,6 @@
 		<module>de.enflexit.db.mySQL</module>
 		<module>de.enflexit.db.postgres</module>
 		<module>de.enflexit.db.ui</module>
+		<module>de.enflexit.db.userManagement</module>
 	</modules>
 </project>
