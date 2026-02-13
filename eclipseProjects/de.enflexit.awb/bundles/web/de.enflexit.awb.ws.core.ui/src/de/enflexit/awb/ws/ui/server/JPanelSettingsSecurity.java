@@ -25,7 +25,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
@@ -524,7 +524,7 @@ public class JPanelSettingsSecurity extends JPanel implements JettyConfiguration
 				String oldValue = (String) tcl.getOldValue();
 				String newValue = (String) newValueObject;
 				if (newValue!=null && newValue.isBlank()==true) newValue = null;
-				isEqualValue = StringUtils.equals(newValue, oldValue);
+				isEqualValue = Strings.CS.equals(newValue, oldValue);
 				
 			} else if (keyType.equals(Boolean.class)==true) {
 				Boolean oldValue = (Boolean) tcl.getOldValue();
