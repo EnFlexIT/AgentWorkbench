@@ -32,10 +32,11 @@ Export-Package: org.awb.env.networkModel,
  org.awb.env.networkModel.visualisation,
  org.awb.env.networkModel.visualisation.notifications
 Require-Bundle: de.enflexit.common,
- de.enflexit.geography,
  org.agentgui.lib.jung,
+ com.google.guava,
  org.eclipse.core.runtime,
- org.apache.commons.text
+ org.apache.commons.text,
+ de.enflexit.geography
 Bundle-ActivationPolicy: lazy
 Import-Package: agentgui.core.charts,
  agentgui.core.charts.timeseriesChart,
