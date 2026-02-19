@@ -13,7 +13,8 @@ Bundle-ClassPath: .,
  lib/failureaccess-1.0.3.jar,
  lib/j2objc-annotations-3.0.0.jar,
  lib/jspecify-1.0.0.jar,
- lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar
+ lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar,
+ lib/docker-java-transport-httpclient5-3.7.0.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Version: 3.7.0.qualifier
 Export-Package: com.github.dockerjava.api,
@@ -28,6 +29,7 @@ Export-Package: com.github.dockerjava.api,
  com.github.dockerjava.core.exception,
  com.github.dockerjava.core.exec,
  com.github.dockerjava.core.util,
+ com.github.dockerjava.httpclient5,
  com.github.dockerjava.transport
 Import-Package: org.slf4j
 Require-Bundle: bcpkix,
@@ -40,6 +42,9 @@ Require-Bundle: bcpkix,
  com.google.guava,
  com.fasterxml.jackson.core.jackson-annotations,
  com.fasterxml.jackson.core.jackson-core,
- com.fasterxml.jackson.core.jackson-databind
+ com.fasterxml.jackson.core.jackson-databind,
+ org.apache.httpcomponents.client5.httpclient5;bundle-version="5.5.0",
+ org.apache.httpcomponents.core5.httpcore5;bundle-version="5.3.4",
+ org.apache.httpcomponents.core5.httpcore5-h2;bundle-version="5.3.4"
 
 
