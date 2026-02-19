@@ -3,22 +3,30 @@
    <feature id="de.enflexit.awb.desktop.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
       <category name="de.enflexit.awb.desktop"/>
    </feature>
-   <feature id="de.enflexit.awb.desktop.feature.source" version="0.0.0">
+   <feature id="de.enflexit.awb.desktop.feature.source">
       <category name="de.enflexit.awb.desktop"/>
    </feature>
-   
    <feature id="de.enflexit.awb.ws.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
       <category name="de.enflexit.awb.ws"/>
    </feature>
    <feature id="de.enflexit.awb.ws.feature.source">
       <category name="de.enflexit.awb.ws"/>
    </feature>
-  
+   <feature id="de.enflexit.awb.docker.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
+      <category name="de.enflexit.awb.extras"/>
+   </feature>
+   <feature id="de.enflexit.awb.docker.feature.source">
+      <category name="de.enflexit.awb.extras"/>
+   </feature>
+   
    <category-def name="de.enflexit.awb" label="Agent.Workbench"/>
    <category-def name="de.enflexit.awb.desktop" label="Agent.Workbench-Desktop">
       <category name="de.enflexit.awb"/>
    </category-def>
    <category-def name="de.enflexit.awb.ws" label="Agent.Workbench-WS">
+      <category name="de.enflexit.awb"/>
+   </category-def>
+   <category-def name="de.enflexit.awb.extras" label="Agent.Wokbench-Extras">
       <category name="de.enflexit.awb"/>
    </category-def>
 </site>

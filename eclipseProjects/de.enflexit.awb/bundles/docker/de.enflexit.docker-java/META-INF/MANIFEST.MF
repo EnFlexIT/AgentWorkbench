@@ -1,0 +1,45 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EnFlex.IT Docker Client
+Bundle-Vendor: EnFlex.IT
+Bundle-SymbolicName: de.enflexit.docker-java
+Automatic-Module-Name: de.enflexit.docker.client-api
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/docker-java-api-3.7.0.jar,
+ lib/docker-java-core-3.7.0.jar,
+ lib/docker-java-transport-3.7.0.jar,
+ lib/error_prone_annotations-2.36.0.jar,
+ lib/failureaccess-1.0.3.jar,
+ lib/j2objc-annotations-3.0.0.jar,
+ lib/jspecify-1.0.0.jar,
+ lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-Version: 3.7.0.qualifier
+Export-Package: com.github.dockerjava.api,
+ com.github.dockerjava.api.async,
+ com.github.dockerjava.api.command,
+ com.github.dockerjava.api.exception,
+ com.github.dockerjava.api.model,
+ com.github.dockerjava.core,
+ com.github.dockerjava.core.async,
+ com.github.dockerjava.core.command,
+ com.github.dockerjava.core.dockerfile,
+ com.github.dockerjava.core.exception,
+ com.github.dockerjava.core.exec,
+ com.github.dockerjava.core.util,
+ com.github.dockerjava.transport
+Import-Package: org.slf4j
+Require-Bundle: bcpkix,
+ bcprov,
+ bcutil,
+ org.apache.commons.commons-codec,
+ org.apache.commons.commons-compress,
+ org.apache.commons.commons-io,
+ org.apache.commons.lang3,
+ com.google.guava,
+ com.fasterxml.jackson.core.jackson-annotations,
+ com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-databind
+
+
