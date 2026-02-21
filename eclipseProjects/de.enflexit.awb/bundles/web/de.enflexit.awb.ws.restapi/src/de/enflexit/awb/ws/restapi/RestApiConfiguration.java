@@ -11,6 +11,7 @@ import de.enflexit.awb.ws.restapi.gen.JacksonJsonProvider;
 import de.enflexit.awb.ws.restapi.gen.LoadApi;
 import de.enflexit.awb.ws.restapi.gen.UserApi;
 import de.enflexit.awb.ws.restapi.gen.VersionApi;
+import de.enflexit.awb.ws.restapi.gen.AliveApi;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -47,6 +48,7 @@ public class RestApiConfiguration extends ResourceConfig {
 	private void configureEndpoints() {
 		this.register(JacksonJsonProvider.class);
 	
+		this.register(AliveApi.class);
 		this.register(AppApi.class);
 		this.register(ExecutionStateApi.class);
 		this.register(InfoApi.class);

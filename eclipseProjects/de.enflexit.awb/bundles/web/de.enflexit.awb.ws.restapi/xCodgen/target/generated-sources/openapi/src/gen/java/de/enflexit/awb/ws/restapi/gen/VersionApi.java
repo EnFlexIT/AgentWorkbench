@@ -11,7 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import de.enflexit.awb.ws.restapi.gen.model.Version;
+import de.enflexit.awb.ws.restapi.gen.model.SoftwareComponentList;
+import de.enflexit.awb.ws.restapi.gen.model.SoftwareComponentType;
 
 import java.util.Map;
 import java.util.List;
@@ -34,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the version API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-12-19T14:09:40.842261300+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-02-20T16:32:18.722136900+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class VersionApi  {
 
    private final VersionApiService delegate;
@@ -64,12 +65,12 @@ public class VersionApi  {
     @Produces({ "application/json" })
     @Operation(summary = "Return the current version number of Agent.Workbench", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "Request was successful and user receives versionNumber", content = 
-                @Content(schema = @Schema(implementation = Version.class))),
+                @Content(schema = @Schema(implementation = SoftwareComponentList.class))),
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "info", }) 
-    public Response versionGet(@Context SecurityContext securityContext)
+    public Response versionGet(@Schema(description = "", allowableValues="WEBAPP, FEATURE, BUNDLE, BUNDLE_OF_FEATURE, ") @QueryParam("type")  SoftwareComponentType type,@Schema(description = "") @QueryParam("filter")  String filter,@Schema(description = "") @QueryParam("isShowSource")  Boolean isShowSource,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.versionGet(securityContext);
+        return delegate.versionGet(type, filter, isShowSource, securityContext);
     }
 }

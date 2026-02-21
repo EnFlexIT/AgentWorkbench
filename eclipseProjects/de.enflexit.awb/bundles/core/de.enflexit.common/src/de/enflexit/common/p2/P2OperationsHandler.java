@@ -591,9 +591,8 @@ public class P2OperationsHandler {
 			try {
 				metadataRepository = this.getMetadataRepositoryManager().loadRepository(uri, new NullProgressMonitor());
 				this.getMetadataRepositories().put(uri, metadataRepository);
-			} catch (ProvisionException | OperationCanceledException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (ProvisionException | OperationCanceledException pEx) {
+				pEx.printStackTrace();
 			}
 		}
 		return metadataRepository;

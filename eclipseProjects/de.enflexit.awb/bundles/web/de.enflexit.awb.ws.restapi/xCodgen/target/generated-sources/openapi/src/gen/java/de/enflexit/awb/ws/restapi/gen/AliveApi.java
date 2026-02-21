@@ -1,7 +1,7 @@
 package de.enflexit.awb.ws.restapi.gen;
 
-import de.enflexit.awb.ws.restapi.gen.DoUpdateApiService;
-import de.enflexit.awb.ws.restapi.gen.factories.DoUpdateApiServiceFactory;
+import de.enflexit.awb.ws.restapi.gen.AliveApiService;
+import de.enflexit.awb.ws.restapi.gen.factories.AliveApiServiceFactory;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,23 +29,23 @@ import jakarta.ws.rs.*;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
-@Path("/doUpdate")
+@Path("/alive")
 
 
-@Tag(description = "the doUpdate API", name = "")
+@Tag(description = "the alive API", name = "")
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-02-20T16:32:18.722136900+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class DoUpdateApi  {
+public class AliveApi  {
 
-   private final DoUpdateApiService delegate;
+   private final AliveApiService delegate;
 
-   public DoUpdateApi(@Context ServletConfig servletContext) {
+   public AliveApi(@Context ServletConfig servletContext) {
 
-      DoUpdateApiService delegate = null;
+      AliveApiService delegate = null;
       if (servletContext != null) {
-         String implClass = servletContext.getInitParameter("DoUpdateApi.implementation");
+         String implClass = servletContext.getInitParameter("AliveApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (DoUpdateApiService) Class.forName(implClass).getDeclaredConstructor().newInstance();
+               delegate = (AliveApiService) Class.forName(implClass).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -53,23 +53,22 @@ public class DoUpdateApi  {
       }
 
       if (delegate == null) {
-         delegate = DoUpdateApiServiceFactory.getDoUpdateApi();
+         delegate = AliveApiServiceFactory.getAliveApi();
       }
       this.delegate = delegate;
    }
 
 
-    @jakarta.ws.rs.POST
+    @jakarta.ws.rs.GET
+    @Produces({ "application/json" })
     @Operation(summary = "", description = "", responses = {
-            @ApiResponse(responseCode = "423", description = "AWB cant currently be updated due to unknown circumstances", content = 
-                @Content(schema = @Schema(implementation = Void.class))),
-            @ApiResponse(responseCode = "200", description = "AWB Update was sheduled. The state of the update can be received by calling /eventLog", content = 
-                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "200", description = "server system is allive", content = 
+                @Content(schema = @Schema(implementation = String.class))),
             },security = {
             @SecurityRequirement(name = "bearerAuth")
-        }, tags={ "doAction", }) 
-    public Response doUpdatePost(@Context SecurityContext securityContext)
+        }, tags={ "info", }) 
+    public Response aliveGet(@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.doUpdatePost(securityContext);
+        return delegate.aliveGet(securityContext);
     }
 }
