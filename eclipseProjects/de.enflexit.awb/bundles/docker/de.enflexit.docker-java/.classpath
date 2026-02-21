@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/docker-java-transport-httpclient5-3.7.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/docker-java-api-3.7.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/docker-java-core-3.7.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/docker-java-transport-3.7.0.jar"/>
