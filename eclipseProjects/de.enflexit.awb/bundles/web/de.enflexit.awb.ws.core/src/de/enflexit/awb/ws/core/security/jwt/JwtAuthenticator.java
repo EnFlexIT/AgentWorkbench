@@ -193,7 +193,33 @@ public class JwtAuthenticator extends LoginAuthenticator {
                     credentials = credentials.substring(space + 1);
                     credentials = new String(Base64.getDecoder().decode(credentials), this.getCharset());
                     int i = credentials.indexOf(':');
-                    if (i > 0) {
+                    if (i==0) {
+                    	// ------------------------------------------
+                    	// --- Did we get a Bearer token? ----------- 
+                    	// ------------------------------------------
+                    	String jwtTokenPrev = credentials.substring(1).trim();
+                    	JwtParsed jwtParsed =  this.getValidParsedJwtToken(jwtTokenPrev);
+                    	if (jwtParsed!=null) {
+                    		
+                    		String username = jwtParsed.getPayload().get(JWT_CLAIM_USER, String.class);
+                    		
+                    		// --- Create JWT for the user ----------
+                        	String jwtToken = this.getJwtHandler().createJwsToken(DEFAULT_JWT_CLAIM_SUBJECT, username, DEFAULT_JWT_CLAIM_ROLE);
+                        	
+                        	// --- Update authentication ------------
+                        	JwtAuthentication authentication = this.getJwtSessionStore().getAuthentication(jwtTokenPrev);
+                        	JwtPrincipal jwtPrincipal = (JwtPrincipal) authentication.getUserPrincipal();
+                        	jwtPrincipal.addJwtToken(jwtToken);
+                        	this.getJwtSessionStore().cacheAuthentication(authentication);
+                        	
+                            resp.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, AUTH_HEADER_VALUE_PREFIX + jwtToken);
+                        	return authentication;
+                    	}
+                    	
+                    } else if (i > 0) {
+                    	// ------------------------------------------
+                    	// --- Regular user with password login -----
+                    	// ------------------------------------------
                         String username = credentials.substring(0, i);
                         String password = credentials.substring(i + 1);
                         UserIdentity user = this.login(username, password, req, resp);
@@ -205,7 +231,6 @@ public class JwtAuthenticator extends LoginAuthenticator {
                         	// --- Create JwtUserIdentity -----------
                         	JwtUserIdentity jwtIdentity = new JwtUserIdentity(jwtPrincipal);
                         	
-                            //response.setHeader(HttpHeader.WWW_AUTHENTICATE.asString(), AUTH_HEADER_VALUE_PREFIX + jwtToken);
                             resp.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, AUTH_HEADER_VALUE_PREFIX + jwtToken);
                         	return new JwtAuthentication(this, jwtIdentity);
                         }
@@ -228,6 +253,49 @@ public class JwtAuthenticator extends LoginAuthenticator {
         return AuthenticationState.CHALLENGE;
 		
 	}
+	
+	/**
+	 * Returns the JwtParsed instance for the specified JWT, if this token is still valid.
+	 *
+	 * @param jwtToken the jwt token to check
+	 * @return the validated JwtParsed instance or <code>null</code>
+	 */
+	private JwtParsed getValidParsedJwtToken(String jwtToken) {
+
+		// --- Try parsing JWT string -----------------------
+		JwtParsed jwtParsed = this.getJwtHandler().parse(jwtToken);
+		if (jwtParsed.hasExceptions()==true || jwtParsed.getJwsClaims()==null) {
+			if (verbose) logger.info("Unable to decode jwt");
+			return null;
+		}
+		
+		// --- Test user name and role ----------------------
+		String username = jwtParsed.getPayload().get(JWT_CLAIM_USER, String.class);
+		String role     = jwtParsed.getPayload().get(JWT_CLAIM_ROLE, String.class);
+		if (username==null || username.isBlank()==true) {
+			if (verbose) logger.info("No username provided in jwt");
+			return null;
+		}
+		if (verbose) logger.info("jwt username={} role={}", username, role);
+		
+		// --- Get JwtAuthentication from local cache -------
+		JwtAuthentication authentication = this.getJwtSessionStore().getAuthentication(jwtToken);
+		if (authentication==null) {
+			if (verbose) logger.info("jwt token not found in local cache, returning unauthenticated");
+			return null;
+		}
+		
+		// --- Check the user name again -------------------- 
+		String prevUsername = authentication.getUserIdentity().getUserPrincipal().getName();
+		if (username.equals(prevUsername)==false) {
+			if (verbose) logger.info("user name differs, returning unauthenticated");
+			return null;
+		}
+		
+		return jwtParsed;
+	}
+
+	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jetty.security.Authenticator#validateRequest(org.eclipse.jetty.server.Request, org.eclipse.jetty.server.Response, org.eclipse.jetty.util.Callback)

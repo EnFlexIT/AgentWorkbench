@@ -424,7 +424,7 @@ public class FeatureEvaluator {
 	 * Returns the feature map that describes the relation between a {@link Feature} and its ID.
 	 * @return the feature map
 	 */
-	private HashMap<String, Feature> getFeatureMap() {
+	public HashMap<String, Feature> getFeatureMap() {
 		if (featureMap==null) {
 			featureMap = new HashMap<>();
 		}
@@ -434,7 +434,7 @@ public class FeatureEvaluator {
 	 * Returns the plugin map that describes the relation between a {@link Plugin} and its ID..
 	 * @return the plugin map
 	 */
-	private HashMap<String, Plugin> getPluginMap() {
+	public HashMap<String, Plugin> getPluginMap() {
 		if (pluginMap==null) {
 			pluginMap = new HashMap<>();
 		}
@@ -444,7 +444,7 @@ public class FeatureEvaluator {
 	 * Returns the feature plugins map that stores a list of bundle IDs for each feature.
 	 * @return the feature plugins map
 	 */
-	private HashMap<String, ArrayList<String>> getFeatureToPluginListMap() {
+	public HashMap<String, ArrayList<String>> getFeatureToPluginListMap() {
 		if (featureToPluginListMap==null) {
 			featureToPluginListMap = new HashMap<>();
 		}
@@ -454,7 +454,7 @@ public class FeatureEvaluator {
 	 * Returns the plugin in feature map that describes in which features a specific plugin can be found.
 	 * @return the plugin in feature map
 	 */
-	private HashMap<String, ArrayList<String>> getPluginToFeatureListMap() {
+	public HashMap<String, ArrayList<String>> getPluginToFeatureListMap() {
 		if (pluginToFeatureListMap==null) {
 			pluginToFeatureListMap = new HashMap<>();
 		}
@@ -464,7 +464,7 @@ public class FeatureEvaluator {
 	 * Returns the included features for feature map that stores the included features for a feature.
 	 * @return the included features for feature map
 	 */
-	private HashMap<String, ArrayList<String>> getIncludedFeaturesForFeatureMap() {
+	public HashMap<String, ArrayList<String>> getIncludedFeaturesForFeatureMap() {
 		if (includedFeaturesForFeatureMap==null) {
 			includedFeaturesForFeatureMap = new HashMap<>();
 		}
@@ -474,7 +474,7 @@ public class FeatureEvaluator {
 	 * Returns the imported features for feature map that stores the imported features for a feature.
 	 * @return the imported features for feature map
 	 */
-	private HashMap<String, ArrayList<String>> getImportedFeaturesForFeatureMap() {
+	public HashMap<String, ArrayList<String>> getImportedFeaturesForFeatureMap() {
 		if (importedFeaturesForFeatureMap==null) {
 			importedFeaturesForFeatureMap = new HashMap<>();
 		}
