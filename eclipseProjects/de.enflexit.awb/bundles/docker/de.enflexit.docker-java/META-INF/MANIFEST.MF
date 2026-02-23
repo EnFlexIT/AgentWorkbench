@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EnFlex.IT Docker Client
+Bundle-Name: Docker-java library
 Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.docker-java
 Automatic-Module-Name: de.enflexit.docker.client-api
@@ -9,12 +9,12 @@ Bundle-ClassPath: .,
  lib/docker-java-api-3.7.0.jar,
  lib/docker-java-core-3.7.0.jar,
  lib/docker-java-transport-3.7.0.jar,
+ lib/docker-java-transport-httpclient5-3.7.0.jar,
  lib/error_prone_annotations-2.36.0.jar,
  lib/failureaccess-1.0.3.jar,
  lib/j2objc-annotations-3.0.0.jar,
  lib/jspecify-1.0.0.jar,
- lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar,
- lib/docker-java-transport-httpclient5-3.7.0.jar
+ lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Version: 3.7.0.qualifier
 Export-Package: com.github.dockerjava.api,
