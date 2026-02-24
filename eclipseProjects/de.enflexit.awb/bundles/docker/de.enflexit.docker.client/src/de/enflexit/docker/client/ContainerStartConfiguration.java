@@ -1,6 +1,7 @@
 package de.enflexit.docker.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.PortBinding;
@@ -11,13 +12,29 @@ import com.github.dockerjava.api.model.PortBinding;
  */
 public class ContainerStartConfiguration {
 	
+	/**
+	 * This enumeration is used to specify how to handle container name conflicts.
+	 * - DELETE: Will delete the previous container with the same name before starting a new one
+	 * - FAIL: The container will not be started
+	 * - SUFFIX: A numerical suffix will be appended to the name of the new container  
+	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+	 */
+	public enum NameConflictHandling {
+		DELETE, FAIL, SUFFIX
+	}
+	
 	private String imageTag;
 	private String containerName;
 	
 	private ArrayList<PortBinding> portMappings;
 	private ArrayList<Bind> volumeMappings;
 	
+	private HashMap<String, String> environmentVariables;
+	
 	private boolean deleteOnTerminate;
+	
+	// --- Do not automatically resolve name conflicts by default
+	private NameConflictHandling nameConflictHandling = NameConflictHandling.FAIL;
 
 	/**
 	 * Gets the image tag.
@@ -65,7 +82,22 @@ public class ContainerStartConfiguration {
 	public void setDeleteOnTerminate(boolean deleteOnTerminate) {
 		this.deleteOnTerminate = deleteOnTerminate;
 	}
-
+	
+	/**
+	 * Gets the name conflict handling strategy.
+	 * @return the name conflict handling strategy
+	 */
+	public NameConflictHandling getNameConflictHandling() {
+		return nameConflictHandling;
+	}
+	
+	/**
+	 * Sets the name conflict handling strategy.
+	 * @param nameConflictHandling the new name conflict handling strategy
+	 */
+	public void setNameConflictHandling(NameConflictHandling nameConflictHandling) {
+		this.nameConflictHandling = nameConflictHandling;
+	}
 	/**
 	 * Gets the port mappings.
 	 * @return the port mappings
@@ -120,5 +152,40 @@ public class ContainerStartConfiguration {
 	public void addVolumeMapping(String hostPath, String containerPath) {
 		this.addVolumeMapping(Bind.parse(hostPath + ":" + containerPath));
 	}
+	
+	/**
+	 * Gets the environment variables.
+	 * @return the environment variables
+	 */
+	public HashMap<String, String> getEnvironmentVariables() {
+		if (environmentVariables==null) {
+			environmentVariables = new HashMap<String, String>();
+		}
+		return environmentVariables;
+	}
+	
+	/**
+	 * Adds the environment variable.
+	 * @param name the name
+	 * @param value the value
+	 */
+	public void addEnvironmentVariable(String name, String value) {
+		this.getEnvironmentVariables().put(name, value);
+	}
+	
+	/**
+	 * Gets the environment variables as list of Strings "NAME=VALUE",
+	 *  as required when starting containers.
+	 * @return the environment variables as string list
+	 */
+	public ArrayList<String> getEnvironmentVariablesAsStringList(){
+		ArrayList<String> envVarsList = new ArrayList<String>();
+		for (String varName : this.getEnvironmentVariables().keySet()) {
+			String varValue = this.getEnvironmentVariables().get(varName);
+			envVarsList.add(varName + "=" + varValue);
+		}
+		return envVarsList;
+	}
+	
 
 }
