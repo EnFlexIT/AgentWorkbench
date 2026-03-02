@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Integration
+Bundle-SymbolicName: de.enflexit.docker.client
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.enflexit.docker.client
+Import-Package: org.slf4j
+Require-Bundle: de.enflexit.docker-java
+Bundle-Vendor: Docker Client
+Automatic-Module-Name: de.enflexit.docker.integration
+Bundle-RequiredExecutionEnvironment: JavaSE-21
