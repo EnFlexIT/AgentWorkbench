@@ -157,6 +157,23 @@ public class AwbWebApplicationManager {
 		return true;
 	}
 	
+	
+	/**
+	 * Sets the properties of the web application.
+	 *
+	 * @param newProps the new props
+	 * @return true, if successful
+	 */
+	public static boolean setProperties(Properties newProps) {
+		
+		if (newProps==null) return false;
+		
+		// TODO To be completed 
+		System.err.println("[" + AwbWebApplicationManager.class.getSimpleName() + "] To be completed !!!");
+		
+		return false;
+	}
+	
 	/**
 	 * Returns the properties of the web application.
 	 *
@@ -351,5 +368,6 @@ public class AwbWebApplicationManager {
 		}
 		return true;
 	}
+
 	
 }

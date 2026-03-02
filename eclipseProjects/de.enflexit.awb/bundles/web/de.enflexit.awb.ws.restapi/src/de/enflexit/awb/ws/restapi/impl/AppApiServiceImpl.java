@@ -17,6 +17,7 @@ import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
+import de.enflexit.common.properties.bus.ApplicationPropertyBus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Response;
@@ -60,10 +61,26 @@ public class AppApiServiceImpl extends AppApiService {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
     	}
     	
-    	// TODO
-    	String performative = properties.getPerformative();
+    	// --- Convert to AWB properties ----------------------------
+    	de.enflexit.common.properties.Properties awbProps = PropertyConverter.toAwbProperties(properties);
     	
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    	// --- Get the current performative -------------------------
+    	boolean success = false;
+    	String xPerformative = properties.getPerformative();
+    	if (xPerformative==null || xPerformative.isBlank()==true) {
+			// --- Set properties of web application ----------------
+			success = AwbWebApplicationManager.setProperties(awbProps);
+
+    	} else {
+    		// --- Set specific application properties -------
+    		success = ApplicationPropertyBus.getInstance().setProperties(xPerformative, awbProps);
+    	}
+
+    	if (success==true) {
+    		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Properties were applied!")).build();
+    	}
+    	return Response.notModified().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Properties could not be applied!")).build();
+    	
     }
 
 	
@@ -86,17 +103,27 @@ public class AppApiServiceImpl extends AppApiService {
     	// --- Create the properties to return ----------------------
     	de.enflexit.common.properties.Properties awbProps = null;
     	if (principal==null) {
+    		// --- If not Authenticated, return public properties ---
     		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.PublicProperties);
     		awbProps.setBooleanValue("_Authenticated", false);
     		this.addSessionInformation(request, awbProps);
+
     	} else {
-    		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties);
-    		awbProps.setBooleanValue("_Authenticated", true);
-    		this.addSessionInformation(request, awbProps);
-    		this.addOIDCPrincipalInformation(principal, awbProps);
+    		// --- If Authenticated, ... ----------------------------
+    		if (xPerformative==null || xPerformative.isBlank()==true) {
+    			// --- return properties of web application ---------
+    			awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties);
+    			awbProps.setBooleanValue("_Authenticated", true);
+    			this.addSessionInformation(request, awbProps);
+    			this.addOIDCPrincipalInformation(principal, awbProps);
+        	} else {
+        		// --- return specific application properties -------
+        		awbProps = ApplicationPropertyBus.getInstance().getProperties(xPerformative);
+        	}
+    		
     	}
     	
-    	// --- Convert response -------------------------------------
+    	// --- Convert response Properties type ---------------------
     	Properties endpointProps = PropertyConverter.toWebRestProperties(awbProps);
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(endpointProps).build();
     }
