@@ -1,5 +1,8 @@
 package de.enflexit.awb.ws.restapi.tools;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.enflexit.awb.ws.restapi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.restapi.gen.model.ValueType;
 import de.enflexit.common.properties.PropertyValue;
@@ -21,15 +24,36 @@ public class PropertyConverter {
 		
 		de.enflexit.awb.ws.restapi.gen.model.Properties restProps = new de.enflexit.awb.ws.restapi.gen.model.Properties();
 
-		// --- Check each property ------------------------
+		// --- Check each property ----------------------------------
 		for (String identifier : awbProps.getIdentifierList()) {
+			// --- Get property -------------------------------------
 			PropertyValue pValue = awbProps.getPropertyValue(identifier);
-			
+			// --- Create REST 'PropertyEntry' ----------------------
 			PropertyEntry pEntry = createPropertyEntry(identifier, pValue) ;
+			pEntry.setValueOptions(PropertyConverter.toWebValueOptionList(pValue.getValueOptionsString()));
+			pEntry.setValueOptionsOnly(pValue.isValueOptionsOnly());
+			
+			// --- Add to property listing --------------------------
 			restProps.addPropertyEntriesItem(pEntry);
 		}
-		
 		return restProps;
+	}
+	
+	/**
+	 * Converts the specified string array to a value option list for the REST 'PropertyEntry'.
+	 *
+	 * @param optionArray the option array
+	 * @return the value option list
+	 */
+	private static List<String> toWebValueOptionList(String[] optionArray) {
+		
+		if (optionArray==null || optionArray.length==0) return null;
+		
+		List<String> optionList = new ArrayList<>();
+		for (String option : optionArray) {
+			optionList.add(option);
+		}
+		return optionList;
 	}
 	
 	/**

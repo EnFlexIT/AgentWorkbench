@@ -19,6 +19,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.enflexit.awb.ws.restapi.gen.model.ValueType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
@@ -29,9 +32,11 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   PropertyEntry.JSON_PROPERTY_KEY,
   PropertyEntry.JSON_PROPERTY_VALUE,
-  PropertyEntry.JSON_PROPERTY_VALUE_TYPE
+  PropertyEntry.JSON_PROPERTY_VALUE_TYPE,
+  PropertyEntry.JSON_PROPERTY_VALUE_OPTIONS,
+  PropertyEntry.JSON_PROPERTY_VALUE_OPTIONS_ONLY
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-02-20T16:32:18.722136900+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-03-04T17:07:13.922796800+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class PropertyEntry   {
   public static final String JSON_PROPERTY_KEY = "key";
   @JsonProperty(JSON_PROPERTY_KEY)
@@ -44,6 +49,14 @@ public class PropertyEntry   {
   public static final String JSON_PROPERTY_VALUE_TYPE = "valueType";
   @JsonProperty(JSON_PROPERTY_VALUE_TYPE)
   private ValueType valueType;
+
+  public static final String JSON_PROPERTY_VALUE_OPTIONS = "valueOptions";
+  @JsonProperty(JSON_PROPERTY_VALUE_OPTIONS)
+  private List<String> valueOptions = new ArrayList<>();
+
+  public static final String JSON_PROPERTY_VALUE_OPTIONS_ONLY = "valueOptionsOnly";
+  @JsonProperty(JSON_PROPERTY_VALUE_OPTIONS_ONLY)
+  private Boolean valueOptionsOnly;
 
   public PropertyEntry key(String key) {
     this.key = key;
@@ -105,6 +118,54 @@ public class PropertyEntry   {
     this.valueType = valueType;
   }
 
+  public PropertyEntry valueOptions(List<String> valueOptions) {
+    this.valueOptions = valueOptions;
+    return this;
+  }
+
+  public PropertyEntry addValueOptionsItem(String valueOptionsItem) {
+    if (this.valueOptions == null) {
+      this.valueOptions = new ArrayList<>();
+    }
+    this.valueOptions.add(valueOptionsItem);
+    return this;
+  }
+
+  /**
+   * Get valueOptions
+   * @return valueOptions
+   **/
+  @JsonProperty(value = "valueOptions")
+  @Schema(description = "")
+  
+  public List<String> getValueOptions() {
+    return valueOptions;
+  }
+
+  public void setValueOptions(List<String> valueOptions) {
+    this.valueOptions = valueOptions;
+  }
+
+  public PropertyEntry valueOptionsOnly(Boolean valueOptionsOnly) {
+    this.valueOptionsOnly = valueOptionsOnly;
+    return this;
+  }
+
+  /**
+   * Get valueOptionsOnly
+   * @return valueOptionsOnly
+   **/
+  @JsonProperty(value = "valueOptionsOnly")
+  @Schema(description = "")
+  
+  public Boolean getValueOptionsOnly() {
+    return valueOptionsOnly;
+  }
+
+  public void setValueOptionsOnly(Boolean valueOptionsOnly) {
+    this.valueOptionsOnly = valueOptionsOnly;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -117,12 +178,14 @@ public class PropertyEntry   {
     PropertyEntry propertyEntry = (PropertyEntry) o;
     return Objects.equals(this.key, propertyEntry.key) &&
         Objects.equals(this.value, propertyEntry.value) &&
-        Objects.equals(this.valueType, propertyEntry.valueType);
+        Objects.equals(this.valueType, propertyEntry.valueType) &&
+        Objects.equals(this.valueOptions, propertyEntry.valueOptions) &&
+        Objects.equals(this.valueOptionsOnly, propertyEntry.valueOptionsOnly);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, value, valueType);
+    return Objects.hash(key, value, valueType, valueOptions, valueOptionsOnly);
   }
 
   @Override
@@ -133,6 +196,8 @@ public class PropertyEntry   {
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
     sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("    valueType: ").append(toIndentedString(valueType)).append("\n");
+    sb.append("    valueOptions: ").append(toIndentedString(valueOptions)).append("\n");
+    sb.append("    valueOptionsOnly: ").append(toIndentedString(valueOptionsOnly)).append("\n");
     sb.append("}");
     return sb.toString();
   }
