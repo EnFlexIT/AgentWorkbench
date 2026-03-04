@@ -3,8 +3,11 @@ package de.enflexit.db.hibernate.properties;
 import java.util.List;
 
 import de.enflexit.common.properties.Properties;
+import de.enflexit.common.properties.PropertyValue;
 import de.enflexit.common.properties.bus.PropertyBusService;
 import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.SessionFactoryMonitor;
+import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 
 /**
  * The Class PropertyBusServiceFactoryIDs.
@@ -29,10 +32,28 @@ public class PropertyBusServiceFactoryIDs implements PropertyBusService {
 
 		if (properties==null) properties = new Properties();
 		
+		// --- Collect description of SessionFactoryState -----------
+		String[] sfsArray = new String[SessionFactoryState.values().length];
+		int s = 0;
+		for (SessionFactoryState sfs : SessionFactoryState.values()) {
+			sfsArray[s] = sfs.name() + " (" + sfs.getDescription() + ")";
+			s++;
+		}
+		
+		// ----------------------------------------------------------
+		// --- Fill result properties -------------------------------
+		// ----------------------------------------------------------
 		List<String> factoryList = HibernateUtilities.getSessionFactoryIDList();
 		for (int i = 0; i < factoryList.size(); i++) {
 			String factoryID = factoryList.get(i);
 			properties.setStringValue("factory[" + i + "]", factoryID);
+			
+			// --- Add SessionFactoryState and descriptions ---------
+			SessionFactoryMonitor sfMon = HibernateUtilities.getSessionFactoryMonitor(factoryID);
+			PropertyValue pValue = new PropertyValue(sfMon.getSessionFactoryState().name());
+			pValue.setValueOptions(sfsArray);
+			pValue.setValueOptionsOnly(true);
+			properties.setValue("factory[" + i + "].state", pValue);
 			
 		}
 		return properties;
