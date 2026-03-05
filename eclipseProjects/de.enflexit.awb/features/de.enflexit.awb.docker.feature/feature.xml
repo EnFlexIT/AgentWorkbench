@@ -21,4 +21,8 @@
          id="de.enflexit.docker-java"
          version="0.0.0"/>
 
+   <plugin
+         id="de.enflexit.docker.client"
+         version="0.0.0"/>
+
 </feature>
