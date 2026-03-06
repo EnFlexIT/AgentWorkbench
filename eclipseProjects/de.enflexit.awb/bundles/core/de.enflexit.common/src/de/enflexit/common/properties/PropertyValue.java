@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyValue", propOrder = {
 	"valueClass", 
 	"valueString",
-	"valueOptions",
+	"valueOptionsString",
 	"valueOptionsOnly"
 })
 public class PropertyValue implements Serializable {
