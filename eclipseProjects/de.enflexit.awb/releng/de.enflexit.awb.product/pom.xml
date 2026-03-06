@@ -85,10 +85,8 @@
 									<url>scp://enflex.it</url> <!-- <url>scpexe://enflex.it</url> -->
 									<fromDir>${project.build.directory}/products/</fromDir>
 									<toDir>/subDomains/p2.enflex.it${repository.subDirProducts}</toDir>
-									<includes>
-										<include>*.zip</include>
-										<include>*.tar.gz</include>
-									</includes>
+									<includes>de.enflexit.awb*.zip</includes>
+									<includes>de.enflexit.awb*.tar.gz</includes>
 								</configuration>
 							</execution>
 						</executions>
