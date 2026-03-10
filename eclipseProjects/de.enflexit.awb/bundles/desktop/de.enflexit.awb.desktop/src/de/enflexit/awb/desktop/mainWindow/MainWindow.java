@@ -23,6 +23,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -66,6 +67,7 @@ import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
+import de.enflexit.awb.core.ui.AwbPerspectiveService;
 import de.enflexit.awb.core.ui.AwbProjectTab;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbUiConfiguration;
@@ -75,6 +77,7 @@ import de.enflexit.awb.desktop.project.ProjectWindow;
 import de.enflexit.awb.desktop.project.update.ProjectRepositoryExplorerDialog;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.AwbLookAndFeelInfo;
@@ -131,6 +134,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	private JMenu jMenuExtraLang;
 	private JMenu jMenuExtraLnF;
 	private JMenu jMenuMainWindows;
+	private JMenu jMenuPerspective;
 	private JMenu jMenuMainHelp;
 
 	private JPanel jPanelToolBar;
@@ -149,6 +153,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	private JButton jButtonSimStart;
 	private JButton jButtonSimPause;
 	private JButton jButtonSimStop;
+
 
 	/**
 	 * Constructor of this class.
@@ -457,14 +462,44 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	}
 	
 	/**
+	 * Returns the AwbPerspectiveService that matches the specified class name.
+	 *
+	 * @param perspectiveClassName the perspective class name
+	 * @return the awb perspective service
+	 */
+	private AwbPerspectiveService getAwbPerspectiveService(String perspectiveClassName) {
+		
+		List<AwbPerspectiveService> servicesList = ServiceFinder.findServices(AwbPerspectiveService.class);
+		if (servicesList!=null) {
+			for (AwbPerspectiveService pService : servicesList) {
+				if (pService.getClass().getName().equals(perspectiveClassName)) return pService;
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * Returns the current AwbUiConfiguration.
 	 * @return the AwbUiConfiguration
 	 */
 	public AwbUiConfiguration getUiConfiguration() {
 		if (awbUiConfiguration==null) {
-			awbUiConfiguration = AwbUiConfiguration.load();
+			// --- Get registered PerspectiveService ----------------
+			String currPerspectiveClassName = Application.getGlobalInfo().getCurrentPerspectiveClassName();  
+			if (currPerspectiveClassName!=null) {
+				AwbPerspectiveService pService = this.getAwbPerspectiveService(currPerspectiveClassName);
+				if (pService!=null) {
+					awbUiConfiguration = pService.getAwbUiConfiguration();
+				}
+			}
+		
+			// --- Read UI-Configuration from file ------------------ 
 			if (awbUiConfiguration==null) {
-				awbUiConfiguration = new AwbUiConfiguration(AwbUiConfiguration.getDefaultConfigurationFile());
+				awbUiConfiguration = AwbUiConfiguration.load();
+				if (awbUiConfiguration==null) {
+					awbUiConfiguration = new AwbUiConfiguration(AwbUiConfiguration.getDefaultConfigurationFile());
+				}
 			}
 			
 			// ------------------------------------------------------
@@ -1046,6 +1081,8 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		return jMenuItemViewTabHeader;
 	}
 	
+
+	
 	// ------------------------------------------------------------
 	// --- Menu "JADE" --------------------------------------------
 	// ------------------------------------------------------------
@@ -1278,7 +1315,8 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	public JMenu getJMenuMainWindow() {
 		if (jMenuMainWindows == null) {
 			jMenuMainWindows = new JMenu("Fenster");
-			jMenuMainWindows.setText(Language.translate("Fenster"));
+			jMenuMainWindows.setText(Language.translate("Fenster"));	
+			
 		}
 		return jMenuMainWindows;
 	}

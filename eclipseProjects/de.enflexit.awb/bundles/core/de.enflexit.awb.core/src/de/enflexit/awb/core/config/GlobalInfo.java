@@ -89,6 +89,8 @@ public class GlobalInfo implements ZoneIdResolver {
 	private static String localAppLnF = DEFAUL_LOOK_AND_FEEL_CLASS;
 	private static Class<?> localAppLnFClass;
 	
+	private static String perspectiveClassName;
+	
 	private static Path localBaseDir;
 	
 	private static String localFileProperties  = "agentgui.ini";
@@ -556,6 +558,23 @@ public class GlobalInfo implements ZoneIdResolver {
 	}
 	// -------------------------------
 
+	
+	// ----------------------------------------------------
+	// --- Perspective Handling ---------------------------
+	// ----------------------------------------------------
+	/**
+	 * Returns the current perspective class name.
+	 * @return the current perspective class name
+	 */
+	public String getCurrentPerspectiveClassName() {
+		return perspectiveClassName;
+	}
+	/**
+	 * Sets the current perspective class name.
+	 */
+	public void setCurrentPerspectiveClassName(String perspectiveClassName) {
+		GlobalInfo.perspectiveClassName = perspectiveClassName;
+	}
 	
 	
 	/**
@@ -2076,5 +2095,6 @@ public class GlobalInfo implements ZoneIdResolver {
 		}
 		return ZoneId.systemDefault();
 	}
+	
 	
 }

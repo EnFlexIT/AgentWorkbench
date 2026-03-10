@@ -90,7 +90,10 @@ public class BundleProperties {
 	
 	public static final String DEF_LAST_SELECTED_FOLDER = "110_LAST_SELECTED_FOLDER";
 	
+	public static final String DEF_CURR_PERSPECTIVE = "120_CURR_PERSPECTIVE";
+	
 	public static final String DEF_SHOW_HEAP_MONITOR = "150_SHOW_HEAP_MONITOR";
+	
 	
 	private GlobalInfo globalInfo;
 	private IEclipsePreferences eclipsePreferences;
@@ -319,6 +322,9 @@ public class BundleProperties {
 		stringPrefValue = eclipsePreferences.get(DEF_LAST_SELECTED_FOLDER, null);
 		this.globalInfo.setLastSelectedFolder(stringPrefValue);
 		
+		// --- this.DEF_CURR_PERSPECTIVE ---------
+		stringPrefValue = eclipsePreferences.get(DEF_CURR_PERSPECTIVE, null);
+		this.globalInfo.setCurrentPerspectiveClassName(stringPrefValue);
 	}
 	
 	/**
@@ -419,7 +425,9 @@ public class BundleProperties {
 		
 		// --- this.DEF_LAST_SELECTED_FOLDER ---------
 		eclipsePreferences.put(DEF_LAST_SELECTED_FOLDER, this.globalInfo.getLastSelectedFolderAsString());
-
+		
+		// --- this.DEF_CURR_PERSPECTIVE ---------
+		if (this.globalInfo.getCurrentPerspectiveClassName()!=null) eclipsePreferences.put(DEF_CURR_PERSPECTIVE, this.globalInfo.getCurrentPerspectiveClassName());
 	}	
 
 	/**

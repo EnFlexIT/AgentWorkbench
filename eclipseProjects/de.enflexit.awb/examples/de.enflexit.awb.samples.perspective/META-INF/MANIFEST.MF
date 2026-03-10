@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Perspective
+Bundle-SymbolicName: de.enflexit.awb.samples.perspective
+Bundle-Version: 1.0.0.qualifier
+Import-Package: de.enflexit.awb.core.ui
+Bundle-Vendor: EnFlex.IT
+Automatic-Module-Name: de.enflexit.awb.samples.perspective
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Service-Component: OSGI-INF/examplePerspectiveService.xml
