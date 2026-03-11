@@ -12,13 +12,18 @@
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
-		<target-platform-version>4.37.0-SNAPSHOT</target-platform-version>
+		<codehouse-wagon-maven-plugin-version>2.0.2</codehouse-wagon-maven-plugin-version>
+		
+		<target-platform-version>4.39.0-SNAPSHOT</target-platform-version>
 		
 		<url.repository.snapshotDomain>https://p2.enflex.it</url.repository.snapshotDomain>
 		<url.repository.snapshotDir>/awb/snapshots/</url.repository.snapshotDir>
+		<url.repository.productDir>/awb/product/3.0.0/</url.repository.productDir>
 		
-		<repository.subDir>${url.repository.snapshotDir}</repository.subDir>
 		<repository.domain>${url.repository.snapshotDomain}</repository.domain>
+		<repository.subDir>${url.repository.snapshotDir}</repository.subDir>
+		<repository.subDirProducts>${url.repository.productDir}</repository.subDirProducts>
+
 		<repository.updateSite>${repository.domain}${repository.subDir}</repository.updateSite>
 		
 	</properties>

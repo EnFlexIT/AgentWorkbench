@@ -139,23 +139,23 @@ public class Properties implements Serializable {
 	
 	
 	
-	public void setStringValue(String identifier, String value) {
-		this.setValue(identifier, value);
+	public PropertyValue setStringValue(String identifier, String value) {
+		return this.setValue(identifier, value);
 	}
-	public void setBooleanValue(String identifier, boolean value) {
-		this.setValue(identifier, value);
+	public PropertyValue setBooleanValue(String identifier, boolean value) {
+		return this.setValue(identifier, value);
 	}
-	public void setIntegerValue(String identifier, int value) {
-		this.setValue(identifier, value);
+	public PropertyValue setIntegerValue(String identifier, int value) {
+		return this.setValue(identifier, value);
 	}
-	public void setLongValue(String identifier, long value) {
-		this.setValue(identifier, value);
+	public PropertyValue setLongValue(String identifier, long value) {
+		return this.setValue(identifier, value);
 	}
-	public void setFloatValue(String identifier, float value) {
-		this.setValue(identifier, value);
+	public PropertyValue setFloatValue(String identifier, float value) {
+		return this.setValue(identifier, value);
 	}
-	public void setDoubleValue(String identifier, double value) {
-		this.setValue(identifier, value);
+	public PropertyValue setDoubleValue(String identifier, double value) {
+		return this.setValue(identifier, value);
 	}
 	
 	

@@ -15,5 +15,6 @@
 
 	<modules>
 		<module>de.enflexit.docker-java</module>
+		<module>de.enflexit.docker.client</module>
 	</modules>
 </project>

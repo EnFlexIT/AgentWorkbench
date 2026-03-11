@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-02-20T16:32:18.722136900+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-03-04T17:07:13.922796800+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public abstract class UserApiService {
     public abstract Response changePassword(PasswordChange passwordChange,SecurityContext securityContext) throws NotFoundException;
     public abstract Response loginUser(SecurityContext securityContext) throws NotFoundException;

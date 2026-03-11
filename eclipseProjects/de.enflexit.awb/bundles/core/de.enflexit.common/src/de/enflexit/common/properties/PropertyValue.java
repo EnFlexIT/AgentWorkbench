@@ -3,11 +3,12 @@ package de.enflexit.common.properties;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import de.enflexit.common.properties.Properties.PropertyType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlType;
-
-import de.enflexit.common.properties.Properties.PropertyType;
 
 /**
  * The Class PropertyValue serves as container to save and restore property values.
@@ -17,7 +18,9 @@ import de.enflexit.common.properties.Properties.PropertyType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyValue", propOrder = {
 	"valueClass", 
-	"valueString"
+	"valueString",
+	"valueOptionsString",
+	"valueOptionsOnly"
 })
 public class PropertyValue implements Serializable {
 	
@@ -26,6 +29,9 @@ public class PropertyValue implements Serializable {
 	private transient Object value;
 	private String valueClass;
 	private String valueString;
+	
+	private String[] valueOptionsString;
+	private boolean valueOptionsOnly;
 	
 	private transient String errorMessage;
 	
@@ -250,6 +256,225 @@ public class PropertyValue implements Serializable {
 	public String getValueString() {
 		return valueString;
 	}
+	
+	
+	/**
+	 * Sets the value options string.
+	 * @param valueOptionsString the new value options string
+	 */
+	public void setValueOptionsString(String[] valueOptionsString) {
+		this.valueOptionsString = valueOptionsString;
+	}
+	/**
+	 * Returns the value options string.
+	 * @return the value options string
+	 */
+	public String[] getValueOptionsString() {
+		return valueOptionsString;
+	}
+	
+	/**
+	 * Sets the specified Object array as value option.
+	 * @param options the new options
+	 */
+	public void setValueOptions(Object[] options) {
+		
+		if (options==null) {
+			this.setValueOptionsString(null);
+			return;
+		}
+		
+		try {
+			String [] vos = new String[options.length];
+			for (int i = 0; i < options.length; i++) {
+				Object option = options[i];
+				vos[i] = option==null ? null : option.toString();
+			}
+			this.setValueOptionsString(vos);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Sets the specifies boolean array as value options.
+	 * @param options the new options
+	 */
+	public void setValueOptions(boolean[] options) {
+		this.setValueOptions(ArrayUtils.toObject(options));
+	}
+	/**
+	 * Sets the specifies boolean array as value options.
+	 * @param options the new options
+	 */
+	public void setValueOptions(int[] options) {
+		this.setValueOptions(ArrayUtils.toObject(options));
+	}
+	/**
+	 * Sets the specifies boolean array as value options.
+	 * @param options the new options
+	 */
+	public void setValueOptions(long[] options) {
+		this.setValueOptions(ArrayUtils.toObject(options));
+	}
+	/**
+	 * Sets the specifies boolean array as value options.
+	 * @param options the new options
+	 */
+	public void setValueOptions(float[] options) {
+		this.setValueOptions(ArrayUtils.toObject(options));
+	}
+	/**
+	 * Sets the specifies boolean array as value options.
+	 * @param options the new options
+	 */
+	public void setValueOptions(double[] options) {
+		this.setValueOptions(ArrayUtils.toObject(options));
+	}
+	
+	
+	/**
+	 * Returns the value as string if the instance is of that type.
+	 * @return the string value or <code>null</code>;
+	 */
+	public String[] getStringOptions() {
+		Object value = this.getValue();
+		if (value instanceof String) {
+			return this.getValueOptionsString();
+		}
+		this.setErrorMessage("Value is not of type String!", true);
+		return null;
+	}
+	/**
+	 * Returns the value as boolean if the instance is of that type.
+	 * @return the boolean value or <code>null</code>;
+	 */
+	public Boolean[] getBooleanOptions() {
+		Object value = this.getValue();
+		if (value instanceof Boolean) {
+			String[] optionStringArray = this.getValueOptionsString();
+			Boolean[] options = new Boolean[optionStringArray.length];
+			for (int i = 0; i < optionStringArray.length; i++) {
+				String optionString = optionStringArray[i];
+				Boolean optionValue = null;
+				try {
+					optionValue = optionString==null || optionString.isBlank() ? null : Boolean.valueOf(optionString);
+				} catch (Exception ex) { }
+				options[i] = optionValue;
+			}
+			return options;
+		}
+		this.setErrorMessage("Value is not of type Boolean!", true);
+		return null;
+	}
+	/**
+	 * Returns the value as integer if the instance is of that type.
+	 * @return the integer value or <code>null</code>;
+	 */
+	public Integer[] getIntegerOptions() {
+		Object value = this.getValue();
+		if (value instanceof Integer) {
+			String[] optionStringArray = this.getValueOptionsString();
+			Integer[] options = new Integer[optionStringArray.length];
+			for (int i = 0; i < optionStringArray.length; i++) {
+				String optionString = optionStringArray[i];
+				Integer optionValue = null;
+				try {
+					optionValue = optionString==null || optionString.isBlank() ? null : Integer.valueOf(optionString);
+				} catch (Exception ex) { }
+				options[i] = optionValue;
+
+			}
+			return options;
+		}
+		this.setErrorMessage("Value is not of type Integer!", true);
+		return null;
+	}
+	/**
+	 * Returns the value as long if the instance is of that type.
+	 * @return the long value or <code>null</code>;
+	 */
+	public Long[] getLongOptions() {
+		Object value = this.getValue();
+		if (value instanceof Long) {
+			String[] optionStringArray = this.getValueOptionsString();
+			Long[] options = new Long[optionStringArray.length];
+			for (int i = 0; i < optionStringArray.length; i++) {
+				String optionString = optionStringArray[i];
+				Long optionValue = null;
+				try {
+					optionValue = optionString==null || optionString.isBlank() ? null : Long.valueOf(optionString);
+				} catch (Exception ex) { }
+				options[i] = optionValue;
+
+			}
+			return options;
+		}
+		this.setErrorMessage("Value is not of type Long!", true);
+		return null;
+	}
+	/**
+	 * Returns the value as float if the instance is of that type.
+	 * @return the float value or <code>null</code>;
+	 */
+	public Float[] getFloatOptions() {
+		Object value = this.getValue();
+		if (value instanceof Float) {
+			String[] optionStringArray = this.getValueOptionsString();
+			Float[] options = new Float[optionStringArray.length];
+			for (int i = 0; i < optionStringArray.length; i++) {
+				String optionString = optionStringArray[i];
+				Float optionValue = null;
+				try {
+					optionValue = optionString==null || optionString.isBlank() ? null : Float.valueOf(optionString);
+				} catch (Exception ex) { }
+				options[i] = optionValue;
+
+			}
+			return options;
+		}
+		this.setErrorMessage("Value is not of type Float!", true);
+		return null;
+	}
+	/**
+	 * Returns the value as double if the instance is of that type.
+	 * @return the double value or <code>null</code>;
+	 */
+	public Double[] getDoubleOptions() {
+		Object value = this.getValue();
+		if (value instanceof Double) {
+			String[] optionStringArray = this.getValueOptionsString();
+			Double[] options = new Double[optionStringArray.length];
+			for (int i = 0; i < optionStringArray.length; i++) {
+				String optionString = optionStringArray[i];
+				Double optionValue = null;
+				try {
+					optionValue = optionString==null || optionString.isBlank() ? null : Double.valueOf(optionString);
+				} catch (Exception ex) { }
+				options[i] = optionValue;
+			}
+			return options;
+		}
+		this.setErrorMessage("Value is not of type Double!", true);
+		return null;
+	}
+	
+	
+	/**
+	 * Sets the value options only.
+	 * @param valueOptionsOnly the new value options only
+	 */
+	public void setValueOptionsOnly(boolean valueOptionsOnly) {
+		this.valueOptionsOnly = valueOptionsOnly;
+	}
+	/**
+	 * Checks if is value options only.
+	 * @return true, if is value options only
+	 */
+	public boolean isValueOptionsOnly() {
+		return valueOptionsOnly;
+	}
+	
 	
 	/**
 	 * Internally sets the error message.

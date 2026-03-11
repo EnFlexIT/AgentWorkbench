@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Automatic-Module-Name: de.enflexit.logging
+Bundle-ActivationPolicy: lazy
 Bundle-SymbolicName: de.enflexit.logging
 Bundle-Name: SLF4J + Logback
 Bundle-Version: 1.5.26.qualifier
