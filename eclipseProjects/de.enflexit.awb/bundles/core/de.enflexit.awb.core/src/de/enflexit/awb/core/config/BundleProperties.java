@@ -427,7 +427,7 @@ public class BundleProperties {
 		eclipsePreferences.put(DEF_LAST_SELECTED_FOLDER, this.globalInfo.getLastSelectedFolderAsString());
 		
 		// --- this.DEF_CURR_PERSPECTIVE ---------
-		if (this.globalInfo.getCurrentPerspectiveClassName()!=null) eclipsePreferences.put(DEF_CURR_PERSPECTIVE, this.globalInfo.getCurrentPerspectiveClassName());
+		eclipsePreferences.put(DEF_CURR_PERSPECTIVE, this.globalInfo.getCurrentPerspectiveClassName()==null ? "" : this.globalInfo.getCurrentPerspectiveClassName());
 	}	
 
 	/**

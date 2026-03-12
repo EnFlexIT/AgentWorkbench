@@ -68,4 +68,3 @@ Import-Package: de.enflexit.awb.baseUI,
  org.slf4j
 Service-Component: OSGI-INF/desktopUiService.xml,
  OSGI-INF/dbStateVisualService.xml
-

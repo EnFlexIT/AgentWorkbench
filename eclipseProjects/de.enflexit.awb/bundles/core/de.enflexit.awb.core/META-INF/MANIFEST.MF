@@ -42,6 +42,7 @@ Import-Package: agentgui.core.charts.timeseriesChart,
  org.osgi.framework,
  org.osgi.service.component,
  org.osgi.service.prefs,
+ org.osgi.util.tracker,
  org.slf4j,
  oshi,
  oshi.hardware

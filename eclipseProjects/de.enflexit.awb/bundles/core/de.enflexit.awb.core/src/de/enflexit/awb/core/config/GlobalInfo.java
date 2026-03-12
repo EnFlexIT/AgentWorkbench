@@ -573,7 +573,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * Sets the current perspective class name.
 	 */
 	public void setCurrentPerspectiveClassName(String perspectiveClassName) {
-		GlobalInfo.perspectiveClassName = perspectiveClassName;
+		GlobalInfo.perspectiveClassName = (perspectiveClassName==null || perspectiveClassName.isBlank()==true) ? null : perspectiveClassName;
 	}
 	
 	

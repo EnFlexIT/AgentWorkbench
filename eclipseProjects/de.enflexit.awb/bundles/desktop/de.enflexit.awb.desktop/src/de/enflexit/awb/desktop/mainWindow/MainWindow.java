@@ -67,7 +67,9 @@ import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
+import de.enflexit.awb.core.ui.AwbPerspective;
 import de.enflexit.awb.core.ui.AwbPerspectiveService;
+import de.enflexit.awb.core.ui.AwbPerspectiveServiceListener;
 import de.enflexit.awb.core.ui.AwbProjectTab;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbUiConfiguration;
@@ -77,7 +79,6 @@ import de.enflexit.awb.desktop.project.ProjectWindow;
 import de.enflexit.awb.desktop.project.update.ProjectRepositoryExplorerDialog;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.AwbLookAndFeelInfo;
@@ -93,7 +94,7 @@ import de.enflexit.language.Language;
  *
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem, JToolBar, JButton>, ApplicationListener {
+public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem, JToolBar, JButton>, ApplicationListener, AwbPerspectiveServiceListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -186,6 +187,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// --- Load AwbUiConfiguration -------------------------
 		this.applyUiConfiguration();
 		
+		// --- Add the MainWindow as an Perspective Listener -----
+		AwbPerspective.addPerspectiveServiceListener(this);
+		
 		// --- Set size by using local Window controller ------------
 		Dimension frameSize = this.getWindowSizeAndPostionController().getOptimalSize();
 		this.setPreferredSize(frameSize);
@@ -275,6 +279,8 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	@Override
 	public void dispose() {
+		// --- Remove the MainWindow as an Perspective Listener -----
+		AwbPerspective.removePerspectiveServiceListener(this);
 		// --- Remove the MainWindow as an Application Listener -----
 		Application.removeApplicationListener(this);
 		// --- Just call super method -------------------------------
@@ -461,24 +467,41 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		return jMenuWorkbench;
 	}
 	
-	/**
-	 * Returns the AwbPerspectiveService that matches the specified class name.
-	 *
-	 * @param perspectiveClassName the perspective class name
-	 * @return the awb perspective service
-	 */
-	private AwbPerspectiveService getAwbPerspectiveService(String perspectiveClassName) {
+	
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.core.ui.AwbPerspectiveServiceListener#addedPerspectiveService(de.enflexit.awb.core.ui.AwbPerspectiveService)
+	*/
+	@Override
+	public void addedPerspectiveService(AwbPerspectiveService service) {
+		this.setJMenuPerspective();
 		
-		List<AwbPerspectiveService> servicesList = ServiceFinder.findServices(AwbPerspectiveService.class);
-		if (servicesList!=null) {
-			for (AwbPerspectiveService pService : servicesList) {
-				if (pService.getClass().getName().equals(perspectiveClassName)) return pService;
-			}
-		}
-		return null;
 	}
+
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.core.ui.AwbPerspectiveServiceListener#removedPerspectiveService(de.enflexit.awb.core.ui.AwbPerspectiveService)
+	*/
+	@Override
+	public void removedPerspectiveService(AwbPerspectiveService service) {
+		this.setJMenuPerspective();
+		this.updateUiConfiguration();
+	}	
 	
 	
+	/**
+	 * Updates the ui configuration.
+	 */
+	public void updateUiConfiguration() {
+		this.updateUiConfiguration(null);
+	}
+	/**
+	 * Updates the ui configuration.
+	 * @param perspectiveClassName the perspective class name
+	 */
+	public void updateUiConfiguration(String perspectiveClassName) {
+		Application.getGlobalInfo().setCurrentPerspectiveClassName(perspectiveClassName);
+		this.setUiConfiguration(null);
+		this.applyUiConfiguration();
+	}
 	/**
 	 * Returns the current AwbUiConfiguration.
 	 * @return the AwbUiConfiguration
@@ -488,7 +511,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			// --- Get registered PerspectiveService ----------------
 			String currPerspectiveClassName = Application.getGlobalInfo().getCurrentPerspectiveClassName();  
 			if (currPerspectiveClassName!=null) {
-				AwbPerspectiveService pService = this.getAwbPerspectiveService(currPerspectiveClassName);
+				AwbPerspectiveService pService = AwbPerspective.getAwbPerspectiveService(currPerspectiveClassName);
 				if (pService!=null) {
 					awbUiConfiguration = pService.getAwbUiConfiguration();
 				}
@@ -549,6 +572,11 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	public void applyUiConfiguration() {
 
 		// ------------------------------------------------
+		// --- Update perspective menu --------------------
+		this.setJMenuPerspective();
+
+		
+		// ------------------------------------------------
 		// --- Set application title ----------------------
 		String appTitle = this.getUiConfiguration().getApplicationTitle();
 		if (appTitle!=null && appTitle.isBlank()==false) {
@@ -607,17 +635,18 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent aEvent) {
-	
-		if (aEvent.getApplicationEvent()==ApplicationEvent.PROJECT_FOCUSED) {
+
+		if (aEvent.getApplicationEvent() == ApplicationEvent.PROJECT_FOCUSED) {
 			// --- Check for new awbUiConfiguration -------
 			Project currProject = (Project) aEvent.getEventObject();
-			if (currProject!=null) {
+			if (currProject != null) {
 				this.setUiConfiguration(currProject.getProjectUiConfiguration());
 			} else {
 				this.setUiConfiguration(null);
 			}
 			// --- Apply new UI configuration -------------
 			this.applyUiConfiguration();
+
 		}
 	}
 	
@@ -1017,9 +1046,67 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainView.addSeparator();
 			jMenuMainView.add(new CWMenuItem("ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png"));
 			jMenuMainView.add(new CWMenuItem("ViewHeapMonitor", Language.translate("Heap-Monitor ein- oder ausblenden"), "MBHeapMonitor.png"));
+			
+			// --- Menue 'Perspektive' --------------------
+			jMenuMainView.addSeparator();
+			jMenuMainView.add(this.getJMenuPerspective());
+			
+
+			
 		}
 		return jMenuMainView;
 	}
+	
+	private JMenu getJMenuPerspective() {
+		if (jMenuPerspective == null) {
+			jMenuPerspective = new JMenu(Language.translate("Perspektive"));
+			this.setJMenuPerspective();
+		}
+		return jMenuPerspective;
+	}
+	
+	private void setJMenuPerspective() {
+
+		this.getJMenuPerspective().removeAll();
+		ButtonGroup perspectiveGroup = new ButtonGroup();
+		JRadioButtonMenuItem newMenuItem;
+		boolean isAlreadySelectedPerspective = false;
+
+		// --- Add Services as menu items ---------------------------
+		List<AwbPerspectiveService> pServices = AwbPerspective.getAwbPerspectiveServiceList();
+		for (AwbPerspectiveService pService : pServices) {
+
+			boolean isPerspectiveSelected = pService.getClass().getName()
+					.equals(Application.getGlobalInfo().getCurrentPerspectiveClassName());
+			if (isPerspectiveSelected == true)
+				isAlreadySelectedPerspective = true;
+
+			newMenuItem = new JRadioButtonMenuItem(pService.getName(), isPerspectiveSelected);
+			newMenuItem.setActionCommand(pService.getClass().getName());
+			newMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					MainWindow.this.updateUiConfiguration(ae.getActionCommand());
+				}
+			});
+
+			this.getJMenuPerspective().add(newMenuItem);
+			perspectiveGroup.add(newMenuItem);
+		}
+
+		// --- Add default perspective ------------------------------
+		newMenuItem = new JRadioButtonMenuItem("AWB Default Perspective", !isAlreadySelectedPerspective);
+		newMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MainWindow.this.updateUiConfiguration();
+			}
+
+		});
+		this.getJMenuPerspective().add(newMenuItem, 0);
+		perspectiveGroup.add(newMenuItem);
+	}
+	
 
 	private ActionListener getViewActionListener() {
 		if (viewActionListener==null) {
@@ -1147,7 +1234,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		if (jMenuExtra == null) {
 			jMenuExtra = new JMenu("Extras");
 			jMenuExtra.setText(Language.translate("Extras"));
-
+ 
 			// --- Menue 'Sprache' ---
 			jMenuExtraLang = new JMenu();
 			jMenuExtraLang.setText(Language.translate("Sprache"));
@@ -1315,11 +1402,12 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	public JMenu getJMenuMainWindow() {
 		if (jMenuMainWindows == null) {
 			jMenuMainWindows = new JMenu("Fenster");
-			jMenuMainWindows.setText(Language.translate("Fenster"));	
-			
+			jMenuMainWindows.setText(Language.translate("Fenster"));		
 		}
 		return jMenuMainWindows;
 	}
+	
+
 
 	// ------------------------------------------------------------
 	// --- Menu Help ----------------------------------------------
@@ -2265,8 +2353,4 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	// ----------------------------------------------------
 	// --- Test and debug area -------------------- End ---
 	// ----------------------------------------------------
-
-	
-
-	
 }
