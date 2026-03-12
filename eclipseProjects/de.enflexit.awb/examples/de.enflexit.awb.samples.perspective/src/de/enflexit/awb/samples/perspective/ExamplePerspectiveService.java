@@ -13,7 +13,7 @@ import de.enflexit.awb.core.ui.AwbUiConfiguration;
  */
 public class ExamplePerspectiveService implements AwbPerspectiveService{
 	
-	public static final String SERVICE_NAME = "ExamplePerspectiveService";
+	public static final String SERVICE_NAME = "Example Perspective";
 	private AwbUiConfiguration uiConfig;
 	
 	/* (non-Javadoc)
