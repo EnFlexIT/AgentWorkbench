@@ -604,6 +604,7 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 				if (wasExpanded==true) {
 					this.getDataSourceTree().expandPath(selection);
 				}
+				
 			} else if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SERIES_ADDED)) {
 				AbstractDataSeriesConfiguration newSeries = (AbstractDataSeriesConfiguration) evt.getNewValue();
 				AbstractDataSourceConfiguration parentSource = (AbstractDataSourceConfiguration) evt.getOldValue(); 
@@ -617,17 +618,20 @@ public class TimeSeriesDataProviderConfigurationPanel extends JPanel implements 
 						this.getDataSourceTree().expandPath(parentPath);
 					}
 				}
+				
 			} else if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SERIES_REMOVED)) {
 				TreePath parentPath = this.getDataSourceTree().getSelectionPath().getParentPath();
 				this.getDataSourceTree().expandPath(parentPath);
-				System.out.println("Data series removed");
+				
 			} else if (evt.getPropertyName().equals(AbstractDataSourceConfiguration.DATA_SERIES_CLEARED)) {
 				DefaultMutableTreeNode sourceNode = (DefaultMutableTreeNode) this.getDataSourceTree().getSelectionPath().getLastPathComponent();
 				sourceNode.removeAllChildren();
+				
 			} else if (evt.getPropertyName().equals(TimeSeriesDataProvider.DATA_SOURCE_ADDED)) {
 				AbstractDataSourceConfiguration newSourceConfig = (AbstractDataSourceConfiguration) evt.getNewValue();
 				this.getRootNode().add(this.createDataSourceNode(newSourceConfig));
 				this.getTreeModel().reload();
+				
 			} else if (evt.getPropertyName().equals(TimeSeriesDataProvider.DATA_SOURCE_REMOVED)) {
 				AbstractDataSourceConfiguration removedConfiguration = (AbstractDataSourceConfiguration) evt.getOldValue();
 				DefaultMutableTreeNode dataSourceNode = this.findDataSourceNode(removedConfiguration);

@@ -454,22 +454,31 @@ public class TimeSeriesDataExplorationPanel extends JPanel implements ActionList
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+
 		if (ae.getSource()==this.getJComboBoxDataSource()) {
 			String selectedSourceName = (String) this.getJComboBoxDataSource().getSelectedItem();
 			if (selectedSourceName.equals(COMBOBOX_ENTRY_NOTHING_SELECTED)==false) {
 				AbstractDataSource sourceConfig = TimeSeriesDataProvider.getInstance().getDataSource(selectedSourceName);
 				this.setSelectedDataSource(sourceConfig);
 			}
+			
 		} else if (ae.getSource()==this.getJComboBoxDataSeries()) {
+			String selectedSourceName = this.selectedDataSource==null ? null : this.selectedDataSource.getName();
 			String selectedSeriesName = (String) this.getJComboBoxDataSeries().getSelectedItem();
-			AbstractDataSeries selectedSeries = TimeSeriesDataProvider.getInstance().getDataSource(this.selectedDataSource.getName()).getDataSeries(selectedSeriesName);
-			this.setSelectedDataSeries(selectedSeries);
+			if (selectedSourceName!=null && selectedSeriesName!=null && selectedSeriesName.equals(COMBOBOX_ENTRY_NOTHING_SELECTED)==false) {
+				AbstractDataSeries selectedSeries = TimeSeriesDataProvider.getInstance().getDataSource(selectedSourceName).getDataSeries(selectedSeriesName);
+				this.setSelectedDataSeries(selectedSeries);
+			}
+			
 		} else if (ae.getSource()==this.getJRadioButtonSingleValue()) {
 			this.getDateTimeWidgetTo().setEnabled(false);
+			
 		} else if (ae.getSource()==this.getJRadioButtonValueRange()) {
 			this.getDateTimeWidgetTo().setEnabled(true);
+			
 		} else if (ae.getSource()==this.getJButtonRequestData()) {
-			requestData();
+			this.requestData();
+			
 		}
 	}
 

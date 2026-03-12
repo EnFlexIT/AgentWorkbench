@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -284,7 +283,6 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		this.csvDataFile = csvDataFile;
 		if (csvDataFile!=null && csvDataFile.exists()) {
 			this.csvData = this.readCsvData(csvDataFile);
-			this.removeEmptyColumns();
 			this.rebuildTableModel();
 		} else {
 			this.csvData=null;
@@ -292,69 +290,13 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 		}
 	}
 	
-	/**
-	 * Removes empty columns from the data set.
-	 */
-	private void removeEmptyColumns() {
-		
-		if (this.csvData!=null) {
-			
-			ArrayList<String> colsToRemove = new ArrayList<>();
-			
-			// --- Iterate over all columns -----------------------------------
-			for (int colIndex=0; colIndex<this.csvData.get(0).size(); colIndex++) {
-				boolean empty = true;
-				
-				for (int rowIndex=1; rowIndex<this.csvData.size(); rowIndex++) {
-					String entry = this.csvData.get(rowIndex).get(colIndex);
-					
-					if (entry!=null && entry.isBlank()==false) {
-						// --- One entry found -> not empty -------------------
-						empty=false;
-						break;
-					}
-				}
-				if (empty==true) {
-					// --- No entries found -> empty -> mark to remove --------
-					colsToRemove.add(this.csvData.get(0).get(colIndex));
-				}
-			}
-			
-			// --- Remove the previously marked columns -----------------------
-			for (String colToRemove : colsToRemove) {
-				int colIndex = this.getIndexForColumn(colToRemove);
-				if (colIndex>=0) {
-					for (Vector<String> row : this.csvData) {
-						row.remove(colIndex);
-					}
-				}
-			}
-			
-		}
-	}
-	
-	/**
-	 * Gets the index for the column with the specified name.
-	 * @param columnHeader the column header
-	 * @return the index for column, -1 if not found
-	 */
-	private int getIndexForColumn(String columnHeader) {
-		if (this.csvData!=null) {
-			for (int i=0; i<this.getCsvData().get(0).size();i++) {
-				if (this.getCsvData().get(0).get(i).equals(columnHeader)) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
 
 	/**
 	 * Choose the csv file.
 	 */
 	private void chooseCsvFile() {
+
 		boolean changeFile = true;
-		
 		// --- If the current data source has configured data series, 
 		if (this.getCurrentDataSourceConfiguration().getDataSeriesConfigurations().size()>0) {
 			String message = "By changing the CSV file, all configured data series for this data source\nwill be discarded! Are you sure?";
@@ -644,10 +586,11 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		
 		if (ae.getSource()==this.getJComboBoxConfigurationScope()) {
-			ConfigurationScope configScope = (ConfigurationScope) this.getJComboBoxConfigurationScope().getSelectedItem();
 			
 			// --- Some checks required if project scope was chosen
+			ConfigurationScope configScope = (ConfigurationScope) this.getJComboBoxConfigurationScope().getSelectedItem();
 			if (configScope==ConfigurationScope.PROJECT) {
 				if (Application.getProjectFocused()==null) {
 					JOptionPane.showMessageDialog(this, "No active project, storing in project scope is not possible!", "No active Project!", JOptionPane.ERROR_MESSAGE);
@@ -656,21 +599,25 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 				} else {
 					if (this.isInProjectFolder(this.getCsvDataFile())==false) {
 						JOptionPane.showMessageDialog(this, "The chosen file is not inside the project folder! Since project scope configurations are shared with the project, this is likely to cause problems!", "File not in project folder!", JOptionPane.WARNING_MESSAGE);
+						this.getJComboBoxConfigurationScope().setSelectedItem(ConfigurationScope.APPLICATION);
+						return;
 					}
 				}
 			}
 			this.getDataSourceConfiguration().setConfigurationScope(configScope);
 			this.checkAndAdjustFilePath();
+			
 		} else if (ae.getSource()==this.getJButtonFormatCheck()) {
 			this.checkTimeFormat();
+			
 		} else if (ae.getSource()==this.getJCheckBoxHasHeadline()) {
 			this.getCurrentDataSourceConfiguration().setHeadline(this.getJCheckBoxHasHeadline().isSelected());
 			this.setCsvDataFile(csvDataFile);	// Trigger a reload
+			
 		} else if (ae.getSource()==this.getJButtonAutoGenerate()) {
 			this.autoGenerateSeries();
-		}
-		
-		else if (ae.getSource()==this.getJButtonLoad()) {
+			
+		} else if (ae.getSource()==this.getJButtonLoad()) {
 			this.chooseCsvFile();
 		}
 	}
@@ -680,6 +627,9 @@ public class CsvDataSourceConfigurationPanel extends AbstractDataSourceConfigura
 	 *  application scope. This method checks if that is the case, and adjusts the path accordingly if not.  
 	 */
 	private void checkAndAdjustFilePath() {
+
+		if (Application.getProjectFocused()==null) return;
+		
 		CsvDataSourceConfiguration csvConfig = (CsvDataSourceConfiguration) this.getDataSourceConfiguration(); 
 		Path filePath = Paths.get(csvConfig.getCsvFilePath());
 		Path projectFolderPath = new File(Application.getProjectFocused().getProjectFolderFullPath()).toPath();

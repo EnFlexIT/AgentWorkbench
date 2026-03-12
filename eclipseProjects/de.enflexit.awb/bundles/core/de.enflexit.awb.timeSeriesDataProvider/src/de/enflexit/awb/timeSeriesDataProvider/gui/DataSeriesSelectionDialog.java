@@ -10,6 +10,8 @@ import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSeries;
 import de.enflexit.awb.timeSeriesDataProvider.AbstractDataSource;
 import de.enflexit.awb.timeSeriesDataProvider.TimeSeriesDataProvider;
 import de.enflexit.common.swing.AwbThemeColor;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -49,14 +51,19 @@ public class DataSeriesSelectionDialog extends JDialog implements ActionListener
 		super(owner);
 		this.initialize();
 	}
-
+	/**
+	 * Initializes the dialog.
+	 */
 	private void initialize() {
-		getContentPane().add(getDataSeriesSelectionPanel(), BorderLayout.CENTER);
-		getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
-		
 		this.setTitle("Select a Data Series");
 		this.setSize(450, 175);
 		this.setModal(true);
+		
+		this.getContentPane().add(this.getDataSeriesSelectionPanel(), BorderLayout.CENTER);
+		this.getContentPane().add(this.getButtonsPanel(), BorderLayout.SOUTH);
+		
+		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		
 	}
 
 	/**
