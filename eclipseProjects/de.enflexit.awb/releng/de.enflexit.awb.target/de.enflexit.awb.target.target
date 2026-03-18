@@ -51,6 +51,27 @@
 					<version>1.15.0</version>
 					<type>jar</type>
 				</dependency>
+				<!-- Apache commons-collections4 -->
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-collections4</artifactId>
+					<version>4.5.0</version>
+					<type>jar</type>
+				</dependency>
+				<!-- Apache commons-math3 -->
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-math3</artifactId>
+					<version>3.6.1</version>
+					<type>jar</type>
+				</dependency>
+				<!-- JAXB integration as bundle -->
+				<dependency>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+					<version>4.0.6</version>
+					<type>jar</type>
+				</dependency>
 				<!-- JAXB integration as bundle -->
 				<dependency>
 					<groupId>com.sun.xml.bind</groupId>
@@ -487,6 +508,20 @@
 					<groupId>io.jsonwebtoken</groupId>
 					<artifactId>jjwt-gson</artifactId>
 					<version>0.13.0</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- From here, FastUtil dependencies 				             -->
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<location includeConfigurePhase="true" includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>it.unimi.dsi</groupId>
+					<artifactId>fastutil</artifactId>
+					<version>8.5.18</version>
 					<type>jar</type>
 				</dependency>
 			</dependencies>
