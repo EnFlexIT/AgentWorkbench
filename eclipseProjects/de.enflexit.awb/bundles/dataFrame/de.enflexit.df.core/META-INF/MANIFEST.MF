@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Data Frame - Core Bundel
+Bundle-Vendor: EnFlex.IT
+Bundle-SymbolicName: de.enflexit.df.core
+Automatic-Module-Name: de.enflexit.df.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: de.enflexit.awb.baseUI,
+ de.enflexit.awb.baseUI.mainWindow,
+ de.enflexit.awb.core,
+ de.enflexit.awb.core.config,
+ de.enflexit.awb.core.ui
+Service-Component: OSGI-INF/dataFramePerspectiveService.xml
