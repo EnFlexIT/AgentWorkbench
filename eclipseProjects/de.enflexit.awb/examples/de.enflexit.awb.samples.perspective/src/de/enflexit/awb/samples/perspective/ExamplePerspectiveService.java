@@ -5,6 +5,7 @@ import de.enflexit.awb.core.ui.AwbMainWindowToolBarGroup;
 import de.enflexit.awb.core.ui.AwbPerspectiveService;
 import de.enflexit.awb.core.ui.AwbProjectTab;
 import de.enflexit.awb.core.ui.AwbUiConfiguration;
+import de.enflexit.awb.core.ui.AwbUiExtension;
 
 
 /**
@@ -48,6 +49,14 @@ public class ExamplePerspectiveService implements AwbPerspectiveService{
 			
 		}
 		return uiConfig;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.ui.AwbPerspectiveService#getAwbUiExtension()
+	 */
+	@Override
+	public AwbUiExtension getAwbUiExtension() {
+		return null;
 	}
 
 }

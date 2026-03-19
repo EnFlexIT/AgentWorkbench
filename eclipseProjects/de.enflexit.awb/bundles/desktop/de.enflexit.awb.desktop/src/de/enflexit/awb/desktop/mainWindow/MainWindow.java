@@ -474,9 +474,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	@Override
 	public void addedPerspectiveService(AwbPerspectiveService service) {
 		this.setJMenuPerspective();
-		
 	}
-
 	/* (non-Javadoc)
 	* @see de.enflexit.awb.core.ui.AwbPerspectiveServiceListener#removedPerspectiveService(de.enflexit.awb.core.ui.AwbPerspectiveService)
 	*/
@@ -485,16 +483,26 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		this.setJMenuPerspective();
 		this.updateUiConfiguration();
 	}	
-	
+	/**
+	 * Returns the currently used AwbPerspectiveServicee.
+	 * @return the current AwbPerspectiveService or <code>null</code>
+	 */
+	private AwbPerspectiveService getAwbPerspectiveService() {
+		String currPerspectiveClassName = Application.getGlobalInfo().getCurrentPerspectiveClassName();  
+		if (currPerspectiveClassName!=null) {
+			return AwbPerspective.getAwbPerspectiveService(currPerspectiveClassName);
+		}
+		return null;
+	}
 	
 	/**
-	 * Updates the ui configuration.
+	 * Updates the UI configuration.
 	 */
 	public void updateUiConfiguration() {
 		this.updateUiConfiguration(null);
 	}
 	/**
-	 * Updates the ui configuration.
+	 * Updates the UI configuration.
 	 * @param perspectiveClassName the perspective class name
 	 */
 	public void updateUiConfiguration(String perspectiveClassName) {
@@ -509,12 +517,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	public AwbUiConfiguration getUiConfiguration() {
 		if (awbUiConfiguration==null) {
 			// --- Get registered PerspectiveService ----------------
-			String currPerspectiveClassName = Application.getGlobalInfo().getCurrentPerspectiveClassName();  
-			if (currPerspectiveClassName!=null) {
-				AwbPerspectiveService pService = AwbPerspective.getAwbPerspectiveService(currPerspectiveClassName);
-				if (pService!=null) {
-					awbUiConfiguration = pService.getAwbUiConfiguration();
-				}
+			AwbPerspectiveService pService = this.getAwbPerspectiveService();
+			if (pService!=null) {
+				awbUiConfiguration = pService.getAwbUiConfiguration();
 			}
 		
 			// --- Read UI-Configuration from file ------------------ 
@@ -574,7 +579,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// ------------------------------------------------
 		// --- Update perspective menu --------------------
 		this.setJMenuPerspective();
-
 		
 		// ------------------------------------------------
 		// --- Set application title ----------------------
@@ -602,7 +606,8 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 				}
 				
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				System.err.println("[" + this.getClass().getSimpleName() + "] Error while loading application icon image named '" + appIconFileName + "'!");
+				//ex.printStackTrace();
 			}
 		} else {
 			this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
@@ -637,16 +642,23 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	public void onApplicationEvent(ApplicationEvent aEvent) {
 
 		if (aEvent.getApplicationEvent() == ApplicationEvent.PROJECT_FOCUSED) {
-			// --- Check for new awbUiConfiguration -------
+			// --- Check for new awbUiConfiguration ---------------------------
 			Project currProject = (Project) aEvent.getEventObject();
 			if (currProject != null) {
-				this.setUiConfiguration(currProject.getProjectUiConfiguration());
+				AwbUiConfiguration uiConfig = currProject.getProjectUiConfiguration();
+				if (uiConfig!=null) {
+					// --- Use the project specific UI configuration ----------
+					this.setUiConfiguration(uiConfig);
+				} else {
+					// --- Use the applications UI configuration --------------
+					currProject.setProjectUiConfiguration(this.getUiConfiguration());
+				}
+				
 			} else {
 				this.setUiConfiguration(null);
 			}
-			// --- Apply new UI configuration -------------
+			// --- Apply new UI configuration ---------------------------------
 			this.applyUiConfiguration();
-
 		}
 	}
 	
@@ -1076,10 +1088,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		List<AwbPerspectiveService> pServices = AwbPerspective.getAwbPerspectiveServiceList();
 		for (AwbPerspectiveService pService : pServices) {
 
-			boolean isPerspectiveSelected = pService.getClass().getName()
-					.equals(Application.getGlobalInfo().getCurrentPerspectiveClassName());
-			if (isPerspectiveSelected == true)
+			boolean isPerspectiveSelected = pService.getClass().getName().equals(Application.getGlobalInfo().getCurrentPerspectiveClassName());
+			if (isPerspectiveSelected == true) {
 				isAlreadySelectedPerspective = true;
+			}
 
 			newMenuItem = new JRadioButtonMenuItem(pService.getName(), isPerspectiveSelected);
 			newMenuItem.setActionCommand(pService.getClass().getName());
@@ -1099,7 +1111,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		newMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MainWindow.this.updateUiConfiguration();
+				MainWindow.this.updateUiConfiguration(null);
 			}
 
 		});

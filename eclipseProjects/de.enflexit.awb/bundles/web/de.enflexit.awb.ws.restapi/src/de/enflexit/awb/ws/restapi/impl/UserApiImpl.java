@@ -121,9 +121,6 @@ public class UserApiImpl extends UserApiService {
 	@Override
 	public Response logout(SecurityContext securityContext) throws NotFoundException {
 		// --- Nothing to do here ! ---
-		
-		
-		
 		return null;
 	}
     

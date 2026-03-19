@@ -3,13 +3,15 @@ package de.enflexit.awb.baseUI.systemtray;
 import java.awt.MenuItem;
 import java.util.Vector;
 
+import de.enflexit.awb.core.ui.AwbUiExtension;
+
 /**
  * The Class TrayIconMenuExtension can be extended to define individual menus, menu items
  * and toolbar components to the Swing main window of Agent.Workbench.
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface AwbTrayIconMenuExtension {
+public interface AwbTrayIconMenuExtension extends AwbUiExtension {
 
 	/**
 	 * Initializes the extension. Use this method to add your individual 

@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.enflexit.ssi</groupId>
+	<artifactId>de.enflexit.df.tablesaw.depPull</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<tablesaw-version>0.44.4</tablesaw-version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>tech.tablesaw</groupId>
+			<artifactId>tablesaw-core</artifactId>
+			<version>${tablesaw-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>tech.tablesaw</groupId>
+			<artifactId>tablesaw-json</artifactId>
+			<version>${tablesaw-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>tech.tablesaw</groupId>
+			<artifactId>tablesaw-html</artifactId>
+			<version>${tablesaw-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>tech.tablesaw</groupId>
+			<artifactId>tablesaw-excel</artifactId>
+			<version>${tablesaw-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>tech.tablesaw</groupId>
+			<artifactId>tablesaw-jsplot</artifactId>
+			<version>${tablesaw-version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.2.0</version>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<description>Execute this Maven POM to download all Jung libs and its dependencies to the directory '/target/dependency' by calling 
+
+a) mvn dependency:copy-dependencies
+(for the jar-files) or 
+b) mvn dependency:copy-dependencies -Dclassifier=sources
+(for the jar-sources)</description>
+</project>
