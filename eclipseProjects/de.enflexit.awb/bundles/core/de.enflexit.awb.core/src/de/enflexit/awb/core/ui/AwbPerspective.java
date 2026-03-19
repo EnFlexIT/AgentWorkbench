@@ -23,7 +23,7 @@ public class AwbPerspective {
 	private static List<AwbPerspectiveServiceListener> getPerspectiveListenerList() {
 		if (perspectiveListenerList == null) {
 			perspectiveListenerList = new ArrayList<>();
-			// Start AwbPerspectiveServiceTracker
+			// --- Start AwbPerspectiveServiceTracker ---------------
 			AwbPerspective.startPerspectiveServiceTracker();
 		}
 		return perspectiveListenerList;
@@ -69,7 +69,6 @@ public class AwbPerspective {
 	}
 
 	
-	
 	/**
 	 * Returns the list of AwbPerspectiveServices.
 	 * @return the list of OSGI registered AwbPerspectiveServices
@@ -77,7 +76,6 @@ public class AwbPerspective {
 	public static List<AwbPerspectiveService> getAwbPerspectiveServiceList() {
 		return ServiceFinder.findServices(AwbPerspectiveService.class);
 	}
-	
 	
 	/**
 	 * Returns the AwbPerspectiveService that matches the specified class name.

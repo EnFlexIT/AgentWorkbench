@@ -1808,8 +1808,12 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			this.getProjectEditorWindow().setProjectTreeVisible(isProjectTreeVisible);
 		}
 	}
+	/**
+	 * Checks if the project tree is to be visible or not.
+	 * @return true, if is project tree visible
+	 */
 	public boolean isProjectTreeVisible() {
-		boolean isHideProjectTree = this.getProjectUiConfiguration().isHideProjectTree();
+		boolean isHideProjectTree = this.getProjectUiConfigurationNotNull().isHideProjectTree();
 		if (isHideProjectTree==true) return false;
 		return projectTreeVisible;
 	}
@@ -1839,11 +1843,27 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	 * @return true, if is project tab header visible
 	 */
 	public boolean isProjectTabHeaderVisible() {
-		boolean isHideProjectTree = this.getProjectUiConfiguration().isHideTabHeader();
+		boolean isHideProjectTree = this.getProjectUiConfigurationNotNull().isHideTabHeader();
 		if (isHideProjectTree==true) return false;
 		return projectTabHeaderVisible;
 	}
 	
+	
+	/**
+	 * Returns the projects UI configuration and will never return Null, but a default UI-configuration.
+	 * @return the AwbUiConfiguration for the current project
+	 */
+	public AwbUiConfiguration getProjectUiConfigurationNotNull() {
+		if (projectUiConfiguration==null) {
+			projectUiConfiguration = this.getProjectUiConfiguration();
+			// --- General thought: if nothing is defined, just use the application settings ---- 
+			// --- If not specified, create a default UI configuration that always works --------
+			if (projectUiConfiguration==null) {
+				projectUiConfiguration = new AwbUiConfiguration(this);
+			}
+		}
+		return projectUiConfiguration;
+	}
 	/**
 	 * Returns the projects UI configuration.
 	 * @return the AwbUiConfiguration for the current project
@@ -1852,11 +1872,16 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	public AwbUiConfiguration getProjectUiConfiguration() {
 		if (projectUiConfiguration==null) {
 			projectUiConfiguration = AwbUiConfiguration.load(this);
-			if (projectUiConfiguration==null) {
-				projectUiConfiguration = new AwbUiConfiguration(this);
-			}
+			// --- General thought: if nothing is defined, just use the application settings ---- 
 		}
 		return projectUiConfiguration;
+	}
+	/**
+	 * Sets the project UI configuration.
+	 * @param projectUiConfiguration the new project ui configuration
+	 */
+	public void setProjectUiConfiguration(AwbUiConfiguration projectUiConfiguration) {
+		this.projectUiConfiguration = projectUiConfiguration;
 	}
 	
 	
