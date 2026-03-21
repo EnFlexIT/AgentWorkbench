@@ -6,6 +6,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JToolBar;
 
 import de.enflexit.awb.baseUI.systemtray.TrayIconMenuExtension;
 import de.enflexit.awb.core.ui.AwbMainWindowMenu;
@@ -61,6 +63,18 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		return mainWindowMenuVector;
  	}
 	/**
+	 * Return the main window menu for the specified JMenu.
+	 *
+	 * @param jMenu the JMenu
+	 * @return the main window menu
+	 */
+	private MainWindowMenu getMainWindowMenu(JMenu jMenu) {
+		for (MainWindowMenu mwMenu : this.getMainWindowMenuVector()) {
+			if (mwMenu.getJMenu()==jMenu) return mwMenu;
+		}
+		return null;
+	}
+	/**
 	 * Adds the specified JMenu to the {@link MainWindow}.
 	 *
 	 * @param jMenu the JMmenu to be added
@@ -70,7 +84,9 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		if (jMenu==null) {
 			throw new NullPointerException("The specified menu to add is null!");
 		}
-		this.getMainWindowMenuVector().addElement(new MainWindowMenu(jMenu, indexPosition));
+		if (this.getMainWindowMenu(jMenu)==null) {
+			this.getMainWindowMenuVector().addElement(new MainWindowMenu(jMenu, indexPosition));
+		}
 	}
 	
 	
@@ -83,6 +99,18 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 			mainWindowMenuItemVector = new Vector<>();
 		}
 		return mainWindowMenuItemVector;
+	}
+	/**
+	 * Return the MainWindowMenuItem for the specified JMenuItem.
+	 *
+	 * @param jMenuItem the JMenuItem to search for
+	 * @return the MainWindowMenuItem found or <code>null</code>
+	 */
+	private MainWindowMenuItem getMainWindowMenuItem(JMenuItem jMenuItem) {
+		for (MainWindowMenuItem mwMenuItem : this.getMainWindowMenuItemVector()) {
+			if (mwMenuItem.getJMenuItem()==jMenuItem) return mwMenuItem;
+		}
+		return null;
 	}
 	/**
 	 * Adds the specified JMenuItem to the specified workbench window at the given index position.
@@ -99,7 +127,9 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		if (menuItemToAdd==null) {
 			throw new NullPointerException("The specified menu item to add is null.");
 		}
-		this.getMainWindowMenuItemVector().addElement(new MainWindowMenuItem(workbenchMenuToAddTo, menuItemToAdd, indexPosition, isUsePrefixSeparator));
+		if (this.getMainWindowMenuItem(menuItemToAdd)==null) {
+			this.getMainWindowMenuItemVector().addElement(new MainWindowMenuItem(workbenchMenuToAddTo, menuItemToAdd, indexPosition, isUsePrefixSeparator));
+		}
 	}
 	
 	/**
@@ -112,7 +142,18 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		}
 		return mainWindowToolBarComponentVector;
 	}
-	
+	/**
+	 * Return the MainWindowToolbarComponent for the specified JComponent for the toolbar.
+	 *
+	 * @param jComponent the JComponent to search for
+	 * @return the MainWindowToolbarComponent found or <code>null</code>
+	 */
+	private MainWindowToolbarComponent getMainWindowToolbarComponent(JComponent jComponent) {
+		for (MainWindowToolbarComponent mwToolbarComp : this.getMainWindowToolBarComponentVector()) {
+			if (mwToolbarComp.getJComponent()==jComponent) return mwToolbarComp;
+		}
+		return null;
+	}
 	/**
 	 * Adds the specified toolbar component to the toolbar.
 	 *
@@ -135,7 +176,9 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		if (toolbarComponentToAdd==null) {
 			throw new NullPointerException("The specified toolbar component to add is null.");
 		}
-		this.getMainWindowToolBarComponentVector().addElement(new MainWindowToolbarComponent(toolbarComponentToAdd, indexPosition, isUsePrefixSeparator, tbGrpoup));
+		if (this.getMainWindowToolbarComponent(toolbarComponentToAdd)==null) {
+			this.getMainWindowToolBarComponentVector().addElement(new MainWindowToolbarComponent(toolbarComponentToAdd, indexPosition, isUsePrefixSeparator, tbGrpoup));
+		}
 	}
 	
 	
@@ -181,6 +224,7 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		private JMenuItem jMenuItem;
 		private Integer indexPosition;
 		private boolean isUsePrefixSeparator;
+		private JPopupMenu.Separator separator;
 		
 		public MainWindowMenuItem(AwbMainWindowMenu awbMainWindowMenu, JMenuItem menuItem, Integer indexPosition, boolean isUsePrefixSeparator) {
 			this.setWorkbenchMenu(awbMainWindowMenu);
@@ -216,6 +260,13 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		public void setUsePrefixSeparator(boolean isUsePrefixSeparator) {
 			this.isUsePrefixSeparator = isUsePrefixSeparator;
 		}
+		
+		public JPopupMenu.Separator getSeparatorInstance() {
+			return separator;
+		}
+		public void setSeparatorInstance(JPopupMenu.Separator separator) {
+			this.separator = separator;
+		}
 	}
 
 	/**
@@ -228,6 +279,7 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		private Integer indexPosition;
 		private boolean isUsePrefixSeparator;
 		private AwbMainWindowToolBarGroup awbMainWindowToolBarGroup;
+		private JToolBar.Separator separator;
 
 		public MainWindowToolbarComponent(JComponent jComponent, Integer indexPosition, boolean isUsePrefixSeparator, AwbMainWindowToolBarGroup awbMainWindowToolBarGroup) {
 			this.setJComponent(jComponent);
@@ -262,6 +314,13 @@ public abstract class MainWindowExtension extends TrayIconMenuExtension {
 		}
 		public void setToolBarGroup(AwbMainWindowToolBarGroup awbMainWindowToolBarGroup) {
 			this.awbMainWindowToolBarGroup = awbMainWindowToolBarGroup;
+		}
+		
+		public JToolBar.Separator getSeparatorInstance() {
+			return separator;
+		}
+		public void setSeparatorInstance(JToolBar.Separator separator) {
+			this.separator = separator;
 		}
 	}
 	
