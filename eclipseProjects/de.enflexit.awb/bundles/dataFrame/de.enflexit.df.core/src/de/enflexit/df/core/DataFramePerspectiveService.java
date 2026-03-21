@@ -18,6 +18,7 @@ public class DataFramePerspectiveService implements AwbPerspectiveService {
 	public static final String DATA_ANALYTICS_PERSPECTIVE_NAME = "Data Analytics Perspective";
 
 	public AwbUiConfiguration uiConfiguration;
+	public DataFrameMainWindowExtension dfMainWindowExtension;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.ui.AwbPerspectiveService#getName()
@@ -70,8 +71,10 @@ public class DataFramePerspectiveService implements AwbPerspectiveService {
 	 */
 	@Override
 	public AwbUiExtension getAwbUiExtension() {
-		// TODO Auto-generated method stub
-		return null;
+		if (dfMainWindowExtension==null) {
+			dfMainWindowExtension = new DataFrameMainWindowExtension();
+		}
+		return dfMainWindowExtension;
 	}
 	
 }
