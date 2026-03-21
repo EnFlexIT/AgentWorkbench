@@ -5,6 +5,9 @@ import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
@@ -30,6 +33,8 @@ import de.enflexit.common.transfer.RecursiveFolderDeleter;
  */
 public class ProjectRepositoryUpdate extends Thread {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(ProjectRepositoryUpdate.class);
+	
 	private static final long UPDATE_CHECK_PERIOD = 1000 * 60 * 60 * 24; // - once a day -
 
 	private boolean debugUpdateProcedure = true;
@@ -345,7 +350,7 @@ public class ProjectRepositoryUpdate extends Thread {
 
 		// -- Check for the configure update site -------------------
 		if (this.currProject.getUpdateSite()==null || this.currProject.getUpdateSite().isEmpty()==true) {
-			this.printSystemOutput("No update-site was specified for the project '" + this.currProject.getProjectName() + "'!", true);
+			this.printSystemOutput("No update-site was specified for the project '" + this.currProject.getProjectName() + "'!", false);
 			return;
 		}
 		
@@ -691,11 +696,10 @@ public class ProjectRepositoryUpdate extends Thread {
 	 * @param isError the is error
 	 */
 	private void printSystemOutput(String message, boolean isError) {
-		String sysMessage = "[" + this.getClass().getSimpleName() + "] " + message;
 		if (isError) {
-			System.err.println(sysMessage);
+			LOGGER.error(message);
 		} else {
-			System.out.println(sysMessage);
+			LOGGER.info(message);
 		}
 	}
 	

@@ -73,6 +73,7 @@ import de.enflexit.awb.core.ui.AwbPerspectiveServiceListener;
 import de.enflexit.awb.core.ui.AwbProjectTab;
 import de.enflexit.awb.core.ui.AwbProjectWindow;
 import de.enflexit.awb.core.ui.AwbUiConfiguration;
+import de.enflexit.awb.core.ui.AwbUiExtension;
 import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.desktop.dialogs.StartAgentDialog;
 import de.enflexit.awb.desktop.project.ProjectWindow;
@@ -155,7 +156,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	private JButton jButtonSimPause;
 	private JButton jButtonSimStop;
 
-
+	private MainWindowExtensionCache mainWindowExtensionCache;
+	
+	
 	/**
 	 * Constructor of this class.
 	 */
@@ -287,7 +290,16 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		super.dispose();
 	}
 	
-	
+	/**
+	 * Returns the reminding MainWindowExtensionCache.
+	 * @return the main window extension cache
+	 */
+	private MainWindowExtensionCache getMainWindowExtensionCache() {
+		if (mainWindowExtensionCache==null) {
+			mainWindowExtensionCache = new MainWindowExtensionCache(this);
+		}
+		return mainWindowExtensionCache;
+	}
 	/**
 	 * Proceeds the main window extensions that are defines 
 	 * by the corresponding extension point.
@@ -309,9 +321,12 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
             System.err.println(ex.getMessage());
         }
 	}
+	
 	/**
 	 * Proceeds a single {@link MainWindowExtension} that was registered as extension.
+	 *
 	 * @param mwExtension the MainWindowExtension to proceed
+	 * @param remindElementsForRemoval the remind elements for removal
 	 */
 	private void proceedMainWindowExtension(MainWindowExtension mwExtension) {
 		
@@ -332,9 +347,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// --- Identity Provider ------------------------------------
 		// ----------------------------------------------------------
 		try {
-			if (mwExtension.getJButtonIdentityProvider()!=null) {
-				this.setIdentityProviderComponent(mwExtension.getJButtonIdentityProvider());
-			}
+			JButton jButtonIdentityProvider = mwExtension.getJButtonIdentityProvider();
+			this.setIdentityProviderComponent(jButtonIdentityProvider);
+			// --- Remind component ---------------------------------
+			this.getMainWindowExtensionCache().remindIdentityProvider(mwExtension, jButtonIdentityProvider);
 			
 		} catch (Exception ex) {
 			System.err.println(mwExtension.getClass().getName() + ": Error while initializing the MainWindowExtension.");
@@ -350,6 +366,8 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 				for (int i = 0; i < mwExtension.getMainWindowMenuVector().size(); i++) {
 					MainWindowMenu mwMenu = mwExtension.getMainWindowMenuVector().get(i);
 					this.addJMenu(mwMenu.getJMenu(), mwMenu.getIndexPosition());
+					// --- Remind component -------------------------
+					this.getMainWindowExtensionCache().remindMainWindowMenu(mwExtension, mwMenu);
 				}
 			}
 			
@@ -362,7 +380,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// --- Menu items -------------------------------------------
 		// ----------------------------------------------------------		
 		try {
-			// --- Check for single MenuItems ---------------------------
+			// --- Check for single MenuItems ------------------------
 			if (mwExtension.getMainWindowMenuItemVector().size()>0) {
 				// --- Add the specified menu items ----------------- 
 				for (int i = 0; i < mwExtension.getMainWindowMenuItemVector().size(); i++) {
@@ -387,9 +405,12 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 						// --- Add a separator also ? --------------- 
 						int indexPosition = jMenuToAddTo.getPopupMenu().getComponentIndex(mwMenuItem.getJMenuItem());
 						if (mwMenuItem.isUsePrefixSeparator()==true) {
-							jMenuToAddTo.add(new JPopupMenu.Separator(), indexPosition);
+							mwMenuItem.setSeparatorInstance(new JPopupMenu.Separator());
+							jMenuToAddTo.add(mwMenuItem.getSeparatorInstance(), indexPosition);
 						}
 						
+						// --- Remind component ----------------------
+						this.getMainWindowExtensionCache().remindMainWindowMenuItem(mwExtension, mwMenuItem);
 					}
 				} // end for
 			}
@@ -415,12 +436,16 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 					// --- Add a separator also ? -------------------
 					int indexPosition = this.getJToolBarApplication().getComponentIndex(mwToolbarComp.getJComponent());
 					if (mwToolbarComp.isUsePrefixSeparator()==true) {
+						mwToolbarComp.setSeparatorInstance(new JToolBar.Separator());
 						if (indexPosition == 0) {
-							this.addToolbarComponent(new JToolBar.Separator(), 1, tbGroup);
+							this.addToolbarComponent(mwToolbarComp.getSeparatorInstance(), 1, tbGroup);
 						} else if (indexPosition > 0) {
-							this.addToolbarComponent(new JToolBar.Separator(), indexPosition, tbGroup);
+							this.addToolbarComponent(mwToolbarComp.getSeparatorInstance(), indexPosition, tbGroup);
 						}
 					}
+					
+					// --- Remind component ----------------------
+					this.getMainWindowExtensionCache().remindMainWindowToolbarComponent(mwExtension, mwToolbarComp);
 				}
 			}
 			
@@ -430,7 +455,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		}
 		
 	}
-
+	
 	/**
 	 * Returns the specified workbench menu as JMenu.
 	 * @param wbMenu the {@link AwbMainWindowMenu}
@@ -494,6 +519,28 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		}
 		return null;
 	}
+	/**
+	 * Adds the perspectives main window extension.
+	 */
+	private void addPerspectivesMainWindowExtension() {
+		
+		// --- Do we have a currently used perspective? -----------------------
+		AwbPerspectiveService pService = this.getAwbPerspectiveService();
+		if (pService==null) return;
+
+		try {
+			// --- Does the perspective provide a MainWindowExtension
+			AwbUiExtension uiExtension = pService.getAwbUiExtension();
+			if (uiExtension instanceof MainWindowExtension) {
+				// --- Cast to MainWindowExtension ----------------------------
+				MainWindowExtension mwExt = (MainWindowExtension) uiExtension;
+				this.proceedMainWindowExtension(mwExt);
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Updates the UI configuration.
@@ -503,12 +550,28 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	}
 	/**
 	 * Updates the UI configuration.
-	 * @param perspectiveClassName the perspective class name
+	 * @param newPerspectiveClassName the perspective class name
 	 */
-	public void updateUiConfiguration(String perspectiveClassName) {
-		Application.getGlobalInfo().setCurrentPerspectiveClassName(perspectiveClassName);
+	public void updateUiConfiguration(String newPerspectiveClassName) {
+
+		// --------------------------------------------------------------------
+		// --- Get the currently used perspective service ---------------------
+		AwbPerspectiveService currPersService = this.getAwbPerspectiveService();
+		AwbUiExtension uiExtension = currPersService==null ? null : currPersService.getAwbUiExtension();
+		if (currPersService!=null) {
+			// --- Remove MainWindowExtension that belongs to the service -----
+			this.getMainWindowExtensionCache().removeMainWindowExtension(uiExtension.getClass().getName());
+		}
+
+		// --------------------------------------------------------------------
+		// --- Set the new perspective service --------------------------------
+		Application.getGlobalInfo().setCurrentPerspectiveClassName(newPerspectiveClassName);
 		this.setUiConfiguration(null);
 		this.applyUiConfiguration();
+		
+		// --------------------------------------------------------------------
+		// --- Set UI configuration to open projects --------------------------
+		Application.getProjectsLoaded().setUiConfiguration(this.getUiConfiguration());
 	}
 	/**
 	 * Returns the current AwbUiConfiguration.
@@ -574,7 +637,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	/**
 	 * Applies the current {@link AwbUiConfiguration}.
 	 */
-	public void applyUiConfiguration() {
+	private void applyUiConfiguration() {
 
 		// ------------------------------------------------
 		// --- Update perspective menu --------------------
@@ -632,6 +695,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 				jToolbarToWorkOn.setVisible(!isToHide);
 			}
 		}
+		
+		// ------------------------------------------------
+		// --- if defined, add the MainWindowExtension ----
+		this.addPerspectivesMainWindowExtension();
 		
 	}
 	
@@ -1040,6 +1107,10 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainView = new JMenu("Ansicht");
 			jMenuMainView.setText(Language.translate("Ansicht"));
 
+			// --- Menu 'Perspective' ---------------------
+			jMenuMainView.add(this.getJMenuPerspective());
+			jMenuMainView.addSeparator();
+			
 			// --------------------------------------------
 			// --- View for Developer or End user ---------
 			// --------------------------------------------
@@ -1058,13 +1129,6 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainView.addSeparator();
 			jMenuMainView.add(new CWMenuItem("ViewConsole", Language.translate("Konsole ein- oder ausblenden"), "MBConsole.png"));
 			jMenuMainView.add(new CWMenuItem("ViewHeapMonitor", Language.translate("Heap-Monitor ein- oder ausblenden"), "MBHeapMonitor.png"));
-			
-			// --- Menue 'Perspektive' --------------------
-			jMenuMainView.addSeparator();
-			jMenuMainView.add(this.getJMenuPerspective());
-			
-
-			
 		}
 		return jMenuMainView;
 	}

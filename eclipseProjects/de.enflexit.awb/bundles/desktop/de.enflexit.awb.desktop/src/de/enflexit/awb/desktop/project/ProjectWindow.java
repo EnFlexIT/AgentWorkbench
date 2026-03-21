@@ -1264,6 +1264,9 @@ public class ProjectWindow extends JInternalFrame implements AwbProjectWindow, O
 		} else if (updateReason.equals(Project.VIEW_TabsLoaded)) {
 			this.setFocus2StartTab();
 			
+		} else if (updateReason.equals(Project.VIEW_ChangedUiConfiguration)) {
+			this.setViewForDeveloperOrEndUser();
+			
 		} else if (updateReason.equals(Project.PROJECT_DESKTOP_COMPONENT_ADDED)) {
 			this.updateProjectDesktopChilds();
 			

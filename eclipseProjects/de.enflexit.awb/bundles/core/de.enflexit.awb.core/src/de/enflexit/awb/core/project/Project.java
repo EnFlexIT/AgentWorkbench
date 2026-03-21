@@ -123,6 +123,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	@XmlTransient public static final String VIEW_Maximize = "MaximizeView";
 	@XmlTransient public static final String VIEW_Restore = "RestoreView";
 	@XmlTransient public static final String VIEW_TabsLoaded = "TabsLoaded";
+	@XmlTransient public static final String VIEW_ChangedUiConfiguration = "ChangedUiConfiguration";
 
 	// --- Constants for the Project Desktop ------------------------
 	@XmlTransient public static final String PROJECT_DESKTOP_COMPONENT_ADDED   = "ProjectDesktopComponentAdded";
@@ -1860,6 +1861,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			// --- If not specified, create a default UI configuration that always works --------
 			if (projectUiConfiguration==null) {
 				projectUiConfiguration = new AwbUiConfiguration(this);
+				this.setNotChangedButNotify(VIEW_ChangedUiConfiguration);
 			}
 		}
 		return projectUiConfiguration;
@@ -1871,8 +1873,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	@XmlTransient
 	public AwbUiConfiguration getProjectUiConfiguration() {
 		if (projectUiConfiguration==null) {
+			// --- Load from file within the project ----------------------------------------------
 			projectUiConfiguration = AwbUiConfiguration.load(this);
-			// --- General thought: if nothing is defined, just use the application settings ---- 
+			// --- General thought: if nothing is defined, use the application settings ----------- 
 		}
 		return projectUiConfiguration;
 	}
@@ -1882,6 +1885,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	 */
 	public void setProjectUiConfiguration(AwbUiConfiguration projectUiConfiguration) {
 		this.projectUiConfiguration = projectUiConfiguration;
+		this.setNotChangedButNotify(VIEW_ChangedUiConfiguration);
 	}
 	
 	

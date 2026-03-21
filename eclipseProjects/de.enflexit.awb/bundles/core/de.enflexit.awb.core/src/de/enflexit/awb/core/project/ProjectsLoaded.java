@@ -24,6 +24,7 @@ import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbProjectExportDialog;
 import de.enflexit.awb.core.ui.AwbProjectInteractionDialog;
+import de.enflexit.awb.core.ui.AwbUiConfiguration;
 import de.enflexit.awb.core.update.ProjectRepositoryExport;
 import de.enflexit.awb.core.update.repositoryModel.RepositoryEntry;
 import de.enflexit.language.Language;
@@ -346,7 +347,20 @@ public class ProjectsLoaded {
 			Application.getMainWindow().setProjectView();
 		}
 	}
-	
+	/**
+	 * Sets the specified UI-configuration to the projects.
+	 * @param newUiConfiguration the new UI configuration
+	 */
+	public void setUiConfiguration(AwbUiConfiguration newUiConfiguration) {
+
+		for (Project project : this.getProjectsOpen()) {
+			try {
+				project.setProjectUiConfiguration(newUiConfiguration);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 	
 	
 	/**
@@ -626,5 +640,5 @@ public class ProjectsLoaded {
 		}
 		
 	}
-	
+
 }
