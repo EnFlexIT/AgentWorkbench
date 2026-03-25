@@ -105,8 +105,7 @@ public class PropertyConverter {
 	 * @param de.enflexit.awb.ws.restapi.gen.model.Properties
 	 * @return the de.enflexit.common.properties.properties
 	 */
-	public static de.enflexit.common.properties.Properties toAwbProperties(
-			de.enflexit.awb.ws.restapi.gen.model.Properties webAppProps) {
+	public static de.enflexit.common.properties.Properties toAwbProperties(de.enflexit.awb.ws.restapi.gen.model.Properties webAppProps) {
 
 		de.enflexit.common.properties.Properties awbProps = new de.enflexit.common.properties.Properties();
 		for (PropertyEntry pEntry : webAppProps.getPropertyEntries()) {
@@ -117,12 +116,16 @@ public class PropertyConverter {
 	}
 
 	/**
-	 * @param pEntry the webApp PropertyEntry to convert
+	 * Sets the awb property value.
+	 *
+	 * @param pEntry   the webApp PropertyEntry to convert
 	 * @param awbProps the awb properties to insert the entry into
 	 */
 	private static void setAwbPropertyValue(PropertyEntry pEntry, de.enflexit.common.properties.Properties awbProps) {
+		
 		String propertyKey = pEntry.getKey();
 		switch (pEntry.getValueType()) {
+		// TODO Exception handling for non-parseble values?
 		case ValueType.INTEGER:
 			awbProps.setIntegerValue(propertyKey, Integer.parseInt(pEntry.getValue()));
 			break;

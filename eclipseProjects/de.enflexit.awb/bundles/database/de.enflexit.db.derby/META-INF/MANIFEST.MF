@@ -21,10 +21,14 @@ Bundle-ClassPath: .,
  lib/derbytools-10.17.1.0.jar
 Service-Component: OSGI-INF/dbService.xml,
  OSGI-INF/dbServiceEmbedded.xml,
- OSGI-INF/derbyNetworkServerConfiguration.xml
+ OSGI-INF/derbyNetworkServerConfiguration.xml,
+ OSGI-INF/PropertyBusServiceDerbyNetworkServer.xml
 Require-Bundle: de.enflexit.db.hibernate
-Import-Package: de.enflexit.awb.core.jade,
+Import-Package: de.enflexit.awb.core.config,
+ de.enflexit.awb.core.jade,
  de.enflexit.common,
+ de.enflexit.common.properties,
+ de.enflexit.common.properties.bus,
  org.eclipse.core.runtime.preferences,
  org.osgi.framework,
  org.osgi.service.prefs,
