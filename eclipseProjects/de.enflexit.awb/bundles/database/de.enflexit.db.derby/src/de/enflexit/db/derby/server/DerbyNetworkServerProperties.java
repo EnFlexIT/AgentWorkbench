@@ -84,21 +84,22 @@ public class DerbyNetworkServerProperties {
 	}
 	
 	/**
-	 * Sets (and saves) all server properties at one.
+	 * Sets (and saves) all server properties at once.
 	 *
 	 * @param isStartServer the is execute server
 	 * @param host the host
 	 * @param portNumber the port number
 	 * @param userName the user name
 	 * @param password the password
+	 * @return returns true if save() is successful, false if not
 	 */
-	public void setProperties(boolean isStartServer, String host, int portNumber, String userName, String password) {
+	public boolean setProperties(boolean isStartServer, String host, int portNumber, String userName, String password) {
 		this.isStartDerbyNetworkServer = isStartServer;
 		this.host = host;
 		this.portNumber = portNumber;
 		this.userName = userName;
 		this.password = password;
-		this.save();
+		return this.save();
 	}
 	
 	
