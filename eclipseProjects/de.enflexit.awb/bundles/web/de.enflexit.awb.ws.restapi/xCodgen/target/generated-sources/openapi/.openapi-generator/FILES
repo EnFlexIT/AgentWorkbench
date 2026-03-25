@@ -34,6 +34,8 @@ src/gen/java/de/enflexit/awb/ws/restapi/gen/VersionApiService.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Event.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/EventLogTypes.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/ExecutionState.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Message.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/model/MessageType.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/NetworkConnection.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/PasswordChange.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Properties.java

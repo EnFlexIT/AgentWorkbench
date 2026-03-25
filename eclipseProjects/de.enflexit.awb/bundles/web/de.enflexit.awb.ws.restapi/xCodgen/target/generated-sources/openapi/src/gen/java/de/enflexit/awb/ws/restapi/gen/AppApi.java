@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import de.enflexit.awb.ws.restapi.gen.model.Message;
 import de.enflexit.awb.ws.restapi.gen.model.Properties;
 
 import java.util.Map;
@@ -35,7 +36,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the app API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-03-04T17:07:13.922796800+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-03-25T12:33:25.416793100+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class AppApi  {
 
    private final AppApiService delegate;
@@ -78,9 +79,10 @@ public class AppApi  {
     @jakarta.ws.rs.PUT
     @Path("/set")
     @Consumes({ "application/json" })
+    @Produces({ "application/json" })
     @Operation(summary = "Enables to update or set the required base configuration settings for the curren web application", description = "", responses = {
-            @ApiResponse(responseCode = "200", description = "Successfully changed settings", content = 
-                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully subbmited settings", content = 
+                @Content(schema = @Schema(implementation = Message.class))),
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "info", }) 

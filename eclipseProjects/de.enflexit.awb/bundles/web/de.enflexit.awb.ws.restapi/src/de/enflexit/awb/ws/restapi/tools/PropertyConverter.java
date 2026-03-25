@@ -24,17 +24,19 @@ public class PropertyConverter {
 		
 		de.enflexit.awb.ws.restapi.gen.model.Properties restProps = new de.enflexit.awb.ws.restapi.gen.model.Properties();
 
-		// --- Check each property ----------------------------------
-		for (String identifier : awbProps.getIdentifierList()) {
-			// --- Get property -------------------------------------
-			PropertyValue pValue = awbProps.getPropertyValue(identifier);
-			// --- Create REST 'PropertyEntry' ----------------------
-			PropertyEntry pEntry = createPropertyEntry(identifier, pValue) ;
-			pEntry.setValueOptions(PropertyConverter.toWebValueOptionList(pValue.getValueOptionsString()));
-			pEntry.setValueOptionsOnly(pValue.isValueOptionsOnly());
-			
-			// --- Add to property listing --------------------------
-			restProps.addPropertyEntriesItem(pEntry);
+		if (awbProps!=null) {
+			// --- Check each property ----------------------------------
+			for (String identifier : awbProps.getIdentifierList()) {
+				// --- Get property -------------------------------------
+				PropertyValue pValue = awbProps.getPropertyValue(identifier);
+				// --- Create REST 'PropertyEntry' ----------------------
+				PropertyEntry pEntry = createPropertyEntry(identifier, pValue) ;
+				pEntry.setValueOptions(PropertyConverter.toWebValueOptionList(pValue.getValueOptionsString()));
+				pEntry.setValueOptionsOnly(pValue.isValueOptionsOnly());
+				
+				// --- Add to property listing --------------------------
+				restProps.addPropertyEntriesItem(pEntry);
+			}
 		}
 		return restProps;
 	}

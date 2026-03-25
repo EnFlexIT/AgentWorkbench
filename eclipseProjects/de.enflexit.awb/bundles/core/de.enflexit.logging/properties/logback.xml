@@ -13,6 +13,8 @@
 	
 	<logger name="de.enflexit.awb.core" level="error" />
 	
+	<logger name="de.enflexit.awb.ws.webApp" level="error" />
+	
 	<logger name="de.enflexit.db" level="warn" />
 	<logger name="de.enflexit.db.hibernate" level="error" />
 	
