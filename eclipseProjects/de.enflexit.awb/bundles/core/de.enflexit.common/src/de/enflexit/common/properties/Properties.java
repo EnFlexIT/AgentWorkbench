@@ -13,6 +13,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 import de.enflexit.common.SerialClone;
 import de.enflexit.common.properties.PropertiesEvent.Action;
+import de.enflexit.common.properties.PropertyMessage.MessageType;
 
 /**
  * The Class Properties serves as base class to store individual properties 
@@ -39,6 +40,8 @@ public class Properties implements Serializable {
 
 	@XmlElement(name="Properties")
 	private TreeMap<String, PropertyValue> propertyMap;
+	
+	public static final String PROPERTY_MESSAGE_KEY = "_PROPERTY_MESSAGE";
 	
 	private transient List<PropertiesListener> listener;
 	
@@ -185,6 +188,38 @@ public class Properties implements Serializable {
 	}
 	
 	
+	/**
+	 * Return the current PropertyMessage.
+	 * @return the property message
+	 */
+	public PropertyMessage getPropertyMessage() {
+		
+		Object message = this.getPropertyValue(PROPERTY_MESSAGE_KEY);
+		if (message instanceof PropertyMessage) {
+			return (PropertyMessage) message;
+		}
+		return null; 
+	}
+
+	/**
+	 * Sets the property message.
+	 *
+	 * @param messageType the message type
+	 * @param message the message
+	 */
+	public void setPropertyMessage(MessageType messageType, String message) {
+		this.setPropertyMessage(new PropertyMessage(messageType, message));
+	}
+	/**
+	 * Sets the property message.
+	 * @param pMessage the new property message
+	 */
+	public void setPropertyMessage(PropertyMessage pMessage) {
+		this.setValue(PROPERTY_MESSAGE_KEY, pMessage);
+	}
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -311,5 +346,5 @@ public class Properties implements Serializable {
 		this.setIntegerValue("Prod.Test 3.Integer 2", 4711);
 		
 	}
-
+	
 }

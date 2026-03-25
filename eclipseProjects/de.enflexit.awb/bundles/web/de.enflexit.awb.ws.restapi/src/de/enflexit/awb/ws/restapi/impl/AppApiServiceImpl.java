@@ -13,10 +13,13 @@ import de.enflexit.awb.ws.restapi.gen.ApiResponseMessage;
 import de.enflexit.awb.ws.restapi.gen.AppApi;
 import de.enflexit.awb.ws.restapi.gen.AppApiService;
 import de.enflexit.awb.ws.restapi.gen.NotFoundException;
+import de.enflexit.awb.ws.restapi.gen.model.Message;
+import de.enflexit.awb.ws.restapi.gen.model.MessageType;
 import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
+import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.ApplicationPropertyBus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -40,7 +43,7 @@ public class AppApiServiceImpl extends AppApiService {
 	 * To get the HttpServletRequest in the method below, you need to add this parameter to the 
 	 * {@link AppApi} manually, using dependency injection. The resulting method has to look like this:
 	 * <li>
-	 * 		public Response getAppSettings(@Context HttpServletRequest request, @Context SecurityContext securityContext)
+	 * 		public Response getAppSettings(String xPerformative, @Context HttpServletRequest request, @Context SecurityContext securityContext)
 	 * </li><br>
 	 * As a result of this structure change, the classes {@link AppApiService} needs to be extended with the new parameter 
 	 * request, so that the method looks like this:
@@ -66,21 +69,30 @@ public class AppApiServiceImpl extends AppApiService {
     	
     	// --- Get the current performative -------------------------
     	boolean success = false;
+    	PropertyMessage pMessage = null;
     	String xPerformative = properties.getPerformative();
     	if (xPerformative==null || xPerformative.isBlank()==true) {
 			// --- Set properties of web application ----------------
 			success = AwbWebApplicationManager.setProperties(awbProps);
 
     	} else {
-    		// --- Set specific application properties -------
+    		// --- Set specific application properties --------------
     		success = ApplicationPropertyBus.getInstance().setProperties(xPerformative, awbProps);
+    		if (success==false) {
+    			// --- extract the current PropertyMessage ----------
+    			pMessage = awbProps.getPropertyMessage();
+    		}
+    		
     	}
 
-    	if (success==true) {
-    		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Properties were applied!")).build();
-    	}
-    	return Response.notModified().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Properties could not be applied!")).build();
+    	// --- Return process message ---------------------
+    	Message message = new Message();
     	
+    	message.setDateTime("");
+    	message.setMessageType(MessageType.INFO);
+    	message.setMessage("Alles gut !");
+    	
+    	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     }
 
 	
