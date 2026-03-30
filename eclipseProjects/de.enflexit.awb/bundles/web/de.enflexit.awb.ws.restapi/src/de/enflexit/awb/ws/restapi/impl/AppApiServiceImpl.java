@@ -88,12 +88,13 @@ public class AppApiServiceImpl extends AppApiService {
     	// --- Return process message ---------------------
     	Message message = new Message();
     	message.setDateTime(System.currentTimeMillis()+"");
-
+    	// --- Default case, no errors occurred --------------
     	if (pMessage == null) {
     		message.setMessageType(MessageType.INFO);
     		message.setMessage("Done");
     		
     	} else {
+    	// --- Set the message type equal to pMessage --------
     		switch (pMessage.getMessageType()) {
     		case Info:
     			message.setMessageType(MessageType.INFO);
@@ -105,6 +106,7 @@ public class AppApiServiceImpl extends AppApiService {
     			message.setMessageType(MessageType.ERROR);
     			break;
     		}
+    	// --- Extract the error message ------------
     		message.setMessage(pMessage.getMessage());
     		
     	}
