@@ -124,24 +124,28 @@ public class PropertyConverter {
 	private static void setAwbPropertyValue(PropertyEntry pEntry, de.enflexit.common.properties.Properties awbProps) {
 		
 		String propertyKey = pEntry.getKey();
-		switch (pEntry.getValueType()) {
-		// TODO Exception handling for non-parseble values?
-		case ValueType.INTEGER:
-			awbProps.setIntegerValue(propertyKey, Integer.parseInt(pEntry.getValue()));
-			break;
-		case ValueType.BOOLEAN:
-			awbProps.setBooleanValue(propertyKey, Boolean.parseBoolean(pEntry.getValue()));
-			break;
-		case ValueType.STRING:
-			awbProps.setStringValue(propertyKey, pEntry.getValue());
-			break;
-		case ValueType.LONG:
-			awbProps.setLongValue(propertyKey, Long.parseLong(pEntry.getValue()));
-			break;
-		case ValueType.DOUBLE:
-			awbProps.setDoubleValue(propertyKey, Double.parseDouble(pEntry.getValue()));
-			break;
-
+		// --- If value != null, find the type and set it ----------
+		if (pEntry.getValue() != null) {
+			switch (pEntry.getValueType()) {
+			case ValueType.INTEGER:
+				awbProps.setIntegerValue(propertyKey, Integer.parseInt(pEntry.getValue()));
+				break;
+			case ValueType.BOOLEAN:
+				awbProps.setBooleanValue(propertyKey, Boolean.parseBoolean(pEntry.getValue()));
+				break;
+			case ValueType.STRING:
+				awbProps.setStringValue(propertyKey, pEntry.getValue());
+				break;
+			case ValueType.LONG:
+				awbProps.setLongValue(propertyKey, Long.parseLong(pEntry.getValue()));
+				break;
+			case ValueType.DOUBLE:
+				awbProps.setDoubleValue(propertyKey, Double.parseDouble(pEntry.getValue()));
+				break;
+			}
+		// --- Else set value to null ---------------	
+		}else {
+			awbProps.setValue(propertyKey, null);
 		}
 
 	}
