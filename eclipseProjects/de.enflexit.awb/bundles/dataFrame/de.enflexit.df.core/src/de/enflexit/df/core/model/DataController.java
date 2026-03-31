@@ -1,0 +1,158 @@
+package de.enflexit.df.core.model;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.enflexit.common.dataSources.AbstractDataSource;
+
+/**
+ * The Class DataController.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class DataController {
+
+	// ------------------------------------------------------------------------
+	// --- From here, PropertyChangeSupport -----------------------------------
+	// ------------------------------------------------------------------------	
+	public static final String DC_ADDED_DATA_SOURCE = "DC_ADDED_DATA_SOURCE";
+	public static final String DC_REMOVED_DATA_SOURCE = "DC_REMOVED_DATA_SOURCE";
+
+	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
+	
+	
+	private PropertyChangeSupport pcs;
+	
+	/**
+	 * Returns the property change support.
+	 * @return the property change support
+	 */
+	private PropertyChangeSupport getPropertyChangeSupport() {
+		if (pcs == null) {
+			pcs = new PropertyChangeSupport(this);
+		}
+		return pcs;
+	}
+	/**
+	 * Adds the property change listener.
+	 * @param listener the listener
+	 */
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.getPropertyChangeSupport().addPropertyChangeListener(listener);
+	}
+	/**
+	 * Removes the property change listener.
+	 * @param listener the listener
+	 */
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.getPropertyChangeSupport().removePropertyChangeListener(listener);
+	}
+	/**
+	 * Fires a property change event.
+	 *
+	 * @param propertyName the property name
+	 * @param oldValue the old value
+	 * @param newValue the new value
+	 */
+	public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+		this.getPropertyChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
+	}
+	
+	// ------------------------------------------------------------------------
+	// --- From here, runtime objects -----------------------------------------
+	// ------------------------------------------------------------------------	
+	private DataControllerSelectionModel selectionModel;
+	private List<AbstractDataSource> dataSources;
+	private DataTreeModel dataTreeModel; 
+
+	
+	public DataControllerSelectionModel getSelectionModel() {
+		if (selectionModel==null) {
+			selectionModel = new DataControllerSelectionModel(this);
+		}
+		return selectionModel;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, Data Source handling ------------------------------------
+	/**
+	 * Returns the data sources.
+	 * @return the data sources
+	 */
+	public List<AbstractDataSource> getDataSources() {
+		if (dataSources==null) {
+			dataSources = new ArrayList<>();
+		}
+		return dataSources;
+	}
+	/**
+	 * Sets the data sources.
+	 * @param dataSources the new data sources
+	 */
+	public void setDataSources(List<AbstractDataSource> dataSources) {
+		this.dataSources = dataSources;
+	}
+	
+	/**
+	 * Adds the specified data source.
+	 * @param dataSource the data source
+	 * @return true, if successfully added
+	 */
+	public boolean addDataSource(AbstractDataSource dataSource) {
+		if (dataSource!=null && this.getDataSources().contains(dataSource)==false) {
+			boolean success = this.getDataSources().add(dataSource);
+			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, dataSource);
+			return success;
+		}
+		return false;
+	}
+	/**
+	 * Removes the specified data source.
+	 * @param dataSource the data source
+	 * @return true, if successfully removed
+	 */
+	public boolean removeDataSource(AbstractDataSource dataSource) {
+		if (dataSource!=null) {
+			boolean success = this.getDataSources().remove(dataSource);
+//			// --- Check the selection model ------------------------
+//			if (this.getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSource()==dataSource) {
+//				this.getSelectionModel().setSelectedTreePath(null);
+//			}
+			// --- Inform property change listener ------------------
+			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, dataSource, null);
+			return success;
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the data source by search phrase.
+	 *
+	 * @param searchPhrase the search phrase
+	 * @return the data source by search phrase
+	 */
+	public List<AbstractDataSource> getDataSourceBySearchPhrase(String searchPhrase) {
+		String praseToUse = searchPhrase.toLowerCase();
+		List<AbstractDataSource> dsFound = new ArrayList<>();
+		for (AbstractDataSource ds : this.getDataSources()) {
+			if (ds.getName().toLowerCase().contains(praseToUse)==true) {
+				dsFound.add(ds);
+			}
+		}
+		return dsFound;
+	}
+	
+	// ------------------------------------------------------------------------
+	// --- From here, DataStructure structure handling ------------------------
+	public DataTreeModel getDataTreeModel() {
+		if (dataTreeModel==null) {
+			dataTreeModel = new DataTreeModel(this);
+		}
+		return dataTreeModel;
+	}
+	
+	
+}

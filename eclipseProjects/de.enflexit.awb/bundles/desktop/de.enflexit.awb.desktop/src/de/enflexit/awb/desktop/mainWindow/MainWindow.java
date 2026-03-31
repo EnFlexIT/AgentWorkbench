@@ -1462,7 +1462,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 	@Override
 	public void applyNewThemeSettings() {
 		String newLnF = Application.getGlobalInfo().getAppLookAndFeelClassName();
-		AwbLookAndFeelAdjustments.setLookAndFeel(newLnF, MainWindow.this);
+		AwbLookAndFeelAdjustments.setLookAndFeel(newLnF);
 		MainWindow.this.resetAfterLookAndFeelUpdate();
 		Application.getProjectsLoaded().setProjectView();
 	}

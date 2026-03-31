@@ -11,5 +11,7 @@ Import-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.core,
  de.enflexit.awb.core.config,
- de.enflexit.awb.core.ui
+ de.enflexit.awb.core.ui,
+ de.enflexit.common.dataSources,
+ de.enflexit.common.swing
 Service-Component: OSGI-INF/dataFramePerspectiveService.xml
