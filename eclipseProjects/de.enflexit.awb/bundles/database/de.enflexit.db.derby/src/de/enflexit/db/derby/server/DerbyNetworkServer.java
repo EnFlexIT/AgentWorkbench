@@ -32,7 +32,7 @@ public class DerbyNetworkServer extends Thread {
 			int serverPort   = sProperties.getPort();
 			String userName  = sProperties.getUserName();
 			String password  = sProperties.getPassword();
-			derbyNetworkServerInstance = new DerbyNetworkServer(iNet, serverPort,userName, password);
+			derbyNetworkServerInstance = new DerbyNetworkServer(iNet, serverPort, userName, password);
 			
 		} catch (UnknownHostException uhEx) {
 			uhEx.printStackTrace();
@@ -99,11 +99,11 @@ public class DerbyNetworkServer extends Thread {
 		
 		try {
 			if (this.userName!=null) {
-				derbyServer = new NetworkServerControlImpl(this.address, this.portNumber, this.userName, this.password);
+				this.derbyServer = new NetworkServerControlImpl(this.address, this.portNumber, this.userName, this.password);
 			} else {
-				derbyServer = new NetworkServerControlImpl();
+				this.derbyServer = new NetworkServerControlImpl();
 			}
-			derbyServer.executeWork(NetworkServerControlImpl.COMMAND_START);
+			this.derbyServer.executeWork(NetworkServerControlImpl.COMMAND_START);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -115,7 +115,8 @@ public class DerbyNetworkServer extends Thread {
 	 */
 	private void doStop() {
 		try {
-			this.derbyServer.shutdown();
+			this.derbyServer.executeWork(NetworkServerControlImpl.COMMAND_SHUTDOWN);
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
