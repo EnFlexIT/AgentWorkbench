@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -19,7 +18,6 @@ import de.enflexit.awb.core.Application;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.AwbLookAndFeelInfo;
 import de.enflexit.common.swing.AwbThemeColor;
-import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.language.Language;
 
 /**
@@ -161,8 +159,7 @@ public class ThemeOptions extends AbstractOptionTab {
 		Application.getGlobalInfo().setAppLookAndFeelClassName(lafClassNameNew);
 		
 		// --- Apply the new LookAndFeel to the current dialog ------
-		Window owner = OwnerDetection.getOwnerWindowForComponent(this);
-		AwbLookAndFeelAdjustments.setLookAndFeel(lafClassNameNew, owner);
+		AwbLookAndFeelAdjustments.setLookAndFeel(lafClassNameNew);
 		
 		// --- Apply somewhere else? --------------------------------
 		if (Application.isMainWindowInitiated()==true) {

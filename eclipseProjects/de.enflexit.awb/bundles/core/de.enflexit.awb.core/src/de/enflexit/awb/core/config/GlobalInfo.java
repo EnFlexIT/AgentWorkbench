@@ -524,7 +524,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * Sets the applications look and feel.
 	 */
 	private void setApplicationsLookAndFeel() {
-		AwbLookAndFeelAdjustments.setLookAndFeel(this.getAppLookAndFeelClassName(), null);
+		AwbLookAndFeelAdjustments.setLookAndFeel(this.getAppLookAndFeelClassName());
 	}
 	/**
 	 * This method will return the current Look and Feel (LnF) for Java Swing.<br>

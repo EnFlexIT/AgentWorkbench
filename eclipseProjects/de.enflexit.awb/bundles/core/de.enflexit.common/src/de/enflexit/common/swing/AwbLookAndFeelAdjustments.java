@@ -1,8 +1,8 @@
 package de.enflexit.common.swing;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GraphicsEnvironment;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,11 +94,9 @@ public class AwbLookAndFeelAdjustments {
 	
 	/**
 	 * Sets the look and feel to the swing UI Manager.
-	 *
 	 * @param lafClassNameNew the new look and feel
-	 * @param invoker the visual invoker of this method
 	 */
-	public static void setLookAndFeel(String lafClassNameNew, Component invoker) {
+	public static void setLookAndFeel(String lafClassNameNew) {
 		
 		if (GraphicsEnvironment.isHeadless()==true) return;
 		if (lafClassNameNew==null || lafClassNameNew.isEmpty()==true) return;
@@ -114,8 +112,8 @@ public class AwbLookAndFeelAdjustments {
 				AwbLookAndFeelAdjustments.isFlatLookAndFeel = null;
 			}
 			AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
-			if (invoker!=null) {
-				SwingUtilities.updateComponentTreeUI(invoker);
+			for (Window window : Window.getWindows()) {
+				SwingUtilities.updateComponentTreeUI(window);
 			}
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException lnfEx) {
@@ -127,8 +125,8 @@ public class AwbLookAndFeelAdjustments {
 					AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
 					AwbLookAndFeelAdjustments.isFlatLookAndFeel = null;
 					AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
-					if (invoker!=null) {
-						SwingUtilities.updateComponentTreeUI(invoker);
+					for (Window window : Window.getWindows()) {
+						SwingUtilities.updateComponentTreeUI(window);
 					}
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
