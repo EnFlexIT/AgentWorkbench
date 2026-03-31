@@ -22,8 +22,7 @@ public class PropertyConverter {
 	 * @param awbProps the AWB properties to convert
 	 * @return the de.enflexit.awb.ws.restapi.gen.model. properties
 	 */
-	public static de.enflexit.awb.ws.restapi.gen.model.Properties toWebRestProperties(
-			de.enflexit.common.properties.Properties awbProps) {
+	public static de.enflexit.awb.ws.restapi.gen.model.Properties toWebRestProperties(de.enflexit.common.properties.Properties awbProps) {
 
 		de.enflexit.awb.ws.restapi.gen.model.Properties restProps = new de.enflexit.awb.ws.restapi.gen.model.Properties();
 
@@ -99,6 +98,7 @@ public class PropertyConverter {
 		return pEntry;
 	}
 
+	
 	/**
 	 * Converts web application properties to AWB properties.
 	 *
@@ -111,10 +111,8 @@ public class PropertyConverter {
 		for (PropertyEntry pEntry : webAppProps.getPropertyEntries()) {
 			PropertyConverter.setAwbPropertyValue(pEntry, awbProps);
 		}
-
 		return awbProps;
 	}
-
 	/**
 	 * Sets the awb property value.
 	 *
@@ -124,30 +122,93 @@ public class PropertyConverter {
 	private static void setAwbPropertyValue(PropertyEntry pEntry, de.enflexit.common.properties.Properties awbProps) {
 		
 		String propertyKey = pEntry.getKey();
-		// --- If value != null, find the type and set it ----------
-		if (pEntry.getValue() != null) {
-			switch (pEntry.getValueType()) {
-			case ValueType.INTEGER:
-				awbProps.setIntegerValue(propertyKey, Integer.parseInt(pEntry.getValue()));
-				break;
-			case ValueType.BOOLEAN:
-				awbProps.setBooleanValue(propertyKey, Boolean.parseBoolean(pEntry.getValue()));
-				break;
-			case ValueType.STRING:
-				awbProps.setStringValue(propertyKey, pEntry.getValue());
-				break;
-			case ValueType.LONG:
-				awbProps.setLongValue(propertyKey, Long.parseLong(pEntry.getValue()));
-				break;
-			case ValueType.DOUBLE:
-				awbProps.setDoubleValue(propertyKey, Double.parseDouble(pEntry.getValue()));
-				break;
-			}
-		// --- Else set value to null ---------------	
-		}else {
-			awbProps.setValue(propertyKey, null);
+		// --- find the type and set it ----------
+		switch (pEntry.getValueType()) {
+		case ValueType.BOOLEAN:
+			awbProps.setBooleanValue(propertyKey, PropertyConverter.parseBoolean(pEntry.getValue()));
+			break;
+		case ValueType.STRING:
+			awbProps.setStringValue(propertyKey, pEntry.getValue());
+			break;
+		case ValueType.INTEGER:
+			awbProps.setIntegerValue(propertyKey, PropertyConverter.parseInteger(pEntry.getValue()));
+			break;
+		case ValueType.LONG:
+			awbProps.setLongValue(propertyKey, PropertyConverter.parseLong(pEntry.getValue()));
+			break;
+		case ValueType.DOUBLE:
+			awbProps.setDoubleValue(propertyKey, PropertyConverter.parseDouble(pEntry.getValue()));
+			break;
 		}
+	}
 
+	/**
+	 * Parses the boolean.
+	 *
+	 * @param stringValue the string value
+	 * @return the boolean
+	 */
+	private static Boolean parseBoolean(String stringValue) {
+		
+		if (stringValue == null || stringValue.isBlank() == true) return null;
+		
+		Boolean value = null;
+		try {
+			value = Boolean.parseBoolean(stringValue);
+		} catch (Exception e) {}
+		
+		return value;
+	}
+	/**
+	 * Parses the Integer.
+	 *
+	 * @param stringValue the string value
+	 * @return the Integer
+	 */
+	private static Integer parseInteger(String stringValue) {
+		
+		if (stringValue == null || stringValue.isBlank() == true) return null;
+		
+		Integer value = null;
+		try {
+			value = Integer.parseInt(stringValue);
+		} catch (Exception e) {}
+		
+		return value;
+	}
+	/**
+	 * Parses the long.
+	 *
+	 * @param stringValue the string value
+	 * @return the Long
+	 */
+	private static Long parseLong(String stringValue) {
+		
+		if (stringValue == null || stringValue.isBlank() == true) return null;
+		
+		Long value = null;
+		try {
+			value = Long.parseLong(stringValue);
+		} catch (Exception e) {}
+		
+		return value;
+	}
+	/**
+	 * Parses the double.
+	 *
+	 * @param stringValue the string value
+	 * @return the double
+	 */
+	private static Double parseDouble(String stringValue) {
+		
+		if (stringValue == null || stringValue.isBlank() == true) return null;
+		
+		Double value = null;
+		try {
+			value = Double.parseDouble(stringValue);
+		} catch (Exception e) {}
+		
+		return value;
 	}
 
 }
