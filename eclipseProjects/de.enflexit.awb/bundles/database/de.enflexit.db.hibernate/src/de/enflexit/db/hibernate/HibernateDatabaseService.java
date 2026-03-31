@@ -20,8 +20,13 @@ public interface HibernateDatabaseService {
 	public static final String HIBERNATE_PROPERTY_DriverClass = "hibernate.connection.driver_class";
 	public static final String HIBERNATE_PROPERTY_Catalog = "hibernate.default_catalog";
 	public static final String HIBERNATE_PROPERTY_URL = "hibernate.connection.url";
+	public static final String HIBERNATE_PROPERTY_URL_MASK = "hibernate.connection.url.mask";
 	public static final String HIBERNATE_PROPERTY_UserName = "hibernate.connection.username";
 	public static final String HIBERNATE_PROPERTY_Password = "hibernate.connection.password";
+	
+	public static final String TAG_HostOrIP = "[HostOrIP]";
+	public static final String TAG_Port     = "[Port]";
+	public static final String TAG_Catalog  = "[Catalog]";
 	
 	
 	/**

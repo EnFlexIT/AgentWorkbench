@@ -55,6 +55,7 @@ public class PGDatabaseService extends AbstractDatabaseService {
 		defaultProps.setProperty(HIBERNATE_PROPERTY_DriverClass, this.getDriverClassName());
 		defaultProps.setProperty(HIBERNATE_PROPERTY_Catalog, "agentWorkbench");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_URL, "jdbc:postgresql://localhost:5432/agentWorkbench");
+		defaultProps.setProperty(HIBERNATE_PROPERTY_URL_MASK, "jdbc:postgresql://" + TAG_HostOrIP + ":" + TAG_Port + "/" + TAG_Catalog + "");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_UserName, "postgres");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_Password, "");
 		return defaultProps;

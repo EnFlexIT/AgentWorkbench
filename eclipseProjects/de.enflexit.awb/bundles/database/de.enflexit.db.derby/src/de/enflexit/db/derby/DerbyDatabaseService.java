@@ -63,6 +63,7 @@ public class DerbyDatabaseService extends AbstractDatabaseService {
 		defaultProps.setProperty(HIBERNATE_PROPERTY_DriverClass, this.getDriverClassName());
 		defaultProps.setProperty(HIBERNATE_PROPERTY_Catalog, "agentWorkbench");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_URL, "jdbc:derby://localhost:1527/agentWorkbench;create=true");
+		defaultProps.setProperty(HIBERNATE_PROPERTY_URL_MASK, "jdbc:derby://" + TAG_HostOrIP + ":" + TAG_Port + "/" + TAG_Catalog + ";create=true");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_UserName, "derby");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_Password, "");
 		return defaultProps;

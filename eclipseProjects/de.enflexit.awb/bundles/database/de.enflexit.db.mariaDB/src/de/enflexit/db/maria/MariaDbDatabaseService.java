@@ -55,6 +55,7 @@ public class MariaDbDatabaseService extends AbstractDatabaseService {
 		defaultProps.setProperty(HIBERNATE_PROPERTY_DriverClass, this.getDriverClassName());
 		defaultProps.setProperty(HIBERNATE_PROPERTY_Catalog, "agentWorkbench");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_URL, "jdbc:mariadb://localhost:3306/agentWorkbench?createDatabaseIfNotExist=true");
+		defaultProps.setProperty(HIBERNATE_PROPERTY_URL_MASK, "jdbc:mariadb://" + TAG_HostOrIP + ":" + TAG_Port + "/" + TAG_Catalog + "?createDatabaseIfNotExist=true");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_UserName, "root");
 		defaultProps.setProperty(HIBERNATE_PROPERTY_Password, "");
 		return defaultProps;
