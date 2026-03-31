@@ -87,11 +87,29 @@ public class AppApiServiceImpl extends AppApiService {
 
     	// --- Return process message ---------------------
     	Message message = new Message();
-    	
-    	message.setDateTime("");
-    	message.setMessageType(MessageType.INFO);
-    	message.setMessage("Alles gut !");
-    	
+    	message.setDateTime(System.currentTimeMillis()+"");
+    	// --- Default case, no errors occurred --------------
+    	if (pMessage == null) {
+    		message.setMessageType(MessageType.INFO);
+    		message.setMessage("Done");
+    		
+    	} else {
+    	// --- Set the message type equal to pMessage --------
+    		switch (pMessage.getMessageType()) {
+    		case Info:
+    			message.setMessageType(MessageType.INFO);
+    			break;
+    		case Warning:
+    			message.setMessageType(MessageType.WARNING);
+    			break;
+    		case Error:
+    			message.setMessageType(MessageType.ERROR);
+    			break;
+    		}
+    	// --- Extract the error message ------------
+    		message.setMessage(pMessage.getMessage());
+    		
+    	}
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     }
 

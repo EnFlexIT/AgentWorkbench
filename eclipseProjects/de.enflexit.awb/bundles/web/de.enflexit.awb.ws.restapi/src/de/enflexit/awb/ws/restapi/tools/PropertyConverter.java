@@ -8,69 +8,74 @@ import de.enflexit.awb.ws.restapi.gen.model.ValueType;
 import de.enflexit.common.properties.PropertyValue;
 
 /**
- * The Class PropertyConverter converts between AWB properties and REST properties.
+ * The Class PropertyConverter converts between AWB properties and REST
+ * properties.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class PropertyConverter {
 
 	/**
-	 * Converts AWB properties to web application properties as specified in this REST API.
+	 * Converts AWB properties to web application properties as specified in this
+	 * REST API.
 	 *
 	 * @param awbProps the AWB properties to convert
 	 * @return the de.enflexit.awb.ws.restapi.gen.model. properties
 	 */
-	public static de.enflexit.awb.ws.restapi.gen.model.Properties toWebRestProperties(de.enflexit.common.properties.Properties awbProps) {
-		
+	public static de.enflexit.awb.ws.restapi.gen.model.Properties toWebRestProperties(
+			de.enflexit.common.properties.Properties awbProps) {
+
 		de.enflexit.awb.ws.restapi.gen.model.Properties restProps = new de.enflexit.awb.ws.restapi.gen.model.Properties();
 
-		if (awbProps!=null) {
+		if (awbProps != null) {
 			// --- Check each property ----------------------------------
 			for (String identifier : awbProps.getIdentifierList()) {
 				// --- Get property -------------------------------------
 				PropertyValue pValue = awbProps.getPropertyValue(identifier);
 				// --- Create REST 'PropertyEntry' ----------------------
-				PropertyEntry pEntry = createPropertyEntry(identifier, pValue) ;
+				PropertyEntry pEntry = createPropertyEntry(identifier, pValue);
 				pEntry.setValueOptions(PropertyConverter.toWebValueOptionList(pValue.getValueOptionsString()));
 				pEntry.setValueOptionsOnly(pValue.isValueOptionsOnly());
-				
+
 				// --- Add to property listing --------------------------
 				restProps.addPropertyEntriesItem(pEntry);
 			}
 		}
 		return restProps;
 	}
-	
+
 	/**
-	 * Converts the specified string array to a value option list for the REST 'PropertyEntry'.
+	 * Converts the specified string array to a value option list for the REST
+	 * 'PropertyEntry'.
 	 *
 	 * @param optionArray the option array
 	 * @return the value option list
 	 */
 	private static List<String> toWebValueOptionList(String[] optionArray) {
-		
-		if (optionArray==null || optionArray.length==0) return null;
-		
+
+		if (optionArray == null || optionArray.length == 0)
+			return null;
+
 		List<String> optionList = new ArrayList<>();
 		for (String option : optionArray) {
 			optionList.add(option);
 		}
 		return optionList;
 	}
-	
+
 	/**
 	 * Creates the property entry.
 	 *
 	 * @param identifier the identifier
-	 * @param pValue the value
+	 * @param pValue     the value
 	 * @return the property entry
 	 */
 	private static PropertyEntry createPropertyEntry(String identifier, PropertyValue pValue) {
-		
+
 		PropertyEntry pEntry = new PropertyEntry();
 		pEntry.setKey(identifier);
 		pEntry.setValue(pValue.getValueString());
-		
+
 		switch (pValue.getPropertyType()) {
 		case Boolean:
 			pEntry.setValueType(ValueType.BOOLEAN);
@@ -90,25 +95,59 @@ public class PropertyConverter {
 		case Long:
 			pEntry.setValueType(ValueType.INTEGER);
 			break;
-		}		
+		}
 		return pEntry;
 	}
-	
-	
+
 	/**
 	 * Converts web application properties to AWB properties.
 	 *
-	 * @param awbProps the awb props
-	 * @return the de.enflexit.common.properties. properties
+	 * @param de.enflexit.awb.ws.restapi.gen.model.Properties
+	 * @return the de.enflexit.common.properties.properties
 	 */
-	public static de.enflexit.common.properties.Properties toAwbProperties(de.enflexit.awb.ws.restapi.gen.model.Properties awbProps) {
-		
-		de.enflexit.common.properties.Properties webAppProps = new de.enflexit.common.properties.Properties();
-		
-		// TODO
-		
-		return webAppProps;
+	public static de.enflexit.common.properties.Properties toAwbProperties(de.enflexit.awb.ws.restapi.gen.model.Properties webAppProps) {
+
+		de.enflexit.common.properties.Properties awbProps = new de.enflexit.common.properties.Properties();
+		for (PropertyEntry pEntry : webAppProps.getPropertyEntries()) {
+			PropertyConverter.setAwbPropertyValue(pEntry, awbProps);
+		}
+
+		return awbProps;
 	}
-	
-	
+
+	/**
+	 * Sets the awb property value.
+	 *
+	 * @param pEntry   the webApp PropertyEntry to convert
+	 * @param awbProps the awb properties to insert the entry into
+	 */
+	private static void setAwbPropertyValue(PropertyEntry pEntry, de.enflexit.common.properties.Properties awbProps) {
+		
+		String propertyKey = pEntry.getKey();
+		// --- If value != null, find the type and set it ----------
+		if (pEntry.getValue() != null) {
+			switch (pEntry.getValueType()) {
+			case ValueType.INTEGER:
+				awbProps.setIntegerValue(propertyKey, Integer.parseInt(pEntry.getValue()));
+				break;
+			case ValueType.BOOLEAN:
+				awbProps.setBooleanValue(propertyKey, Boolean.parseBoolean(pEntry.getValue()));
+				break;
+			case ValueType.STRING:
+				awbProps.setStringValue(propertyKey, pEntry.getValue());
+				break;
+			case ValueType.LONG:
+				awbProps.setLongValue(propertyKey, Long.parseLong(pEntry.getValue()));
+				break;
+			case ValueType.DOUBLE:
+				awbProps.setDoubleValue(propertyKey, Double.parseDouble(pEntry.getValue()));
+				break;
+			}
+		// --- Else set value to null ---------------	
+		}else {
+			awbProps.setValue(propertyKey, null);
+		}
+
+	}
+
 }
