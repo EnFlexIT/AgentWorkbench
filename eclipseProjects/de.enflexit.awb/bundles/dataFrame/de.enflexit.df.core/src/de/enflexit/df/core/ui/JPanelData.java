@@ -1,19 +1,23 @@
 package de.enflexit.df.core.ui;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.tree.TreePath;
 
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.DataTreeNodeDataSource;
 
 /**
  * The Class JPanelData.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelData extends JPanel {
+public class JPanelData extends JPanel implements PropertyChangeListener {
 	
 	private static final long serialVersionUID = 112966832470901946L;
 
@@ -74,7 +78,7 @@ public class JPanelData extends JPanel {
 		if (jSplitPaneData==null) {
 			jSplitPaneData = new JSplitPane();
 			jSplitPaneData.setOneTouchExpandable(true);
-			jSplitPaneData.setDividerSize(0);
+			jSplitPaneData.setDividerSize(5);
 			jSplitPaneData.setResizeWeight(0.25);
 			
 			jSplitPaneData.setLeftComponent(this.getJPanelTree());
@@ -86,6 +90,17 @@ public class JPanelData extends JPanel {
 			jPanelTree = new JPanelTree(this.getDataController());
 		}
 		return jPanelTree;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		
+		
 	}
 	
 }

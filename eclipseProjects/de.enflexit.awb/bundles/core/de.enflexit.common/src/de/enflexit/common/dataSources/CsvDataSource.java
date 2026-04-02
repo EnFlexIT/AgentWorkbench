@@ -16,6 +16,8 @@ public class CsvDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;
 
+	public static final String[] COLUMN_SEPARATORS = {";",",",":","."};
+	
 	@Column(name="csv_file_path", nullable=false)
 	private String csvFilePath;
 	

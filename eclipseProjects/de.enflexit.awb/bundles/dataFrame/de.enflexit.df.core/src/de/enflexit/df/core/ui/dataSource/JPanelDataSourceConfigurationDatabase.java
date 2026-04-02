@@ -1,0 +1,53 @@
+package de.enflexit.df.core.ui.dataSource;
+
+import java.util.List;
+
+import javax.swing.JComponent;
+
+import de.enflexit.df.core.model.DataTreeNodeDataSourceDatabase;
+
+/**
+ * The Class JPanelDataSourceConfigurationDatabase.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ * @param <DataTreeNodeDataSourceDatabase> the generic type
+ */
+public class JPanelDataSourceConfigurationDatabase  extends JPanelDataSourceConfiguration<DataTreeNodeDataSourceDatabase> {
+
+	private static final long serialVersionUID = 2214513797513629518L;
+
+	/**
+	 * Instantiates a new JPanelDataSourceConfigurationDatabase.
+	 * @param dsTreeNode the JPanelDataSourceConfigurationDatabase
+	 */
+	public JPanelDataSourceConfigurationDatabase(DataTreeNodeDataSourceDatabase dsTreeNode) {
+		super(dsTreeNode);
+		this.initialize();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
+	 */
+	@Override
+	public List<JComponent> getConfigurationToolbarComponents() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
+	 */
+	@Override
+	public JComponent getConfigurationPanel() {
+		return this;
+	}
+	
+	/**
+	 * Initialize.
+	 */
+	private void initialize() {
+		
+		
+	}
+
+	
+
+}
