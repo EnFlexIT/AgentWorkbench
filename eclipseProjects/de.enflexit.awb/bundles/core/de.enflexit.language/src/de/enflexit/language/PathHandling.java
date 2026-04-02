@@ -93,7 +93,8 @@ public class PathHandling {
 		// --------------------------------------------------------------------
 		if (debug==true) {
 			Bundle bundle = FrameworkUtil.getBundle(clazz);
-			System.err.println("[" + PathHandling.class.getSimpleName() + "]  Base path for class out of bundle '" + bundle.getSymbolicName() + "' is '" + baseDir + "'");
+			String bundleName = bundle==null ? "[No-OSGI-Env]" : bundle.getSymbolicName();
+			System.err.println("[" + PathHandling.class.getSimpleName() + "]  Base path for class out of bundle '" + bundleName + "' is '" + baseDir + "'");
 		}
 		return Path.of(baseDir);
 	}

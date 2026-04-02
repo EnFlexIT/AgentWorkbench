@@ -416,16 +416,22 @@ public class Language {
 			// --- Create buffered reader to load the dictionary ----
 			switch (sourceFile) {
 			case DefaultFile64:
-				File fileDefault = new File(Language.getDictionaryFileNameDefault64());
-				if (fileDefault.exists()==true) {
-					bReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileDefault)));
+				String fileNameDefault64 = Language.getDictionaryFileNameDefault64();
+				if (fileNameDefault64!=null) {
+					File fileDefault = new File(fileNameDefault64);
+					if (fileDefault!=null && fileDefault.exists()==true) {
+						bReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileDefault)));
+					}
 				}
 				break;
 
 			case CsvFile:
-				File fileCSV = new File(Language.getDictionaryFileNameCSV());
-				if (fileCSV.exists()==true) {
-					bReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileCSV)));
+				String fileNameCSV = Language.getDictionaryFileNameCSV();
+				if (fileNameCSV!=null) {
+					File fileCSV = new File(fileNameCSV);
+					if (fileCSV!=null && fileCSV.exists()==true) {
+						bReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileCSV)));
+					}
 				}
 				break;
 				
@@ -634,7 +640,11 @@ public class Language {
 	 */
 	private static String getDictionaryFileNameDefault64() {
 		if (dictFileNameDefault64==null) {
-			dictFileNameDefault64 = PathHandling.getFileDictionary(true, true);
+			try {
+				dictFileNameDefault64 = PathHandling.getFileDictionary(true, true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		return dictFileNameDefault64;
 	}
@@ -644,7 +654,11 @@ public class Language {
 	 */
 	private static String getDictionaryFileNameCSV() {
 		if (dictFileNameCSV==null) {
-			dictFileNameCSV = PathHandling.getFileDictionary(false, true);
+			try {
+				dictFileNameCSV = PathHandling.getFileDictionary(false, true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		return dictFileNameCSV;
 	}
@@ -668,10 +682,15 @@ public class Language {
 	 * @param overwriteExistingFile the indicator to overwrite existing file
 	 */
 	public static void checkAndProvideDictionaryFiles(boolean overwriteExistingFile) {
-		File propFile = PathHandling.getPropertiesPath(true).toFile();
-		PropertyContentProvider pcProvider = new PropertyContentProvider(propFile);
-		pcProvider.checkAndProvidePropertyContent(FileToProvide.DICTIONARY_CSV, overwriteExistingFile);
-		pcProvider.checkAndProvidePropertyContent(FileToProvide.DICTIONARY_BIN, overwriteExistingFile);
+		try {
+			File propFile = PathHandling.getPropertiesPath(true).toFile();
+			PropertyContentProvider pcProvider = new PropertyContentProvider(propFile);
+			pcProvider.checkAndProvidePropertyContent(FileToProvide.DICTIONARY_CSV, overwriteExistingFile);
+			pcProvider.checkAndProvidePropertyContent(FileToProvide.DICTIONARY_BIN, overwriteExistingFile);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
 	}
 	
 	// -------------------------------------------------------------------------
