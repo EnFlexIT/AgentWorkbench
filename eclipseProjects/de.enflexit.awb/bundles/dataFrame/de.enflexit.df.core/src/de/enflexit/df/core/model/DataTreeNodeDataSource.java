@@ -1,6 +1,7 @@
 package de.enflexit.df.core.model;
 
 import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfiguration;
 
 /**
  * The Class DataTreeNodeDataSource.
@@ -33,5 +34,11 @@ public abstract class DataTreeNodeDataSource<DS extends AbstractDataSource> exte
 	public void setDataSource(DS dataSource) {
 		this.dataSource = dataSource;
 	}
+
+	/**
+	 * Has to return the JPanel for the configuration of the data source.
+	 * @return the JPanel for the configuration
+	 */
+	public abstract JPanelDataSourceConfiguration<?> getJPanelConfiguration();
 	
 }

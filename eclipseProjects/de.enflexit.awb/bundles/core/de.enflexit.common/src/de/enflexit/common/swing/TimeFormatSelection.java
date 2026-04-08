@@ -134,8 +134,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	public JLabel getJLabelFormatHeader() {
 		if (jLabelFormat==null) {
 			jLabelFormat = new JLabel();
-			jLabelFormat.setText("Format");
-			jLabelFormat.setText(Language.translate(jLabelFormat.getText()) + ":");
+			jLabelFormat.setText(Language.translate("Format") + ":");
 			jLabelFormat.setPreferredSize(new Dimension(40, 16));
 		}
 		return jLabelFormat;
@@ -174,8 +173,7 @@ public class TimeFormatSelection extends JPanelForActions {
 		if (jButtonTimeFormatDefault == null) {
 			jButtonTimeFormatDefault = new JButton();
 			jButtonTimeFormatDefault.setIcon(BundleHelper.getImageIcon("MBreset.png"));
-			jButtonTimeFormatDefault.setToolTipText("Standard verwenden");
-			jButtonTimeFormatDefault.setToolTipText(Language.translate(jButtonTimeFormatDefault.getToolTipText()));
+			jButtonTimeFormatDefault.setToolTipText(Language.translate("Standard verwenden"));
 			jButtonTimeFormatDefault.setPreferredSize(new Dimension(45, 26));
 			jButtonTimeFormatDefault.addActionListener(new ActionListener() {
 				@Override

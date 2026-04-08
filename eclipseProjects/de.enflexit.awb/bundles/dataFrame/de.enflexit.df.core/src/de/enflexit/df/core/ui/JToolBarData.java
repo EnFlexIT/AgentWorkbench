@@ -1,25 +1,23 @@
 package de.enflexit.df.core.ui;
 
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
-import javax.swing.tree.TreePath;
 
-import de.enflexit.awb.core.ui.AwbMessageDialog;
-import de.enflexit.awb.core.ui.AwbOptionsDialog;
-import de.enflexit.common.dataSources.AbstractDataSource;
 import de.enflexit.common.dataSources.CsvDataSource;
 import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.common.dataSources.ExcelDataSource;
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
@@ -31,7 +29,7 @@ import de.enflexit.df.core.model.DataTreeNodeDataSource;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @param ae the ae
  */
-public class JToolBarData extends JToolBar implements ActionListener {
+public class JToolBarData extends JToolBar implements ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 2584749340449450910L;
 
@@ -42,18 +40,30 @@ public class JToolBarData extends JToolBar implements ActionListener {
 	private JMenuItem jMenuItemExcelFile;
 	private JMenuItem jMenuItemDatabaseData;
 	
+	private JToggleButton jToggleButtonDataSourceConfiguration;
 	private JButton jButtonDeleteDataSources;
+	
 	
 	/**
 	 * Instantiates a new j tool bar data.
 	 * @param dataController the data controller
 	 */
 	public JToolBarData(DataController dataController) {
-		
-		this.dataController = dataController;
+		this.setDataController(dataController);
 		
 		this.add(this.getJButtonEditDataSources());
+		this.add(this.getJToggleButtonDataSourceConfiguration());
 		this.add(this.getJButtonDeleteDataSources());
+	}
+	
+	public DataController getDataController() {
+		return dataController;
+	}
+	public void setDataController(DataController dataController) {
+		this.dataController = dataController;
+		if (this.dataController!=null) {
+			this.dataController.addPropertyChangeListener(this);
+		}
 	}
 	
 	/**
@@ -111,6 +121,7 @@ public class JToolBarData extends JToolBar implements ActionListener {
 	private JMenuItem getJMenuItemCsvData() {
 		if (jMenuItemCsvData==null) {
 			jMenuItemCsvData = new JMenuItem("Add CSV File");
+			jMenuItemCsvData.setForeground(AwbThemeColor.RegularText.getColor());
 			jMenuItemCsvData.setIcon(BundleHelper.getThemedIcon("NewCsvFileBlack.png", "NewCsvFileGrey.png"));
 			jMenuItemCsvData.addActionListener(this);
 		}
@@ -119,6 +130,7 @@ public class JToolBarData extends JToolBar implements ActionListener {
 	private JMenuItem getJMenuItemExcelFile() {
 		if (jMenuItemExcelFile==null) {
 			jMenuItemExcelFile = new JMenuItem("Add MS-Excel File");
+			jMenuItemExcelFile.setForeground(AwbThemeColor.RegularText.getColor());
 			jMenuItemExcelFile.setIcon(BundleHelper.getThemedIcon("NewExcelLight.png", "NewExcelDark.png"));
 			jMenuItemExcelFile.addActionListener(this);
 		}
@@ -127,12 +139,27 @@ public class JToolBarData extends JToolBar implements ActionListener {
 	private JMenuItem getJMenuItemDatabaseData() {
 		if (jMenuItemDatabaseData==null) {
 			jMenuItemDatabaseData = new JMenuItem("Add Database");
+			jMenuItemDatabaseData.setForeground(AwbThemeColor.RegularText.getColor());
 			jMenuItemDatabaseData.setIcon(BundleHelper.getThemedIcon("NewDatabaseBlack.png", "NewDatabaseGrey.png"));
 			jMenuItemDatabaseData.addActionListener(this);
 		}
 		return jMenuItemDatabaseData;
 	}
 	
+	/**
+	 * Returns the JToggleButton edit data sources.
+	 * @return the JToggleButton to edit data sources
+	 */
+	private JToggleButton getJToggleButtonDataSourceConfiguration() {
+		if (jToggleButtonDataSourceConfiguration==null) {
+			jToggleButtonDataSourceConfiguration = new JToggleButton();
+			jToggleButtonDataSourceConfiguration.setToolTipText("Data source configuration ");
+			jToggleButtonDataSourceConfiguration.setIcon(BundleHelper.getImageIcon("MBsettings.png"));
+			jToggleButtonDataSourceConfiguration.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonDataSourceConfiguration.addActionListener(this);
+		}
+		return jToggleButtonDataSourceConfiguration;
+	}
 	/**
 	 * Returns the JButton edit data sources.
 	 * @return the JButton to edit data sources
@@ -148,6 +175,24 @@ public class JToolBarData extends JToolBar implements ActionListener {
 		return jButtonDeleteDataSources;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
+			this.getJToggleButtonDataSourceConfiguration().setSelected(true);
+			
+		} else if (evt.getPropertyName().equals(DataController.DC_SHOW_DATA_SOURCE_CONFIGURATION)==true) {
+			boolean isShowConfig = (boolean) evt.getNewValue();
+			if (this.getJToggleButtonDataSourceConfiguration().isSelected()!=isShowConfig) {
+				this.getJToggleButtonDataSourceConfiguration().setSelected(isShowConfig);
+			}
+		}
+		
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -166,24 +211,23 @@ public class JToolBarData extends JToolBar implements ActionListener {
 		} else if (ae.getSource()==this.getJMenuItemDatabaseData()) {
 			// --- Add DatabaseDataSource -------------------------------------
 			this.dataController.addDataSource(new DatabaseDataSource());
+		
+		} else if (ae.getSource()==this.getJToggleButtonDataSourceConfiguration()) {
+			// --- Show data source configuration -----------------------------
+			boolean isSelected = this.getJToggleButtonDataSourceConfiguration().isSelected();
+			this.dataController.firePropertyChange(DataController.DC_SHOW_DATA_SOURCE_CONFIGURATION, !isSelected, isSelected);
 			
 		} else if (ae.getSource()==this.getJButtonDeleteDataSources()) {
 			// --- Delete currently selected data source ----------------------
 			DataTreeNodeDataSource<?> dtnoDataSource = this.dataController.getSelectionModel().getSelectedDataTreeNodeDataSource();
 			if (dtnoDataSource!=null) {
-				// --- Get the data source to delete -------------------------- 
-				AbstractDataSource dSource = dtnoDataSource.getDataSource();
 				// --- Ask the user to delete the data source -----------------
-				Window owner   = OwnerDetection.getOwnerWindowForComponent(this);
-				String message = "Would you like to delete the selected data source '" + dtnoDataSource.getCaption() + "'?";
-				int userAnswer = AwbMessageDialog.showConfirmDialog(owner, message, "Delete Data Source?", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (userAnswer==JOptionPane.NO_OPTION) return;
-				// --- Finally, delete data source ----------------------------
-				this.dataController.removeDataSource(dSource);
+				this.dataController.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(this), dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
 			}
 			
 		} 
 		
 	}
+
 
 }

@@ -1,10 +1,14 @@
 package de.enflexit.df.core.model;
 
+import java.awt.Window;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.dataSources.AbstractDataSource;
 
 /**
@@ -21,6 +25,7 @@ public class DataController {
 	public static final String DC_REMOVED_DATA_SOURCE = "DC_REMOVED_DATA_SOURCE";
 
 	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
+	public static final String DC_SHOW_DATA_SOURCE_CONFIGURATION = "DC_SHOW_DATA_SOURCE_CONFIGURATION";
 	
 	
 	private PropertyChangeSupport pcs;
@@ -59,6 +64,16 @@ public class DataController {
 	public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		this.getPropertyChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
 	}
+//	/**
+//	 * Fires a property change event.
+//	 *
+//	 * @param propertyName the property name
+//	 * @param oldValue the old value
+//	 * @param newValue the new value
+//	 */
+//	public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
+//		this.getPropertyChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
+//	}
 	
 	// ------------------------------------------------------------------------
 	// --- From here, runtime objects -----------------------------------------
@@ -117,15 +132,26 @@ public class DataController {
 	public boolean removeDataSource(AbstractDataSource dataSource) {
 		if (dataSource!=null) {
 			boolean success = this.getDataSources().remove(dataSource);
-//			// --- Check the selection model ------------------------
-//			if (this.getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSource()==dataSource) {
-//				this.getSelectionModel().setSelectedTreePath(null);
-//			}
 			// --- Inform property change listener ------------------
 			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, dataSource, null);
 			return success;
 		}
 		return false;
+	}
+	/**
+	 * Removes the data source ask user.
+	 *
+	 * @param owner the owner
+	 * @param dSource the data source to delete
+	 * @param dataSourceCaption the data source caption
+	 */
+	public boolean removeDataSourceAskUser(Window owner, AbstractDataSource dSource, String dataSourceCaption) {
+		
+		String message = "Would you like to delete the selected data source '" + dataSourceCaption + "'?";
+		int userAnswer = AwbMessageDialog.showConfirmDialog(owner, message, "Delete Data Source?", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (userAnswer==JOptionPane.NO_OPTION) return false;
+		// --- Delete data source -------------------------
+		return this.removeDataSource(dSource);
 	}
 	
 	/**
@@ -153,6 +179,5 @@ public class DataController {
 		}
 		return dataTreeModel;
 	}
-	
 	
 }

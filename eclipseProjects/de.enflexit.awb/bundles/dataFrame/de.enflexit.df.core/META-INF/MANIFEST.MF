@@ -5,6 +5,9 @@ Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.df.core
 Automatic-Module-Name: de.enflexit.df.core
 Bundle-Version: 1.0.0.qualifier
+Export-Package: de.enflexit.df.core,
+ de.enflexit.df.core.model,
+ de.enflexit.df.core.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: de.enflexit.awb.baseUI,

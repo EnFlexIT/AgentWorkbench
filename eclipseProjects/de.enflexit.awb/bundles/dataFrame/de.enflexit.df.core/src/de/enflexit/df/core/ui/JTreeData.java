@@ -18,8 +18,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeModel;
+import de.enflexit.df.core.model.DataTreeNodeDataSource;
 
 /**
  * The Class JTreeData.
@@ -33,6 +35,7 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 	private DataController dataController; 
 	
 	private JPopupMenu jPopupMenuDataTree;
+	
 	
 	/**
 	 * Instantiates a new j tree data.
@@ -53,7 +56,6 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 		this.addMouseListener(this.getMouseAdapter());
 		
 		this.setCellRenderer(new DataTreeCellRenderer());
-		
 	}
 	
 	/**
@@ -140,14 +142,16 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			public void keyReleased(KeyEvent ke) {
 
 				if (ke.getKeyCode()==KeyEvent.VK_DELETE) {
-					// --- Remove a node tree object --------------
-					String title = null;
-					String msg = null;
-					//Window owner = OwnerDetection.getOwnerWindowForComponent(this);
-					// TODO
-
+					// --- Delete currently selected data source --------------
+					DataController dc = JTreeData.this.getDataController();
+					DataTreeNodeDataSource<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
+					if (dtnoDataSource!=null) {
+						// --- Ask the user to delete the data source ---------
+						dc.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(JTreeData.this), dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
+					}
+					
 				} else if (ke.getKeyCode()==KeyEvent.VK_CONTEXT_MENU ) {
-					// --- Show context menu ----------------------
+					// --- Show context menu ----------------------------------
 					Rectangle pathBounds = JTreeData.this.getPathBounds(JTreeData.this.getSelectionPath());
 					JTreeData.this.getJPopupMenuDataTree().show (JTreeData.this, pathBounds.x, pathBounds.y + pathBounds.height);
 					
@@ -170,7 +174,6 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			 */
 			@Override
 			public void treeNodesChanged(TreeModelEvent tme) {
-				
 			}
 
 			/* (non-Javadoc)
@@ -222,7 +225,6 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			 */
 			@Override
 			public void treeStructureChanged(TreeModelEvent tme) {
-				
 			}
 		};
 		return tml;
