@@ -36,7 +36,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 * @param root the root
 	 */
 	public DataTreeModel(DataController dataController) {
-		super(new DefaultMutableTreeNode(new DataTreeNodeBase("RootNode")));
+		super(new DefaultMutableTreeNode(new DataTreeNodeObjectBase("RootNode")));
 		this.setDataController(dataController);
 	}
 	
@@ -122,11 +122,11 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		
 		DataTreeNodeDataSource<?> ds = null;
 		if (dataSource instanceof CsvDataSource) {
-			ds = new DataTreeNodeDataSourceCsv((CsvDataSource) dataSource);
+			ds = new DataTreeNodeDataSourceCsv(this.getDataController(), (CsvDataSource) dataSource);
 		} else if (dataSource instanceof ExcelDataSource) {
-			ds = new DataTreeNodeDataSourceExcel((ExcelDataSource) dataSource);
+			ds = new DataTreeNodeDataSourceExcel(this.getDataController(), (ExcelDataSource) dataSource);
 		} else if (dataSource instanceof DatabaseDataSource) {
-			ds = new DataTreeNodeDataSourceDatabase((DatabaseDataSource) dataSource);
+			ds = new DataTreeNodeDataSourceDatabase(this.getDataController(), (DatabaseDataSource) dataSource);
 		}
 		
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ds);
@@ -149,7 +149,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 			@Override
 			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
 				
-				DataTreeNodeBase dtno = (DataTreeNodeBase) treeNode.getUserObject();
+				DataTreeNodeObjectBase dtno = (DataTreeNodeObjectBase) treeNode.getUserObject();
 				if (dtno instanceof DataTreeNodeDataSource<?>) {
 					
 					DataTreeNodeDataSource<?> dtnoDataSource = (DataTreeNodeDataSource<?>) dtno;

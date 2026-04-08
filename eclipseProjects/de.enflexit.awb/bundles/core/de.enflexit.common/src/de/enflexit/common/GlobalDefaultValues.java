@@ -7,7 +7,7 @@ package de.enflexit.common;
  */
 public class GlobalDefaultValues {
 
-	public static final String 	DEFAULT_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss.SSS";
+	public static final String 	DEFAULT_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss,SSS";
 	
 	
 }

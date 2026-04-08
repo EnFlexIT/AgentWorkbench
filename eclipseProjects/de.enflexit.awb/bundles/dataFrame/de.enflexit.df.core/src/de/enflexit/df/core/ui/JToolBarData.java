@@ -18,6 +18,7 @@ import de.enflexit.common.dataSources.CsvDataSource;
 import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.common.dataSources.ExcelDataSource;
 import de.enflexit.common.swing.AwbThemeColor;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
@@ -153,8 +154,8 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	private JToggleButton getJToggleButtonDataSourceConfiguration() {
 		if (jToggleButtonDataSourceConfiguration==null) {
 			jToggleButtonDataSourceConfiguration = new JToggleButton();
-			jToggleButtonDataSourceConfiguration.setToolTipText("Data source configuration ");
-			jToggleButtonDataSourceConfiguration.setIcon(BundleHelper.getImageIcon("MBsettings.png"));
+			jToggleButtonDataSourceConfiguration.setToolTipText("Data Source Configuration ");
+			jToggleButtonDataSourceConfiguration.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("MBsettings.png")));
 			jToggleButtonDataSourceConfiguration.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonDataSourceConfiguration.addActionListener(this);
 		}
@@ -167,7 +168,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	private JButton getJButtonDeleteDataSources() {
 		if (jButtonDeleteDataSources==null) {
 			jButtonDeleteDataSources = new JButton();
-			jButtonDeleteDataSources.setToolTipText("Delete Data Sources");
+			jButtonDeleteDataSources.setToolTipText("Delete selected Data Sources");
 			jButtonDeleteDataSources.setIcon(BundleHelper.getImageIcon("Delete.png"));
 			jButtonDeleteDataSources.setPreferredSize(new Dimension(26, 26));
 			jButtonDeleteDataSources.addActionListener(this);
@@ -185,7 +186,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
 			this.getJToggleButtonDataSourceConfiguration().setSelected(true);
 			
-		} else if (evt.getPropertyName().equals(DataController.DC_SHOW_DATA_SOURCE_CONFIGURATION)==true) {
+		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW)==true) {
 			boolean isShowConfig = (boolean) evt.getNewValue();
 			if (this.getJToggleButtonDataSourceConfiguration().isSelected()!=isShowConfig) {
 				this.getJToggleButtonDataSourceConfiguration().setSelected(isShowConfig);
@@ -215,7 +216,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		} else if (ae.getSource()==this.getJToggleButtonDataSourceConfiguration()) {
 			// --- Show data source configuration -----------------------------
 			boolean isSelected = this.getJToggleButtonDataSourceConfiguration().isSelected();
-			this.dataController.firePropertyChange(DataController.DC_SHOW_DATA_SOURCE_CONFIGURATION, !isSelected, isSelected);
+			this.dataController.firePropertyChange(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW, !isSelected, isSelected);
 			
 		} else if (ae.getSource()==this.getJButtonDeleteDataSources()) {
 			// --- Delete currently selected data source ----------------------

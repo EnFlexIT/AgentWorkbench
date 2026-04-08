@@ -25,7 +25,9 @@ public class DataController {
 	public static final String DC_REMOVED_DATA_SOURCE = "DC_REMOVED_DATA_SOURCE";
 
 	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
-	public static final String DC_SHOW_DATA_SOURCE_CONFIGURATION = "DC_SHOW_DATA_SOURCE_CONFIGURATION";
+	public static final String DC_DATA_SOURCE_CONFIGURATION_SHOW = "DC_DATA_SOURCE_CONFIGURATION_SHOW";
+	public static final String DC_DATA_SOURCE_CONFIGURATION_CHANGED = "DC_DATA_SOURCE_CONFIGURATION_CHANGED";
+	public static final String DC_DATA_LOADED = "DC_DATA_LOADED";
 	
 	
 	private PropertyChangeSupport pcs;
@@ -64,16 +66,6 @@ public class DataController {
 	public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		this.getPropertyChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
 	}
-//	/**
-//	 * Fires a property change event.
-//	 *
-//	 * @param propertyName the property name
-//	 * @param oldValue the old value
-//	 * @param newValue the new value
-//	 */
-//	public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
-//		this.getPropertyChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
-//	}
 	
 	// ------------------------------------------------------------------------
 	// --- From here, runtime objects -----------------------------------------

@@ -12,7 +12,14 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import de.enflexit.common.swing.AwbThemeColor;
+import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.df.core.BundleHelper;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 
 /**
@@ -34,6 +41,9 @@ public class JPanelConfigurationWrapper extends JPanel {
 	private JButton jButtonClose;
 	private ActionListener closeActionListener;
 	
+	private JPanel jPanelSouth;
+	private JLabel jLabelError;
+	
 	
 	/**
 	 * Instantiates a new j panel configuration wrapper.
@@ -47,6 +57,8 @@ public class JPanelConfigurationWrapper extends JPanel {
 	private void initialize() {
 		this.setLayout(new BorderLayout(0, 0));
 		this.add(this.getJPanelNorth(), BorderLayout.NORTH);
+//		this.add(this.getJLabelError(), BorderLayout.SOUTH);
+		add(getJPanelSouth(), BorderLayout.SOUTH);
 	}
 	
 	private JPanel getJPanelNorth() {
@@ -78,9 +90,9 @@ public class JPanelConfigurationWrapper extends JPanel {
 	}
 	private JButton getJButtonClose() {
 		if (jButtonClose == null) {
-			jButtonClose = new JButton("");
+			jButtonClose = new JButton();
 			jButtonClose.setToolTipText("Close the configuration panel!");
-			jButtonClose.setIcon(BundleHelper.getImageIcon("MBclose.png"));
+			jButtonClose.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("MBclose.png")));
 			jButtonClose.setPreferredSize(new Dimension(26, 26));
 			jButtonClose.addActionListener(new ActionListener() {
 				@Override
@@ -148,5 +160,51 @@ public class JPanelConfigurationWrapper extends JPanel {
 	public void addCloseActionListener(ActionListener listener) {
 		this.closeActionListener = listener;
 	}
+	
+
+	private JPanel getJPanelSouth() {
+		if (jPanelSouth == null) {
+			jPanelSouth = new JPanel();
+			GridBagLayout gbl_jPanelSouth = new GridBagLayout();
+			gbl_jPanelSouth.columnWidths = new int[]{46, 0};
+			gbl_jPanelSouth.rowHeights = new int[]{14, 0};
+			gbl_jPanelSouth.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gbl_jPanelSouth.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			jPanelSouth.setLayout(gbl_jPanelSouth);
+			GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+			gbc_lblNewLabel.insets = new Insets(5, 5, 5, 5);
+			gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
+			gbc_lblNewLabel.gridx = 0;
+			gbc_lblNewLabel.gridy = 0;
+			jPanelSouth.add(getJLabelError(), gbc_lblNewLabel);
+		}
+		return jPanelSouth;
+	}
+	private JLabel getJLabelError() {
+		if (jLabelError == null) {
+			jLabelError = new JLabel();
+			jLabelError.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelError.setForeground(AwbThemeColor.ErrorText.getColor());
+		}
+		return jLabelError;
+	}
+	/**
+	 * Sets the error to the display.
+	 * @param errorMessage the new error
+	 */
+	public void setError(String errorMessage) {
+		
+		if (errorMessage==null || errorMessage.isBlank()==true) {
+			this.getJLabelError().setText("");
+			this.remove(this.getJPanelSouth());
+		} else {
+			this.getJLabelError().setText(errorMessage);
+			this.add(this.getJPanelSouth(), BorderLayout.SOUTH);
+		}
+		this.validate();
+		this.repaint();
+	}
+	
+
 	
 }

@@ -17,9 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeNodeDataSource;
+import de.enflexit.df.core.model.DataTreeNodeObjectBase;
 
 /**
  * The Class JPanelTree.
@@ -34,6 +37,7 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 	
 	private JSplitPane jSplitPaneTreeConfiguration;
 	private boolean isConfigurationVisible;
+	private Integer dividerLocationReminder;
 	
 	private JPanel jPanelDataTree;
 	private JTreeData jTreeData;
@@ -206,6 +210,7 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 	private void setConfiguration(boolean isShowConfiguration) {
 		
 		if (isShowConfiguration==false) {
+			this.dividerLocationReminder = this.getJSplitPaneTreeConfiguration().getDividerLocation();
 			this.remove(this.getJSplitPaneTreeConfiguration());
 			this.add(this.getJPanelDataTree(), BorderLayout.CENTER);
 			
@@ -214,6 +219,9 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 			this.getJSplitPaneTreeConfiguration().setTopComponent(this.getJPanelDataTree());
 			this.getJSplitPaneTreeConfiguration().setBottomComponent(this.getJPanelConfigurationWrapper());
 			this.add(this.getJSplitPaneTreeConfiguration(), BorderLayout.CENTER);
+			if (this.dividerLocationReminder!=null) {
+				this.getJSplitPaneTreeConfiguration().setDividerLocation(this.dividerLocationReminder);
+			}
 		}
 		this.updateConfiguration();
 		
@@ -245,13 +253,25 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
 			this.setConfiguration(true);
 			
-		} else if (evt.getPropertyName().equals(DataController.DC_SHOW_DATA_SOURCE_CONFIGURATION)==true) {
+		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW)==true) {
 			boolean isShowConfig = (boolean) evt.getNewValue();
 			this.setConfiguration(isShowConfig);
+			
+		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_CHANGED)==true) {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) this.getJTreeData().getSelectionPath().getLastPathComponent();
+			if (treeNode!=null) {
+				((DefaultTreeModel) this.getJTreeData().getModel()).nodeChanged(treeNode);
+			}
 			
 		} else if (evt.getPropertyName().equals(DataController.DC_NEW_TREE_PATH_SELECTED)==true) {
 			if (this.isConfigurationVisible()==true) {
 				this.updateConfiguration();
+			}
+			
+		} else if (evt.getPropertyName().equals(DataController.DC_DATA_LOADED)) {
+			DataTreeNodeObjectBase dtno = this.getDataController().getSelectionModel().getSelectedDataTreeNodeObjectBase();
+			if (dtno!=null) {
+				this.getJPanelConfigurationWrapper().setError(dtno.getErrorMessage());
 			}
 			
 		}
@@ -266,7 +286,7 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 		
 		if (ae.getSource()==this.getJPanelConfigurationWrapper()) {
 			// --- React on configuration close event --------------
-			this.getDataController().firePropertyChange(DataController.DC_SHOW_DATA_SOURCE_CONFIGURATION, true, false);
+			this.getDataController().firePropertyChange(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW, true, false);
 			
 		} else if (ae.getSource()==this.getJButtonResetSearch()) {
 			// --- Reset search -------------------------------------

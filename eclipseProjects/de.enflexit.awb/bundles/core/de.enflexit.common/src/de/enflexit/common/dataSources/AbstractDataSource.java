@@ -26,6 +26,10 @@ public abstract class AbstractDataSource implements Serializable {
 
 	private static final long serialVersionUID = -1124708006041779794L;
 
+	public static final String CHANGED_ID = "CHANGED_ID";
+	public static final String CHANGED_NAME = "CHANGED_NAME";
+	public static final String CHANGED_DESCRIPTION = "CHANGED_DESCRIPTION";
+	
 	@Id
 	@GeneratedValue
 	@Column(name="id_data_source", nullable=false)

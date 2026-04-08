@@ -14,12 +14,16 @@ public class DataTreeNodeDataSourceExcel extends DataTreeNodeDataSource<ExcelDat
 	
 	/**
 	 * Instantiates a new data tree node data source excel.
+	 *
+	 * @param dataController the data controller
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceExcel(ExcelDataSource dataSource) {
-		super(dataSource);
+	public DataTreeNodeDataSourceExcel(DataController dataController, ExcelDataSource dataSource) {
+		super(dataController, dataSource);
+		if (dataSource.getName()==null) {
+			dataSource.setName("New Excel data source");
+		}
 		this.setImageIcon(BundleHelper.getThemedIcon("MS-Excel-Light.png", "MS-Excel-Dark.png"));
-		this.setCaption("New Excel data source");
 		this.setTooltipText("Please, configure the Excel file settings ...");
 	}
 
@@ -29,9 +33,18 @@ public class DataTreeNodeDataSourceExcel extends DataTreeNodeDataSource<ExcelDat
 	@Override
 	public JPanelDataSourceConfigurationExcel getJPanelConfiguration() {
 		if (jPanelDataSourceConfigurationExcel==null) {
-			jPanelDataSourceConfigurationExcel = new JPanelDataSourceConfigurationExcel(this);
+			jPanelDataSourceConfigurationExcel = new JPanelDataSourceConfigurationExcel(this.getDataController(), this);
 		}
 		return jPanelDataSourceConfigurationExcel;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#loadData()
+	 */
+	@Override
+	public boolean loadData() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
