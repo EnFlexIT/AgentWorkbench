@@ -39,10 +39,10 @@ public class PropertyBusServiceGeneralConnection implements PropertyBusService {
 	@Override
 	public boolean setProperties(Properties properties) {
 
-		// --- If properties aren't valid, don't apply them and return false -----------------
+		// --- If properties aren't valid, don't apply them and return false --------------------------------
 		if (this.hasValidProperties(properties)== false) return false;
 		
-		// --- Get the new property values ---------------------
+		// --- Get the new property values ------------------------------------------------------------------
 		Boolean useForEveryDB = properties.getBooleanValue(USE_FOR_EVERY_CONNECTION);
 		String dbSystem = properties.getStringValue(DB_SYSTEM);
 		String driver = properties.getStringValue(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
@@ -51,7 +51,7 @@ public class PropertyBusServiceGeneralConnection implements PropertyBusService {
 		String user = properties.getStringValue(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName);
 		String password = properties.getStringValue(HibernateDatabaseService.HIBERNATE_PROPERTY_Password);
 		
-		// --- Put new values into a java.util.Property instance --------------------
+		// --- Put new values into a java.util.Property instance --------------------------------------------
 		java.util.Properties hibernateDbs = new java.util.Properties();
 		hibernateDbs.put(DB_SYSTEM, dbSystem);
 		hibernateDbs.put(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, driver);
@@ -65,7 +65,7 @@ public class PropertyBusServiceGeneralConnection implements PropertyBusService {
 		gdbSettings.setHibernateDatabaseSettings(hibernateDbs);
 
 		
-		// --- Try to save the new settings and return the result -----------------------
+		// --- Try to save the new settings and return the result -------------------------------------------
 		return DatabaseConnectionManager.getInstance().saveGeneralDatabaseSettings(gdbSettings);
 	}
 
@@ -79,7 +79,7 @@ public class PropertyBusServiceGeneralConnection implements PropertyBusService {
 
 		List<String> invalidValues = new ArrayList<>();
 		
-		// --- Check the property values and add them to invalidValues if invalid ------------
+		// --- Check the property values and add them to invalidValues if invalid ---------------------------
 		Boolean useForEveryDB = properties2check.getBooleanValue(USE_FOR_EVERY_CONNECTION);
 		if (useForEveryDB == null) {
 			invalidValues.add(USE_FOR_EVERY_CONNECTION + " is null");
@@ -102,7 +102,7 @@ public class PropertyBusServiceGeneralConnection implements PropertyBusService {
 			invalidValues.add(errorPswd);
 		}
 
-		// --- If invalid values were found, add an error message to the properties -------------
+		// --- If invalid values were found, add an error message to the properties -------------------------
 		if (invalidValues.size() > 0) {
 			properties2check.setPropertyMessage(PropertyMessage.MessageType.Error, String.join(", ", invalidValues));
 			return false;
@@ -119,19 +119,19 @@ public class PropertyBusServiceGeneralConnection implements PropertyBusService {
 		
 		if (properties == null) properties = new Properties();
 		
-		// --- Get database settings and set the current db system ----------------
+		// --- Get database settings and set the current db system ------------------------------------------
 		DatabaseSettings databaseSettings = DatabaseConnectionManager.getInstance().getGeneralDatabaseSettings();
 		String dbSystem = databaseSettings.getDatabaseSystemName();
 		properties.setStringValue(DB_SYSTEM, dbSystem);
 		
-		// --- Iterate over hibernate database settings to extract keys and values ----------------
+		// --- Iterate over hibernate database settings to extract keys and values --------------------------
 		java.util.Properties hibernateDbs = databaseSettings.getHibernateDatabaseSettings();
 		
 		for (Object keyObject : hibernateDbs.keySet()) {
 			String key = (String) keyObject;
 			String value = (String) hibernateDbs.get(key);
 			
-			// --- Set property value ---------------
+			// --- Set property value -----------------------------------------------------------------------
 			if (key.equals(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY)) {
 				properties.setBooleanValue(USE_FOR_EVERY_CONNECTION, Boolean.parseBoolean(value));
 			} else {

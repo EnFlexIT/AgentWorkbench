@@ -13,7 +13,7 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  * configuration of the Derby Network Server within the application. It is
  * registered under the performative "db.derby.networkserver" and allows other
  * components of the application to retrieve and update the Derby Network Server
- * settings through the {@link ApplicationPropertyBus}.
+ * settings through the {@link} ApplicationPropertyBus.
  * 
  * @author Daniel Bormann
  */
@@ -65,11 +65,11 @@ public class PropertyBusServiceDerbyNetworkServer implements PropertyBusService 
 	@Override
 	public boolean setProperties(Properties properties) {
 		
-		// --- if values are invalid, don't apply and return false -------------
+		// --- if values are invalid, don't apply and return false --------------------------------
 		if (this.hasValidProperties(properties) == false) {
 			return false;
 		}
-		// --- Shut down the Derby server to set new properties ------------
+		// --- Shut down the Derby server to set new properties -----------------------------------
 		if (DerbyNetworkServer.isExecuted()) DerbyNetworkServer.terminate();
 		
 		boolean isStart = properties.getBooleanValue(ISSTARTDERBYNETWORKSERVER);
@@ -78,7 +78,7 @@ public class PropertyBusServiceDerbyNetworkServer implements PropertyBusService 
 		String user = properties.getStringValue(USER);
 		String password = properties.getStringValue(PASSWORD);
 		
-		// --- Set new properties and restart the server if necessary ----------
+		// --- Set new properties and restart the server if necessary -----------------------------
 		DerbyNetworkServerProperties derbyProperties = new DerbyNetworkServerProperties();
 		boolean success = derbyProperties.setProperties(isStart, host, port, user, password);
 		
@@ -97,7 +97,7 @@ public class PropertyBusServiceDerbyNetworkServer implements PropertyBusService 
 
 		List<String> invalidValues = new ArrayList<>();
 		
-		// --- Check the property values and add them to invalidValues if invalid ------------
+		// --- Check the property values and add them to invalidValues if invalid -----------------
 		String host = properties2check.getStringValue(HOSTIP);
 		if (host == null || host.isBlank() == true) {
 			invalidValues.add("Host is empty.");
@@ -120,7 +120,7 @@ public class PropertyBusServiceDerbyNetworkServer implements PropertyBusService 
 			invalidValues.add(errorPswd);
 		}
 
-		// --- If invalid values were found, add an error message to the properties -------------
+		// --- If invalid values were found, add an error message to the properties ---------------
 		if (invalidValues.size() > 0) {
 			properties2check.setPropertyMessage(PropertyMessage.MessageType.Error, String.join(", ", invalidValues));
 			return false;
