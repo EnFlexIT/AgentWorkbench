@@ -2,7 +2,8 @@ package de.enflexit.db.derby.server;
 
 import java.util.ArrayList;
 import java.util.List;
-import de.enflexit.awb.core.config.SecurityPolicies;
+
+import de.enflexit.common.SecurityPolicies;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.PropertyBusService;
