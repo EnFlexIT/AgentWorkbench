@@ -1,8 +1,15 @@
 package de.enflexit.df.core.model;
 
+import java.io.File;
+import java.time.format.DateTimeFormatter;
+
 import de.enflexit.common.dataSources.CsvDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationCsv;
+import tech.tablesaw.api.Table;
+import tech.tablesaw.io.AddCellToColumnException;
+import tech.tablesaw.io.ColumnIndexOutOfBoundsException;
+import tech.tablesaw.io.csv.CsvReadOptions;
 
 /**
  * The Class DataTreeNodeDataSourceCsv.
@@ -15,12 +22,16 @@ public class DataTreeNodeDataSourceCsv extends DataTreeNodeDataSource<CsvDataSou
 	
 	/**
 	 * Instantiates a new data tree node data source csv.
+	 *
+	 * @param dataController the data controller
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceCsv(CsvDataSource dataSource) {
-		super(dataSource);
+	public DataTreeNodeDataSourceCsv(DataController dataController, CsvDataSource dataSource) {
+		super(dataController, dataSource);
+		if (dataSource.getName()==null) {
+			dataSource.setName("New CSV data source");
+		}
 		this.setImageIcon(BundleHelper.getThemedIcon("CsvFileBlack.png", "CsvFileGrey.png"));
-		this.setCaption("New CSV data source");
 		this.setTooltipText("Please, configure the CSV File settings ...");
 	}
 
@@ -30,22 +41,60 @@ public class DataTreeNodeDataSourceCsv extends DataTreeNodeDataSource<CsvDataSou
 	@Override
 	public JPanelDataSourceConfigurationCsv getJPanelConfiguration() {
 		if (jPanelDataSourceConfigurationCsv==null) {
-			jPanelDataSourceConfigurationCsv = new JPanelDataSourceConfigurationCsv(this);
+			jPanelDataSourceConfigurationCsv = new JPanelDataSourceConfigurationCsv(this.getDataController(), this);
 		}
 		return jPanelDataSourceConfigurationCsv;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.DataTreeNodeBase#setCaption(java.lang.String)
+	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getToolTipText()
 	 */
 	@Override
-	public void setCaption(String caption) {
-		super.setCaption(caption);
-		if (this.getDataSource()!=null) {
-			this.getDataSource().setName(caption);
-		}
+	public String getToolTipText() {
+		return this.getDataSource().getCsvFilePath();
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#loadData()
+	 */
+	@Override
+	public boolean loadData() {
 	
-	
+		Table oldTable = this.getTable();
+		Table newTable = null;
+		
+		try {
+			CsvDataSource csvDS = this.getDataSource();
+
+			File csvFile = csvDS.getCsvFilePath()!=null ? new File(csvDS.getCsvFilePath()) : null; 
+			DateTimeFormatter dtFomatter = DateTimeFormatter.ofPattern(csvDS.getDateTimeFormat());
+			
+			
+			if (csvFile!=null) {
+				CsvReadOptions csvOptions = CsvReadOptions.builder(csvFile)
+						.separator(csvDS.getColumnSeparator().charAt(0))
+						.header(csvDS.isHeadline())
+						.dateTimeFormat(dtFomatter)
+						.missingValueIndicator(" - ")
+						.build();
+				
+				newTable = Table.read().usingOptions(csvOptions).inRange(0, 50);
+				
+			}
+			this.setTable(newTable);
+			this.setErrorMessage(null);			
+			return true;
+			
+		} catch (AddCellToColumnException | ColumnIndexOutOfBoundsException | ArrayIndexOutOfBoundsException | IllegalArgumentException ex) {
+			LOGGER.error(ex.getLocalizedMessage());
+			this.setErrorMessage(ex.getLocalizedMessage());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			this.setErrorMessage(ex.getLocalizedMessage());
+		} finally {
+			this.getDataController().firePropertyChange(DataController.DC_DATA_LOADED, oldTable, newTable);
+		}
+		return false;
+	}
 	
 }

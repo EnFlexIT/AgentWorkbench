@@ -10,6 +10,8 @@ public enum AwbThemeColor {
 
 	RegularText(Color.BLACK, new Color(221, 221, 221)),
 	
+	ErrorText(new Color(200, 0, 0), Color.RED),
+	
 	ButtonTextRed(new Color(153, 0, 0), new Color(255, 0, 0)),
 	ButtonTextGreen(new Color(0, 153, 0), new Color(0, 189, 0)),
 	ButtonTextBlue(new Color(0, 0, 153), new Color(76, 135, 200)),

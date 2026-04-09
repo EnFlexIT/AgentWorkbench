@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeNodeDataSourceDatabase;
 
 /**
@@ -18,10 +19,12 @@ public class JPanelDataSourceConfigurationDatabase  extends JPanelDataSourceConf
 
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationDatabase.
+	 *
+	 * @param dataController the data controller
 	 * @param dsTreeNode the JPanelDataSourceConfigurationDatabase
 	 */
-	public JPanelDataSourceConfigurationDatabase(DataTreeNodeDataSourceDatabase dsTreeNode) {
-		super(dsTreeNode);
+	public JPanelDataSourceConfigurationDatabase(DataController dataController, DataTreeNodeDataSourceDatabase dsTreeNode) {
+		super(dataController, dsTreeNode);
 		this.initialize();
 	}
 	

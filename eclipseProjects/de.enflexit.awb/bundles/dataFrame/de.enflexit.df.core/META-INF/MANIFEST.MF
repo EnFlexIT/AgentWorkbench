@@ -16,5 +16,7 @@ Import-Package: de.enflexit.awb.baseUI,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.ui,
  de.enflexit.common.dataSources,
- de.enflexit.common.swing
+ de.enflexit.common.swing,
+ org.slf4j
+Require-Bundle: de.enflexit.df.tablesaw
 Service-Component: OSGI-INF/dataFramePerspectiveService.xml

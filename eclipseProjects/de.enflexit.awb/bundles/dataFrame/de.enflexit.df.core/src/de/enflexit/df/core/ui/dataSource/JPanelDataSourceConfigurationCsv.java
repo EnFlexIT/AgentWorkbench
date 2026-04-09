@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -16,16 +17,19 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import de.enflexit.common.dataSources.CsvDataSource;
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.FileSelection;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeNodeDataSourceCsv;
-import javax.swing.JTextArea;
-import javax.swing.JSeparator;
 
 /**
  * The Class JPanelDataSourceConfigurationCsv.
@@ -33,7 +37,7 @@ import javax.swing.JSeparator;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @param <DataTreeNodeDataSourceCsv> the generic type
  */
-public class JPanelDataSourceConfigurationCsv  extends JPanelDataSourceConfiguration<DataTreeNodeDataSourceCsv> implements ActionListener, DocumentListener {
+public class JPanelDataSourceConfigurationCsv extends JPanelDataSourceConfiguration<DataTreeNodeDataSourceCsv> implements ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 	
@@ -58,10 +62,12 @@ public class JPanelDataSourceConfigurationCsv  extends JPanelDataSourceConfigura
 	
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationCsv.
+	 *
+	 * @param dataController the data controller
 	 * @param dsTreeNode the DataTreeNodeDataSourceCsv
 	 */
-	public JPanelDataSourceConfigurationCsv(DataTreeNodeDataSourceCsv dsTreeNode) {
-		super(dsTreeNode);
+	public JPanelDataSourceConfigurationCsv(DataController dataController, DataTreeNodeDataSourceCsv dsTreeNode) {
+		super(dataController, dsTreeNode);
 		this.initialize();
 		this.setCsvDataSourceToUI();
 	}
@@ -207,7 +213,7 @@ public class JPanelDataSourceConfigurationCsv  extends JPanelDataSourceConfigura
 		if (jTextFieldDataSourceName == null) {
 			jTextFieldDataSourceName = new JTextField();
 			jTextFieldDataSourceName.setPreferredSize(new Dimension(120, 26));
-			jTextFieldDataSourceName.getDocument().addDocumentListener(null);
+			jTextFieldDataSourceName.getDocument().addDocumentListener(this);
 			jTextFieldDataSourceName.addActionListener(this);
 		}
 		return jTextFieldDataSourceName;
@@ -232,7 +238,7 @@ public class JPanelDataSourceConfigurationCsv  extends JPanelDataSourceConfigura
 		if (jTextAreaDescription == null) {
 			jTextAreaDescription = new JTextArea();
 			jTextAreaDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextAreaDescription.getDocument().addDocumentListener(null);
+			jTextAreaDescription.getDocument().addDocumentListener(this);
 		}
 		return jTextAreaDescription;
 	}
@@ -341,6 +347,8 @@ public class JPanelDataSourceConfigurationCsv  extends JPanelDataSourceConfigura
 		this.getJTextAreaDescription().setText(csvDS.getDescription());
 		
 		this.getJTextFieldCsvFile().setText(csvDS.getCsvFilePath());
+		this.getJTextFieldCsvFile().setToolTipText(csvDS.getCsvFilePath());
+		
 		this.getJComboBoxColumnSeparator().setSelectedItem(csvDS.getColumnSeparator());
 		this.getJCheckBoxHasHeadline().setSelected(csvDS.isHeadline());
 		this.getJPanelTimeFormater().setTimeFormat(csvDS.getDateTimeFormat());
@@ -357,23 +365,50 @@ public class JPanelDataSourceConfigurationCsv  extends JPanelDataSourceConfigura
 		if (ae.getSource()==this.getJTextFieldDataSourceName()) {
 			this.getCsvDataSource().setName(this.getJTextFieldDataSourceName().getText());
 			this.getJTextAreaDescription().requestFocus();
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_NAME);
 			
 		} else if (ae.getSource()==this.getJTextAreaDescription()) {
 			this.getCsvDataSource().setDescription(this.getJTextAreaDescription().getText());
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_DESCRIPTION);
 			
 		} else if (ae.getSource()==this.getJButtonSelectCsvFile()) {
+			// --- Ask user to select an csv file ------------------- 
+			String previousFilePath = this.getCsvDataSource().getCsvFilePath();
+			File previousFile = previousFilePath==null ? null : new File(previousFilePath);
+			
+			File csvFile = FileSelection.selectCsvFile(OwnerDetection.getOwnerWindowForComponent(this), previousFile, null);
+			if (csvFile==null) return;
 
+			String csvFilePath = csvFile.getAbsolutePath();
+			this.getCsvDataSource().setCsvFilePath(csvFilePath);
+			this.getJTextFieldCsvFile().setText(csvFilePath);
+			this.getJTextFieldCsvFile().setToolTipText(csvFilePath);
+			
+			String csvFileName = csvFile.getName(); 
+			this.getCsvDataSource().setName(csvFileName);
+			this.getJTextFieldDataSourceName().setText(csvFileName);
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_FILE);
+			
+			this.getDataTreeNodeDataSource().loadData();
 			
 		} else if (ae.getSource()==this.getJComboBoxColumnSeparator()) {
-		
+			this.getCsvDataSource().setColumnSeparator((String)this.getJComboBoxColumnSeparator().getSelectedItem());
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_COLUMN_SEPARATOR);
+			
+			this.getDataTreeNodeDataSource().loadData();
 			
 		} else if (ae.getSource()==this.getJCheckBoxHasHeadline()) {
+			this.getCsvDataSource().setHeadline(this.getJCheckBoxHasHeadline().isSelected());
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_HAS_HEADLINE);
 			
+			this.getDataTreeNodeDataSource().loadData();
 			
 		} else if (ae.getSource()==this.getJPanelTimeFormater()) {
+			this.getCsvDataSource().setDateTimeFormat(this.getJPanelTimeFormater().getTimeFormat());
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_DATE_TIME_FORMAT);
 			
+			this.getDataTreeNodeDataSource().loadData();			
 		}
-		
 	}
 	
 	/* (non-Javadoc)
@@ -406,10 +441,12 @@ public class JPanelDataSourceConfigurationCsv  extends JPanelDataSourceConfigura
 		if (de.getDocument()==this.getJTextFieldDataSourceName().getDocument()) {
 			// --- Changed name ---------------------------
 			this.getCsvDataSource().setName(this.getJTextFieldDataSourceName().getText());
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_NAME);
 			
 		} else if (de.getDocument()==this.getJTextAreaDescription().getDocument()) {
 			// --- Changed description --------------------
 			this.getCsvDataSource().setDescription(this.getJTextAreaDescription().getText());
+			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_DESCRIPTION);
 		}
 	}
 	

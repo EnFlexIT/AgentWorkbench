@@ -7,10 +7,8 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
-import javax.swing.tree.TreePath;
 
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSource;
 
 /**
  * The Class JPanelData.
@@ -26,7 +24,7 @@ public class JPanelData extends JPanel implements PropertyChangeListener {
 	private JToolBarData jToolBarData;
 	private JSplitPane jSplitPaneData;
 	private JPanelTree jPanelTree;
-
+	private JPanelDataTable jPanelDataTable;
 	
 	/**
 	 * Instantiates a new JPanelData.
@@ -82,6 +80,7 @@ public class JPanelData extends JPanel implements PropertyChangeListener {
 			jSplitPaneData.setResizeWeight(0.25);
 			
 			jSplitPaneData.setLeftComponent(this.getJPanelTree());
+			jSplitPaneData.setRightComponent(this.getJPanelDataTable());
 		}
 		return jSplitPaneData;
 	}
@@ -90,6 +89,12 @@ public class JPanelData extends JPanel implements PropertyChangeListener {
 			jPanelTree = new JPanelTree(this.getDataController());
 		}
 		return jPanelTree;
+	}
+	private JPanelDataTable getJPanelDataTable() {
+		if (jPanelDataTable==null) {
+			jPanelDataTable = new JPanelDataTable(this.getDataController());
+		}
+		return jPanelDataTable;
 	}
 	
 	

@@ -16,10 +16,12 @@ public class DataTreeNodeDataSourceDatabase extends DataTreeNodeDataSource<Datab
 	 * Instantiates a new data tree node data source database.
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceDatabase(DatabaseDataSource dataSource) {
-		super(dataSource);
+	public DataTreeNodeDataSourceDatabase(DataController dataController, DatabaseDataSource dataSource) {
+		super(dataController, dataSource);
+		if (dataSource.getName()==null) {
+			dataSource.setName("New Database Connection");
+		}
 		this.setImageIcon(BundleHelper.getThemedIcon("DatabaseBlack.png", "DatabaseGrey.png"));
-		this.setCaption("New Database Connection");
 		this.setTooltipText("Please, configure the database connection ...");
 	}
 
@@ -29,9 +31,18 @@ public class DataTreeNodeDataSourceDatabase extends DataTreeNodeDataSource<Datab
 	@Override
 	public JPanelDataSourceConfigurationDatabase getJPanelConfiguration() {
 		if (jPanelDataSourceConfigurationDatabase==null) {
-			jPanelDataSourceConfigurationDatabase = new JPanelDataSourceConfigurationDatabase(this);
+			jPanelDataSourceConfigurationDatabase = new JPanelDataSourceConfigurationDatabase(this.getDataController(), this);
 		}
 		return jPanelDataSourceConfigurationDatabase;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#loadData()
+	 */
+	@Override
+	public boolean loadData() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

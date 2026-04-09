@@ -60,6 +60,22 @@ public class DataControllerSelectionModel {
 	}
 
 	/**
+	 * Returns the currently selected DataTreeNodeObjectBase.
+	 * @return the selected data tree node base
+	 */
+	public DataTreeNodeObjectBase getSelectedDataTreeNodeObjectBase() {
+		
+		TreePath treePath = this.getSelectedTreePath();
+		if (treePath!=null) {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
+			if (treeNode.getUserObject() instanceof DataTreeNodeObjectBase) {
+				return (DataTreeNodeObjectBase) treeNode.getUserObject();
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the currently selected {@link DataTreeNodeDataSource} if available.
 	 * @return the selected data tree node data source
 	 */

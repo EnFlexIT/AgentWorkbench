@@ -16,7 +16,13 @@ public class CsvDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;
 
+	public static final String CHANGED_CSV_FILE = "CHANGED_CSV_FILE";
+	public static final String CHANGED_CSV_DATE_TIME_FORMAT = "CHANGED_CSV_DATE_TIME_FORMAT";
+	public static final String CHANGED_CSV_COLUMN_SEPARATOR = "CHANGED_CSV_COLUMN_SEPARATOR";
+	public static final String CHANGED_CSV_HAS_HEADLINE = "CHANGED_CSV_HAS_HEADLINE";
+	
 	public static final String[] COLUMN_SEPARATORS = {";",",",":","."};
+	
 	
 	@Column(name="csv_file_path", nullable=false)
 	private String csvFilePath;

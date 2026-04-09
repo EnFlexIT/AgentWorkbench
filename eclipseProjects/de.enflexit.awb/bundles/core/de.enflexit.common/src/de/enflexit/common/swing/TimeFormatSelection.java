@@ -162,6 +162,13 @@ public class TimeFormatSelection extends JPanelForActions {
 					fireActionEvent();
 				}
 			});
+			jTextFieldTimeFormat.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					getJButtonTimeFormatDefault().requestFocus();
+					fireActionEvent();
+				}
+			});
 		}
 		return jTextFieldTimeFormat;
 	}
