@@ -45,7 +45,8 @@ Service-Component: OSGI-INF/dbServiceConsumer.xml,
  OSGI-INF/PropertyBusServiceFactoryIDs.xml,
  OSGI-INF/PropertyBusServiceGeneralConnection.xml,
  OSGI-INF/PropertyBusServiceDatabaseConnectionFactoryGet.xml,
- OSGI-INF/PropertyBusServiceDatabaseConnectionFactorySet.xml
+ OSGI-INF/PropertyBusServiceDatabaseConnectionFactorySet.xml,
+ OSGI-INF/PropertyBusServiceDbConnectionTest.xml
 Export-Package: de.enflexit.db.hibernate,
  de.enflexit.db.hibernate.connection,
  de.enflexit.db.hibernate.gui,
