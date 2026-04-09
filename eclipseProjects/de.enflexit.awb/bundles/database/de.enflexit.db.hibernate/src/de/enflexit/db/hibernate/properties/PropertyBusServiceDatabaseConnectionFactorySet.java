@@ -81,6 +81,16 @@ public class PropertyBusServiceDatabaseConnectionFactorySet implements PropertyB
 			invalidValues.add("Database System is missing");
 		}
 		
+		String driver = properties2check.getStringValue(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
+		if (driver == null || driver.isBlank()) {
+			invalidValues.add("Driver class is missing");
+		}
+		
+		String driverForDbSystem = HibernateUtilities.getDatabaseService(dbSystem).getDriverClassName();
+		if (!driver.equals(driverForDbSystem)) {
+			invalidValues.add("The specified driver does not match the database system");
+		}
+		
 		String url = properties2check.getStringValue(HibernateDatabaseService.HIBERNATE_PROPERTY_URL);
 		if (url == null || url.isBlank() == true) {
 			invalidValues.add("URL is missing");
