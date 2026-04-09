@@ -8,10 +8,8 @@ import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.PropertyBusService;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
-import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.GeneralDatabaseSettings;
-import de.enflexit.db.hibernate.gui.DatabaseSettings;
 
 /**
  * The Class PropertyBusServiceGeneralConnection.
@@ -120,23 +118,20 @@ public class PropertyBusServiceGeneralConnection implements PropertyBusService {
 		if (properties == null) properties = new Properties();
 		
 		// --- Get database settings and set the current db system ------------------------------------------
-		DatabaseSettings databaseSettings = DatabaseConnectionManager.getInstance().getGeneralDatabaseSettings();
+		GeneralDatabaseSettings databaseSettings = DatabaseConnectionManager.getInstance().getGeneralDatabaseSettings();
 		String dbSystem = databaseSettings.getDatabaseSystemName();
 		properties.setStringValue(DB_SYSTEM, dbSystem);
-		
+		properties.setBooleanValue(USE_FOR_EVERY_CONNECTION, databaseSettings.isUseForEveryFactory());
+
 		// --- Iterate over hibernate database settings to extract keys and values --------------------------
 		java.util.Properties hibernateDbs = databaseSettings.getHibernateDatabaseSettings();
 		
 		for (Object keyObject : hibernateDbs.keySet()) {
 			String key = (String) keyObject;
 			String value = (String) hibernateDbs.get(key);
-			
+
 			// --- Set property value -----------------------------------------------------------------------
-			if (key.equals(HibernateUtilities.GENERAL_USE_SETTINGS_FOR_EVERY_FACTORY)) {
-				properties.setBooleanValue(USE_FOR_EVERY_CONNECTION, Boolean.parseBoolean(value));
-			} else {
 				properties.setStringValue(key, value);
-			}
 		}
 		return properties;
 	}
