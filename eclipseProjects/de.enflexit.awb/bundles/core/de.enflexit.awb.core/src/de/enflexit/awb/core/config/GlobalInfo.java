@@ -40,6 +40,7 @@ import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.simulation.environment.time.TimeModel;
 import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.common.ExecutionEnvironment;
+import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.VersionInfo;
@@ -164,9 +165,9 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * @see GlobalInfo#getExecutionMode()
 	 */
 	public enum AWBProduct {
-		WEB("de.enflexit.awb.ws.core.product", "Web"),
-		DESKTOP_SWING("de.enflexit.awb.core.product", "Desktop"), 
-		DESKTOP_SWT("de.enflexit.awb.desktop.swt.product", "RCP-Desktop"); 
+		WEB(GlobalConstants.AWB_PRODUCT_ID_WEB, "Web"),
+		DESKTOP_SWING(GlobalConstants.AWB_PRODUCT_ID_DESKTOP_SWING , "Desktop"), 
+		DESKTOP_SWT(GlobalConstants.AWB_PRODUCT_ID_DESKTOP_SWT, "RCP-Desktop"); 
 
 		private final String productID;
 		private final String productName;

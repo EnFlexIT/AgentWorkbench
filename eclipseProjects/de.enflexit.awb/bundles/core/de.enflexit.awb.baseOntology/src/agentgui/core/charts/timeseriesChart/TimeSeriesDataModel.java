@@ -28,7 +28,7 @@
  */
 package agentgui.core.charts.timeseriesChart;
 
-import de.enflexit.common.GlobalDefaultValues;
+import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.Observable;
 import agentgui.core.charts.ChartSettingModel;
 import agentgui.core.charts.ChartSettingModel.ChartSettingsUpdateNotification;
@@ -192,7 +192,7 @@ public class TimeSeriesDataModel extends DataModel {
 	public String getTimeFormat() {
 		TimeSeriesChartSettings tscs = (TimeSeriesChartSettings)((TimeSeriesOntologyModel)this.ontologyModel).getChartSettings();
 		if (tscs.getTimeFormat()==null) {
-			tscs.setTimeFormat(GlobalDefaultValues.DEFAULT_TIME_FORMAT);
+			tscs.setTimeFormat(GlobalConstants.DEFAULT_TIME_FORMAT);
 		} 
 		return tscs.getTimeFormat();
 	}

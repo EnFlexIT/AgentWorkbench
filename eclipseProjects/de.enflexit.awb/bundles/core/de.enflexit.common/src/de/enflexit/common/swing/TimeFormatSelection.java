@@ -16,7 +16,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import de.enflexit.common.BundleHelper;
-import de.enflexit.common.GlobalDefaultValues;
+import de.enflexit.common.GlobalConstants;
 import de.enflexit.language.Language;
 
 /**
@@ -31,7 +31,7 @@ public class TimeFormatSelection extends JPanelForActions {
 	private static final long serialVersionUID = 1L;
 	
 	private boolean showLable = false;
-	private String defaultTimeFormat = GlobalDefaultValues.DEFAULT_TIME_FORMAT;
+	private String defaultTimeFormat = GlobalConstants.DEFAULT_TIME_FORMAT;
 	
 	private JLabel jLabelFormat;
 	private JTextField jTextFieldTimeFormat;
