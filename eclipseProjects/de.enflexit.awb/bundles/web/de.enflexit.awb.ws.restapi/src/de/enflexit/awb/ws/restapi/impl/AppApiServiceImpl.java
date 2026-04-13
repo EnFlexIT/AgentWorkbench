@@ -78,23 +78,20 @@ public class AppApiServiceImpl extends AppApiService {
     	} else {
     		// --- Set specific application properties --------------
     		success = ApplicationPropertyBus.getInstance().setProperties(xPerformative, awbProps);
-    		if (success==false) {
-    			// --- extract the current PropertyMessage ----------
-    			pMessage = awbProps.getPropertyMessage();
-    		}
-    		
+    		// --- extract the current PropertyMessage --------------
+    		pMessage = awbProps.getPropertyMessage();
     	}
 
-    	// --- Return process message ---------------------
+    	// --- Return process message -------------------------------
     	Message message = new Message();
     	message.setDateTime(System.currentTimeMillis()+"");
-    	// --- Default case, no errors occurred --------------
-    	if (pMessage == null) {
+    	// --- Default case, no errors occurred ---------------------
+    	if (pMessage == null && success == true) {
     		message.setMessageType(MessageType.INFO);
     		message.setMessage("Done");
     		
     	} else {
-    	// --- Set the message type equal to pMessage --------
+    	// --- Set the message type equal to pMessage ---------------
     		switch (pMessage.getMessageType()) {
     		case Info:
     			message.setMessageType(MessageType.INFO);
@@ -106,7 +103,7 @@ public class AppApiServiceImpl extends AppApiService {
     			message.setMessageType(MessageType.ERROR);
     			break;
     		}
-    	// --- Extract the error message ------------
+    	// --- Extract the message ----------------------------------
     		message.setMessage(pMessage.getMessage());
     		
     	}
