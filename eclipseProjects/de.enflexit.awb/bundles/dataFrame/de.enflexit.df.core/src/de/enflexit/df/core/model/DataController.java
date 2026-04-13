@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class DataController.
@@ -21,6 +22,9 @@ public class DataController {
 	// ------------------------------------------------------------------------
 	// --- From here, PropertyChangeSupport -----------------------------------
 	// ------------------------------------------------------------------------	
+	public static final String DC_ADDED_DATA_WORKBOOK = "DC_ADDED_DATA_WORKBOOK";
+	public static final String DC_REMOVED_DATA_WORKBOOK = "DC_REMOVED_DATA_WORKBOOK";
+	
 	public static final String DC_ADDED_DATA_SOURCE = "DC_ADDED_DATA_SOURCE";
 	public static final String DC_REMOVED_DATA_SOURCE = "DC_REMOVED_DATA_SOURCE";
 
@@ -71,6 +75,8 @@ public class DataController {
 	// --- From here, runtime objects -----------------------------------------
 	// ------------------------------------------------------------------------	
 	private DataControllerSelectionModel selectionModel;
+	
+	private List<DataWorkbook> dataWorkbooks;
 	private List<AbstractDataSource> dataSources;
 	private DataTreeModel dataTreeModel; 
 
@@ -82,7 +88,46 @@ public class DataController {
 		return selectionModel;
 	}
 	
-	
+	// ------------------------------------------------------------------------
+	// --- From here, Data Workbook handling ----------------------------------
+	/**
+	 * Returns the list of data workbooks.
+	 * @return the data workbooks
+	 */
+	public List<DataWorkbook> getDataWorkbooks() {
+		if (dataWorkbooks==null) {
+			dataWorkbooks = new ArrayList<>();
+		}
+		return dataWorkbooks;
+	}
+	/**
+	 * Adds the specified {@link DataWorkbook}.
+	 * @param dataWorkbook the data workbook
+	 */
+	public boolean addDataWorkbook(DataWorkbook dataWorkbook) {
+		if (dataWorkbook!=null && this.getDataWorkbooks().contains(dataWorkbook)==false) {
+			boolean success = this.getDataWorkbooks().add(dataWorkbook);
+			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_WORKBOOK, null, dataWorkbook);
+			return success;
+		}
+		return false;
+	}
+	/**
+	 * Removes the {@link DataWorkbook}.
+	 *
+	 * @param dataWorkbook the data workbook
+	 * @return true, if successful
+	 */
+	public boolean removeDataWorkbook(DataWorkbook dataWorkbook) {
+		if (dataWorkbook!=null) {
+			boolean success = this.getDataWorkbooks().remove(dataWorkbook);
+			// --- Inform property change listener ------------------
+			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_WORKBOOK, dataWorkbook, null);
+			return success;
+		}
+		return false;
+	}
+
 	// ------------------------------------------------------------------------
 	// --- From here, Data Source handling ------------------------------------
 	/**

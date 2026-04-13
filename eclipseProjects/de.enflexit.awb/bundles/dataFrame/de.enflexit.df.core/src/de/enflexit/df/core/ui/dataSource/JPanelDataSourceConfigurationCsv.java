@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -376,7 +377,7 @@ public class JPanelDataSourceConfigurationCsv extends JPanelDataSourceConfigurat
 			String previousFilePath = this.getCsvDataSource().getCsvFilePath();
 			File previousFile = previousFilePath==null ? null : new File(previousFilePath);
 			
-			File csvFile = FileSelection.selectCsvFile(OwnerDetection.getOwnerWindowForComponent(this), previousFile, null);
+			File csvFile = FileSelection.selectCsvFile(OwnerDetection.getOwnerWindowForComponent(this), JFileChooser.OPEN_DIALOG, null, null, previousFile, null);
 			if (csvFile==null) return;
 
 			String csvFilePath = csvFile.getAbsolutePath();

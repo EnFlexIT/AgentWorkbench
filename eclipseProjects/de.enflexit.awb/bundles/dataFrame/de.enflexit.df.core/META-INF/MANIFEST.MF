@@ -10,13 +10,17 @@ Export-Package: de.enflexit.df.core,
  de.enflexit.df.core.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: de.enflexit.awb.baseUI,
+Import-Package: com.google.gson,
+ de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.ui,
  de.enflexit.common.dataSources,
  de.enflexit.common.swing,
+ jakarta.persistence,
+ jakarta.xml.bind,
+ jakarta.xml.bind.annotation,
  org.slf4j
 Require-Bundle: de.enflexit.df.tablesaw
 Service-Component: OSGI-INF/dataFramePerspectiveService.xml
