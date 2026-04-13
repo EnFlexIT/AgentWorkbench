@@ -30,7 +30,7 @@ import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSourceCsv;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceCsv;
 
 /**
  * The Class JPanelDataSourceConfigurationCsv.
@@ -38,7 +38,7 @@ import de.enflexit.df.core.model.DataTreeNodeDataSourceCsv;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @param <DataTreeNodeDataSourceCsv> the generic type
  */
-public class JPanelDataSourceConfigurationCsv extends JPanelDataSourceConfiguration<DataTreeNodeDataSourceCsv> implements ActionListener, DocumentListener {
+public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceCsv> implements ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 	

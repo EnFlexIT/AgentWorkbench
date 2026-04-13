@@ -256,12 +256,12 @@ public class NumberHelper {
 	/**
 	 * Returns a random integer.
 	 *
-	 * @param fromBound the from bound
-	 * @param toBound the to bound
+	 * @param fromBound the lower bound
+	 * @param toBound the inclusive upper bound
 	 * @return the random integer
 	 */
 	public static int getRandomInteger(int fromBound, int toBound) {   
-		toBound++;   
+		if (toBound < Integer.MAX_VALUE) toBound++;   
 		return (int) (Math.random() * (toBound - fromBound) + fromBound);   
 	}
 	/**

@@ -45,9 +45,20 @@ public class BundleHelper {
 	 * @param darkModeImageURL the dark mode image nema
 	 * @return the themed icon
 	 */
-	public static  AwbThemeImageIcon getThemedIcon(String lightModeImage, String darkModeImage) {
+	public static AwbThemeImageIcon getThemedIcon(String lightModeImage, String darkModeImage) {
 		ImageIcon lightModeIcon = BundleHelper.getImageIcon(lightModeImage); 
 		ImageIcon darkModeIcon = BundleHelper.getImageIcon(darkModeImage);
 		return new AwbThemeImageIcon(lightModeIcon, darkModeIcon);
 	}
+	/**
+	 * Creates a themed icon, using the provided URLs for light and dark mode images.
+	 *
+	 * @param image the image
+	 * @return the themed icon
+	 */
+	public static AwbThemeImageIcon getThemedIcon(String image) {
+		ImageIcon icon = BundleHelper.getImageIcon(image);
+		return new AwbThemeImageIcon(icon );
+	}
+	
 }

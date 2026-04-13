@@ -21,8 +21,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSource;
-import de.enflexit.df.core.model.DataTreeNodeObjectBase;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 
 /**
  * The Class JPanelTree.
@@ -223,7 +223,7 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 				this.getJSplitPaneTreeConfiguration().setDividerLocation(this.dividerLocationReminder);
 			}
 		}
-		this.updateConfiguration();
+		this.updateConfigurationView();
 		
 		this.validate();
 		this.repaint();
@@ -233,14 +233,10 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 	/**
 	 * Updates the configuration.
 	 */
-	private void updateConfiguration() {
+	private void updateConfigurationView() {
 		
 		// --- React on newly selected tree path ----------------
-		DataTreeNodeDataSource<?> dtnoDataSource = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
-		ConfigurationPanel configPanel = null;
-		if (dtnoDataSource!=null) {
-			configPanel = dtnoDataSource.getJPanelConfiguration();
-		}
+		ConfigurationPanel configPanel = this.getDataController().getSelectionModel().getSelectedFirstConfigurationPanel();
 		this.getJPanelConfigurationWrapper().setConfigurationPanel(configPanel);
 	}
 	
@@ -250,7 +246,10 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
-		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
+		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_WORKBOOK)==true) {
+			this.setConfiguration(true);
+		
+		} else if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
 			this.setConfiguration(true);
 			
 		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW)==true) {
@@ -265,7 +264,7 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 			
 		} else if (evt.getPropertyName().equals(DataController.DC_NEW_TREE_PATH_SELECTED)==true) {
 			if (this.isConfigurationVisible()==true) {
-				this.updateConfiguration();
+				this.updateConfigurationView();
 			}
 			
 		} else if (evt.getPropertyName().equals(DataController.DC_DATA_LOADED)) {

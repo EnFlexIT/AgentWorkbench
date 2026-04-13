@@ -3,7 +3,7 @@ package de.enflexit.df.core.workbook;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+import de.enflexit.common.NumberHelper;
 import de.enflexit.common.dataSources.AbstractDataSource;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -70,7 +70,7 @@ public abstract class DataWorkbook implements Serializable {
 	 * @param dataSources the data sources
 	 */
 	public DataWorkbook(Integer id, String name, String description, List<AbstractDataSource> dataSources) {
-		this.setId(id);
+		this.setID(id);
 		this.setName(name);
 		this.setDescription(description);
 		this.setDataSources(dataSources);
@@ -80,16 +80,27 @@ public abstract class DataWorkbook implements Serializable {
 	 * Returns the id.
 	 * @return the id
 	 */
-	public Integer getId() {
+	public Integer getID() {
 		return id;
 	}
 	/**
 	 * Sets the id.
 	 * @param id the new id
 	 */
-	public void setId(Integer id) {
+	public void setID(Integer id) {
 		this.id = id;
 	}
+	/**
+	 * Creates a random integer ID, if the ID is not already defined for the {@link DataWorkbook}.
+	 * @return the ID of the DataWorkbook, the current or the newly defined ID
+	 */
+	public Integer createRandomID() {
+		if (this.id==null) {
+			this.id = NumberHelper.getRandomInteger(0, Integer.MAX_VALUE);
+		}
+		return this.getID();
+	}
+	
 	
 	/**
 	 * Returns the name.
@@ -145,5 +156,6 @@ public abstract class DataWorkbook implements Serializable {
 	 * @return true, if successful
 	 */
 	public abstract boolean save();
+	
 	
 }

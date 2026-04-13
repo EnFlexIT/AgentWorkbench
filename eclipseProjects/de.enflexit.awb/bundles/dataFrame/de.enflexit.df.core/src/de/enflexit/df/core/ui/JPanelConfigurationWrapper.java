@@ -2,6 +2,10 @@ package de.enflexit.df.core.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -9,18 +13,14 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.df.core.BundleHelper;
-import javax.swing.JLabel;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
 
 /**
  * The Class JPanelConfigurationWrapper.
@@ -43,6 +43,7 @@ public class JPanelConfigurationWrapper extends JPanel {
 	
 	private JPanel jPanelSouth;
 	private JLabel jLabelError;
+	private JSeparator jSeparator;
 	
 	
 	/**
@@ -57,16 +58,17 @@ public class JPanelConfigurationWrapper extends JPanel {
 	private void initialize() {
 		this.setLayout(new BorderLayout(0, 0));
 		this.add(this.getJPanelNorth(), BorderLayout.NORTH);
-//		this.add(this.getJLabelError(), BorderLayout.SOUTH);
 		add(getJPanelSouth(), BorderLayout.SOUTH);
 	}
 	
 	private JPanel getJPanelNorth() {
 		if (jPanelNorth == null) {
 			jPanelNorth = new JPanel();
+			jPanelNorth.setBorder(null);
 			jPanelNorth.setLayout(new BorderLayout(0, 0));
 			jPanelNorth.add(this.getJToolBarConfiguration(), BorderLayout.WEST);
 			jPanelNorth.add(this.getJToolBarCloseConfiguration(), BorderLayout.EAST);
+			jPanelNorth.add(this.getJSeparator(), BorderLayout.SOUTH);
 		}
 		return jPanelNorth;
 	}
@@ -106,6 +108,12 @@ public class JPanelConfigurationWrapper extends JPanel {
 			});
 		}
 		return jButtonClose;
+	}
+	private JSeparator getJSeparator() {
+		if (jSeparator == null) {
+			jSeparator = new JSeparator();
+		}
+		return jSeparator;
 	}
 	
 	/**
@@ -205,6 +213,5 @@ public class JPanelConfigurationWrapper extends JPanel {
 		this.repaint();
 	}
 	
-
 	
 }

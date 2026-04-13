@@ -1,14 +1,15 @@
-package de.enflexit.df.core.model;
+package de.enflexit.df.core.model.treeNode;
 
 import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationDatabase;
 
 /**
  * The Class DataTreeNodeDataSourceDatabase.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataSourceDatabase extends DataTreeNodeDataSource<DatabaseDataSource> {
+public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSource<DatabaseDataSource> {
 
 	private JPanelDataSourceConfigurationDatabase jPanelDataSourceConfigurationDatabase;
 	

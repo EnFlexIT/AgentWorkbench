@@ -8,7 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import de.enflexit.common.swing.AwbThemeColor;
-import de.enflexit.df.core.model.DataTreeNodeObjectBase;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 
 /**
  * The Class DataTreeCellRenderer.

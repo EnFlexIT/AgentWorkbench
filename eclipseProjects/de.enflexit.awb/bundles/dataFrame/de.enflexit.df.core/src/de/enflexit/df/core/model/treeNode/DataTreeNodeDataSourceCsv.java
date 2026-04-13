@@ -1,10 +1,11 @@
-package de.enflexit.df.core.model;
+package de.enflexit.df.core.model.treeNode;
 
 import java.io.File;
 import java.time.format.DateTimeFormatter;
 
 import de.enflexit.common.dataSources.CsvDataSource;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationCsv;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.io.AddCellToColumnException;
@@ -16,7 +17,7 @@ import tech.tablesaw.io.csv.CsvReadOptions;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataSourceCsv extends DataTreeNodeDataSource<CsvDataSource> {
+public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<CsvDataSource> {
 
 	private JPanelDataSourceConfigurationCsv jPanelDataSourceConfigurationCsv;
 	
