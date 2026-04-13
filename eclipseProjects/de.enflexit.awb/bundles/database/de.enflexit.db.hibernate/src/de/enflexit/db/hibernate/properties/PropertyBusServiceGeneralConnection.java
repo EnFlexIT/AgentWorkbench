@@ -12,7 +12,8 @@ import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.GeneralDatabaseSettings;
 
 /**
- * The Class PropertyBusServiceGeneralConnection.
+ * The Class PropertyBusServiceGeneralConnection is used to get and set the 
+ * general database connection settings through the {@link de.enflexit.common.properties.bus.ApplicationPropertyBus}.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */

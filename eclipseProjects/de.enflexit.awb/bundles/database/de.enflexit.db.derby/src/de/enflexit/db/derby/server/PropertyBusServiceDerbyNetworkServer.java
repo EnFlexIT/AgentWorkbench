@@ -13,7 +13,7 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  * configuration of the Derby Network Server within the application. It is
  * registered under the performative "db.derby.networkserver" and allows other
  * components of the application to retrieve and update the Derby Network Server
- * settings through the {@link} ApplicationPropertyBus.
+ * settings through the {@link de.enflexit.common.properties.bus.ApplicationPropertyBus}.
  * 
  * @author Daniel Bormann
  */

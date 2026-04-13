@@ -10,16 +10,16 @@ import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 
 /**
- * The Class PropertyBusServiceDatabaseConnectionFactoryGet is a PropertyBusService implementation, registered 
- * under the performative "DB.CONN.FACTORY.GET". It is used to get the individual database settings 
- * for each factory through the {@link} ApplicationPropertyBus.
+ * The Class PropertyBusServiceDatabaseConnectionFactoryGet is used to get the individual database settings 
+ * for each factory through the {@link de.enflexit.common.properties.bus.ApplicationPropertyBus}.
+ * Use {@link PropertyBusServiceDatabaseConnectionFactorySet#setProperties(Properties)} to change the factory settings.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
 public class PropertyBusServiceDatabaseConnectionFactoryGet implements PropertyBusService {
 
-	public static String FACTORYID = "factoryID";
-	public static String DBSYSTEM = "dbSystem";
+	public static final String FACTORYID = "factoryID";
+	public static final String DBSYSTEM = "dbSystem";
 
 	@Override
 	public String getPerformative() {
@@ -29,6 +29,7 @@ public class PropertyBusServiceDatabaseConnectionFactoryGet implements PropertyB
 
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#setProperties(de.enflexit.common.properties.Properties)
+	* @see PropertyBusServiceDatabaseConnectionFactorySet
 	*/
 	@Override
 	public boolean setProperties(Properties properties) {

@@ -12,7 +12,9 @@ import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 
 /**
- * The Class PropertyBusServiceDatabaseConnectionFactorySet. 
+ * The Class PropertyBusServiceDatabaseConnectionFactorySet is used to change the settings 
+ * of a hibernate factory through the {@link de.enflexit.common.properties.bus.ApplicationPropertyBus}. 
+ * Use {@link PropertyBusServiceDatabaseConnectionFactoryGet#getProperties(Properties)} to get the current settings.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
@@ -123,10 +125,11 @@ public class PropertyBusServiceDatabaseConnectionFactorySet implements PropertyB
 
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties)
+	* @see PropertyBusServiceDatabaseConnectionFactoryGet
 	*/
 	@Override
 	public Properties getProperties(Properties properties) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
