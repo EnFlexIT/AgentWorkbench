@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.config;
+package de.enflexit.common;
 
 /**
  * The Class SecurityPolicies.

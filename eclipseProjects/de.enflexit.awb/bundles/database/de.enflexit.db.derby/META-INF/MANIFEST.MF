@@ -24,8 +24,7 @@ Service-Component: OSGI-INF/dbService.xml,
  OSGI-INF/derbyNetworkServerConfiguration.xml,
  OSGI-INF/PropertyBusServiceDerbyNetworkServer.xml
 Require-Bundle: de.enflexit.db.hibernate
-Import-Package: de.enflexit.awb.core.config,
- de.enflexit.awb.core.jade,
+Import-Package: de.enflexit.awb.core.jade,
  de.enflexit.common,
  de.enflexit.common.properties,
  de.enflexit.common.properties.bus,
