@@ -13,7 +13,7 @@ import de.enflexit.db.hibernate.HibernateUtilities;
 
 /**
  * The Class PropertyBusServiceDbConnectionTest can be used to test a database connection through the
- * {@link} ApplicationPropertyBus.
+ * {@link de.enflexit.common.properties.bus.ApplicationPropertyBus}
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
@@ -59,8 +59,6 @@ public class PropertyBusServiceDbConnectionTest implements PropertyBusService {
 		// --- Add a message depending on the result --------------------------------------------------------
 		if (isTestSuccessful == false) {
 			properties.setPropertyMessage(PropertyMessage.MessageType.Info, "Connection test failed.");
-		} else {
-			properties.setPropertyMessage(PropertyMessage.MessageType.Info, "Connection test successful.");
 		}
 		
 		return isTestSuccessful;
@@ -79,7 +77,7 @@ public class PropertyBusServiceDbConnectionTest implements PropertyBusService {
 		// --- Check the property values and add them to invalidValues if invalid ---------------------------
 		String dbSystem = properties2check.getStringValue(DBSYSTEM);
 		if (dbSystem == null || dbSystem.isBlank() == true) {
-			invalidValues.add("Database System is missing");
+			invalidValues.add("Database system is missing");
 		}
 		
 		String driver = properties2check.getStringValue(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
