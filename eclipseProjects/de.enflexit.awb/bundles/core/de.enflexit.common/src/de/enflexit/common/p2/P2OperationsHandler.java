@@ -72,7 +72,7 @@ public class P2OperationsHandler {
 
 	private  List<IInstallableUnit> iuList;
 	
-	private boolean debug = true;
+	private boolean debug = false;
 	
 	private Vector<String> updateRelevantBundleNames;
 	private Vector<Bundle> installedBundles;
