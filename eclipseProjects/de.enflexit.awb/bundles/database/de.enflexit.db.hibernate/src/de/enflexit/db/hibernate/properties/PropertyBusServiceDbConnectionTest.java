@@ -59,8 +59,9 @@ public class PropertyBusServiceDbConnectionTest implements PropertyBusService {
 		// --- Add a message depending on the result --------------------------------------------------------
 		if (isTestSuccessful == false) {
 			properties.setPropertyMessage(PropertyMessage.MessageType.Info, "Connection test failed.");
+		} else {
+			properties.setPropertyMessage(PropertyMessage.MessageType.Info, "Connection test successful.");
 		}
-		
 		return isTestSuccessful;
 	}		
 	
