@@ -339,6 +339,13 @@ public class P2OperationsHandler {
 		if (isHeadlessOp==true || isWebProduct==true) {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
+			if (this.debug==true) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
+			}
+		} else {
+			if (this.debug==true) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Regular application mode, not accepting unsigned updates!");
+			}
 		}
 		
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
