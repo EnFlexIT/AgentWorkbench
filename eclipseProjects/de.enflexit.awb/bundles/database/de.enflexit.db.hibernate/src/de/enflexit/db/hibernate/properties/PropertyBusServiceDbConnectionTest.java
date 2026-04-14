@@ -52,13 +52,12 @@ public class PropertyBusServiceDbConnectionTest implements PropertyBusService {
 		hibernateDbs.put(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, user);
 		hibernateDbs.put(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, password);
 
-		HibernateDatabaseService hdbs = HibernateUtilities.getDatabaseServiceByDriverClassName(driver);
-		boolean isTestSuccessful = false;
-		// --- Test the connection if a database service was found ------------------------------------------
-		if (hdbs != null) {
-			Vector<String> userMessage = new Vector<>();
-			isTestSuccessful = hdbs.isDatabaseAccessible(hibernateDbs, userMessage, true);
-		}
+		
+		// --- Test the connection --------------------------------------------------------------------------
+		Vector<String> userMessage = new Vector<>();
+
+		boolean isTestSuccessful = HibernateUtilities.getDatabaseService(dbSystem).isDatabaseAccessible(hibernateDbs, userMessage, true);
+			
 		// --- Add a message depending on the result --------------------------------------------------------
 		if (isTestSuccessful == false) {
 			properties.setPropertyMessage(PropertyMessage.MessageType.Info, "Connection test failed.");
@@ -82,6 +81,12 @@ public class PropertyBusServiceDbConnectionTest implements PropertyBusService {
 		String dbSystem = properties2check.getStringValue(DBSYSTEM);
 		if (dbSystem == null || dbSystem.isBlank() == true) {
 			invalidValues.add("Database system is missing");
+		}
+		
+		if (HibernateUtilities.getDatabaseService(dbSystem) == null) {
+			if (invalidValues.contains("Database system is missing") == false) {
+				invalidValues.add("Database System is invalid");
+			}
 		}
 		
 		String driver = properties2check.getStringValue(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
