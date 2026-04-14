@@ -46,7 +46,7 @@ import agentgui.core.charts.BundleHelper;
 import agentgui.core.charts.timeseriesChart.StaticTimeSeriesChartConfiguration;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.ExceptionHandling;
-import de.enflexit.common.GlobalDefaultValues;
+import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.GlobalRuntimeValues;
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.TimeFormatSelection;
@@ -234,7 +234,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 	 * @return the file property for the CSV time format
 	 */
 	private String getFilePropertyCsvTimeFormat() {
-		return BundleHelper.getEclipsePreferences().get(PROP_CsvTimeFormat, GlobalDefaultValues.DEFAULT_TIME_FORMAT);
+		return BundleHelper.getEclipsePreferences().get(PROP_CsvTimeFormat, GlobalConstants.DEFAULT_TIME_FORMAT);
 	}
 	/**
 	 * Sets the file property of the CSV time format.
@@ -320,7 +320,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 				this.timeExampleFromFile = DateTimeHelper.getTimestampFromDateTimeString(this.csvFileFirstTimeStamp, this.getTimeFormat(), GlobalRuntimeValues.getZoneId());
 				
 				// --- Try to display the date in a standard way ----
-				this.getJTextFieldParsed().setText(DateTimeHelper.getDateTimeAsString(this.timeExampleFromFile, GlobalDefaultValues.DEFAULT_TIME_FORMAT, GlobalRuntimeValues.getZoneId()));
+				this.getJTextFieldParsed().setText(DateTimeHelper.getDateTimeAsString(this.timeExampleFromFile, GlobalConstants.DEFAULT_TIME_FORMAT, GlobalRuntimeValues.getZoneId()));
 				this.setError(false);
 				this.getJTextFieldParsed().setForeground(new Color(0, 0, 0));
 				this.jLabelParsed.setForeground(new Color(0, 0, 0));
@@ -534,7 +534,7 @@ public class TimeFormatImportConfiguration extends JDialog implements ActionList
 				displayText += " [" + Language.translate("Not defined!", Language.EN) + "]";
 			} else {
 //				displayText += " " + new SimpleDateFormat(TimeModelDateBased.DEFAULT_TIME_FORMAT).format(new Date(this.timeStartSimSetup));
-				displayText += " " + DateTimeHelper.getDateTimeAsString(this.timeStartSimSetup, GlobalDefaultValues.DEFAULT_TIME_FORMAT, GlobalRuntimeValues.getZoneId());
+				displayText += " " + DateTimeHelper.getDateTimeAsString(this.timeStartSimSetup, GlobalConstants.DEFAULT_TIME_FORMAT, GlobalRuntimeValues.getZoneId());
 				displayText += " - <b>" + Language.translate("Formatted as", Language.EN) + ":</b> " + DateTimeHelper.getDateTimeAsString(this.timeStartSimSetup, this.timeFormatSimSetup, GlobalRuntimeValues.getZoneId());
 			}
 			displayText += "</html>";

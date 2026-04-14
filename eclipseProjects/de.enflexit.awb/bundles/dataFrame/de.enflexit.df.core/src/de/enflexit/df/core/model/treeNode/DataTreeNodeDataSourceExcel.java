@@ -1,14 +1,15 @@
-package de.enflexit.df.core.model;
+package de.enflexit.df.core.model.treeNode;
 
 import de.enflexit.common.dataSources.ExcelDataSource;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationExcel;
 
 /**
  * The Class DataTreeNodeDataSourceExcel.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataSourceExcel extends DataTreeNodeDataSource<ExcelDataSource> {
+public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<ExcelDataSource> {
 
 	private JPanelDataSourceConfigurationExcel jPanelDataSourceConfigurationExcel;
 	

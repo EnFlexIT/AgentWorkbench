@@ -22,7 +22,10 @@ import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
+import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.core.workbook.DataWorkbook4JSON;
+import de.enflexit.df.core.workbook.DataWorkbook4XML;
 
 /**
  * The Class JToolBarData.
@@ -36,14 +39,28 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 
 	private DataController dataController;
 	
+	private JButton jButtonDataWorkbookNew;
+		private JMenuItem jMenuItemNewDataWorkbookXML; 
+		private JMenuItem jMenuItemNewDataWorkbookJSON;
+		private JMenuItem jMenuItemNewDataWorkbookDB;
+		
+	private JButton jButtonDataWorkbookOpen;
+		private JMenuItem jMenuItemOpenDataWorkbookXML; 
+		private JMenuItem jMenuItemOpenDataWorkbookJSON;
+		private JMenuItem jMenuItemOpenDataWorkbookDB;
+
+	private JButton jButtonDataWorkbookSave;
+	private JButton jButtonDataWorkbookDelete;
+	private JButton jButtonDataWorkbookClose;
+	
+	private JToggleButton jToggleButtonConfiguration;
+
 	private JButton jButtonEditDataSources;
-	private JMenuItem jMenuItemCsvData; 
-	private JMenuItem jMenuItemExcelFile;
-	private JMenuItem jMenuItemDatabaseData;
+		private JMenuItem jMenuItemCsvData; 
+		private JMenuItem jMenuItemExcelFile;
+		private JMenuItem jMenuItemDatabaseData;
 	
-	private JToggleButton jToggleButtonDataSourceConfiguration;
 	private JButton jButtonDeleteDataSources;
-	
 	
 	/**
 	 * Instantiates a new j tool bar data.
@@ -52,8 +69,17 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	public JToolBarData(DataController dataController) {
 		this.setDataController(dataController);
 		
+		this.add(this.getJButtonDataWorkbookNew());
+		this.add(this.getJButtonDataWorkbookOpen());
+		this.add(this.getJButtonDataWorkbookSave());
+		this.add(this.getJButtonDataWorkbookDelete());
+		this.add(this.getJButtonDataWorkbookClose());
+		
+		this.addSeparator();
+		this.add(this.getJToggleButtonConfiguration());
+		
+		this.addSeparator();
 		this.add(this.getJButtonEditDataSources());
-		this.add(this.getJToggleButtonDataSourceConfiguration());
 		this.add(this.getJButtonDeleteDataSources());
 	}
 	
@@ -65,6 +91,200 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		if (this.dataController!=null) {
 			this.dataController.addPropertyChangeListener(this);
 		}
+	}
+	
+	private JButton getJButtonDataWorkbookNew() {
+		if (jButtonDataWorkbookNew==null) {
+			jButtonDataWorkbookNew = new JButton();
+			jButtonDataWorkbookNew.setToolTipText("Create new Data Workbook");
+			jButtonDataWorkbookNew.setIcon(BundleHelper.getImageIcon("wb/Workbook-White-New.png"));
+			jButtonDataWorkbookNew.setPreferredSize(new Dimension(26, 26));
+			jButtonDataWorkbookNew.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					JButton invoker = (JButton) ae.getSource();
+					showJPopupForNewDataWorkbook(invoker);
+				}
+			});
+		}
+		return jButtonDataWorkbookNew;
+	}
+	/**
+	 * Show JPop popup or invokes the default action.
+	 * @param invoker the invoker
+	 */
+	private void showJPopupForNewDataWorkbook(JButton invoker) {
+	
+		// --- Create the popup menu to select the desired action ---------  
+		JPopupMenu jPopupMenuOpen = this.getJPopupMenuNewDataWorkbooks();
+		if (jPopupMenuOpen.getSubElements().length==1) {
+			// --- Directly do the action of the single menu item ---------
+			JMenuItem menuItem = (JMenuItem) jPopupMenuOpen.getSubElements()[0];
+			menuItem.doClick();
+		} else {
+			// --- Show the pop menu --------------------------------------
+			jPopupMenuOpen.show(invoker, 0, invoker.getHeight());
+		}
+	}
+	/**
+	 * Returns the JPopupMenu to open a TechnicalSystem, TechnicalSystemGroup or a ScheduleList.
+	 * @return the JPopupMenu to open an EOM artifact
+	 */
+	private JPopupMenu getJPopupMenuNewDataWorkbooks() {
+		JPopupMenu jPopupMenuOpen = new JPopupMenu("New Data Workbooks");
+		jPopupMenuOpen.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		jPopupMenuOpen.add(this.getJMenuItemNewDataWorkbookXML());
+		jPopupMenuOpen.add(this.getJMenuItemNewDataWorkbookJSON());
+		jPopupMenuOpen.add(this.getJMenuItemNewDataWorkbookDB());
+		return jPopupMenuOpen;
+	}
+	private JMenuItem getJMenuItemNewDataWorkbookXML() {
+		if (jMenuItemNewDataWorkbookXML==null) {
+			jMenuItemNewDataWorkbookXML = new JMenuItem("Create XML Data Workbook");
+			jMenuItemNewDataWorkbookXML.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemNewDataWorkbookXML.setIcon(BundleHelper.getThemedIcon("wb/Workbook-XML-light.png", "wb/Workbook-XML-dark.png"));
+			jMenuItemNewDataWorkbookXML.addActionListener(this);
+		}
+		return jMenuItemNewDataWorkbookXML;
+	}
+	private JMenuItem getJMenuItemNewDataWorkbookJSON() {
+		if (jMenuItemNewDataWorkbookJSON==null) {
+			jMenuItemNewDataWorkbookJSON = new JMenuItem("Create JSON Data Workbook");
+			jMenuItemNewDataWorkbookJSON.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemNewDataWorkbookJSON.setIcon(BundleHelper.getThemedIcon("wb/Workbook-JSON-light.png", "wb/Workbook-JSON-dark.png"));
+			jMenuItemNewDataWorkbookJSON.addActionListener(this);
+		}
+		return jMenuItemNewDataWorkbookJSON;
+	}
+	private JMenuItem getJMenuItemNewDataWorkbookDB() {
+		if (jMenuItemNewDataWorkbookDB==null) {
+			jMenuItemNewDataWorkbookDB = new JMenuItem("Create Database Data Workbook");
+			jMenuItemNewDataWorkbookDB.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemNewDataWorkbookDB.setIcon(BundleHelper.getThemedIcon("wb/Workbook-DB-light.png", "wb/Workbook-DB-dark.png"));
+			jMenuItemNewDataWorkbookDB.addActionListener(this);
+		}
+		return jMenuItemNewDataWorkbookDB;
+	}
+	
+	private JButton getJButtonDataWorkbookOpen() {
+		if (jButtonDataWorkbookOpen==null) {
+			jButtonDataWorkbookOpen = new JButton();
+			jButtonDataWorkbookOpen.setToolTipText("Open a Data Workbook");
+			jButtonDataWorkbookOpen.setIcon(BundleHelper.getImageIcon("wb/Workbook-Yellow.png"));
+			jButtonDataWorkbookOpen.setPreferredSize(new Dimension(26, 26));
+			jButtonDataWorkbookOpen.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					JButton invoker = (JButton) ae.getSource();
+					showJPopupForOpenDataWorkbook(invoker);
+				}
+			});
+		}
+		return jButtonDataWorkbookOpen;
+	}
+	/**
+	 * Show JPop popup or invokes the default action.
+	 * @param invoker the invoker
+	 */
+	private void showJPopupForOpenDataWorkbook(JButton invoker) {
+	
+		// --- Create the popup menu to select the desired action ---------  
+		JPopupMenu jPopupMenuOpen = this.getJPopupMenuOpenDataWorkbooks();
+		if (jPopupMenuOpen.getSubElements().length==1) {
+			// --- Directly do the action of the single menu item ---------
+			JMenuItem menuItem = (JMenuItem) jPopupMenuOpen.getSubElements()[0];
+			menuItem.doClick();
+		} else {
+			// --- Show the pop menu --------------------------------------
+			jPopupMenuOpen.show(invoker, 0, invoker.getHeight());
+		}
+	}
+	/**
+	 * Returns the JPopupMenu to open a TechnicalSystem, TechnicalSystemGroup or a ScheduleList.
+	 * @return the JPopupMenu to open an EOM artifact
+	 */
+	private JPopupMenu getJPopupMenuOpenDataWorkbooks() {
+		JPopupMenu jPopupMenuOpen = new JPopupMenu("Open Data Workbooks");
+		jPopupMenuOpen.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		jPopupMenuOpen.add(this.getJMenuItemOpenDataWorkbookXML());
+		jPopupMenuOpen.add(this.getJMenuItemOpenDataWorkbookJSON());
+		jPopupMenuOpen.add(this.getJMenuItemOpenDataWorkbookDB());
+		return jPopupMenuOpen;
+	}
+
+	private JMenuItem getJMenuItemOpenDataWorkbookXML() {
+		if (jMenuItemOpenDataWorkbookXML==null) {
+			jMenuItemOpenDataWorkbookXML = new JMenuItem("Open XML Data Workbook");
+			jMenuItemOpenDataWorkbookXML.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemOpenDataWorkbookXML.setIcon(BundleHelper.getThemedIcon("wb/Workbook-XML-light.png", "wb/Workbook-XML-dark.png"));
+			jMenuItemOpenDataWorkbookXML.addActionListener(this);
+		}
+		return jMenuItemOpenDataWorkbookXML;
+	}
+	private JMenuItem getJMenuItemOpenDataWorkbookJSON() {
+		if (jMenuItemOpenDataWorkbookJSON==null) {
+			jMenuItemOpenDataWorkbookJSON = new JMenuItem("Open JSON Data Workbook");
+			jMenuItemOpenDataWorkbookJSON.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemOpenDataWorkbookJSON.setIcon(BundleHelper.getThemedIcon("wb/Workbook-JSON-light.png", "wb/Workbook-JSON-dark.png"));
+			jMenuItemOpenDataWorkbookJSON.addActionListener(this);
+		}
+		return jMenuItemOpenDataWorkbookJSON;
+	}
+	private JMenuItem getJMenuItemOpenDataWorkbookDB() {
+		if (jMenuItemOpenDataWorkbookDB==null) {
+			jMenuItemOpenDataWorkbookDB = new JMenuItem("Open Database Data Workbook");
+			jMenuItemOpenDataWorkbookDB.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemOpenDataWorkbookDB.setIcon(BundleHelper.getThemedIcon("wb/Workbook-DB-light.png", "wb/Workbook-DB-dark.png"));
+			jMenuItemOpenDataWorkbookDB.addActionListener(this);
+		}
+		return jMenuItemOpenDataWorkbookDB;
+	}
+	
+	private JButton getJButtonDataWorkbookSave() {
+		if (jButtonDataWorkbookSave==null) {
+			jButtonDataWorkbookSave = new JButton();
+			jButtonDataWorkbookSave.setToolTipText("Save the current Data Workbook");
+			jButtonDataWorkbookSave.setIcon(BundleHelper.getImageIcon("MBsave.png"));
+			jButtonDataWorkbookSave.setPreferredSize(new Dimension(26, 26));
+			jButtonDataWorkbookSave.addActionListener(this);
+		}
+		return jButtonDataWorkbookSave;
+	}
+	private JButton getJButtonDataWorkbookDelete() {
+		if (jButtonDataWorkbookDelete==null) {
+			jButtonDataWorkbookDelete = new JButton();
+			jButtonDataWorkbookDelete.setToolTipText("Delete the current Data Workbook");
+			jButtonDataWorkbookDelete.setIcon(BundleHelper.getImageIcon("wb/Workbook-Grey-Delete.png"));
+			jButtonDataWorkbookDelete.setPreferredSize(new Dimension(26, 26));
+			jButtonDataWorkbookDelete.addActionListener(this);
+		}
+		return jButtonDataWorkbookDelete;
+	}
+	private JButton getJButtonDataWorkbookClose() {
+		if (jButtonDataWorkbookClose==null) {
+			jButtonDataWorkbookClose = new JButton();
+			jButtonDataWorkbookClose.setToolTipText("Close the current Data Workbook");
+			jButtonDataWorkbookClose.setIcon(BundleHelper.getImageIcon("wb/Workbook-Closed-Grey.png"));
+			jButtonDataWorkbookClose.setPreferredSize(new Dimension(26, 26));
+			jButtonDataWorkbookClose.addActionListener(this);
+
+		}
+		return jButtonDataWorkbookClose;
+	}
+	
+	/**
+	 * Returns the JToggleButton edit data sources.
+	 * @return the JToggleButton to edit data sources
+	 */
+	private JToggleButton getJToggleButtonConfiguration() {
+		if (jToggleButtonConfiguration==null) {
+			jToggleButtonConfiguration = new JToggleButton();
+			jToggleButtonConfiguration.setToolTipText("Configuration Options");
+			jToggleButtonConfiguration.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("MBsettings.png")));
+			jToggleButtonConfiguration.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonConfiguration.addActionListener(this);
+		}
+		return jToggleButtonConfiguration;
 	}
 	
 	/**
@@ -89,9 +309,6 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	}
 	/**
 	 * Show JPop popup or invokes the default action.
-	 *
-	 * @param eomController the current {@link EomController}
-	 * @param action the action
 	 * @param invoker the invoker
 	 */
 	private void showJPopupForDataSources(JButton invoker) {
@@ -148,20 +365,6 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	}
 	
 	/**
-	 * Returns the JToggleButton edit data sources.
-	 * @return the JToggleButton to edit data sources
-	 */
-	private JToggleButton getJToggleButtonDataSourceConfiguration() {
-		if (jToggleButtonDataSourceConfiguration==null) {
-			jToggleButtonDataSourceConfiguration = new JToggleButton();
-			jToggleButtonDataSourceConfiguration.setToolTipText("Data Source Configuration ");
-			jToggleButtonDataSourceConfiguration.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("MBsettings.png")));
-			jToggleButtonDataSourceConfiguration.setPreferredSize(new Dimension(26, 26));
-			jToggleButtonDataSourceConfiguration.addActionListener(this);
-		}
-		return jToggleButtonDataSourceConfiguration;
-	}
-	/**
 	 * Returns the JButton edit data sources.
 	 * @return the JButton to edit data sources
 	 */
@@ -184,12 +387,12 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	public void propertyChange(PropertyChangeEvent evt) {
 		
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
-			this.getJToggleButtonDataSourceConfiguration().setSelected(true);
+			this.getJToggleButtonConfiguration().setSelected(true);
 			
 		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW)==true) {
 			boolean isShowConfig = (boolean) evt.getNewValue();
-			if (this.getJToggleButtonDataSourceConfiguration().isSelected()!=isShowConfig) {
-				this.getJToggleButtonDataSourceConfiguration().setSelected(isShowConfig);
+			if (this.getJToggleButtonConfiguration().isSelected()!=isShowConfig) {
+				this.getJToggleButtonConfiguration().setSelected(isShowConfig);
 			}
 		}
 		
@@ -201,7 +404,42 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 
-		if (ae.getSource()==this.getJMenuItemCsvData()) {
+		if (ae.getSource()==this.getJMenuItemNewDataWorkbookXML()) {
+			// --- Create XML DataWorkbook ------------------------------------
+			this.dataController.addDataWorkbook(DataWorkbook4XML.create(this));
+			
+		} else if (ae.getSource()==this.getJMenuItemNewDataWorkbookJSON()) {
+			// --- Create JSON DataWorkbook -----------------------------------
+			this.dataController.addDataWorkbook(DataWorkbook4JSON.create(this));
+			
+		} else if (ae.getSource()==this.getJMenuItemNewDataWorkbookDB()) {
+			// --- Create database DataWorkbook -------------------------------
+			// TODO
+			
+		} else if (ae.getSource()==this.getJMenuItemOpenDataWorkbookXML()) {
+			// --- Open XML DataWorkbook --------------------------------------
+			this.dataController.addDataWorkbook(DataWorkbook4XML.loadFromFile(this));
+			
+		} else if (ae.getSource()==this.getJMenuItemOpenDataWorkbookJSON()) {
+			// --- Open JSON DataWorkbook -------------------------------------
+			this.dataController.addDataWorkbook(DataWorkbook4JSON.loadFromFile(this));
+			
+		} else if (ae.getSource()==this.getJMenuItemOpenDataWorkbookDB()) {
+			// --- Open database DataWorkbook ---------------------------------
+			// TODO
+
+		} else if (ae.getSource()==this.getJButtonDataWorkbookSave()) {
+			// --- Save current DataWorkbook ----------------------------------
+			DataWorkbook dw = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
+			if (dw!=null) dw.save();
+			
+		} else if (ae.getSource()==this.getJButtonDataWorkbookDelete()) {
+			
+			
+		} else if (ae.getSource()==this.getJButtonDataWorkbookClose()) {
+			
+			
+		} else if (ae.getSource()==this.getJMenuItemCsvData()) {
 			// --- Add CsvDataSource ------------------------------------------
 			this.dataController.addDataSource(new CsvDataSource());
 			
@@ -213,14 +451,14 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 			// --- Add DatabaseDataSource -------------------------------------
 			this.dataController.addDataSource(new DatabaseDataSource());
 		
-		} else if (ae.getSource()==this.getJToggleButtonDataSourceConfiguration()) {
+		} else if (ae.getSource()==this.getJToggleButtonConfiguration()) {
 			// --- Show data source configuration -----------------------------
-			boolean isSelected = this.getJToggleButtonDataSourceConfiguration().isSelected();
+			boolean isSelected = this.getJToggleButtonConfiguration().isSelected();
 			this.dataController.firePropertyChange(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW, !isSelected, isSelected);
 			
 		} else if (ae.getSource()==this.getJButtonDeleteDataSources()) {
 			// --- Delete currently selected data source ----------------------
-			DataTreeNodeDataSource<?> dtnoDataSource = this.dataController.getSelectionModel().getSelectedDataTreeNodeDataSource();
+			AbstractDataTreeNodeDataSource<?> dtnoDataSource = this.dataController.getSelectionModel().getSelectedDataTreeNodeDataSource();
 			if (dtnoDataSource!=null) {
 				// --- Ask the user to delete the data source -----------------
 				this.dataController.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(this), dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());

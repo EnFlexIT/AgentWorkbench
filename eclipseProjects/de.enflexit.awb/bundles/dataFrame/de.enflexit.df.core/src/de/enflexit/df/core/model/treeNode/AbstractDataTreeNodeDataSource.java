@@ -1,15 +1,16 @@
-package de.enflexit.df.core.model;
+package de.enflexit.df.core.model.treeNode;
 
 import de.enflexit.common.dataSources.AbstractDataSource;
-import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfiguration;
+import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.ui.dataSource.AbstractJPanelDataSourceConfiguration;
 import tech.tablesaw.api.Table;
 
 /**
- * The Class DataTreeNodeDataSource.
+ * The Class AbstractDataTreeNodeDataSource.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class DataTreeNodeDataSource<DS extends AbstractDataSource> extends DataTreeNodeObjectBase {
+public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSource> extends DataTreeNodeObjectBase {
 
 	private DataController dataController;
 	private DS dataSource;
@@ -20,7 +21,7 @@ public abstract class DataTreeNodeDataSource<DS extends AbstractDataSource> exte
 	 * Instantiates a new data tree node data source.
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSource(DataController dataController, DS dataSource) {
+	public AbstractDataTreeNodeDataSource(DataController dataController, DS dataSource) {
 		this.setDataController(dataController);
 		this.setDataSource(dataSource);
 	}
@@ -80,7 +81,7 @@ public abstract class DataTreeNodeDataSource<DS extends AbstractDataSource> exte
 	 * Has to return the JPanel for the configuration of the data source.
 	 * @return the JPanel for the configuration
 	 */
-	public abstract JPanelDataSourceConfiguration<?> getJPanelConfiguration();
+	public abstract AbstractJPanelDataSourceConfiguration<?> getJPanelConfiguration();
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getCaption()

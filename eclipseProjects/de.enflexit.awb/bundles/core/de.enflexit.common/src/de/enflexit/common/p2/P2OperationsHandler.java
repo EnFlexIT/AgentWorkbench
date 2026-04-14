@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
@@ -41,6 +42,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+
+import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 
@@ -328,10 +331,21 @@ public class P2OperationsHandler {
 	 */
 	public IStatus installAvailableUpdates() {
 		
-		// --- Set policy to always accept unsigned IUs if operating headless -----------
-		if (SystemEnvironmentHelper.isHeadlessOperation()==true) {
+		// --- Set policy to always accept unsigned IUs if web or operating headless --------------
+		String currProductID = Platform.getProduct().getId();
+		boolean isWebProduct = (currProductID!=null && currProductID.equals(GlobalConstants.AWB_PRODUCT_ID_WEB));
+		boolean isHeadlessOp = SystemEnvironmentHelper.isHeadlessOperation(); 
+		
+		if (isHeadlessOp==true || isWebProduct==true) {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
+			if (this.debug==true) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
+			}
+		} else {
+			if (this.debug==true) {
+				System.out.println("[" + this.getClass().getSimpleName() + "] Regular application mode, not accepting unsigned updates!");
+			}
 		}
 		
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());

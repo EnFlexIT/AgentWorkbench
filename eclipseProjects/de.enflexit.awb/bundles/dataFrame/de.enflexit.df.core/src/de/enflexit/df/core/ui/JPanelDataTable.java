@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -29,8 +30,8 @@ import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSource;
 import de.enflexit.df.core.model.TablesawTableModel;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import tech.tablesaw.api.Table;
 
 /**
@@ -206,7 +207,7 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 		case DataController.DC_DATA_LOADED:
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			
-			DataTreeNodeDataSource<?> dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+			AbstractDataTreeNodeDataSource<?> dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
 			if (dtnoDS!=null) {
 				TablesawTableModel tsTM = null;
 				Table dataTable = dtnoDS.getTable();
@@ -259,9 +260,9 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 	private void setDatasetSelection(Integer dataRowToSelect, int direction, boolean isSelectInTable) {
 		
 		// --- Adjust number of data row text field -----------------
-		ListSelectionModel selMode = this.getJTableData().getSelectionModel();
-		if (selMode.getSelectedItemsCount()==1) {
-			int rowSelected = selMode.getSelectedIndices()[0] + 1;
+		ListSelectionModel selModel = this.getJTableData().getSelectionModel();
+		if (selModel.getSelectedItemsCount()==1) {
+			int rowSelected = selModel.getSelectedIndices()[0] + 1;
 			this.getJTextFieldDatasetNo().setText(rowSelected + "");
 		} else {
 			this.getJTextFieldDatasetNo().setText("");
@@ -269,15 +270,14 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 		
 		// --- Adjust table selection? ------------------------------
 		if (isSelectInTable==true) {
+			
 			if (dataRowToSelect!=null) {
 				// --- React on text field changes ------------------ 
 				if (dataRowToSelect<1) {
-					selMode.setSelectionInterval(0, 0);
-					this.getJTextFieldDatasetNo().setText("1");
-				} else if (dataRowToSelect>this.getJTableData().getRowCount()) {
+					dataRowToSelect = 1;
+				} else if (dataRowToSelect > this.getJTableData().getRowCount()) {
 					// TODO: Further load data or reduce number row row count  
-				} else {
-					selMode.setSelectionInterval(dataRowToSelect-1, dataRowToSelect-1);
+					
 				}
 				
 			} else {
@@ -287,21 +287,25 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 					dataRowToSelect = 1;
 					break;
 				case -1: 
-					dataRowToSelect = this.getSelectedDataRow(selMode.getSelectedIndices(), false) - 1;
+					dataRowToSelect = this.getSelectedDataRow(selModel.getSelectedIndices(), false) - 1;
 					if (dataRowToSelect<1) dataRowToSelect = 1;
 					break;
 				case 1: 
-					dataRowToSelect = this.getSelectedDataRow(selMode.getSelectedIndices(), true) + 1;
+					dataRowToSelect = this.getSelectedDataRow(selModel.getSelectedIndices(), true) + 1;
 					if (dataRowToSelect>this.getJTableData().getRowCount()) dataRowToSelect = this.getJTableData().getRowCount();
 					break;
 				case Integer.MAX_VALUE:
 					dataRowToSelect = this.getJTableData().getRowCount();
 					break;
 				}
-				selMode.setSelectionInterval(dataRowToSelect-1, dataRowToSelect-1);
-				this.getJTextFieldDatasetNo().setText(dataRowToSelect + "");
-				
 			}
+			
+			selModel.setSelectionInterval(dataRowToSelect-1, dataRowToSelect-1);
+			this.getJTextFieldDatasetNo().setText(dataRowToSelect + "");
+			
+		    Rectangle rect = this.getJTableData().getCellRect(dataRowToSelect-1, 0, true);
+		    this.getJTableData().scrollRectToVisible(rect);
+			
 		}
 	}
 	

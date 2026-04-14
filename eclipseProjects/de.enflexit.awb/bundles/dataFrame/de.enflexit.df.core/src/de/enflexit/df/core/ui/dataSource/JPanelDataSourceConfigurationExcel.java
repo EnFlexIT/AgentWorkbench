@@ -5,7 +5,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSourceExcel;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceExcel;
 
 /**
  * The Class JPanelDataSourceConfigurationExcel.
@@ -13,7 +13,7 @@ import de.enflexit.df.core.model.DataTreeNodeDataSourceExcel;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @param <DataTreeNodeDataSourceCsv> the generic type
  */
-public class JPanelDataSourceConfigurationExcel  extends JPanelDataSourceConfiguration<DataTreeNodeDataSourceExcel> {
+public class JPanelDataSourceConfigurationExcel  extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceExcel> {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 

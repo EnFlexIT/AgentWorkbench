@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -29,7 +30,7 @@ import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSourceCsv;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceCsv;
 
 /**
  * The Class JPanelDataSourceConfigurationCsv.
@@ -37,7 +38,7 @@ import de.enflexit.df.core.model.DataTreeNodeDataSourceCsv;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @param <DataTreeNodeDataSourceCsv> the generic type
  */
-public class JPanelDataSourceConfigurationCsv extends JPanelDataSourceConfiguration<DataTreeNodeDataSourceCsv> implements ActionListener, DocumentListener {
+public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceCsv> implements ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 	
@@ -376,7 +377,7 @@ public class JPanelDataSourceConfigurationCsv extends JPanelDataSourceConfigurat
 			String previousFilePath = this.getCsvDataSource().getCsvFilePath();
 			File previousFile = previousFilePath==null ? null : new File(previousFilePath);
 			
-			File csvFile = FileSelection.selectCsvFile(OwnerDetection.getOwnerWindowForComponent(this), previousFile, null);
+			File csvFile = FileSelection.selectCsvFile(OwnerDetection.getOwnerWindowForComponent(this), JFileChooser.OPEN_DIALOG, null, null, previousFile, null);
 			if (csvFile==null) return;
 
 			String csvFilePath = csvFile.getAbsolutePath();

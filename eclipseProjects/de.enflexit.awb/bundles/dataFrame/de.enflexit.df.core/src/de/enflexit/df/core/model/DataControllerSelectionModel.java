@@ -3,6 +3,12 @@ package de.enflexit.df.core.model;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.ui.ConfigurationPanel;
+import de.enflexit.df.core.workbook.DataWorkbook;
+
 /**
  * The Class DataControllerSelectionModel.
  *
@@ -74,12 +80,12 @@ public class DataControllerSelectionModel {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the currently selected {@link DataTreeNodeDataSource} if available.
+	 * Returns the currently selected {@link DataTreeNodeDataWorkbook} if available.
 	 * @return the selected data tree node data source
 	 */
-	public DataTreeNodeDataSource<?> getSelectedDataTreeNodeDataSource() {
+	public DataTreeNodeDataWorkbook getSelectedDataTreeNodeDataWorkbook() {
 		
 		TreePath tpSelected = this.getSelectedTreePath();
 		if (tpSelected==null) return null;
@@ -88,13 +94,63 @@ public class DataControllerSelectionModel {
 		for (int i = pathNodes.length-1; i >=0 ; i--) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
 			Object userObject = treeNode.getUserObject();
-			if (userObject instanceof DataTreeNodeDataSource<?>) {
-				return (DataTreeNodeDataSource<?>) userObject;
+			if (userObject instanceof DataTreeNodeDataWorkbook) {
+				return (DataTreeNodeDataWorkbook) userObject;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the currently selected DataWorkbook.
+	 * @return the selected DataWorkbook
+	 */
+	public DataWorkbook getSelectedDataWorkbook() {
+		
+		DataTreeNodeDataWorkbook dtnoDW = this.getSelectedDataTreeNodeDataWorkbook();
+		if (dtnoDW!=null) {
+			return dtnoDW.getDataWorkbook();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the currently selected {@link AbstractDataTreeNodeDataSource} if available.
+	 * @return the selected data tree node data source
+	 */
+	public AbstractDataTreeNodeDataSource<?> getSelectedDataTreeNodeDataSource() {
+		
+		TreePath tpSelected = this.getSelectedTreePath();
+		if (tpSelected==null) return null;
+		
+		Object[] pathNodes = tpSelected.getPath();
+		for (int i = pathNodes.length-1; i >=0 ; i--) {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
+			Object userObject = treeNode.getUserObject();
+			if (userObject instanceof AbstractDataTreeNodeDataSource<?>) {
+				return (AbstractDataTreeNodeDataSource<?>) userObject;
 			}
 		}
 		return null;
 	}
 	
-	
+	/**
+	 * Returns the first instance of a ConfigurationPanel out of the current path selection.
+	 * @return the selected data tree node data source
+	 */
+	public ConfigurationPanel getSelectedFirstConfigurationPanel() {
+		
+		TreePath tpSelected = this.getSelectedTreePath();
+		if (tpSelected==null) return null;
+		
+		Object[] pathNodes = tpSelected.getPath();
+		for (int i = pathNodes.length-1; i >=0 ; i--) {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
+			Object userObject = treeNode.getUserObject();
+			if (userObject instanceof ConfigurationPanel) {
+				return (ConfigurationPanel) userObject;
+			}
+		}
+		return null;
+	}
 	
 }

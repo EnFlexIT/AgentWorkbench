@@ -4,19 +4,28 @@ Bundle-Name: Data Frame - Core Bundel
 Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.df.core
 Automatic-Module-Name: de.enflexit.df.core
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.1.qualifier
 Export-Package: de.enflexit.df.core,
  de.enflexit.df.core.model,
- de.enflexit.df.core.ui
+ de.enflexit.df.core.model.treeNode,
+ de.enflexit.df.core.ui,
+ de.enflexit.df.core.ui.dataSource,
+ de.enflexit.df.core.workbook,
+ de.enflexit.df.core.workbook.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: de.enflexit.awb.baseUI,
+Import-Package: com.google.gson,
+ de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.ui,
+ de.enflexit.common,
  de.enflexit.common.dataSources,
  de.enflexit.common.swing,
+ jakarta.persistence,
+ jakarta.xml.bind,
+ jakarta.xml.bind.annotation,
  org.slf4j
 Require-Bundle: de.enflexit.df.tablesaw
 Service-Component: OSGI-INF/dataFramePerspectiveService.xml
