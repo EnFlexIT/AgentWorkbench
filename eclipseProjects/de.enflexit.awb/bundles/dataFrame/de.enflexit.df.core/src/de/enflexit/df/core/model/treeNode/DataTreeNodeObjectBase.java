@@ -1,4 +1,4 @@
-package de.enflexit.df.core.model;
+package de.enflexit.df.core.model.treeNode;
 
 import javax.swing.ImageIcon;
 
@@ -14,11 +14,11 @@ public class DataTreeNodeObjectBase {
 
 	static Logger LOGGER = LoggerFactory.getLogger(DataTreeNodeObjectBase.class);
 	
-	private ImageIcon imageIcon;
-	private String caption;
-	private String tooltipText;
+	protected ImageIcon imageIcon;
+	protected String caption;
+	protected String tooltipText;
 	
-	private String errorMessage;
+	protected String errorMessage;
 	
 	
 	/**

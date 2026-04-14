@@ -21,7 +21,7 @@ import javax.swing.tree.TreeSelectionModel;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeModel;
-import de.enflexit.df.core.model.DataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 
 /**
  * The Class JTreeData.
@@ -144,7 +144,7 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 				if (ke.getKeyCode()==KeyEvent.VK_DELETE) {
 					// --- Delete currently selected data source --------------
 					DataController dc = JTreeData.this.getDataController();
-					DataTreeNodeDataSource<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
+					AbstractDataTreeNodeDataSource<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
 					if (dtnoDataSource!=null) {
 						// --- Ask the user to delete the data source ---------
 						dc.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(JTreeData.this), dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());

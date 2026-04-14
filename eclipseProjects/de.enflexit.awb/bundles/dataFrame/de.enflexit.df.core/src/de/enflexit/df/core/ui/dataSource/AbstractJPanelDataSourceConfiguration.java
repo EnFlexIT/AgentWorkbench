@@ -3,15 +3,15 @@ package de.enflexit.df.core.ui.dataSource;
 import javax.swing.JPanel;
 
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.ui.ConfigurationPanel;
 
 /**
- * The Class JPanelDataSourceConfiguration.
+ * The Class AbstractJPanelDataSourceConfiguration.
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class JPanelDataSourceConfiguration<DSTreeNode extends DataTreeNodeDataSource<?>> extends JPanel implements ConfigurationPanel {
+public abstract class AbstractJPanelDataSourceConfiguration<DSTreeNode extends AbstractDataTreeNodeDataSource<?>> extends JPanel implements ConfigurationPanel {
 
 	private static final long serialVersionUID = 6426491391209948791L;
 
@@ -19,12 +19,12 @@ public abstract class JPanelDataSourceConfiguration<DSTreeNode extends DataTreeN
 	private DSTreeNode dsTreeNode;
 	
 	/**
-	 * Instantiates a new JPanelDataSourceConfiguration.
+	 * Instantiates a new AbstractJPanelDataSourceConfiguration.
 	 *
 	 * @param dataController the current data controller
 	 * @param dsTreeNode the ds tree node
 	 */
-	public JPanelDataSourceConfiguration(DataController dataController, DSTreeNode dsTreeNode) {
+	public AbstractJPanelDataSourceConfiguration(DataController dataController, DSTreeNode dsTreeNode) {
 		this.setDataController(dataController);
 		this.setDataTreeNodeDataSource(dsTreeNode);
 	}
@@ -53,14 +53,14 @@ public abstract class JPanelDataSourceConfiguration<DSTreeNode extends DataTreeN
 	}
 	
 	/**
-	 * Returns the current {@link DataTreeNodeDataSource}.
+	 * Returns the current {@link AbstractDataTreeNodeDataSource}.
 	 * @return the data tree node data source
 	 */
 	public DSTreeNode getDataTreeNodeDataSource() {
 		return dsTreeNode;
 	}
 	/**
-	 * Sets the actual {@link DataTreeNodeDataSource}.
+	 * Sets the actual {@link AbstractDataTreeNodeDataSource}.
 	 * @param dsTreeNode the new data tree node data source
 	 */
 	public void setDataTreeNodeDataSource(DSTreeNode dsTreeNode) {

@@ -30,8 +30,8 @@ import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSource;
 import de.enflexit.df.core.model.TablesawTableModel;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import tech.tablesaw.api.Table;
 
 /**
@@ -207,7 +207,7 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 		case DataController.DC_DATA_LOADED:
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			
-			DataTreeNodeDataSource<?> dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+			AbstractDataTreeNodeDataSource<?> dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
 			if (dtnoDS!=null) {
 				TablesawTableModel tsTM = null;
 				Table dataTable = dtnoDS.getTable();

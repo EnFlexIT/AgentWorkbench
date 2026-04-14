@@ -179,7 +179,9 @@ public class DataWorkbook4XML extends DataWorkbook {
 		if (xmlFile==null) return null;
 		
 		DataWorkbook4XML dwbXML = new DataWorkbook4XML(xmlFile);
+		dwbXML.createRandomID();
 		dwbXML.setName(xmlFile.getName());
+		dwbXML.setDescription("Description of the XML DataWorkbook");
 		dwbXML.save();
 		return dwbXML;
 	}

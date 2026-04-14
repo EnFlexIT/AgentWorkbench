@@ -5,7 +5,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.DataTreeNodeDataSourceDatabase;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceDatabase;
 
 /**
  * The Class JPanelDataSourceConfigurationDatabase.
@@ -13,7 +13,7 @@ import de.enflexit.df.core.model.DataTreeNodeDataSourceDatabase;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @param <DataTreeNodeDataSourceDatabase> the generic type
  */
-public class JPanelDataSourceConfigurationDatabase  extends JPanelDataSourceConfiguration<DataTreeNodeDataSourceDatabase> {
+public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceDatabase> {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 

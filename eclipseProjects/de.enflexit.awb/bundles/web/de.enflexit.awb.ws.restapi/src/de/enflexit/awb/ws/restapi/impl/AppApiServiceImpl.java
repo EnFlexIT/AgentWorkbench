@@ -90,23 +90,23 @@ public class AppApiServiceImpl extends AppApiService {
     		message.setMessageType(MessageType.INFO);
     		message.setMessage("Done");
     		
-    	} else {
-    	// --- Set the message type equal to pMessage ---------------
-    		switch (pMessage.getMessageType()) {
-    		case Info:
-    			message.setMessageType(MessageType.INFO);
-    			break;
-    		case Warning:
-    			message.setMessageType(MessageType.WARNING);
-    			break;
-    		case Error:
-    			message.setMessageType(MessageType.ERROR);
-    			break;
-    		}
-    	// --- Extract the message ----------------------------------
-    		message.setMessage(pMessage.getMessage());
-    		
-    	}
+		} else {
+			// --- Set the message type equal to pMessage -----------
+			switch (pMessage.getMessageType()) {
+			case Info:
+				message.setMessageType(MessageType.INFO);
+				break;
+			case Warning:
+				message.setMessageType(MessageType.WARNING);
+				break;
+			case Error:
+				message.setMessageType(MessageType.ERROR);
+				break;
+			}
+			// --- Extract the message ------------------------------
+			message.setMessage(pMessage.getMessage());
+
+		}
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     }
 

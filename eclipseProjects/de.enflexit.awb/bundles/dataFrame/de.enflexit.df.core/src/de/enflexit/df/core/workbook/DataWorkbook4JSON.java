@@ -163,7 +163,9 @@ public class DataWorkbook4JSON extends DataWorkbook {
 		if (xmlFile==null) return null;
 		
 		DataWorkbook4JSON dwbJSON = new DataWorkbook4JSON(xmlFile);
+		dwbJSON.createRandomID();
 		dwbJSON.setName(xmlFile.getName());
+		dwbJSON.setDescription("Description of the XML DataWorkbook");
 		dwbJSON.save();
 		return dwbJSON;
 	}
