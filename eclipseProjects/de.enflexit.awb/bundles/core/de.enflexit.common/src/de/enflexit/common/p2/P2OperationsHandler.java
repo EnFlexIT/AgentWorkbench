@@ -16,7 +16,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
+import org.eclipse.equinox.internal.p2.engine.phases.AuthorityChecker;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
@@ -42,6 +46,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.prefs.BackingStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -55,7 +62,10 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 @SuppressWarnings("restriction")
 public class P2OperationsHandler {
 	
+	private static Logger LOGGER = LoggerFactory.getLogger(P2OperationsHandler.class);
+	
 	private static final String DEFAULT_REPO_URI = "https://p2.enflex.it/awb/latest/";
+	
 	
 	private boolean isDevelopmentMode = false;
 	private File p2Directory = null;
@@ -339,13 +349,19 @@ public class P2OperationsHandler {
 		if (isHeadlessOp==true || isWebProduct==true) {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
-			if (this.debug==true) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
+			try {
+				IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+				IEclipsePreferences p2prefs = iScopeContext.getNode(EngineActivator.ID);
+				p2prefs.putBoolean(AuthorityChecker.TRUST_ALL_AUTHORITIES, true);
+				p2prefs.flush();
+			} catch (BackingStoreException bse) {
+				LOGGER.error("Error flushing preferences! " + bse.getLocalizedMessage());
 			}
+			LOGGER.info("Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
+			
 		} else {
-			if (this.debug==true) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Regular application mode, not accepting unsigned updates!");
-			}
+			LOGGER.info("Regular application mode, not accepting unsigned updates!");
+			
 		}
 		
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
