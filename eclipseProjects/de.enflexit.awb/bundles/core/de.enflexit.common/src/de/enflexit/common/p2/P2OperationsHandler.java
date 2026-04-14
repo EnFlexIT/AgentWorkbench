@@ -16,7 +16,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
+import org.eclipse.equinox.internal.p2.engine.phases.AuthorityChecker;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
@@ -42,6 +46,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.prefs.BackingStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -55,7 +62,10 @@ import de.enflexit.common.bundleEvaluation.BundleEvaluator;
 @SuppressWarnings("restriction")
 public class P2OperationsHandler {
 	
+	private static Logger LOGGER = LoggerFactory.getLogger(P2OperationsHandler.class);
+	
 	private static final String DEFAULT_REPO_URI = "https://p2.enflex.it/awb/latest/";
+	
 	
 	private boolean isDevelopmentMode = false;
 	private File p2Directory = null;
@@ -71,8 +81,6 @@ public class P2OperationsHandler {
 	private IArtifactRepositoryManager artifactRepositoryManager;
 
 	private  List<IInstallableUnit> iuList;
-	
-	private boolean debug = false;
 	
 	private Vector<String> updateRelevantBundleNames;
 	private Vector<Bundle> installedBundles;
@@ -288,7 +296,7 @@ public class P2OperationsHandler {
 
 			// --- If not, print an error message -----------------------
 			String errorMessage = "Installable unit " + installableUnitID + " could not be found in the repositoty " + repositoryURI;
-			System.err.println(errorMessage);
+			LOGGER.error(errorMessage);
 			return false;
 
 		}
@@ -307,7 +315,7 @@ public class P2OperationsHandler {
 			ProvisioningJob provisioningJob = operation.getProvisioningJob(this.getProgressMonitor());
 
 			if (provisioningJob == null) {
-				System.err.println("Trying to install from the Eclipse IDE? This won't work!");
+				LOGGER.error("Trying to install from the Eclipse IDE? This won't work!");
 				return Status.CANCEL_STATUS;
 			}
 
@@ -339,18 +347,24 @@ public class P2OperationsHandler {
 		if (isHeadlessOp==true || isWebProduct==true) {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
-			if (this.debug==true) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
+			try {
+				IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+				IEclipsePreferences p2prefs = iScopeContext.getNode(EngineActivator.ID);
+				p2prefs.putBoolean(AuthorityChecker.TRUST_ALL_AUTHORITIES, true);
+				p2prefs.flush();
+			} catch (BackingStoreException bse) {
+				LOGGER.error("Error flushing preferences! " + bse.getLocalizedMessage());
 			}
+			LOGGER.info("Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
+			
 		} else {
-			if (this.debug==true) {
-				System.out.println("[" + this.getClass().getSimpleName() + "] Regular application mode, not accepting unsigned updates!");
-			}
+			LOGGER.info("Regular application mode, not accepting unsigned updates!");
+			
 		}
 		
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
 		if (provisioningJob == null) {
-			System.err.println("Trying to update from the Eclipse IDE? This won't work!");
+			LOGGER.error("Trying to update from the Eclipse IDE? This won't work!");
 			return Status.CANCEL_STATUS;
 		}
 
@@ -405,8 +419,7 @@ public class P2OperationsHandler {
 			}
 			
 		} catch (ProvisionException | OperationCanceledException e) {
-			System.err.println("Error loading the repository at " + repositoryURI);
-			e.printStackTrace();
+			LOGGER.error("Error loading the repository at " + repositoryURI + ": " + e.getLocalizedMessage());
 		}
 
 		return queryResult;
@@ -494,8 +507,7 @@ public class P2OperationsHandler {
 				this.addRepository(defaultRepo);
 			}
 		} catch (URISyntaxException e) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + DEFAULT_REPO_URI);
-			e.printStackTrace();
+			LOGGER.error("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + DEFAULT_REPO_URI);
 		}
 		
 		URI[] knownRepos = this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
@@ -509,9 +521,7 @@ public class P2OperationsHandler {
 					if (repo!=null) {
 						boolean updateAvailable = this.queryRepoForNewerVersion(bundle, repo);
 						if (updateAvailable==true) {
-							if (this.debug==true) {
-								System.out.println("[" + this.getClass().getSimpleName() + "] Update found for bundle " + bundle.getSymbolicName());
-							}
+							LOGGER.info("[" + this.getClass().getSimpleName() + "] Update found for bundle " + bundle.getSymbolicName());
 							return true;
 						}
 					}
@@ -520,9 +530,7 @@ public class P2OperationsHandler {
 		}
 		
 		// --- If not returned yet, no newer versions are available -------
-		if (this.debug==true) {
-			System.out.println("[" + this.getClass().getSimpleName() + "] Your target platform is up to date!");
-		}
+		LOGGER.info("[" + this.getClass().getSimpleName() + "] Your target platform is up to date!");
 		return false;
 	}
 	
