@@ -22,11 +22,13 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.equinox.internal.p2.engine.phases.AuthorityChecker;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
+import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.engine.ProfileScope;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.operations.InstallOperation;
@@ -348,8 +350,12 @@ public class P2OperationsHandler {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
 			try {
-				IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
-				IEclipsePreferences p2prefs = iScopeContext.getNode(EngineActivator.ID);
+//				IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+//				IEclipsePreferences p2prefs = iScopeContext.getNode(EngineActivator.ID);
+				
+				var profileScope = new ProfileScope(this.getProvisioningAgent().getService(IAgentLocation.class), "DefaultProfile");
+				IEclipsePreferences p2prefs = profileScope.getNode(EngineActivator.ID);
+				
 				p2prefs.putBoolean(AuthorityChecker.TRUST_ALL_AUTHORITIES, true);
 				p2prefs.flush();
 			} catch (BackingStoreException bse) {
