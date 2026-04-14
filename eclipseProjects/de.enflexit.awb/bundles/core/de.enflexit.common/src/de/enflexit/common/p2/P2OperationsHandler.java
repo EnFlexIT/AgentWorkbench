@@ -350,8 +350,6 @@ public class P2OperationsHandler {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
 			try {
-//				IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
-//				IEclipsePreferences p2prefs = iScopeContext.getNode(EngineActivator.ID);
 				
 				var profileScope = new ProfileScope(this.getProvisioningAgent().getService(IAgentLocation.class), "DefaultProfile");
 				IEclipsePreferences p2prefs = profileScope.getNode(EngineActivator.ID);
