@@ -85,10 +85,15 @@ public class AppApiServiceImpl extends AppApiService {
     	// --- Return process message -------------------------------
     	Message message = new Message();
     	message.setDateTime(System.currentTimeMillis()+"");
-    	// --- Default case, no errors occurred ---------------------
-    	if (pMessage == null && success == true) {
-    		message.setMessageType(MessageType.INFO);
-    		message.setMessage("Done");
+    	if (pMessage == null) {
+    		if (success == true) {
+    			// --- Default case, no errors occurred ---------------------
+    			message.setMessageType(MessageType.INFO);
+    			message.setMessage("Done");
+    		} else {
+    			message.setMessageType(MessageType.ERROR);
+    			message.setMessage("Properties could not be applied.");    			
+    		}
     		
 		} else {
 			// --- Set the message type equal to pMessage -----------
