@@ -82,8 +82,6 @@ public class P2OperationsHandler {
 
 	private  List<IInstallableUnit> iuList;
 	
-	private boolean debug = false;
-	
 	private Vector<String> updateRelevantBundleNames;
 	private Vector<Bundle> installedBundles;
 	
@@ -298,7 +296,7 @@ public class P2OperationsHandler {
 
 			// --- If not, print an error message -----------------------
 			String errorMessage = "Installable unit " + installableUnitID + " could not be found in the repositoty " + repositoryURI;
-			System.err.println(errorMessage);
+			LOGGER.error(errorMessage);
 			return false;
 
 		}
@@ -317,7 +315,7 @@ public class P2OperationsHandler {
 			ProvisioningJob provisioningJob = operation.getProvisioningJob(this.getProgressMonitor());
 
 			if (provisioningJob == null) {
-				System.err.println("Trying to install from the Eclipse IDE? This won't work!");
+				LOGGER.error("Trying to install from the Eclipse IDE? This won't work!");
 				return Status.CANCEL_STATUS;
 			}
 
@@ -366,7 +364,7 @@ public class P2OperationsHandler {
 		
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
 		if (provisioningJob == null) {
-			System.err.println("Trying to update from the Eclipse IDE? This won't work!");
+			LOGGER.error("Trying to update from the Eclipse IDE? This won't work!");
 			return Status.CANCEL_STATUS;
 		}
 
@@ -421,8 +419,7 @@ public class P2OperationsHandler {
 			}
 			
 		} catch (ProvisionException | OperationCanceledException e) {
-			System.err.println("Error loading the repository at " + repositoryURI);
-			e.printStackTrace();
+			LOGGER.error("Error loading the repository at " + repositoryURI + ": " + e.getLocalizedMessage());
 		}
 
 		return queryResult;
@@ -510,8 +507,7 @@ public class P2OperationsHandler {
 				this.addRepository(defaultRepo);
 			}
 		} catch (URISyntaxException e) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + DEFAULT_REPO_URI);
-			e.printStackTrace();
+			LOGGER.error("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + DEFAULT_REPO_URI);
 		}
 		
 		URI[] knownRepos = this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
@@ -525,9 +521,7 @@ public class P2OperationsHandler {
 					if (repo!=null) {
 						boolean updateAvailable = this.queryRepoForNewerVersion(bundle, repo);
 						if (updateAvailable==true) {
-							if (this.debug==true) {
-								System.out.println("[" + this.getClass().getSimpleName() + "] Update found for bundle " + bundle.getSymbolicName());
-							}
+							LOGGER.info("[" + this.getClass().getSimpleName() + "] Update found for bundle " + bundle.getSymbolicName());
 							return true;
 						}
 					}
@@ -536,9 +530,7 @@ public class P2OperationsHandler {
 		}
 		
 		// --- If not returned yet, no newer versions are available -------
-		if (this.debug==true) {
-			System.out.println("[" + this.getClass().getSimpleName() + "] Your target platform is up to date!");
-		}
+		LOGGER.info("[" + this.getClass().getSimpleName() + "] Your target platform is up to date!");
 		return false;
 	}
 	
