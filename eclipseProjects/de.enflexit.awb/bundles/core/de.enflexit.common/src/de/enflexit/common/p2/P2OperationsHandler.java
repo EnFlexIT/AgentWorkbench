@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
+import org.eclipse.equinox.internal.p2.engine.phases.AuthorityChecker;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
 import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
@@ -65,10 +66,6 @@ public class P2OperationsHandler {
 	private static Logger LOGGER = LoggerFactory.getLogger(P2OperationsHandler.class);
 	
 	private static final String DEFAULT_REPO_URI = "https://p2.enflex.it/awb/latest/";
-	
-	private static final String TRUSTED_AUTHORITIES_PROPERTY_KEY = "p2.trustedAuthorities"; 
-	private static final String TRUSTED_AUTHORITIES_PROPERTY_VALUE = "https://download.eclipse.org https://archive.eclipse.org https://p2.enflex.it";
-	
 	
 	private boolean isDevelopmentMode = false;
 	private File p2Directory = null;
@@ -352,20 +349,19 @@ public class P2OperationsHandler {
 		boolean isWebProduct = (currProductID!=null && currProductID.equals(GlobalConstants.AWB_PRODUCT_ID_WEB));
 		boolean isHeadlessOp = SystemEnvironmentHelper.isHeadlessOperation();
 		
-		try {
-			var profileScope = new ProfileScope(this.getProvisioningAgent().getService(IAgentLocation.class), "DefaultProfile");
-			IEclipsePreferences p2prefs = profileScope.getNode(EngineActivator.ID);
-			
-			p2prefs.put(TRUSTED_AUTHORITIES_PROPERTY_KEY, TRUSTED_AUTHORITIES_PROPERTY_VALUE);
-			p2prefs.flush();
-			
-		} catch (BackingStoreException bse) {
-			LOGGER.error("Error flushing preferences! " + bse.getLocalizedMessage());
-		}
-		
 		if (isHeadlessOp==true || isWebProduct==true) {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
+			try {
+				
+				var profileScope = new ProfileScope(this.getProvisioningAgent().getService(IAgentLocation.class), "DefaultProfile");
+				IEclipsePreferences p2prefs = profileScope.getNode(EngineActivator.ID);
+				
+				p2prefs.putBoolean(AuthorityChecker.TRUST_ALL_AUTHORITIES, true);
+				p2prefs.flush();
+			} catch (BackingStoreException bse) {
+				LOGGER.error("Error flushing preferences! " + bse.getLocalizedMessage());
+			}
 			LOGGER.info("Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
 			
 		} else {
