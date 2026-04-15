@@ -394,12 +394,18 @@ public class JettyServerManager {
 		// ----------------------------------------------------------
 		// --- Secure the server ------------------------------------
 		JettySecuritySettings securitySettings = jConfiguration.getSecuritySettings();
+		Boolean isSecured = null;
 		if (hCollection==null) {
-			this.secureHandler(initialHandler, securitySettings);
+			isSecured = this.secureHandler(initialHandler, securitySettings);
 		} else {
-			this.secureHandler(hCollection, securitySettings);
+			isSecured = this.secureHandler(hCollection, securitySettings);
 		}
-
+		if (isSecured!=null && isSecured==false) {
+			String msg = "Unable to start the web server '" + jConfiguration.getServerName() + "' because at least one handler could not be secured.";
+			BundleHelper.systemPrintln(this, msg, true);
+			return false;
+		}
+		
 		// ----------------------------------------------------------
 		// --- Always redirect HTTP to HTTPS? -----------------------
 		Object redirect = server.getAttribute(JettyConstants.HTTP_TO_HTTPS.getJettyKey());
@@ -573,12 +579,19 @@ public class JettyServerManager {
 	 * @param hCollection the handler collection to secure
 	 * @param securitySettings the security settings
 	 */
-	private void secureHandler(Sequence hCollection, JettySecuritySettings securitySettings) {
+	private Boolean secureHandler(Sequence hCollection, JettySecuritySettings securitySettings) {
+		
 		List<Handler> handlerList = hCollection.getHandlers();
-		if (handlerList==null) return;
+		if (handlerList==null) return null;
+		
+		Boolean isSecured = null;
 		for (int i = 0; i < handlerList.size(); i++) {
-			this.secureHandler(handlerList.get(i), securitySettings);
+			Boolean isHandlerSeccurred = this.secureHandler(handlerList.get(i), securitySettings);
+			if (isHandlerSeccurred!=null && isHandlerSeccurred==false) {
+				isSecured = false;
+			}
 		}
+		return isSecured;
 	}
 	/**
 	 * Secures the specified handler.
@@ -586,10 +599,10 @@ public class JettyServerManager {
 	 * @param handler the handler
 	 * @param securitySettings the security settings
 	 */
-	private void secureHandler(Handler handler, JettySecuritySettings securitySettings) {
+	private Boolean secureHandler(Handler handler, JettySecuritySettings securitySettings) {
 
-		if (handler==null) return;
-		if (! (handler instanceof ServletContextHandler)) return;
+		if (handler==null) return null;
+		if (! (handler instanceof ServletContextHandler)) return null;
 		
 		// --- Get the servlet context handler to secure ----------------------
 		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
@@ -597,24 +610,30 @@ public class JettyServerManager {
 		
 		// --- Get the activated security configuration -----------------------
 		ServletSecurityConfiguration ssc = securitySettings.getActivedServletSecurityConfiguration(contextPath);
-		if (ssc==null) return;
+		if (ssc==null) return null;
 
 		// --- Get the corresponding security handler service ----------------- 
 		AwbSecurityHandlerService securityService = SecurityHandlerService.getAwbSecurityHandlerService(ssc.getSecurityHandlerName());
-		if (securityService==null) return;
+		if (securityService==null) return null;
 		
 		// --- Initiate the security handler ----------------------------------
 		try {
 
 			// --- Get handler from specified service -------------------------
 			SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(ssc.getSecurityHandlerConfiguration());
-			serCtxHandler.setSecurityHandler(securtiyHandler);
-			serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
+			if (securtiyHandler!=null) {
+				serCtxHandler.setSecurityHandler(securtiyHandler);
+				serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
+				return true;
+			} else {
+				return false;
+			}
 			
 		} catch (Exception ex) {
 			BundleHelper.systemPrintln(this, "Error while trying to secure servlet for context path '" + contextPath+ "':", true);
 			ex.printStackTrace() ;
 		}
+		return null;
 	}
 	
 	/**

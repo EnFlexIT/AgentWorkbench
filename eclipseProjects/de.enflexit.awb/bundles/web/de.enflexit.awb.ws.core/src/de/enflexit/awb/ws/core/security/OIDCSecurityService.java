@@ -94,6 +94,10 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		String issuer = securityHandlerConfiguration.get(OIDCParameter.Issuer.getKey());
 		String clientID = securityHandlerConfiguration.get(OIDCParameter.ClientID.getKey());
 		String clientSecret = securityHandlerConfiguration.get(OIDCParameter.ClientSecrete.getKey());
+		
+		if (issuer==null || issuer.isBlank()) return null;
+		if (clientID==null || clientID.isBlank()) return null;
+		if (clientSecret==null || clientSecret.isBlank()) return null;
 
 		if (useOneAuthenticator==true) {
 			// --- Only used in the context of development tests ----
