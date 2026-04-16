@@ -606,6 +606,10 @@ public class P2OperationsHandler {
 		return false;
 	}
 	
+	/**
+	 * Gets the metadata repositories.
+	 * @return the metadata repositories
+	 */
 	private HashMap<URI, IMetadataRepository> getMetadataRepositories() {
 		if (metadataRepositories==null) {
 			metadataRepositories = new HashMap<>();
@@ -613,6 +617,12 @@ public class P2OperationsHandler {
 		return metadataRepositories;
 	}
 	
+	/**
+	 * Gets the metadata repository with the specified URI. If not already known,
+	 * a new {@link IMetadataRepository} is created and added to the repository map.
+	 * @param uri the uri
+	 * @return the metadata repository
+	 */
 	private IMetadataRepository getMetadataRepository(URI uri) {
 		IMetadataRepository metadataRepository = this.getMetadataRepositories().get(uri);
 		if (metadataRepository==null) {
@@ -646,6 +656,10 @@ public class P2OperationsHandler {
 		return new Vector<>(bundlesBySymbolicName.values());
 	}
 	
+	/**
+	 * Gets the provisioning context.
+	 * @return the provisioning context
+	 */
 	private ProvisioningContext getProvisioningContext() {
 		if (provisioningContext==null) {
 			provisioningContext = new ProvisioningContext(this.getProvisioningAgent());
@@ -653,6 +667,7 @@ public class P2OperationsHandler {
 				URI repoURI = new URI(DEFAULT_REPO_URI);
 				provisioningContext.setMetadataRepositories(repoURI);
 				provisioningContext.setArtifactRepositories(repoURI);
+				LOGGER.info("Created a provisioning context for repository " + DEFAULT_REPO_URI);
 			} catch (URISyntaxException e) {
 				LOGGER.error("Invalid repository URI: " + DEFAULT_REPO_URI);
 			}
