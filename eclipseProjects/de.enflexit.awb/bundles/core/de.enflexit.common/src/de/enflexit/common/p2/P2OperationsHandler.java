@@ -43,7 +43,6 @@ import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.eclipse.osgi.service.security.TrustEngine;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -157,11 +156,6 @@ public class P2OperationsHandler {
 				if (serviceReference!=null) {
 					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
 				}
-				
-				ServiceReference<?> ref = bundleContext.getServiceReference(TrustEngine.class.getName());
-				Object engine = bundleContext.getService(ref);
-
-				LOGGER.info("Using TrustEngine " + engine.getClass().getSimpleName());
 			}
 			
 		}
