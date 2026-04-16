@@ -651,8 +651,8 @@ public class P2OperationsHandler {
 			URI repoURI;
 			try {
 				repoURI = new URI("https://p2.enflex.it");
-				provisioningContext.setMetadataRepositories(new URI[] { repoURI });
-				provisioningContext.setArtifactRepositories(new URI[] { repoURI });
+				provisioningContext.setMetadataRepositories(new URI[] { repoURI, new URI(DEFAULT_REPO_URI) });
+				provisioningContext.setArtifactRepositories(new URI[] { repoURI, new URI(DEFAULT_REPO_URI) });
 			} catch (URISyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
