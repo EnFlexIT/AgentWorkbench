@@ -33,16 +33,18 @@ public interface PropertyBusService {
 	 * Sets the specified properties for the local performative.
 	 *
 	 * @param properties the properties to set
+	 * @param arguments the optional arguments
 	 * @return true, if successful
 	 */
-	public boolean setProperties(Properties properties);
+	public boolean setProperties(Properties properties, String arguments);
 	
 	/**
 	 * Collects and returns the properties for the local performative.
 	 *
 	 * @param properties the properties that were already found for the performative (usually expected to be <code>null</code>)
+	 * @param arguments the optional arguments
 	 * @return the properties
 	 */
-	public Properties getProperties(Properties properties);
+	public Properties getProperties(Properties properties, String arguments);
 	
 }

@@ -29,9 +29,11 @@ public class PropertyBusServiceDbConnectionTest implements PropertyBusService {
 
 		return "DB.CONN.TEST";
 	}
-
+	/* (non-Javadoc)
+	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
+	*/
 	@Override
-	public boolean setProperties(Properties properties) {
+	public boolean setProperties(Properties properties, String arguments) {
 		
 		// --- If properties aren't valid, don't test the connection and return false -----------------------
 		if (this.hasValidProperties(properties)== false) return false;
@@ -125,10 +127,10 @@ public class PropertyBusServiceDbConnectionTest implements PropertyBusService {
 	}
 	
 	/* (non-Javadoc)
-	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties)
+	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
 	*/
 	@Override
-	public Properties getProperties(Properties properties) {
+	public Properties getProperties(Properties properties, String arguments) {
 		
 		return null;
 	}

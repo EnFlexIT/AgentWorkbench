@@ -23,10 +23,10 @@ public class PropertyBusServiceDatabaseSystemsParameter implements PropertyBusSe
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties)
-	 */
+	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
+	*/
 	@Override
-	public Properties getProperties(Properties properties) {
+	public Properties getProperties(Properties properties, String arguments) {
 
 		if (properties==null) properties = new Properties();
 		
@@ -55,10 +55,10 @@ public class PropertyBusServiceDatabaseSystemsParameter implements PropertyBusSe
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.common.properties.bus.PropertyBusService#setProperties(de.enflexit.common.properties.Properties)
-	 */
+	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
+	*/
 	@Override
-	public boolean setProperties(Properties properties) {
+	public boolean setProperties(Properties properties, String arguments) {
 		return false;
 	}
 
