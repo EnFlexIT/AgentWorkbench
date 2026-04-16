@@ -27,7 +27,6 @@ import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.ProfileScope;
-import org.eclipse.equinox.p2.engine.ProvisioningContext;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.operations.InstallOperation;
@@ -76,7 +75,6 @@ public class P2OperationsHandler {
 	private IProgressMonitor progressMonitor;
 	
 	private UpdateOperation updateOperation;
-	private ProvisioningContext provisioningContext;
 
 	private IMetadataRepositoryManager metadataRepositoryManager;
 	private IArtifactRepositoryManager artifactRepositoryManager;
@@ -187,7 +185,14 @@ public class P2OperationsHandler {
 	private UpdateOperation getUpdateOperation() {
 		if (updateOperation == null) {
 			updateOperation = new UpdateOperation(this.getProvisioningSession());
-			updateOperation.setProvisioningContext(this.getProvisioningContext());
+			URI repoURI;
+			try {
+				repoURI = new URI(DEFAULT_REPO_URI);
+				updateOperation.getProvisioningContext().setMetadataRepositories(repoURI);
+				updateOperation.getProvisioningContext().setArtifactRepositories(repoURI);
+			} catch (URISyntaxException e) {
+				LOGGER.error("Invalid repository URI: " + DEFAULT_REPO_URI);
+			}
 			
 		}
 		return updateOperation;
@@ -644,22 +649,5 @@ public class P2OperationsHandler {
 		
 		return new Vector<>(bundlesBySymbolicName.values());
 	}
-	
-	private ProvisioningContext getProvisioningContext() {
-		if (provisioningContext==null) {
-			provisioningContext = new ProvisioningContext(this.getProvisioningAgent());
-			URI repoURI;
-			try {
-				repoURI = new URI("https://p2.enflex.it");
-				provisioningContext.setMetadataRepositories(new URI[] { repoURI, new URI(DEFAULT_REPO_URI) });
-				provisioningContext.setArtifactRepositories(new URI[] { repoURI, new URI(DEFAULT_REPO_URI) });
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return provisioningContext;
-	}
-	
 	
 }
