@@ -153,7 +153,10 @@ public class P2OperationsHandler {
 			if (provisioningAgent==null) {
 				// --- This should provide the agent for product execution ----
 				BundleContext bundleContext = FrameworkUtil.getBundle(P2OperationsHandler.class).getBundleContext();
-				
+				ServiceReference<?> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.SERVICE_NAME);
+				if (serviceReference!=null) {
+					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
+				}
 				
 				ServiceReference<?> ref = bundleContext.getServiceReference(TrustEngine.class.getName());
 				Object engine = bundleContext.getService(ref);
