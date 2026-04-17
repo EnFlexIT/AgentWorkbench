@@ -1,8 +1,17 @@
 package de.enflexit.common.p2;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +52,7 @@ import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.eclipse.osgi.service.security.TrustEngine;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -156,6 +166,14 @@ public class P2OperationsHandler {
 				ServiceReference<?> serviceReference = bundleContext.getServiceReference(IProvisioningAgent.SERVICE_NAME);
 				if (serviceReference!=null) {
 					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
+					
+					try {
+						CustomP2TrustEngine trustEngine = new CustomP2TrustEngine(this.loadDefaultTrustStore(), true);
+						provisioningAgent.registerService(TrustEngine.class.getName(), trustEngine);
+					} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+						LOGGER.error("Unable to load the default trust store: " + e.getLocalizedMessage());
+					}
+					
 				}
 			}
 			
@@ -673,6 +691,29 @@ public class P2OperationsHandler {
 			}
 		}
 		return provisioningContext;
+	}
+	
+	/**
+	 * Loads the default trust store.
+	 * @return the trust store
+	 * @throws KeyStoreException the key store exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws NoSuchAlgorithmException the no such algorithm exception
+	 * @throws CertificateException the certificate exception
+	 */
+	private KeyStore loadDefaultTrustStore() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+
+		String javaHome = System.getProperty("java.home");
+		Path cacertsPath = Paths.get(javaHome, "lib", "security", "cacerts");
+		
+		if (Files.exists(cacertsPath)) {
+			try (InputStream is = Files.newInputStream(cacertsPath)) {
+			    ks.load(is, null);
+			}
+		}
+		
+		return ks;
 	}
 	
 }
