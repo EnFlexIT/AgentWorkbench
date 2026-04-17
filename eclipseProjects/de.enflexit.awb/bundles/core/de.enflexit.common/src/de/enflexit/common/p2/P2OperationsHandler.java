@@ -387,6 +387,10 @@ public class P2OperationsHandler {
 		
 		this.getUpdateOperation().setProvisioningContext(this.getProvisioningContext());
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
+		
+		TrustEngine engine = (TrustEngine) this.getProvisioningAgent().getService(TrustEngine.class.getName());
+		LOGGER.info("Using trust engine " + engine.getName());
+
 		if (provisioningJob == null) {
 			LOGGER.error("Trying to update from the Eclipse IDE? This won't work!");
 			return Status.CANCEL_STATUS;
