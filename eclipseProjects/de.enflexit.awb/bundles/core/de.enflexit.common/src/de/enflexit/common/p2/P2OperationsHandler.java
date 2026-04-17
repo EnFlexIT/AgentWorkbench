@@ -27,6 +27,7 @@ import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.ProfileScope;
+import org.eclipse.equinox.p2.engine.ProvisioningContext;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.operations.InstallOperation;
@@ -42,7 +43,6 @@ import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.eclipse.osgi.service.security.TrustEngine;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -76,6 +76,8 @@ public class P2OperationsHandler {
 	private IProgressMonitor progressMonitor;
 	
 	private UpdateOperation updateOperation;
+	
+	private ProvisioningContext provisioningContext;
 
 	private IMetadataRepositoryManager metadataRepositoryManager;
 	private IArtifactRepositoryManager artifactRepositoryManager;
@@ -155,11 +157,6 @@ public class P2OperationsHandler {
 				if (serviceReference!=null) {
 					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
 				}
-				
-				ServiceReference<?> ref = bundleContext.getServiceReference(TrustEngine.class.getName());
-				Object engine = bundleContext.getService(ref);
-
-				LOGGER.info("Using TrustEngine " + engine.getClass().getSimpleName());
 			}
 			
 		}
@@ -334,6 +331,7 @@ public class P2OperationsHandler {
 	 * @return the result status
 	 */
 	public IStatus checkForUpdates() {
+		this.getUpdateOperation().setProvisioningContext(this.getProvisioningContext());
 		return this.getUpdateOperation().resolveModal(this.getProgressMonitor());
 	}
 
@@ -369,6 +367,7 @@ public class P2OperationsHandler {
 			
 		}
 		
+		this.getUpdateOperation().setProvisioningContext(this.getProvisioningContext());
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
 		if (provisioningJob == null) {
 			LOGGER.error("Trying to update from the Eclipse IDE? This won't work!");
@@ -607,6 +606,10 @@ public class P2OperationsHandler {
 		return false;
 	}
 	
+	/**
+	 * Gets the metadata repositories.
+	 * @return the metadata repositories
+	 */
 	private HashMap<URI, IMetadataRepository> getMetadataRepositories() {
 		if (metadataRepositories==null) {
 			metadataRepositories = new HashMap<>();
@@ -614,6 +617,12 @@ public class P2OperationsHandler {
 		return metadataRepositories;
 	}
 	
+	/**
+	 * Gets the metadata repository with the specified URI. If not already known,
+	 * a new {@link IMetadataRepository} is created and added to the repository map.
+	 * @param uri the uri
+	 * @return the metadata repository
+	 */
 	private IMetadataRepository getMetadataRepository(URI uri) {
 		IMetadataRepository metadataRepository = this.getMetadataRepositories().get(uri);
 		if (metadataRepository==null) {
@@ -647,5 +656,23 @@ public class P2OperationsHandler {
 		return new Vector<>(bundlesBySymbolicName.values());
 	}
 	
+	/**
+	 * Gets the provisioning context.
+	 * @return the provisioning context
+	 */
+	private ProvisioningContext getProvisioningContext() {
+		if (provisioningContext==null) {
+			provisioningContext = new ProvisioningContext(this.getProvisioningAgent());
+			try {
+				URI repoURI = new URI(DEFAULT_REPO_URI);
+				provisioningContext.setMetadataRepositories(repoURI);
+				provisioningContext.setArtifactRepositories(repoURI);
+				LOGGER.info("Created a provisioning context for repository " + DEFAULT_REPO_URI);
+			} catch (URISyntaxException e) {
+				LOGGER.error("Invalid repository URI: " + DEFAULT_REPO_URI);
+			}
+		}
+		return provisioningContext;
+	}
 	
 }
