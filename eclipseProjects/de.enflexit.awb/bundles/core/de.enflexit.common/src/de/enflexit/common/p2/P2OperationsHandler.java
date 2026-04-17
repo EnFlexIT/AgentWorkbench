@@ -397,8 +397,8 @@ public class P2OperationsHandler {
 		this.getUpdateOperation().setProvisioningContext(this.getProvisioningContext());
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
 		
-		TrustEngine engine = (TrustEngine) this.getProvisioningAgent().getService(TrustEngine.class.getName());
-		LOGGER.info("Using trust engine " + engine.getName());
+//		TrustEngine engine = (TrustEngine) this.getProvisioningAgent().getService(TrustEngine.class.getName());
+//		LOGGER.info("Using trust engine " + engine.getName());
 
 		if (provisioningJob == null) {
 			LOGGER.error("Trying to update from the Eclipse IDE? This won't work!");
@@ -698,7 +698,7 @@ public class P2OperationsHandler {
 				URI repoURI = new URI(DEFAULT_REPO_URI);
 				provisioningContext.setMetadataRepositories(repoURI);
 				provisioningContext.setArtifactRepositories(repoURI);
-				LOGGER.info("Created a provisioning context for repository " + DEFAULT_REPO_URI);
+//				LOGGER.info("Created a provisioning context for repository " + DEFAULT_REPO_URI);
 			} catch (URISyntaxException e) {
 				LOGGER.error("Invalid repository URI: " + DEFAULT_REPO_URI);
 			}
