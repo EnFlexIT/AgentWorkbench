@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.equinox.internal.p2.engine.phases.AuthorityChecker;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
@@ -174,6 +175,14 @@ public class P2OperationsHandler {
 						LOGGER.error("Unable to load the default trust store: " + e.getLocalizedMessage());
 					}
 					
+				}
+				
+				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("org.eclipse.equinox.p2.engine");
+				prefs.put("p2.trustedAuthorities", "https://download.eclipse.org https://archive.eclipse.org https://p2.enflex.it https://p2.enflex.it/awb/latest");
+				try {
+				    prefs.flush();
+				} catch (BackingStoreException e) {
+				    e.printStackTrace();
 				}
 			}
 			
