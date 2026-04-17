@@ -1,6 +1,7 @@
 package de.enflexit.common;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.time.ZoneId;
 
 /**
@@ -9,6 +10,27 @@ import java.time.ZoneId;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class GlobalRuntimeValues {
+	
+	// --------------------------------------------------------------
+	// --- Methods for the user.home directory ----------------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the user home directory.
+	 * @return the user home directory
+	 */
+	public static Path getUserHomeDirectory() {
+		Path userHomePath = Path.of(System.getProperty("user.home"));
+		return userHomePath;
+	}
+	/**
+	 * Returns the user home working directory of the .
+	 * @return the user home working directory
+	 */
+	public static Path getUserHomeWorkingDirectory() {
+		Path userHomePath = GlobalRuntimeValues.getUserHomeDirectory();
+		Path userHomePathWork = userHomePath.resolve(GlobalConstants.AWB_USER_HOME_SUB_DIRECTORY);
+		return userHomePathWork;
+	}
 	
 	
 	// --------------------------------------------------------------

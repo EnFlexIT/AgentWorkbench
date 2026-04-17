@@ -72,8 +72,6 @@ public class GlobalInfo implements ZoneIdResolver {
 	public static final String DEFAULT_AWB_PROJECT_REPOSITORY = "https://p2.enflex.it/awbProjectRepository/";
 	public static final String DEFAULT_OIDC_ISSUER_URI = "https://se238124.zim.uni-due.de:8443/auth/realms/EOMID/";
 
-	public static final String SECURED_PROPERTIES_FILE_NAME = "secured.properties";
-	
 	private final static String newLineSeparator = System.getProperty("line.separator");
 	
 	private static Color localColorMenuHighLight;
@@ -612,6 +610,21 @@ public class GlobalInfo implements ZoneIdResolver {
 		return localBaseDir;
 	}	
 
+	/**
+	 * Returns System.get("user.home") as a path instance.
+	 * @return the path user home
+	 */
+	public static Path getPathUserHome() {
+		return GlobalRuntimeValues.getUserHomeDirectory();
+	}
+	/**
+	 * Returns the working sub directory within System.get("user.home") directory.
+	 * @return the path user home working directory
+	 */
+	public static Path getPathUserHomeWorkingDirectory() {
+		return GlobalRuntimeValues.getUserHomeWorkingDirectory();
+	}
+	
 	
 	/**
 	 * Creates the directory if not already there and thus required.
@@ -1217,12 +1230,14 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public SecuredProperties getSecuredProperties() {
 		if (securedProperties==null) {
-			securedProperties = new SecuredProperties(this.getPathProperty(true).resolve(SECURED_PROPERTIES_FILE_NAME), SecuredProperties.getDefaultPassword());
+			// --- Changed location to 'user.home' --------
+			securedProperties = new SecuredProperties(SecuredProperties.getPathGlobalSecuredProperties(), SecuredProperties.getDefaultPassword());
+			//securedProperties = new SecuredProperties(this.getPathProperty(true).resolve(GlobalConstants.AWB_SECURED_PROPERTIES_FILE_NAME), SecuredProperties.getDefaultPassword());
 			
 			// ------------------------------------------------------
 			// --- Put test data? -----------------------------------
 			// ------------------------------------------------------
-			boolean isPutSecuredTestData = false;
+			boolean isPutSecuredTestData = true;
 			if (isPutSecuredTestData==true) {
 				
 				// --- Saved in the file root without node --------------------

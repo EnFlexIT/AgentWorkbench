@@ -54,6 +54,7 @@ import de.enflexit.awb.core.update.ProjectRepositoryExport;
 import de.enflexit.awb.core.update.ProjectRepositoryUpdate;
 import de.enflexit.common.AbstractUserObject;
 import de.enflexit.common.ExecutionEnvironment;
+import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.Observable;
 import de.enflexit.common.PathHandling;
 import de.enflexit.common.StringHelper;
@@ -2219,7 +2220,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			String globalSecStoreKey = "securedProperties.password";
 			
 			PBEKeySpec pswdSpec = null;
-			Path secStoragePath = Path.of(this.getProjectSecurityFolderFullPath()).resolve(GlobalInfo.SECURED_PROPERTIES_FILE_NAME);
+			Path secStoragePath = Path.of(this.getProjectSecurityFolderFullPath()).resolve(GlobalConstants.AWB_SECURED_PROPERTIES_FILE_NAME);
 			if (secStoragePath.toFile().exists()==false) {
 				// --------------------------------------------------------------------------------
 				// --- No secure storage was created yet, requires manual password generation -----
@@ -2292,7 +2293,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 	private PBEKeySpec getPasswordSpecificationFromUser(boolean isConfirmPassword) {
 		
 		PBEKeySpec pswdSpec = null;
-		char[] pswdArray = AgentWorkbenchUiManager.getInstance().getPasswordFromAwbPasswordDialog(isConfirmPassword, "Enter Password", "Password for file './" + this.getProjectFolder() + "/" + DEFAULT_SUB_FOLDER_SECURITY + "/" + GlobalInfo.SECURED_PROPERTIES_FILE_NAME + "':");
+		char[] pswdArray = AgentWorkbenchUiManager.getInstance().getPasswordFromAwbPasswordDialog(isConfirmPassword, "Enter Password", "Password for file './" + this.getProjectFolder() + "/" + DEFAULT_SUB_FOLDER_SECURITY + "/" + GlobalConstants.AWB_SECURED_PROPERTIES_FILE_NAME + "':");
 		if (pswdArray==null) {
 			pswdSpec = SecuredProperties.getDefaultPassword();
 		} else {
