@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.equinox.internal.p2.engine.phases.AuthorityChecker;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
@@ -169,13 +168,7 @@ public class P2OperationsHandler {
 				if (serviceReference!=null) {
 					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
 					
-					try {
-						CustomP2TrustEngine trustEngine = new CustomP2TrustEngine(this.loadDefaultTrustStore(), true);
-						provisioningAgent.registerService(TrustEngine.class.getName(), trustEngine);
-					} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
-						LOGGER.error("Unable to load the default trust store: " + e.getLocalizedMessage());
-					}
-					
+					// --- Add a custom IInstallableUnitUIServices implementation to handle trusted repos if headless
 					try {
 						Set<URI> trustedRepos = Set.of(new URI(DEFAULT_REPO_URI));
 						provisioningAgent.registerService(IInstallableUnitUIServices.class.getName(), new HeadlessInstallableUnitUIServices(trustedRepos));
@@ -183,14 +176,14 @@ public class P2OperationsHandler {
 						LOGGER.error("Invaled repository URI: " + DEFAULT_REPO_URI);
 					}
 					
-				}
-				
-				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("org.eclipse.equinox.p2.engine");
-				prefs.put("p2.trustedAuthorities", "https://download.eclipse.org https://archive.eclipse.org https://p2.enflex.it https://p2.enflex.it/awb/latest");
-				try {
-				    prefs.flush();
-				} catch (BackingStoreException e) {
-				    e.printStackTrace();
+					// --- Add a custom TrustEngine implementation for handling signed artifacts
+					try {
+						CustomP2TrustEngine trustEngine = new CustomP2TrustEngine(this.loadDefaultTrustStore(), true);
+						provisioningAgent.registerService(TrustEngine.class.getName(), trustEngine);
+					} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+						LOGGER.error("Unable to load the default trust store: " + e.getLocalizedMessage());
+					}
+					
 				}
 			}
 			
