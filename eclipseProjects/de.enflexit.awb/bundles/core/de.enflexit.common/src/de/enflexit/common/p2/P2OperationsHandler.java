@@ -53,7 +53,6 @@ import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.eclipse.equinox.p2.repository.metadata.spi.IInstallableUnitUIServices;
 import org.eclipse.osgi.service.security.TrustEngine;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -173,6 +172,7 @@ public class P2OperationsHandler {
 					try {
 						Set<URI> trustedRepos = Set.of(new URI(DEFAULT_REPO_URI));
 						provisioningAgent.registerService(UIServices.class.getName(), new HeadlessInstallableUnitUIServices(trustedRepos));
+						LOGGER.info("Registered HeadlessInstallableUnitUIServices");
 					} catch (URISyntaxException e) {
 						LOGGER.error("Invaled repository URI: " + DEFAULT_REPO_URI);
 					}
@@ -181,6 +181,7 @@ public class P2OperationsHandler {
 					try {
 						CustomP2TrustEngine trustEngine = new CustomP2TrustEngine(this.loadDefaultTrustStore(), true);
 						provisioningAgent.registerService(TrustEngine.class.getName(), trustEngine);
+						LOGGER.info("Registered CustomP2TrustEngine");
 					} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
 						LOGGER.error("Unable to load the default trust store: " + e.getLocalizedMessage());
 					}
