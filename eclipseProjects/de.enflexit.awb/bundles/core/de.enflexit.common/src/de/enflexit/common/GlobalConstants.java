@@ -11,6 +11,8 @@ public class GlobalConstants {
 	public static final String AWB_PRODUCT_ID_DESKTOP_SWING = "de.enflexit.awb.core.product";
 	public static final String AWB_PRODUCT_ID_DESKTOP_SWT = "de.enflexit.awb.desktop.swt.product";
 	
+	public static final String AWB_P2_REPOSITORY_URI = "https://p2.enflex.it/awb/latest/";
+	
 	public static final String 	DEFAULT_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss,SSS";
 	
 }
