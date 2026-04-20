@@ -1,5 +1,9 @@
 package de.enflexit.df.core.model.treeNode;
 
+import java.util.List;
+
+import javax.swing.JComponent;
+
 import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
@@ -27,10 +31,17 @@ public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSour
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#getJPanelConfiguration()
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
-	public JPanelDataSourceConfigurationDatabase getJPanelConfiguration() {
+	public List<JComponent> getConfigurationToolbarComponents() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
+	 */
+	@Override
+	public JComponent getConfigurationPanel() {
 		if (jPanelDataSourceConfigurationDatabase==null) {
 			jPanelDataSourceConfigurationDatabase = new JPanelDataSourceConfigurationDatabase(this.getDataController(), this);
 		}

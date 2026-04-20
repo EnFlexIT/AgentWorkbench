@@ -1,13 +1,17 @@
 package de.enflexit.df.core.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-
+import de.enflexit.common.images.ImageHelper;
+import de.enflexit.common.swing.AwbColor;
 import de.enflexit.common.swing.AwbThemeColor;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 
 /**
@@ -28,7 +32,7 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
 		Component renderComp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus); 
 		JLabel renderLabel = renderComp instanceof JLabel ? (JLabel) renderComp : null;
 		if (value instanceof DefaultMutableTreeNode) {
-			// --- Get the DataTreeNodeObjectBase -----------------------
+			// --- Get the DataTreeNodeObjectBase -------------------
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
 			DataTreeNodeObjectBase dtno = (DataTreeNodeObjectBase) treeNode.getUserObject();
 			
@@ -37,8 +41,18 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
 			renderLabel.setText(dtno.toString());
 			renderLabel.setToolTipText(dtno.getToolTipText());
 			
+			// --- Do we have an error ------------------------------
 			if (dtno.getErrorMessage()!=null) {
 				renderLabel.setForeground(AwbThemeColor.ErrorText.getColor());
+			}
+			
+			// --- Do we see a closed DataWorkbook here? ------------
+			if (dtno instanceof DataTreeNodeDataWorkbook) {
+				DataTreeNodeDataWorkbook dtnoDW = (DataTreeNodeDataWorkbook) dtno;
+				if (dtno.getErrorMessage()==null && dtnoDW.isDataSourcesLoaded()==false) {
+					renderLabel.setForeground(new AwbColor(Color.LIGHT_GRAY, Color.GRAY));
+					renderLabel.setIcon(new ImageIcon(ImageHelper.setTransparency(dtno.getImageIcon(), 0.5f)));
+				}
 			}
 			
 		}

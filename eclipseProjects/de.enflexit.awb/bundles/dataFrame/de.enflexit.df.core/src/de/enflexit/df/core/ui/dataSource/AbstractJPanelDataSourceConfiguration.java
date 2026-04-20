@@ -4,14 +4,13 @@ import javax.swing.JPanel;
 
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
-import de.enflexit.df.core.ui.ConfigurationPanel;
 
 /**
  * The Class AbstractJPanelDataSourceConfiguration.
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractJPanelDataSourceConfiguration<DSTreeNode extends AbstractDataTreeNodeDataSource<?>> extends JPanel implements ConfigurationPanel {
+public abstract class AbstractJPanelDataSourceConfiguration<DSTreeNode extends AbstractDataTreeNodeDataSource<?>> extends JPanel {
 
 	private static final long serialVersionUID = 6426491391209948791L;
 

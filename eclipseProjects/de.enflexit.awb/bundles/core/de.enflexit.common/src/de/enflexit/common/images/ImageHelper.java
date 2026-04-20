@@ -1,5 +1,6 @@
 package de.enflexit.common.images;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -157,5 +158,45 @@ public class ImageHelper {
 	    return scaledImage;
 	}
 
+	/**
+	 * Sets the transparency of the specified buffered image.
+	 *
+	 * @param iIcon the ImageIcon
+	 * @param alpha the alpha
+	 * @return the buffered image
+	 */
+	public static Image setTransparency(ImageIcon iIcon, float alpha) {
+		return setTransparency(iIcon.getImage(), alpha);
+	}
+	/**
+	 * Sets the transparency of the specified buffered image.
+	 *
+	 * @param image the image
+	 * @param alpha the alpha
+	 * @return the buffered image
+	 */
+	public static Image setTransparency(Image image, float alpha) {
+		return setTransparency(convertToBufferedImage(image), alpha);
+	}
+	/**
+	 * Sets the transparency of the specified buffered image.
+	 *
+	 * @param image the BufferedImage
+	 * @param alpha the alpha
+	 * @return the buffered image
+	 */
+	public static Image setTransparency(BufferedImage image, float alpha) {
+
+		BufferedImage transparentImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = transparentImage.createGraphics();
+
+		// Alpha setzen (0.0 = komplett transparent, 1.0 = voll sichtbar)
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+		g2d.drawImage(image, 0, 0, null);
+
+		g2d.dispose();
+		return transparentImage;
+	}
 	
 }

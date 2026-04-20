@@ -102,6 +102,21 @@ public class SecuredProperties {
 	
 	
 	/**
+	 * Removes the specified key form the secured storage.
+	 *
+	 * @param nodePath the node path (optional)
+	 * @param key the key
+	 */
+	public void remove(String nodePath, String key) {
+		if (nodePath==null || nodePath.isBlank()==true) {
+			this.getSecuredProperties().remove(key);
+		} else {
+			this.getSecuredProperties().node(nodePath).remove(key);
+		}
+	}
+	
+	
+	/**
 	 * Will put the specified String to the secured properties.
 	 *
 	 * @param nodePath the optional node path. Can be null
@@ -411,5 +426,6 @@ public class SecuredProperties {
 		String pswd64 = Base64.getEncoder().encodeToString(pswd.getBytes(StandardCharsets.UTF_8));
 		return new PBEKeySpec(pswd64.toCharArray());
 	}
+
 
 }

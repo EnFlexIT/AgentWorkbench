@@ -2,7 +2,7 @@ package de.enflexit.df.core.model.treeNode;
 
 import de.enflexit.common.dataSources.AbstractDataSource;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.dataSource.AbstractJPanelDataSourceConfiguration;
+import de.enflexit.df.core.ui.ConfigurationPanel;
 import tech.tablesaw.api.Table;
 
 /**
@@ -10,7 +10,7 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSource> extends DataTreeNodeObjectBase {
+public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSource> extends DataTreeNodeObjectBase implements ConfigurationPanel {
 
 	private DataController dataController;
 	private DS dataSource;
@@ -76,12 +76,6 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 		this.table = table;
 	}
 	
-	
-	/**
-	 * Has to return the JPanel for the configuration of the data source.
-	 * @return the JPanel for the configuration
-	 */
-	public abstract AbstractJPanelDataSourceConfiguration<?> getJPanelConfiguration();
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getCaption()

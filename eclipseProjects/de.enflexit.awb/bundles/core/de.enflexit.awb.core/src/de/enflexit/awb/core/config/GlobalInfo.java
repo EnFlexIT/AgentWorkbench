@@ -1237,7 +1237,7 @@ public class GlobalInfo implements ZoneIdResolver {
 			// ------------------------------------------------------
 			// --- Put test data? -----------------------------------
 			// ------------------------------------------------------
-			boolean isPutSecuredTestData = true;
+			boolean isPutSecuredTestData = false;
 			if (isPutSecuredTestData==true) {
 				
 				// --- Saved in the file root without node --------------------

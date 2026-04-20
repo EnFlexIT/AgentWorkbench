@@ -6,6 +6,7 @@ import java.awt.Window;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
@@ -51,6 +52,7 @@ public class JFrameDataView extends JFrame {
 		this.getContentPane().add(this.getJPanelData(), BorderLayout.CENTER);
 		
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
+		SwingUtilities.updateComponentTreeUI(this);
 		
 	}
 	/**

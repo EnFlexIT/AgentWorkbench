@@ -11,6 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The Class AbstractDataSource.
@@ -22,6 +26,14 @@ import jakarta.persistence.Table;
 @Table(name = "data_source")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "source_type", discriminatorType = DiscriminatorType.STRING)
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {
+    "id",
+    "name",
+    "description"
+})
+@XmlSeeAlso({CsvDataSource.class, ExcelDataSource.class, DatabaseDataSource.class})
 public abstract class AbstractDataSource implements Serializable {
 
 	private static final long serialVersionUID = -1124708006041779794L;
