@@ -8,13 +8,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -72,22 +70,6 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 		this.initialize();
 		this.setCsvDataSourceToUI();
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
-	 */
-	@Override
-	public List<JComponent> getConfigurationToolbarComponents() {
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
-	 */
-	@Override
-	public JComponent getConfigurationPanel() {
-		return this;
-	}
-	
 	/**
 	 * Initialize.
 	 */

@@ -1,5 +1,9 @@
 package de.enflexit.df.core.model.treeNode;
 
+import java.util.List;
+
+import javax.swing.JComponent;
+
 import de.enflexit.common.dataSources.ExcelDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
@@ -29,16 +33,22 @@ public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#getJPanelConfiguration()
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
-	public JPanelDataSourceConfigurationExcel getJPanelConfiguration() {
+	public List<JComponent> getConfigurationToolbarComponents() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
+	 */
+	@Override
+	public JComponent getConfigurationPanel() {
 		if (jPanelDataSourceConfigurationExcel==null) {
 			jPanelDataSourceConfigurationExcel = new JPanelDataSourceConfigurationExcel(this.getDataController(), this);
 		}
 		return jPanelDataSourceConfigurationExcel;
 	}
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#loadData()
 	 */

@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.FileSelection;
 
+
 /**
  * The Class DataWorkbook for XML files.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
@@ -36,30 +37,51 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 * @param workbookJsonFile the workbook json file
 	 */
 	public DataWorkbook4JSON(File workbookJsonFile) {
-		this.setWorkbookJsonFile(workbookJsonFile);
+		this.setDataWorkbookFile(workbookJsonFile);
 	}
-	
-	/**
-	 * Returns the workbook json file.
-	 * @return the workbook json file
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookFile()
 	 */
-	public File getWorkbookJsonFile() {
+	@Override
+	public File getDataWorkbookFile() {
 		return workbookJsonFile;
 	}
 	/**
 	 * Sets the workbook Json file.
 	 * @param workbookJsonFile the new workbook Json file
 	 */
-	public void setWorkbookJsonFile(File workbookXmlFile) {
+	public void setDataWorkbookFile(File workbookXmlFile) {
 		this.workbookJsonFile = workbookXmlFile;
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookLocation()
+	 */
+	@Override
+	public DataWorkbookLocation getDataWorkbookLocation() {
+		return new DataWorkbookLocation(this.getClass(), this.getDataWorkbookFile().getAbsolutePath());
+	}
+	/**
+	 * Load from DataWorkbookLocation.
+	 *
+	 * @param dwLocation the dw location
+	 * @return the data workbook
+	 */
+	public static DataWorkbook loadFromDataWorkBookLocation(DataWorkbookLocation dwLocation) {
+		
+		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
+		File dwFile = new File(dwLocation.getDataWorkbookLocation());
+		return loadFromFile(dwFile);
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#save()
 	 */
 	@Override
 	public boolean save() {
-		return DataWorkbook4JSON.saveToFile(this, this.getWorkbookJsonFile());
+		return DataWorkbook4JSON.saveToFile(this, this.getDataWorkbookFile());
 	}
 	/**
 	 * Saves the specified DataWorkbook to a JSON file.
@@ -127,7 +149,7 @@ public class DataWorkbook4JSON extends DataWorkbook {
 			reader = new FileReader(fileToOpen);
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			dwb = gson.fromJson(reader, DataWorkbook4JSON.class);
-			dwb.setWorkbookJsonFile(fileToOpen);
+			dwb.setDataWorkbookFile(fileToOpen);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -1,9 +1,5 @@
 package de.enflexit.df.core.ui.dataSource;
 
-import java.util.List;
-
-import javax.swing.JComponent;
-
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceExcel;
 
@@ -27,22 +23,6 @@ public class JPanelDataSourceConfigurationExcel  extends AbstractJPanelDataSourc
 		super(dataController, dsTreeNode);
 		this.initialize();
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
-	 */
-	@Override
-	public List<JComponent> getConfigurationToolbarComponents() {
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
-	 */
-	@Override
-	public JComponent getConfigurationPanel() {
-		return this;
-	}
-	
 	/**
 	 * Initialize.
 	 */

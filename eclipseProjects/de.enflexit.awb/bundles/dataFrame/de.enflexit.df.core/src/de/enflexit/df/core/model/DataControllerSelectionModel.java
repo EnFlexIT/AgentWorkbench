@@ -65,27 +65,36 @@ public class DataControllerSelectionModel {
 		this.getDataController().firePropertyChange(DataController.DC_NEW_TREE_PATH_SELECTED, oldSelectedTreePath, newSelectedTreePath);
 	}
 
+	
+	/**
+	 * Returns the currently selected tree node (a {@link DefaultMutableTreeNode}.
+	 * @return the selected data tree node
+	 */
+	public DefaultMutableTreeNode getSelectedDataTreeNode() {
+		
+		TreePath treePath = this.getSelectedTreePath();
+		if (treePath!=null) {
+			return (DefaultMutableTreeNode)treePath.getLastPathComponent();
+		}
+		return null;
+	}
 	/**
 	 * Returns the currently selected DataTreeNodeObjectBase.
 	 * @return the selected data tree node base
 	 */
 	public DataTreeNodeObjectBase getSelectedDataTreeNodeObjectBase() {
-		
-		TreePath treePath = this.getSelectedTreePath();
-		if (treePath!=null) {
-			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
-			if (treeNode.getUserObject() instanceof DataTreeNodeObjectBase) {
-				return (DataTreeNodeObjectBase) treeNode.getUserObject();
-			}
+		DefaultMutableTreeNode treeNode = this.getSelectedDataTreeNode();
+		if (treeNode!=null && treeNode.getUserObject() instanceof DataTreeNodeObjectBase) {
+			return (DataTreeNodeObjectBase) treeNode.getUserObject();
 		}
 		return null;
 	}
 
 	/**
-	 * Returns the currently selected {@link DataTreeNodeDataWorkbook} if available.
+	 * Returns the corresponding DataWorkbook tree node of the currently selected path.
 	 * @return the selected data tree node data source
 	 */
-	public DataTreeNodeDataWorkbook getSelectedDataTreeNodeDataWorkbook() {
+	public DefaultMutableTreeNode getSelectedDataWorkbookTreeNode() {
 		
 		TreePath tpSelected = this.getSelectedTreePath();
 		if (tpSelected==null) return null;
@@ -93,10 +102,21 @@ public class DataControllerSelectionModel {
 		Object[] pathNodes = tpSelected.getPath();
 		for (int i = pathNodes.length-1; i >=0 ; i--) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
-			Object userObject = treeNode.getUserObject();
-			if (userObject instanceof DataTreeNodeDataWorkbook) {
-				return (DataTreeNodeDataWorkbook) userObject;
+			if (treeNode.getUserObject() instanceof DataTreeNodeDataWorkbook) {
+				return treeNode;
 			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the currently selected {@link DataTreeNodeDataWorkbook} if available.
+	 * @return the selected data tree node data source
+	 */
+	public DataTreeNodeDataWorkbook getSelectedDataTreeNodeDataWorkbook() {
+		
+		DefaultMutableTreeNode dwTreeNode = this.getSelectedDataWorkbookTreeNode();
+		if (dwTreeNode!=null) {
+			return (DataTreeNodeDataWorkbook)dwTreeNode.getUserObject();
 		}
 		return null;
 	}

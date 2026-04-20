@@ -2,6 +2,9 @@ package de.enflexit.df.core.model.treeNode;
 
 import java.io.File;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import javax.swing.JComponent;
 
 import de.enflexit.common.dataSources.CsvDataSource;
 import de.enflexit.df.core.BundleHelper;
@@ -36,16 +39,25 @@ public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<Cs
 		this.setTooltipText("Please, configure the CSV File settings ...");
 	}
 
+	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#getJPanelConfiguration()
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
-	public JPanelDataSourceConfigurationCsv getJPanelConfiguration() {
+	public List<JComponent> getConfigurationToolbarComponents() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
+	 */
+	@Override
+	public JComponent getConfigurationPanel() {
 		if (jPanelDataSourceConfigurationCsv==null) {
 			jPanelDataSourceConfigurationCsv = new JPanelDataSourceConfigurationCsv(this.getDataController(), this);
 		}
 		return jPanelDataSourceConfigurationCsv;
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getToolTipText()
@@ -97,5 +109,5 @@ public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<Cs
 		}
 		return false;
 	}
-	
+
 }

@@ -16,6 +16,9 @@ import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.equinox.security.storage.provider.IProviderHints;
 
+import de.enflexit.common.GlobalConstants;
+import de.enflexit.common.GlobalRuntimeValues;
+
 /**
  * The Class SecuredProperties.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
@@ -95,6 +98,21 @@ public class SecuredProperties {
 			stEx.printStackTrace();
 		}
 		return isCorrectPassword;
+	}
+	
+	
+	/**
+	 * Removes the specified key form the secured storage.
+	 *
+	 * @param nodePath the node path (optional)
+	 * @param key the key
+	 */
+	public void remove(String nodePath, String key) {
+		if (nodePath==null || nodePath.isBlank()==true) {
+			this.getSecuredProperties().remove(key);
+		} else {
+			this.getSecuredProperties().node(nodePath).remove(key);
+		}
 	}
 	
 	
@@ -377,6 +395,14 @@ public class SecuredProperties {
 	// --- From here, static help methods -------------------------------------
 	// ------------------------------------------------------------------------
 	/**
+	 * Returns the path for the file of the global secured properties.
+	 * @return the path global secured properties
+	 */
+	public static Path getPathGlobalSecuredProperties() {
+		return GlobalRuntimeValues.getUserHomeWorkingDirectory().resolve(GlobalConstants.AWB_SECURED_PROPERTIES_FILE_NAME);
+	}
+	
+	/**
 	 * Returns a local default password.
 	 *
 	 * @param isAskUser the indicator to ask the current user
@@ -400,5 +426,6 @@ public class SecuredProperties {
 		String pswd64 = Base64.getEncoder().encodeToString(pswd.getBytes(StandardCharsets.UTF_8));
 		return new PBEKeySpec(pswd64.toCharArray());
 	}
+
 
 }

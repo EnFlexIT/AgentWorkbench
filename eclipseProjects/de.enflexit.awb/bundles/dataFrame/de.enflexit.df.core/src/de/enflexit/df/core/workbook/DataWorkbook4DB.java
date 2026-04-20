@@ -10,7 +10,36 @@ public class DataWorkbook4DB extends DataWorkbook {
 
 	private static final long serialVersionUID = 5010880029903092936L;
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookFile()
+	 */
+	@Override
+	public File getDataWorkbookFile() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookLocation()
+	 */
+	@Override
+	public DataWorkbookLocation getDataWorkbookLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/**
+	 * Load from data work book location.
+	 *
+	 * @param dwLocation the dw location
+	 * @return the data workbook
+	 */
+	public static DataWorkbook loadFromDataWorkBookLocation(DataWorkbookLocation dwLocation) {
+		
+		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
+		// TODO
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#save()
 	 */
@@ -60,4 +89,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		return dwb;
 	}
+
+
+	
 }

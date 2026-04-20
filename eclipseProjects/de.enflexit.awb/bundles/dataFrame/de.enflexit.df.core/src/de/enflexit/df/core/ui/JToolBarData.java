@@ -1,6 +1,7 @@
 package de.enflexit.df.core.ui;
 
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -8,12 +9,15 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
 
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.dataSources.CsvDataSource;
 import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.common.dataSources.ExcelDataSource;
@@ -434,7 +438,29 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 			if (dw!=null) dw.save();
 			
 		} else if (ae.getSource()==this.getJButtonDataWorkbookDelete()) {
+			// --- Delete selected DataWorkbook: ------------------------------
+			DataWorkbook dwSelected = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
+			if (dwSelected==null) return;
 			
+			// --- Prepare user request ---------------------------------------
+			Window owner = OwnerDetection.getOwnerWindowForComponent(this);
+			String requestMsg = "Delete the current Data Workbook '" + dwSelected.getName() + "' from the view?\n";
+			JCheckBox jCheckBoxDeletePermanently = new JCheckBox("Also delete data workbook from disk!");
+			Object[] requestMsgCheck = { requestMsg, jCheckBoxDeletePermanently };
+			boolean isFileBasedDataWorkbook = dwSelected.getDataWorkbookFile()!=null;
+			Object message = isFileBasedDataWorkbook==true ? requestMsgCheck : requestMsg;
+			
+			// --- Ask the user -----------------------------------------------
+			int userAnswer = AwbMessageDialog.showOptionDialog(owner, message, "Delete DataWorkbook?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+			if (userAnswer==JOptionPane.OK_OPTION) {
+				boolean isDeletePermanently = isFileBasedDataWorkbook==true && jCheckBoxDeletePermanently.isSelected();
+				// --- Remove the DataWorkbook --------------------------------
+				this.getDataController().removeDataWorkbook(dwSelected);
+				if (isDeletePermanently==true) {
+					// --- Delete the DataWorkbook file -----------------------
+					dwSelected.getDataWorkbookFile().delete();
+				}
+			}
 			
 		} else if (ae.getSource()==this.getJButtonDataWorkbookClose()) {
 			

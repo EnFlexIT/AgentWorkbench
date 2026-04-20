@@ -1,5 +1,6 @@
 package de.enflexit.df.core.workbook;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
@@ -43,6 +46,8 @@ public abstract class DataWorkbook implements Serializable {
 	private String name;
 	private String description;
 	
+	@XmlElementWrapper(name = "dataSources")
+	@XmlElementRef 
 	private List<AbstractDataSource> dataSources;
 	
 	/**
@@ -157,5 +162,16 @@ public abstract class DataWorkbook implements Serializable {
 	 */
 	public abstract boolean save();
 	
+	/**
+	 * Has to return the the data workbook file or <code>null</code>., if noc file are involved.
+	 * @return the data workbook file
+	 */
+	public abstract File getDataWorkbookFile();
+
+	/**
+	 * Has to return the individual DataWorkbookLocation.
+	 * @return the data workbook location
+	 */
+	public abstract DataWorkbookLocation getDataWorkbookLocation();
 	
 }

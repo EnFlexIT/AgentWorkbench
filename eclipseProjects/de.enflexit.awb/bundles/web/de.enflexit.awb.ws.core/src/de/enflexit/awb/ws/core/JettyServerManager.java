@@ -403,6 +403,12 @@ public class JettyServerManager {
 		if (isSecured!=null && isSecured==false) {
 			String msg = "Unable to start the web server '" + jConfiguration.getServerName() + "' because at least one handler could not be secured.";
 			BundleHelper.systemPrintln(this, msg, true);
+			// --- Shutdown Agent.Workbench ??? -------------
+			if (Application.isOperatingHeadless()==true) {
+				msg = "Failure while starting server - shutting down " + Application.getGlobalInfo().getApplicationTitle() + " ... ";
+				BundleHelper.systemPrintln(this, msg, true);
+				Application.stop();
+			}
 			return false;
 		}
 		
@@ -710,12 +716,15 @@ public class JettyServerManager {
 					server.start();
 					
 				} catch (Exception ex) {
-					System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Thread '" + Thread.currentThread().getName() + "' Error while trying to start server '" + serverName + "':");
+					
+					String msg = "Thread '" + Thread.currentThread().getName() + "' Error while trying to start server '" + serverName + "':";
+					BundleHelper.systemPrintln(this, msg, true);
 					ex.printStackTrace();
 
 					// --- Shutdown Agent.Workbench ??? -------------
 					if (Application.getGlobalInfo().getAWBProduct()==AWBProduct.WEB) {
-						System.err.println("[" + JettyServerManager.this.getClass().getSimpleName() + "] Failure while starting server - shutting down " + Application.getGlobalInfo().getApplicationTitle() + " ... ");
+						msg = "Failure while starting server - shutting down " + Application.getGlobalInfo().getApplicationTitle() + " ... ";
+						BundleHelper.systemPrintln(this, msg, true);
 						Application.stop();
 					}
 				}

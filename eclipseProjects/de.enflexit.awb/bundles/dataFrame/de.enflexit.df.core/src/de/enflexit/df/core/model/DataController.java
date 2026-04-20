@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.dataSources.AbstractDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.core.workbook.DataWorkbookReminder;
 
 /**
  * The Class DataController.
@@ -19,6 +20,14 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  */
 public class DataController {
 
+	/**
+	 * Instantiates a new data controller.
+	 */
+	public DataController() {
+		this.getDataTreeModel();
+		this.getDataWorkbookReminder();
+	}
+	
 	// ------------------------------------------------------------------------
 	// --- From here, PropertyChangeSupport -----------------------------------
 	// ------------------------------------------------------------------------	
@@ -70,6 +79,23 @@ public class DataController {
 	public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		this.getPropertyChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
 	}
+
+	// ------------------------------------------------------------------------
+	// --- From here, workbook reminder ---------------------------------------
+	// ------------------------------------------------------------------------	
+	private DataWorkbookReminder dataWorkbookReminder;
+	
+	/**
+	 * Returns the DataWorkbookReminder.
+	 * @return the data workbook reminder
+	 */
+	public DataWorkbookReminder getDataWorkbookReminder() {
+		if (dataWorkbookReminder==null) {
+			dataWorkbookReminder = new DataWorkbookReminder(this);
+		}
+		return dataWorkbookReminder;
+	}
+
 	
 	// ------------------------------------------------------------------------
 	// --- From here, runtime objects -----------------------------------------
@@ -77,7 +103,6 @@ public class DataController {
 	private DataControllerSelectionModel selectionModel;
 	
 	private List<DataWorkbook> dataWorkbooks;
-	private List<AbstractDataSource> dataSources;
 	private DataTreeModel dataTreeModel; 
 
 	
@@ -131,21 +156,22 @@ public class DataController {
 	// ------------------------------------------------------------------------
 	// --- From here, Data Source handling ------------------------------------
 	/**
-	 * Returns the data sources.
+	 * Returns the data sources of the currently selected {@link DataWorkbook}.
 	 * @return the data sources
 	 */
 	public List<AbstractDataSource> getDataSources() {
-		if (dataSources==null) {
-			dataSources = new ArrayList<>();
-		}
-		return dataSources;
+		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
+		if (dw==null) return null;
+		return dw.getDataSources();
 	}
 	/**
 	 * Sets the data sources.
 	 * @param dataSources the new data sources
 	 */
 	public void setDataSources(List<AbstractDataSource> dataSources) {
-		this.dataSources = dataSources;
+		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
+		if (dw==null) return;
+		dw.setDataSources(dataSources);
 	}
 	
 	/**
@@ -154,7 +180,7 @@ public class DataController {
 	 * @return true, if successfully added
 	 */
 	public boolean addDataSource(AbstractDataSource dataSource) {
-		if (dataSource!=null && this.getDataSources().contains(dataSource)==false) {
+		if (dataSource!=null && this.getDataSources()!=null && this.getDataSources().contains(dataSource)==false) {
 			boolean success = this.getDataSources().add(dataSource);
 			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, dataSource);
 			return success;
@@ -167,7 +193,7 @@ public class DataController {
 	 * @return true, if successfully removed
 	 */
 	public boolean removeDataSource(AbstractDataSource dataSource) {
-		if (dataSource!=null) {
+		if (dataSource!=null && this.getDataSources()!=null) {
 			boolean success = this.getDataSources().remove(dataSource);
 			// --- Inform property change listener ------------------
 			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, dataSource, null);
