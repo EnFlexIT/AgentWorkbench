@@ -19,6 +19,7 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+
 /**
  * The Class DataWorkbook for XML files.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
@@ -43,31 +44,51 @@ public class DataWorkbook4XML extends DataWorkbook {
 	 */
 	public DataWorkbook4XML(File workbookXmlFile) {
 		super();
-		this.setWorkbookXmlFile(workbookXmlFile);
+		this.setDataWorkbookFile(workbookXmlFile);
 	}
 	
-	/**
-	 * Returns the workbook xml file.
-	 * @return the workbook xml file
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookFile()
 	 */
-	public File getWorkbookXmlFile() {
+	@Override
+	public File getDataWorkbookFile() {
 		return workbookXmlFile;
 	}
 	/**
-	 * Sets the workbook xml file.
-	 * @param workbookXmlFile the new workbook xml file
+	 * Sets the workbook Json file.
+	 * @param workbookJsonFile the new workbook Json file
 	 */
-	public void setWorkbookXmlFile(File workbookXmlFile) {
+	public void setDataWorkbookFile(File workbookXmlFile) {
 		this.workbookXmlFile = workbookXmlFile;
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookLocation()
+	 */
+	@Override
+	public DataWorkbookLocation getDataWorkbookLocation() {
+		return new DataWorkbookLocation(this.getClass(), this.getDataWorkbookFile().getAbsolutePath());
+	}
+	/**
+	 * Load from data work book location.
+	 *
+	 * @param dwLocation the dw location
+	 * @return the data workbook
+	 */
+	public static DataWorkbook loadFromDataWorkBookLocation(DataWorkbookLocation dwLocation) {
+		
+		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
+		File dwFile = new File(dwLocation.getDataWorkbookLocation());
+		return loadFromFile(dwFile);
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#save()
 	 */
 	@Override
 	public boolean save() {
-		return DataWorkbook4XML.saveToFile(this, this.getWorkbookXmlFile());
+		return DataWorkbook4XML.saveToFile(this, this.getDataWorkbookFile());
 	}
 	/**
 	 * Saves the specified DataWorkbook to a XML file.
@@ -142,7 +163,7 @@ public class DataWorkbook4XML extends DataWorkbook {
 			JAXBContext pc = JAXBContext.newInstance(DataWorkbook4XML.class);
 			Unmarshaller um = pc.createUnmarshaller();
 			dwb = (DataWorkbook4XML) um.unmarshal(fileReader);
-			dwb.setWorkbookXmlFile(fileToOpen);
+			dwb.setDataWorkbookFile(fileToOpen);
 			
 		} catch (FileNotFoundException | JAXBException ex) {
 			ex.printStackTrace();

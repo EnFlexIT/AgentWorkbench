@@ -3,6 +3,10 @@ package de.enflexit.common.dataSources;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The Class DatabaseDataSource.
@@ -12,6 +16,18 @@ import jakarta.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("dbms")
+
+@XmlRootElement(name = "DatabaseDataSource")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {
+    "dbmsName",
+    "hostOrIP",
+    "port",
+    "dbName",
+    "userName",
+    "password"
+})
+
 public class DatabaseDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 6704254616526361690L;

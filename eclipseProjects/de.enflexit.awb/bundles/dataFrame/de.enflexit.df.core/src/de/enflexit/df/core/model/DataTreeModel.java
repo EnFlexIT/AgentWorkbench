@@ -166,7 +166,12 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 * @param dataSource the data source
 	 */
 	private void addedDataSource(AbstractDataSource dataSource) {
-		
+
+		// --- Get the corresponding DataWorkbook first -------------
+		DefaultMutableTreeNode dwNode =  this.getDataController().getSelectionModel().getSelectedDataWorkbookTreeNode();
+		if (dwNode==null) return;
+
+		// --- Create new node according to data source -------------
 		AbstractDataTreeNodeDataSource<?> ds = null;
 		if (dataSource instanceof CsvDataSource) {
 			ds = new DataTreeNodeDataSourceCsv(this.getDataController(), (CsvDataSource) dataSource);
@@ -176,11 +181,12 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 			ds = new DataTreeNodeDataSourceDatabase(this.getDataController(), (DatabaseDataSource) dataSource);
 		}
 		
+		// --- Create new node and add to parent --------------------
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ds);
-		this.getRootNode().add(newNode);
+		dwNode.add(newNode);
 		
-		Object[] pathToParent = this.getRootNode().getPath();
-		int[] newIndicies = {this.getRootNode().getIndex(newNode)};
+		Object[] pathToParent = dwNode.getPath();
+		int[] newIndicies = {dwNode.getIndex(newNode)};
 		Object[] newChildren = {newNode}; 
 		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
 	}

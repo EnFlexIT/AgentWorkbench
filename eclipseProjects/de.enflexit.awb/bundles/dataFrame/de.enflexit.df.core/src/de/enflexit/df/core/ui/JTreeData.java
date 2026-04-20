@@ -22,6 +22,8 @@ import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeModel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 
 /**
  * The Class JTreeData.
@@ -244,8 +246,22 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			@Override
 			public void mousePressed(MouseEvent me) {
 			
+				if (me.getClickCount()==2 && SwingUtilities.isLeftMouseButton(me)==true) {
+					
+					DataTreeNodeObjectBase dtno = getDataController().getSelectionModel().getSelectedDataTreeNodeObjectBase();
+					if (dtno instanceof DataTreeNodeDataWorkbook) {
+						DataTreeNodeDataWorkbook dtnoDW = (DataTreeNodeDataWorkbook) dtno;
+						if (dtnoDW.isDataSourcesLoaded()==false) {
+							// --- Load the data sources of the DataWorkbook ------------
+							System.err.println("Load data sources ... !");
+							
+						}
+					}
+					return;
+				}
+				
 				if (SwingUtilities.isRightMouseButton(me)) {
-					// --- Display the context menu -----------------
+					// --- Display the context menu -------------------------------------
 					JTree myTree = (JTree) me.getSource();
 					TreePath path = myTree.getPathForLocation(me.getX(), me.getY());
 					Rectangle pathBounds = myTree.getUI().getPathBounds(myTree, path);
@@ -254,7 +270,9 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 						myTree.scrollPathToVisible(path);
 						JTreeData.this.getJPopupMenuDataTree().show (myTree, pathBounds.x, pathBounds.y + pathBounds.height);
 					}
+					return;
 				}
+				
 			} // end mousePressed
 			
 		};

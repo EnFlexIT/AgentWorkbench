@@ -27,6 +27,8 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 
 	private JPanel jPanelConfiguration;
 	
+	private boolean dataSourcesLoaded;
+	
 	/**
 	 * Instantiates a new data tree node data source.
 	 *
@@ -68,6 +70,23 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 		this.dataWorkbook = dataWorkbook;
 	}
 
+	
+	/**
+	 * Checks if is data sources loaded.
+	 * @return true, if is data sources loaded
+	 */
+	public boolean isDataSourcesLoaded() {
+		return dataSourcesLoaded;
+	}
+	/**
+	 * Sets the data sources loaded.
+	 * @param dataSourcesLoaded the new data sources loaded
+	 */
+	public void setDataSourcesLoaded(boolean dataSourcesLoaded) {
+		this.dataSourcesLoaded = dataSourcesLoaded;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase#getCaption()
 	 */

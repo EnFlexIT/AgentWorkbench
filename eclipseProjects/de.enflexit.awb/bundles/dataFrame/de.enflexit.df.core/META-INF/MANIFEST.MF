@@ -21,11 +21,14 @@ Import-Package: com.google.gson,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.ui,
  de.enflexit.common,
+ de.enflexit.common.crypto,
  de.enflexit.common.dataSources,
+ de.enflexit.common.images,
  de.enflexit.common.swing,
  jakarta.persistence,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,
+ org.osgi.framework,
  org.slf4j
 Require-Bundle: de.enflexit.df.tablesaw
 Service-Component: OSGI-INF/dataFramePerspectiveService.xml

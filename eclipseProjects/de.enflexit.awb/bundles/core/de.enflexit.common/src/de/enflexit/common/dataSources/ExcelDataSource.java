@@ -3,6 +3,10 @@ package de.enflexit.common.dataSources;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The Class CsvDataSource.
@@ -12,6 +16,16 @@ import jakarta.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("csv")
+
+@XmlRootElement(name = "ExcelDataSource")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {
+    "csvFilePath",
+    "dateTimeFormat",
+    "columnSeparator",
+    "headline"
+})
+
 public class ExcelDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;

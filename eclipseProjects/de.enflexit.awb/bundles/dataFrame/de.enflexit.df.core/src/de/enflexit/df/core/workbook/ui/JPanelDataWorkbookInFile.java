@@ -143,9 +143,9 @@ public class JPanelDataWorkbookInFile extends JPanel {
 			this.getJTextAreaDescription().setText(this.dataWorkbook.getDescription());
 			
 			if (this.getDataWorkbook() instanceof DataWorkbook4XML) {
-				filePath = ((DataWorkbook4XML)this.getDataWorkbook()).getWorkbookXmlFile().getAbsolutePath();
+				filePath = ((DataWorkbook4XML)this.getDataWorkbook()).getDataWorkbookFile().getAbsolutePath();
 			} else if (this.getDataWorkbook() instanceof DataWorkbook4JSON) {
-				filePath = ((DataWorkbook4JSON)this.getDataWorkbook()).getWorkbookJsonFile().getAbsolutePath();
+				filePath = ((DataWorkbook4JSON)this.getDataWorkbook()).getDataWorkbookFile().getAbsolutePath();
 			}
 		}
 		this.getJLabelFilePath().setText("<html>" + filePath + "</html>");
