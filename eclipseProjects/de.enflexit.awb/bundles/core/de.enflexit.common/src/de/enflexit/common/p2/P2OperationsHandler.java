@@ -33,6 +33,7 @@ import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.core.UIServices;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.ProfileScope;
@@ -171,7 +172,7 @@ public class P2OperationsHandler {
 					// --- Add a custom IInstallableUnitUIServices implementation to handle trusted repos if headless
 					try {
 						Set<URI> trustedRepos = Set.of(new URI(DEFAULT_REPO_URI));
-						provisioningAgent.registerService(IInstallableUnitUIServices.class.getName(), new HeadlessInstallableUnitUIServices(trustedRepos));
+						provisioningAgent.registerService(UIServices.class.getName(), new HeadlessInstallableUnitUIServices(trustedRepos));
 					} catch (URISyntaxException e) {
 						LOGGER.error("Invaled repository URI: " + DEFAULT_REPO_URI);
 					}
