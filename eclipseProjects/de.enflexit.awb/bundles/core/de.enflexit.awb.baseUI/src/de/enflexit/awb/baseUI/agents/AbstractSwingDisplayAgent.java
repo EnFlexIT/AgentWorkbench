@@ -65,9 +65,11 @@ public abstract class AbstractSwingDisplayAgent extends AbstractDisplayAgent<JPa
 	public void buildEnvironmentModelVisualization() {
 		// --- Build the new Controller GUI ---------------
 		if (this.isAgentWorkbenchEmbedded()==true) {
-			this.visualizationContainer.add(this.getEnvironmentController().getOrCreateEnvironmentPanel(), BorderLayout.CENTER);
-			this.visualizationContainer.validate();
-			this.visualizationContainer.repaint();
+			if (this.visualizationContainer!=null) {
+				this.visualizationContainer.add(this.getEnvironmentController().getOrCreateEnvironmentPanel(), BorderLayout.CENTER);
+				this.visualizationContainer.validate();
+				this.visualizationContainer.repaint();
+			}
 		} else {
 			this.getJFrameStandalone().getContentPane().add(this.getEnvironmentController().getOrCreateEnvironmentPanel(), BorderLayout.CENTER);
 			this.getJFrameStandalone().validate();
@@ -143,7 +145,9 @@ public abstract class AbstractSwingDisplayAgent extends AbstractDisplayAgent<JPa
 			} else {
 				@SuppressWarnings("unchecked")
 				AwbMainWindow<JMenu, JMenuItem, JToolBar, JComponent> mainWindow = (AwbMainWindow<JMenu, JMenuItem, JToolBar, JComponent>) Application.getMainWindow();
-				this.jToolBar4TimeModel = mainWindow.getApplicationToolbar();
+				if (mainWindow!=null) {
+					this.jToolBar4TimeModel = mainWindow.getApplicationToolbar();
+				}
 			}
 		}
 	

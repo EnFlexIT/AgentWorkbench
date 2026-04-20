@@ -1322,7 +1322,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			this.resourcesRemove();
 		}
 
-		this.getProjectEditorWindow().moveToFront();
+		if (this.getProjectEditorWindow()!=null) {
+			this.getProjectEditorWindow().moveToFront();
+		}
 		Application.setTitleAddition(projectName);
 		Application.setProjectFocused(this);
 		Application.getProjectsLoaded().setProjectView();

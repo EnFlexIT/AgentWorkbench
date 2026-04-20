@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.classLoadService.ClassLoadServiceUtility;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.SimulationSetup;
 import de.enflexit.awb.core.project.setup.SimulationSetupNotification;
@@ -130,7 +131,7 @@ public class TimeModelController implements Observer {
 	 */
 	private void addTimeModelDisplayToProjectWindow() {
 		
-		if (Application.isOperatingHeadless()==true) return;
+		if (Application.isOperatingHeadless()==true || Application.getGlobalInfo().getAWBProduct()==AWBProduct.WEB) return;
 		
 		// --- First, remove time model visualization -----
 		this.removeTimeModelDisplayFromProjectWindow();
