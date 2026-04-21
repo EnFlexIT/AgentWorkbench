@@ -145,19 +145,19 @@ public class Properties implements Serializable {
 	public PropertyValue setStringValue(String identifier, String value) {
 		return this.setValue(identifier, value);
 	}
-	public PropertyValue setBooleanValue(String identifier, boolean value) {
+	public PropertyValue setBooleanValue(String identifier, Boolean value) {
 		return this.setValue(identifier, value);
 	}
-	public PropertyValue setIntegerValue(String identifier, int value) {
+	public PropertyValue setIntegerValue(String identifier, Integer value) {
 		return this.setValue(identifier, value);
 	}
-	public PropertyValue setLongValue(String identifier, long value) {
+	public PropertyValue setLongValue(String identifier, Long value) {
 		return this.setValue(identifier, value);
 	}
-	public PropertyValue setFloatValue(String identifier, float value) {
+	public PropertyValue setFloatValue(String identifier, Float value) {
 		return this.setValue(identifier, value);
 	}
-	public PropertyValue setDoubleValue(String identifier, double value) {
+	public PropertyValue setDoubleValue(String identifier, Double value) {
 		return this.setValue(identifier, value);
 	}
 	
@@ -325,9 +325,9 @@ public class Properties implements Serializable {
 		this.setIntegerValue("Dev.Test 2.Integer 1", 0);
 		this.setIntegerValue("Dev.Test 2.Integer 2", 4711);
 		
-		this.setLongValue("Dev.Test 2.Long 1", 0);
-		this.setLongValue("Dev.Test 2.Long 2", -100);
-		this.setLongValue("Dev.Test 2.Long 2", 987654321);
+		this.setLongValue("Dev.Test 2.Long 1", 0L);
+		this.setLongValue("Dev.Test 2.Long 2", -100L);
+		this.setLongValue("Dev.Test 2.Long 2", 987654321L);
 		
 		this.setFloatValue("Dev.Test 3.Float 1", 0.0f);
 		this.setFloatValue("Dev.Test 3.Float 2", 1.6f);
