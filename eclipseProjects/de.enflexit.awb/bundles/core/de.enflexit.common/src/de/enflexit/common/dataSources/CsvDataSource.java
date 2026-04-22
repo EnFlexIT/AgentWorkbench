@@ -1,5 +1,6 @@
 package de.enflexit.common.dataSources;
 
+import de.enflexit.common.StringHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -116,6 +117,26 @@ public class CsvDataSource extends AbstractDataSource {
 	 */
 	public void setHeadline(boolean headline) {
 		this.headline = headline;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.dataSources.AbstractDataSource#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (super.equals(compObj)==false) return false;
+		if (compObj instanceof CsvDataSource == false) return false;
+		
+		CsvDataSource csvDsComp = (CsvDataSource) compObj;
+		
+		if (StringHelper.isEqualString(this.getCsvFilePath(), csvDsComp.getCsvFilePath())==false) return false;
+		if (StringHelper.isEqualString(this.getDateTimeFormat(), csvDsComp.getDateTimeFormat())==false) return false;
+		if (StringHelper.isEqualString(this.getColumnSeparator(), csvDsComp.getColumnSeparator())==false) return false;
+		if (this.isHeadline()!=csvDsComp.isHeadline()) return false;
+		
+		return true;
 	}
 	
 }

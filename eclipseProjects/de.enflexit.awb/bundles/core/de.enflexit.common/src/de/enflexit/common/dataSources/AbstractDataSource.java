@@ -2,6 +2,7 @@ package de.enflexit.common.dataSources;
 
 import java.io.Serializable;
 
+import de.enflexit.common.StringHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -95,6 +96,28 @@ public abstract class AbstractDataSource implements Serializable {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (compObj==null) return false;
+		if (compObj instanceof AbstractDataSource ==false) return false;
+		
+		if (compObj==this) return true;
+
+		// --- Compare the abstract data source first ---------------
+		AbstractDataSource adsComp = (AbstractDataSource) compObj;
+		
+		//if (NumberHelper.isEqualNumber(this.getId(), adsComp.getId())==false) return false;
+		if (StringHelper.isEqualString(this.getName(), adsComp.getName())==false) return false;
+		if (StringHelper.isEqualString(this.getDescription(), adsComp.getDescription())==false) return false;
+		
+		return true;
 	}
 	
 }
