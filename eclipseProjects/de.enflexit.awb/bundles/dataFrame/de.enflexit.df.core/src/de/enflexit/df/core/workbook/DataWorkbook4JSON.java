@@ -12,8 +12,11 @@ import javax.swing.JFileChooser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.common.dataSources.AbstractDataSource;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.FileSelection;
+import de.enflexit.df.core.model.DataController;
 
 
 /**
@@ -96,7 +99,7 @@ public class DataWorkbook4JSON extends DataWorkbook {
 		try {
 			fw = new FileWriter(fileToSaveTo);
 
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			Gson gson = DataWorkbook4JSON.createGsonForDataWorkbook4JSON();
 			gson.toJson(dataWorkbook, fw);
 			return true;
 			
@@ -111,6 +114,13 @@ public class DataWorkbook4JSON extends DataWorkbook {
 			}
 		}
 		return false;
+	}
+	/**
+	 * Creates the gson / GsonBuilder for the Json data workbook.
+	 * @return the gson
+	 */
+	private static Gson createGsonForDataWorkbook4JSON() {
+		return new GsonBuilder().registerTypeAdapter(AbstractDataSource.class, new JsonAdapterForDataSource()).setPrettyPrinting().create();
 	}
 	
 	/**
@@ -147,7 +157,7 @@ public class DataWorkbook4JSON extends DataWorkbook {
 		FileReader reader = null;
 		try {
 			reader = new FileReader(fileToOpen);
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			Gson gson = DataWorkbook4JSON.createGsonForDataWorkbook4JSON();
 			dwb = gson.fromJson(reader, DataWorkbook4JSON.class);
 			dwb.setDataWorkbookFile(fileToOpen);
 			
@@ -165,24 +175,32 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	}
 	
 	/**
-	 * Creates a XML DataWorkbok by asking for a storage location.
+	 * Creates a XML DataWorkbook by asking for a storage location.
 	 *
-	 * @param owner the asking component owner window
+	 * @param dataController the data controller
+	 * @param component the component
 	 * @return the DataWorkbook4XML
 	 */
-	public static DataWorkbook4JSON create(Component component) {
-		return DataWorkbook4JSON.create(OwnerDetection.getOwnerWindowForComponent(component));
+	public static DataWorkbook4JSON create(DataController dataController, Component component) {
+		return DataWorkbook4JSON.create(dataController, OwnerDetection.getOwnerWindowForComponent(component));
 	}
 	/**
 	 * Creates a XML DataWorkbok by asking for a storage location.
 	 *
+	 * @param dataController the data controller
 	 * @param owner the owner window
 	 * @return the DataWorkbook4XML
 	 */
-	public static DataWorkbook4JSON create(Window owner) {
+	public static DataWorkbook4JSON create(DataController dataController, Window owner) {
 		
 		File xmlFile = FileSelection.selectJsonFile(owner, JFileChooser.SAVE_DIALOG, "Create Workbook", "Create JSON DataWorkbook", null, null);
 		if (xmlFile==null) return null;
+		
+		DataWorkbookLocation dwLocation = new DataWorkbookLocation(DataWorkbook4JSON.class, xmlFile.getAbsolutePath());
+		if (dataController.getDataWorkbookReminder().getDataWorkbookLocationList().contains(dwLocation)==true) {
+			AwbMessageDialog.showMessageDialog(owner, "The Data Workbook '" + xmlFile.getName() + "' was already loaded to the data viewer and thus cannot be overwritten!", "Data Workbook already loaded!", AwbMessageDialog.ERROR_MESSAGE);
+			return null;
+		} 
 		
 		DataWorkbook4JSON dwbJSON = new DataWorkbook4JSON(xmlFile);
 		dwbJSON.createRandomID();

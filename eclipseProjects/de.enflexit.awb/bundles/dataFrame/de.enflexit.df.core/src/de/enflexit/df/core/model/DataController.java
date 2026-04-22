@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.dataSources.AbstractDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.core.workbook.DataWorkbookLocation;
 import de.enflexit.df.core.workbook.DataWorkbookReminder;
 
 /**
@@ -32,9 +33,13 @@ public class DataController {
 	// --- From here, PropertyChangeSupport -----------------------------------
 	// ------------------------------------------------------------------------	
 	public static final String DC_ADDED_DATA_WORKBOOK = "DC_ADDED_DATA_WORKBOOK";
+	public static final String DC_OPENED_DATA_WORKBOOK = "DC_OPENED_DATA_WORKBOOK";
+	public static final String DC_CLOSED_DATA_WORKBOOK = "DC_CLOSED_DATA_WORKBOOK";
 	public static final String DC_REMOVED_DATA_WORKBOOK = "DC_REMOVED_DATA_WORKBOOK";
 	
 	public static final String DC_ADDED_DATA_SOURCE = "DC_ADDED_DATA_SOURCE";
+	public static final String DC_OPENED_DATA_SOURCE = "DC_OPENED_DATA_SOURCE";
+	public static final String DC_CLOSED_DATA_SOURCE = "DC_CLOSED_DATA_SOURCE";
 	public static final String DC_REMOVED_DATA_SOURCE = "DC_REMOVED_DATA_SOURCE";
 
 	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
@@ -126,16 +131,84 @@ public class DataController {
 		return dataWorkbooks;
 	}
 	/**
+	 * Checks for an equal or duplicate DataWorkbook in the list of DataWorkbooks.
+	 *
+	 * @param dwSearch the DataWorkbook to search for
+	 * @return the data workbook
+	 */
+	public DataWorkbook getDataWorkbook(DataWorkbook dwSearch) {
+		for (DataWorkbook dw : this.getDataWorkbooks()) {
+			if (dw.equals(dwSearch)==true || dw==dwSearch) {
+				return dw;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the DataWorkbook that matches the specified {@link DataWorkbookLocation}.
+	 *
+	 * @param dwLocation the DataWorkbookLocation to search with
+	 * @return the data workbook
+	 */
+	public DataWorkbook getDataWorkbook(DataWorkbookLocation dwLocation) {
+		for (DataWorkbook dw : this.getDataWorkbooks()) {
+			if (dw.getDataWorkbookLocation().equals(dwLocation)==true) {
+				return dw;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Adds the specified {@link DataWorkbook}.
 	 * @param dataWorkbook the data workbook
 	 */
 	public boolean addDataWorkbook(DataWorkbook dataWorkbook) {
 		if (dataWorkbook!=null && this.getDataWorkbooks().contains(dataWorkbook)==false) {
 			boolean success = this.getDataWorkbooks().add(dataWorkbook);
-			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_WORKBOOK, null, dataWorkbook);
+			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 			return success;
 		}
 		return false;
+	}
+	/**
+	 * Open data workbook.
+	 * @param dataWorkbook the data workbook
+	 */
+	public void openDataWorkbook(DataWorkbook dataWorkbook) {
+
+		if (dataWorkbook==null) return;
+		
+		// --- Check if we have a workbook with this settings -------
+		DataWorkbook dataWorkbookLocal = this.getDataWorkbook(dataWorkbook); 
+		DataWorkbook dataWorkbookWork  = dataWorkbookLocal==null ? dataWorkbook : dataWorkbookLocal;  
+		
+		// --- If not loaded yet, load the data workbook first ------
+		if (dataWorkbookLocal==null) {
+			this.addDataWorkbook(dataWorkbookWork);
+		}
+
+		// --- Open the data sources --------------------------------
+		for (AbstractDataSource ds : dataWorkbookWork.getDataSources()) {
+			this.openDataSource(dataWorkbookWork, ds);
+		}
+		this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbookWork));
+	}
+	/**
+	 * Close data workbook.
+	 * @param dataWorkbook the data workbook
+	 */
+	public void closeDataWorkbook(DataWorkbook dataWorkbook) {
+		
+		if (dataWorkbook==null) return;
+
+		if (this.getDataWorkbooks().contains(dataWorkbook)==true) {
+			// --- Close the data sources ---------------------------
+			for (AbstractDataSource ds : dataWorkbook.getDataSources()) {
+				this.closeDataSource(dataWorkbook, ds);
+			}
+			this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
+		}
 	}
 	/**
 	 * Removes the {@link DataWorkbook}.
@@ -147,7 +220,7 @@ public class DataController {
 		if (dataWorkbook!=null) {
 			boolean success = this.getDataWorkbooks().remove(dataWorkbook);
 			// --- Inform property change listener ------------------
-			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_WORKBOOK, dataWorkbook, null);
+			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_WORKBOOK, AffectedDataObjects.create(dataWorkbook), null);
 			return success;
 		}
 		return false;
@@ -155,78 +228,117 @@ public class DataController {
 
 	// ------------------------------------------------------------------------
 	// --- From here, Data Source handling ------------------------------------
-	/**
-	 * Returns the data sources of the currently selected {@link DataWorkbook}.
-	 * @return the data sources
-	 */
-	public List<AbstractDataSource> getDataSources() {
-		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
-		if (dw==null) return null;
-		return dw.getDataSources();
-	}
-	/**
-	 * Sets the data sources.
-	 * @param dataSources the new data sources
-	 */
-	public void setDataSources(List<AbstractDataSource> dataSources) {
-		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
-		if (dw==null) return;
-		dw.setDataSources(dataSources);
-	}
+//	/**
+//	 * Returns the data sources of the currently selected {@link DataWorkbook}.
+//	 * @return the data sources
+//	 */
+//	public List<AbstractDataSource> getDataSources() {
+//		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
+//		if (dw==null) return null;
+//		return dw.getDataSources();
+//	}
+//	/**
+//	 * Sets the data sources.
+//	 * @param dataSources the new data sources
+//	 */
+//	public void setDataSources(List<AbstractDataSource> dataSources) {
+//		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
+//		if (dw==null) return;
+//		dw.setDataSources(dataSources);
+//	}
 	
 	/**
 	 * Adds the specified data source.
+	 *
+	 * @param dw the DataWorkbook to work on
 	 * @param dataSource the data source
 	 * @return true, if successfully added
 	 */
-	public boolean addDataSource(AbstractDataSource dataSource) {
-		if (dataSource!=null && this.getDataSources()!=null && this.getDataSources().contains(dataSource)==false) {
-			boolean success = this.getDataSources().add(dataSource);
-			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, dataSource);
+	public boolean addDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+		if (dw!=null && dataSource!=null && dw.getDataSources()!=null && dw.getDataSources().contains(dataSource)==false) {
+			boolean success = dw.getDataSources().add(dataSource);
+			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
 			return success;
 		}
 		return false;
 	}
 	/**
+	 * Opens the specified data source.
+	 *
+	 * @param dw the DataWorkbook to work on
+	 * @param dataSource the data source
+	 * @return true, if successfully opened
+	 */
+	public boolean openDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+		
+		if (dw==null || dataSource==null || dw.getDataSources()==null) return false;
+		
+		if (dw.getDataSources().contains(dataSource)==false) {
+			return this.addDataSource(dw, dataSource);
+		} 
+		this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
+		return true;
+	}
+	/**
+	 * Closes the specified data source.
+	 *
+	 * @param dw the DataWorkbook to work on
+	 * @param dataSource the data source
+	 * @return true, if successfully opened
+	 */
+	public boolean closeDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+		
+		if (dw==null || dataSource==null || dw.getDataSources()==null) return false;
+		
+		this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
+		return true;
+	}
+	/**
 	 * Removes the specified data source.
+	 *
+	 * @param dw the DataWorkbook to work on
 	 * @param dataSource the data source
 	 * @return true, if successfully removed
 	 */
-	public boolean removeDataSource(AbstractDataSource dataSource) {
-		if (dataSource!=null && this.getDataSources()!=null) {
-			boolean success = this.getDataSources().remove(dataSource);
+	public boolean removeDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+		if (dw!=null && dataSource!=null && dw.getDataSources()!=null) {
+			boolean success = dw.getDataSources().remove(dataSource);
 			// --- Inform property change listener ------------------
-			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, dataSource, null);
+			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
 			return success;
 		}
 		return false;
 	}
+	
 	/**
 	 * Removes the data source ask user.
 	 *
 	 * @param owner the owner
+	 * @param dw the DataWorkbook to work on
 	 * @param dSource the data source to delete
 	 * @param dataSourceCaption the data source caption
+	 * @return true, if successful
 	 */
-	public boolean removeDataSourceAskUser(Window owner, AbstractDataSource dSource, String dataSourceCaption) {
+	public boolean removeDataSourceAskUser(Window owner, DataWorkbook dw, AbstractDataSource dSource, String dataSourceCaption) {
 		
 		String message = "Would you like to delete the selected data source '" + dataSourceCaption + "'?";
 		int userAnswer = AwbMessageDialog.showConfirmDialog(owner, message, "Delete Data Source?", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (userAnswer==JOptionPane.NO_OPTION) return false;
 		// --- Delete data source -------------------------
-		return this.removeDataSource(dSource);
+		return this.removeDataSource(dw, dSource);
 	}
 	
 	/**
 	 * Returns the data source by search phrase.
 	 *
+	 * @param dw the DataWorkbook to work on
 	 * @param searchPhrase the search phrase
 	 * @return the data source by search phrase
 	 */
-	public List<AbstractDataSource> getDataSourceBySearchPhrase(String searchPhrase) {
+	public List<AbstractDataSource> getDataSourceBySearchPhrase(DataWorkbook dw, String searchPhrase) {
 		String praseToUse = searchPhrase.toLowerCase();
 		List<AbstractDataSource> dsFound = new ArrayList<>();
-		for (AbstractDataSource ds : this.getDataSources()) {
+		for (AbstractDataSource ds : dw.getDataSources()) {
 			if (ds.getName().toLowerCase().contains(praseToUse)==true) {
 				dsFound.add(ds);
 			}

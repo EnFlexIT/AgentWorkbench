@@ -109,7 +109,6 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 				if (resultListChild!=null && resultListChild.size()>0) {
 					resultList.addAll(resultListChild);
 				}
-				
 			}
 		}
 
@@ -119,31 +118,15 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		}
 		return resultList;
 	}
+	/**
+	 * Returns a DataTreeModelSearchFilter for the specified {@link DataWorkbook}.
+	 *
+	 * @param dataWorkbook the data workbook
+	 * @return the search filter 4 data workbook
+	 */
+	private DataTreeModelSearchFilter getSearchFilter4DataWorkbook(final DataWorkbook dataWorkbook) {
 	
-	/**
-	 * Add the specified DataWorkbook as a tree node.
-	 * @param dataWorkbook the data workbook
-	 */
-	private void addedDataWorkbook(DataWorkbook dataWorkbook) {
-
-		DataTreeNodeDataWorkbook dtnoDW = new DataTreeNodeDataWorkbook(this.getDataController(), dataWorkbook);
-		
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dtnoDW);
-		this.getRootNode().add(newNode);
-		
-		Object[] pathToParent = this.getRootNode().getPath();
-		int[] newIndicies = {this.getRootNode().getIndex(newNode)};
-		Object[] newChildren = {newNode}; 
-		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
-	}
-	/**
-	 * Removes the specified DataWorkbook.
-	 * @param dataWorkbook the data workbook
-	 */
-	private void removedDataWorkbook(final DataWorkbook dataWorkbook) {
-		
-		// --- Define a search filter for the search traversal ----------------
-		DataTreeModelSearchFilter searchFilter = new DataTreeModelSearchFilter() {
+		return new DataTreeModelSearchFilter() {
 			@Override
 			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
 				DataTreeNodeObjectBase dtno = (DataTreeNodeObjectBase) treeNode.getUserObject();
@@ -156,49 +139,16 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 				return false;
 			}
 		};
-		// --- Search the tree and remove the corresponding nodes -------------
-		this.removeTreeNodes(this.searchTreeNode(searchFilter));
 	}
-	
-	
 	/**
-	 * Adds the specified data source as a tree node.
+	 * Returns a DataTreeModelSearchFilter for the specified {@link AbstractDataSource}.
+	 *
 	 * @param dataSource the data source
+	 * @return the search filter 4 data source
 	 */
-	private void addedDataSource(AbstractDataSource dataSource) {
-
-		// --- Get the corresponding DataWorkbook first -------------
-		DefaultMutableTreeNode dwNode =  this.getDataController().getSelectionModel().getSelectedDataWorkbookTreeNode();
-		if (dwNode==null) return;
-
-		// --- Create new node according to data source -------------
-		AbstractDataTreeNodeDataSource<?> ds = null;
-		if (dataSource instanceof CsvDataSource) {
-			ds = new DataTreeNodeDataSourceCsv(this.getDataController(), (CsvDataSource) dataSource);
-		} else if (dataSource instanceof ExcelDataSource) {
-			ds = new DataTreeNodeDataSourceExcel(this.getDataController(), (ExcelDataSource) dataSource);
-		} else if (dataSource instanceof DatabaseDataSource) {
-			ds = new DataTreeNodeDataSourceDatabase(this.getDataController(), (DatabaseDataSource) dataSource);
-		}
+	private DataTreeModelSearchFilter getSearchFilter4DataSource(final AbstractDataSource dataSource) {
 		
-		// --- Create new node and add to parent --------------------
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ds);
-		dwNode.add(newNode);
-		
-		Object[] pathToParent = dwNode.getPath();
-		int[] newIndicies = {dwNode.getIndex(newNode)};
-		Object[] newChildren = {newNode}; 
-		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
-	}
-	
-	/**
-	 * Removes the data source.
-	 * @param dataSource the data source
-	 */
-	private void removedDataSource(final AbstractDataSource dataSource) {
-		
-		// --- Define a search filter for the search traversal ----------------
-		DataTreeModelSearchFilter searchFilter = new DataTreeModelSearchFilter() {
+		return new DataTreeModelSearchFilter() {
 			@Override
 			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
 				DataTreeNodeObjectBase dtno = (DataTreeNodeObjectBase) treeNode.getUserObject();
@@ -211,8 +161,6 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 				return false;
 			}
 		};
-		// --- Search the tree and remove the corresponding nodes -------------
-		this.removeTreeNodes(this.searchTreeNode(searchFilter));
 	}
 	
 	/**
@@ -241,6 +189,113 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		this.fireTreeNodesRemoved(this, pathToParent, removedIndicies, removedChildren);
 	}
 	
+		
+	/**
+	 * Add the specified DataWorkbook as a tree node.
+	 * @param dataWorkbook the data workbook
+	 */
+	private void addedDataWorkbook(DataWorkbook dataWorkbook) {
+
+		DataTreeNodeDataWorkbook dtnoDW = new DataTreeNodeDataWorkbook(this.getDataController(), dataWorkbook);
+		
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dtnoDW);
+		this.getRootNode().add(newNode);
+		
+		Object[] pathToParent = this.getRootNode().getPath();
+		int[] newIndicies = {this.getRootNode().getIndex(newNode)};
+		Object[] newChildren = {newNode}; 
+		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+	}
+	
+	/**
+	 * React on an opened data workbook.
+	 * @param dataWorkbook the data workbook
+	 */
+	private void openedDataWorkbook(DataWorkbook dataWorkbook) {
+		
+		List<DefaultMutableTreeNode> treeNodesFound = this.searchTreeNode(this.getSearchFilter4DataWorkbook(dataWorkbook));
+		if (treeNodesFound==null) return;
+		
+		DefaultMutableTreeNode treeNodeWB = treeNodesFound.get(0);
+		DataTreeNodeDataWorkbook dtnoWB =  (DataTreeNodeDataWorkbook) treeNodeWB.getUserObject();
+		
+		dtnoWB.setDataSourcesLoaded(true);
+	}
+	/**
+	 * React on a closed data workbook.
+	 * @param dataWorkbook the data workbook
+	 */
+	private void closedDataWorkbook(DataWorkbook dataWorkbook) {
+		
+		List<DefaultMutableTreeNode> treeNodesFound = this.searchTreeNode(this.getSearchFilter4DataWorkbook(dataWorkbook));
+		if (treeNodesFound==null) return;
+		
+		DefaultMutableTreeNode treeNodeWB = treeNodesFound.get(0);
+		DataTreeNodeDataWorkbook dtnoWB =  (DataTreeNodeDataWorkbook) treeNodeWB.getUserObject();
+		
+		dtnoWB.setDataSourcesLoaded(false);
+	}
+	/**
+	 * Removes the specified DataWorkbook.
+	 * @param dataWorkbook the data workbook
+	 */
+	private void removedDataWorkbook(DataWorkbook dataWorkbook) {
+		
+		// --- Define a search filter for the search traversal ----------------
+		DataTreeModelSearchFilter searchFilter = this.getSearchFilter4DataWorkbook(dataWorkbook);
+		
+		// --- Search the tree and remove the corresponding nodes -------------
+		this.removeTreeNodes(this.searchTreeNode(searchFilter));
+	}
+	
+	
+	/**
+	 * Adds the specified data source as a tree node.
+	 *
+	 * @param dw the corresponding {@link DataWorkbook}
+	 * @param dataSource the data source
+	 */
+	private void addedDataSource(DataWorkbook dw,  AbstractDataSource dataSource) {
+
+		// --- Get the corresponding DataWorkbook first -------------
+		List<DefaultMutableTreeNode> treeNodesFound = this.searchTreeNode(this.getSearchFilter4DataWorkbook(dw));
+		if (treeNodesFound==null || treeNodesFound.size()>1) return;
+		DefaultMutableTreeNode dwNode = treeNodesFound.getFirst();
+
+		// --- Create new node according to data source -------------
+		AbstractDataTreeNodeDataSource<?> ds = null;
+		if (dataSource instanceof CsvDataSource) {
+			ds = new DataTreeNodeDataSourceCsv(this.getDataController(), (CsvDataSource) dataSource);
+		} else if (dataSource instanceof ExcelDataSource) {
+			ds = new DataTreeNodeDataSourceExcel(this.getDataController(), (ExcelDataSource) dataSource);
+		} else if (dataSource instanceof DatabaseDataSource) {
+			ds = new DataTreeNodeDataSourceDatabase(this.getDataController(), (DatabaseDataSource) dataSource);
+		}
+		
+		// --- Create new node and add to parent --------------------
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ds);
+		dwNode.add(newNode);
+		
+		Object[] pathToParent = dwNode.getPath();
+		int[] newIndicies = {dwNode.getIndex(newNode)};
+		Object[] newChildren = {newNode}; 
+		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+	}
+	/**
+	 * Removes the specified data source as tree node.
+	 * 
+	 * @param dw the corresponding {@link DataWorkbook}
+	 * @param dataSource the data source
+	 */
+	private void removedDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+		
+		// --- Define a search filter for the search traversal ----------------
+		DataTreeModelSearchFilter searchFilter = this.getSearchFilter4DataSource(dataSource);
+		
+		// --- Search the tree and remove the corresponding nodes -------------
+		this.removeTreeNodes(this.searchTreeNode(searchFilter));
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
@@ -248,25 +303,34 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 
-		DataWorkbook dw = null;
-		AbstractDataSource ds = null;
+		AffectedDataObjects ado = null;
 		switch (evt.getPropertyName()) {
 		case DataController.DC_ADDED_DATA_WORKBOOK:
-			dw = (DataWorkbook) evt.getNewValue();
-			this.addedDataWorkbook(dw);
+			ado = (AffectedDataObjects) evt.getNewValue();
+			this.addedDataWorkbook(ado.getDataWorkbook());
+			break;
+		case DataController.DC_OPENED_DATA_WORKBOOK:
+			ado = (AffectedDataObjects) evt.getNewValue();
+			this.openedDataWorkbook(ado.getDataWorkbook());
+			break;
+		case DataController.DC_CLOSED_DATA_WORKBOOK:
+			ado = (AffectedDataObjects) evt.getNewValue();
+			this.closedDataWorkbook(ado.getDataWorkbook());
 			break;
 		case DataController.DC_REMOVED_DATA_WORKBOOK:
-			dw = (DataWorkbook) evt.getOldValue();
-			this.removedDataWorkbook(dw);
+			ado = (AffectedDataObjects) evt.getOldValue();
+			this.removedDataWorkbook(ado.getDataWorkbook());
 			break;
 
 		case DataController.DC_ADDED_DATA_SOURCE:
-			ds = (AbstractDataSource) evt.getNewValue();
-			this.addedDataSource(ds);
+		case DataController.DC_OPENED_DATA_SOURCE:
+			ado = (AffectedDataObjects) evt.getNewValue();
+			this.addedDataSource(ado.getDataWorkbook(), ado.getDataSource());
 			break;
+		case DataController.DC_CLOSED_DATA_SOURCE:
 		case DataController.DC_REMOVED_DATA_SOURCE:
-			ds = (AbstractDataSource) evt.getOldValue();
-			this.removedDataSource(ds);
+			ado = (AffectedDataObjects) evt.getOldValue();
+			this.removedDataSource(ado.getDataWorkbook(), ado.getDataSource());
 			break;
 		}
 	}

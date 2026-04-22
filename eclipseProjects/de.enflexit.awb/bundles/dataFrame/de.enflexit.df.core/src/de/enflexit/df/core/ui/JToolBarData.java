@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,8 +27,11 @@ import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.DataControllerSelectionModel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
 import de.enflexit.df.core.workbook.DataWorkbook4XML;
 
@@ -42,6 +46,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	private static final long serialVersionUID = 2584749340449450910L;
 
 	private DataController dataController;
+	private HashSet<String> propertyListForJButtonEnablement;
 	
 	private JButton jButtonDataWorkbookNew;
 		private JMenuItem jMenuItemNewDataWorkbookXML; 
@@ -55,7 +60,9 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 
 	private JButton jButtonDataWorkbookSave;
 	private JButton jButtonDataWorkbookDelete;
-	private JButton jButtonDataWorkbookClose;
+	
+	private JButton jButtonSelectedDataWorkbookOpen;
+	private JButton jButtonSelectedDataWorkbookClose;
 	
 	private JToggleButton jToggleButtonConfiguration;
 
@@ -77,7 +84,10 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		this.add(this.getJButtonDataWorkbookOpen());
 		this.add(this.getJButtonDataWorkbookSave());
 		this.add(this.getJButtonDataWorkbookDelete());
-		this.add(this.getJButtonDataWorkbookClose());
+		
+		this.addSeparator();
+		this.add(this.getJButtonSelectedDataWorkbookOpen());
+		this.add(this.getJButtonSelectedDataWorkbookClose());
 		
 		this.addSeparator();
 		this.add(this.getJToggleButtonConfiguration());
@@ -264,16 +274,28 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		}
 		return jButtonDataWorkbookDelete;
 	}
-	private JButton getJButtonDataWorkbookClose() {
-		if (jButtonDataWorkbookClose==null) {
-			jButtonDataWorkbookClose = new JButton();
-			jButtonDataWorkbookClose.setToolTipText("Close the current Data Workbook");
-			jButtonDataWorkbookClose.setIcon(BundleHelper.getImageIcon("wb/Workbook-Closed-Grey.png"));
-			jButtonDataWorkbookClose.setPreferredSize(new Dimension(26, 26));
-			jButtonDataWorkbookClose.addActionListener(this);
+	
+	private JButton getJButtonSelectedDataWorkbookOpen() {
+		if (jButtonSelectedDataWorkbookOpen==null) {
+			jButtonSelectedDataWorkbookOpen = new JButton();
+			jButtonSelectedDataWorkbookOpen.setToolTipText("Open the selected Data Workbook");
+			jButtonSelectedDataWorkbookOpen.setIcon(BundleHelper.getImageIcon("wb/Workbook-Grey.png"));
+			jButtonSelectedDataWorkbookOpen.setPreferredSize(new Dimension(26, 26));
+			jButtonSelectedDataWorkbookOpen.addActionListener(this);
+		}
+		return jButtonSelectedDataWorkbookOpen;
+	}
+	
+	private JButton getJButtonSelectedDataWorkbookClose() {
+		if (jButtonSelectedDataWorkbookClose==null) {
+			jButtonSelectedDataWorkbookClose = new JButton();
+			jButtonSelectedDataWorkbookClose.setToolTipText("Close the currently selected Data Workbook");
+			jButtonSelectedDataWorkbookClose.setIcon(BundleHelper.getImageIcon("wb/Workbook-Closed-Grey.png"));
+			jButtonSelectedDataWorkbookClose.setPreferredSize(new Dimension(26, 26));
+			jButtonSelectedDataWorkbookClose.addActionListener(this);
 
 		}
-		return jButtonDataWorkbookClose;
+		return jButtonSelectedDataWorkbookClose;
 	}
 	
 	/**
@@ -390,6 +412,8 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
+		this.enableJButtonEnabledToSelection(evt.getPropertyName());
+		
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
 			this.getJToggleButtonConfiguration().setSelected(true);
 			
@@ -399,9 +423,44 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 				this.getJToggleButtonConfiguration().setSelected(isShowConfig);
 			}
 		}
-		
 	}
 	
+	/**
+	 * Gets the list of properties to which an enablement for the JButtons is to be done.
+	 * @return the property list button enablement
+	 */
+	private HashSet<String> getPropertyListForJButtonEnablement() {
+		if (propertyListForJButtonEnablement==null) {
+			propertyListForJButtonEnablement = new HashSet<>();
+			propertyListForJButtonEnablement.add(DataController.DC_NEW_TREE_PATH_SELECTED);
+			propertyListForJButtonEnablement.add(DataController.DC_ADDED_DATA_WORKBOOK);
+			propertyListForJButtonEnablement.add(DataController.DC_OPENED_DATA_WORKBOOK);
+			propertyListForJButtonEnablement.add(DataController.DC_CLOSED_DATA_WORKBOOK);
+			propertyListForJButtonEnablement.add(DataController.DC_REMOVED_DATA_WORKBOOK);
+		}
+		return propertyListForJButtonEnablement;
+	}
+	/**
+	 * Sets the JButton enabled to the current selection.
+	 * @param propertyChanged the actual property that changed
+	 */
+	private void enableJButtonEnabledToSelection(String propertyChanged) {
+		
+		if (this.getPropertyListForJButtonEnablement().contains(propertyChanged)==false) return;
+		 
+		DataControllerSelectionModel selModel = this.getDataController().getSelectionModel();
+
+		DataTreeNodeDataWorkbook dtnoDW = selModel.getSelectedDataTreeNodeDataWorkbook();
+		if (dtnoDW==null) {
+			this.getJButtonSelectedDataWorkbookOpen().setEnabled(false);		
+			this.getJButtonSelectedDataWorkbookClose().setEnabled(false);
+		} else {
+			this.getJButtonSelectedDataWorkbookOpen().setEnabled(dtnoDW.isDataSourcesLoaded()==false);
+			this.getJButtonSelectedDataWorkbookClose().setEnabled(dtnoDW.isDataSourcesLoaded()==true);
+		}
+		
+	}
+
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -410,28 +469,26 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 
 		if (ae.getSource()==this.getJMenuItemNewDataWorkbookXML()) {
 			// --- Create XML DataWorkbook ------------------------------------
-			this.dataController.addDataWorkbook(DataWorkbook4XML.create(this));
-			
+			this.addNewDataWorkbook(DataWorkbook4XML.create(this.dataController, this));
 		} else if (ae.getSource()==this.getJMenuItemNewDataWorkbookJSON()) {
 			// --- Create JSON DataWorkbook -----------------------------------
-			this.dataController.addDataWorkbook(DataWorkbook4JSON.create(this));
-			
+			this.addNewDataWorkbook(DataWorkbook4JSON.create(this.dataController, this));
 		} else if (ae.getSource()==this.getJMenuItemNewDataWorkbookDB()) {
 			// --- Create database DataWorkbook -------------------------------
-			// TODO
+			this.addNewDataWorkbook(DataWorkbook4DB.create(this.dataController, this));
+			
 			
 		} else if (ae.getSource()==this.getJMenuItemOpenDataWorkbookXML()) {
 			// --- Open XML DataWorkbook --------------------------------------
-			this.dataController.addDataWorkbook(DataWorkbook4XML.loadFromFile(this));
-			
+			this.dataController.openDataWorkbook(DataWorkbook4XML.loadFromFile(this));
 		} else if (ae.getSource()==this.getJMenuItemOpenDataWorkbookJSON()) {
 			// --- Open JSON DataWorkbook -------------------------------------
-			this.dataController.addDataWorkbook(DataWorkbook4JSON.loadFromFile(this));
-			
+			this.dataController.openDataWorkbook(DataWorkbook4JSON.loadFromFile(this));
 		} else if (ae.getSource()==this.getJMenuItemOpenDataWorkbookDB()) {
 			// --- Open database DataWorkbook ---------------------------------
-			// TODO
+			this.dataController.openDataWorkbook(DataWorkbook4DB.loadFromDatabase());
 
+			
 		} else if (ae.getSource()==this.getJButtonDataWorkbookSave()) {
 			// --- Save current DataWorkbook ----------------------------------
 			DataWorkbook dw = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
@@ -462,20 +519,27 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 				}
 			}
 			
-		} else if (ae.getSource()==this.getJButtonDataWorkbookClose()) {
+		} else if (ae.getSource()==this.getJButtonSelectedDataWorkbookOpen()) {
+			// --- Open the selected DataWorkbook -----------------------------
+			DataWorkbook dwSelected = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
+			this.getDataController().openDataWorkbook(dwSelected);
 			
+		} else if (ae.getSource()==this.getJButtonSelectedDataWorkbookClose()) {
+			// --- Close the currently selected DataWorkbook ------------------
+			DataWorkbook dwSelected = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
+			this.getDataController().closeDataWorkbook(dwSelected);
 			
 		} else if (ae.getSource()==this.getJMenuItemCsvData()) {
 			// --- Add CsvDataSource ------------------------------------------
-			this.dataController.addDataSource(new CsvDataSource());
+			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new CsvDataSource());
 			
 		} else if (ae.getSource()==this.getJMenuItemExcelFile()) {
 			// --- Add ExcelDataSource ----------------------------------------
-			this.dataController.addDataSource(new ExcelDataSource());
+			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new ExcelDataSource());
 			
 		} else if (ae.getSource()==this.getJMenuItemDatabaseData()) {
 			// --- Add DatabaseDataSource -------------------------------------
-			this.dataController.addDataSource(new DatabaseDataSource());
+			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new DatabaseDataSource());
 		
 		} else if (ae.getSource()==this.getJToggleButtonConfiguration()) {
 			// --- Show data source configuration -----------------------------
@@ -484,15 +548,24 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 			
 		} else if (ae.getSource()==this.getJButtonDeleteDataSources()) {
 			// --- Delete currently selected data source ----------------------
-			AbstractDataTreeNodeDataSource<?> dtnoDataSource = this.dataController.getSelectionModel().getSelectedDataTreeNodeDataSource();
-			if (dtnoDataSource!=null) {
+			DataWorkbook dw = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
+			AbstractDataTreeNodeDataSource<?> dtnoDataSource = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+			if (dw!=null && dtnoDataSource!=null) {
 				// --- Ask the user to delete the data source -----------------
-				this.dataController.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(this), dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
+				this.dataController.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(this), dw, dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
 			}
 			
 		} 
 		
 	}
 
-
+	/**
+	 * Adds the specified new data work book.
+	 * @param newDataWorkbook the new data workbook
+	 */
+	private void addNewDataWorkbook(DataWorkbook newDataWorkbook) {
+		this.dataController.addDataWorkbook(newDataWorkbook);
+		this.dataController.openDataWorkbook(newDataWorkbook);
+	}
+	
 }

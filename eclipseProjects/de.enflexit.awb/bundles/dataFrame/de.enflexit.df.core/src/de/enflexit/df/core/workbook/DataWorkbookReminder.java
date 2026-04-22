@@ -11,6 +11,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.common.crypto.SecuredProperties;
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 
 /**
@@ -74,11 +75,11 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_WORKBOOK)==true) {
-			DataWorkbook dw = (DataWorkbook) evt.getNewValue();
+			DataWorkbook dw = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
 			this.addDataWorkbookLocation(dw.getDataWorkbookLocation(), true);
 			this.saveToSecuredStorage();
 		} else if (evt.getPropertyName().equals(DataController.DC_REMOVED_DATA_WORKBOOK)==true) {
-			DataWorkbook dw = (DataWorkbook) evt.getOldValue();
+			DataWorkbook dw = ((AffectedDataObjects) evt.getOldValue()).getDataWorkbook();
 			this.removeDataWorkbookLocation(dw.getDataWorkbookLocation(), true);
 			this.saveToSecuredStorage();
 		}
@@ -135,7 +136,7 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 		for (DataWorkbookLocation dwLocation : this.getDataWorkbookLocationList()) {
 			DataWorkbook dw = null;
 			if (dwLocation.getDataWorkbookClassName().equals(DataWorkbook4XML.class.getName())) {
-				dw = DataWorkbook4XML.loadFromDataWorkBookLocation(dwLocation);
+				dw = DataWorkbook4XML.loadFromDataWorkbookLocation(dwLocation);
 			} else if (dwLocation.getDataWorkbookClassName().equals(DataWorkbook4JSON.class.getName())) {
 				dw = DataWorkbook4JSON.loadFromDataWorkBookLocation(dwLocation);
 			} else if (dwLocation.getDataWorkbookClassName().equals(DataWorkbook4DB.class.getName())) {

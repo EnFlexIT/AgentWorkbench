@@ -24,6 +24,7 @@ import de.enflexit.df.core.model.DataTreeModel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class JTreeData.
@@ -129,8 +130,6 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 		
 		// --- Adjust the selection model -----------------
 		this.getDataController().getSelectionModel().setSelectedTreePath(tse.getNewLeadSelectionPath());
-		
-		
 	}
 	
 	/**
@@ -146,10 +145,11 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 				if (ke.getKeyCode()==KeyEvent.VK_DELETE) {
 					// --- Delete currently selected data source --------------
 					DataController dc = JTreeData.this.getDataController();
+					DataWorkbook dw = dc.getSelectionModel().getSelectedDataWorkbook();
 					AbstractDataTreeNodeDataSource<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
-					if (dtnoDataSource!=null) {
+					if (dw!=null && dtnoDataSource!=null) {
 						// --- Ask the user to delete the data source ---------
-						dc.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(JTreeData.this), dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
+						dc.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(JTreeData.this), dw, dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
 					}
 					
 				} else if (ke.getKeyCode()==KeyEvent.VK_CONTEXT_MENU ) {
@@ -253,8 +253,8 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 						DataTreeNodeDataWorkbook dtnoDW = (DataTreeNodeDataWorkbook) dtno;
 						if (dtnoDW.isDataSourcesLoaded()==false) {
 							// --- Load the data sources of the DataWorkbook ------------
-							System.err.println("Load data sources ... !");
-							
+							JTreeData.this.getDataController().openDataWorkbook(dtnoDW.getDataWorkbook());
+							me.consume();
 						}
 					}
 					return;
@@ -269,6 +269,7 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 						myTree.setSelectionPath(path);
 						myTree.scrollPathToVisible(path);
 						JTreeData.this.getJPopupMenuDataTree().show (myTree, pathBounds.x, pathBounds.y + pathBounds.height);
+						me.consume();
 					}
 					return;
 				}

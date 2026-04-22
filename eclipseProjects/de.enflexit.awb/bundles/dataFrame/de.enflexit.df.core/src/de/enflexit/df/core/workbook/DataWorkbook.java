@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import de.enflexit.common.NumberHelper;
+import de.enflexit.common.StringHelper;
 import de.enflexit.common.dataSources.AbstractDataSource;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -173,5 +174,50 @@ public abstract class DataWorkbook implements Serializable {
 	 * @return the data workbook location
 	 */
 	public abstract DataWorkbookLocation getDataWorkbookLocation();
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (compObj==null) return false;
+		if (compObj instanceof DataWorkbook ==false) return false;
+		
+		if (compObj==this) return true;
+
+		// --- Compare the DataWorkbook first -----------------------
+		DataWorkbook dwComp = (DataWorkbook) compObj;
+		
+		// --- Compare ID, name and description ---------------------
+		//if (NumberHelper.isEqualNumber(this.getID(), dwComp.getID())==false) return false;
+		if (StringHelper.isEqualString(this.getName(), dwComp.getName())==false) return false;
+		if (StringHelper.isEqualString(this.getDescription(), dwComp.getDescription())==false) return false;
+		
+		// --- Compare DataWorkbookLocation -------------------------
+		if (this.getDataWorkbookLocation()==null && dwComp.getDataWorkbookLocation()==null) {
+			// --- Nothing to do here ---
+		} else if ((this.getDataWorkbookLocation()!=null && dwComp.getDataWorkbookLocation()==null) || (this.getDataWorkbookLocation()==null && dwComp.getDataWorkbookLocation()!=null)) {
+			return false;
+		} else {
+			if (this.getDataWorkbookLocation().equals(dwComp.getDataWorkbookLocation())==false) return false;
+		}
+		
+		// --- Compare workbook file --------------------------------
+		if (this.getDataWorkbookFile()==null && dwComp.getDataWorkbookFile()==null) {
+			// --- Nothing to do here ---
+		} else if ((this.getDataWorkbookFile()!=null && dwComp.getDataWorkbookFile()==null) || (this.getDataWorkbookFile()==null && dwComp.getDataWorkbookFile()!=null)) {
+			return false;
+		} else {
+			if (this.getDataWorkbookFile().equals(dwComp.getDataWorkbookFile())==false) return false;
+		}
+		
+		// --- Compare data sources ---------------------------------
+		if (this.getDataSources().equals(dwComp.getDataSources())==false) return false;
+		
+		return true;
+	}
+	
 	
 }
