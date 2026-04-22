@@ -752,15 +752,13 @@ import jakarta.xml.bind.annotation.XmlTransient;
 		Application.setStatusBarMessage(Language.translate("Projekt schließen") + " ...");
 		if (isSkipSaving==false && this.isUnsaved()==true) {
 
-			if (Application.isOperatingHeadless()==false) {
+			if (Application.isOperatingHeadless()==false && this.getProjectEditorWindow()!=null) {
 				// --- Operation with an UI ---------------
 				msgHead = Language.translate("Projekt '@' speichern?");
 				msgHead = msgHead.replace("'@'", "'" + projectName + "'");
-				msgText = Language.translate(
-						"Das aktuelle Projekt '@' ist noch nicht gespeichert!" + Application.getGlobalInfo().getNewLineSeparator() + 
-						"Möchten Sie es nun speichern ?");
+				msgText = Language.translate("Das aktuelle Projekt '@' ist noch nicht gespeichert!" + Application.getGlobalInfo().getNewLineSeparator() + "Möchten Sie es nun speichern ?");
 				msgText = msgText.replace("'@'", "'" + projectName + "'");
-
+					
 				ProjectCloseUserFeedback userAnswer = this.getProjectEditorWindow().getUserFeedbackForClosingProject(msgHead, msgText, parentComponent);
 				switch (userAnswer) {
 				case CancelCloseAction:
@@ -1323,7 +1321,9 @@ import jakarta.xml.bind.annotation.XmlTransient;
 			this.resourcesRemove();
 		}
 
-		this.getProjectEditorWindow().moveToFront();
+		if (this.getProjectEditorWindow()!=null) {
+			this.getProjectEditorWindow().moveToFront();
+		}
 		Application.setTitleAddition(projectName);
 		Application.setProjectFocused(this);
 		Application.getProjectsLoaded().setProjectView();

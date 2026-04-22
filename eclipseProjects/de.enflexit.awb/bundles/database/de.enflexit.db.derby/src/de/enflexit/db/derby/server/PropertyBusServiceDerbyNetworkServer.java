@@ -35,14 +35,12 @@ public class PropertyBusServiceDerbyNetworkServer implements PropertyBusService 
 		return "DB.DERBY.NETWORKSERVER";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.enflexit.common.properties.bus.PropertyBusService#setProperties(de.
-	 * enflexit.common.properties.Properties)
-	 */
+	
+	/* (non-Javadoc)
+	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
+	*/
 	@Override
-	public Properties getProperties(Properties properties) {
+	public Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
 		
@@ -56,14 +54,11 @@ public class PropertyBusServiceDerbyNetworkServer implements PropertyBusService 
 		return properties;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.enflexit.common.properties.bus.PropertyBusService#setProperties(de.
-	 * enflexit.common.properties.Properties)
-	 */
+	/* (non-Javadoc)
+	* @see de.enflexit.common.properties.bus.PropertyBusService#setProperties(de.enflexit.common.properties.Properties, java.lang.String)
+	*/
 	@Override
-	public boolean setProperties(Properties properties) {
+	public boolean setProperties(Properties properties, String arguments) {
 		
 		// --- if values are invalid, don't apply and return false --------------------------------
 		if (this.hasValidProperties(properties) == false) {

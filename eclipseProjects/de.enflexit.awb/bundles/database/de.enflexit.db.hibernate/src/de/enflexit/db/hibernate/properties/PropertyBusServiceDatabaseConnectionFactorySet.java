@@ -33,10 +33,10 @@ public class PropertyBusServiceDatabaseConnectionFactorySet implements PropertyB
 	}
 
 	/* (non-Javadoc)
-	* @see de.enflexit.common.properties.bus.PropertyBusService#setProperties(de.enflexit.common.properties.Properties)
+	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
 	*/
 	@Override
-	public boolean setProperties(Properties properties) {
+	public boolean setProperties(Properties properties, String arguments) {
 		
 		// --- If properties aren't valid, don't apply them and return false --------------------------------
 		if (this.hasValidProperties(properties)== false) return false;
@@ -119,11 +119,10 @@ public class PropertyBusServiceDatabaseConnectionFactorySet implements PropertyB
 	}
 
 	/* (non-Javadoc)
-	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties)
-	* @see PropertyBusServiceDatabaseConnectionFactoryGet
+	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
 	*/
 	@Override
-	public Properties getProperties(Properties properties) {
+	public Properties getProperties(Properties properties, String arguments) {
 
 		return null;
 	}
