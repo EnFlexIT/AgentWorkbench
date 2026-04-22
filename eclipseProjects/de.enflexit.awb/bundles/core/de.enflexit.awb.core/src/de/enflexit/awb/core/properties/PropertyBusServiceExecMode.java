@@ -50,9 +50,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	public static final String BGSYSTEM_FACTORY = "de.enflexit.awb.bgSystem.db";
 	
 	
-	
-	
-
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
 	*/
@@ -499,6 +496,10 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		}
 	}
 	
+	// ------------------------------------------------------------------------------------------------------
+	// --- From here, methods to find enum constants from strings -------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
+	
 	/**
 	 * Returns the de.enflexit.awb.core.config.GlobalInfo.ExecutionMode equivalent for the provided string, ignoring case, or null,
 	 * if no match is found. 
@@ -538,6 +539,12 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		return deviceSystemExecutionMode;
 	}
 	
+	/**
+	 * Find MtpProtocol enum constant from string.
+	 *
+	 * @param mtpProtocolString the mtp protocol string
+	 * @returns the MtpProtocol
+	 */
 	private MtpProtocol findMtpProtocolFromString(String mtpProtocolString) {
 		
 		if (mtpProtocolString==null || mtpProtocolString.isBlank()==true) return null;
@@ -560,6 +567,12 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		return mtpProtocol;
 	}
 	
+	/**
+	 * Find MTP_creation enum constant from string.
+	 *
+	 * @param mtpCreationString the mtp creation string
+	 * @returns the MTP_creation enum constant equivalent to the input string
+	 */
 	private MTP_Creation findMtpCreationFromString(String mtpCreationString) {
 		
 		if (mtpCreationString==null || mtpCreationString.isBlank()==true) return null;
