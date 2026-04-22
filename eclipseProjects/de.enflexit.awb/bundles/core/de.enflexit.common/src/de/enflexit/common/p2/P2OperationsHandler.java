@@ -76,7 +76,7 @@ public class P2OperationsHandler {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(P2OperationsHandler.class);
 	
-	private static final String DEFAULT_REPO_URI = "https://p2.enflex.it/awb/latest/";
+	private static boolean alwaysTrustRepositories = false;
 	
 	private boolean isDevelopmentMode = false;
 	private File p2Directory = null;
@@ -118,7 +118,6 @@ public class P2OperationsHandler {
 		if (this.isDevelopmentMode==true && (this.p2Directory==null || this.p2Directory.exists()==false || p2Directory.isDirectory()==false) ) {
 			this.isDevelopmentMode = false;
 			this.p2Directory = null;
-			
 		}
 	}
 	
@@ -169,19 +168,12 @@ public class P2OperationsHandler {
 					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
 					
 					// --- Add a custom IInstallableUnitUIServices implementation to handle trusted repos if headless
-					try {
-						Set<URI> trustedRepos = Set.of(new URI(DEFAULT_REPO_URI));
-						provisioningAgent.registerService(UIServices.class.getName(), new HeadlessInstallableUnitUIServices(trustedRepos));
-						LOGGER.info("Registered HeadlessInstallableUnitUIServices");
-					} catch (URISyntaxException e) {
-						LOGGER.error("Invaled repository URI: " + DEFAULT_REPO_URI);
-					}
+					provisioningAgent.registerService(UIServices.class.getName(), new HeadlessInstallableUnitUIServices(this.getTrustedRepositoryURIs()));
 					
 					// --- Add a custom TrustEngine implementation for handling signed artifacts
 					try {
 						CustomP2TrustEngine trustEngine = new CustomP2TrustEngine(this.loadDefaultTrustStore(), true);
 						provisioningAgent.registerService(TrustEngine.class.getName(), trustEngine);
-						LOGGER.info("Registered CustomP2TrustEngine");
 					} catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
 						LOGGER.error("Unable to load the default trust store: " + e.getLocalizedMessage());
 					}
@@ -380,29 +372,19 @@ public class P2OperationsHandler {
 		if (isHeadlessOp==true || isWebProduct==true) {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
-			try {
-				
-				var profileScope = new ProfileScope(this.getProvisioningAgent().getService(IAgentLocation.class), "DefaultProfile");
-				IEclipsePreferences p2prefs = profileScope.getNode(EngineActivator.ID);
-				
-				p2prefs.putBoolean(AuthorityChecker.TRUST_ALL_AUTHORITIES, true);
-				p2prefs.flush();
-			} catch (BackingStoreException bse) {
-				LOGGER.error("Error flushing preferences! " + bse.getLocalizedMessage());
-			}
-			LOGGER.info("Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
 			
+			if (alwaysTrustRepositories==true) {
+				this.setTrustAllAuthoritiesPreference();
+			}
+			
+			LOGGER.info("Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
 		} else {
 			LOGGER.info("Regular application mode, not accepting unsigned updates!");
-			
 		}
 		
 		this.getUpdateOperation().setProvisioningContext(this.getProvisioningContext());
 		ProvisioningJob provisioningJob = this.getUpdateOperation().getProvisioningJob(this.getProgressMonitor());
 		
-//		TrustEngine engine = (TrustEngine) this.getProvisioningAgent().getService(TrustEngine.class.getName());
-//		LOGGER.info("Using trust engine " + engine.getName());
-
 		if (provisioningJob == null) {
 			LOGGER.error("Trying to update from the Eclipse IDE? This won't work!");
 			return Status.CANCEL_STATUS;
@@ -540,14 +522,16 @@ public class P2OperationsHandler {
 	 */
 	public boolean checkForNewerBundles() {
 		
+		String uriString = GlobalConstants.AWB_P2_REPOSITORY_URI;
+		
 		// --- Check if the default repository is configured, add if not
 		try {
-			URI defaultRepo = new URI(DEFAULT_REPO_URI);
+			URI defaultRepo = new URI(uriString);
 			if (this.isKnownRepository(defaultRepo)==false) {
 				this.addRepository(defaultRepo);
 			}
 		} catch (URISyntaxException e) {
-			LOGGER.error("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + DEFAULT_REPO_URI);
+			LOGGER.error("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + uriString);
 		}
 		
 		URI[] knownRepos = this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
@@ -617,10 +601,10 @@ public class P2OperationsHandler {
 	}
 	
 	/**
-	 * Query repo for newer version.
+	 * Query the repository for newer versions of the specified bundle.
 	 *
 	 * @param bundle the bundle
-	 * @param repo the repo
+	 * @param repo the repository metadata
 	 * @return true, if successful
 	 */
 	private boolean queryRepoForNewerVersion(Bundle bundle, IMetadataRepository repo) {
@@ -697,13 +681,13 @@ public class P2OperationsHandler {
 	private ProvisioningContext getProvisioningContext() {
 		if (provisioningContext==null) {
 			provisioningContext = new ProvisioningContext(this.getProvisioningAgent());
+			String uriString = GlobalConstants.AWB_P2_REPOSITORY_URI;
 			try {
-				URI repoURI = new URI(DEFAULT_REPO_URI);
+				URI repoURI = new URI(uriString);
 				provisioningContext.setMetadataRepositories(repoURI);
 				provisioningContext.setArtifactRepositories(repoURI);
-//				LOGGER.info("Created a provisioning context for repository " + DEFAULT_REPO_URI);
 			} catch (URISyntaxException e) {
-				LOGGER.error("Invalid repository URI: " + DEFAULT_REPO_URI);
+				LOGGER.error("Invalid repository URI: " + uriString);
 			}
 		}
 		return provisioningContext;
@@ -730,6 +714,35 @@ public class P2OperationsHandler {
 		}
 		
 		return ks;
+	}
+	
+	/**
+	 * Sets a preference value that makes p2 trust all artifact repositories.
+	 */
+	private void setTrustAllAuthoritiesPreference() {
+		try {
+			
+			var profileScope = new ProfileScope(this.getProvisioningAgent().getService(IAgentLocation.class), "DefaultProfile");
+			IEclipsePreferences p2prefs = profileScope.getNode(EngineActivator.ID);
+			
+			p2prefs.putBoolean(AuthorityChecker.TRUST_ALL_AUTHORITIES, true);
+			p2prefs.flush();
+		} catch (BackingStoreException bse) {
+			LOGGER.error("Error flushing preferences! " + bse.getLocalizedMessage());
+		}
+	}
+	
+	/**
+	 * Gets the trusted repository URIs.
+	 * @return the trusted repository URIs
+	 */
+	private Set<URI> getTrustedRepositoryURIs() {
+		try {
+			return Set.of(new URI(GlobalConstants.AWB_P2_REPOSITORY_URI));
+		} catch (URISyntaxException use) {
+			LOGGER.error("Invalid repository URI: " + GlobalConstants.AWB_P2_REPOSITORY_URI);
+			return null;
+		}
 	}
 	
 }
