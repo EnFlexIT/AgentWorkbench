@@ -254,6 +254,29 @@ public class NumberHelper {
 	}
 	
 	/**
+	 * Checks if the specified Numbers are equal or equal Numbers.<br>
+	 * Comparing <code>null</code> and <code>null</code> will return <code>true</code><br>.
+	 * Comparing <code>null</code> and 'anyValue' will return <code>false</code><br>.
+	 * Otherwise, the equal method of the {@link String} class will be executed and return accordingly.
+	 *
+	 * @param number1 the first Number to compare
+	 * @param number2 the second Number to compare
+	 * @return true, if is equal Number
+	 * 
+	 * @see String#equals(Object)
+	 */
+	public static boolean isEqualNumber(Number number1, Number number2) {
+		if (number1==null & number2==null) {
+			return true;
+		} else if (number1==null & number2!=null) {
+			return false;
+		} else if (number1!=null & number2==null) {
+			return false;
+		}
+		return number1.equals(number2);
+	}
+	
+	/**
 	 * Returns a random integer.
 	 *
 	 * @param fromBound the lower bound

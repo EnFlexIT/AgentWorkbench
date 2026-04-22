@@ -11,8 +11,10 @@ import java.io.Writer;
 
 import javax.swing.JFileChooser;
 
+import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.FileSelection;
+import de.enflexit.df.core.model.DataController;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -75,7 +77,7 @@ public class DataWorkbook4XML extends DataWorkbook {
 	 * @param dwLocation the dw location
 	 * @return the data workbook
 	 */
-	public static DataWorkbook loadFromDataWorkBookLocation(DataWorkbookLocation dwLocation) {
+	public static DataWorkbook loadFromDataWorkbookLocation(DataWorkbookLocation dwLocation) {
 		
 		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
@@ -182,22 +184,30 @@ public class DataWorkbook4XML extends DataWorkbook {
 	/**
 	 * Creates a XML DataWorkbok by asking for a storage location.
 	 *
+	 * @param dataController the data controller
 	 * @param component the asking component owner window
 	 * @return the DataWorkbook4XML
 	 */
-	public static DataWorkbook4XML create(Component component) {
-		return DataWorkbook4XML.create(OwnerDetection.getOwnerWindowForComponent(component));
+	public static DataWorkbook4XML create(DataController dataController, Component component) {
+		return DataWorkbook4XML.create(dataController, OwnerDetection.getOwnerWindowForComponent( component));
 	}
 	/**
 	 * Creates a XML DataWorkbok by asking for a storage location.
 	 *
+	 * @param dataController the data controller
 	 * @param owner the owner window
 	 * @return the DataWorkbook4XML
 	 */
-	public static DataWorkbook4XML create(Window owner) {
+	public static DataWorkbook4XML create(DataController dataController, Window owner) {
 		
 		File xmlFile = FileSelection.selectXMLFile(owner, JFileChooser.SAVE_DIALOG, "Create Workbook", "Create XML DataWorkbook", null, null);
 		if (xmlFile==null) return null;
+
+		DataWorkbookLocation dwLocation = new DataWorkbookLocation(DataWorkbook4XML.class, xmlFile.getAbsolutePath());
+		if (dataController.getDataWorkbookReminder().getDataWorkbookLocationList().contains(dwLocation)==true) {
+			AwbMessageDialog.showMessageDialog(owner, "The Data Workbook '" + xmlFile.getName() + "' was already loaded to the data viewer and thus cannot be overwritten!", "Data Workbook already loaded!", AwbMessageDialog.ERROR_MESSAGE);
+			return null;
+		} 
 		
 		DataWorkbook4XML dwbXML = new DataWorkbook4XML(xmlFile);
 		dwbXML.createRandomID();
