@@ -27,6 +27,7 @@ import javax.swing.border.EtchedBorder;
 
 import de.enflexit.awb.bgSystem.db.BgSystemDatabaseConnectionService;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.ApplicationSwitch;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
@@ -829,95 +830,12 @@ public class StartOptions extends AbstractOptionTab implements ActionListener, H
 		this.setFormData2Global();
 		Application.getGlobalInfo().doSaveConfiguration();
 		// --------------------------------------------------------------------
-		this.applySettings();
+		//this.applySettings();
+		ApplicationSwitch.switchExecutionMode(this.optionDialog, this.executionModeOld, this.executionModeNew);
 		// --------------------------------------------------------------------
 		this.optionDialog.setVisible(false);
 	}
-
-	/**
-	 * Apply settings.
-	 */
-	private void applySettings(){
-		
-		if (this.executionModeNew==this.executionModeOld) {
-			// ------------------------------------------------------
-			// --- Same ExecutionMode -------------------------------
-			// ------------------------------------------------------
-			switch (this.executionModeOld) {
-			case APPLICATION:
-				// --- Do nothing in this case ----------------------
-				break;
-			
-			case SERVER:
-			case SERVER_MASTER:
-			case SERVER_SLAVE:
-				// --- Background System Modus ----------------------
-				System.out.println("\n" + Language.translate("Neustart des Server-Dienstes") + " ...");
-				Application.getJadePlatform().stop(false);
-				Application.removeTrayIcon();
-				Application.startAgentWorkbench();
-				break;
-				
-			case DEVICE_SYSTEM:
-				// --- Device / Embedded System Agent ---------------
-				System.out.println("\n" + Language.translate("Neustart") + " " + Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew) + " ...");
-				Application.getJadePlatform().stop(false);
-				if (Application.getProjectsLoaded()!= null) {
-					if (Application.getProjectsLoaded().closeAll(this.optionDialog, true)==false) return;	
-				}		
-				Application.setMainWindow(null);
-				Application.removeTrayIcon();	
-				Application.startAgentWorkbench();
-				break;
-			}
-			
-		} else {
-			// ------------------------------------------------------
-			// --- New ExecutionMode --------------------------------
-			// ------------------------------------------------------
-			String textPrefix = Language.translate("Umschalten von");
-			String executionModeTextOld = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeOld);
-			String textMiddle = Language.translate("auf");
-			String executionModeTextNew = Application.getGlobalInfo().getExecutionModeDescription(this.executionModeNew);
-			System.out.println(textPrefix + " '" + executionModeTextOld + "' " + textMiddle + " '" + executionModeTextNew + "'");
-			
-			// ------------------------------------------------------
-			// --- Controlled shutdown of the current execution -----
-			Application.getJadePlatform().stop(false);
-			
-			// --- Case separation for current ExecutionMode --------
-			switch (this.executionModeOld) {
-			case APPLICATION:
-				// --- Application Modus ----------------------------
-				if (Application.getProjectsLoaded()!= null) {
-					if (Application.getProjectsLoaded().closeAll(this.optionDialog) == false ) return;	
-				}		
-				// --- Close main window and TrayIcon ---------------
-				Application.setMainWindow(null);
-				Application.removeTrayIcon();
-				break;
-
-			case SERVER:
-			case SERVER_MASTER:
-			case SERVER_SLAVE:
-				// --- Background System Modus ----------------------
-				Application.removeTrayIcon();
-				break;
-				
-			case DEVICE_SYSTEM:
-				// --- Device / Embedded System Agent ---------------
-				if (Application.getProjectsLoaded()!= null) {
-					if (Application.getProjectsLoaded().closeAll(this.optionDialog, true)==false) return;	
-				}		
-				Application.setMainWindow(null);
-				Application.removeTrayIcon();	
-				//Application.stopLoggingWriter(); TODO Check if to be used 
-				break;
-			}
-			// --- Restart ------------------------------------------
-			Application.startAgentWorkbench();
-		}
-	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
