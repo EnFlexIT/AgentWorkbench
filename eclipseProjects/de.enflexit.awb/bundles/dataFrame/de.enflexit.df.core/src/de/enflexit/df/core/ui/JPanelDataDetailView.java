@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -35,17 +36,20 @@ import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import tech.tablesaw.api.Table;
 
 /**
- * The Class JPanelDataTable.
+ * The Class JPanelDataDetailView.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelDataTable extends JPanel implements PropertyChangeListener, ActionListener {
+public class JPanelDataDetailView extends JPanel implements PropertyChangeListener, ActionListener {
 
 	private static final long serialVersionUID = -2503356793902058897L;
 
 	private DataController dataController;
+	
 	private JScrollPane jScrollPaneData;
 	private JTable jTableData;
+
+	private JPanel jPanelDataless;
 	
 	private JToolBar jToolBarDatasetNavigation;
 	
@@ -60,7 +64,7 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 	 * Instantiates a new j panel data table.
 	 * @param dataController the data controller
 	 */
-	public JPanelDataTable(DataController dataController) {
+	public JPanelDataDetailView(DataController dataController) {
 		this.setDataController(dataController);
 		this.initialize();
 	}
@@ -68,23 +72,26 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 	 * Initialize.
 	 */
 	private void initialize() {
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
+		this.setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jScrollPaneData = new GridBagConstraints();
 		gbc_jScrollPaneData.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneData.gridx = 0;
 		gbc_jScrollPaneData.gridy = 0;
-		add(getJScrollPaneData(), gbc_jScrollPaneData);
+		this.add(this.getJScrollPaneData(), gbc_jScrollPaneData);
+		
 		GridBagConstraints gbc_jToolBarDatasetNavigation = new GridBagConstraints();
 		gbc_jToolBarDatasetNavigation.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jToolBarDatasetNavigation.insets = new Insets(5, 5, 5, 5);
 		gbc_jToolBarDatasetNavigation.gridx = 0;
 		gbc_jToolBarDatasetNavigation.gridy = 1;
-		add(getJToolBarDatasetNavigation(), gbc_jToolBarDatasetNavigation);
+		this.add(this.getJToolBarDatasetNavigation(), gbc_jToolBarDatasetNavigation);
 	}
 
 	/**
@@ -108,7 +115,7 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 	private JScrollPane getJScrollPaneData() {
 		if (jScrollPaneData == null) {
 			jScrollPaneData = new JScrollPane();
-			jScrollPaneData.setViewportView(getJTableData());
+			jScrollPaneData.setViewportView(this.getJPanelDataless());
 		}
 		return jScrollPaneData;
 	}
@@ -122,13 +129,19 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 				@Override
 				public void valueChanged(ListSelectionEvent lse) {
 					if (lse.getValueIsAdjusting()==true) return;
-					JPanelDataTable.this.setDatasetSelection(lse.getFirstIndex(), lse.getLastIndex(), false);
+					JPanelDataDetailView.this.setDatasetSelection(lse.getFirstIndex(), lse.getLastIndex(), false);
 				}
 			});
 		}
 		return jTableData;
 	}
 
+	private JPanel getJPanelDataless() {
+		if (jPanelDataless==null) {
+			jPanelDataless = new JPanel();
+		}
+		return jPanelDataless;
+	}
 	
 	private JToolBar getJToolBarDatasetNavigation() {
 		if (jToolBarDatasetNavigation == null) {
@@ -207,17 +220,28 @@ public class JPanelDataTable extends JPanel implements PropertyChangeListener, A
 		case DataController.DC_DATA_LOADED:
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			
+			JComponent uiDetail = this.getJPanelDataless();
+			
 			AbstractDataTreeNodeDataSource<?> dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
 			if (dtnoDS!=null) {
-				TablesawTableModel tsTM = null;
-				Table dataTable = dtnoDS.getTable();
-				if (dataTable!=null) {
-					tsTM = new TablesawTableModel(dataTable);
-					this.getJTableData().setModel(tsTM);
+				
+				Table tableSawDataTable = dtnoDS.getTable();
+				if (tableSawDataTable!=null) {
+					// --- Show table data --------------------------- 
+					this.getJTableData().setModel(new TablesawTableModel(tableSawDataTable));
+					
 				} else {
+					// --- Try loading? -----------------------------
+					dtnoDS.loadDataWithinThread();
 					this.getJTableData().setModel(new DefaultTableModel());
 				}
+				uiDetail = this.getJTableData();
 			}
+			
+			// --- Set UI component --------------------------------- 
+			this.getJScrollPaneData().setViewportView(uiDetail);
+			this.getJScrollPaneData().validate();
+			this.getJScrollPaneData().repaint();
 			break;
 		}
 		

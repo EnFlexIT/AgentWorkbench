@@ -111,6 +111,10 @@ public class DataController {
 	private DataTreeModel dataTreeModel; 
 
 	
+	/**
+	 * Returns the {@link DataControllerSelectionModel}.
+	 * @return the selection model
+	 */
 	public DataControllerSelectionModel getSelectionModel() {
 		if (selectionModel==null) {
 			selectionModel = new DataControllerSelectionModel(this);
@@ -120,6 +124,7 @@ public class DataController {
 	
 	// ------------------------------------------------------------------------
 	// --- From here, Data Workbook handling ----------------------------------
+	// ------------------------------------------------------------------------
 	/**
 	 * Returns the list of data workbooks.
 	 * @return the data workbooks
@@ -228,25 +233,7 @@ public class DataController {
 
 	// ------------------------------------------------------------------------
 	// --- From here, Data Source handling ------------------------------------
-//	/**
-//	 * Returns the data sources of the currently selected {@link DataWorkbook}.
-//	 * @return the data sources
-//	 */
-//	public List<AbstractDataSource> getDataSources() {
-//		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
-//		if (dw==null) return null;
-//		return dw.getDataSources();
-//	}
-//	/**
-//	 * Sets the data sources.
-//	 * @param dataSources the new data sources
-//	 */
-//	public void setDataSources(List<AbstractDataSource> dataSources) {
-//		DataWorkbook dw = this.getSelectionModel().getSelectedDataWorkbook();
-//		if (dw==null) return;
-//		dw.setDataSources(dataSources);
-//	}
-	
+	// ------------------------------------------------------------------------
 	/**
 	 * Adds the specified data source.
 	 *
@@ -348,6 +335,11 @@ public class DataController {
 	
 	// ------------------------------------------------------------------------
 	// --- From here, DataStructure structure handling ------------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns the current DataTreeModel.
+	 * @return the data tree model
+	 */
 	public DataTreeModel getDataTreeModel() {
 		if (dataTreeModel==null) {
 			dataTreeModel = new DataTreeModel(this);

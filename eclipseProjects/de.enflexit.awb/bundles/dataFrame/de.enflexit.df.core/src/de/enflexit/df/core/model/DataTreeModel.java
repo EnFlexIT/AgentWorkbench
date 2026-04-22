@@ -255,13 +255,18 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 * @param dw the corresponding {@link DataWorkbook}
 	 * @param dataSource the data source
 	 */
-	private void addedDataSource(DataWorkbook dw,  AbstractDataSource dataSource) {
+	private void addedDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
 
-		// --- Get the corresponding DataWorkbook first -------------
-		List<DefaultMutableTreeNode> treeNodesFound = this.searchTreeNode(this.getSearchFilter4DataWorkbook(dw));
+		// -- Check if the data source node is already there --------
+		List<DefaultMutableTreeNode> treeNodesFound = this.searchTreeNode(this.getSearchFilter4DataSource(dataSource));
+		if (treeNodesFound!=null) return;
+		
+		// --- Get TreeNode of DataWorkbook -------------------------
+		treeNodesFound = this.searchTreeNode(this.getSearchFilter4DataWorkbook(dw));
 		if (treeNodesFound==null || treeNodesFound.size()>1) return;
 		DefaultMutableTreeNode dwNode = treeNodesFound.getFirst();
 
+		
 		// --- Create new node according to data source -------------
 		AbstractDataTreeNodeDataSource<?> ds = null;
 		if (dataSource instanceof CsvDataSource) {

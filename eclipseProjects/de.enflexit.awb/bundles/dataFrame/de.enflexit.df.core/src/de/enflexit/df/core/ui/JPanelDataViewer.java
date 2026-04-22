@@ -1,8 +1,6 @@
 package de.enflexit.df.core.ui;
 
 import java.awt.BorderLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -11,31 +9,33 @@ import javax.swing.JToolBar;
 import de.enflexit.df.core.model.DataController;
 
 /**
- * The Class JPanelData.
+ * The Class JPanelDataViewer.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelData extends JPanel implements PropertyChangeListener {
+public class JPanelDataViewer extends JPanel {
 	
 	private static final long serialVersionUID = 112966832470901946L;
 
 	private DataController dataController;
 	
 	private JToolBarData jToolBarData;
+	
 	private JSplitPane jSplitPaneData;
-	private JPanelTree jPanelTree;
-	private JPanelDataTable jPanelDataTable;
+	private JPanelNavigation jPanelNavigation;
+	private JPanelDataDetailView jPanelDataDetailView;
+	
 	
 	/**
-	 * Instantiates a new JPanelData.
+	 * Instantiates a new JPanelDataViewer.
 	 */
-	public JPanelData() {
+	public JPanelDataViewer() {
 		this(null);
 	}
 	/**
-	 * Instantiates a new JPanelData.
+	 * Instantiates a new JPanelDataViewer.
 	 */
-	public JPanelData(DataController dataController) {
+	public JPanelDataViewer(DataController dataController) {
 		this.setDataController(dataController);
 		this.initialize();
 	}
@@ -79,33 +79,22 @@ public class JPanelData extends JPanel implements PropertyChangeListener {
 			jSplitPaneData.setDividerSize(5);
 			jSplitPaneData.setResizeWeight(0.25);
 			
-			jSplitPaneData.setLeftComponent(this.getJPanelTree());
-			jSplitPaneData.setRightComponent(this.getJPanelDataTable());
+			jSplitPaneData.setLeftComponent(this.getJPanelNavigation());
+			jSplitPaneData.setRightComponent(this.getJPanelDataDetailView());
 		}
 		return jSplitPaneData;
 	}
-	private JPanelTree getJPanelTree() {
-		if (jPanelTree == null) {
-			jPanelTree = new JPanelTree(this.getDataController());
+	private JPanelNavigation getJPanelNavigation() {
+		if (jPanelNavigation == null) {
+			jPanelNavigation = new JPanelNavigation(this.getDataController());
 		}
-		return jPanelTree;
+		return jPanelNavigation;
 	}
-	private JPanelDataTable getJPanelDataTable() {
-		if (jPanelDataTable==null) {
-			jPanelDataTable = new JPanelDataTable(this.getDataController());
+	private JPanelDataDetailView getJPanelDataDetailView() {
+		if (jPanelDataDetailView==null) {
+			jPanelDataDetailView = new JPanelDataDetailView(this.getDataController());
 		}
-		return jPanelDataTable;
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-	 */
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		
-		
-		
+		return jPanelDataDetailView;
 	}
 	
 }

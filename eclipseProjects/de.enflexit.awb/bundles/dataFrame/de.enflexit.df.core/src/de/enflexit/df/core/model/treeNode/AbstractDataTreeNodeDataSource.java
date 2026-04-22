@@ -17,6 +17,8 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 
 	private Table table;
 	
+	private boolean isLoading;
+	
 	/**
 	 * Instantiates a new data tree node data source.
 	 * @param dataSource the data source
@@ -62,6 +64,29 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	public abstract boolean loadData();
 	
 	/**
+	 * Will call load data in dedicated thread.
+	 */
+	public void loadDataWithinThread() {
+
+		if (this.isLoading==false) {
+			
+			this.isLoading = true;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						AbstractDataTreeNodeDataSource.this.loadData();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					} finally {
+						AbstractDataTreeNodeDataSource.this.isLoading=false;
+					}
+				}
+			}, "DataLoader-" + this.getClass().getSimpleName()).start();;
+		}
+	}
+	
+	/**
 	 * Returns the current tablesaw table.
 	 * @return the table
 	 */
@@ -84,5 +109,5 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	public String getCaption() {
 		return this.getDataSource().getName();
 	}
-	
+
 }
