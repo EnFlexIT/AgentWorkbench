@@ -59,6 +59,7 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 		this.dataSource = dataSource;
 	}
 
+	
 	/**
 	 * Will be invoked to load the data bases on the local data source.
 	 */
@@ -83,10 +84,9 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 						AbstractDataTreeNodeDataSource.this.isLoading=false;
 					}
 				}
-			}, "DataLoader-" + this.getClass().getSimpleName()).start();;
+			}, "DataLoader-" + this.getClass().getSimpleName()).start();
 		}
 	}
-	
 	/**
 	 * Informs by firing a PropertyChangeEvent using the {@link DataController}.
 	 *

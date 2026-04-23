@@ -37,6 +37,8 @@ public class DataController {
 	public static final String DC_CLOSED_DATA_WORKBOOK = "DC_CLOSED_DATA_WORKBOOK";
 	public static final String DC_REMOVED_DATA_WORKBOOK = "DC_REMOVED_DATA_WORKBOOK";
 	
+	public static final String DC_DATA_WORKBOOK_CONFIGURATION_CHANGED = "DC_DATA_WORKBOOK_CONFIGURATION_CHANGED";
+	
 	public static final String DC_ADDED_DATA_SOURCE = "DC_ADDED_DATA_SOURCE";
 	public static final String DC_OPENED_DATA_SOURCE = "DC_OPENED_DATA_SOURCE";
 	public static final String DC_CLOSED_DATA_SOURCE = "DC_CLOSED_DATA_SOURCE";
@@ -45,6 +47,7 @@ public class DataController {
 	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_SHOW = "DC_DATA_SOURCE_CONFIGURATION_SHOW";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_CHANGED = "DC_DATA_SOURCE_CONFIGURATION_CHANGED";
+	
 	public static final String DC_DATA_LOADED = "DC_DATA_LOADED";
 	
 	

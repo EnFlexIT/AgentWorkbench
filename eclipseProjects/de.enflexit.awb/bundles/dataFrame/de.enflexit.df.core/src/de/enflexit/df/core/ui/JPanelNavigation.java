@@ -247,14 +247,15 @@ public class JPanelNavigation extends JPanel implements ActionListener, Property
 		
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_WORKBOOK)==true) {
 			this.setConfiguration(true);
+		} else if (evt.getPropertyName().equals(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED)==true) {
+			DefaultMutableTreeNode treeNode = this.getDataController().getSelectionModel().getSelectedDataTreeNode();
+			this.getDataController().getDataTreeModel().nodeChanged(treeNode);
 		
 		} else if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
 			this.setConfiguration(true);
-			
 		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW)==true) {
 			boolean isShowConfig = (boolean) evt.getNewValue();
 			this.setConfiguration(isShowConfig);
-			
 		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_CHANGED)==true) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) this.getJTreeData().getSelectionPath().getLastPathComponent();
 			if (treeNode!=null) {
