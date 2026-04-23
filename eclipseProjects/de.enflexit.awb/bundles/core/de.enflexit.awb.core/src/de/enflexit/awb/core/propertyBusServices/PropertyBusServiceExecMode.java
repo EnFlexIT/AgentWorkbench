@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.properties;
+package de.enflexit.awb.core.propertyBusServices;
 
 import java.util.ArrayList;
 import java.util.List;
