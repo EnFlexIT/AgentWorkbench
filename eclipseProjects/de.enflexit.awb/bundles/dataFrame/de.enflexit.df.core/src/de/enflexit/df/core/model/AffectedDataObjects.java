@@ -1,7 +1,10 @@
 package de.enflexit.df.core.model;
 
 import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
+import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import tech.tablesaw.api.Table;
 
 /**
  * The class AffectedDataObjects represents a container that can hold instances 
@@ -37,7 +40,7 @@ public class AffectedDataObjects {
 	}
 	
 	/**
-	 * Gets the instance of the specified class.
+	 * Returns the first instance of the specified class.
 	 *
 	 * @param <Type> the generic type
 	 * @param typeClass the type class
@@ -66,6 +69,30 @@ public class AffectedDataObjects {
 	 */
 	public AbstractDataSource getDataSource() {
 		return this.getInstance(AbstractDataSource.class);
+	}
+	
+	/**
+	 * Returns the first DataTreeNodeObjectBase, if available.
+	 * @return the data tree node object
+	 */
+	public DataTreeNodeObjectBase getDataTreeNodeObject() {
+		return this.getInstance(DataTreeNodeObjectBase.class);
+	}
+	
+	
+	/**
+	 * Returns the first data source tree node object, if available.
+	 * @return the data tree node object
+	 */
+	public AbstractDataTreeNodeDataSource<?> getDataTreeNodeObjectDataSource() {
+		return this.getInstance(AbstractDataTreeNodeDataSource.class);
+	}
+	/**
+	 * Returns the tablesaw table, if available.
+	 * @return the table instance
+	 */
+	public Table getTable() {
+		return this.getInstance(Table.class);
 	}
 	
 	

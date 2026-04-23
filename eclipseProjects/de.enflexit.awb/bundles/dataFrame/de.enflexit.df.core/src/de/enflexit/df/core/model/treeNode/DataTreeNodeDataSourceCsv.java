@@ -105,7 +105,7 @@ public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<Cs
 			ex.printStackTrace();
 			this.setErrorMessage(ex.getLocalizedMessage());
 		} finally {
-			this.getDataController().firePropertyChange(DataController.DC_DATA_LOADED, oldTable, newTable);
+			this.informLoaded(oldTable, newTable);
 		}
 		return false;
 	}

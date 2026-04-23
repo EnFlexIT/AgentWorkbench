@@ -23,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -30,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.TablesawTableModel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
@@ -214,38 +216,76 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
+		AbstractDataTreeNodeDataSource<?> dtnoDS = null;
+		
 		String propChanged = evt.getPropertyName();
 		
 		switch (propChanged) {
 		case DataController.DC_DATA_LOADED:
-		case DataController.DC_NEW_TREE_PATH_SELECTED:
+			// --- Data could be loaded in a dedicated thread -------
+			AffectedDataObjects ado = (AffectedDataObjects) evt.getNewValue();
+			dtnoDS = ado.getDataTreeNodeObjectDataSource();
 			
-			JComponent uiDetail = this.getJPanelDataless();
-			
-			AbstractDataTreeNodeDataSource<?> dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
-			if (dtnoDS!=null) {
+			if (SwingUtilities.isEventDispatchThread()==true) {
+				// --- Just execute view adjustment -----------------
+				this.setDetailView(dtnoDS);
 				
-				Table tableSawDataTable = dtnoDS.getTable();
-				if (tableSawDataTable!=null) {
-					// --- Show table data --------------------------- 
-					this.getJTableData().setModel(new TablesawTableModel(tableSawDataTable));
-					
-				} else {
-					// --- Try loading? -----------------------------
-					dtnoDS.loadDataWithinThread();
-					this.getJTableData().setModel(new DefaultTableModel());
-				}
-				uiDetail = this.getJTableData();
+			} else {
+				// --- Hand over to Swing Thread --------------------
+				final AbstractDataTreeNodeDataSource<?> dtnoDSFinal = dtnoDS; 
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JPanelDataDetailView.this.setDetailView(dtnoDSFinal);
+					}
+				});
 			}
-			
-			// --- Set UI component --------------------------------- 
-			this.getJScrollPaneData().setViewportView(uiDetail);
-			this.getJScrollPaneData().validate();
-			this.getJScrollPaneData().repaint();
 			break;
+			
+		case DataController.DC_NEW_TREE_PATH_SELECTED:
+			dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+			this.setDetailView(dtnoDS);
+			break;
+			
 		}
 		
 	}
+	
+	/**
+	 * Sets the detail view.
+	 * @param dtnoDS the data source tree node to show
+	 */
+	private void setDetailView(AbstractDataTreeNodeDataSource<?> dtnoDS) {
+
+		// --- Direct exit? -----------------------------------------
+		AbstractDataTreeNodeDataSource<?> dtnoDsSelected = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+		boolean useDatalessView = (dtnoDS==null || dtnoDsSelected==null);
+		boolean isDifferentData = (dtnoDS!=null && dtnoDsSelected!=null && dtnoDS!=dtnoDsSelected);
+		if (isDifferentData== true) return;
+		
+		JComponent uiDetail = this.getJPanelDataless();
+		if (useDatalessView==false) {
+			
+			Table tableSawDataTable = dtnoDS.getTable();
+			if (tableSawDataTable!=null) {
+				// --- Show table data ------------------------------
+				this.getJTableData().setModel(new TablesawTableModel(tableSawDataTable));
+				
+			} else {
+				// --- Try loading? ---------------------------------
+				dtnoDS.loadDataWithinThread();
+				this.getJTableData().setModel(new DefaultTableModel());
+			}
+			uiDetail = this.getJTableData();
+		}
+		
+		// --- Set UI component -------------------------------------
+		this.getJScrollPaneData().setViewportView(uiDetail);
+		this.getJScrollPaneData().validate();
+		this.getJScrollPaneData().repaint();
+		
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
