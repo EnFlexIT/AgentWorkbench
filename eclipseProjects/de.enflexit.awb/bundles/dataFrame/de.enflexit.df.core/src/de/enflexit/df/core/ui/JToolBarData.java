@@ -82,11 +82,11 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		
 		this.add(this.getJButtonDataWorkbookNew());
 		this.add(this.getJButtonDataWorkbookOpen());
-		this.add(this.getJButtonDataWorkbookSave());
 		this.add(this.getJButtonDataWorkbookDelete());
 		
 		this.addSeparator();
 		this.add(this.getJButtonSelectedDataWorkbookOpen());
+		this.add(this.getJButtonDataWorkbookSave());
 		this.add(this.getJButtonSelectedDataWorkbookClose());
 		
 		this.addSeparator();
@@ -452,10 +452,12 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 
 		DataTreeNodeDataWorkbook dtnoDW = selModel.getSelectedDataTreeNodeDataWorkbook();
 		if (dtnoDW==null) {
-			this.getJButtonSelectedDataWorkbookOpen().setEnabled(false);		
+			this.getJButtonSelectedDataWorkbookOpen().setEnabled(false);
+			this.getJButtonDataWorkbookSave().setEnabled(false);
 			this.getJButtonSelectedDataWorkbookClose().setEnabled(false);
 		} else {
 			this.getJButtonSelectedDataWorkbookOpen().setEnabled(dtnoDW.isDataSourcesLoaded()==false);
+			this.getJButtonDataWorkbookSave().setEnabled(dtnoDW.isDataSourcesLoaded()==true);
 			this.getJButtonSelectedDataWorkbookClose().setEnabled(dtnoDW.isDataSourcesLoaded()==true);
 		}
 		

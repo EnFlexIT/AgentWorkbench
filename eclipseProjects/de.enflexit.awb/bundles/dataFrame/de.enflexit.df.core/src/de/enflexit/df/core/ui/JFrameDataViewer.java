@@ -14,28 +14,28 @@ import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 
 /**
- * The Class JFrameDataView.
+ * The Class JFrameDataViewer.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JFrameDataView extends JFrame {
+public class JFrameDataViewer extends JFrame {
 
 	private static final long serialVersionUID = 4308063704167480118L;
 
 	private Dimension ownerSize;
-	private JPanelData jPanelData;
+	private JPanelDataViewer jPanelDataViewer;
 	
 	/**
-	 * Instantiates a new JFrameDataView.
+	 * Instantiates a new JFrameDataViewer.
 	 */
-	public JFrameDataView() {
+	public JFrameDataViewer() {
 		this(null);
 	}
 	/**
-	 * Instantiates a new JFrameDataView.
+	 * Instantiates a new JFrameDataViewer.
 	 * @param owner the owner window
 	 */
-	public JFrameDataView(Window owner) {
+	public JFrameDataViewer(Window owner) {
 		if (owner!=null) this.ownerSize = owner.getSize();
 		this.initialize();
 	}
@@ -49,7 +49,7 @@ public class JFrameDataView extends JFrame {
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
-		this.getContentPane().add(this.getJPanelData(), BorderLayout.CENTER);
+		this.getContentPane().add(this.getJPanelDataViewer(), BorderLayout.CENTER);
 		
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		SwingUtilities.updateComponentTreeUI(this);
@@ -71,14 +71,14 @@ public class JFrameDataView extends JFrame {
 	}
 	
 	/**
-	 * Returns the JPanelData.
-	 * @return the j panel data
+	 * Returns the JPanelDataViewer.
+	 * @return the j panel data viewer
 	 */
-	private JPanelData getJPanelData() {
-		if (jPanelData==null) {
-			jPanelData = new JPanelData();
+	private JPanelDataViewer getJPanelDataViewer() {
+		if (jPanelDataViewer==null) {
+			jPanelDataViewer = new JPanelDataViewer();
 		}
-		return jPanelData;
+		return jPanelDataViewer;
 	}
 	
 }

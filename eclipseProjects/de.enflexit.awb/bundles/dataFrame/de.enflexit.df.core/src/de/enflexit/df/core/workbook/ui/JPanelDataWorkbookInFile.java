@@ -2,6 +2,7 @@ package de.enflexit.df.core.workbook.ui;
 
 import javax.swing.JPanel;
 
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
 import de.enflexit.df.core.workbook.DataWorkbook4XML;
@@ -18,17 +19,21 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * The Class JPanelDataWorkbookInFile.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelDataWorkbookInFile extends JPanel {
+public class JPanelDataWorkbookInFile extends JPanel implements DocumentListener {
 
 	private static final long serialVersionUID = 621465097935840406L;
 	
-	public DataWorkbook dataWorkbook;
+	private DataController dataController;
+	private DataWorkbook dataWorkbook;
+	
 	private JLabel jLabelCaptionFile;
 	private JLabel jLabelFilePath;
 	private JLabel jLableCaptionName;
@@ -43,15 +48,19 @@ public class JPanelDataWorkbookInFile extends JPanel {
 	 * Instantiates a new j panel data workbook as file.
 	 */
 	public JPanelDataWorkbookInFile() {
-		this(null);
+		this(null, null);
 	}
+	
 	/**
 	 * Instantiates a  JPanelDataWorkbookInFile.
+	 *
+	 * @param dataController the data controller
 	 * @param dataWorkbook the data workbook
 	 */
-	public JPanelDataWorkbookInFile(DataWorkbook dataWorkbook) {
+	public JPanelDataWorkbookInFile(DataController dataController, DataWorkbook dataWorkbook) {
 		this.initialize();
 		this.setDataWorkbook(dataWorkbook);
+		this.setDataController(dataController);
 	}
 	
 	/**
@@ -77,30 +86,32 @@ public class JPanelDataWorkbookInFile extends JPanel {
 		gbc_jLabelID.gridx = 1;
 		gbc_jLabelID.gridy = 0;
 		add(getJLabelID(), gbc_jLabelID);
+		
 		GridBagConstraints gbc_jLableCaptionName = new GridBagConstraints();
 		gbc_jLableCaptionName.anchor = GridBagConstraints.WEST;
 		gbc_jLableCaptionName.insets = new Insets(5, 5, 0, 0);
 		gbc_jLableCaptionName.gridx = 0;
 		gbc_jLableCaptionName.gridy = 1;
-		add(getJLableCaptionName(), gbc_jLableCaptionName);
+		this.add(this.getJLableCaptionName(), gbc_jLableCaptionName);
 		GridBagConstraints gbc_jTextFieldName = new GridBagConstraints();
 		gbc_jTextFieldName.insets = new Insets(5, 5, 0, 5);
 		gbc_jTextFieldName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldName.gridx = 1;
 		gbc_jTextFieldName.gridy = 1;
-		add(getJTextFieldName(), gbc_jTextFieldName);
+		this.add(this.getJTextFieldName(), gbc_jTextFieldName);
+		
 		GridBagConstraints gbc_jLabelDescription = new GridBagConstraints();
 		gbc_jLabelDescription.anchor = GridBagConstraints.NORTH;
 		gbc_jLabelDescription.insets = new Insets(5, 5, 0, 0);
 		gbc_jLabelDescription.gridx = 0;
 		gbc_jLabelDescription.gridy = 2;
-		add(getJLabelDescription(), gbc_jLabelDescription);
+		this.add(this.getJLabelDescription(), gbc_jLabelDescription);
 		GridBagConstraints gbc_jScrollPaneDescription = new GridBagConstraints();
 		gbc_jScrollPaneDescription.insets = new Insets(5, 5, 0, 5);
 		gbc_jScrollPaneDescription.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneDescription.gridx = 1;
 		gbc_jScrollPaneDescription.gridy = 2;
-		add(getJScrollPaneDescription(), gbc_jScrollPaneDescription);
+		this.add(this.getJScrollPaneDescription(), gbc_jScrollPaneDescription);
 		
 		GridBagConstraints gbc_jLabelCaptionFile = new GridBagConstraints();
 		gbc_jLabelCaptionFile.anchor = GridBagConstraints.NORTHWEST;
@@ -116,6 +127,29 @@ public class JPanelDataWorkbookInFile extends JPanel {
 		gbc_jLabelFilePath.gridy = 3;
 		this.add(this.getJLabelFilePath(), gbc_jLabelFilePath);
 		
+	}
+	
+	/**
+	 * Returns the controller.
+	 * @return the controller
+	 */
+	private DataController getDataController() {
+		return this.dataController;
+	}
+	/**
+	 * Sets the data controller.
+	 * @param dataController the new data controller
+	 */
+	public void setDataController(DataController dataController) {
+		this.dataController = dataController;
+	}
+	/**
+	 * Informs the data controller about settings changes.
+	 */
+	protected void informDataWorkbookSettingChanged() {
+		if (this.getDataController()!=null) {
+			this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, null);	
+		}
 	}
 	
 	/**
@@ -151,6 +185,7 @@ public class JPanelDataWorkbookInFile extends JPanel {
 		this.getJLabelFilePath().setText("<html>" + filePath + "</html>");
 	}
 	
+	
 	private JLabel getJLabelCaptionID() {
 		if (jLabelCaptionID == null) {
 			jLabelCaptionID = new JLabel("ID:");
@@ -181,6 +216,7 @@ public class JPanelDataWorkbookInFile extends JPanel {
 			jTextFieldName = new JTextField();
 			jTextFieldName.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldName.setPreferredSize(new Dimension(80, 26));
+			jTextFieldName.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldName;
 	}
@@ -206,6 +242,7 @@ public class JPanelDataWorkbookInFile extends JPanel {
 			jTextAreaDescription = new JTextArea();
 			jTextAreaDescription.setText((String) null);
 			jTextAreaDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextAreaDescription.getDocument().addDocumentListener(this);
 		}
 		return jTextAreaDescription;
 	}
@@ -228,5 +265,42 @@ public class JPanelDataWorkbookInFile extends JPanel {
 		return jLabelFilePath;
 	}
 	
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void insertUpdate(DocumentEvent de) {
+		this.onChange(de);
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void removeUpdate(DocumentEvent de) {
+		this.onChange(de);
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void changedUpdate(DocumentEvent de) {
+		this.onChange(de);
+	}
+	/**
+	 * Reacts on document events.
+	 * @param de the DocumentEvent
+	 */
+	private void onChange(DocumentEvent de) {
+		
+		if (de.getDocument()==this.getJTextFieldName().getDocument()) {
+			this.getDataWorkbook().setName(this.getJTextFieldName().getText());
+			this.informDataWorkbookSettingChanged();
+		} else if (de.getDocument()==this.getJTextAreaDescription().getDocument()) {
+			this.getDataWorkbook().setDescription(this.getJTextAreaDescription().getText());
+			this.informDataWorkbookSettingChanged();
+		}
+	}
 	
 }

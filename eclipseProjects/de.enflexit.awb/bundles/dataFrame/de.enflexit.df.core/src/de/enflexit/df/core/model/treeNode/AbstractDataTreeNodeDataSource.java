@@ -1,6 +1,7 @@
 package de.enflexit.df.core.model.treeNode;
 
 import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.ConfigurationPanel;
 import tech.tablesaw.api.Table;
@@ -16,6 +17,8 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	private DS dataSource;
 
 	private Table table;
+	
+	private boolean isLoading;
 	
 	/**
 	 * Instantiates a new data tree node data source.
@@ -56,10 +59,44 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 		this.dataSource = dataSource;
 	}
 
+	
 	/**
 	 * Will be invoked to load the data bases on the local data source.
 	 */
 	public abstract boolean loadData();
+	
+	/**
+	 * Will call load data in dedicated thread.
+	 */
+	public void loadDataWithinThread() {
+
+		if (this.isLoading==false) {
+			
+			this.isLoading = true;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						AbstractDataTreeNodeDataSource.this.loadData();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					} finally {
+						AbstractDataTreeNodeDataSource.this.isLoading=false;
+					}
+				}
+			}, "DataLoader-" + this.getClass().getSimpleName()).start();
+		}
+	}
+	/**
+	 * Informs by firing a PropertyChangeEvent using the {@link DataController}.
+	 *
+	 * @param oldTable the old tablesaw table
+	 * @param newTable the new tablesaw table
+	 */
+	protected void informLoaded(Table oldTable, Table newTable) {
+		this.getDataController().firePropertyChange(DataController.DC_DATA_LOADED, AffectedDataObjects.create(this, this.getDataSource(), oldTable), AffectedDataObjects.create(this, this.getDataSource(), newTable));
+	}
+
 	
 	/**
 	 * Returns the current tablesaw table.
@@ -84,5 +121,5 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	public String getCaption() {
 		return this.getDataSource().getName();
 	}
-	
+
 }

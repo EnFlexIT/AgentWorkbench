@@ -24,11 +24,11 @@ import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 
 /**
- * The Class JPanelTree.
+ * The Class JPanelNavigation.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelTree extends JPanel implements ActionListener, PropertyChangeListener {
+public class JPanelNavigation extends JPanel implements ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 4514690381659493450L;
 	
@@ -50,17 +50,17 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 	private JButton jButtonResetSearch;
 	
 	/**
-	 * Instantiates a new JPanelTree.
+	 * Instantiates a new JPanelNavigation.
 	 */
 	@SuppressWarnings("unused")
-	private JPanelTree() {
+	private JPanelNavigation() {
 		this(null);
 	}
 	/**
-	 * Instantiates a new JPanelTree.
-	 * @param jPanelData the current JPanelData instance
+	 * Instantiates a new JPanelNavigation.
+	 * @param jPanelData the current JPanelDataViewer instance
 	 */
-	public JPanelTree(DataController dataController) {
+	public JPanelNavigation(DataController dataController) {
 		this.setDataController(dataController);
 		this.initialize();
 	}
@@ -247,14 +247,15 @@ public class JPanelTree extends JPanel implements ActionListener, PropertyChange
 		
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_WORKBOOK)==true) {
 			this.setConfiguration(true);
+		} else if (evt.getPropertyName().equals(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED)==true) {
+			DefaultMutableTreeNode treeNode = this.getDataController().getSelectionModel().getSelectedDataTreeNode();
+			this.getDataController().getDataTreeModel().nodeChanged(treeNode);
 		
 		} else if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
 			this.setConfiguration(true);
-			
 		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW)==true) {
 			boolean isShowConfig = (boolean) evt.getNewValue();
 			this.setConfiguration(isShowConfig);
-			
 		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_CHANGED)==true) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) this.getJTreeData().getSelectionPath().getLastPathComponent();
 			if (treeNode!=null) {

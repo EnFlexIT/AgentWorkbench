@@ -119,9 +119,9 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 	public JPanel getJPanelConfiguration() {
 		if (jPanelConfiguration==null) {
 			if (this.getDataWorkbook() instanceof DataWorkbook4XML || this.getDataWorkbook() instanceof DataWorkbook4JSON) {
-				jPanelConfiguration = new JPanelDataWorkbookInFile(this.getDataWorkbook());
+				jPanelConfiguration = new JPanelDataWorkbookInFile(this.getDataController(), this.getDataWorkbook());
 			} else if (this.getDataWorkbook() instanceof DataWorkbook4DB) {
-				jPanelConfiguration = new JPanelDataWorkbookInDB(this.getDataWorkbook());
+				jPanelConfiguration = new JPanelDataWorkbookInDB(this.getDataController(), this.getDataWorkbook());
 			}
 		}
 		return jPanelConfiguration;

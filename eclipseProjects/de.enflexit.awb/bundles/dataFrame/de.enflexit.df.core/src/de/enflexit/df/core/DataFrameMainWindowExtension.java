@@ -11,7 +11,7 @@ import javax.swing.JMenuItem;
 
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.df.core.ui.JFrameDataView;
+import de.enflexit.df.core.ui.JFrameDataViewer;
 
 /**
  * The Class DataFrameMainWindowExtension.
@@ -24,7 +24,7 @@ public class DataFrameMainWindowExtension extends MainWindowExtension implements
 	private JMenuItem jMenuItemDataViews;
 	private JMenuItem jMenuItemDataSettings;
 	
-	private JFrameDataView dvDialog;
+	private JFrameDataViewer dvDialog;
 	
 	
 	/* (non-Javadoc)
@@ -93,7 +93,7 @@ public class DataFrameMainWindowExtension extends MainWindowExtension implements
 		if (dvDialog==null) {
 			// --- Open the dialog, if not already open ---
 			Window owner = OwnerDetection.getOwnerWindowForComponent(this.getJMenuItemDataViews());
-			dvDialog = new JFrameDataView(owner);
+			dvDialog = new JFrameDataViewer(owner);
 			dvDialog.setVisible(true);
 			dvDialog.addWindowListener(new WindowAdapter() {
 				@Override

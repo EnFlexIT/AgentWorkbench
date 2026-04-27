@@ -38,7 +38,7 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
 			
 			// --- Set Icon and Label -------------------------------
 			renderLabel.setIcon(dtno.getImageIcon());
-			renderLabel.setText(dtno.toString());
+			renderLabel.setText(dtno.getCaption());
 			renderLabel.setToolTipText(dtno.getToolTipText());
 			
 			// --- Do we have an error ------------------------------
