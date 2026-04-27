@@ -10,6 +10,8 @@ import de.enflexit.awb.core.config.DeviceAgentDescription;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.core.jade.NetworkAddresses;
+import de.enflexit.awb.core.jade.NetworkAddresses.NetworkAddress;
 import de.enflexit.awb.core.project.PlatformJadeConfig;
 import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
 import de.enflexit.common.properties.Properties;
@@ -401,6 +403,15 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		}
 		Integer localMtpPort = Application.getGlobalInfo().getOwnMtpPort();
 		String localMtpProtocol = Application.getGlobalInfo().getMtpProtocol().toString();
+		
+		// --- Get the available network addresses ------------------------------------------------
+		NetworkAddresses networkaddresses = new NetworkAddresses();
+		Vector<NetworkAddress> addressSelection = networkaddresses.getNetworkAddressVector();
+		int networkCounter = 0;
+		for (NetworkAddress networkaddress : addressSelection) {
+			properties.setStringValue("local.ip.selection[" + networkCounter + "]", networkaddress.toString());
+			networkCounter++;
+		}
 		
 		// --- Set property values ----------------------------------------------------------------
 		properties.setStringValue(SERVER_MASTER_URL, serverMasterUrl);
