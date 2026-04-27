@@ -1,9 +1,11 @@
 package de.enflexit.awb.core.propertyBusServices;
 
+import java.io.File;
+
+import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.project.Project;
 import de.enflexit.awb.core.project.setup.SimulationSetups;
 import de.enflexit.common.properties.Properties;
-import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.ApplicationPropertyBus;
 import de.enflexit.common.properties.bus.PropertyBusService;
 
@@ -41,29 +43,27 @@ public class PropertyBusServiceProjectSetups implements PropertyBusService {
 		
 		if (properties == null) properties = new Properties();
 
-		if (arguments == null) {
-			return properties;
-		}
+		if (arguments == null) return properties;
+		String projectFolder = Application.getGlobalInfo().getPathProjects();
+		
+		// --- Split the arguments ----------------------------------------------------------------
 		String[] projects = arguments.split(",");
 		for (int i = 0; i < projects.length; i++) {
-			Project project = Project.load(projects[i].trim());
-			// TODO hide pop-ups when project can't be loaded
+			// --- Prepare the file path to the next project and load -----------------------------
+			File projectPath = new File(projectFolder+projects[i].trim());
+			Project project = Project.loadProjectXml(projectPath);
+			// TODO Hide pop-ups when a project fails to load
 			
+			// --- If successful, get the available setups and set the results --------------------
 			if (project != null) {
 				SimulationSetups setups = project.getSimulationSetups();
 				int setupCounter = 0;
 				for (String setup : setups.keySet()) {
-					properties.setStringValue("project["+i+"]"+"setup["+setupCounter+"]", setup);
+					properties.setStringValue("project["+i+"]."+"setup["+setupCounter+"]", setup);
 					setupCounter++;
 				}
-				
-			} else {
-				// TODO The get endpoint can't handle property messages and is not setup to deal with errors. How to deal with this problem?
-				properties.setPropertyMessage(PropertyMessage.MessageType.Error, properties.getPropertyMessage()+"project["+i+"] could not be found");
 			}
 		}
-		
 		return properties;
 	}
-
 }
