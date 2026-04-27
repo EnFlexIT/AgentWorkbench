@@ -12,8 +12,6 @@ import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
 import de.enflexit.awb.core.project.PlatformJadeConfig;
 import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
-import de.enflexit.awb.core.project.Project;
-import de.enflexit.awb.core.project.setup.SimulationSetups;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.PropertyBusService;
@@ -99,7 +97,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		if (localUrl == null) {
 			localUrl = PlatformJadeConfig.MTP_IP_AUTO_Config;
 		}
-		
 		
 		// --- Set common values ----------------------------------------------------------------------------
 		Application.getGlobalInfo().setServerMasterURL(serverMasterUrl);
@@ -221,7 +218,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 			}
 		}
 		
-		
 		// --------------------------------------------------------------------------------------------------
 		// --- Additional checks based on execution mode ----------------------------------------------------
 		// --------------------------------------------------------------------------------------------------
@@ -260,7 +256,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	 */
 	private void hasValidPropertiesForBackgroundMode(Properties properties2check, List<String> invalidValues) {
 		
-		
 		// --- Extract all the necessary values for background mode -----------------------------------------
 		String serverMasterUrl = properties2check.getStringValue(SERVER_MASTER_URL);
 		Integer serverMasterPort = properties2check.getIntegerValue(SERVER_MASTER_PORT);
@@ -298,7 +293,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	 */
 	private void hasValidPropertiesForDeviceSystemMode(Properties properties2check, List<String> invalidValues) {
 		
-		
 		DeviceSystemExecutionMode deviceExecMode = this.findDeviceSystemExecutionModeFromString(properties2check.getStringValue(DEVICE_EXEC_MODE));
 		if (deviceExecMode == null) {
 			invalidValues.add("Device execution mode is missing or invalid");
@@ -308,50 +302,17 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		String projectString = properties2check.getStringValue(SELECTED_PROJECT);
 		if (projectString == null || projectString.isBlank()) {
 			invalidValues.add("Project is missing");
-			
-		} else {
-
-			// --- Check if the project can be found ------------------------------------------------------------
-			String[] projectFolders = Application.getGlobalInfo().getProjectSubDirectories();
-			boolean isSelectedProjectPresent = false;
-			for (String projectFolder : projectFolders) {
-				if (projectString.equals(projectFolder)) {
-					isSelectedProjectPresent = true;
-				}
-			}
-			if (isSelectedProjectPresent == false) {
-				invalidValues.add("Selected Project cannot be found");
-			}
 		}
 		
-		// --- DeviceSystemExecutionMode.SETUP --------------------------------------------------------------
 		if (deviceExecMode == DeviceSystemExecutionMode.SETUP) {
 			
 			// --- Check whether the Setup is missing  ------------------------------------------------------
 			String serviceSetup = properties2check.getStringValue(SERVICE_SETUP);
 			if (serviceSetup == null || serviceSetup.isBlank()) {
 				invalidValues.add("Service setup is missing");
-
-			} else {
-				// --- Check whether the Setup is valid -----------------------------------------------------
-				if (projectString != null) {
-					SimulationSetups allowedSetups = null;
-					Project projectSelected = Project.load(projectString);
-					if (projectSelected != null) {
-						allowedSetups = projectSelected.getSimulationSetups();
-					}
-					
-					if (allowedSetups != null && allowedSetups.containsSetupName(serviceSetup) == false) {
-						invalidValues.add("Selected setup is invalid for the project.");
-					}
-					
-				}
 			}
-			
-			
-			// --- DeviceSystemExecutionMode.AGENT --------------------------------------------------------------
+
 		} else if (deviceExecMode == DeviceSystemExecutionMode.AGENT){
-			// TODO More criteria for valid agents??
 			
 			int agentKeyCounter = 0;
 			String agentClass;
