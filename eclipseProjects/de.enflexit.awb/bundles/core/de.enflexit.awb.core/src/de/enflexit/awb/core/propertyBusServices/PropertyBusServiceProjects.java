@@ -36,6 +36,9 @@ public class PropertyBusServiceProjects implements PropertyBusService {
 		
 		int projectCounter = 0;
 		String[] projectFolders = Application.getGlobalInfo().getProjectSubDirectories();
+		if (projectFolders == null) {
+			return properties;
+		}
 		for (String project : projectFolders) {
 			properties.setStringValue("project["+projectCounter+"]", project);
 			projectCounter++;

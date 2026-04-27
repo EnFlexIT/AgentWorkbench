@@ -44,15 +44,21 @@ public class PropertyBusServiceProjectSetups implements PropertyBusService {
 		if (properties == null) properties = new Properties();
 
 		if (arguments == null) return properties;
+		
 		String projectFolder = Application.getGlobalInfo().getPathProjects();
+		if (projectFolder == null) {
+			return properties;
+		}
 		
 		// --- Split the arguments ----------------------------------------------------------------
 		String[] projects = arguments.split(",");
 		for (int i = 0; i < projects.length; i++) {
 			// --- Prepare the file path to the next project and load -----------------------------
 			File projectPath = new File(projectFolder+projects[i].trim());
-			Project project = Project.loadProjectXml(projectPath);
-			// TODO Hide pop-ups when a project fails to load
+			Project project = null;
+			if (projectPath != null && projectPath.exists() == true) {
+				project = Project.loadProjectXml(projectPath);
+			}
 			
 			// --- If successful, get the available setups and set the results --------------------
 			if (project != null) {
