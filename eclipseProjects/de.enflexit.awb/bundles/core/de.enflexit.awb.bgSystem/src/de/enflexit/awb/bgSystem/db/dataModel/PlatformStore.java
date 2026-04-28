@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.enflexit.awb.bgSystem.db.BgSystemDatabaseHandler;
+import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 
 /**
  * The Class PlatformStore is used by the ServerMasterAgent to organize
@@ -13,9 +15,31 @@ import de.enflexit.awb.bgSystem.db.BgSystemDatabaseHandler;
  */
 public class PlatformStore {
 
+	private static PlatformStore instance;
+	
 	private List<BgSystemPlatform> platformList; 
 	private BgSystemDatabaseHandler dbHandler;
 	
+	
+	/**
+	 * Instantiates a new platform store.
+	 */
+	private PlatformStore() {
+	}
+	
+	/**
+	 * Returns the single instance of PlatformStore.
+	 *
+	 * @return single instance of PlatformStore
+	 */
+	public static PlatformStore getInstance() {
+		if (instance == null) {
+			if (Application.getGlobalInfo().getExecutionMode() == ExecutionMode.SERVER_MASTER) {
+				instance = new PlatformStore();
+			}
+		}
+		return instance;
+	}
 	
 	/**
 	 * Returns the current platform list.

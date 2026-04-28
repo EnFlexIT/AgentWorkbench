@@ -78,8 +78,6 @@ public class ServerMasterAgent extends Agent {
 	private Ontology ontology = AWB_DistributionOntology.getInstance();
 	private Codec codec = new SLCodec();
 	
-	private PlatformStore platformStore;
-	
 	private ParallelBehaviour parBehaiv;
 	
 	private HashMap<String, Long> lastRequestedSlaveAgents;
@@ -112,10 +110,7 @@ public class ServerMasterAgent extends Agent {
 	 * @return the platform store
 	 */
 	private PlatformStore getPlatformStore() {
-		if (platformStore==null) {
-			platformStore = new PlatformStore();
-		}
-		return platformStore;
+		return PlatformStore.getInstance();
 	}
 	
 	/**

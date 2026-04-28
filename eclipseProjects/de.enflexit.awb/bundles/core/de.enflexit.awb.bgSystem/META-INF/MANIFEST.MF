@@ -15,7 +15,8 @@ Export-Package: de.enflexit.awb.bgSystem,
  de.enflexit.awb.bgSystem.db,
  de.enflexit.awb.bgSystem.db.dataModel
 Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml,
- OSGI-INF/baseClassLoadService.xml
+ OSGI-INF/baseClassLoadService.xml,
+ OSGI-INF/PropertyBusServiceMasterSlavesGet.xml
 Require-Bundle: de.enflexit.db.hibernate,
  org.eclipse.osgi
 Import-Package: de.enflexit.awb.core,
@@ -29,6 +30,8 @@ Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.simulation.ontology,
  de.enflexit.common,
  de.enflexit.common.classLoadService,
+ de.enflexit.common.properties,
+ de.enflexit.common.properties.bus,
  jade.content,
  jade.content.lang,
  jade.content.lang.sl,
