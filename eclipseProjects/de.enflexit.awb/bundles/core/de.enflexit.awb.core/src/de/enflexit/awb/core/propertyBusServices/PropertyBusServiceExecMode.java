@@ -1,4 +1,4 @@
-package de.enflexit.awb.core.properties;
+package de.enflexit.awb.core.propertyBusServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +10,10 @@ import de.enflexit.awb.core.config.DeviceAgentDescription;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.core.jade.NetworkAddresses;
+import de.enflexit.awb.core.jade.NetworkAddresses.NetworkAddress;
 import de.enflexit.awb.core.project.PlatformJadeConfig;
 import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
-import de.enflexit.awb.core.project.Project;
-import de.enflexit.awb.core.project.setup.SimulationSetups;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.PropertyBusService;
@@ -45,14 +45,14 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	public static final String SELECTED_PROJECT = "embeddedsystem.project";
 	public static final String AUTO_INIT_BGSYSTEM = "bgsystem.auto_init";
 	public static final String SERVER_MASTER_PROTOCOL = "server.master.protocol";
+	public final static String EMBEDDEDSYSTEM_AGENT_CLASSNAME="embeddedsystem.agent[X].classname";
+	public final static String EMBEDDEDSYSTEM_AGENT_AGENTNAME="embeddedsystem.agent[X].agentname";
+
 
 	// --- The hibernate factory id which is always used for the background system --------------------------
 	public static final String BGSYSTEM_FACTORY = "de.enflexit.awb.bgSystem.db";
 	
 	
-	
-	
-
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
 	*/
@@ -103,8 +103,8 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 			localUrl = PlatformJadeConfig.MTP_IP_AUTO_Config;
 		}
 		
-		
 		// --- Set common values ----------------------------------------------------------------------------
+		Application.getGlobalInfo().setServerAutoRun(false);
 		Application.getGlobalInfo().setServerMasterURL(serverMasterUrl);
 		Application.getGlobalInfo().setServerMasterPort(serverMasterPort);
 		Application.getGlobalInfo().setServerMasterPort4MTP(serverMasterPortMtp);
@@ -119,7 +119,7 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		// --------------------------------------------------------------------------------------------------
 		
 		// --- Background mode ------------------------------------------------------------------------------
-		if (newExecutionMode == ExecutionMode.SERVER_MASTER || newExecutionMode == ExecutionMode.SERVER_SLAVE) {
+		if (newExecutionMode == ExecutionMode.SERVER) {
 			// --- In background mode auto run has to be true -----------------------------------------------
 			Application.getGlobalInfo().setServerAutoRun(true);
 		
@@ -144,16 +144,20 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 				// --- Set values specific to DeviceSystemExecutionMode.AGENT -------------------------------
 			} else {
 				
+				// --- Prepare the first agent name and class -----------------------------------------------
 				int agentCounter = 0;
 				Vector<DeviceAgentDescription> agents2Set = new Vector<>();
+				String agentClass = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)));
+				String agentName = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentCounter)));
 				
-				while (properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].classname") != null && properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].agentname")!= null) {
-					// --- Extract the next agent name and class and add them to the vector -----------------
-					String agentName = properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].agentname");
-					String agentClass = properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].classname");
-					
+				while (agentClass != null && agentName != null) {
 					agents2Set.add(new DeviceAgentDescription(agentName, agentClass));
+
+					// --- Prepare the next agent -----------------------------------------------------------
 					agentCounter++;
+					agentName = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentCounter)));
+					agentClass = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)));
+					
 				}
 				Application.getGlobalInfo().setDeviceServiceAgents(agents2Set);
 			}
@@ -224,7 +228,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 			}
 		}
 		
-		
 		// --------------------------------------------------------------------------------------------------
 		// --- Additional checks based on execution mode ----------------------------------------------------
 		// --------------------------------------------------------------------------------------------------
@@ -263,7 +266,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	 */
 	private void hasValidPropertiesForBackgroundMode(Properties properties2check, List<String> invalidValues) {
 		
-		
 		// --- Extract all the necessary values for background mode -----------------------------------------
 		String serverMasterUrl = properties2check.getStringValue(SERVER_MASTER_URL);
 		Integer serverMasterPort = properties2check.getIntegerValue(SERVER_MASTER_PORT);
@@ -301,7 +303,6 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	 */
 	private void hasValidPropertiesForDeviceSystemMode(Properties properties2check, List<String> invalidValues) {
 		
-		
 		DeviceSystemExecutionMode deviceExecMode = this.findDeviceSystemExecutionModeFromString(properties2check.getStringValue(DEVICE_EXEC_MODE));
 		if (deviceExecMode == null) {
 			invalidValues.add("Device execution mode is missing or invalid");
@@ -311,62 +312,31 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		String projectString = properties2check.getStringValue(SELECTED_PROJECT);
 		if (projectString == null || projectString.isBlank()) {
 			invalidValues.add("Project is missing");
-			
-		} else {
-
-			// --- Check if the project can be found ------------------------------------------------------------
-			String[] projectFolders = Application.getGlobalInfo().getProjectSubDirectories();
-			boolean isSelectedProjectPresent = false;
-			for (String projectFolder : projectFolders) {
-				if (projectString.equals(projectFolder)) {
-					isSelectedProjectPresent = true;
-				}
-			}
-			if (isSelectedProjectPresent == false) {
-				invalidValues.add("Selected Project cannot be found");
-			}
 		}
 		
-		// --- DeviceSystemExecutionMode.SETUP --------------------------------------------------------------
 		if (deviceExecMode == DeviceSystemExecutionMode.SETUP) {
 			
 			// --- Check whether the Setup is missing  ------------------------------------------------------
 			String serviceSetup = properties2check.getStringValue(SERVICE_SETUP);
 			if (serviceSetup == null || serviceSetup.isBlank()) {
 				invalidValues.add("Service setup is missing");
-
-			} else {
-				// --- Check whether the Setup is valid -----------------------------------------------------
-				if (projectString != null) {
-					SimulationSetups allowedSetups = null;
-					Project projectSelected = Project.load(projectString);
-					if (projectSelected != null) {
-						allowedSetups = projectSelected.getSimulationSetups();
-					}
-					
-					if (allowedSetups != null && allowedSetups.containsSetupName(serviceSetup) == false) {
-						invalidValues.add("Selected setup is invalid for the project.");
-					}
-					
-				}
 			}
-			
-			
-			// --- DeviceSystemExecutionMode.AGENT --------------------------------------------------------------
+
 		} else if (deviceExecMode == DeviceSystemExecutionMode.AGENT){
-			// TODO More criteria for valid agents??
 			
 			int agentKeyCounter = 0;
 			String agentClass;
 			String agentName;
+			String agentClassKey = EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentKeyCounter));
+			String agentNameKey = EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentKeyCounter));
 			List<String> identifierList = properties2check.getIdentifierList();
 			
 			// --- Look for the next agent key --------------------------------------------------------------
-			while (identifierList.contains("embeddedsystem.agent[" + agentKeyCounter + "].classname") || identifierList.contains("embeddedsystem.agent[" + agentKeyCounter + "].agentname")) {
+			while (identifierList.contains(agentClassKey) || identifierList.contains(agentNameKey)) {
 				
 				// --- Get agent name and agent class -------------------------------------------------------
-				agentClass = properties2check.getStringValue("embeddedsystem.agent[" + agentKeyCounter + "].classname");
-				agentName = properties2check.getStringValue("embeddedsystem.agent[" + agentKeyCounter + "].agentname");
+				agentClass = properties2check.getStringValue(agentClassKey);
+				agentName = properties2check.getStringValue(agentNameKey);
 				
 				// --- Both should be specified since a key was found ---------------------------------------
 				if (agentName == null || agentName.isBlank()) {
@@ -375,7 +345,10 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 				if (agentClass == null || agentClass.isBlank()) {
 					invalidValues.add("embeddedsystem.agent[" + agentKeyCounter + "].agentclass is missing");
 				}
+				// --- Prepare the next keys ----------------------------------------------------------------
 				agentKeyCounter++;
+				agentClassKey = EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentKeyCounter));
+				agentNameKey = EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentKeyCounter));
 			}
 			
 			if (agentKeyCounter == 0) {
@@ -444,6 +417,15 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		Integer localMtpPort = Application.getGlobalInfo().getOwnMtpPort();
 		String localMtpProtocol = Application.getGlobalInfo().getMtpProtocol().toString();
 		
+		// --- Get the available network addresses ------------------------------------------------
+		NetworkAddresses networkaddresses = new NetworkAddresses();
+		Vector<NetworkAddress> addressSelection = networkaddresses.getNetworkAddressVector();
+		int networkCounter = 0;
+		for (NetworkAddress networkaddress : addressSelection) {
+			properties.setStringValue("local.ip.selection[" + networkCounter + "]", networkaddress.toString());
+			networkCounter++;
+		}
+		
 		// --- Set property values ----------------------------------------------------------------
 		properties.setStringValue(SERVER_MASTER_URL, serverMasterUrl);
 		properties.setIntegerValue(SERVER_MASTER_PORT, serverMasterPort);
@@ -493,11 +475,15 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 			// --- In agent mode, get all selected agent classes and their names ------------------
 			Vector<DeviceAgentDescription> embeddedSystemAgents = Application.getGlobalInfo().getDeviceServiceAgents();
 			for (int i = 0; i< embeddedSystemAgents.size(); i++) {
-				properties.setStringValue("embeddedsystem.agent["+ i +"].classname", embeddedSystemAgents.get(i).getAgentClass());
-				properties.setStringValue("embeddedsystem.agent["+ i +"].agentname", embeddedSystemAgents.get(i).getAgentName());
+				properties.setStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(i)), embeddedSystemAgents.get(i).getAgentClass());
+				properties.setStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(i)), embeddedSystemAgents.get(i).getAgentName());
 			}
 		}
 	}
+	
+	// ------------------------------------------------------------------------------------------------------
+	// --- From here, methods to find enum constants from strings -------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
 	
 	/**
 	 * Returns the de.enflexit.awb.core.config.GlobalInfo.ExecutionMode equivalent for the provided string, ignoring case, or null,
@@ -538,6 +524,12 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		return deviceSystemExecutionMode;
 	}
 	
+	/**
+	 * Find MtpProtocol enum constant from string.
+	 *
+	 * @param mtpProtocolString the mtp protocol string
+	 * @returns the MtpProtocol
+	 */
 	private MtpProtocol findMtpProtocolFromString(String mtpProtocolString) {
 		
 		if (mtpProtocolString==null || mtpProtocolString.isBlank()==true) return null;
@@ -560,6 +552,12 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		return mtpProtocol;
 	}
 	
+	/**
+	 * Find MTP_creation enum constant from string.
+	 *
+	 * @param mtpCreationString the mtp creation string
+	 * @returns the MTP_creation enum constant equivalent to the input string
+	 */
 	private MTP_Creation findMtpCreationFromString(String mtpCreationString) {
 		
 		if (mtpCreationString==null || mtpCreationString.isBlank()==true) return null;

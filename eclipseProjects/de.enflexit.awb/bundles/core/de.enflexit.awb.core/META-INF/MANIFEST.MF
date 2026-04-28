@@ -9,7 +9,10 @@ Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: EnFlex.IT
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Service-Component: OSGI-INF/classLoadService.xml,
- OSGI-INF/PropertyBusServiceExecMode.xml
+ OSGI-INF/PropertyBusServiceExecMode.xml,
+ OSGI-INF/PropertyBusServiceProjects.xml,
+ OSGI-INF/PropertyBusServiceProjectSetups.xml,
+ OSGI-INF/PropertyBusServiceAgents.xml
 Import-Package: agentgui.core.charts.timeseriesChart,
  agentgui.core.charts.xyChart,
  de.enflexit.awb.core.update.repositoryModel,
@@ -59,7 +62,7 @@ Export-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.project.plugins,
  de.enflexit.awb.core.project.setup,
  de.enflexit.awb.core.project.transfer,
- de.enflexit.awb.core.properties,
+ de.enflexit.awb.core.propertyBusServices,
  de.enflexit.awb.core.ui,
  de.enflexit.awb.core.update,
  de.enflexit.awb.core.update.repositoryModel,

@@ -5,24 +5,32 @@ import java.awt.Component;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.language.Language;
 
+/**
+ * The Class ApplicationSwitch is responsible for performing a switch
+ * in the execution mode. It decides if and which compoments have to be
+ * stopped and restarted.
+ *
+ * @author Daniel Bormann - EnFlex.IT GmbH
+ */
 public class ApplicationSwitch {
 
 	
 	/**
 	 * Switches the applications execution mode.
 	 *
-	 * @param executionModeOld the execution mode old
-	 * @param executionModeNew the execution mode new
+	 * @param executionModeOld the old execution mode 
+	 * @param executionModeNew the new execution mode 
 	 */
 	public static void switchExecutionMode(ExecutionMode executionModeOld, ExecutionMode executionModeNew) {
 		ApplicationSwitch.switchExecutionMode(null, executionModeOld, executionModeNew);
 	}
+	
 	/**
 	 * Switches the applications execution mode.
 	 *
 	 * @param parentComponent the parent component
-	 * @param executionModeOld the execution mode old
-	 * @param executionModeNew the execution mode new
+	 * @param executionModeOld the old execution mode 
+	 * @param executionModeNew the new execution mode
 	 */
 	public static void switchExecutionMode(Component parentComponent, ExecutionMode executionModeOld, ExecutionMode executionModeNew) {
 		
