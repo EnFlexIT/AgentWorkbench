@@ -2,6 +2,7 @@ package de.enflexit.common.dataSources;
 
 import java.io.Serializable;
 
+import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -32,7 +33,8 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(propOrder = {
     "id",
     "name",
-    "description"
+    "description",
+    "rowsPerPage"
 })
 @XmlSeeAlso({CsvDataSource.class, ExcelDataSource.class, DatabaseDataSource.class})
 public abstract class AbstractDataSource implements Serializable {
@@ -51,6 +53,8 @@ public abstract class AbstractDataSource implements Serializable {
 	@Column(nullable=false)
 	private String name;
 	private String description;
+	
+	private int rowsPerPage;
 	
 	
 	/**
@@ -99,6 +103,28 @@ public abstract class AbstractDataSource implements Serializable {
 	}
 
 	
+	/**
+	 * Returns the number of rows per page, if data pagination is implemented, where
+	 * a number smaller or equal 0 means to deactivate pagination, while a number bigger 0
+	 * represents the actual number of rows to load per page. 
+	 *  
+	 * @return the rows per page
+	 */
+	public int getRowsPerPage() {
+		return rowsPerPage;
+	}
+	/**
+	 * Sets the rows per page that are to be loaded in case of pagination. Here, 
+	 * a number smaller or equal 0 means to deactivate pagination, while a number bigger 0
+	 * represents the actual number of rows to load per page.
+	 *  
+	 * @param rowsPerPage the new rows per page
+	 */
+	public void setRowsPerPage(int rowsPerPage) {
+		this.rowsPerPage = rowsPerPage;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -116,6 +142,7 @@ public abstract class AbstractDataSource implements Serializable {
 		//if (NumberHelper.isEqualNumber(this.getId(), adsComp.getId())==false) return false;
 		if (StringHelper.isEqualString(this.getName(), adsComp.getName())==false) return false;
 		if (StringHelper.isEqualString(this.getDescription(), adsComp.getDescription())==false) return false;
+		if (NumberHelper.isEqualNumber(this.getRowsPerPage(), adsComp.getRowsPerPage())==false) return false;
 		
 		return true;
 	}

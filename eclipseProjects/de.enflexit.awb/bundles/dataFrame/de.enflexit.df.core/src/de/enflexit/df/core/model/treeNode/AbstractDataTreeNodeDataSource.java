@@ -1,6 +1,7 @@
 package de.enflexit.df.core.model.treeNode;
 
 import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.ConfigurationPanel;
@@ -19,6 +20,8 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	private Table table;
 	
 	private boolean isLoading;
+	
+	private int rowSelected = 1;
 	
 	/**
 	 * Instantiates a new data tree node data source.
@@ -59,45 +62,15 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 		this.dataSource = dataSource;
 	}
 
-	
-	/**
-	 * Will be invoked to load the data bases on the local data source.
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getCaption()
 	 */
-	public abstract boolean loadData();
-	
-	/**
-	 * Will call load data in dedicated thread.
-	 */
-	public void loadDataWithinThread() {
-
-		if (this.isLoading==false) {
-			
-			this.isLoading = true;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						AbstractDataTreeNodeDataSource.this.loadData();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					} finally {
-						AbstractDataTreeNodeDataSource.this.isLoading=false;
-					}
-				}
-			}, "DataLoader-" + this.getClass().getSimpleName()).start();
-		}
+	@Override
+	public String getCaption() {
+		return this.getDataSource().getName();
 	}
-	/**
-	 * Informs by firing a PropertyChangeEvent using the {@link DataController}.
-	 *
-	 * @param oldTable the old tablesaw table
-	 * @param newTable the new tablesaw table
-	 */
-	protected void informLoaded(Table oldTable, Table newTable) {
-		this.getDataController().firePropertyChange(DataController.DC_DATA_LOADED, AffectedDataObjects.create(this, this.getDataSource(), oldTable), AffectedDataObjects.create(this, this.getDataSource(), newTable));
-	}
-
 	
+
 	/**
 	 * Returns the current tablesaw table.
 	 * @return the table
@@ -114,12 +87,96 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getCaption()
+	/**
+	 * Has to return the pagination loader for the specific .
+	 * @return the pagination loader
 	 */
-	@Override
-	public String getCaption() {
-		return this.getDataSource().getName();
+	public abstract PaginationDataLoader<DS> getPaginationDataLoader();
+	
+	/**
+	 * Will call load the data in dedicated thread.
+	 */
+	public void loadDataWithinThread() {
+
+		if (this.isLoading==false) {
+			
+			this.isLoading = true;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						AbstractDataTreeNodeDataSource.this.loadNextPage();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					} finally {
+						AbstractDataTreeNodeDataSource.this.isLoading=false;
+					}
+				}
+			}, "DataLoader-" + this.getClass().getSimpleName()).start();
+		}
+	}
+	
+	/**
+	 * Reload.
+	 */
+	public void reloadTable() {
+		try {
+			this.setTable(null);
+			this.getPaginationDataLoader().reset();
+			this.loadDataWithinThread();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Load next page.
+	 */
+	private void loadNextPage() {
+		
+		// --- Try loading the next page ---------------------------- 
+		Table page = this.getPaginationDataLoader().loadNextPage();
+		if (page==null) {
+			
+		} else {
+			if (this.getTable()==null) {
+				this.setTable(page);
+			} else {	
+				this.getTable().append(page);
+			}
+		}
+		
+		// --- Transfer error into node instance --------------------
+		this.setErrorMessage(this.getPaginationDataLoader().getErrorMessage());
+		
+		// --- Inform about page loading ----------------------------
+		this.informLoaded(this.getTable(), page);
+	}
+	
+	/**
+	 * Informs by firing a PropertyChangeEvent using the {@link DataController}.
+	 *
+	 * @param oldTable the old tablesaw table
+	 * @param newTable the new tablesaw table
+	 */
+	protected void informLoaded(Table oldTable, Table newTable) {
+		this.getDataController().firePropertyChange(DataController.DC_DATA_LOADED, AffectedDataObjects.create(this, this.getDataSource(), oldTable), AffectedDataObjects.create(this, this.getDataSource(), newTable));
+	}
+
+	
+	/**
+	 * Sets the reminder for the row selected.
+	 * @param rowSelected the new row selected
+	 */
+	public void setRowSelected(int rowSelected) {
+		this.rowSelected = rowSelected;
+	}
+	/**
+	 * Returns the reminded row selected.
+	 * @return the row selected
+	 */
+	public int getRowSelected() {
+		return rowSelected;
 	}
 
 }

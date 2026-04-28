@@ -17,10 +17,12 @@ import java.util.NoSuchElementException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -31,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.TablesawTableModel;
@@ -48,19 +51,27 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 
 	private DataController dataController;
 	
+	private Font baseFont = new Font("Dialog", Font.PLAIN, 12);
+	private Dimension textFieldDimension = new Dimension(60, 24);
+	
+	
 	private JScrollPane jScrollPaneData;
 	private JTable jTableData;
 
 	private JPanel jPanelDataless;
 	
 	private JToolBar jToolBarDatasetNavigation;
+		private JButton jButtonDatasetFirst;
+		private JButton jButtonDatasetPrevious;
+		private JTextField jTextFieldDatasetNo;
+		private JButton jButtonDatasetNext;
+		private JButton jButtonDatasetLast;
 	
-	private JButton jButtonDatasetFirst;
-	private JButton jButtonDatasetPrevious;
-	private JTextField jTextFieldDatasetNo;
-	private JButton jButtonDatasetNext;
-	private JButton jButtonDatasetLast;
-	
+		private JToggleButton jToggleButtonEnabledPagination;
+		private JLabel jLabelRowsPerPage;
+		private JTextField jTextFieldRowsPerPage;
+		private JLabel jLabelPageLoaded;
+		private JTextField jTextFieldPageLoaded;
 	
 	/**
 	 * Instantiates a new j panel data table.
@@ -94,6 +105,9 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		gbc_jToolBarDatasetNavigation.gridx = 0;
 		gbc_jToolBarDatasetNavigation.gridy = 1;
 		this.add(this.getJToolBarDatasetNavigation(), gbc_jToolBarDatasetNavigation);
+		
+		this.setJToolDatasetNavigationEnabled();
+		
 	}
 
 	/**
@@ -113,6 +127,22 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			this.dataController.addPropertyChangeListener(this);
 		}
 	}
+	/**
+	 * Returns the currently selected data tree node data source.
+	 * @return the selected data tree node data source
+	 */
+	private AbstractDataTreeNodeDataSource<?> getSelectedDataTreeNodeDataSource() {
+		return this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+	}
+	/**
+	 * Returns the current PaginationDataLoader or <code>null</code>, if no data tree node can be found.
+	 * @return the pagination data loader
+	 */
+	private PaginationDataLoader<?> getPaginationDataLoader() {
+		AbstractDataTreeNodeDataSource<?> dtnoDS = getSelectedDataTreeNodeDataSource();
+		return (dtnoDS==null ? null : dtnoDS.getPaginationDataLoader());
+	}
+	
 	
 	private JScrollPane getJScrollPaneData() {
 		if (jScrollPaneData == null) {
@@ -125,6 +155,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		if (jTableData == null) {
 			jTableData = new JTable();
 			jTableData.setFillsViewportHeight(true);
+			jTableData.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
 			jTableData.getTableHeader().setReorderingAllowed(false);
 			jTableData.setDefaultRenderer(Object.class, new DateTimeTableCellRenderer("dd.MM.yyyy HH:mm:ss"));
 			jTableData.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -157,10 +189,43 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			jToolBarDatasetNavigation.add(this.getJTextFieldDatasetNo());
 			jToolBarDatasetNavigation.add(this.getJButtonDatasetNext());
 			jToolBarDatasetNavigation.add(this.getJButtonDatasetLast());
+			
+			jToolBarDatasetNavigation.addSeparator();
+			jToolBarDatasetNavigation.add(this.getJToggleButtonEnabledPagination());
+			jToolBarDatasetNavigation.add(this.getJLabelRowsPerPage());
+			jToolBarDatasetNavigation.add(this.getJTextFieldRowsPerPage());
+			
+			jToolBarDatasetNavigation.add(this.getJLabelPagesLoaded());
+			jToolBarDatasetNavigation.add(this.getJTextFieldPageLoaded());
+			
 		}
 		return jToolBarDatasetNavigation;
 	}
-	
+	/**
+	 * Depending on the current selection, sets the navigation toolbar enabled.
+	 */
+	private void setJToolDatasetNavigationEnabled() {
+		
+		AbstractDataTreeNodeDataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
+		boolean isEnabledToolBar = (dtnoDS!=null);
+		
+		this.getJToggleButtonEnabledPagination().setSelected(isEnabledToolBar && this.getPaginationDataLoader().isPaginationActivated()==true);
+		this.setJToggleButtonEnabledPaginationIcon();
+		
+		this.getJButtonDatasetFirst().setEnabled(isEnabledToolBar);
+		this.getJButtonDatasetPrevious().setEnabled(isEnabledToolBar);
+		this.getJTextFieldDatasetNo().setEnabled(isEnabledToolBar);
+		this.getJButtonDatasetNext().setEnabled(isEnabledToolBar);
+		this.getJButtonDatasetLast().setEnabled(isEnabledToolBar);
+		
+		this.getJToggleButtonEnabledPagination().setEnabled(isEnabledToolBar);
+		this.getJLabelRowsPerPage().setEnabled(isEnabledToolBar);
+		this.getJTextFieldRowsPerPage().setEnabled(isEnabledToolBar);
+		
+		this.getJLabelPagesLoaded().setEnabled(isEnabledToolBar);
+		this.getJTextFieldPageLoaded().setEnabled(isEnabledToolBar);
+	}
+
 	private JButton getJButtonDatasetFirst() {
 		if (jButtonDatasetFirst==null) {
 			jButtonDatasetFirst = new JButton(new AwbThemeImageIcon(BundleHelper.getImageIcon("Dataset_First.png")));
@@ -182,9 +247,9 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	private JTextField getJTextFieldDatasetNo() {
 		if (jTextFieldDatasetNo==null) {
 			jTextFieldDatasetNo = new JTextField();
-			jTextFieldDatasetNo.setPreferredSize(new Dimension(60, 24));
-			jTextFieldDatasetNo.setMaximumSize(new Dimension(60, 24));
-			jTextFieldDatasetNo.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldDatasetNo.setPreferredSize(this.textFieldDimension);
+			jTextFieldDatasetNo.setMaximumSize(this.textFieldDimension);
+			jTextFieldDatasetNo.setFont(this.baseFont);
 			jTextFieldDatasetNo.setHorizontalAlignment(JTextField.CENTER);
 			jTextFieldDatasetNo.addKeyListener(new KeyAdapter4Numbers(false));
 			jTextFieldDatasetNo.addActionListener(this);
@@ -210,6 +275,68 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		return jButtonDatasetLast;
 	}
 
+	
+	private JToggleButton getJToggleButtonEnabledPagination() {
+		if (jToggleButtonEnabledPagination==null) {
+			jToggleButtonEnabledPagination = new JToggleButton();
+			jToggleButtonEnabledPagination.setToolTipText("Pagination On / Off");
+			jToggleButtonEnabledPagination.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonEnabledPagination.setMinimumSize(new Dimension(26, 26));
+			jToggleButtonEnabledPagination.addActionListener(this);
+			this.setJToggleButtonEnabledPaginationIcon();
+		}
+		return jToggleButtonEnabledPagination;
+	}
+	
+	private void setJToggleButtonEnabledPaginationIcon() {
+		if (this.getJToggleButtonEnabledPagination().isSelected()==true) {
+			this.getJToggleButtonEnabledPagination().setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("Pagination-On.png")));
+			this.getJToggleButtonEnabledPagination().setToolTipText("Pagination enabled");
+		} else {
+			this.getJToggleButtonEnabledPagination().setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("Pagination-Off.png")));
+			this.getJToggleButtonEnabledPagination().setToolTipText("Pagination disbaled");
+		}
+	}
+	
+	private JLabel getJLabelRowsPerPage() {
+		if (jLabelRowsPerPage==null) {
+			jLabelRowsPerPage = new JLabel("Rows / Page: ");
+			jLabelRowsPerPage.setFont(baseFont.deriveFont(Font.BOLD));
+		}
+		return jLabelRowsPerPage;
+	}
+	private JTextField getJTextFieldRowsPerPage() {
+		if (jTextFieldRowsPerPage==null) {
+			jTextFieldRowsPerPage = new JTextField();
+			jTextFieldRowsPerPage.setPreferredSize(this.textFieldDimension);
+			jTextFieldRowsPerPage.setMaximumSize(this.textFieldDimension);
+			jTextFieldRowsPerPage.setFont(this.baseFont);
+			jTextFieldRowsPerPage.setHorizontalAlignment(JTextField.CENTER);
+			jTextFieldRowsPerPage.addKeyListener(new KeyAdapter4Numbers(false));
+			jTextFieldRowsPerPage.addActionListener(this);
+		}
+		return jTextFieldRowsPerPage;
+	}
+	
+	private JLabel getJLabelPagesLoaded() {
+		if (jLabelPageLoaded==null) {
+			jLabelPageLoaded = new JLabel("  Page-No: ");
+			jLabelPageLoaded.setFont(baseFont.deriveFont(Font.BOLD));
+		}
+		return jLabelPageLoaded;
+	}
+	private JTextField getJTextFieldPageLoaded() {
+		if (jTextFieldPageLoaded==null) {
+			jTextFieldPageLoaded = new JTextField();
+			jTextFieldPageLoaded.setPreferredSize(this.textFieldDimension);
+			jTextFieldPageLoaded.setMaximumSize(this.textFieldDimension);
+			jTextFieldPageLoaded.setFont(baseFont);
+			jTextFieldPageLoaded.setHorizontalAlignment(JTextField.CENTER);
+			jTextFieldPageLoaded.setEditable(false);
+		}
+		return jTextFieldPageLoaded;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
@@ -243,7 +370,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			break;
 			
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
-			dtnoDS = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+			dtnoDS = this.getSelectedDataTreeNodeDataSource();
 			this.setDetailView(dtnoDS);
 			break;
 			
@@ -258,18 +385,26 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	private void setDetailView(AbstractDataTreeNodeDataSource<?> dtnoDS) {
 
 		// --- Direct exit? -----------------------------------------
-		AbstractDataTreeNodeDataSource<?> dtnoDsSelected = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+		AbstractDataTreeNodeDataSource<?> dtnoDsSelected = this.getSelectedDataTreeNodeDataSource();
 		boolean useDatalessView = (dtnoDS==null || dtnoDsSelected==null);
 		boolean isDifferentData = (dtnoDS!=null && dtnoDsSelected!=null && dtnoDS!=dtnoDsSelected);
-		if (isDifferentData== true) return;
+		if (isDifferentData==true) return;
 		
 		JComponent uiDetail = this.getJPanelDataless();
 		if (useDatalessView==false) {
 			
-			Table tableSawDataTable = dtnoDS.getTable();
-			if (tableSawDataTable!=null) {
+			Table tablesawDataTable = dtnoDS.getTable();
+			if (tablesawDataTable!=null) {
 				// --- Show table data ------------------------------
-				this.getJTableData().setModel(new TablesawTableModel(tableSawDataTable));
+				this.getJTableData().setModel(new TablesawTableModel(tablesawDataTable));
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JPanelDataDetailView.this.setDatasetSelection(dtnoDS.getRowSelected(), 0, true);
+						JPanelDataDetailView.this.getJTextFieldRowsPerPage().setText(dtnoDS.getPaginationDataLoader().getNumberOfRecordsPerPage() + "");
+						JPanelDataDetailView.this.getJTextFieldPageLoaded().setText(dtnoDS.getPaginationDataLoader().getPageNumberLoaded() + "");
+					}
+				});
 				
 			} else {
 				// --- Try loading? ---------------------------------
@@ -278,6 +413,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			}
 			uiDetail = this.getJTableData();
 		}
+		this.setJToolDatasetNavigationEnabled();
 		
 		// --- Set UI component -------------------------------------
 		this.getJScrollPaneData().setViewportView(uiDetail);
@@ -306,28 +442,53 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			Integer dsNo2Select = null;
 			try {
 				dsNo2Select = Integer.parseInt(this.getJTextFieldDatasetNo().getText());
-			} catch (Exception ex) {
-			}
+			} catch (Exception ex) { }
 			if (dsNo2Select!=null) {
 				this.setDatasetSelection(dsNo2Select, 0, true);
 			}
+			
+		} else if (ae.getSource()==this.getJToggleButtonEnabledPagination()) {
+			// --- React on pagination toggle ----------------------- 
+			this.setJToggleButtonEnabledPaginationIcon();
+			this.getPaginationDataLoader().setPaginationActivated(this.getJToggleButtonEnabledPagination().isSelected());
+			this.getSelectedDataTreeNodeDataSource().reloadTable();
+			
+		} else if (ae.getSource()==this.getJTextFieldRowsPerPage()) {
+			// --- Change the number of rows per page ---------------
+			int newRowsPerPage = -1;
+			try {
+				newRowsPerPage = Integer.parseInt(this.getJTextFieldRowsPerPage().getText().trim());
+				if (newRowsPerPage != this.getPaginationDataLoader().getNumberOfRecordsPerPage()) {
+					this.getPaginationDataLoader().setNumberOfRecordsPerPage(newRowsPerPage);
+					this.getSelectedDataTreeNodeDataSource().reloadTable();
+					this.getJTextFieldDatasetNo().requestFocus();
+				}
+				
+			} catch (Exception ex) { }
+			
 		}
 	}
 	
 	/**
 	 * Sets the dataset selection.
 	 *
-	 * @param dataRowToSelect the data row to select
+	 * @param dataRowToSelect the data row to select; may be <code>null</code> for direction!=0 and isSelectInTable==true
 	 * @param direction the second index
 	 * @param isSelectInTable the is select in table
 	 */
 	private void setDatasetSelection(Integer dataRowToSelect, int direction, boolean isSelectInTable) {
+		
+		AbstractDataTreeNodeDataSource<?> dtnoDsSelected = this.getSelectedDataTreeNodeDataSource();
+		if (dtnoDsSelected==null) return;
 		
 		// --- Adjust number of data row text field -----------------
 		ListSelectionModel selModel = this.getJTableData().getSelectionModel();
 		if (selModel.getSelectedItemsCount()==1) {
 			int rowSelected = selModel.getSelectedIndices()[0] + 1;
 			this.getJTextFieldDatasetNo().setText(rowSelected + "");
+		    // --- Remind selected data row ------------------------- 
+		    dtnoDsSelected.setRowSelected(rowSelected);
+		    
 		} else {
 			this.getJTextFieldDatasetNo().setText("");
 		}
@@ -340,8 +501,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				if (dataRowToSelect<1) {
 					dataRowToSelect = 1;
 				} else if (dataRowToSelect > this.getJTableData().getRowCount()) {
-					// TODO: Further load data or reduce number row row count  
-					
+					// TODO: Further load data or reduce number row count  
+					System.err.println();
 				}
 				
 			} else {
@@ -370,8 +531,11 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		    Rectangle rect = this.getJTableData().getCellRect(dataRowToSelect-1, 0, true);
 		    this.getJTableData().scrollRectToVisible(rect);
 			
+		    // --- Remind selected data row ------------------------- 
+		    dtnoDsSelected.setRowSelected(dataRowToSelect);
 		}
 	}
+	
 	
 	/**
 	 * Returns a selected index depending on the direction, a user wants to navigate.

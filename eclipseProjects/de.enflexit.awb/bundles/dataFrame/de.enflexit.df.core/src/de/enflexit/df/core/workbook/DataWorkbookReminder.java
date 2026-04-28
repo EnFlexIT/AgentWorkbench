@@ -35,7 +35,7 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 	public DataWorkbookReminder(DataController dataController) {
 		this.setDataController(dataController);
 		this.loadFromSecuredStorage();
-		this.loadDataWorkbookLocationListToDataController();
+		this.loadDataWorkbookLocationListToDataController(false);
 		this.attachPropertyChangeListener(true);
 	}
 	/**
@@ -128,9 +128,16 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 	}
 
 	/**
-	 * Loads the data workbook location list to the {@link DataController}.
+	 * Opens all data workbooks.
 	 */
-	private void loadDataWorkbookLocationListToDataController() {
+	public void openAllDataWorkbooks() {
+		this.loadDataWorkbookLocationListToDataController(true);
+	}
+	/**
+	 * Loads the data workbook location list to the {@link DataController}.
+	 * @param openDataWorkbooks the indicator to open the DataWorkbooks
+	 */
+	private void loadDataWorkbookLocationListToDataController(boolean openDataWorkbooks) {
 
 		// --- Load the files to the data controller ----------------
 		for (DataWorkbookLocation dwLocation : this.getDataWorkbookLocationList()) {
@@ -143,8 +150,12 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 				dw = DataWorkbook4DB.loadFromDataWorkBookLocation(dwLocation);
 			}
 			this.getDataController().addDataWorkbook(dw);
+			if (openDataWorkbooks==true) {
+				this.getDataController().openDataWorkbook(dw);
+			}
 		}
 	}
+
 	
 	/**
 	 * Returns the secured properties.

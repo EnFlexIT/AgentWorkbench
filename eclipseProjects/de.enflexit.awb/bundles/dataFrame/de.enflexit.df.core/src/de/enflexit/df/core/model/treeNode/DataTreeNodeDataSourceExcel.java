@@ -6,16 +6,21 @@ import javax.swing.JComponent;
 
 import de.enflexit.common.dataSources.ExcelDataSource;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.data.PaginationDataLoader;
+import de.enflexit.df.core.data.PaginationDataLoader4Excel;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationExcel;
 
 /**
  * The Class DataTreeNodeDataSourceExcel.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<ExcelDataSource> {
 
 	private JPanelDataSourceConfigurationExcel jPanelDataSourceConfigurationExcel;
+
+	private PaginationDataLoader4Excel paginationDataLoader4Excel;
 	
 	/**
 	 * Instantiates a new data tree node data source excel.
@@ -49,13 +54,17 @@ public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<
 		}
 		return jPanelDataSourceConfigurationExcel;
 	}
+
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#loadData()
+	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()
 	 */
 	@Override
-	public boolean loadData() {
-		// TODO Auto-generated method stub
-		return false;
+	public PaginationDataLoader<ExcelDataSource> getPaginationDataLoader() {
+		if (paginationDataLoader4Excel==null) {
+			paginationDataLoader4Excel = new PaginationDataLoader4Excel(this.getDataSource());
+		}
+		return paginationDataLoader4Excel;
 	}
+	
 
 }
