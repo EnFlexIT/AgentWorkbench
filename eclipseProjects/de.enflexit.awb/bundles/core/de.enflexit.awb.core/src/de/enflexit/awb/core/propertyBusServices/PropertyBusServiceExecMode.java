@@ -45,6 +45,9 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	public static final String SELECTED_PROJECT = "embeddedsystem.project";
 	public static final String AUTO_INIT_BGSYSTEM = "bgsystem.auto_init";
 	public static final String SERVER_MASTER_PROTOCOL = "server.master.protocol";
+	public final static String EMBEDDEDSYSTEM_AGENT_CLASSNAME="embeddedsystem.agent[X].classname";
+	public final static String EMBEDDEDSYSTEM_AGENT_AGENTNAME="embeddedsystem.agent[X].agentname";
+
 
 	// --- The hibernate factory id which is always used for the background system --------------------------
 	public static final String BGSYSTEM_FACTORY = "de.enflexit.awb.bgSystem.db";
@@ -101,6 +104,7 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		}
 		
 		// --- Set common values ----------------------------------------------------------------------------
+		Application.getGlobalInfo().setServerAutoRun(false);
 		Application.getGlobalInfo().setServerMasterURL(serverMasterUrl);
 		Application.getGlobalInfo().setServerMasterPort(serverMasterPort);
 		Application.getGlobalInfo().setServerMasterPort4MTP(serverMasterPortMtp);
@@ -115,7 +119,7 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		// --------------------------------------------------------------------------------------------------
 		
 		// --- Background mode ------------------------------------------------------------------------------
-		if (newExecutionMode == ExecutionMode.SERVER_MASTER || newExecutionMode == ExecutionMode.SERVER_SLAVE) {
+		if (newExecutionMode == ExecutionMode.SERVER) {
 			// --- In background mode auto run has to be true -----------------------------------------------
 			Application.getGlobalInfo().setServerAutoRun(true);
 		
@@ -140,16 +144,20 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 				// --- Set values specific to DeviceSystemExecutionMode.AGENT -------------------------------
 			} else {
 				
+				// --- Prepare the first agent name and class -----------------------------------------------
 				int agentCounter = 0;
 				Vector<DeviceAgentDescription> agents2Set = new Vector<>();
+				String agentClass = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)));
+				String agentName = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentCounter)));
 				
-				while (properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].classname") != null && properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].agentname")!= null) {
-					// --- Extract the next agent name and class and add them to the vector -----------------
-					String agentName = properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].agentname");
-					String agentClass = properties.getStringValue("embeddedsystem.agent[" + agentCounter + "].classname");
-					
+				while (agentClass != null && agentName != null) {
 					agents2Set.add(new DeviceAgentDescription(agentName, agentClass));
+
+					// --- Prepare the next agent -----------------------------------------------------------
 					agentCounter++;
+					agentName = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentCounter)));
+					agentClass = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)));
+					
 				}
 				Application.getGlobalInfo().setDeviceServiceAgents(agents2Set);
 			}
@@ -319,14 +327,16 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 			int agentKeyCounter = 0;
 			String agentClass;
 			String agentName;
+			String agentClassKey = EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentKeyCounter));
+			String agentNameKey = EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentKeyCounter));
 			List<String> identifierList = properties2check.getIdentifierList();
 			
 			// --- Look for the next agent key --------------------------------------------------------------
-			while (identifierList.contains("embeddedsystem.agent[" + agentKeyCounter + "].classname") || identifierList.contains("embeddedsystem.agent[" + agentKeyCounter + "].agentname")) {
+			while (identifierList.contains(agentClassKey) || identifierList.contains(agentNameKey)) {
 				
 				// --- Get agent name and agent class -------------------------------------------------------
-				agentClass = properties2check.getStringValue("embeddedsystem.agent[" + agentKeyCounter + "].classname");
-				agentName = properties2check.getStringValue("embeddedsystem.agent[" + agentKeyCounter + "].agentname");
+				agentClass = properties2check.getStringValue(agentClassKey);
+				agentName = properties2check.getStringValue(agentNameKey);
 				
 				// --- Both should be specified since a key was found ---------------------------------------
 				if (agentName == null || agentName.isBlank()) {
@@ -335,7 +345,10 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 				if (agentClass == null || agentClass.isBlank()) {
 					invalidValues.add("embeddedsystem.agent[" + agentKeyCounter + "].agentclass is missing");
 				}
+				// --- Prepare the next keys ----------------------------------------------------------------
 				agentKeyCounter++;
+				agentClassKey = EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentKeyCounter));
+				agentNameKey = EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentKeyCounter));
 			}
 			
 			if (agentKeyCounter == 0) {
@@ -462,8 +475,8 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 			// --- In agent mode, get all selected agent classes and their names ------------------
 			Vector<DeviceAgentDescription> embeddedSystemAgents = Application.getGlobalInfo().getDeviceServiceAgents();
 			for (int i = 0; i< embeddedSystemAgents.size(); i++) {
-				properties.setStringValue("embeddedsystem.agent["+ i +"].classname", embeddedSystemAgents.get(i).getAgentClass());
-				properties.setStringValue("embeddedsystem.agent["+ i +"].agentname", embeddedSystemAgents.get(i).getAgentName());
+				properties.setStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(i)), embeddedSystemAgents.get(i).getAgentClass());
+				properties.setStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(i)), embeddedSystemAgents.get(i).getAgentName());
 			}
 		}
 	}
