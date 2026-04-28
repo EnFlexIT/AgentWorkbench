@@ -19,6 +19,8 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  */
 public class PropertyBusServiceProjectSetups implements PropertyBusService {
 
+	public final static String PROJECT_SETUP="project[X].setup[Y]";
+
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
 	*/
@@ -52,9 +54,9 @@ public class PropertyBusServiceProjectSetups implements PropertyBusService {
 		
 		// --- Split the arguments ----------------------------------------------------------------
 		String[] projects = arguments.split(",");
-		for (int i = 0; i < projects.length; i++) {
+		for (int projectCounter = 0; projectCounter < projects.length; projectCounter++) {
 			// --- Prepare the file path to the next project and load -----------------------------
-			File projectPath = new File(projectFolder+projects[i].trim());
+			File projectPath = new File(projectFolder+projects[projectCounter].trim());
 			Project project = null;
 			if (projectPath != null && projectPath.exists() == true) {
 				project = Project.loadProjectXml(projectPath);
@@ -64,8 +66,9 @@ public class PropertyBusServiceProjectSetups implements PropertyBusService {
 			if (project != null) {
 				SimulationSetups setups = project.getSimulationSetups();
 				int setupCounter = 0;
-				for (String setup : setups.keySet()) {
-					properties.setStringValue("project["+i+"]."+"setup["+setupCounter+"]", setup);
+				for (String setupName : setups.keySet()) {
+					String key = PROJECT_SETUP.replace("Y", String.valueOf(setupCounter)).replace("X", String.valueOf(projectCounter));
+					properties.setStringValue(key, setupName);
 					setupCounter++;
 				}
 			}

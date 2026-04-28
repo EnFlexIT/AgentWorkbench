@@ -16,6 +16,8 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
 public class PropertyBusServiceAgents implements PropertyBusService {
+	
+	public final static String AGENT_CLASSNAME="agent[X].classname";
 
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
@@ -47,7 +49,7 @@ public class PropertyBusServiceAgents implements PropertyBusService {
 		// --- Set the results --------------------------------------------------------------------
 		int agentCounter = 0;
 		for (String agent : agents) {
-			properties.setStringValue("agent["+ agentCounter + "].classname", agent);
+			properties.setStringValue(AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)), agent);
 			agentCounter++;
 		}
 		return properties;

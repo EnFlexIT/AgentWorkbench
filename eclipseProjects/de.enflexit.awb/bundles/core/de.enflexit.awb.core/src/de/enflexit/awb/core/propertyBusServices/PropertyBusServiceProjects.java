@@ -12,6 +12,8 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
 public class PropertyBusServiceProjects implements PropertyBusService {
+	
+	public final static String PROJECT= "project[X]";
 
 	@Override
 	public String getPerformative() {
@@ -40,7 +42,7 @@ public class PropertyBusServiceProjects implements PropertyBusService {
 			return properties;
 		}
 		for (String project : projectFolders) {
-			properties.setStringValue("project["+projectCounter+"]", project);
+			properties.setStringValue(PROJECT.replace("X", String.valueOf(projectCounter)), project);
 			projectCounter++;
 		}
 		

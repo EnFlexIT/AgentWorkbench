@@ -18,8 +18,13 @@ import de.enflexit.db.hibernate.gui.DatabaseSettings;
  */
 public class PropertyBusServiceDatabaseConnectionFactoryGet implements PropertyBusService {
 
-	public static final String FACTORYID = "factoryID";
-	public static final String DBSYSTEM = "dbSystem";
+	public final static String FACTORY_FACTORYID="factory[X].factoryID";
+	public final static String FACTORY_DBSYSTEM="factory[X].dbSystem";
+	public final static String FACTORY_HIBERNATE_CONNECTION_DRIVER_CLASS="factory[X].hibernate.connection.driver_class";
+	public final static String FACTORY_HIBERNATE_CONNECTION_URL="factory[X].hibernate.connection.url";
+	public final static String FACTORY_HIBERNATE_DEFAULT_CATALOG="factory[X].hibernate.default_catalog";
+	public final static String FACTORY_HIBERNATE_CONNECTION_USERNAME="factory[X].hibernate.connection.username";
+	public final static String FACTORY_HIBERNATE_CONNECTION_PASSWORD="factory[X].hibernate.connection.password";
 
 	@Override
 	public String getPerformative() {
@@ -47,8 +52,8 @@ public class PropertyBusServiceDatabaseConnectionFactoryGet implements PropertyB
 
 		List<String> factoryList = HibernateUtilities.getSessionFactoryIDList();
 		// --- Iterate over list of known factories ---------------------------------------------------------
-		for (int i = 0; i < factoryList.size(); i++) {
-			String factoryID = factoryList.get(i);
+		for (int factoryCounter = 0; factoryCounter < factoryList.size(); factoryCounter++) {
+			String factoryID = factoryList.get(factoryCounter);
 			
 			// --- Get the database settings for the current factory ----------------------------------------
 			DatabaseSettings dbs = DatabaseConnectionManager.getInstance().getDatabaseSettings(factoryID);
@@ -63,13 +68,13 @@ public class PropertyBusServiceDatabaseConnectionFactoryGet implements PropertyB
 			String password = hibernateDbs.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password);
 
 			// --- Set properties for the current factory ---------------------------------------------------
-			properties.setStringValue("factory[" + i + "]."+FACTORYID , factoryID);
-			properties.setStringValue("factory[" + i + "]."+DBSYSTEM, dbSystem);
-			properties.setStringValue("factory[" + i + "]."+HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, driver);
-			properties.setStringValue("factory[" + i + "]."+HibernateDatabaseService.HIBERNATE_PROPERTY_URL, url);
-			properties.setStringValue("factory[" + i + "]."+HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, defaultCatalog);
-			properties.setStringValue("factory[" + i + "]."+HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, user);
-			properties.setStringValue("factory[" + i + "]."+HibernateDatabaseService.HIBERNATE_PROPERTY_Password, password);
+			properties.setStringValue(FACTORY_FACTORYID.replace("X", String.valueOf(factoryCounter)) , factoryID);
+			properties.setStringValue(FACTORY_DBSYSTEM.replace("X", String.valueOf(factoryCounter)), dbSystem);
+			properties.setStringValue(FACTORY_HIBERNATE_CONNECTION_DRIVER_CLASS.replace("X", String.valueOf(factoryCounter)), driver);
+			properties.setStringValue(FACTORY_HIBERNATE_CONNECTION_URL.replace("X", String.valueOf(factoryCounter)), url);
+			properties.setStringValue(FACTORY_HIBERNATE_DEFAULT_CATALOG.replace("X", String.valueOf(factoryCounter)), defaultCatalog);
+			properties.setStringValue(FACTORY_HIBERNATE_CONNECTION_USERNAME.replace("X", String.valueOf(factoryCounter)), user);
+			properties.setStringValue(FACTORY_HIBERNATE_CONNECTION_PASSWORD.replace("X", String.valueOf(factoryCounter)), password);
 
 		}
 		return properties;
