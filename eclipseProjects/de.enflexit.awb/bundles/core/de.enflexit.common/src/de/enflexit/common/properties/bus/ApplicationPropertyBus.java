@@ -248,7 +248,7 @@ public class ApplicationPropertyBus {
 	 */
 	private String getPerformativeWithoutArgument(String performative) {
 
-		//--- Determine if there is an argument -------------------------------
+		// --- Determine if there is an argument -------------------------------
 		if (performative.contains("[") && performative.contains("]")) {
 			int argStart = performative.indexOf("[");
 			int argEnd = performative.indexOf("]");
@@ -259,5 +259,5 @@ public class ApplicationPropertyBus {
 		}
 		return performative;
 	}
-	
+
 }
