@@ -45,8 +45,8 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	public static final String SELECTED_PROJECT = "embeddedsystem.project";
 	public static final String AUTO_INIT_BGSYSTEM = "bgsystem.auto_init";
 	public static final String SERVER_MASTER_PROTOCOL = "server.master.protocol";
-	public final static String EMBEDDEDSYSTEM_AGENT_CLASSNAME="embeddedsystem.agent[X].classname";
-	public final static String EMBEDDEDSYSTEM_AGENT_AGENTNAME="embeddedsystem.agent[X].agentname";
+	public final static String EMBEDDEDSYSTEM_AGENT_CLASSNAME = "embeddedsystem.agent[X].classname";
+	public final static String EMBEDDEDSYSTEM_AGENT_AGENTNAME = "embeddedsystem.agent[X].agentname";
 
 
 	// --- The hibernate factory id which is always used for the background system --------------------------
@@ -149,6 +149,7 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 				Vector<DeviceAgentDescription> agents2Set = new Vector<>();
 				String agentClass = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)));
 				String agentName = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentCounter)));
+				agentName = agentName.replace(" ", "_");
 				
 				while (agentClass != null && agentName != null) {
 					agents2Set.add(new DeviceAgentDescription(agentName, agentClass));
@@ -157,7 +158,7 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 					agentCounter++;
 					agentName = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_AGENTNAME.replace("X", String.valueOf(agentCounter)));
 					agentClass = properties.getStringValue(EMBEDDEDSYSTEM_AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)));
-					
+					agentName = agentName.replace(" ", "_");	
 				}
 				Application.getGlobalInfo().setDeviceServiceAgents(agents2Set);
 			}
