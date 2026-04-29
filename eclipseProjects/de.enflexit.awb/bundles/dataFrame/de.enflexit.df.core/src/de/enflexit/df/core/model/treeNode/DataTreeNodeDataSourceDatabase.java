@@ -6,6 +6,8 @@ import javax.swing.JComponent;
 
 import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.data.PaginationDataLoader;
+import de.enflexit.df.core.data.PaginationDataLoader4DB;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationDatabase;
 
@@ -16,6 +18,8 @@ import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationDatabase;
 public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSource<DatabaseDataSource> {
 
 	private JPanelDataSourceConfigurationDatabase jPanelDataSourceConfigurationDatabase;
+	
+	private PaginationDataLoader4DB paginationDataLoader4DB;
 	
 	/**
 	 * Instantiates a new data tree node data source database.
@@ -49,12 +53,14 @@ public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSour
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.DataTreeNodeDataSource#loadData()
+	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()
 	 */
 	@Override
-	public boolean loadData() {
-		// TODO Auto-generated method stub
-		return false;
+	public PaginationDataLoader<DatabaseDataSource> getPaginationDataLoader() {
+		if (paginationDataLoader4DB==null) {
+			paginationDataLoader4DB = new PaginationDataLoader4DB(this.getDataSource());
+		}
+		return paginationDataLoader4DB;
 	}
 
 }

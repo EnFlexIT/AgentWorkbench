@@ -85,16 +85,18 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		this.add(this.getJButtonDataWorkbookDelete());
 		
 		this.addSeparator();
+		this.add(this.getJToggleButtonConfiguration());
+
+		this.addSeparator();
 		this.add(this.getJButtonSelectedDataWorkbookOpen());
 		this.add(this.getJButtonDataWorkbookSave());
 		this.add(this.getJButtonSelectedDataWorkbookClose());
 		
 		this.addSeparator();
-		this.add(this.getJToggleButtonConfiguration());
-		
-		this.addSeparator();
 		this.add(this.getJButtonEditDataSources());
 		this.add(this.getJButtonDeleteDataSources());
+		
+		this.enableJButtonEnabledToSelection(null);
 	}
 	
 	public DataController getDataController() {
@@ -446,10 +448,11 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	 */
 	private void enableJButtonEnabledToSelection(String propertyChanged) {
 		
-		if (this.getPropertyListForJButtonEnablement().contains(propertyChanged)==false) return;
+		if (propertyChanged!=null && this.getPropertyListForJButtonEnablement().contains(propertyChanged)==false) return;
 		 
 		DataControllerSelectionModel selModel = this.getDataController().getSelectionModel();
 
+		// --- DataWorkbook open / save / close buttons -------------
 		DataTreeNodeDataWorkbook dtnoDW = selModel.getSelectedDataTreeNodeDataWorkbook();
 		if (dtnoDW==null) {
 			this.getJButtonSelectedDataWorkbookOpen().setEnabled(false);
@@ -460,6 +463,12 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 			this.getJButtonDataWorkbookSave().setEnabled(dtnoDW.isDataSourcesLoaded()==true);
 			this.getJButtonSelectedDataWorkbookClose().setEnabled(dtnoDW.isDataSourcesLoaded()==true);
 		}
+		
+		// --- Edit or delete data sources --------------------------
+		this.getJButtonEditDataSources().setEnabled(dtnoDW!=null && dtnoDW.isDataSourcesLoaded());
+		this.getJButtonDeleteDataSources().setEnabled(dtnoDW!=null && dtnoDW.isDataSourcesLoaded());
+		
+		
 		
 	}
 
