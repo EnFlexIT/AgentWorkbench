@@ -66,10 +66,9 @@ public class ApplicationPropertyBus {
 
 	/**
 	 * Returns the performative service HashMap.
-	 * 
 	 * @return the performative HashMap
 	 */
-	private HashMap<String, List<PropertyBusService>> getPerformativeServieHashMap() {
+	private synchronized HashMap<String, List<PropertyBusService>> getPerformativeServieHashMap() {
 		if (performativeServieHashMap == null) {
 			performativeServieHashMap = new HashMap<>();
 			this.updatePerformativeServiceHashMap();
@@ -96,8 +95,7 @@ public class ApplicationPropertyBus {
 	 */
 	public void addPropertyBusService(PropertyBusService perfService) {
 
-		if (perfService == null)
-			return;
+		if (perfService == null) return;
 
 		String performative = perfService.getPerformativeNotNull();
 		List<PropertyBusService> perfServiceListKnown = this.getPerformativeServieHashMap().get(performative);
@@ -122,8 +120,7 @@ public class ApplicationPropertyBus {
 	 */
 	public void removePropertyBusService(PropertyBusService perfService) {
 
-		if (perfService == null)
-			return;
+		if (perfService == null) return;
 
 		String performative = perfService.getPerformativeNotNull();
 		List<PropertyBusService> perfServiceList = this.getPerformativeServieHashMap().get(performative);
@@ -157,13 +154,11 @@ public class ApplicationPropertyBus {
 
 		String argumentFreePerformative = this.getPerformativeWithoutArgument(performative);
 
-		List<PropertyBusService> perfServiceListKnown = this.getPerformativeServieHashMap()
-				.get(argumentFreePerformative.trim().toLowerCase());
+		List<PropertyBusService> perfServiceListKnown = this.getPerformativeServieHashMap().get(argumentFreePerformative.trim().toLowerCase());
 		if (perfServiceListKnown == null || perfServiceListKnown.size() == 0) {
 			LOGGER.error("No PropertyBusService was found for the performative '" + performative + "'!");
 		} else if (perfServiceListKnown.size() > 1) {
-			LOGGER.info(perfServiceListKnown.size()
-					+ " instead of one PropertyBusService were found for the performative '" + performative + "'!");
+			LOGGER.info(perfServiceListKnown.size() + " instead of one PropertyBusService were found for the performative '" + performative + "'!");
 		}
 		return perfServiceListKnown;
 	}
