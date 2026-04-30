@@ -192,6 +192,7 @@ public class PaginationDataLoader4CSV extends PaginationDataLoader<CsvDataSource
 				// --- Read complete file ---------------------------
 				// --------------------------------------------------
 				newPage = this.loadCompleteFile();
+				this.setPageNumberLoaded(1);
 				
 			} else {
 				// --------------------------------------------------
@@ -204,14 +205,15 @@ public class PaginationDataLoader4CSV extends PaginationDataLoader<CsvDataSource
 					int noOfRows = isHeadLine==true ? (this.getNumberOfRecordsPerPage()+1) : this.getNumberOfRecordsPerPage(); 
 					
 					pageData = this.readNextDataRows(noOfRows);
+					this.setPageNumberLoaded(1);
+					
+					// --- Proceed first chunk ----------------------
 					if (isHeadLine==true) {
 						this.headLine = pageData.remove(0);
 					}
 					this.pageOne = pageData;
-					
 					// --- Detect column model ----------------------
 					this.detectColumnTypes();
-					this.setPageNumberLoaded(1);
 					
 					// --- Create tablesaw table --------------------
 					newPage = Table.create(this.createAndFillDataColumns(pageData));
@@ -219,7 +221,9 @@ public class PaginationDataLoader4CSV extends PaginationDataLoader<CsvDataSource
 				} else {
 					// --- Read next page ---------------------------
 					pageData = this.readNextDataRows(this.getNumberOfRecordsPerPage());
-					this.setPageNumberLoaded(this.getPageNumberLoaded() + 1);
+					if (pageData.size()>0) {
+						this.setPageNumberLoaded(this.getPageNumberLoaded() + 1);
+					}
 					
 					// --- Create tablesaw table --------------------
 					newPage = Table.create(this.pageDataColumns);

@@ -93,6 +93,21 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	 */
 	public abstract PaginationDataLoader<DS> getPaginationDataLoader();
 	
+
+	
+	/**
+	 * Reload.
+	 */
+	public void reloadTable() {
+		try {
+			this.setTable(null);
+			this.getPaginationDataLoader().reset();
+			this.loadDataWithinThread();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Will call load the data in dedicated thread.
 	 */
@@ -113,19 +128,6 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 					}
 				}
 			}, "DataLoader-" + this.getClass().getSimpleName()).start();
-		}
-	}
-	
-	/**
-	 * Reload.
-	 */
-	public void reloadTable() {
-		try {
-			this.setTable(null);
-			this.getPaginationDataLoader().reset();
-			this.loadDataWithinThread();
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
 	}
 	

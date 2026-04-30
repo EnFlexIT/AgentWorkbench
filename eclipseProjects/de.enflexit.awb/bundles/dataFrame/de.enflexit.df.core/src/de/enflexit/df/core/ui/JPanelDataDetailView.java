@@ -320,7 +320,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	
 	private JLabel getJLabelPagesLoaded() {
 		if (jLabelPageLoaded==null) {
-			jLabelPageLoaded = new JLabel("  Page-No: ");
+			jLabelPageLoaded = new JLabel("  Pages-Loaded: ");
 			jLabelPageLoaded.setFont(baseFont.deriveFont(Font.BOLD));
 		}
 		return jLabelPageLoaded;
@@ -461,7 +461,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				if (newRowsPerPage != this.getPaginationDataLoader().getNumberOfRecordsPerPage()) {
 					this.getPaginationDataLoader().setNumberOfRecordsPerPage(newRowsPerPage);
 					this.getSelectedDataTreeNodeDataSource().reloadTable();
-					this.getJTextFieldDatasetNo().requestFocus();
+					this.getJButtonDatasetLast().requestFocus();
 				}
 				
 			} catch (Exception ex) { }
@@ -478,8 +478,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 */
 	private void setDatasetSelection(Integer dataRowToSelect, int direction, boolean isSelectInTable) {
 		
-		AbstractDataTreeNodeDataSource<?> dtnoDsSelected = this.getSelectedDataTreeNodeDataSource();
-		if (dtnoDsSelected==null) return;
+		AbstractDataTreeNodeDataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
+		if (dtnoDS==null) return;
 		
 		// --- Adjust number of data row text field -----------------
 		ListSelectionModel selModel = this.getJTableData().getSelectionModel();
@@ -487,7 +487,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			int rowSelected = selModel.getSelectedIndices()[0] + 1;
 			this.getJTextFieldDatasetNo().setText(rowSelected + "");
 		    // --- Remind selected data row ------------------------- 
-		    dtnoDsSelected.setRowSelected(rowSelected);
+		    dtnoDS.setRowSelected(rowSelected);
 		    
 		} else {
 			this.getJTextFieldDatasetNo().setText("");
@@ -501,8 +501,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				if (dataRowToSelect<1) {
 					dataRowToSelect = 1;
 				} else if (dataRowToSelect > this.getJTableData().getRowCount()) {
-					// TODO: Further load data or reduce number row count  
-					System.err.println();
+					this.setDatasetSelection(null, Integer.MAX_VALUE, true);
+					return;
 				}
 				
 			} else {
@@ -517,10 +517,18 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 					break;
 				case 1: 
 					dataRowToSelect = this.getSelectedDataRow(selModel.getSelectedIndices(), true) + 1;
-					if (dataRowToSelect>this.getJTableData().getRowCount()) dataRowToSelect = this.getJTableData().getRowCount();
+					if (dataRowToSelect>this.getJTableData().getRowCount()) {
+						dataRowToSelect = this.getJTableData().getRowCount();
+					}
+					if (dataRowToSelect==this.getJTableData().getRowCount() && dtnoDS.getPaginationDataLoader().isPaginationActivated()==true) {
+						dtnoDS.loadDataWithinThread();
+					}
 					break;
 				case Integer.MAX_VALUE:
 					dataRowToSelect = this.getJTableData().getRowCount();
+					if (dtnoDS.getPaginationDataLoader().isPaginationActivated()==true) {
+						dtnoDS.loadDataWithinThread();
+					}
 					break;
 				}
 			}
@@ -532,7 +540,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		    this.getJTableData().scrollRectToVisible(rect);
 			
 		    // --- Remind selected data row ------------------------- 
-		    dtnoDsSelected.setRowSelected(dataRowToSelect);
+		    dtnoDS.setRowSelected(dataRowToSelect);
 		}
 	}
 	
