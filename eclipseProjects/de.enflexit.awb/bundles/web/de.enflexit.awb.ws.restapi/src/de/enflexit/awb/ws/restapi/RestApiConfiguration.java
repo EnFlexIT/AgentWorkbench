@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import de.enflexit.awb.ws.restapi.gen.AppApi;
+import de.enflexit.awb.ws.restapi.gen.DoUpdateApi;
 import de.enflexit.awb.ws.restapi.gen.ExecutionStateApi;
 import de.enflexit.awb.ws.restapi.gen.InfoApi;
 import de.enflexit.awb.ws.restapi.gen.JacksonJsonProvider;
@@ -55,6 +56,7 @@ public class RestApiConfiguration extends ResourceConfig {
 		this.register(LoadApi.class);
 		this.register(UserApi.class);
 		this.register(VersionApi.class);
+		this.register(DoUpdateApi.class);
 	}
 	
 	

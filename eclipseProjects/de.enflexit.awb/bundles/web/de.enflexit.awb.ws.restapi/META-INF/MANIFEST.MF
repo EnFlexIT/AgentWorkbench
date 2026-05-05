@@ -41,6 +41,7 @@ Bundle-ClassPath: .
 Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.project,
+ de.enflexit.awb.core.update,
  de.enflexit.awb.simulation.load,
  de.enflexit.common,
  de.enflexit.common.featureEvaluation,
