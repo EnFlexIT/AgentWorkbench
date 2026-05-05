@@ -44,14 +44,16 @@ public class PropertyBusServiceAgents implements PropertyBusService {
 		if (properties == null) properties = new Properties();
 		// --- Get all registered classes extending jade.core.Agent -------------------------------
 		AbstractBundleClassFilter agentFilter = BundleEvaluator.getInstance().getBundleClassFilterByClass(jade.core.Agent.class);
-		Vector<String> agents = agentFilter.getClassesFound();
-
-		// --- Set the results --------------------------------------------------------------------
-		int agentCounter = 0;
-		for (String agent : agents) {
-			properties.setStringValue(AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)), agent);
-			agentCounter++;
+		if (agentFilter != null) {
+			Vector<String> agents = agentFilter.getClassesFound();
+			// --- Set the results --------------------------------------------------------------------
+			int agentCounter = 0;
+			for (String agent : agents) {
+				properties.setStringValue(AGENT_CLASSNAME.replace("X", String.valueOf(agentCounter)), agent);
+				agentCounter++;
+			}
 		}
+
 		return properties;
 	}
 }
