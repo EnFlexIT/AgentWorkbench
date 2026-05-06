@@ -168,7 +168,9 @@ public class P2OperationsHandler {
 					provisioningAgent = (IProvisioningAgent) bundleContext.getService(serviceReference);
 					
 					// --- Add a custom IInstallableUnitUIServices implementation to handle trusted repos if headless
-					provisioningAgent.registerService(UIServices.class.getName(), new HeadlessInstallableUnitUIServices(this.getTrustedRepositoryURIs()));
+					if (this.isWebOrHeadless()==true) {
+						provisioningAgent.registerService(UIServices.class.getName(), new HeadlessInstallableUnitUIServices(this.getTrustedRepositoryURIs()));
+					}
 					
 					// --- Add a custom TrustEngine implementation for handling signed artifacts
 					try {
@@ -365,11 +367,9 @@ public class P2OperationsHandler {
 	public IStatus installAvailableUpdates() {
 		
 		// --- Set policy to always accept unsigned IUs if web or operating headless --------------
-		String currProductID = Platform.getProduct().getId();
-		boolean isWebProduct = (currProductID!=null && currProductID.equals(GlobalConstants.AWB_PRODUCT_ID_WEB));
-		boolean isHeadlessOp = SystemEnvironmentHelper.isHeadlessOperation();
 		
-		if (isHeadlessOp==true || isWebProduct==true) {
+		
+		if (this.isWebOrHeadless()) {
 			//TODO Remove when proper signing of bundles is implemented!
 			System.getProperties().setProperty(EngineActivator.PROP_UNSIGNED_POLICY, EngineActivator.UNSIGNED_ALLOW);
 			
@@ -377,7 +377,7 @@ public class P2OperationsHandler {
 				this.setTrustAllAuthoritiesPreference();
 			}
 			
-			LOGGER.info("Accepting unsigned updates: WebProduct=" + isWebProduct + ", HeadlessOperation=" + isHeadlessOp);
+			LOGGER.info("Running in web server or headless mode, accepting unsigned updates");
 		} else {
 			LOGGER.info("Regular application mode, not accepting unsigned updates!");
 		}
@@ -420,6 +420,17 @@ public class P2OperationsHandler {
 
 		// --- No repository containing the IU could be found ---------------------------
 		return null;
+	}
+	
+	/**
+	 * Checks if the application is running in web server or headless mode, where trust issues must be handled differently.
+	 * @return true, if is web or headless
+	 */
+	private boolean isWebOrHeadless() {
+		String currProductID = Platform.getProduct().getId();
+		boolean isWebProduct = (currProductID!=null && currProductID.equals(GlobalConstants.AWB_PRODUCT_ID_WEB));
+		boolean isHeadlessOp = SystemEnvironmentHelper.isHeadlessOperation();
+		return isWebProduct || isHeadlessOp;
 	}
 
 	/**
