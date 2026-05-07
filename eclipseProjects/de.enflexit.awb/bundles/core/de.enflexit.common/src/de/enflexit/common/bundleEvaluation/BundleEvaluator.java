@@ -238,7 +238,7 @@ public class BundleEvaluator {
 	 * Returns the filter and the filter results of the bundle evaluation.
 	 * @return the bundle class filters
 	 */
-	private EvaluationFilterResults getEvaluationFilterResults() {
+	private synchronized EvaluationFilterResults getEvaluationFilterResults() {
 		if (evaluationFilterResults==null) {
 			evaluationFilterResults = new EvaluationFilterResults(this);
 		}
