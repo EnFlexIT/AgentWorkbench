@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.restapi.gen.impl;
+package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
 import de.enflexit.awb.ws.restapi.gen.*;
@@ -19,10 +19,10 @@ public class DoUpdateApiServiceImpl extends DoUpdateApiService {
     	if (principal==null) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
     	}
+    	
     	AWBUpdater awbUpdater = new AWBUpdater(true, true);
     	awbUpdater.start();
-    	awbUpdater.waitForUpdate();
     	
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Done!")).build();
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Update scheduled")).build();
     }
 }
