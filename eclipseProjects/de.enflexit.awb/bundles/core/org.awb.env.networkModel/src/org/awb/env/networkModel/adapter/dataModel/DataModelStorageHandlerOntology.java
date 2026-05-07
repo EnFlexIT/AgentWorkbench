@@ -331,7 +331,7 @@ public class DataModelStorageHandlerOntology extends AbstractDataModelStorageHan
 		// --- Try to obtain the storage service ------------ 
 		SetupDataModelStorageServiceOntology storageService = null;
 		int timesTried=0;
-		int maxTries = 20;
+		int maxTries = 50;
 		long waitMillis = 100;
 		
 		do {
