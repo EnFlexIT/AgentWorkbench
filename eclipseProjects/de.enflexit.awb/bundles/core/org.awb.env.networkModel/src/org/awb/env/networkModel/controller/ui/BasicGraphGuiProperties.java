@@ -933,7 +933,11 @@ public class BasicGraphGuiProperties extends BasicGraphGuiJInternalFrame impleme
 					BundlingNetworkComponentAdapter4DataModel bnca2DataModel = (BundlingNetworkComponentAdapter4DataModel) nca2DataModel;
 					ontoViewer = (OntologyInstanceViewer) bnca2DataModel.getVisualizationComponent(uds.getDomain());
 				} else {
-					ontoViewer = (OntologyInstanceViewer) nca2DataModel.getVisualizationComponent(this);
+					try {
+						ontoViewer = (OntologyInstanceViewer) nca2DataModel.getVisualizationComponent(this);
+					} catch (ClassCastException cce) {
+//						System.err.println("[" + this.getClass().getSimpleName() + "] ClassCastException for OntologyInstanceViewer of " + nca2DataModel.getNetworkComponent().getId());
+					}
 				}
 				
 				if (ontoViewer!=null) {
