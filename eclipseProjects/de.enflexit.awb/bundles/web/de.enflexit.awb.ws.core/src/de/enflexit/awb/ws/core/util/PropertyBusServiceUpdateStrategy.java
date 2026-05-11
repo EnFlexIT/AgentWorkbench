@@ -46,11 +46,11 @@ public class PropertyBusServiceUpdateStrategy implements PropertyBusService {
 			
 			// --- Set the desired value --------------------------------------------------------------------
 			switch (properties.getStringValue(UPDATE_STRATEGY)) {
-			case "automatic":
+			case AUTOMATIC:
 				Application.getGlobalInfo().setUpdateAutoConfiguration(AWBUpdater.UPDATE_MODE_AUTOMATIC);
 				webAppSettings.setUpdateStrategy(UpdateStrategy.Automatic);
 				break;
-			case "askuser":
+			case ASKUSER:
 				Application.getGlobalInfo().setUpdateAutoConfiguration(AWBUpdater.UPDATE_MODE_ASK);
 				webAppSettings.setUpdateStrategy(UpdateStrategy.AskUser);
 				break;
