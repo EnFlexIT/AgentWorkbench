@@ -46,6 +46,7 @@ public class DatabaseSettingsPanel extends JPanel {
 	private boolean canceled;
 	private Vector<String> userMessages;
 	
+	
 	/**
 	 * Instantiates a new database settings dialog.
 	 * @param databaseSettings the actual database settings to configure
@@ -67,35 +68,69 @@ public class DatabaseSettingsPanel extends JPanel {
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
+		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
 		gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
 		gbc_jLabelHeader.gridwidth = 2;
 		gbc_jLabelHeader.insets = new Insets(15, 15, 10, 0);
 		gbc_jLabelHeader.gridx = 0;
 		gbc_jLabelHeader.gridy = 0;
-		this.add(getJLabelHeader(), gbc_jLabelHeader);
+		this.add(this.getJLabelHeader(), gbc_jLabelHeader);
 		GridBagConstraints gbc_jLabelDatabaseType = new GridBagConstraints();
 		gbc_jLabelDatabaseType.insets = new Insets(0, 15, 5, 5);
 		gbc_jLabelDatabaseType.anchor = GridBagConstraints.WEST;
 		gbc_jLabelDatabaseType.gridx = 0;
 		gbc_jLabelDatabaseType.gridy = 1;
-		this.add(getJLabelDatabaseType(), gbc_jLabelDatabaseType);
+		this.add(this.getJLabelDatabaseType(), gbc_jLabelDatabaseType);
 		GridBagConstraints gbc_jComboBoxDbType = new GridBagConstraints();
 		gbc_jComboBoxDbType.anchor = GridBagConstraints.WEST;
 		gbc_jComboBoxDbType.insets = new Insets(0, 5, 5, 0);
 		gbc_jComboBoxDbType.gridx = 1;
 		gbc_jComboBoxDbType.gridy = 1;
-		this.add(getJComboBoxDbType(), gbc_jComboBoxDbType);
+		this.add(this.getJComboBoxDbType(), gbc_jComboBoxDbType);
 		GridBagConstraints gbc_jPanelSettings = new GridBagConstraints();
 		gbc_jPanelSettings.gridwidth = 2;
 		gbc_jPanelSettings.insets = new Insets(10, 15, 15, 15);
 		gbc_jPanelSettings.fill = GridBagConstraints.BOTH;
 		gbc_jPanelSettings.gridx = 0;
 		gbc_jPanelSettings.gridy = 2;
-		this.add(getJScrollPaneSettings(), gbc_jPanelSettings);
+		this.add(this.getJScrollPaneSettings(), gbc_jPanelSettings);
 		
 	}
-   
+
+	/**
+	 * Sets the outer margin of the outer components.
+	 * @param newMargin the new outer margin that needs to be greater than 0.
+	 */
+	public void setOuterMargin(int newMargin) {
+		
+		if (newMargin<0) return;
+		
+		GridBagLayout gbLayout = (GridBagLayout) this.getLayout();
+		GridBagConstraints gbc = null;
+		
+		gbc = gbLayout.getConstraints(this.getJLabelHeader());
+		gbc.insets = new Insets(newMargin, newMargin, 10, 0);
+		gbLayout.setConstraints(this.getJLabelHeader(), gbc);
+		
+		gbc = gbLayout.getConstraints(this.getJLabelDatabaseType());
+		gbc.insets = new Insets(0, newMargin, 5, 5);
+		gbLayout.setConstraints(this.getJLabelDatabaseType(), gbc);
+		
+		gbc = gbLayout.getConstraints(this.getJScrollPaneSettings());
+		gbc.insets = new Insets(10, newMargin, newMargin, newMargin);
+		gbLayout.setConstraints(this.getJScrollPaneSettings(), gbc);
+		
+		this.revalidate();
+		this.repaint();
+	}
+	
+	/**
+	 * Removes the header text.
+	 */
+	public void removeHeaderText() {
+		this.remove(this.getJLabelHeader());
+	}
     /**
      * Sets the header text for the Dialog.
      * @param headerText the new header
