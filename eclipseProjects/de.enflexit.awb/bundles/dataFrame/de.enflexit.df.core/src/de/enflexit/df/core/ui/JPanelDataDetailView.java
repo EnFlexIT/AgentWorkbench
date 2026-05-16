@@ -292,9 +292,15 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		if (this.getJToggleButtonEnabledPagination().isSelected()==true) {
 			this.getJToggleButtonEnabledPagination().setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("Pagination-On.png")));
 			this.getJToggleButtonEnabledPagination().setToolTipText("Pagination enabled");
+			this.getJLabelRowsPerPage().setEnabled(true);
+			this.getJTextFieldRowsPerPage().setEnabled(true);
+			this.getJTextFieldRowsPerPage().setEditable(true);
 		} else {
 			this.getJToggleButtonEnabledPagination().setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("Pagination-Off.png")));
 			this.getJToggleButtonEnabledPagination().setToolTipText("Pagination disbaled");
+			this.getJLabelRowsPerPage().setEnabled(false);
+			this.getJTextFieldRowsPerPage().setEnabled(false);
+			this.getJTextFieldRowsPerPage().setEditable(false);
 		}
 	}
 	
@@ -408,7 +414,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				
 			} else {
 				// --- Try loading? ---------------------------------
-				dtnoDS.loadDataWithinThread();
+				dtnoDS.loadNextPageAsynchronous();
 				this.getJTableData().setModel(new DefaultTableModel());
 			}
 			uiDetail = this.getJTableData();
@@ -451,7 +457,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			// --- React on pagination toggle ----------------------- 
 			this.setJToggleButtonEnabledPaginationIcon();
 			this.getPaginationDataLoader().setPaginationActivated(this.getJToggleButtonEnabledPagination().isSelected());
-			this.getSelectedDataTreeNodeDataSource().reloadTable();
+			this.getSelectedDataTreeNodeDataSource().reloadTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJTextFieldRowsPerPage()) {
 			// --- Change the number of rows per page ---------------
@@ -460,7 +466,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				newRowsPerPage = Integer.parseInt(this.getJTextFieldRowsPerPage().getText().trim());
 				if (newRowsPerPage != this.getPaginationDataLoader().getNumberOfRecordsPerPage()) {
 					this.getPaginationDataLoader().setNumberOfRecordsPerPage(newRowsPerPage);
-					this.getSelectedDataTreeNodeDataSource().reloadTable();
+					this.getSelectedDataTreeNodeDataSource().reloadTableAsynchronous();
 					this.getJButtonDatasetLast().requestFocus();
 				}
 				
@@ -521,13 +527,13 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 						dataRowToSelect = this.getJTableData().getRowCount();
 					}
 					if (dataRowToSelect==this.getJTableData().getRowCount() && dtnoDS.getPaginationDataLoader().isPaginationActivated()==true) {
-						dtnoDS.loadDataWithinThread();
+						dtnoDS.loadNextPageAsynchronous();
 					}
 					break;
 				case Integer.MAX_VALUE:
 					dataRowToSelect = this.getJTableData().getRowCount();
 					if (dtnoDS.getPaginationDataLoader().isPaginationActivated()==true) {
-						dtnoDS.loadDataWithinThread();
+						dtnoDS.loadNextPageAsynchronous();
 					}
 					break;
 				}

@@ -157,6 +157,7 @@ public class JPanelConfigurationWrapper extends JPanel {
 			}
 		}
 		this.add(this.configComponent, BorderLayout.CENTER);
+		
 		this.validate();
 		this.repaint();
 	}

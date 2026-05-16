@@ -51,6 +51,14 @@ public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSour
 		}
 		return jPanelDataSourceConfigurationDatabase;
 	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 */
+	@Override
+	public void resetConfigurationPanel() {
+		this.jPanelDataSourceConfigurationDatabase = null;
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()

@@ -54,7 +54,14 @@ public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<
 		}
 		return jPanelDataSourceConfigurationExcel;
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 */
+	@Override
+	public void resetConfigurationPanel() {
+		this.jPanelDataSourceConfigurationExcel = null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()
 	 */

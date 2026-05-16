@@ -94,24 +94,39 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 	public abstract PaginationDataLoader<DS> getPaginationDataLoader();
 	
 
-	
 	/**
-	 * Reload.
+	 * Asynchronously reloads the data table.
+	 */
+	public void reloadTableAsynchronous() {
+		try {
+			this.setTable(null);
+			if (this.getPaginationDataLoader()!=null) {
+				this.getPaginationDataLoader().reset();
+			}
+			this.loadNextPageAsynchronous();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	/**
+	 * Reloads the data table.
 	 */
 	public void reloadTable() {
 		try {
 			this.setTable(null);
-			this.getPaginationDataLoader().reset();
-			this.loadDataWithinThread();
+			if (this.getPaginationDataLoader()!=null) {
+				this.getPaginationDataLoader().reset();
+			}
+			this.loadNextPage();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Will call load the data in dedicated thread.
+	 * Will call to load the next page by doing that within in a dedicated thread.
 	 */
-	public void loadDataWithinThread() {
+	public synchronized void loadNextPageAsynchronous() {
 
 		if (this.isLoading==false) {
 			
@@ -130,21 +145,20 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 			}, "DataLoader-" + this.getClass().getSimpleName()).start();
 		}
 	}
-	
 	/**
 	 * Load next page.
 	 */
-	private void loadNextPage() {
+	public void loadNextPage() {
 		
 		// --- Try loading the next page ---------------------------- 
-		Table page = this.getPaginationDataLoader().loadNextPage();
-		if (page==null) {
+		Table newPage = this.getPaginationDataLoader().loadNextPage();
+		if (newPage==null) {
 			
 		} else {
 			if (this.getTable()==null) {
-				this.setTable(page);
+				this.setTable(newPage);
 			} else {	
-				this.getTable().append(page);
+				this.getTable().append(newPage);
 			}
 		}
 		
@@ -152,7 +166,7 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSour
 		this.setErrorMessage(this.getPaginationDataLoader().getErrorMessage());
 		
 		// --- Inform about page loading ----------------------------
-		this.informLoaded(this.getTable(), page);
+		this.informLoaded(this.getTable(), newPage);
 	}
 	
 	/**

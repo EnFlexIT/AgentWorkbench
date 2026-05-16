@@ -126,12 +126,23 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 		}
 		return jPanelConfiguration;
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 */
+	@Override
+	public void resetConfigurationPanel() {
+		this.jPanelConfiguration = null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
 	public List<JComponent> getConfigurationToolbarComponents() {
+		if (this.getDataWorkbook() instanceof DataWorkbook4DB) {
+			JPanelDataWorkbookInDB jPanelConfiguration = (JPanelDataWorkbookInDB) this.getJPanelConfiguration();
+			return jPanelConfiguration.getConfigurationToolbarComponents();
+		}
 		return null;
 	}
 	/* (non-Javadoc)
