@@ -17,6 +17,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	private static final long serialVersionUID = 5010880029903092936L;
 	
 	private DatabaseDataSource dataSource;
+	private String factoryID;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookFile()
@@ -33,9 +34,6 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 * @return the workbook data source
 	 */
 	public DatabaseDataSource getWorkbookDataSource() {
-		if (dataSource==null) {
-			dataSource = new DatabaseDataSource();			
-		}
 		return dataSource;
 	}
 	/**
@@ -46,6 +44,21 @@ public class DataWorkbook4DB extends DataWorkbook {
 		this.dataSource = dataSource;
 	}
 	
+	/**
+	 * Returns the factory ID to be used for database connections.
+	 * @return the factory ID
+	 */
+	public String getFactoryID() {
+		return factoryID;
+	}
+	/**
+	 * Sets the factory ID to be used for database connections.
+	 * @param factoryID the new factory ID
+	 */
+	public void setFactoryID(String factoryID) {
+		this.factoryID = factoryID;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookLocation()
