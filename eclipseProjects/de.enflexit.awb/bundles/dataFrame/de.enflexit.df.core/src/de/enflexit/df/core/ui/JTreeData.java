@@ -15,6 +15,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -81,7 +82,7 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 	 * @return the data tree model
 	 */
 	private DataTreeModel getDataTreeModel() {
-		return this.getDataController().getDataTreeModel();
+		return this.getDataController()==null ? null : this.getDataController().getDataTreeModel();
 	}
 	
 	/**
@@ -280,5 +281,48 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 		return ma;
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.swing.JTree#updateUI()
+	 */
+	@Override
+	public void updateUI() {
+		super.updateUI();
+		
+		// --- Call reset UI for each hidden configuration panel in the tree --
+		DefaultTreeModel treeModel = this.getDataTreeModel();
+		if (treeModel==null) return;
+		
+		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
+		DefaultMutableTreeNode selTreeNode = null;
+		TreePath selTreePath = this.getLeadSelectionPath();
+		if (selTreePath!=null) {
+			selTreeNode = (DefaultMutableTreeNode) selTreePath.getLastPathComponent();
+		}
+		this.resetTreeNodeConfigurationUI(rootNode, selTreeNode);
+	}
+	
+	/**
+	 * Updates the configuration UI of the specified tree node.
+	 *
+	 * @param treeNode the tree node
+	 * @param selTreeNode the currently selected tree node
+	 */
+	private void resetTreeNodeConfigurationUI(DefaultMutableTreeNode treeNode, DefaultMutableTreeNode selTreeNode) {
+		
+		if (treeNode==null || treeNode==selTreeNode) return;
+		
+		Object userObject = treeNode.getUserObject();
+		if (userObject instanceof ConfigurationPanel) {
+			ConfigurationPanel dtnoDS = (ConfigurationPanel) userObject;
+			dtnoDS.resetConfigurationPanel();
+		}
+		
+		// --- Work on sub tree nodes
+		for (int i = 0; i < treeNode.getChildCount(); i++) {
+			DefaultMutableTreeNode subTreeNode = (DefaultMutableTreeNode) treeNode.getChildAt(i);
+			this.resetTreeNodeConfigurationUI(subTreeNode, selTreeNode);
+		}
+		
+	}
 	
 }

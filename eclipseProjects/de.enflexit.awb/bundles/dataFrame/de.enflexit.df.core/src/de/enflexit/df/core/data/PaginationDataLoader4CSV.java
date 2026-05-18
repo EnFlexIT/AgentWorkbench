@@ -196,7 +196,7 @@ public class PaginationDataLoader4CSV extends PaginationDataLoader<CsvDataSource
 				
 			} else {
 				// --------------------------------------------------
-				// --- Reap data page-wise --------------------------
+				// --- Read data page-wise --------------------------
 				// --------------------------------------------------
 				// --- Initial read required? -----------------------
 				if (this.getColumnTypes().size()==0) {

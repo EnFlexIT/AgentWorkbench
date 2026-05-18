@@ -4,11 +4,8 @@ import java.awt.Component;
 import java.awt.Window;
 import java.io.File;
 
-import javax.swing.JFileChooser;
-
-import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.DataController;
 
 /**
@@ -19,13 +16,49 @@ public class DataWorkbook4DB extends DataWorkbook {
 
 	private static final long serialVersionUID = 5010880029903092936L;
 	
+	private DatabaseDataSource dataSource;
+	private String factoryID;
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookFile()
 	 */
 	@Override
 	public File getDataWorkbookFile() {
+		// --- Nothing further to do here -------
 		return null;
 	}
+	
+	
+	/**
+	 * Returns the workbooks data source.
+	 * @return the workbook data source
+	 */
+	public DatabaseDataSource getWorkbookDataSource() {
+		return dataSource;
+	}
+	/**
+	 * Sets the workbooks data source.
+	 * @param dataSource the new workbook data source
+	 */
+	public void setWorkbookDataSource(DatabaseDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	/**
+	 * Returns the factory ID to be used for database connections.
+	 * @return the factory ID
+	 */
+	public String getFactoryID() {
+		return factoryID;
+	}
+	/**
+	 * Sets the factory ID to be used for database connections.
+	 * @param factoryID the new factory ID
+	 */
+	public void setFactoryID(String factoryID) {
+		this.factoryID = factoryID;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookLocation()
@@ -118,23 +151,13 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 */
 	public static DataWorkbook4DB create(DataController dataController, Window owner) {
 		
-		File xmlFile = FileSelection.selectJsonFile(owner, JFileChooser.SAVE_DIALOG, "Create Workbook", "Create JSON DataWorkbook", null, null);
-		if (xmlFile==null) return null;
-		
-		// TODO
-		DataWorkbookLocation dwLocation = new DataWorkbookLocation(DataWorkbook4DB.class, xmlFile.getAbsolutePath());
-		if (dataController.getDataWorkbookReminder().getDataWorkbookLocationList().contains(dwLocation)==true) {
-			AwbMessageDialog.showMessageDialog(owner, "The Data Workbook '" + xmlFile.getName() + "' was already loaded to the data viewer and thus cannot be overwritten!", "Data Workbook already loaded!", AwbMessageDialog.ERROR_MESSAGE);
-			return null;
-		} 
-		
-		
 		DataWorkbook4DB dwbDB = new DataWorkbook4DB();
 		
-		
+		dwbDB.createRandomID();
+		dwbDB.setName("Database Data Workbook");
+		dwbDB.setDescription("Description of the DataWorkbook, stored in a database");
 		return dwbDB;
 	}
-
 
 	
 }

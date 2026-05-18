@@ -73,7 +73,7 @@ public class DataWorkbookLocation {
 		
 		DataWorkbookLocation compLocation = (DataWorkbookLocation)compObj;
 		if (StringHelper.isEqualString(compLocation.getDataWorkbookClassName(), this.getDataWorkbookClassName())==false) return false;
-		if (StringHelper.isEqualString(compLocation.getDataWorkbookLocation(), this.getDataWorkbookLocation())==false) return false;
+		if (StringHelper.isEqualString(compLocation.getDataWorkbookLocation(),  this.getDataWorkbookLocation())==false)  return false;
 		
 		return true;
 	}

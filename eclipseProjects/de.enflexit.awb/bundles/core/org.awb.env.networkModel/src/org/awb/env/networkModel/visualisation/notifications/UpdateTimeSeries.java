@@ -366,9 +366,13 @@ public class UpdateTimeSeries extends UpdateDataSeries {
 				tsvp.setTimestamp(sl);
 				tsvp.setValue(sf);
 				
-				// --- Add new value pair to data model -------------
-				if (i>=0 && i<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
-					wrapper.addValuePair(i, tsvp);
+				if (timeSeriesChart!=null) {
+					// --- Add new value pair to data model -------------
+					if (i>=0 && i<=timeSeriesChart.getTimeSeriesChartData().size()-1) {
+						wrapper.addValuePair(i, tsvp);
+					}
+				} else {
+//					System.err.println("[" + this.getClass().getSimpleName() + "] Time series chart not found for " + this.getComponentID());
 				}
 			}
 			break;

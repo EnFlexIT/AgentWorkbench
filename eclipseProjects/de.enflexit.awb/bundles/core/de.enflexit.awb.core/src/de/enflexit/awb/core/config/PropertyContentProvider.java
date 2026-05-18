@@ -25,7 +25,7 @@ public class PropertyContentProvider {
 	 * The enumeration that describes the FileToProvide.
 	 */
 	public enum FileToProvide {
-		OIDC_TRUST_STORE_JKS("oidcTrustStore.jks");
+		EMPTY_PLACEHOLDER("file_in_properties_dir.xyz");
 		
 		private final String fileName;
 		
@@ -85,6 +85,8 @@ public class PropertyContentProvider {
 	 * @param overwriteExistingFile the overwrite existing file
 	 */
 	public void checkAndProvidePropertyContent(FileToProvide fileToProvide, boolean overwriteExistingFile) {
+		
+		if (fileToProvide==FileToProvide.EMPTY_PLACEHOLDER) return;
 		
 		// --- Try to find the file in the properties ----- 
 		final String fileNameToMatch = fileToProvide.toString();

@@ -181,8 +181,8 @@ public class TimeSeriesChartRealTimeWrapper {
 	private TimeSeriesValuePair getValuePairForTimestamp(TimeSeries timeSeries, long timestamp) {
 		for (int i=0; i<timeSeries.getTimeSeriesValuePairs().size(); i++) {
 			TimeSeriesValuePair tsvp = (TimeSeriesValuePair) timeSeries.getTimeSeriesValuePairs().get(i);
-			long tsvpTimestamp = tsvp.getTimestamp().getLongValue();
-			if (tsvpTimestamp==timestamp) {
+			Long tsvpTimestamp = tsvp.getTimestamp().getLongValue();
+			if (tsvpTimestamp!=null && tsvpTimestamp==timestamp) {
 				return tsvp;
 			}
 		}

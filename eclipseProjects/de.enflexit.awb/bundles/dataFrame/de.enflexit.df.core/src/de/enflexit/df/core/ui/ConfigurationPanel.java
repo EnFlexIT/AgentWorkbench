@@ -22,4 +22,9 @@ public interface ConfigurationPanel {
 	 */
 	public JComponent getConfigurationPanel();
 	
+	/**
+	 * Has to reset the configuration panel.
+	 */
+	public void resetConfigurationPanel();
+	
 }

@@ -2,7 +2,6 @@ package de.enflexit.db.hibernate.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -28,6 +27,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.TableCellColorHelper;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor;
@@ -246,16 +246,7 @@ public class DatabaseSelectionPanel extends JPanel implements HibernateStateVisu
 	 */
 	private void showDatabaseDialog(String factoryID) {
 		
-		Window parentWindow = null;
-		Container parentContainer = this.getParent();
-		while (parentContainer!=null) {
-			if (parentContainer instanceof Window) {
-				parentWindow = (Window) parentContainer;
-				break;
-			}
-			parentContainer = parentContainer.getParent();
-		}
-
+		Window parentWindow = OwnerDetection.getOwnerWindowForComponent(this.getParent());
 		DatabaseConnectionSettingsDialog databaseConnectionSettingsDialog = new DatabaseConnectionSettingsDialog(parentWindow, factoryID);
 		databaseConnectionSettingsDialog.setVisible(true);
 		// - - - Wait for user - - - - - - - - -  

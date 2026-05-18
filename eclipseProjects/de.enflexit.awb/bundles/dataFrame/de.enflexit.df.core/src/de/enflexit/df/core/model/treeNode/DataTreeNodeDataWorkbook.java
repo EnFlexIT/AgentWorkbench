@@ -121,17 +121,28 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 			if (this.getDataWorkbook() instanceof DataWorkbook4XML || this.getDataWorkbook() instanceof DataWorkbook4JSON) {
 				jPanelConfiguration = new JPanelDataWorkbookInFile(this.getDataController(), this.getDataWorkbook());
 			} else if (this.getDataWorkbook() instanceof DataWorkbook4DB) {
-				jPanelConfiguration = new JPanelDataWorkbookInDB(this.getDataController(), this.getDataWorkbook());
+				jPanelConfiguration = new JPanelDataWorkbookInDB(this.getDataController(), (DataWorkbook4DB)this.getDataWorkbook());
 			}
 		}
 		return jPanelConfiguration;
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 */
+	@Override
+	public void resetConfigurationPanel() {
+		this.jPanelConfiguration = null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
 	public List<JComponent> getConfigurationToolbarComponents() {
+		if (this.getDataWorkbook() instanceof DataWorkbook4DB) {
+			JPanelDataWorkbookInDB jPanelConfiguration = (JPanelDataWorkbookInDB) this.getJPanelConfiguration();
+			return jPanelConfiguration.getConfigurationToolbarComponents();
+		}
 		return null;
 	}
 	/* (non-Javadoc)

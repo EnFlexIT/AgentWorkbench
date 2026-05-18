@@ -62,7 +62,14 @@ public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<Cs
 		}
 		return jPanelDataSourceConfigurationCsv;
 	}
-
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 */
+	@Override
+	public void resetConfigurationPanel() {
+		this.jPanelDataSourceConfigurationCsv = null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()
 	 */
