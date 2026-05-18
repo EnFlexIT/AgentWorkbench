@@ -17,9 +17,7 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  */
 public class PropertyBusServiceUpdateStrategy implements PropertyBusService {
 
-	public static final String UPDATE_STRATEGY = "update.strategy";
-	public static final String AUTOMATIC = "automatic";
-	public static final String ASKUSER = "askuser";
+	public static final String UPDATE_STRATEGY = "isautoupdate";
 
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
@@ -37,7 +35,7 @@ public class PropertyBusServiceUpdateStrategy implements PropertyBusService {
 		
 		// --- Find out whether the strategy is going to change ---------------------------------------------
 		int currentStrategy = Application.getGlobalInfo().getUpdateAutoConfiguration();
-		int newUpdateStrategy = properties.getStringValue(UPDATE_STRATEGY).equals(AUTOMATIC) ? AWBUpdater.UPDATE_MODE_AUTOMATIC : AWBUpdater.UPDATE_MODE_ASK;
+		int newUpdateStrategy = properties.getBooleanValue(UPDATE_STRATEGY) == true ? AWBUpdater.UPDATE_MODE_AUTOMATIC : AWBUpdater.UPDATE_MODE_ASK;
 		
 		if (currentStrategy != newUpdateStrategy) {
 			// --- Get the webAppSettings -------------------------------------------------------------------
@@ -45,17 +43,13 @@ public class PropertyBusServiceUpdateStrategy implements PropertyBusService {
 			JettyWebApplicationSettings webAppSettings = jettyConfig.getWebApplicationSettings();
 			
 			// --- Set the desired value --------------------------------------------------------------------
-			switch (properties.getStringValue(UPDATE_STRATEGY)) {
-			case AUTOMATIC:
+			if (properties.getBooleanValue(UPDATE_STRATEGY) == true) {
 				Application.getGlobalInfo().setUpdateAutoConfiguration(AWBUpdater.UPDATE_MODE_AUTOMATIC);
 				webAppSettings.setUpdateStrategy(UpdateStrategy.Automatic);
-				break;
-			case ASKUSER:
+			}				
+			else {
 				Application.getGlobalInfo().setUpdateAutoConfiguration(AWBUpdater.UPDATE_MODE_ASK);
 				webAppSettings.setUpdateStrategy(UpdateStrategy.AskUser);
-				break;
-			default:
-				return false;
 			}
 			Application.getGlobalInfo().doSaveConfiguration();
 			jettyConfig.save();
@@ -71,8 +65,8 @@ public class PropertyBusServiceUpdateStrategy implements PropertyBusService {
 	public Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
-		String updateStrategy = Application.getGlobalInfo().getUpdateAutoConfiguration() == AWBUpdater.UPDATE_MODE_AUTOMATIC? AUTOMATIC: ASKUSER;
-		properties.setStringValue(UPDATE_STRATEGY, updateStrategy);
+		boolean isAutoUpdate = Application.getGlobalInfo().getUpdateAutoConfiguration() == AWBUpdater.UPDATE_MODE_AUTOMATIC? true: false;
+		properties.setBooleanValue(UPDATE_STRATEGY, isAutoUpdate);
 		
 		return properties;
 	}
