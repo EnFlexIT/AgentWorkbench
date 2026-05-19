@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.core.util;
+package de.enflexit.awb.ws.core.propertyBusServices;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.update.AWBUpdater;
