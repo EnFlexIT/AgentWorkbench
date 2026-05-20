@@ -92,7 +92,7 @@ public class PropertyConverter {
 			pEntry.setValueType(ValueType.INTEGER);
 			break;
 		case Long:
-			pEntry.setValueType(ValueType.INTEGER);
+			pEntry.setValueType(ValueType.LONG);
 			break;
 		}
 		return pEntry;
