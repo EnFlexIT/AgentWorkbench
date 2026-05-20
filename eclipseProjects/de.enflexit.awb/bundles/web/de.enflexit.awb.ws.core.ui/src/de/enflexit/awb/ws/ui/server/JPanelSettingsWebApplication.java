@@ -8,7 +8,9 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -77,6 +79,7 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 	private JLabel jLabelWebAppAvailable;
 	private JLabel jLabelHeader;
 	private JLabel jLabelVisitWebApplication;
+	private JLabel jLabelUpdateDateLastCheck;
 	private JHyperLink jHyperLinkWebApplication;
 
 	
@@ -182,6 +185,12 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		gbc_jButtonCheckForUpdates.gridx = 1;
 		gbc_jButtonCheckForUpdates.gridy = 5;
 		add(getJButtonCheckForUpdates(), gbc_jButtonCheckForUpdates);
+		GridBagConstraints gbc_jLabelUpdateLastCheck = new GridBagConstraints();
+		gbc_jLabelUpdateLastCheck.insets = new Insets(10, 5, 0, 0);
+		gbc_jLabelUpdateLastCheck.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelUpdateLastCheck.gridx = 1;
+		gbc_jLabelUpdateLastCheck.gridy = 6;
+		add(getJLabelUpdateDateLastCheck(), gbc_jLabelUpdateLastCheck);
 	}
 	
 	private JLabel getJLabelHeader() {
@@ -329,6 +338,19 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		return jButtonCheckForUpdates;
 	}
 	
+	private JLabel getJLabelUpdateDateLastCheck() {
+		if (jLabelUpdateDateLastCheck == null) {
+			jLabelUpdateDateLastCheck = new JLabel("Last Check: ");
+			jLabelUpdateDateLastCheck.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelUpdateDateLastCheck;
+	}
+	
+	private void updateJLabelUpdateDateLastCheck() {
+		JettyWebApplicationSettings webAppSettings = this.getWebApplicationSettings();
+		if (webAppSettings == null) return;
+		this.getJLabelUpdateDateLastCheck().setText(("Last Check: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(webAppSettings.getUpdateLastCheck()))));
+	}
 	
 	private JLabel getJLabelWebAppAvailable() {
 		if (jLabelWebAppAvailable == null) {
@@ -438,6 +460,7 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		this.isPauseActionListener = true;
 		this.getJTextFieldWebAppURL().setText(webAppSettings.getDownloadURL());
 		this.getJComboBoxUpdateStrategy().setSelectedItem(webAppSettings.getUpdateStrategy());
+		this.updateJLabelUpdateDateLastCheck();
 		this.isPauseActionListener = false;
 		this.isPauseDocumentListener = false;
 	}
@@ -508,6 +531,10 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		} else if (ae.getSource()==this.getJButtonCheckForUpdates()) {
 			Window owner = OwnerDetection.getOwnerWindowForComponent(this);
 			WebApplicationVersion appVersionUpdate = WebApplicationUpdate.getWebApplicationUpdate(this.getJTextFieldWebAppURL().getText());
+			if (this.getWebApplicationSettings() != null) {
+				this.getWebApplicationSettings().setUpdateLastCheck(System.currentTimeMillis());
+				this.updateJLabelUpdateDateLastCheck();
+			}
 			if (appVersionUpdate==null) {
 				JOptionPane.showMessageDialog(owner, "There is no update available!", "Check for Update", JOptionPane.INFORMATION_MESSAGE);
 				

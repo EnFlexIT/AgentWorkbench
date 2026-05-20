@@ -14,7 +14,8 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "JettyWebApplicationSettings", propOrder = {
     "downloadURL",
-    "updateStrategy"
+    "updateStrategy",
+    "updateLastCheck"
 })
 public class JettyWebApplicationSettings implements Serializable {
 
@@ -28,7 +29,7 @@ public class JettyWebApplicationSettings implements Serializable {
 	
 	private String downloadURL; 
 	private UpdateStrategy updateStrategy;
-	
+	private long updateLastCheck;
 	
 	/**
 	 * Gets the download URL.
@@ -63,6 +64,13 @@ public class JettyWebApplicationSettings implements Serializable {
 		this.updateStrategy = updateStrategy;
 	}
 
+	public long getUpdateLastCheck() {
+
+		return updateLastCheck;
+	}
+	public void setUpdateLastCheck(long updateLastCheck) {
+		this.updateLastCheck = updateLastCheck;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -81,6 +89,7 @@ public class JettyWebApplicationSettings implements Serializable {
 		if (this.getDownloadURL().equals(compObj.getDownloadURL())==false) return false;
 
 		if (this.getUpdateStrategy()!=compObj.getUpdateStrategy()) return false;
+		if (this.getUpdateLastCheck() != compObj.getUpdateLastCheck()) return false;
 		
 		return true;
 	}

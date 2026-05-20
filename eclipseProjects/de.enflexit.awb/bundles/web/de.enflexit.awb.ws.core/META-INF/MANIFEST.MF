@@ -9,7 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Activator: de.enflexit.awb.ws.AwbWsActivator
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/awbWebServerService.xml,
- OSGI-INF/PropertyBusServiceUpdateStrategy.xml
+ OSGI-INF/PropertyBusServiceUpdateStrategy.xml,
+ OSGI-INF/PropertyBusServiceUpdateCheckWebApp.xml
 Require-Bundle: org.eclipse.osgi,
  org.eclipse.jetty.security,
  org.eclipse.jetty.server,
