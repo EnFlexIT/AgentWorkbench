@@ -7,8 +7,8 @@ public class UpdateCheckCoordinator {
 	
 	
 	private UpdateCheckStatus status = new UpdateCheckStatus();
-	private volatile Thread workerThread;
-	private static final long CACHE_TIME = 60000;
+	private Thread workerThread;
+	private static final long CACHE_TIME = 60_000L;
 	
 	private static UpdateCheckCoordinator instance;
 	

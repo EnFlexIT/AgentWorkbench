@@ -1,8 +1,8 @@
 package de.enflexit.awb.core.propertyBusServices;
 
 
-import java.time.Instant;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.update.UpdateCheckCoordinator;
 import de.enflexit.awb.core.update.UpdateCheckStatus;
@@ -17,9 +17,10 @@ import de.enflexit.common.properties.bus.PropertyBusService;
 public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 	
 
-	private static final String PENDING = "updatecheck.ispending";
-	private static final String ISUPDATEAVAILABLE = "udpatecheck.isavailable";
-	private static final String LASTCHECK = "updatecheck.lastcheck";
+	private static final String PENDING = "updatecheck.backend.ispending";
+	private static final String ISUPDATEAVAILABLE = "updatecheck.backend.isavailable";
+	private static final String LASTCHECK = "updatecheck.backend.lastcheck";
+	private static final String VERSION = "updatecheck.backend.version";
 
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
@@ -55,7 +56,7 @@ public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 		}
 		properties.setBooleanValue(ISUPDATEAVAILABLE, status.isUpdateAvailable());
 		// TODO Implement Version data
-		properties.setStringValue(LASTCHECK, Instant.ofEpochMilli(status.getLastCheck()).toString());
+		properties.setStringValue(LASTCHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
 		
 		Application.getGlobalInfo().setUpdateDateLastChecked(status.getLastCheck());
 		
