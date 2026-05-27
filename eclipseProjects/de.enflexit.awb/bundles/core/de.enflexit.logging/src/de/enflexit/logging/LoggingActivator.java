@@ -108,9 +108,9 @@ public class LoggingActivator implements BundleActivator {
 	 * @return the internal logback file URL
 	 */
 	private URL getInternalLogbackFileURL() {
-		String bundleFile = (PathHandling.getPropertiesPath(false) + FileToProvide.LOGBACK_CONFIGURATION.toString()).replace("\\", "/");
+		Path bundleFile = (PathHandling.getPropertiesPath(false).resolve(FileToProvide.LOGBACK_CONFIGURATION.toString()));
 		Bundle bundle = FrameworkUtil.getBundle(LoggingActivator.class);
-		return bundle.getResource(bundleFile);
+		return bundle.getResource(bundleFile.toString());
 	}
 
 	
