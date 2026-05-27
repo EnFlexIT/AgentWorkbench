@@ -57,8 +57,6 @@ public class RestApiConfiguration extends ResourceConfig {
 		this.register(LoadApi.class);
 		this.register(UserApi.class);
 		this.register(VersionApi.class);
-		this.register(DoUpdateApi.class);
-		this.register(IsUpdateAvailableApi.class);
 	}
 	
 	

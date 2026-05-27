@@ -8,7 +8,8 @@ Automatic-Module-Name: de.enflexit.ws.core
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Activator: de.enflexit.awb.ws.AwbWsActivator
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/awbWebServerService.xml 
+Service-Component: OSGI-INF/awbWebServerService.xml,
+ OSGI-INF/PropertyBusServiceUpdateStrategy.xml
 Require-Bundle: org.eclipse.osgi,
  org.eclipse.jetty.security,
  org.eclipse.jetty.server,
@@ -39,12 +40,14 @@ Export-Package: de.enflexit.awb.ws,
  de.enflexit.awb.ws.webApp
 Import-Package: de.enflexit.awb.core,
  de.enflexit.awb.core.config,
+ de.enflexit.awb.core.update,
  de.enflexit.awb.ws.core.db,
  de.enflexit.common,
  de.enflexit.common.classLoadService,
  de.enflexit.common.crypto,
  de.enflexit.common.http,
  de.enflexit.common.properties,
+ de.enflexit.common.properties.bus,
  de.enflexit.common.swing,
  de.enflexit.common.transfer,
  de.enflexit.db.derby.server,

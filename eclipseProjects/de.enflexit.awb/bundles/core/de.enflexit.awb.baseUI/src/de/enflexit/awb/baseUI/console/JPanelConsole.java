@@ -82,18 +82,28 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 		if (fontFamily==null) {
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			HashSet<String> ffNames = new HashSet<>(Arrays.asList(ge.getAvailableFontFamilyNames()));
+			
+			// --- Try the preferred font families first --------------------------------
 			if (fontFamily==null && ffNames.contains("Consolas")==true) {
 				fontFamily = "Consolas";	
 			}
 			if (fontFamily==null && ffNames.contains("Courier New")==true) {
 				fontFamily = "Courier New";
 			}
+			// --- If not successful, try a java system font ----------------------------  
+			if (fontFamily==null && ffNames.contains("Monospaced")==true) {
+				fontFamily = "Monospaced";
+			}
+			// --- Fallback - if the other options fail, take the first one available ---
+			if (fontFamily==null) {
+				fontFamily = ge.getAvailableFontFamilyNames()[0];
+			}
 		}
 		return fontFamily;
 	}
 	
 	/**
-	 * Initialises this
+	 * Initializes the console panel.
 	 */
 	private void initialize() {
 		
