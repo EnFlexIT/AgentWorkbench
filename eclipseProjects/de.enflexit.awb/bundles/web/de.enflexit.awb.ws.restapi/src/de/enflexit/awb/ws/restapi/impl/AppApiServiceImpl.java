@@ -202,9 +202,16 @@ public class AppApiServiceImpl extends AppApiService {
     		//response.keySet().forEach(key -> System.out.println(key + ": " + response.get(key)));
     		
     		
-    		String bearer = (String) response.get("access_token");
-    		awbProps.setStringValue("_oidc.bearer", bearer);
+    		String access_token = (String) response.get("access_token");
+    		awbProps.setStringValue("_oidc.access_token", access_token);
 
+    		String refresh_token = (String) response.get("refresh_token");
+    		awbProps.setStringValue("_oidc.refresh_token", refresh_token);
+    		
+    		String id_token = (String) response.get("id_token");
+    		awbProps.setStringValue("_oidc.id_token", id_token);
+    		
+    		
     		
     		String id = (String) claims.get("sub");
     		awbProps.setStringValue("_oidc.id", id);
