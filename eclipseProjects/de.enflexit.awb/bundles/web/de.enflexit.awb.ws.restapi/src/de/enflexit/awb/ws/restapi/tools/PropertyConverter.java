@@ -31,13 +31,16 @@ public class PropertyConverter {
 			for (String identifier : awbProps.getIdentifierList()) {
 				// --- Get property -------------------------------------
 				PropertyValue pValue = awbProps.getPropertyValue(identifier);
-				// --- Create REST 'PropertyEntry' ----------------------
-				PropertyEntry pEntry = createPropertyEntry(identifier, pValue);
-				pEntry.setValueOptions(PropertyConverter.toWebValueOptionList(pValue.getValueOptionsString()));
-				pEntry.setValueOptionsOnly(pValue.isValueOptionsOnly());
-
-				// --- Add to property listing --------------------------
-				restProps.addPropertyEntriesItem(pEntry);
+				
+				if (pValue!=null) {
+					// --- Create REST 'PropertyEntry' ----------------------
+					PropertyEntry pEntry = createPropertyEntry(identifier, pValue);
+					pEntry.setValueOptions(PropertyConverter.toWebValueOptionList(pValue.getValueOptionsString()));
+					pEntry.setValueOptionsOnly(pValue.isValueOptionsOnly());
+					
+					// --- Add to property listing --------------------------
+					restProps.addPropertyEntriesItem(pEntry);
+				}
 			}
 		}
 		return restProps;
