@@ -84,5 +84,6 @@ public class UpdateCheckStatusWebApp {
 	 */
 	public void setLastCheck(long lastCheck) {
 		JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration().getWebApplicationSettings().setUpdateLastCheck(lastCheck);
+		JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration().save();
 	}	
 }

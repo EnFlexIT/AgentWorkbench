@@ -64,5 +64,6 @@ public class UpdateCheckStatusBackend {
 	 */
 	public void setLastCheck(long lastCheck) {
 		Application.getGlobalInfo().setUpdateDateLastChecked(lastCheck);
+		Application.getGlobalInfo().doSaveConfiguration();
 	}	
 }

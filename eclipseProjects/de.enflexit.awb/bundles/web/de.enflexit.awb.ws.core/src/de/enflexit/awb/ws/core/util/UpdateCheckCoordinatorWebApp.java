@@ -87,6 +87,7 @@ public class UpdateCheckCoordinatorWebApp {
 		}
 		this.getUpdateCheckStatusWebApp().setLastCheck(System.currentTimeMillis());
 		this.getUpdateCheckStatusWebApp().setPending(false);
+		
 		workerThread = null;
     }
 	
