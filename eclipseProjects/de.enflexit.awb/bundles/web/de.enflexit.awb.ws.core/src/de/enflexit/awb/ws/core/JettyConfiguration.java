@@ -552,32 +552,63 @@ public class JettyConfiguration implements Serializable {
 		
 		JettyConfiguration jConfig = null;
 		InputStream inputStream = null;
-		InputStreamReader isReader = null;
 		try {
 			
-			JAXBContext context = JAXBContext.newInstance(JettyConfiguration.class);
-			Unmarshaller unMarsh = context.createUnmarshaller();
-			
 			inputStream = new FileInputStream(file);
-			isReader  = new InputStreamReader(inputStream, FILE_ENCODING);
-			
-			Object jaxbObject = unMarsh.unmarshal(isReader);
-			if (jaxbObject!=null && jaxbObject instanceof JettyConfiguration) {
-				jConfig = (JettyConfiguration)jaxbObject;
-			}
+			jConfig = JettyConfiguration.load(inputStream);
 			
 		} catch (Exception ex) {
 			System.out.println("[" + AbstractUserObject.class.getSimpleName() + "] Error while loading the user object from XML file:");
 			ex.printStackTrace();
 		} finally {
 			try {
-				if (isReader!=null) isReader.close();
 				if (inputStream!=null) inputStream.close();
 			} catch (IOException ioEx) {
 				ioEx.printStackTrace();
 			}	
 		}
 		return jConfig;
+	}
+	
+	/**
+	 * Loads a JettyConfiguration from the input stream.
+	 *
+	 * @param inputStream the input stream
+	 * @return the jetty configuration
+	 */
+	public static JettyConfiguration load(InputStream inputStream) {
+
+	    if (inputStream == null) return null;
+
+	    JettyConfiguration jConfig = null;
+	    InputStreamReader isReader = null;
+
+	    try {
+
+	        JAXBContext context = JAXBContext.newInstance(JettyConfiguration.class);
+	        Unmarshaller unMarsh = context.createUnmarshaller();
+
+	        isReader = new InputStreamReader(inputStream, FILE_ENCODING);
+
+	        Object jaxbObject = unMarsh.unmarshal(isReader);
+
+	        if (jaxbObject != null && jaxbObject instanceof JettyConfiguration) {
+	            jConfig = (JettyConfiguration) jaxbObject;
+	        }
+
+	    } catch (Exception ex) {
+	        System.out.println("[" + AbstractUserObject.class.getSimpleName() + "] Error while loading XML from InputStream:");
+	        ex.printStackTrace();
+	    } finally {
+	        try {
+	            if (isReader != null) isReader.close();
+	            if (inputStream != null) inputStream.close();
+	        } catch (IOException ioEx) {
+	            ioEx.printStackTrace();
+	        }
+	    }
+
+	    return jConfig;
 	}
 
 }
