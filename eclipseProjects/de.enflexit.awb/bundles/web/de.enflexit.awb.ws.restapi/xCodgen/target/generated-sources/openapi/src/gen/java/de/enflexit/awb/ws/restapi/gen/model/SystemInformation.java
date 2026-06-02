@@ -43,7 +43,7 @@ import jakarta.validation.Valid;
   SystemInformation.JSON_PROPERTY_HEAP_MEMORY_MAX_IN_G_B,
   SystemInformation.JSON_PROPERTY_NETWORK_CONNECTIONS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-05-20T10:58:36.851262400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class SystemInformation   {
   public static final String JSON_PROPERTY_OS_DESCRIPTION = "osDescription";
   @JsonProperty(JSON_PROPERTY_OS_DESCRIPTION)
@@ -396,10 +396,7 @@ public class SystemInformation   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

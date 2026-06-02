@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.ws.restapi.gen.model.PasswordChange;
+import de.enflexit.awb.ws.restapi.gen.model.SessionTimes;
 
 import java.util.Map;
 import java.util.List;
@@ -34,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the user API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-05-20T10:58:36.851262400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class UserApi  {
 
    private final UserApiService delegate;
@@ -75,6 +76,20 @@ public class UserApi  {
     public Response changePassword(@Schema(description = "The credentials to login.") @Valid  PasswordChange passwordChange,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.changePassword(passwordChange, securityContext);
+    }
+
+    @jakarta.ws.rs.GET
+    @Path("/sessionTime")
+    @Produces({ "application/json" })
+    @Operation(summary = "Enables to read the remaining and the expiration time of the current user session", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "Provided remaining session time", content = 
+                @Content(schema = @Schema(implementation = SessionTimes.class))),
+            },security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }, tags={ "user", }) 
+    public Response getSessionTime(@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.getSessionTime(securityContext);
     }
 
     @jakarta.ws.rs.GET

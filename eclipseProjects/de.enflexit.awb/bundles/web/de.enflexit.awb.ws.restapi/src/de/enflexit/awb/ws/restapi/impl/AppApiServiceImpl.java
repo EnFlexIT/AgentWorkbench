@@ -11,12 +11,11 @@ import org.eclipse.jetty.security.openid.OpenIdCredentials;
 import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import de.enflexit.awb.ws.core.JettyConfiguration;
-import de.enflexit.awb.ws.core.JettyCustomizer;
-import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
-import de.enflexit.awb.ws.core.JettyServerManager;
 import com.nimbusds.jwt.SignedJWT;
 
+import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettyCustomizer;
+import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.JettySessionSettings;
 import de.enflexit.awb.ws.restapi.AwbWebServerAccess;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
@@ -319,10 +318,6 @@ public class AppApiServiceImpl extends AppApiService {
 		}
     }
 
-<<<<<<< HEAD
-}
-=======
-    
     /**
      * Adds some test parameter to the properties to be exposed.
      *
@@ -360,4 +355,3 @@ public class AppApiServiceImpl extends AppApiService {
     }
     
 }
->>>>>>> branch 'master' of https://github.com/EnFlexIT/AgentWorkbench.git

@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
   ExecutionState.JSON_PROPERTY_PROJECT,
   ExecutionState.JSON_PROPERTY_SETUP
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-05-20T10:58:36.851262400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class ExecutionState   {
   /**
    * * &#39;APPLICATION&#39; - Runs as end user application in an desktop environment * &#39;SERVER&#39; - Runs as Background server-system * &#39;SERVER_MASTER&#39; - Runs as central &#39;server. master&#39; system and manages all &#39;server.slave&#39; systems * &#39;SERVER_SLAVE&#39; - Runs as central &#39;server. slave&#39; system and wait for start order from the &#39;server.master&#39; * &#39;DEVICE_SYSTEM&#39; - Runs as system that directly executes single agents or projects 
@@ -54,8 +54,12 @@ public class ExecutionState   {
       this.value = value;
     }
 
-    @Override
     @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
     public String toString() {
       return String.valueOf(value);
     }
@@ -89,8 +93,12 @@ public class ExecutionState   {
       this.value = value;
     }
 
-    @Override
     @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
     public String toString() {
       return String.valueOf(value);
     }
@@ -237,10 +245,7 @@ public class ExecutionState   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

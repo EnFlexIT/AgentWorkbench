@@ -1,43 +1,33 @@
 package de.enflexit.awb.ws.restapi.gen;
 
-import de.enflexit.awb.ws.restapi.gen.AppApiService;
-import de.enflexit.awb.ws.restapi.gen.factories.AppApiServiceFactory;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import de.enflexit.awb.ws.restapi.gen.factories.AppApiServiceFactory;
+import de.enflexit.awb.ws.restapi.gen.model.Message;
+import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.io.File;
-import de.enflexit.awb.ws.restapi.gen.model.Message;
-import de.enflexit.awb.ws.restapi.gen.model.Properties;
-
-import java.util.Map;
-import java.util.List;
-import de.enflexit.awb.ws.restapi.gen.NotFoundException;
-
-import java.io.InputStream;
-
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-import jakarta.ws.rs.*;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
 
 @Path("/app/settings")
 
 
 @Tag(description = "the app API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-05-20T10:58:36.851262400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class AppApi  {
 
    private final AppApiService delegate;
@@ -72,7 +62,7 @@ public class AppApi  {
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "info", }) 
-    public Response getAppSettings(@Schema(description = "" )@HeaderParam("X-Performative") String xPerformative,@Context HttpServletRequest request,@Context SecurityContext securityContext)
+    public Response getAppSettings(@Schema(description = "" )@HeaderParam("X-Performative") String xPerformative, @Context HttpServletRequest request,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getAppSettings(xPerformative, request, securityContext);
     }
@@ -102,7 +92,7 @@ public class AppApi  {
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "admins", }) 
-    public Response uploadAppSettingsFile(@FormDataParam("file") FormDataBodyPart _fileBodypart,@Schema(description = "Defines which configuration should be updated (e.g. jetty)" )@HeaderParam("X-Performative") String xPerformative,@Context SecurityContext securityContext)
+    public Response uploadAppSettingsFile(@FormDataParam("file") FormDataBodyPart _fileBodypart,@Schema(description = "Defines which configuration should be updated" )@HeaderParam("X-Performative") String xPerformative,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.uploadAppSettingsFile(_fileBodypart, xPerformative, securityContext);
     }

@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
   PasswordChange.JSON_PROPERTY_PASSWORD_OLD,
   PasswordChange.JSON_PROPERTY_PASSWORD_NEW
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-05-20T10:58:36.851262400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class PasswordChange   {
   public static final String JSON_PROPERTY_PASSWORD_OLD = "password_old";
   @JsonProperty(JSON_PROPERTY_PASSWORD_OLD)
@@ -113,10 +113,7 @@ public class PasswordChange   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 
