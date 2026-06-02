@@ -19,15 +19,16 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  */
 public class PropertyBusServiceUpdateCheckWebApp implements PropertyBusService {
 
-	private static final String ISUPDATEAVAILABLE = "updatecheck.frontend.isavailable";
-	private static final String LASTCHECK = "updatecheck.frontend.lastcheck";
-	private static final String VERSION = "updatecheck.frontend.version";
+	private static final String PENDING = "updatecheck.backend.ispending";
+	private static final String ISUPDATEAVAILABLE = "updatecheck.isavailable";
+	private static final String LASTCHECK = "updatecheck.lastcheck";
+	private static final String VERSION = "updatecheck.version";
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
 	*/
 	@Override
 	public String getPerformative() {
-		return "UPDATE.CHECK";
+		return "UPDATE.FRONTEND.CHECK";
 	}
 
 	/* (non-Javadoc)
@@ -45,10 +46,10 @@ public class PropertyBusServiceUpdateCheckWebApp implements PropertyBusService {
 	public Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
-		// --- Get the download URL from webAppSettings -----------------------------------------------------
+		// --- Get the webAppSettings -----------------------------------------------------------------------
 		JettyConfiguration jettyConfig = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration();
 		JettyWebApplicationSettings webAppSettings = jettyConfig.getWebApplicationSettings();
-		// --- Search for a new version ---------------------------------------------------------------------
+		// --- Search for a newer version -------------------------------------------------------------------
 		WebApplicationVersion newVersion = WebApplicationUpdate.getWebApplicationUpdate(webAppSettings.getDownloadURL());
 		long latestCheckDate = System.currentTimeMillis();
 
