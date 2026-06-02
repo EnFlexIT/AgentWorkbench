@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
   Message.JSON_PROPERTY_MESSAGE_TYPE,
   Message.JSON_PROPERTY_MESSAGE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-03-25T12:33:25.416793100+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-05-20T10:58:36.851262400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class Message   {
   public static final String JSON_PROPERTY_DATE_TIME = "dateTime";
   @JsonProperty(JSON_PROPERTY_DATE_TIME)

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.io.File;
 import de.enflexit.awb.ws.restapi.gen.model.Message;
 import de.enflexit.awb.ws.restapi.gen.model.Properties;
 
@@ -36,7 +37,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the app API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-03-25T12:33:25.416793100+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-05-20T10:58:36.851262400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class AppApi  {
 
    private final AppApiService delegate;
@@ -71,7 +72,7 @@ public class AppApi  {
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "info", }) 
-    public Response getAppSettings(@Schema(description = "" )@HeaderParam("X-Performative") String xPerformative,@Context HttpServletRequest request, @Context SecurityContext securityContext)
+    public Response getAppSettings(@Schema(description = "" )@HeaderParam("X-Performative") String xPerformative,@Context HttpServletRequest request,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getAppSettings(xPerformative, request, securityContext);
     }
@@ -89,5 +90,20 @@ public class AppApi  {
     public Response setAppSettings(@Schema(description = "The new settings") @Valid  Properties properties,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.setAppSettings(properties, securityContext);
+    }
+
+    @jakarta.ws.rs.POST
+    @Path("/upload")
+    @Consumes({ "multipart/form-data" })
+    @Produces({ "application/json" })
+    @Operation(summary = "Upload configuration file (binary)", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "Upload successful and configuration applied", content = 
+                @Content(schema = @Schema(implementation = Message.class))),
+            },security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }, tags={ "admins", }) 
+    public Response uploadAppSettingsFile(@FormDataParam("file") FormDataBodyPart _fileBodypart,@Schema(description = "Defines which configuration should be updated (e.g. jetty)" )@HeaderParam("X-Performative") String xPerformative,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.uploadAppSettingsFile(_fileBodypart, xPerformative, securityContext);
     }
 }

@@ -1,11 +1,17 @@
 package de.enflexit.awb.ws.restapi.impl;
 
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.Map;
 
 import org.eclipse.jetty.security.openid.OpenIdCredentials;
 import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
+import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettyCustomizer;
+import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.JettySessionSettings;
 import de.enflexit.awb.ws.restapi.AwbWebServerAccess;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
@@ -17,6 +23,7 @@ import de.enflexit.awb.ws.restapi.gen.model.Message;
 import de.enflexit.awb.ws.restapi.gen.model.MessageType;
 import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
+import de.enflexit.awb.ws.server.AwbServer;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
 import de.enflexit.common.properties.PropertyMessage;
@@ -159,6 +166,49 @@ public class AppApiServiceImpl extends AppApiService {
     	Properties endpointProps = PropertyConverter.toWebRestProperties(awbProps);
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(endpointProps).build();
     }
+    
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.restapi.gen.AppApiService#uploadAppSettingsFile(org.glassfish.jersey.media.multipart.FormDataBodyPart, java.lang.String, jakarta.ws.rs.core.SecurityContext)
+	*/
+	@Override
+	public Response uploadAppSettingsFile(FormDataBodyPart _fileBodypart, String xPerformative, SecurityContext securityContext) throws NotFoundException {
+
+	    if (securityContext.getUserPrincipal() == null) {
+	        return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
+	    }
+	    try {
+	    	InputStream inputStream = _fileBodypart.getEntityAs(InputStream.class);
+//	    	if (xPerformative.equalsIgnoreCase("jettyconfiguration")) {
+	    		JettyConfiguration jettyConfig = JettyConfiguration.load(inputStream);
+	    		if (jettyConfig != null) {
+	    			new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							try {
+								Thread.sleep(1000);
+								JettyServerManager.getInstance().stopServer(jettyConfig.getServerName());
+								JettyCustomizer customizer = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfigurationFromPropertiesFile().getJettyCustomizer();
+								JettyConfiguration.save(jettyConfig);
+								jettyConfig.setJettyCustomizer(customizer);
+								JettyServerManager.getInstance().startServer(jettyConfig);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+					}, "Server-restart-Thread").start();
+	    		}
+//	    	}
+	    } catch (Exception ex) {
+	    	ex.printStackTrace();
+	    }
+	    Message message = new Message();
+    	message.setMessage("Configuration uploaded. Server restarting...");
+    	message.setDateTime(System.currentTimeMillis()+"");
+    	message.setMessageType(MessageType.INFO);
+
+		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
+	}
     
     /**
      * Adds the session ID to the properties.
