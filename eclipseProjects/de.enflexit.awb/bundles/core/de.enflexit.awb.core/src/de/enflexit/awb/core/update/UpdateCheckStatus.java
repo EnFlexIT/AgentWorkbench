@@ -1,5 +1,6 @@
 package de.enflexit.awb.core.update;
 
+import de.enflexit.awb.core.Application;
 
 /**
  * The Class UpdateCheckStatus.
@@ -11,7 +12,6 @@ public class UpdateCheckStatus {
 	private boolean isPending;
 	private boolean isAvailable;
 	private String version;
-	private long lastCheck;
 	
 	public boolean isPending() {
 		return isPending;
@@ -37,10 +37,10 @@ public class UpdateCheckStatus {
 	}
 
 	public long getLastCheck() {
-		return lastCheck;
+		return Application.getGlobalInfo().getUpdateDateLastChecked();
 	}
 
 	public void setLastCheck(long lastCheck) {
-		this.lastCheck = lastCheck;
+		Application.getGlobalInfo().setUpdateDateLastChecked(lastCheck);
 	}	
 }
