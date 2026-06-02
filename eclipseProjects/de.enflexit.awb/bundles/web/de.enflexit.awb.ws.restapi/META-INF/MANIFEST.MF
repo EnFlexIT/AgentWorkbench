@@ -38,7 +38,11 @@ Export-Package: de.enflexit.awb.ws.restapi,
  de.enflexit.awb.ws.restapi.tools
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Import-Package: de.enflexit.awb.core,
+Import-Package: com.nimbusds.jose,
+ com.nimbusds.jose.crypto,
+ com.nimbusds.jose.jwk,
+ com.nimbusds.jwt,
+ de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.project,
  de.enflexit.awb.core.update,

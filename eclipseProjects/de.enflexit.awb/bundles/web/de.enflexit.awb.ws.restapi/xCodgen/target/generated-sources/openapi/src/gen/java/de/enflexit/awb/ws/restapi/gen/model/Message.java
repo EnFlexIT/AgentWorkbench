@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
   Message.JSON_PROPERTY_MESSAGE_TYPE,
   Message.JSON_PROPERTY_MESSAGE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-03-25T12:33:25.416793100+01:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-01T23:43:55.903649400+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class Message   {
   public static final String JSON_PROPERTY_DATE_TIME = "dateTime";
   @JsonProperty(JSON_PROPERTY_DATE_TIME)
@@ -142,10 +142,7 @@ public class Message   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

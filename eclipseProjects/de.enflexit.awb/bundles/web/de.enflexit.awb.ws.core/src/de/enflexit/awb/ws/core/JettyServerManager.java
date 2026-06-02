@@ -630,7 +630,10 @@ public class JettyServerManager {
 			if (securtiyHandler!=null) {
 				serCtxHandler.setSecurityHandler(securtiyHandler);
 				serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
+				// --- Optionally, customize the ServletContextHandler --------
+				securityService.customizeServletContextHandler(ssc.getSecurityHandlerConfiguration(), serCtxHandler);
 				return true;
+				
 			} else {
 				return false;
 			}

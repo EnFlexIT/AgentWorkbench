@@ -1,10 +1,15 @@
 package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Map;
 
 import org.eclipse.jetty.security.openid.OpenIdCredentials;
 import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
+
+import com.nimbusds.jwt.SignedJWT;
 
 import de.enflexit.awb.ws.core.JettySessionSettings;
 import de.enflexit.awb.ws.restapi.AwbWebServerAccess;
@@ -115,7 +120,6 @@ public class AppApiServiceImpl extends AppApiService {
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     }
 
-	
     /* (non-Javadoc)
      * @see de.enflexit.awb.ws.restapi.gen.AppApiService#getAppSettings(jakarta.ws.rs.core.SecurityContext)
      */
@@ -148,6 +152,7 @@ public class AppApiServiceImpl extends AppApiService {
     			awbProps.setBooleanValue("_Authenticated", true);
     			this.addSessionInformation(request, awbProps);
     			this.addOIDCPrincipalInformation(principal, awbProps);
+    			
         	} else {
         		// --- return specific application properties -------
         		awbProps = ApplicationPropertyBus.getInstance().getProperties(xPerformative);
@@ -177,6 +182,24 @@ public class AppApiServiceImpl extends AppApiService {
     		String sessionPathParameter = AwbWebServerAccess.getJettyConfiguration().getSessionSettings().getSessionAttribute(JettySessionSettings.KEY_SET_SESSION_ID_PATH_PARAMETER_NAME).getValue().toString();
     		awbProps.setStringValue("_session.pathParameter", sessionPathParameter);
     		awbProps.setStringValue("_session.id", sessionID);
+    		
+    		// --- Session times ------------------------------------ 
+    		awbProps.setStringValue("_aa.session.lastAccessTime", new Date(session.getLastAccessedTime()).toString());
+    		awbProps.setStringValue("_aa.session.expires", new Date(session.getLastAccessedTime() + (session.getMaxInactiveInterval()) * 1000L).toString());
+    		awbProps.setLongValue("_session.maxInactiveInterval", session.getMaxInactiveInterval());
+    		awbProps.setStringValue("_session.maxInactiveIntervalMin", String.valueOf(session.getMaxInactiveInterval() / 60));
+    		
+    		// --- Just for testing purposes ------------------------
+    		boolean addAllAttributeValues = false;
+    		if (addAllAttributeValues==true) {
+    			Enumeration<String> attributeNames = session.getAttributeNames();
+    			while (attributeNames.hasMoreElements()) {
+    				String attribute = attributeNames.nextElement();
+    				Object attributeValue = session.getAttribute(attribute);
+    				System.out.println(attribute + ": " + attributeValue.toString() );
+    			}
+    		}
+    		
     	}
     }
     
@@ -201,6 +224,10 @@ public class AppApiServiceImpl extends AppApiService {
     		Map<String, Object> response = credentials.getResponse();
     		//response.keySet().forEach(key -> System.out.println(key + ": " + response.get(key)));
     		
+    		boolean isAddAccessTokenParameter = true;
+    		if (isAddAccessTokenParameter==true) {
+    			this.addAccessTokenParameter(awbProps, claims, response);
+    		}
     		
     		String access_token = (String) response.get("access_token");
     		awbProps.setStringValue("_oidc.access_token", access_token);
@@ -211,7 +238,7 @@ public class AppApiServiceImpl extends AppApiService {
     		String id_token = (String) response.get("id_token");
     		awbProps.setStringValue("_oidc.id_token", id_token);
     		
-    		
+
     		
     		String id = (String) claims.get("sub");
     		awbProps.setStringValue("_oidc.id", id);
@@ -242,4 +269,41 @@ public class AppApiServiceImpl extends AppApiService {
 		}
     }
 
+    
+    /**
+     * Adds some test parameter to the properties to be exposed.
+     *
+     * @param awbProps the awb props
+     * @param claims the claims
+     * @param response the response
+     */
+    private void addAccessTokenParameter(de.enflexit.common.properties.Properties awbProps, Map<String, Object> claims, Map<String, Object> response) {
+    	
+    	String access_token = (String) response.get("access_token");
+
+    	// --- Test for just using Java to handle the access t
+    	boolean useJavaAbility = false;
+    	if (useJavaAbility==true) {
+
+    		String[] chunks = access_token.split("\\.");
+    		
+    		Base64.Decoder decoder = Base64.getUrlDecoder();
+    		String header = new String(decoder.decode(chunks[0]));
+    		String payload = new String(decoder.decode(chunks[1]));
+    		
+    		awbProps.setStringValue("_aa.access_token.header", header);
+    		awbProps.setStringValue("_aa.access_token.payload", payload);
+    	}
+    	
+		try {
+			SignedJWT jwtCheck = SignedJWT.parse(access_token);
+//			String issuer = jwtCheck.getJWTClaimsSet().getIssuer();
+			awbProps.setStringValue("_aa.access_token.expires", jwtCheck.getJWTClaimsSet().getExpirationTime().toString());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    }
+    
 }

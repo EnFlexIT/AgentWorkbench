@@ -22,60 +22,60 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * PasswordChange
+ * SessionTimes
  */
 @JsonPropertyOrder({
-  PasswordChange.JSON_PROPERTY_PASSWORD_OLD,
-  PasswordChange.JSON_PROPERTY_PASSWORD_NEW
+  SessionTimes.JSON_PROPERTY_REMAINING_TIME,
+  SessionTimes.JSON_PROPERTY_EXPIRATION_TIME
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-01T23:43:55.903649400+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
-public class PasswordChange   {
-  public static final String JSON_PROPERTY_PASSWORD_OLD = "password_old";
-  @JsonProperty(JSON_PROPERTY_PASSWORD_OLD)
-  private String passwordOld;
+public class SessionTimes   {
+  public static final String JSON_PROPERTY_REMAINING_TIME = "remainingTime";
+  @JsonProperty(JSON_PROPERTY_REMAINING_TIME)
+  private Long remainingTime;
 
-  public static final String JSON_PROPERTY_PASSWORD_NEW = "password_new";
-  @JsonProperty(JSON_PROPERTY_PASSWORD_NEW)
-  private String passwordNew;
+  public static final String JSON_PROPERTY_EXPIRATION_TIME = "expirationTime";
+  @JsonProperty(JSON_PROPERTY_EXPIRATION_TIME)
+  private Long expirationTime;
 
-  public PasswordChange passwordOld(String passwordOld) {
-    this.passwordOld = passwordOld;
+  public SessionTimes remainingTime(Long remainingTime) {
+    this.remainingTime = remainingTime;
     return this;
   }
 
   /**
-   * Get passwordOld
-   * @return passwordOld
+   * Get remainingTime
+   * @return remainingTime
    **/
-  @JsonProperty(value = "password_old")
+  @JsonProperty(value = "remainingTime")
   @Schema(required = true, description = "")
   @NotNull 
-  public String getPasswordOld() {
-    return passwordOld;
+  public Long getRemainingTime() {
+    return remainingTime;
   }
 
-  public void setPasswordOld(String passwordOld) {
-    this.passwordOld = passwordOld;
+  public void setRemainingTime(Long remainingTime) {
+    this.remainingTime = remainingTime;
   }
 
-  public PasswordChange passwordNew(String passwordNew) {
-    this.passwordNew = passwordNew;
+  public SessionTimes expirationTime(Long expirationTime) {
+    this.expirationTime = expirationTime;
     return this;
   }
 
   /**
-   * Get passwordNew
-   * @return passwordNew
+   * Get expirationTime
+   * @return expirationTime
    **/
-  @JsonProperty(value = "password_new")
+  @JsonProperty(value = "expirationTime")
   @Schema(required = true, description = "")
   @NotNull 
-  public String getPasswordNew() {
-    return passwordNew;
+  public Long getExpirationTime() {
+    return expirationTime;
   }
 
-  public void setPasswordNew(String passwordNew) {
-    this.passwordNew = passwordNew;
+  public void setExpirationTime(Long expirationTime) {
+    this.expirationTime = expirationTime;
   }
 
 
@@ -87,23 +87,23 @@ public class PasswordChange   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PasswordChange passwordChange = (PasswordChange) o;
-    return Objects.equals(this.passwordOld, passwordChange.passwordOld) &&
-        Objects.equals(this.passwordNew, passwordChange.passwordNew);
+    SessionTimes sessionTimes = (SessionTimes) o;
+    return Objects.equals(this.remainingTime, sessionTimes.remainingTime) &&
+        Objects.equals(this.expirationTime, sessionTimes.expirationTime);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(passwordOld, passwordNew);
+    return Objects.hash(remainingTime, expirationTime);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class PasswordChange {\n");
+    sb.append("class SessionTimes {\n");
     
-    sb.append("    passwordOld: ").append("*").append("\n");
-    sb.append("    passwordNew: ").append("*").append("\n");
+    sb.append("    remainingTime: ").append(toIndentedString(remainingTime)).append("\n");
+    sb.append("    expirationTime: ").append(toIndentedString(expirationTime)).append("\n");
     sb.append("}");
     return sb.toString();
   }
