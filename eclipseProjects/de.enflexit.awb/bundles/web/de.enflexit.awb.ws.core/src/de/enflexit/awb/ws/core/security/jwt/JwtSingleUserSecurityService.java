@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
@@ -109,5 +110,12 @@ public class JwtSingleUserSecurityService implements AwbSecurityHandlerService {
 		return new JwtSingleUserSecurityHandler(securityHandlerConfiguration, jwtConfig);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(java.util.TreeMap, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
+	 */
+	@Override
+	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle) {
+		// --- Nothing to do here --------------- 
+	}
 	
 }

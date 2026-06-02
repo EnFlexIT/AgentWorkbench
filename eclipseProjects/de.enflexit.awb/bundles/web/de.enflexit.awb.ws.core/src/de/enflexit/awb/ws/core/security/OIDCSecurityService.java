@@ -1,15 +1,19 @@
 package de.enflexit.awb.ws.core.security;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.openid.OpenIdAuthenticator;
 import org.eclipse.jetty.security.openid.OpenIdConfiguration;
 import org.eclipse.jetty.security.openid.OpenIdConfiguration.Builder;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
+import jakarta.servlet.DispatcherType;
 
 /**
  * The Class OpenIDSecurityService.
@@ -112,6 +116,31 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		// --- The regular way to create an OIDCSecurityHandler -----
 		return new OIDCSecurityHandler(issuer, clientID, clientSecret, true);
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(java.util.TreeMap, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
+	 */
+	@Override
+	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle) {
+		
+		// --- Get the required parameter ---------------------------
+		String issuer = securityHandlerConfiguration.get(OIDCParameter.Issuer.getKey());
+		String clientID = securityHandlerConfiguration.get(OIDCParameter.ClientID.getKey());
+		String clientSecret = securityHandlerConfiguration.get(OIDCParameter.ClientSecrete.getKey());
+		
+		// --- As example:  https://your-idp.example.com/realms/myrealm/protocol/openid-connect/token
+		String tokenEndPoint = issuer + "/protocol/openid-connect/token";
+		
+		FilterHolder refreshFilter = new FilterHolder(OIDCTokenRefreshFilter.class);
+		refreshFilter.setInitParameter("tokenEndpoint", tokenEndPoint); 
+		refreshFilter.setInitParameter("clientId",     clientID);
+		refreshFilter.setInitParameter("clientSecret", clientSecret);
+
+		// --- Apply to secured paths -------------------------------
+		serCtxHandle.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
+	}
+
+	
 	
 	/**
 	 * Resets the  OpenIdAuthenticator.

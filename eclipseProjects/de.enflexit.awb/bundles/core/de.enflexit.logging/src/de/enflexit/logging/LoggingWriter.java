@@ -39,7 +39,7 @@ public class LoggingWriter extends DBAppender {
 	 * @param writeToLoggingStorage the new write to logging storage
 	 */
 	public void setWriteToLoggingStorage(boolean writeToLoggingStorage) {
-		if (writeToLoggingStorage==true) {
+		if (writeToLoggingStorage==true && this.connectionSource!=null && this.getConnectionSource().isStarted()==true) {
 			if (this.isStarted()==false) this.start();
 		} else {
 			if (this.isStarted()==true) this.stop();

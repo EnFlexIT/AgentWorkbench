@@ -33,9 +33,7 @@ public enum SoftwareComponentType {
   
   BUNDLE("BUNDLE"),
   
-  BUNDLE_OF_FEATURE("BUNDLE_OF_FEATURE"),
-  
-  NULL("null");
+  BUNDLE_OF_FEATURE("BUNDLE_OF_FEATURE");
 
   private String value;
 

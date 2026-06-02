@@ -53,7 +53,6 @@ public class VersionApiImpl extends VersionApiService {
 		// --- Create response 'SoftwareComponentList' --------------
 		SoftwareComponentList scList = null;
 		switch (type) {
-		case NULL:
 		case WEBAPP: 
 			scList = this.getSoftwareComponentListForWebApp(scList);
 			break;

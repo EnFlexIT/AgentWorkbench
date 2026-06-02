@@ -2,6 +2,7 @@ package de.enflexit.awb.ws.core.security;
 
 import java.util.TreeMap;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
@@ -45,6 +46,13 @@ public class SingleUserSecurityService implements AwbSecurityHandlerService {
 	@Override
 	public SecurityHandler getNewSecurityHandler(TreeMap<String, String> securityHandlerConfiguration) {
 		return new SingleUserSecurityHandler(securityHandlerConfiguration);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(java.util.TreeMap, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
+	 */
+	@Override
+	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle) {
+		// --- Nothing to do here --------------- 
 	}
 
 }

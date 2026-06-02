@@ -2,6 +2,7 @@ package de.enflexit.awb.ws;
 
 import java.util.TreeMap;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 
 /**
@@ -41,5 +42,13 @@ public interface AwbSecurityHandlerService {
 	 */
 	public SecurityHandler getNewSecurityHandler(TreeMap<String, String> securityHandlerConfiguration);
 
+	/**
+	 * Enables to further customize the currently used ServletContextHandler (e.g. to apply an additional filter).
+	 *
+	 * @param serCtxHandle the servlet context handle to customize
+	 * @param securityHandlerConfiguration the security handler configuration
+	 */
+	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle);
+	
 	
 }

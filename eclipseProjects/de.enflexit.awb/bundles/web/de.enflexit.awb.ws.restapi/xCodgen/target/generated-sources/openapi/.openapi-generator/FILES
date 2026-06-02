@@ -36,6 +36,7 @@ src/gen/java/de/enflexit/awb/ws/restapi/gen/model/NetworkConnection.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/PasswordChange.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Properties.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/PropertyEntry.java
+src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SessionTimes.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SoftwareComponent.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SoftwareComponentList.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/model/SoftwareComponentType.java

@@ -1,9 +1,12 @@
 package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
+import java.text.ParseException;
 
 import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
+
+import com.nimbusds.jwt.SignedJWT;
 
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
@@ -15,6 +18,7 @@ import de.enflexit.awb.ws.restapi.gen.NotFoundException;
 import de.enflexit.awb.ws.restapi.gen.UserApi;
 import de.enflexit.awb.ws.restapi.gen.UserApiService;
 import de.enflexit.awb.ws.restapi.gen.model.PasswordChange;
+import de.enflexit.awb.ws.restapi.gen.model.SessionTimes;
 import de.enflexit.common.StringHelper;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -114,6 +118,56 @@ public class UserApiImpl extends UserApiService {
         return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
     }
 
+    /* (non-Javadoc)
+     * @see de.enflexit.awb.ws.restapi.gen.UserApiService#getSessionTime(jakarta.ws.rs.core.SecurityContext)
+     */
+    @Override
+	public Response getSessionTime(SecurityContext securityContext) throws NotFoundException {
+		
+    	String errMsg = null;
+    	Principal principal = securityContext.getUserPrincipal();
+		if (principal==null) {
+			errMsg = "Could not find any principal information.";
+			return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
+		}
+		
+		// --- For known Principals ---------------------------------
+		String accessToken = null;
+		if (principal instanceof JwtPrincipal jwtPrincipal) {
+			accessToken = jwtPrincipal.getJwtToken();
+		} else if (principal instanceof OpenIdUserPrincipal openIdPrincipal) {
+			accessToken = (String) openIdPrincipal.getCredentials().getResponse().get("access_token");
+		}
+		if (accessToken==null) {
+			errMsg = "Weather a JWT nor a OIDC login handling is activated!";
+			return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
+		}
+    	
+		// --- Evaluate remaining and expiration time ---------------
+		Long expirationTime = null;
+		Long remainingTime = null;
+		try {
+			SignedJWT jwtCheck = SignedJWT.parse(accessToken);
+			expirationTime = jwtCheck.getJWTClaimsSet().getExpirationTime().getTime() / 1000;
+			remainingTime = expirationTime - (System.currentTimeMillis() / 1000);
+			
+		} catch (ParseException pEx) {
+			pEx.printStackTrace();
+			errMsg = pEx.getMessage();
+		}
+
+		if (expirationTime==null || errMsg!=null) {
+			errMsg = "Error while " + errMsg;
+			return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
+		}
+		
+    	// --- Create return type -------------------------
+    	SessionTimes sTime = new SessionTimes();
+    	sTime.setRemainingTime(remainingTime);
+    	sTime.setExpirationTime(expirationTime);
+    	
+    	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(sTime).build();
+	}
 
     /* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.restapi.gen.UserApiService#logout(javax.ws.rs.core.SecurityContext)
@@ -123,5 +177,5 @@ public class UserApiImpl extends UserApiService {
 		// --- Nothing to do here ! ---
 		return null;
 	}
-    
+
 }
