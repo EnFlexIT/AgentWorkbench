@@ -8,35 +8,38 @@ import de.enflexit.common.p2.P2OperationsHandler;
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
-public class UpdateCheckCoordinator {
+public class UpdateCheckCoordinatorBackend {
 	
 	private static final long EXECUTION_WAIT_TIME = 60_000L;
 	private Thread workerThread;
-	private UpdateCheckStatus status;
+	private UpdateCheckStatusBackend status;
 	private long lastExecution;
 	
-	private static UpdateCheckCoordinator instance;
+	private static UpdateCheckCoordinatorBackend instance;
 	
 	/**
 	 * Gets the single instance of UpdateCheckCoordinator.
 	 * @return single instance of UpdateCheckCoordinator
 	 */
-	public static UpdateCheckCoordinator getInstance() {
+	public static UpdateCheckCoordinatorBackend getInstance() {
 		if (instance == null) {
-			instance = new UpdateCheckCoordinator();
+			instance = new UpdateCheckCoordinatorBackend();
 		}
 		return instance;
 	}
 	
-	private UpdateCheckCoordinator() {}
+	/**
+	 * Instantiates a new update check coordinator.
+	 */
+	private UpdateCheckCoordinatorBackend() {}
 	
     /**
-     * Gets the status.
-     * @return the status
+     * Returns the UpdateCheckStatus.
+     * @return the UpdateCheckStatus
      */
-    public UpdateCheckStatus getUpdateCheckStatus() {
+    public UpdateCheckStatusBackend getUpdateCheckStatusBackend() {
     	if (status == null) {
-    		status = new UpdateCheckStatus();
+    		status = new UpdateCheckStatusBackend();
     	}
         return status;
     }
@@ -52,29 +55,28 @@ public class UpdateCheckCoordinator {
     	long now = System.currentTimeMillis();
     	if (forceNewCheck == false) {
     		// --- workerThread is already running but not finished yet ---------------------------
-    		if (now < this.getUpdateCheckStatus().getLastCheck() + AWBUpdater.UPDATE_CHECK_PERIOD) {
+    		if (now < this.getUpdateCheckStatusBackend().getLastCheck() + AWBUpdater.UPDATE_CHECK_PERIOD) {
     			return;
     		}
     	}
     	
-    	// --- Avoid too frequent checks ----------------------------------------------------------
+    	// --- Avoid to frequent checks ----------------------------------------------------------
     	if (now >= lastExecution + EXECUTION_WAIT_TIME) {
-    		this.getUpdateCheckStatus().setPending(true);
+    		this.getUpdateCheckStatusBackend().setPending(true);
     		workerThread = new Thread(this::runBackendCheck,"P2-Update-Check-Thread");
     		lastExecution = now;
     		workerThread.start();
     	}
     }
     		
-    
     /**
      * Checks for newer bundles.
      */
     private void runBackendCheck() {
 		boolean isUpdateAvailable = P2OperationsHandler.getInstance().checkForNewerBundles();
-		this.getUpdateCheckStatus().setAvailable(isUpdateAvailable);
-		this.getUpdateCheckStatus().setLastCheck(System.currentTimeMillis());
-		this.getUpdateCheckStatus().setPending(false);
+		this.getUpdateCheckStatusBackend().setAvailable(isUpdateAvailable);
+		this.getUpdateCheckStatusBackend().setLastCheck(System.currentTimeMillis());
+		this.getUpdateCheckStatusBackend().setPending(false);
 		workerThread = null;
 	}
 

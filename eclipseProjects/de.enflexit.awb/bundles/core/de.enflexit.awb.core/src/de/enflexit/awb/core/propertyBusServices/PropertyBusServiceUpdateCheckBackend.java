@@ -4,8 +4,8 @@ package de.enflexit.awb.core.propertyBusServices;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.core.update.UpdateCheckCoordinator;
-import de.enflexit.awb.core.update.UpdateCheckStatus;
+import de.enflexit.awb.core.update.UpdateCheckCoordinatorBackend;
+import de.enflexit.awb.core.update.UpdateCheckStatusBackend;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.bus.PropertyBusService;
 
@@ -47,17 +47,17 @@ public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 		if (arguments == null) return properties;
 		
 		boolean forceNewCheck = arguments.equalsIgnoreCase("true") ? true : false;
-		UpdateCheckCoordinator.getInstance().triggerCheck(forceNewCheck);
-		UpdateCheckStatus status = UpdateCheckCoordinator.getInstance().getUpdateCheckStatus();
+		UpdateCheckCoordinatorBackend.getInstance().triggerCheck(forceNewCheck);
+		UpdateCheckStatusBackend status = UpdateCheckCoordinatorBackend.getInstance().getUpdateCheckStatusBackend();
 		if (status.isPending()) {
 			properties.setBooleanValue(PENDING, true);
 			return properties;
 		}
 		properties.setBooleanValue(ISUPDATEAVAILABLE, status.isUpdateAvailable());
-		// TODO Implement version data
 		properties.setStringValue(LASTCHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
 		
-		Application.getGlobalInfo().setUpdateDateLastChecked(status.getLastCheck());
+		// TODO Next line necessary? UpdateCheckStatus already sets the value in GlobalInfo. Maybe a call to safe() instead
+//		Application.getGlobalInfo().setUpdateDateLastChecked(status.getLastCheck());
 		
 		return properties;
 	}
