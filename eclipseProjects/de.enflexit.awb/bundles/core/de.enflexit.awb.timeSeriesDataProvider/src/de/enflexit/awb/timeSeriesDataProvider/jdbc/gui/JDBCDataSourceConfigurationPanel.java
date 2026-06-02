@@ -782,7 +782,7 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	private List<String> findTimeStampColumns(ResultSetMetaData resultSetMetaData) throws SQLException {
 		List<String> columnNames = new ArrayList<String>();
 		for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
-			if (resultSetMetaData.getColumnTypeName(i).equalsIgnoreCase("timestamp")) {
+			if (resultSetMetaData.getColumnTypeName(i).equalsIgnoreCase("timestamp") || resultSetMetaData.getColumnTypeName(i).equalsIgnoreCase("timestamptz")) {
 				columnNames.add(resultSetMetaData.getColumnName(i));
 			}
 		}
