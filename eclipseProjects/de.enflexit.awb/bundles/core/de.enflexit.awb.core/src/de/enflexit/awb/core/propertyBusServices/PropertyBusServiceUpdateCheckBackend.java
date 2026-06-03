@@ -3,7 +3,7 @@ package de.enflexit.awb.core.propertyBusServices;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import de.enflexit.awb.core.Application;
+
 import de.enflexit.awb.core.update.UpdateCheckCoordinatorBackend;
 import de.enflexit.awb.core.update.UpdateCheckStatusBackend;
 import de.enflexit.common.properties.Properties;
@@ -54,10 +54,7 @@ public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 		}
 		properties.setBooleanValue(IS_UPDATE_AVAILABLE, status.isUpdateAvailable());
 		properties.setStringValue(LAST_CHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
-		
-		Application.getGlobalInfo().setUpdateDateLastChecked(status.getLastCheck());
-		Application.getGlobalInfo().doSaveConfiguration();
-		
+				
 		return properties;
 	}
 

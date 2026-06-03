@@ -53,9 +53,9 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 	public Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
-		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverIDE) {
-			return properties;
-		}
+//		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverIDE) {
+//			return properties;
+//		}
 		
 		if (awbUpdater==null) {
 			// --- Start the Update process -------------------------
@@ -85,7 +85,7 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 				properties.setIntegerValue(PROGRESS, 100);
 				properties.setStringValue(MESSAGE, awbUpdater.getFinalMessage());
 				
-				// --- Destroy AwbUpdate ----------------------------
+				// --- Destroy AwbUpdater ---------------------------
 				awbUpdater = null;
 			}
 		}
@@ -95,7 +95,7 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 
 	
 	/**
-	 * Returnss the progress monitor.
+	 * Returns the progress monitor.
 	 * @return the progress monitor
 	 */
 	private IProgressMonitor getProgressMonitor() {
