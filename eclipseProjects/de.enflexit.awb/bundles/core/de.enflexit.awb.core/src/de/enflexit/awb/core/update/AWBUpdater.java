@@ -1,5 +1,6 @@
 package de.enflexit.awb.core.update;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import de.enflexit.awb.core.Application;
@@ -32,6 +33,9 @@ public class AWBUpdater extends Thread {
 	private boolean debug = false;
 	private boolean updateDone = false;
 
+	private boolean hasInstalledUpdate;
+	private String finalMessage;
+	
 	private GlobalInfo globalInfo;
 	private ExecutionMode executionMode;
 
@@ -46,7 +50,7 @@ public class AWBUpdater extends Thread {
 	private boolean doUpdateCheckOnly = false;
 	
 	private Object synchronizationObject;
-	private AwbProgressMonitor progressMonitor;
+	private IProgressMonitor progressMonitor;
 	
 
 	
@@ -213,19 +217,20 @@ public class AWBUpdater extends Thread {
 		if (updatesAvailable==true) {
 			String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
-			
+			this.setFinalMessage(infoString);
 			if (Application.isOperatingHeadless()==false) {
 				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "Updates available", AwbMessageDialog.WARNING_MESSAGE);
 			}
+			
 		} else {
 			String infoString = "Your target platform is up to date!";
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
-			
+			this.setFinalMessage(infoString);
 			if (this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
 				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbMessageDialog.INFORMATION_MESSAGE);
 			}
+			
 		}
-		
 	}
 	/**
 	 * Wait for the end of the benchmark.
@@ -243,31 +248,32 @@ public class AWBUpdater extends Thread {
 	// ------------------------------------
 	// --- p2-based update ----------------
 	// ------------------------------------
-
 	/**
 	 * Starts a p2-based update procedure
 	 */
 	public void startP2Updates() {
 		
-		// --- Check for available updates -------
+		// --- Check for available updates ----------------------------------------------------------------------------
 		System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Check for updates ...");
 		
 		if (Application.isOperatingHeadless() == false) {
-			this.getProgressMonitor().setVisible(true);
+			this.setAwbProgressMonitorVisible(true);
 			P2OperationsHandler.getInstance().setProgressMonitor(this.getProgressMonitor());
 		}
 		
+		String finalMessage = null;
 		IStatus status = P2OperationsHandler.getInstance().checkForUpdates();
 		if (status.getSeverity()!=IStatus.ERROR) {
 
 			if (status.getCode()==UpdateOperation.STATUS_NOTHING_TO_UPDATE) {
-				// --- No updates found --------------
-				System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: No updates found!");
+				// --- No updates found -------------------------------------------------------------------------------
+				finalMessage = "P2 Update: No updates found!";
+				System.out.println("[" + this.getClass().getSimpleName() + "] " + finalMessage);
 				
 				if (Application.isOperatingHeadless() == false) {
-					this.getProgressMonitor().setProgress(100);
-					this.getProgressMonitor().setVisible(false);
-					this.getProgressMonitor().dispose();
+					this.setAwbProgressMonitorProgress(100);
+					this.setAwbProgressMonitorVisible(false);
+					this.disposeAwbProgressMonitor();
 				}
 				
 				if (Application.isOperatingHeadless()==false && this.manualyExecutedByUser==true) {
@@ -275,65 +281,84 @@ public class AWBUpdater extends Thread {
 				}
 
 			} else {
-				
-				// --- Ask for user confirmation if specified in the settings -------
+				// --- Ask for user confirmation if specified in the settings -----------------------------------------
 				boolean installUpdates = true;
 				if (this.askBeforeDownload==true) {
 					
-					// --- Temporary hide the progress dialog, otherwise the confirmation dialog would not be shown-------- 
+					// --- Temporary hide the progress dialog, otherwise the confirmation dialog would not be shown --- 
 					if (this.executionMode == ExecutionMode.APPLICATION) {
-						this.getProgressMonitor().setVisible(false);
+						this.setAwbProgressMonitorVisible(false);
 					}
 					
-					// --- Show confirmation dialog ----------
+					// --- Show confirmation dialog -------------------------------------------------------------------
 					int userAnswer = AwbMessageDialog.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), Application.getGlobalInfo().getApplicationTitle() + " Update", AwbMessageDialog.YES_NO_OPTION);
 					if (userAnswer == AwbMessageDialog.NO_OPTION) {
 						installUpdates = false;
-						System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Update canceled by user.");
+						finalMessage = "P2 Update: Update canceled by user.";
+						System.out.println("[" + this.getClass().getSimpleName() + "] " + finalMessage);
 						if (Application.isOperatingHeadless() == false) {
-							this.getProgressMonitor().setVisible(false);
-							this.getProgressMonitor().dispose();
+							this.setAwbProgressMonitorVisible(false);
+							this.disposeAwbProgressMonitor();
 						}
 					}
 				}
-				
 
 				if (installUpdates==true) {
-					// --- Change progress dialog texts ----------------
+					// --- Change progress dialog texts ---------------------------------------------------------------
 					if (Application.isOperatingHeadless() == false) {
-						this.getProgressMonitor().setHeaderText(Language.translate("Installiere Updates"));
-						this.getProgressMonitor().setProgressText(Language.translate("Installiere") + "...");
-						this.getProgressMonitor().setVisible(true);
+						this.setAwbProgressMonitorHeaderText(Language.translate("Installiere Updates"));
+						this.setAwbProgressMonitorProgressText(Language.translate("Installiere") + "...");
+						this.setAwbProgressMonitorVisible(true);
 						P2OperationsHandler.getInstance().setProgressMonitor(this.getProgressMonitor());
 					}
+					// --- Proceed with the update --------------------------------------------------------------------
 					status = P2OperationsHandler.getInstance().installAvailableUpdates();
 					if (status.isOK()) {
-						System.out.println("[" + this.getClass().getSimpleName() + "] P2 Update: Updates sucessfully installed, restarting...");
+						finalMessage = "P2 Update: Updates sucessfully installed, restarting...";
+						System.out.println("[" + this.getClass().getSimpleName() + "] " + finalMessage);
+						this.hasInstalledUpdate = true;
+						this.updateDone = true;
+						this.setFinalMessage(finalMessage);
 						Application.restart();
+						
 					} else {
-						System.err.println("[" + this.getClass().getSimpleName() + "] P2 Update: Error installing updates.");
+						finalMessage = "P2 Update: Error installing updates.";
+						System.err.println("[" + this.getClass().getSimpleName() + "] " + finalMessage);
+						System.err.println("[" + this.getClass().getSimpleName() + "] => " + status.getMessage());
+						finalMessage = finalMessage + ": " + status.getMessage();
+						
 					}
 				}
 				
 				if (Application.isOperatingHeadless() == false) {
-					this.getProgressMonitor().setProgress(100);
-					this.getProgressMonitor().setVisible(false);
-					this.getProgressMonitor().dispose();
+					this.setAwbProgressMonitorProgress(100);
+					this.setAwbProgressMonitorVisible(false);
+					this.disposeAwbProgressMonitor();
 				}
 
 			}
 		}
 		
-		// --- Finally remove the local progress monitor ------------
+		// --- Set the final message ----------------------------------------------------------------------------------
+		this.setFinalMessage(finalMessage);
+		
+		// --- Finally remove the local progress monitor --------------------------------------------------------------
 		P2OperationsHandler.getInstance().setProgressMonitor(null);
 		
 	}
 	
 	/**
-	 * Gets the progress monitor.
+	 * Enables to set an individual progress monitor.
+	 * @param progressMonitor the new progress monitor
+	 */
+	public void setProgressMonitor(IProgressMonitor progressMonitor) {
+		this.progressMonitor = progressMonitor;
+	}
+	/**
+	 * Returns the AwbProgressMonitor.
 	 * @return the progress monitor
 	 */
-	private AwbProgressMonitor getProgressMonitor() {
+	private IProgressMonitor getProgressMonitor() {
 		if (this.progressMonitor == null) {
 			String title = Language.translate("Aktualisierung");
 			String header = Language.translate("Suche nach Updates");
@@ -342,6 +367,62 @@ public class AWBUpdater extends Thread {
 		}
 		return this.progressMonitor;
 	}
+	
+	// --------------------------------------------------------------
+	// --- Handling of the AwbProgressMonitor -----------------------
+	// --------------------------------------------------------------
+	/**
+	 * Returns the AwbProgressMonitor, if available.
+	 * @return the AwbProgressMonitor or <code>null</code>
+	 */
+	private AwbProgressMonitor getAwbProgressMonitor() {
+		if (this.getProgressMonitor() instanceof AwbProgressMonitor awbProgressMonitor) {
+			return awbProgressMonitor;
+		}
+		return null;
+	}
+	/**
+	 * Sets the AwbProgressMonitor visible.
+	 * @param setVisible the new AwbProgressMonitor visible
+	 */
+	private void setAwbProgressMonitorVisible(boolean setVisible) {
+		if (this.getAwbProgressMonitor()==null) return;
+		this.getAwbProgressMonitor().setVisible(setVisible);
+	}
+	/**
+	 * Sets the AwbProgressMonitor progress.
+	 * @param progress the new progress
+	 */
+	private void setAwbProgressMonitorProgress(int progress) {
+		if (this.getAwbProgressMonitor()==null) return;
+		this.getAwbProgressMonitor().setProgress(progress);
+	}
+	/**
+	 * Sets the AwbProgressMonitor header text.
+	 * @param headerText the new header text
+	 */
+	private void setAwbProgressMonitorHeaderText(String headerText) {
+		if (this.getAwbProgressMonitor()==null) return;
+		this.getAwbProgressMonitor().setHeaderText(headerText);
+	}
+	/**
+	 * Sets the AwbProgressMonitor progress text.
+	 * @param progress the new progress text
+	 */
+	private void setAwbProgressMonitorProgressText(String progressText) {
+		if (this.getAwbProgressMonitor()==null) return;
+		this.getAwbProgressMonitor().setProgressText(progressText);
+	}
+	/**
+	 * Dispose awb progress monitor.
+	 */
+	private void disposeAwbProgressMonitor() {
+		if (this.getAwbProgressMonitor()==null) return;
+		this.getAwbProgressMonitor().dispose();
+	}
+	// --------------------------------------------------------------
+	// --------------------------------------------------------------
+	
 	
 	/**
 	 * Checks if the update is done.
@@ -372,6 +453,29 @@ public class AWBUpdater extends Thread {
 		} else {
 			this.debugPrint("Update already done, no need to wait");
 		}
+	}
+	
+	/**
+	 * Checks if the updates were successfully installed.
+	 * @return true, if successful
+	 */
+	public boolean hasInstalledUpdate() {
+		return hasInstalledUpdate;
+	}
+	
+	/**
+	 * Sets the final message.
+	 * @param finalMessage the new final message
+	 */
+	private void setFinalMessage(String finalMessage) {
+		this.finalMessage = finalMessage;
+	}
+	/**
+	 * Returns the final message.
+	 * @return the final message
+	 */
+	public String getFinalMessage() {
+		return finalMessage;
 	}
 	
 	/**

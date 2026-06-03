@@ -1,10 +1,10 @@
 package de.enflexit.awb.core.propertyBusServices;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.common.ExecutionEnvironment;
-import de.enflexit.common.p2.P2OperationsHandler;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.bus.PropertyBusService;
 
@@ -16,10 +16,19 @@ import de.enflexit.common.properties.bus.PropertyBusService;
 public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 	
 	public static final String STATUS = "update.status";
-	public static final String RESTARTREQUIRED = "isrestartrequired";
+	public static final String PROGRESS = "update.progress";
+	public static final String MESSAGE = "update.message";
 
-	private Thread workerThread;
-	private IStatus result;
+	private IProgressMonitor progressMonitor;
+	private int pmTotalWorkCount;
+	private int pmProgressCount;
+	private int pmProgressPercent;
+	
+	private String pmTask;
+	private String pmSubTask;
+	
+	private AWBUpdater awbUpdater;
+	
 	
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
@@ -48,26 +57,83 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 			return properties;
 		}
 		
-		if (workerThread == null && result == null) {
-			workerThread = new Thread(this::doUpdate, Application.getGlobalInfo().getApplicationTitle() + "-Updater");
-			workerThread.start();
+		if (awbUpdater==null) {
+			// --- Start the Update process -------------------------
+			awbUpdater = new AWBUpdater(true, true);
+			awbUpdater.setProgressMonitor(this.getProgressMonitor());
+			awbUpdater.start();
+
 			properties.setStringValue(STATUS, "Pending");
+			properties.setIntegerValue(PROGRESS, 0);
+			properties.setStringValue(MESSAGE, "");
 			
-		} else if(workerThread == null && result != null && result.isOK()) {
-			// TODO Method to find out if a restart is really required?
-			// TODO Set flag that a restart is required?
-			properties.setStringValue(STATUS, "Done");
-			properties.setBooleanValue(RESTARTREQUIRED, true);
+		} else {
+			
+			if (awbUpdater.isUpdateDone()==false) {
+				// --- Running update -------------------------------
+				properties.setStringValue(STATUS, "Pending");
+				properties.setIntegerValue(PROGRESS, this.pmProgressPercent);
+				properties.setStringValue(MESSAGE, this.pmTask + ": " + this.pmSubTask);
+				
+			} else {
+				// --- Finalized update -----------------------------
+				if (awbUpdater.hasInstalledUpdate()==true) {
+					properties.setStringValue(STATUS, "Done");
+				} else {
+					properties.setStringValue(STATUS, "Error");
+				}
+				properties.setIntegerValue(PROGRESS, 100);
+				properties.setStringValue(MESSAGE, awbUpdater.getFinalMessage());
+				
+				// --- Destroy AwbUpdate ----------------------------
+				awbUpdater = null;
+			}
 		}
+		
 		return properties;
 	}
+
 	
 	/**
-	 * Install the update.
+	 * Returnss the progress monitor.
+	 * @return the progress monitor
 	 */
-	private void doUpdate() {
-		result = P2OperationsHandler.getInstance().installAvailableUpdates();
-		workerThread = null;
-	}
+	private IProgressMonitor getProgressMonitor() {
+		if (progressMonitor==null) {
+			progressMonitor = new IProgressMonitor() {
+				@Override
+				public void beginTask(String name, int totalWork) {
+					this.setTaskName(name);
+					PropertyBusServiceUpdateBackend.this.pmTotalWorkCount = totalWork;
+				}
+				@Override
+				public void worked(int work) {
+					PropertyBusServiceUpdateBackend.this.pmProgressCount += work;
+					Long percentLong = Math.round(((double)PropertyBusServiceUpdateBackend.this.pmProgressCount / PropertyBusServiceUpdateBackend.this.pmTotalWorkCount) * 100.0);
+					PropertyBusServiceUpdateBackend.this.pmProgressPercent = percentLong.intValue();
+				}
+				@Override
+				public void setTaskName(String name) {
+					PropertyBusServiceUpdateBackend.this.pmTask = name;
+				}
+				@Override
+				public void subTask(String name) {
+					PropertyBusServiceUpdateBackend.this.pmSubTask = name;
+				}
 
+				@Override
+				public void done() { }
+				@Override
+				public void internalWorked(double work) { }
+				@Override
+				public void setCanceled(boolean value) { }
+				@Override
+				public boolean isCanceled() {
+					return false;
+				}
+			};
+		}
+		return progressMonitor;
+	}
+	
 }
