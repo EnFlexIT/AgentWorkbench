@@ -13,7 +13,8 @@ Service-Component: OSGI-INF/classLoadService.xml,
  OSGI-INF/PropertyBusServiceProjects.xml,
  OSGI-INF/PropertyBusServiceProjectSetups.xml,
  OSGI-INF/PropertyBusServiceAgents.xml,
- OSGI-INF/PropertyBusServiceUpdateCheckBackend.xml
+ OSGI-INF/PropertyBusServiceUpdateCheckBackend.xml,
+ OSGI-INF/PropertyBusServiceExecuteBackendUpdate.xml
 Import-Package: agentgui.core.charts.timeseriesChart,
  agentgui.core.charts.xyChart,
  de.enflexit.awb.core.update.repositoryModel,
