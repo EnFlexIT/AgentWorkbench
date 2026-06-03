@@ -13,7 +13,7 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
-public class PropertyBusServiceExecuteBackendUpdate implements PropertyBusService{
+public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 	
 	public static final String STATUS = "update.status";
 	public static final String RESTARTREQUIRED = "isrestartrequired";

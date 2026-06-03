@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.awb.core.propertyBusServices.PropertyBusServiceExecuteBackendUpdate">
-   <implementation class="de.enflexit.awb.core.propertyBusServices.PropertyBusServiceExecuteBackendUpdate"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.awb.core.propertyBusServices.PropertyBusServiceUpdateBackend">
+   <implementation class="de.enflexit.awb.core.propertyBusServices.PropertyBusServiceUpdateBackend"/>
    <service>
       <provide interface="de.enflexit.common.properties.bus.PropertyBusService"/>
    </service>

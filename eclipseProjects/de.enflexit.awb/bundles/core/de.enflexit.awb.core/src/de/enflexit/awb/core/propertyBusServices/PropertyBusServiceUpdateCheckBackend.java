@@ -16,10 +16,9 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  */
 public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 	
-
 	private static final String PENDING = "updatecheck.backend.ispending";
-	private static final String ISUPDATEAVAILABLE = "updatecheck.backend.isavailable";
-	private static final String LASTCHECK = "updatecheck.backend.lastcheck";
+	private static final String IS_UPDATE_AVAILABLE = "updatecheck.backend.isavailable";
+	private static final String LAST_CHECK = "updatecheck.backend.lastcheck";
 
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
@@ -53,11 +52,11 @@ public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 			properties.setBooleanValue(PENDING, true);
 			return properties;
 		}
-		properties.setBooleanValue(ISUPDATEAVAILABLE, status.isUpdateAvailable());
-		properties.setStringValue(LASTCHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
+		properties.setBooleanValue(IS_UPDATE_AVAILABLE, status.isUpdateAvailable());
+		properties.setStringValue(LAST_CHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
 		
-		// TODO Next line necessary? UpdateCheckStatus already sets the value in GlobalInfo. Maybe a call to safe() instead
-//		Application.getGlobalInfo().setUpdateDateLastChecked(status.getLastCheck());
+		Application.getGlobalInfo().setUpdateDateLastChecked(status.getLastCheck());
+		Application.getGlobalInfo().doSaveConfiguration();
 		
 		return properties;
 	}
