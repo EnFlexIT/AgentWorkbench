@@ -47,7 +47,27 @@ public class PropertyBusServiceExecuteBackendUpdate implements PropertyBusServic
 		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverIDE) {
 			return properties;
 		}
+		
+		if (workerThread == null && result == null) {
+			workerThread = new Thread(this::doUpdate, Application.getGlobalInfo().getApplicationTitle() + "-Updater");
+			workerThread.start();
+			properties.setStringValue(STATUS, "Pending");
+			
+		} else if(workerThread == null && result != null && result.isOK()) {
+			// TODO Method to find out if a restart is really required?
+			// TODO Set flag that a restart is required?
+			properties.setStringValue(STATUS, "Done");
+			properties.setBooleanValue(RESTARTREQUIRED, true);
+		}
 		return properties;
+	}
+	
+	/**
+	 * Install the update.
+	 */
+	private void doUpdate() {
+		result = P2OperationsHandler.getInstance().installAvailableUpdates();
+		workerThread = null;
 	}
 
 }
