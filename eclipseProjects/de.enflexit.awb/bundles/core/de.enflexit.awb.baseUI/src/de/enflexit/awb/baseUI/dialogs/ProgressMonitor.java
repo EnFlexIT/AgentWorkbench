@@ -22,8 +22,6 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import de.enflexit.language.Language;
 import de.enflexit.awb.core.ui.AwbMainWindowProjectDesktop;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
@@ -37,7 +35,7 @@ import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class ProgressMonitor implements ActionListener, AwbProgressMonitor, IProgressMonitor {
+public class ProgressMonitor implements ActionListener, AwbProgressMonitor {
 
 	private AwbMainWindowProjectDesktop parentDesktopPane;
 	
