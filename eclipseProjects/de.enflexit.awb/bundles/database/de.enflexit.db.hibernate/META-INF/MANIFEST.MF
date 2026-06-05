@@ -26,6 +26,7 @@ Bundle-ClassPath: .,
  lib/txw2-4.0.2.jar
 Import-Package: ch.qos.logback.classic,
  de.enflexit.common,
+ de.enflexit.common.dataSources,
  de.enflexit.common.properties,
  de.enflexit.common.properties.bus,
  de.enflexit.common.swing,

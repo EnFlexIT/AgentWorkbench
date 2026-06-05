@@ -21,8 +21,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
     "dbmsName",
-    "hostOrIP",
-    "port",
+    "connectionURL",
     "dbName",
     "userName",
     "password"
@@ -35,11 +34,8 @@ public class DatabaseDataSource extends AbstractDataSource {
 	@Column(name="dbms_name", nullable=false)
 	private String dbmsName; 
 	
-	@Column(name="host_or_ip", nullable=false)
-	private String hostOrIP;
-	
-	@Column(nullable=false)
-	private int port;
+	@Column(name="connection_url", nullable=false)
+	private String connectionURL;
 	
 	@Column(name="db_name", nullable=false)
 	private String dbName;
@@ -55,14 +51,14 @@ public class DatabaseDataSource extends AbstractDataSource {
 	 * Returns the DBMS name (e.g. MariaDB or PostGres).
 	 * @return the DBMS name
 	 */
-	public String getDbmsName() {
+	public String getDBMSName() {
 		return dbmsName;
 	}
 	/**
 	 * Sets the DBMS name.
 	 * @param dbmsName the new DBMS name
 	 */
-	public void setDbmsName(String dbmsName) {
+	public void setDBMSName(String dbmsName) {
 		this.dbmsName = dbmsName;
 	}
 
@@ -70,30 +66,15 @@ public class DatabaseDataSource extends AbstractDataSource {
 	 * Returns the host or IP.
 	 * @return the host or IP
 	 */
-	public String getHostOrIP() {
-		return hostOrIP;
+	public String getConnectionURL() {
+		return connectionURL;
 	}
 	/**
-	 * Sets the host or IP.
-	 * @param hostOrIP the new host or IP
+	 * Sets the connection URL.
+	 * @param connectionURL the new connection URL
 	 */
-	public void setHostOrIP(String hostOrIP) {
-		this.hostOrIP = hostOrIP;
-	}
-
-	/**
-	 * Returns the port.
-	 * @return the port
-	 */
-	public int getPort() {
-		return port;
-	}
-	/**
-	 * Sets the port.
-	 * @param port the new port
-	 */
-	public void setPort(int port) {
-		this.port = port;
+	public void setConnectionURL(String connectionURL) {
+		this.connectionURL = connectionURL;
 	}
 
 	/**
@@ -112,15 +93,15 @@ public class DatabaseDataSource extends AbstractDataSource {
 	}
 
 	/**
-	 * Returns the database username.
-	 * @return the database username
+	 * Returns the database user name.
+	 * @return the database user name
 	 */
 	public String getUserName() {
 		return userName;
 	}
 	/**
-	 * Sets the database username.
-	 * @param userName the new database username
+	 * Sets the database user name.
+	 * @param userName the new database user name
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
