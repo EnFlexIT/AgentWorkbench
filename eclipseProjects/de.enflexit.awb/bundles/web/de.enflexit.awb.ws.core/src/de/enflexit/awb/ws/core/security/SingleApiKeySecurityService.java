@@ -6,6 +6,7 @@ import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
+import de.enflexit.awb.ws.core.JettyConfiguration;
 
 /**
  * The Class SingleApiKeySecurityService describes the {@link SingleApiKeySecurityHandler}
@@ -48,10 +49,10 @@ public class SingleApiKeySecurityService implements AwbSecurityHandlerService {
 		return new SingleApiKeySecurityHandler(securityHandlerConfiguration);
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(java.util.TreeMap, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
+	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(de.enflexit.awb.ws.core.JettyConfiguration, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
 	 */
 	@Override
-	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle) {
+	public void customizeServletContextHandler(JettyConfiguration jConfiguration, ServletContextHandler serCtxHandle) {
 		// --- Nothing to do here --------------- 
 	}
 

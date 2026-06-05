@@ -1,16 +1,24 @@
 package de.enflexit.awb.ws.core.security.jwt;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
+import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettySecuritySettings;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.SingleUserSecurityHandler;
+import de.enflexit.awb.ws.core.session.UserSessionFilter;
+import de.enflexit.common.NumberHelper;
+import jakarta.servlet.DispatcherType;
 
 /**
  * The Class JwtSingleUserSecurityService describes the {@link SingleUserSecurityHandler}
@@ -111,11 +119,22 @@ public class JwtSingleUserSecurityService implements AwbSecurityHandlerService {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(java.util.TreeMap, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
+	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(de.enflexit.awb.ws.core.JettyConfiguration, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
 	 */
 	@Override
-	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle) {
-		// --- Nothing to do here --------------- 
+	public void customizeServletContextHandler(JettyConfiguration jConfiguration, ServletContextHandler serCtxHandle) {
+		
+		// --- Get the required parameter ---------------------------
+		ServletSecurityConfiguration ssc = jConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+		Integer validityPeriod = NumberHelper.parseInteger(ssc.getSecurityHandlerConfiguration().get(JwtParameter.JwtValidityPeriod.getKey())) * 60;
+		
+		FilterHolder refreshFilter = new FilterHolder(UserSessionFilter.class);
+		refreshFilter.setInitParameter(UserSessionFilter.SECURITY_HANDLER_SERVICE, this.getClass().getName());
+		refreshFilter.setInitParameter(UserSessionFilter.USER_SESSION_LENGTH_IN_SECONDS, validityPeriod.toString()); 
+
+		// --- Apply to secured paths -------------------------------
+		serCtxHandle.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
+		
 	}
 	
 }

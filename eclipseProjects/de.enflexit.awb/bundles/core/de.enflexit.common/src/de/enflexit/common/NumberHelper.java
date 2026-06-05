@@ -102,10 +102,10 @@ public class NumberHelper {
 	 * Parses the specified integer string into an integer.
 	 *
 	 * @param integerString the integer string
-	 * @return the int value 
+	 * @return the Integer value 
 	 */
-	public static int parseInteger(String integerString) {
-		int intValue = 0;
+	public static Integer parseInteger(String integerString) {
+		Integer intValue = null;
 		if (integerString!=null && integerString.trim().isEmpty()==false) {
 			try {
 				intValue = Integer.parseInt(integerString);

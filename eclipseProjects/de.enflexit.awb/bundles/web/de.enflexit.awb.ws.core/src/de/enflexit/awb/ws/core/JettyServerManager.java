@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -44,7 +45,10 @@ import de.enflexit.awb.ws.core.security.NoSecurityHandler;
 import de.enflexit.awb.ws.core.security.OIDCSecurityService;
 import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 import de.enflexit.awb.ws.core.session.AWBSessionHandler;
+import de.enflexit.awb.ws.core.session.UserSessionStore;
+import de.enflexit.awb.ws.core.util.MonitoringFilter;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
+import jakarta.servlet.DispatcherType;
 
 /**
  * The Singleton <i>JettyServerManager</i> is used to control the start of {@link Server} instances
@@ -393,12 +397,11 @@ public class JettyServerManager {
 		
 		// ----------------------------------------------------------
 		// --- Secure the server ------------------------------------
-		JettySecuritySettings securitySettings = jConfiguration.getSecuritySettings();
 		Boolean isSecured = null;
 		if (hCollection==null) {
-			isSecured = this.secureHandler(initialHandler, securitySettings);
+			isSecured = this.secureHandler(initialHandler, jConfiguration);
 		} else {
-			isSecured = this.secureHandler(hCollection, securitySettings);
+			isSecured = this.secureHandler(hCollection, jConfiguration);
 		}
 		if (isSecured!=null && isSecured==false) {
 			String msg = "Unable to start the web server '" + jConfiguration.getServerName() + "' because at least one handler could not be secured.";
@@ -410,6 +413,16 @@ public class JettyServerManager {
 				Application.stop();
 			}
 			return false;
+		}
+		
+		// ----------------------------------------------------------
+		// --- Add monitoring filter --------------------------------
+		if (this.isAddMonitoringFilter(jConfiguration)==true) {
+			if (hCollection==null) {
+				this.addMonitoringFilter(initialHandler, jConfiguration);
+			} else {
+				this.addMonitoringFilter(hCollection, jConfiguration);
+			}
 		}
 		
 		// ----------------------------------------------------------
@@ -580,19 +593,79 @@ public class JettyServerManager {
 	}
 	
 	/**
+	 * Checks if is adds the monitoring filter.
+	 *
+	 * @param jConfiguration the j configuration
+	 * @return true, if is adds the monitoring filter
+	 */
+	private boolean isAddMonitoringFilter(JettyConfiguration jConfiguration) {
+		JettyAttribute<?> jaIsPrintOutput = jConfiguration.get(JettyConstants.MONITORING_IS_PRINT_OUTPUT);
+		if (jaIsPrintOutput==null) return false;
+		return (boolean) jaIsPrintOutput.getValue();
+	}
+	/**
+	 * Adds the monitoring filter to each of the specified handler.
+	 *
+	 * @param hCollection the h collection
+	 * @param sessionSettings the session settings
+	 */
+	private void addMonitoringFilter(Sequence hCollection, JettyConfiguration jConfiguration) {
+		List<Handler> handlerList = hCollection.getHandlers();
+		if (handlerList==null) return;
+		for (int i = 0; i < handlerList.size(); i++) {
+			this.addMonitoringFilter(handlerList.get(i), jConfiguration);
+		}
+	}
+	/**
+	 * Adds the monitoring filter to each of the specified handler.
+	 *
+	 * @param handler the handler
+	 * @param jConfiguration the JettyConfiguration
+	 */
+	private void addMonitoringFilter(Handler handler, JettyConfiguration jConfiguration) {
+		
+		if (handler==null) return;
+		if (! (handler instanceof ServletContextHandler)) return;
+		
+		// --- Get filter configuration attributes ----------------------------
+		Boolean isPrint = false;
+		Integer noOf4Avg = 20; 
+		String excludePaths = "";
+		try {
+			isPrint = (boolean) jConfiguration.get(JettyConstants.MONITORING_IS_PRINT_OUTPUT).getValue();
+			noOf4Avg = (int) jConfiguration.get(JettyConstants.MONITORING_NO_FOR_AVERAGE).getValue();
+			excludePaths = (String) jConfiguration.get(JettyConstants.MONITORING_EXCLUDE_PATHS).getValue();
+			
+		} catch (Exception ex) { }
+		
+		
+		// --- Define filter --------------------------------------------------
+		FilterHolder refreshFilter = new FilterHolder(MonitoringFilter.class);
+		refreshFilter.setInitParameter(MonitoringFilter.IS_PRINT_MONITORING_OUTPUT, isPrint.toString());
+		refreshFilter.setInitParameter(MonitoringFilter.NO_OF_ELEMENTS_FOR_AVERAGE, noOf4Avg.toString());
+		refreshFilter.setInitParameter(MonitoringFilter.EXCLUDE_PATH_ARRAY, excludePaths);
+
+		// --- Append to servlet context handler ------------------------------
+		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
+		serCtxHandler.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
+		
+	}
+	
+	/**
 	 * Secure the specified handler collection.
 	 *
-	 * @param hCollection the handler collection to secure
-	 * @param securitySettings the security settings
+	 * @param sequence the handler collection to secure
+	 * @param jConfiguration the j configuration
+	 * @return true, if all handler of the sequence could be secured
 	 */
-	private Boolean secureHandler(Sequence hCollection, JettySecuritySettings securitySettings) {
+	private Boolean secureHandler(Sequence sequence, JettyConfiguration jConfiguration) {
 		
-		List<Handler> handlerList = hCollection.getHandlers();
+		List<Handler> handlerList = sequence.getHandlers();
 		if (handlerList==null) return null;
 		
 		Boolean isSecured = null;
 		for (int i = 0; i < handlerList.size(); i++) {
-			Boolean isHandlerSeccurred = this.secureHandler(handlerList.get(i), securitySettings);
+			Boolean isHandlerSeccurred = this.secureHandler(handlerList.get(i), jConfiguration);
 			if (isHandlerSeccurred!=null && isHandlerSeccurred==false) {
 				isSecured = false;
 			}
@@ -603,9 +676,10 @@ public class JettyServerManager {
 	 * Secures the specified handler.
 	 *
 	 * @param handler the handler
-	 * @param securitySettings the security settings
+	 * @param jConfiguration the j configuration
+	 * @return true, if successfully secured 
 	 */
-	private Boolean secureHandler(Handler handler, JettySecuritySettings securitySettings) {
+	private Boolean secureHandler(Handler handler, JettyConfiguration jConfiguration) {
 
 		if (handler==null) return null;
 		if (! (handler instanceof ServletContextHandler)) return null;
@@ -615,7 +689,7 @@ public class JettyServerManager {
 		String contextPath = serCtxHandler.getContextPath();
 		
 		// --- Get the activated security configuration -----------------------
-		ServletSecurityConfiguration ssc = securitySettings.getActivedServletSecurityConfiguration(contextPath);
+		ServletSecurityConfiguration ssc = jConfiguration.getSecuritySettings().getActivedServletSecurityConfiguration(contextPath);
 		if (ssc==null) return null;
 
 		// --- Get the corresponding security handler service ----------------- 
@@ -631,7 +705,7 @@ public class JettyServerManager {
 				serCtxHandler.setSecurityHandler(securtiyHandler);
 				serCtxHandler.getInitParams().put(AWB_SECURED, AWB_SECURED);
 				// --- Optionally, customize the ServletContextHandler --------
-				securityService.customizeServletContextHandler(ssc.getSecurityHandlerConfiguration(), serCtxHandler);
+				securityService.customizeServletContextHandler(jConfiguration, serCtxHandler);
 				return true;
 				
 			} else {
@@ -760,6 +834,8 @@ public class JettyServerManager {
 			this.disposeAwbWebHandlerServices(serverName);
 			// --- Unregister server instance -----------------------
 			this.unregisterServerInstances(serverName);
+			// --- Dispose the UserSessionStore (if used) -----------
+			UserSessionStore.dispose();
 			// --- Reset the OpenIdAuthenticator --------------------
 			OIDCSecurityService.resetOpenIdAuthenticator();
 			

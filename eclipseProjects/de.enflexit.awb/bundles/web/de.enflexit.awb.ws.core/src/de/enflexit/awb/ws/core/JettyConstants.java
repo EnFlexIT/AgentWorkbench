@@ -37,7 +37,6 @@ public enum JettyConstants {
 	
 //	HOUSEKEEPER_INTERVAL("housekeeper.interval", 20, Integer.class, null, null);
 	
-	
 	CORS_ENABLED("cors.filter.enabled", 30, Boolean.class, false, new Boolean[] {true, false}),
 	CORS_ALLOWED_ORIGINS_PARAM("cors.allowedOrigins", 31, String.class, "*", null),
 	CORS_ALLOWED_TIMING_ORIGINS_PARAM("cors.allowedTimingOrigins", 32, String.class, "", null),
@@ -46,8 +45,13 @@ public enum JettyConstants {
 	CORS_PREFLIGHT_MAX_AGE_PARAM("cors.preflightMaxAge", 35, Integer.class, 1800, null),
 	CORS_ALLOW_CREDENTIALS_PARAM("cors.allowCredentials", 36, Boolean.class, true, new Boolean[] {true, false}),
 	CORS_EXPOSED_HEADERS_PARAM("cors.exposedHeaders", 37, String.class, "*", null),
-	CORS_CHAIN_PREFLIGHT_PARAM("cors.chainPreflight", 38, Boolean.class, false,  new Boolean[] {true, false});
+	CORS_CHAIN_PREFLIGHT_PARAM("cors.chainPreflight", 38, Boolean.class, false,  new Boolean[] {true, false}),
 	
+	MONITORING_IS_PRINT_OUTPUT("mon.isPrintOutput", 40, Boolean.class, false,  new Boolean[] {true, false}),
+	MONITORING_EXCLUDE_PATHS("mon.excludedPaths", 41, String.class, "",  null),
+	MONITORING_NO_FOR_AVERAGE("mon.noOfElementsForAverage", 42, Integer.class, 20,  null),
+	;
+
 	
 	private String jettyKey;
 	private Integer orderPos;

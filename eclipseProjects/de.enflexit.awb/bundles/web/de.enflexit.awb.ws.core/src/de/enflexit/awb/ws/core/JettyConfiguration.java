@@ -176,6 +176,11 @@ public class JettyConfiguration implements Serializable {
 		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.CORS_EXPOSED_HEADERS_PARAM));		
 		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.CORS_CHAIN_PREFLIGHT_PARAM));
 		
+		// --- Monitoring Settings ----------------------------------
+		this.setJettyAttribute(new JettyAttribute<Boolean>(JettyConstants.MONITORING_IS_PRINT_OUTPUT));
+		this.setJettyAttribute(new JettyAttribute<String>(JettyConstants.MONITORING_EXCLUDE_PATHS));
+		this.setJettyAttribute(new JettyAttribute<Integer>(JettyConstants.MONITORING_NO_FOR_AVERAGE));
+		
 	}
 	
 	/**

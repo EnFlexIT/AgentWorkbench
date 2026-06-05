@@ -141,7 +141,7 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
     			SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(securitySettiongs.getSecurityHandlerConfiguration());
     			servletContextHandler.setSecurityHandler(securtiyHandler);
     			// --- Customize ServletContextHandler --------------
-				securityService.customizeServletContextHandler(securitySettiongs.getSecurityHandlerConfiguration(), servletContextHandler);
+				securityService.customizeServletContextHandler(jettyConfiguration, servletContextHandler);
     		}
         }
         

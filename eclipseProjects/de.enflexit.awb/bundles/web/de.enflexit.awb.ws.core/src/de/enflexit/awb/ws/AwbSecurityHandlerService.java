@@ -5,6 +5,8 @@ import java.util.TreeMap;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.security.SecurityHandler;
 
+import de.enflexit.awb.ws.core.JettyConfiguration;
+
 /**
  * The interface AwbSecurityHandlerService describes the information to be provided 
  * by an implementation to add another security handler to the AWB-WS infrastructure. 
@@ -45,10 +47,10 @@ public interface AwbSecurityHandlerService {
 	/**
 	 * Enables to further customize the currently used ServletContextHandler (e.g. to apply an additional filter).
 	 *
+	 * @param jConfiguration the current JettyConfiguration
 	 * @param serCtxHandle the servlet context handle to customize
-	 * @param securityHandlerConfiguration the security handler configuration
 	 */
-	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle);
+	public void customizeServletContextHandler(JettyConfiguration jConfiguration, ServletContextHandler serCtxHandle);
 	
 	
 }

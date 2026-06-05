@@ -17,7 +17,6 @@ import org.eclipse.jetty.security.openid.OpenIdLoginService;
  */
 public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 
-	
 	/**
 	 * Instantiates a new OIDC security handler.
 	 *
@@ -66,7 +65,6 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 		SecurityHandlerService.putPathsToSecurityHandler(this, true);
 	}
 	
-	
 	/**
 	 * Creates a nested login service.
 	 * @return the nested login service
@@ -83,8 +81,5 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 		
 		return nestedLoginService;
 	}
-	
-	
-	
 	
 }

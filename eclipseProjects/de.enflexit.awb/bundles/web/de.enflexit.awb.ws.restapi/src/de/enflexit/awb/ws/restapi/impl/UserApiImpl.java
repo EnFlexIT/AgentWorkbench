@@ -1,16 +1,15 @@
 package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
-import java.text.ParseException;
 
 import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
 
-import com.nimbusds.jwt.SignedJWT;
-
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
+import de.enflexit.awb.ws.core.session.UserSession;
+import de.enflexit.awb.ws.core.session.UserSessionStore;
 import de.enflexit.awb.ws.restapi.AwbWebServerAccess;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.ApiResponseMessage;
@@ -132,36 +131,20 @@ public class UserApiImpl extends UserApiService {
 		}
 		
 		// --- For known Principals ---------------------------------
-		String accessToken = null;
-		if (principal instanceof JwtPrincipal jwtPrincipal) {
-			accessToken = jwtPrincipal.getJwtToken();
-		} else if (principal instanceof OpenIdUserPrincipal openIdPrincipal) {
-			accessToken = (String) openIdPrincipal.getCredentials().getResponse().get("access_token");
-		}
-		if (accessToken==null) {
-			errMsg = "Weather a JWT nor a OIDC login handling is activated!";
-			return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
-		}
-    	
+		String userID = principal.getName();
+		UserSession uSess = UserSessionStore.getInstance().getUserSession(userID);
+
 		// --- Evaluate remaining and expiration time ---------------
-		Long expirationTime = null;
-		Long remainingTime = null;
-		try {
-			SignedJWT jwtCheck = SignedJWT.parse(accessToken);
-			expirationTime = jwtCheck.getJWTClaimsSet().getExpirationTime().getTime() / 1000;
-			remainingTime = expirationTime - (System.currentTimeMillis() / 1000);
-			
-		} catch (ParseException pEx) {
-			pEx.printStackTrace();
-			errMsg = pEx.getMessage();
-		}
+		Long expirationTime = uSess.getExpiration() / 1000;
+		Long remainingTime  = (uSess.getExpiration() - System.currentTimeMillis()) / 1000;
 
 		if (expirationTime==null || errMsg!=null) {
 			errMsg = "Error while " + errMsg;
 			return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
 		}
 		
-    	// --- Create return type -------------------------
+		
+    	// --- Create return type -----------------------------------
     	SessionTimes sTime = new SessionTimes();
     	sTime.setRemainingTime(remainingTime);
     	sTime.setExpirationTime(expirationTime);

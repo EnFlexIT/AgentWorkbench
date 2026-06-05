@@ -13,6 +13,11 @@ import org.eclipse.jetty.security.openid.OpenIdConfiguration;
 import org.eclipse.jetty.security.openid.OpenIdConfiguration.Builder;
 
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
+import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettySecuritySettings;
+import de.enflexit.awb.ws.core.JettySessionSettings;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
+import de.enflexit.awb.ws.core.session.UserSessionFilter;
 import jakarta.servlet.DispatcherType;
 
 /**
@@ -118,20 +123,26 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(java.util.TreeMap, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
+	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#customizeServletContextHandler(de.enflexit.awb.ws.core.JettyConfiguration, org.eclipse.jetty.ee10.servlet.ServletContextHandler)
 	 */
 	@Override
-	public void customizeServletContextHandler(TreeMap<String, String> securityHandlerConfiguration, ServletContextHandler serCtxHandle) {
+	public void customizeServletContextHandler(JettyConfiguration jConfiguration, ServletContextHandler serCtxHandle) {
 		
 		// --- Get the required parameter ---------------------------
-		String issuer = securityHandlerConfiguration.get(OIDCParameter.Issuer.getKey());
-		String clientID = securityHandlerConfiguration.get(OIDCParameter.ClientID.getKey());
-		String clientSecret = securityHandlerConfiguration.get(OIDCParameter.ClientSecrete.getKey());
+		ServletSecurityConfiguration ssc = jConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+		String issuer = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.Issuer.getKey());
+		String clientID = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientID.getKey());
+		String clientSecret = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientSecrete.getKey());
+		
+		Integer maxSessionLength = (int) jConfiguration.getSessionSettings().getSessionAttribute(JettySessionSettings.KEY_SET_MAX_INACTIVE_INTERVAL).getValue();
 		
 		// --- As example:  https://your-idp.example.com/realms/myrealm/protocol/openid-connect/token
 		String tokenEndPoint = issuer + "/protocol/openid-connect/token";
 		
-		FilterHolder refreshFilter = new FilterHolder(OIDCTokenRefreshFilter.class);
+		FilterHolder refreshFilter = new FilterHolder(UserSessionFilter.class);
+		refreshFilter.setInitParameter(UserSessionFilter.SECURITY_HANDLER_SERVICE, this.getClass().getName());
+		refreshFilter.setInitParameter(UserSessionFilter.USER_SESSION_LENGTH_IN_SECONDS, maxSessionLength.toString());
+
 		refreshFilter.setInitParameter("tokenEndpoint", tokenEndPoint); 
 		refreshFilter.setInitParameter("clientId",     clientID);
 		refreshFilter.setInitParameter("clientSecret", clientSecret);
@@ -139,8 +150,6 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		// --- Apply to secured paths -------------------------------
 		serCtxHandle.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
 	}
-
-	
 	
 	/**
 	 * Resets the  OpenIdAuthenticator.
