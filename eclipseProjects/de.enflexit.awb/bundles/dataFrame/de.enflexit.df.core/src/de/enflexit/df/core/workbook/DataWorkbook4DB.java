@@ -16,6 +16,12 @@ public class DataWorkbook4DB extends DataWorkbook {
 
 	private static final long serialVersionUID = 5010880029903092936L;
 	
+	public static final String CONNECTION_MASK_CONFIGURATION = "CONNECTION::[Configuration]";
+	public static final String CONNECTION_MASK_FACTORY = "FACTORY::[FactoryID]";
+	
+	public static final String TAG_CONFIGURATION = "[Configuration]";
+	public static final String TAG_FACTORY_ID = "[FactoryID]";
+	
 	private DatabaseDataSource dataSource;
 	private String factoryID;
 	
@@ -24,7 +30,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 */
 	@Override
 	public File getDataWorkbookFile() {
-		// --- Nothing further to do here -------
+		// --- Nothing to do here ---------------
 		return null;
 	}
 	
@@ -65,8 +71,20 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 */
 	@Override
 	public DataWorkbookLocation getDataWorkbookLocation() {
-		// TODO Auto-generated method stub
-		return null;
+				
+		String locationDescription = "";
+		
+		if (this.getFactoryID()==null) {
+			// --- Manual connection Settings -----------------------
+			String configString = ""; // TODO
+			locationDescription = CONNECTION_MASK_CONFIGURATION.replace(TAG_CONFIGURATION, configString);
+			
+		} else {
+			// --- Settings according to factory --------------------
+			locationDescription = CONNECTION_MASK_FACTORY.replace(TAG_FACTORY_ID, this.getFactoryID());
+			
+		}
+		return new DataWorkbookLocation(this.getClass(), locationDescription);
 	}
 	/**
 	 * Load from data work book location.
@@ -78,6 +96,18 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
+		String locationDescription = dwLocation.getDataWorkbookLocation();
+		String connectionType = locationDescription.substring(0, locationDescription.indexOf(":")); 
+		
+		
+		if (connectionType.toLowerCase().equals("CONNECTION".toLowerCase())==true) {
+			// --- Manual connection Settings -----------------------
+			
+		} else {
+			// --- Settings according to factory --------------------
+			
+		}
+		
 		// TODO
 		return null;
 	}
