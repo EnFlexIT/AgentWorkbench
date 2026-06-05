@@ -24,7 +24,9 @@ import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettyConstants;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.JettyCustomizer;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
@@ -135,7 +137,9 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         servletContextHandler.setErrorHandler(errorHandler);
         
         // --- Add the MonitoringFilter -----------------------------
-        MonitoringFilter.addMonitoringFilter(servletContextHandler, jettyConfiguration);
+        if (this.isAddMonitoringFilter(jettyConfiguration)==true) {
+        	MonitoringFilter.addMonitoringFilter(servletContextHandler, jettyConfiguration);
+        }
         
         // --- Check to secure via OIDC/OAuth -----------------------
         ServletSecurityConfiguration securitySettiongs = jettyConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
@@ -283,5 +287,15 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 		}
 	}
 	
-	
+	/**
+	 * Checks if is adds the monitoring filter.
+	 *
+	 * @param jConfiguration the j configuration
+	 * @return true, if is adds the monitoring filter
+	 */
+	private boolean isAddMonitoringFilter(JettyConfiguration jConfiguration) {
+		JettyAttribute<?> jaIsPrintOutput = jConfiguration.get(JettyConstants.MONITORING_IS_PRINT_OUTPUT);
+		if (jaIsPrintOutput==null) return false;
+		return (boolean) jaIsPrintOutput.getValue();
+	}
 }
