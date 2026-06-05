@@ -2,9 +2,17 @@ package de.enflexit.awb.ws.core.util;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.EnumSet;
 import java.util.HashSet;
 
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.server.Handler;
+
+import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettyConstants;
 import de.enflexit.common.NumberHelper;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -121,14 +129,17 @@ public class MonitoringFilter implements Filter {
 			String userID = null;
 			String reqURI = sRequest.getRequestURI();
 			
-			if (this.getExcludedUriForSessionExtension().contains(reqURI.toLowerCase())==false) {
-				
-				// --- Get the registered user / Principal ----------
-				Principal principal = this.getPrincipal(sRequest);
-				if (principal!=null) {
-					userID = principal.getName();
-				}
+			if (this.getExcludedUriForSessionExtension().contains(reqURI.toLowerCase())==true) {
+				chain.doFilter(request, response);
+				return;
 			}
+
+			// --- Get the registered user / Principal ----------
+			Principal principal = this.getPrincipal(sRequest);
+			if (principal!=null) {
+				userID = principal.getName();
+			}
+			
 			// --- Print a monitoring message -----------------------
 			String monitoringMsg = "Requested URL: " + reqURI + (userID!=null ? "\tUserID: " + userID : "");
 			this.print(monitoringMsg);
@@ -217,5 +228,52 @@ public class MonitoringFilter implements Filter {
 		}
 	}
 	
+	
+	// ------------------------------------------------------------------------
+	// --- From here static help methods to append the filter to a handler ----
+	// ------------------------------------------------------------------------
+	/**
+	 * Appends a {@link MonitoringFilter} to the specified Handler.
+	 *
+	 * @param handler the handler
+	 * @param jConfiguration the JettyConfiguration
+	 */
+	public static void addMonitoringFilter(Handler handler, JettyConfiguration jConfiguration) {
+		
+		if (handler==null) return;
+		if (! (handler instanceof ServletContextHandler)) return;
+		MonitoringFilter.addMonitoringFilter((ServletContextHandler)handler, jConfiguration);
+	}
+	/**
+	 * Appends a {@link MonitoringFilter} to the specified ServletContextHandler.
+	 *
+	 * @param serCtxHandler the ServletContextHandler
+	 * @param jConfiguration the JettyConfiguration
+	 */
+	public static void addMonitoringFilter(ServletContextHandler serCtxHandler, JettyConfiguration jConfiguration) {
+	
+		if (serCtxHandler==null) return;
+		
+		// --- Get filter configuration attributes ----------------------------
+		Boolean isPrint = false;
+		Integer noOf4Avg = 20; 
+		String excludePaths = "";
+		try {
+			isPrint = (boolean) jConfiguration.get(JettyConstants.MONITORING_IS_PRINT_OUTPUT).getValue();
+			noOf4Avg = (int) jConfiguration.get(JettyConstants.MONITORING_NO_FOR_AVERAGE).getValue();
+			excludePaths = (String) jConfiguration.get(JettyConstants.MONITORING_EXCLUDE_PATHS).getValue();
+			
+		} catch (Exception ex) { }
+		
+		
+		// --- Define filter --------------------------------------------------
+		FilterHolder refreshFilter = new FilterHolder(MonitoringFilter.class);
+		refreshFilter.setInitParameter(MonitoringFilter.IS_PRINT_MONITORING_OUTPUT, isPrint.toString());
+		refreshFilter.setInitParameter(MonitoringFilter.NO_OF_ELEMENTS_FOR_AVERAGE, noOf4Avg.toString());
+		refreshFilter.setInitParameter(MonitoringFilter.EXCLUDE_PATH_ARRAY, excludePaths);
+
+		// --- Append to servlet context handler ------------------------------
+		serCtxHandler.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
+	}
 	
 }

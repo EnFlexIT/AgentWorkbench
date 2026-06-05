@@ -37,6 +37,7 @@ import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityHandler;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 import de.enflexit.awb.ws.core.session.AWBSessionHandler;
+import de.enflexit.awb.ws.core.util.MonitoringFilter;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdate;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdateProcess;
 import de.enflexit.awb.ws.core.util.WebApplicationVersion;
@@ -132,6 +133,9 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
         errorHandler.addErrorPage(404, "/"); // return root ... being index.html
         servletContextHandler.setErrorHandler(errorHandler);
+        
+        // --- Add the MonitoringFilter -----------------------------
+        MonitoringFilter.addMonitoringFilter(servletContextHandler, jettyConfiguration);
         
         // --- Check to secure via OIDC/OAuth -----------------------
         ServletSecurityConfiguration securitySettiongs = jettyConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);

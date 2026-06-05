@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -48,7 +47,6 @@ import de.enflexit.awb.ws.core.session.AWBSessionHandler;
 import de.enflexit.awb.ws.core.session.UserSessionStore;
 import de.enflexit.awb.ws.core.util.MonitoringFilter;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
-import jakarta.servlet.DispatcherType;
 
 /**
  * The Singleton <i>JettyServerManager</i> is used to control the start of {@link Server} instances
@@ -627,28 +625,8 @@ public class JettyServerManager {
 		if (handler==null) return;
 		if (! (handler instanceof ServletContextHandler)) return;
 		
-		// --- Get filter configuration attributes ----------------------------
-		Boolean isPrint = false;
-		Integer noOf4Avg = 20; 
-		String excludePaths = "";
-		try {
-			isPrint = (boolean) jConfiguration.get(JettyConstants.MONITORING_IS_PRINT_OUTPUT).getValue();
-			noOf4Avg = (int) jConfiguration.get(JettyConstants.MONITORING_NO_FOR_AVERAGE).getValue();
-			excludePaths = (String) jConfiguration.get(JettyConstants.MONITORING_EXCLUDE_PATHS).getValue();
-			
-		} catch (Exception ex) { }
-		
-		
-		// --- Define filter --------------------------------------------------
-		FilterHolder refreshFilter = new FilterHolder(MonitoringFilter.class);
-		refreshFilter.setInitParameter(MonitoringFilter.IS_PRINT_MONITORING_OUTPUT, isPrint.toString());
-		refreshFilter.setInitParameter(MonitoringFilter.NO_OF_ELEMENTS_FOR_AVERAGE, noOf4Avg.toString());
-		refreshFilter.setInitParameter(MonitoringFilter.EXCLUDE_PATH_ARRAY, excludePaths);
-
-		// --- Append to servlet context handler ------------------------------
-		ServletContextHandler serCtxHandler = (ServletContextHandler) handler;
-		serCtxHandler.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
-		
+		// --- Append a Monitoring filter to the handler ------------
+		MonitoringFilter.addMonitoringFilter(handler, jConfiguration);
 	}
 	
 	/**

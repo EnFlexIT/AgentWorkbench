@@ -141,7 +141,7 @@
             <key>mon.isPrintOutput</key>
             <value>
                 <key>mon.isPrintOutput</key>
-                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">true</value>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
             </value>
         </entry>
         <entry>
