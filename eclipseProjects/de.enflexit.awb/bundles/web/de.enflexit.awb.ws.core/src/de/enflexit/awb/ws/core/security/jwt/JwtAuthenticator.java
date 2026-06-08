@@ -11,7 +11,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.ServerAuthException;
 import org.eclipse.jetty.security.UserIdentity;
-import org.eclipse.jetty.security.AuthenticationState.Deferred;
 import org.eclipse.jetty.security.authentication.LoginAuthenticator;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
@@ -250,7 +249,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
         value += ", charset=\"" + this.getCharset().name() + "\"";
         
         resp.getHeaders().put(HttpHeader.WWW_AUTHENTICATE, value);
-        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+        this.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
         return AuthenticationState.CHALLENGE;
 		
 	}
@@ -321,11 +320,6 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		}
 		
 		// ----------------------------------------------------------
-		// --- Check if we need to defer the authentication ---------
-		// ----------------------------------------------------------
-		if (resp instanceof Deferred.DeferredResponse) return null;
-				
-		// ----------------------------------------------------------
 		// --- From here handling of JWT token ----------------------
 		// ----------------------------------------------------------
 		JwtAuthentication authentication = null;
@@ -337,7 +331,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (jwtParsed.hasExceptions()==true || jwtParsed.getJwsClaims()==null) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("unable to decode jwt, returning unauthenticated");
-			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					this.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
 					return AuthenticationState.SEND_FAILURE;
 				}
 				
@@ -347,7 +341,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (username==null || username.isBlank()==true) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("no username provided in jwt, returning unauthenticated");
-			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					this.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
 					return AuthenticationState.SEND_FAILURE;
 				}
 				if (verbose) logger.info("jwt username={} role={}", username, role);
@@ -357,7 +351,7 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (authentication==null) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("jwt token not found in local cache, returning unauthenticated");
-			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					this.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
 					return AuthenticationState.SEND_FAILURE;
 				}
 				
@@ -366,14 +360,14 @@ public class JwtAuthenticator extends LoginAuthenticator {
 				if (username.equals(prevUsername)==false) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
 					if (verbose) logger.info("user name differs, returning unauthenticated");
-			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					this.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
 					return AuthenticationState.SEND_FAILURE;
 				}
 				
 				// --- Logout the current user? ---------------------
 				if (ServletHelper.isLogoutPathRequest((Request) req)==true) {
 					this.getJwtSessionStore().removeAuthentication(jwtInput);
-			        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+					this.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
 					return AuthenticationState.SEND_FAILURE;
 				}
 				
@@ -407,10 +401,24 @@ public class JwtAuthenticator extends LoginAuthenticator {
 		if (authentication != null) {
 			return authentication;
 		}
-        Response.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
+		this.writeError(req, resp, callback, HttpStatus.UNAUTHORIZED_401);
 		return AuthenticationState.SEND_FAILURE;
 	}
 
+	/**
+	 * Writes a response error with the specified parameter, but checks first 
+	 * if the {@link Response} is not already committed.
+	 *
+	 * @param req the req
+	 * @param res the res
+	 * @param callback the callback
+	 * @param status the status
+	 */
+	private void writeError(Request req, Response resp, Callback callback, int status) {
+		if (resp.isCommitted()==true) return;
+		Response.writeError(req, resp, callback, status);
+	}
+	
 	/**
 	 * Get the bearer token from the HTTP request. The token is in the HTTP request
 	 * "Authorization" header in the form of: "Bearer [token]"

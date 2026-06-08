@@ -1,6 +1,11 @@
 package de.enflexit.awb.ws.core.session;
 
+import java.security.Principal;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
+
+import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
 
 /**
  * The Class UserSessionStore.
@@ -42,7 +47,7 @@ public class UserSessionStore {
 		return userSessionHashMap;
 	}
 	/**
-	 * Gets the user session.
+	 * Returns the UserSession for the specified user name or user ID.
 	 *
 	 * @param userID the user ID
 	 * @return the user session
@@ -65,7 +70,27 @@ public class UserSessionStore {
 		}
 		return uSess;
 	}
+	/**
+	 * Based on the specified Principal, creates a new UserSession.
+	 *
+	 * @param principal the principal
+	 * @param userSessionLength the user session length
+	 * @return the user session
+	 */
+	public UserSession createUserSession(Principal principal, Integer userSessionLength) {
 
+		String userID = principal.getName();
+		UserSession uSess = this.getOrCreateUserSession(userID, userSessionLength);
+		String accessToken = null;
+		if (principal instanceof JwtPrincipal jwtPrincipal) {
+			accessToken = jwtPrincipal.getJwtToken();
+		} else if (principal instanceof OpenIdUserPrincipal openIdPrincipal) {
+			accessToken = (String) openIdPrincipal.getCredentials().getResponse().get("access_token");
+		}
+		uSess.setAccessToken(accessToken);
+		return uSess;
+	}
+	
 	/**
 	 * Destroy user session.
 	 * @param userSession the UserSession to destroy
@@ -80,5 +105,6 @@ public class UserSessionStore {
 	public void destroyUserSession(String userID) {
 		this.getSessionHashMap().remove(userID);
 	}
+	
 	
 }

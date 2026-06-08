@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 
-import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
-
-import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
+import de.enflexit.awb.ws.core.security.OIDCSecurityService;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.NumberHelper;
 import jakarta.servlet.Filter;
@@ -48,6 +47,17 @@ public class UserSessionFilter implements Filter {
 	 */
 	protected String getSecurityHandlerServiceClassName() {
 		return this.filterConfig==null ? null : this.filterConfig.getInitParameter(SECURITY_HANDLER_SERVICE);
+	}
+	/**
+	 * Returns the security handler service simple class name.
+	 * @return the security handler service simple class name
+	 */
+	protected String getSecurityHandlerServiceSimpleClassName() {
+		String className = this.getSecurityHandlerServiceClassName();
+		if (className!=null) {
+			return className.substring(className.lastIndexOf(".")+1);
+		}
+		return null;
 	}
 	
 	/**
@@ -108,7 +118,7 @@ public class UserSessionFilter implements Filter {
 				if (principal!=null) {
 					// --- Find the UserID ------------------------------------
 					String userID = principal.getName();
-					this.debugPrint("Security Service: " + this.getSecurityHandlerServiceClassName() +  " - User-ID is: " + userID + " - Requested URL: " + reqURI);
+					this.debugPrint("Security Service: " + this.getSecurityHandlerServiceSimpleClassName() +  " - User-ID is: " + userID + " - Requested URL: " + reqURI);
 					
 					// --- Try getting the user session -----------------------
 					UserSession uSess = UserSessionStore.getInstance().getUserSession(userID);
@@ -116,15 +126,7 @@ public class UserSessionFilter implements Filter {
 						// ----------------------------------------------------
 						// --- Newly remind the current UserSession -----------
 						// ----------------------------------------------------
-						uSess = UserSessionStore.getInstance().getOrCreateUserSession(userID, this.getUserSessionLength());
-						String accessToken = null;
-						if (principal instanceof JwtPrincipal jwtPrincipal) {
-							accessToken = jwtPrincipal.getJwtToken();
-						} else if (principal instanceof OpenIdUserPrincipal openIdPrincipal) {
-							accessToken = (String) openIdPrincipal.getCredentials().getResponse().get("access_token");
-						}
-						// --- Remind access token and its expiration ---------
-						uSess.setAccessToken(accessToken);
+						uSess = UserSessionStore.getInstance().createUserSession(principal, this.getUserSessionLength());
 						
 					} else {
 						// ----------------------------------------------------
@@ -133,7 +135,8 @@ public class UserSessionFilter implements Filter {
 						if (uSess.isExpired()==true ) {
 							UserSessionStore.getInstance().destroyUserSession(uSess);
 							uSess = null;
-							this.debugPrint("=> Session was expired!");
+							this.debugPrint("=> Session was expired - create a new one !");
+							uSess = UserSessionStore.getInstance().createUserSession(principal, this.getUserSessionLength());
 							
 						} else {
 							// --- Extend the user session --------------------
@@ -144,10 +147,20 @@ public class UserSessionFilter implements Filter {
 							// ------------------------------------------------ 
 							// --- Extend the token expiration? ---------------
 							// ------------------------------------------------
-							
-							
-							
-							
+							if (reqURI.toLowerCase().equals("/api/user/login".toLowerCase())) {
+								// ------------------------------------------------------------------------------------
+								// --- For both, a new JWT-token can be obtained by calling '/api/user/login' ! -------
+								if (this.getSecurityHandlerServiceClassName().equals(JwtSingleUserSecurityService.class.getName())==true) {
+									// --- The JWT use-case: ---------------------------------------------------------- 
+									// --- => Nothing to do here, since renew of token will already be executed
+									// ---    by the JwtAuthenticator for this path. 
+									
+								} else if (this.getSecurityHandlerServiceClassName().equals(OIDCSecurityService.class.getName())==true) {
+									// --- The OIDC use-case ----------------------------------------------------------
+									// --- => Call OIDC token end point to renew JWT ----------------------------------
+									this.updateOidcAccessToken();
+								}
+							}
 							
 						}
 					}
@@ -167,6 +180,15 @@ public class UserSessionFilter implements Filter {
 		chain.doFilter(request, response);
 		
 	}
+	
+	/**
+	 * Update OIDC access token.
+	 */
+	private void updateOidcAccessToken() {
+		
+		
+	}
+	
 	
 	
 	/**

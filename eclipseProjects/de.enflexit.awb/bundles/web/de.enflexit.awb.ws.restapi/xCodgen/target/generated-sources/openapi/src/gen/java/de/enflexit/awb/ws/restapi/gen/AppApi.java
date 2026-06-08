@@ -27,7 +27,7 @@ import jakarta.ws.rs.core.SecurityContext;
 
 
 @Tag(description = "the app API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-08T12:08:47.460531100+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class AppApi  {
 
    private final AppApiService delegate;
@@ -62,7 +62,7 @@ public class AppApi  {
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "info", }) 
-    public Response getAppSettings(@Schema(description = "" )@HeaderParam("X-Performative") String xPerformative, @Context HttpServletRequest request,@Context SecurityContext securityContext)
+    public Response getAppSettings(@Schema(description = "" )@HeaderParam("X-Performative") String xPerformative, @Context HttpServletRequest request, @Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getAppSettings(xPerformative, request, securityContext);
     }

@@ -9,7 +9,7 @@ import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-08T12:08:47.460531100+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class AppApiServiceImpl extends AppApiService {
     @Override
     public Response getAppSettings(String xPerformative, HttpServletRequest request, SecurityContext securityContext) throws NotFoundException {

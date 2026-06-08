@@ -46,11 +46,20 @@ public class UserApiImpl extends UserApiService {
 		// --- For known Principals ---------------------------------
 		if (principal instanceof JwtPrincipal jwtPrincipal) {
 			// --- Get the JWT String from principal ----------------
-			String bearerString = "Bearer " + jwtPrincipal.getJwtToken();
-			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(bearerString).build();
+			String jwtToken = jwtPrincipal.getJwtToken();
+			// --- Refresh UserSession ------------------------------
+			UserSession uSess = UserSessionStore.getInstance().getUserSession(principal.getName());
+			if (uSess!=null) uSess.setAccessToken(jwtToken);
+			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity("Bearer " + jwtToken).build();
+			
 		} else if (principal instanceof OpenIdUserPrincipal openIdPrincipal) {
-			String bearerString = "Bearer " + openIdPrincipal.getCredentials().getResponse().get("access_token");
-			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(bearerString).build();
+			// --- Get the JWT String from principal ----------------
+			String jwtToken = (String) openIdPrincipal.getCredentials().getResponse().get("access_token");
+			// --- Refresh UserSession ------------------------------
+			UserSession uSess = UserSessionStore.getInstance().getUserSession(principal.getName());
+			if (uSess!=null) uSess.setAccessToken(jwtToken);
+			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity("Bearer " + jwtToken).build();
+			
 		}
 
 		// --- Fallback return that does make no sense  -------------
@@ -133,23 +142,36 @@ public class UserApiImpl extends UserApiService {
 		// --- For known Principals ---------------------------------
 		String userID = principal.getName();
 		UserSession uSess = UserSessionStore.getInstance().getUserSession(userID);
+		if (uSess==null) {
+			// --- Try to create a user session ---------------------
+			Integer userSessionLengthInSeconds = AwbWebServerAccess.getUserSessionLengthInSeconds();
+			if (userSessionLengthInSeconds==null) {
+				errMsg = "Could not find a configured time for a user session! - Perhaps no JWT or OIDC security handler?";
+				return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
+			}
+			uSess = UserSessionStore.getInstance().createUserSession(principal, userSessionLengthInSeconds);
+		}
 
-		// --- Evaluate remaining and expiration time ---------------
-		Long expirationTime = uSess.getExpiration() / 1000;
-		Long remainingTime  = (uSess.getExpiration() - System.currentTimeMillis()) / 1000;
-
-		if (expirationTime==null || errMsg!=null) {
-			errMsg = "Error while " + errMsg;
+		// --- Still no UserSession? --------------------------------
+		if (uSess==null) {
+			errMsg = "Could not find or create a UserSession! - Perhaps no JWT or OIDC security handler?";
 			return Response.status(Status.NOT_IMPLEMENTED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
 		}
 		
+		// --- Evaluate remaining and expiration time ---------------
+		Long remainingTime  = uSess.getExpiration() - System.currentTimeMillis();
+		Long expirationTime = uSess.getExpiration();
+		Long remainingTokenTime  = uSess.getAccessTokenExpiration() - System.currentTimeMillis();
+		Long tokenExpTime   = uSess.getAccessTokenExpiration();
 		
-    	// --- Create return type -----------------------------------
-    	SessionTimes sTime = new SessionTimes();
-    	sTime.setRemainingTime(remainingTime);
-    	sTime.setExpirationTime(expirationTime);
-    	
-    	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(sTime).build();
+		// --- Create return type -----------------------------------
+		SessionTimes sTime = new SessionTimes();
+		sTime.setRemainingTime(remainingTime);
+		sTime.setExpirationTime(expirationTime);
+		sTime.setRemainingTokenTime(remainingTokenTime);
+		sTime.setTokenExpirationTime(tokenExpTime);
+		
+		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(sTime).build();
 	}
 
     /* (non-Javadoc)

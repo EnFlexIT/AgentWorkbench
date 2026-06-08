@@ -26,9 +26,11 @@ import jakarta.validation.Valid;
  */
 @JsonPropertyOrder({
   SessionTimes.JSON_PROPERTY_REMAINING_TIME,
-  SessionTimes.JSON_PROPERTY_EXPIRATION_TIME
+  SessionTimes.JSON_PROPERTY_EXPIRATION_TIME,
+  SessionTimes.JSON_PROPERTY_REMAINING_TOKEN_TIME,
+  SessionTimes.JSON_PROPERTY_TOKEN_EXPIRATION_TIME
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-02T10:38:19.398049500+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-08T12:08:47.460531100+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class SessionTimes   {
   public static final String JSON_PROPERTY_REMAINING_TIME = "remainingTime";
   @JsonProperty(JSON_PROPERTY_REMAINING_TIME)
@@ -37,6 +39,14 @@ public class SessionTimes   {
   public static final String JSON_PROPERTY_EXPIRATION_TIME = "expirationTime";
   @JsonProperty(JSON_PROPERTY_EXPIRATION_TIME)
   private Long expirationTime;
+
+  public static final String JSON_PROPERTY_REMAINING_TOKEN_TIME = "remainingTokenTime";
+  @JsonProperty(JSON_PROPERTY_REMAINING_TOKEN_TIME)
+  private Long remainingTokenTime;
+
+  public static final String JSON_PROPERTY_TOKEN_EXPIRATION_TIME = "tokenExpirationTime";
+  @JsonProperty(JSON_PROPERTY_TOKEN_EXPIRATION_TIME)
+  private Long tokenExpirationTime;
 
   public SessionTimes remainingTime(Long remainingTime) {
     this.remainingTime = remainingTime;
@@ -78,6 +88,46 @@ public class SessionTimes   {
     this.expirationTime = expirationTime;
   }
 
+  public SessionTimes remainingTokenTime(Long remainingTokenTime) {
+    this.remainingTokenTime = remainingTokenTime;
+    return this;
+  }
+
+  /**
+   * Get remainingTokenTime
+   * @return remainingTokenTime
+   **/
+  @JsonProperty(value = "remainingTokenTime")
+  @Schema(description = "")
+  
+  public Long getRemainingTokenTime() {
+    return remainingTokenTime;
+  }
+
+  public void setRemainingTokenTime(Long remainingTokenTime) {
+    this.remainingTokenTime = remainingTokenTime;
+  }
+
+  public SessionTimes tokenExpirationTime(Long tokenExpirationTime) {
+    this.tokenExpirationTime = tokenExpirationTime;
+    return this;
+  }
+
+  /**
+   * Get tokenExpirationTime
+   * @return tokenExpirationTime
+   **/
+  @JsonProperty(value = "tokenExpirationTime")
+  @Schema(description = "")
+  
+  public Long getTokenExpirationTime() {
+    return tokenExpirationTime;
+  }
+
+  public void setTokenExpirationTime(Long tokenExpirationTime) {
+    this.tokenExpirationTime = tokenExpirationTime;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -89,12 +139,14 @@ public class SessionTimes   {
     }
     SessionTimes sessionTimes = (SessionTimes) o;
     return Objects.equals(this.remainingTime, sessionTimes.remainingTime) &&
-        Objects.equals(this.expirationTime, sessionTimes.expirationTime);
+        Objects.equals(this.expirationTime, sessionTimes.expirationTime) &&
+        Objects.equals(this.remainingTokenTime, sessionTimes.remainingTokenTime) &&
+        Objects.equals(this.tokenExpirationTime, sessionTimes.tokenExpirationTime);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(remainingTime, expirationTime);
+    return Objects.hash(remainingTime, expirationTime, remainingTokenTime, tokenExpirationTime);
   }
 
   @Override
@@ -104,6 +156,8 @@ public class SessionTimes   {
     
     sb.append("    remainingTime: ").append(toIndentedString(remainingTime)).append("\n");
     sb.append("    expirationTime: ").append(toIndentedString(expirationTime)).append("\n");
+    sb.append("    remainingTokenTime: ").append(toIndentedString(remainingTokenTime)).append("\n");
+    sb.append("    tokenExpirationTime: ").append(toIndentedString(tokenExpirationTime)).append("\n");
     sb.append("}");
     return sb.toString();
   }
