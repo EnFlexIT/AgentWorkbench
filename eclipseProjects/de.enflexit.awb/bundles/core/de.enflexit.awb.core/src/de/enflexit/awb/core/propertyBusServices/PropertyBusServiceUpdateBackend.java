@@ -2,9 +2,7 @@ package de.enflexit.awb.core.propertyBusServices;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.update.AWBUpdater;
-import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.bus.PropertyBusService;
 
@@ -53,9 +51,6 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 	public Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
-//		if (Application.getGlobalInfo().getExecutionEnvironment() == ExecutionEnvironment.ExecutedOverIDE) {
-//			return properties;
-//		}
 		
 		if (awbUpdater==null) {
 			// --- Start the Update process -------------------------
