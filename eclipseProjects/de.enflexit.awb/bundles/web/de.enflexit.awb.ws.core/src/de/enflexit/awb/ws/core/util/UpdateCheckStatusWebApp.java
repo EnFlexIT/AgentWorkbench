@@ -12,7 +12,8 @@ public class UpdateCheckStatusWebApp {
 	
 	private boolean isPending;
 	private boolean isAvailable;
-	private String version;
+	private String newVersion;
+	private String currentVersion;
 	
 	/**
 	 * Checks if the update check is pending.
@@ -55,8 +56,8 @@ public class UpdateCheckStatusWebApp {
 	 *
 	 * @return the new version
 	 */
-	public String getVersion() {
-		return version;
+	public String getNewVersion() {
+		return newVersion;
 	}
 
 	/**
@@ -64,8 +65,8 @@ public class UpdateCheckStatusWebApp {
 	 *
 	 * @param version the new version
 	 */
-	public void setVersion(String version) {
-		this.version = version;
+	public void setNewVersion(String version) {
+		this.newVersion = version;
 	}
 
 	/**
@@ -85,5 +86,19 @@ public class UpdateCheckStatusWebApp {
 	public void setLastCheck(long lastCheck) {
 		JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration().getWebApplicationSettings().setUpdateLastCheck(lastCheck);
 		JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration().save();
+	}
+
+	/**
+	 * @return the currentVersion
+	 */
+	public String getCurrentVersion() {
+		return currentVersion;
+	}
+
+	/**
+	 * @param currentVersion the currentVersion to set
+	 */
+	public void setCurrentVersion(String currentVersion) {
+		this.currentVersion = currentVersion;
 	}	
 }
