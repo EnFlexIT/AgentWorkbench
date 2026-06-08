@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.core.util;
 
-import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.JettyWebApplicationSettings;
@@ -46,18 +45,11 @@ public class UpdateCheckCoordinatorWebApp {
      * Starts a thread which checks for newer bundles.
      * @param forceNewCheck the force new check
      */
-    public synchronized void triggerCheck(boolean forceNewCheck) {
+    public synchronized void triggerCheck() {
     	
     	if (workerThread != null) return;
     	
     	long now = System.currentTimeMillis();
-    	if (forceNewCheck == false) {
-    		// --- workerThread is already running but not finished yet -------------------------------------
-    		if (now < this.getUpdateCheckStatusWebApp().getLastCheck() + AWBUpdater.UPDATE_CHECK_PERIOD) {
-    			return;
-    		}
-    	}
-    	
     	// --- Avoid to frequent checks --------------------------------------------------------------------
     	if (now >= lastExecution + EXECUTION_WAIT_TIME) {
     		this.getUpdateCheckStatusWebApp().setPending(true);
@@ -80,14 +72,14 @@ public class UpdateCheckCoordinatorWebApp {
 		// --- Set results. newVersion == null means no update available ------------------------------------
 		if (newVersion != null) {
 			this.getUpdateCheckStatusWebApp().setAvailable(true);
-			this.getUpdateCheckStatusWebApp().setVersion(newVersion.getVersion().toString());
+			this.getUpdateCheckStatusWebApp().setNewVersion(newVersion.getVersion().toString());
 		} else {
 			this.getUpdateCheckStatusWebApp().setAvailable(false);
-			this.getUpdateCheckStatusWebApp().setVersion("-");
+			this.getUpdateCheckStatusWebApp().setNewVersion("-");
 		}
 		this.getUpdateCheckStatusWebApp().setLastCheck(System.currentTimeMillis());
 		this.getUpdateCheckStatusWebApp().setPending(false);
-		
+		this.getUpdateCheckStatusWebApp().setCurrentVersion(WebApplicationUpdate.getCurrentWebApplicationVersion().getVersion().toString());		
 		workerThread = null;
     }
 	
