@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.awb.ws.core.util.FileConfigurationServiceJettyConfiguration">
+   <implementation class="de.enflexit.awb.ws.core.util.FileConfigurationServiceJettyConfiguration"/>
+   <service>
+      <provide interface="de.enflexit.common.fileConfiguration.FileConfigurationService"/>
+   </service>
+</scr:component>
