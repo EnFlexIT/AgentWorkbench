@@ -226,7 +226,6 @@ public class AWBUpdater extends Thread {
 			String infoString = "Your target platform is up to date!";
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			this.setFinalMessage(infoString);
-			this.updateDone = true;
 			if (this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
 				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbMessageDialog.INFORMATION_MESSAGE);
 			}
