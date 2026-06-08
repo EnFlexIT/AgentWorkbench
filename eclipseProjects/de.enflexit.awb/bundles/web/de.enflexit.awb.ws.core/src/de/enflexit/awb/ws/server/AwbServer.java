@@ -24,7 +24,9 @@ import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.ws.AwbSecurityHandlerService;
 import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.BundleHelper;
+import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConfiguration;
+import de.enflexit.awb.ws.core.JettyConstants;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
 import de.enflexit.awb.ws.core.JettyCustomizer;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
@@ -37,6 +39,7 @@ import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityHandler;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 import de.enflexit.awb.ws.core.session.AWBSessionHandler;
+import de.enflexit.awb.ws.core.util.MonitoringFilter;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdate;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdateProcess;
 import de.enflexit.awb.ws.core.util.WebApplicationVersion;
@@ -133,6 +136,11 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
         errorHandler.addErrorPage(404, "/"); // return root ... being index.html
         servletContextHandler.setErrorHandler(errorHandler);
         
+        // --- Add the MonitoringFilter -----------------------------
+        if (this.isAddMonitoringFilter(jettyConfiguration)==true) {
+        	MonitoringFilter.addMonitoringFilter(servletContextHandler, jettyConfiguration);
+        }
+        
         // --- Check to secure via OIDC/OAuth -----------------------
         ServletSecurityConfiguration securitySettiongs = jettyConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
         if (securitySettiongs!=null && securitySettiongs.isSecurityHandlerActivated()==true && securitySettiongs.getSecurityHandlerName().equals(OIDCSecurityHandler.class.getSimpleName())==true) {
@@ -141,7 +149,7 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
     			SecurityHandler securtiyHandler = securityService.getNewSecurityHandler(securitySettiongs.getSecurityHandlerConfiguration());
     			servletContextHandler.setSecurityHandler(securtiyHandler);
     			// --- Customize ServletContextHandler --------------
-				securityService.customizeServletContextHandler(securitySettiongs.getSecurityHandlerConfiguration(), servletContextHandler);
+				securityService.customizeServletContextHandler(jettyConfiguration, servletContextHandler);
     		}
         }
         
@@ -279,5 +287,15 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 		}
 	}
 	
-	
+	/**
+	 * Checks if is adds the monitoring filter.
+	 *
+	 * @param jConfiguration the j configuration
+	 * @return true, if is adds the monitoring filter
+	 */
+	private boolean isAddMonitoringFilter(JettyConfiguration jConfiguration) {
+		JettyAttribute<?> jaIsPrintOutput = jConfiguration.get(JettyConstants.MONITORING_IS_PRINT_OUTPUT);
+		if (jaIsPrintOutput==null) return false;
+		return (boolean) jaIsPrintOutput.getValue();
+	}
 }

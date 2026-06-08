@@ -11,6 +11,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.security.AuthenticationState;
 import org.eclipse.jetty.security.ServerAuthException;
 import org.eclipse.jetty.security.UserIdentity;
+import org.eclipse.jetty.security.AuthenticationState.Deferred;
 import org.eclipse.jetty.security.authentication.LoginAuthenticator;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
@@ -319,6 +320,11 @@ public class JwtAuthenticator extends LoginAuthenticator {
             return authentication;
 		}
 		
+		// ----------------------------------------------------------
+		// --- Check if we need to defer the authentication ---------
+		// ----------------------------------------------------------
+		if (resp instanceof Deferred.DeferredResponse) return null;
+				
 		// ----------------------------------------------------------
 		// --- From here handling of JWT token ----------------------
 		// ----------------------------------------------------------

@@ -122,9 +122,9 @@ public class OIDCAuthorization implements OIDCCallbackListener {
 			instance = new OIDCAuthorization();
 			try {
 				instance.checkForRefreshToken();
-			} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException e) {
-				System.err.println("[" + instance.getClass().getSimpleName() + "] Error restoring stored OIDC session:");
-				e.printStackTrace();
+			} catch (KeyManagementException | NoSuchAlgorithmException | CertificateException | KeyStoreException | URISyntaxException | IOException ex) {
+				System.err.println("[" + instance.getClass().getSimpleName() + "] Error restoring stored OIDC session: " + ex.getMessage());
+				//ex.printStackTrace();
 			}
 			
 		}

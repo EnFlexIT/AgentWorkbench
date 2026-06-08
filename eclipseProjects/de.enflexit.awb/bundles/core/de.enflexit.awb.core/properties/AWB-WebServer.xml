@@ -131,6 +131,27 @@
             </value>
         </entry>
         <entry>
+            <key>mon.excludedPaths</key>
+            <value>
+                <key>mon.excludedPaths</key>
+                <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></value>
+            </value>
+        </entry>
+        <entry>
+            <key>mon.isPrintOutput</key>
+            <value>
+                <key>mon.isPrintOutput</key>
+                <value xsi:type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">false</value>
+            </value>
+        </entry>
+        <entry>
+            <key>mon.noOfElementsForAverage</key>
+            <value>
+                <key>mon.noOfElementsForAverage</key>
+                <value xsi:type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">20</value>
+            </value>
+        </entry>
+        <entry>
             <key>ssl.keypassword</key>
             <value>
                 <key>ssl.keypassword</key>
@@ -222,6 +243,7 @@
     <webApplicationSettings>
         <downloadURL>https://p2.enflex.it/web/baseTemplate/</downloadURL>
         <updateStrategy>Automatic</updateStrategy>
+        <updateLastCheck>0</updateLastCheck>
     </webApplicationSettings>
     <sessionSettings>
         <useIndividualSettings>true</useIndividualSettings>

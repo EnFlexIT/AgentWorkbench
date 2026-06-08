@@ -8,6 +8,7 @@ import java.util.Vector;
 import org.hibernate.cfg.Configuration;
 
 import de.enflexit.common.StringHelper;
+import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 
@@ -140,6 +141,56 @@ public class DatabaseSettings implements Serializable {
 
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * Converts the current settings to a {@link DatabaseDataSource} .
+	 * @return the database data source
+	 */
+	public DatabaseDataSource toDataSource() {
+		return toDataSource(this);
+	}
+	/**
+	 * Converts the current settings to a {@link DatabaseDataSource} .
+	 * @return the database data source
+	 */
+	public static DatabaseDataSource toDataSource(DatabaseSettings dbSettings) {
+		
+		if (dbSettings==null) return null;
+		
+		DatabaseDataSource dbDS = new DatabaseDataSource();
+		dbDS.setDBMSName(dbSettings.getDatabaseSystemName());
+		dbDS.setConnectionURL(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
+		dbDS.setDbName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
+		
+		dbDS.setUserName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName));
+		dbDS.setPassword(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password));
+		
+		return dbDS;
+	}
+	/**
+	 * Converts the specified {@link DatabaseDataSource} to {@link DatabaseSettings}.
+	 * 
+	 * @param dbDataSource the DatabaseDataSource to convert
+	 * @return the database settings
+	 */
+	public static DatabaseSettings fromDataSource(DatabaseDataSource dbDataSource) {
+		
+		if (dbDataSource==null) return null;
+		
+		DatabaseSettings dbSettings = new DatabaseSettings();
+		
+		dbSettings.setDatabaseSystemName(dbDataSource.getDBMSName());
+		dbSettings.setHibernateDatabaseSettings(new Properties());
+
+		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbDataSource.getConnectionURL());
+		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, dbDataSource.getDbName());
+		
+		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
+		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
+		
+		return dbSettings;
 	}
 	
 }

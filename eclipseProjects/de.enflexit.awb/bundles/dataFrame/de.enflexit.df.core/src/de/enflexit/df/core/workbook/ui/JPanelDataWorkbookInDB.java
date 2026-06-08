@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -19,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -31,9 +34,12 @@ import javax.swing.event.DocumentListener;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
+import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.gui.DatabaseConnectionSettingsDialog;
+import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
@@ -407,7 +413,6 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jButtonEditFactorySettings;
 	}
-	
 	/**
 	 * Show database dialog for the specified session factory.
 	 * @param factoryID the factory ID
@@ -420,7 +425,6 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		// - - - Wait for user - - - - - - - - -  
 		databaseConnectionSettingsDialog.dispose();
 		databaseConnectionSettingsDialog = null;
-		
 	}
 	
 	
@@ -541,19 +545,75 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	public void actionPerformed(ActionEvent ae) {
 		
 		if (ae.getSource()==this.getJToggleButtonSettingsManual()) {
+			// ----------------------------------------------------------------
+			// --- Switch to manual DB connection -----------------------------
+			// ----------------------------------------------------------------
 			this.switchSourceOfDatabaseSettings(true);
 		} else if (ae.getSource()==this.getJToggleButtonSettingsFactory()) {
+			// ----------------------------------------------------------------
+			// --- Switch to factory usage for DB connection ------------------
+			// ----------------------------------------------------------------
 			this.switchSourceOfDatabaseSettings(false);
 		
 		} else if (ae.getSource()==this.getJComboBoxFactoryID()) {
+			// ----------------------------------------------------------------
+			// --- Changed factory ID -----------------------------------------
+			// ----------------------------------------------------------------
 			this.updateFactoryStatus();
+			
 		} else if (ae.getSource()==this.getJButtonEditFactorySettings()) {
+			// ----------------------------------------------------------------
+			// --- Open the actual factory settings ---------------------------
+			// ----------------------------------------------------------------
 			String factorySelected = (String)this.getJComboBoxFactoryID().getSelectedItem();
 			this.showDatabaseDialog(factorySelected);
 			
 		} else if (ae.getSource()==this.getJButtonTestConnection()) {
+			// ----------------------------------------------------------------
+			// --- Check the database connection ------------------------------
+			// ----------------------------------------------------------------
+			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+			if (this.getJToggleButtonSettingsFactory().isSelected()==true) {
+				String factoryID = (String)this.getJComboBoxFactoryID().getSelectedItem();
+				dbSettings = DatabaseConnectionManager.getInstance().getDatabaseSettings(factoryID);
+			}
+			
+			Vector<String> msgVector = new Vector<>();
+			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
+			if (hds!=null) {
+				Properties props = dbSettings.getHibernateDatabaseSettings();
+				if (hds.isDatabaseAccessible(props, msgVector, true)==true) {
+					JOptionPane.showMessageDialog(this, "Connection test successful!", "Connection Test", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					String message = "Connection test failed!";
+					if (msgVector.isEmpty()==false) {
+						message += "\n\n";
+						for (String singelMessage : msgVector) {
+							message += singelMessage + "\n";
+						}
+					}
+					JOptionPane.showMessageDialog(this, message, "Connection Test", JOptionPane.ERROR_MESSAGE);
+				}
+			}
 			
 		} else if (ae.getSource()==this.getJButtonApply()) {
+			// ----------------------------------------------------------------
+			// --- Apply and save settings ------------------------------------
+			// ----------------------------------------------------------------
+			this.getDataWorkbook().setName(this.getJTextFieldName().getText());
+			this.getDataWorkbook().setDescription(this.getJTextAreaDescription().getText());
+			
+			if (this.getJToggleButtonSettingsFactory().isSelected()==true) {
+				// --- For factory settings -----------------------------------
+				String factoryID = (String) this.getJComboBoxFactoryID().getSelectedItem();
+				this.getDataWorkbook().setFactoryID(factoryID);
+				this.getDataWorkbook().setWorkbookDataSource(null);
+			} else {
+				// --- For manual configured connections ---------------------- 
+				DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+				this.getDataWorkbook().setFactoryID(null);
+				this.getDataWorkbook().setWorkbookDataSource(dbSettings.toDataSource());
+			}
 			
 		}
 	}
