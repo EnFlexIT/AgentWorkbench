@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.session;
 
+import de.enflexit.awb.ws.core.security.AccessTokenRefreshment;
 import de.enflexit.awb.ws.core.security.jwt.JwtHelper;
 
 /**
@@ -17,6 +18,8 @@ public class UserSession {
 
 	private String accessToken;
 	private long accessTokenExpiration;
+	
+	private AccessTokenRefreshment accessTokenRefreshment;
 	
 	/**
 	 * Instantiates a new user session.
@@ -140,6 +143,28 @@ public class UserSession {
 	 */
 	public void setAccessTokenExpiration(long accessTokenExpiration) {
 		this.accessTokenExpiration = accessTokenExpiration;
+	}
+	/**
+	 * Checks if the UserSession has an expired access token.
+	 * @return true, if this UserSession is expired
+	 */
+	public boolean isExpiredAccessToken() {
+		return System.currentTimeMillis()>=this.getAccessTokenExpiration();
+	}
+	
+	/**
+	 * Returns the access token refreshment.
+	 * @return the access token refreshment
+	 */
+	public AccessTokenRefreshment getAccessTokenRefreshment() {
+		return accessTokenRefreshment;
+	}
+	/**
+	 * Sets the access token refreshment.
+	 * @param accessTokenRefreshment the new access token refreshment
+	 */
+	public void setAccessTokenRefreshment(AccessTokenRefreshment accessTokenRefreshment) {
+		this.accessTokenRefreshment = accessTokenRefreshment;
 	}
 	
 }
