@@ -13,9 +13,6 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 import com.nimbusds.jwt.SignedJWT;
 
-import de.enflexit.awb.ws.core.JettyConfiguration;
-import de.enflexit.awb.ws.core.JettyCustomizer;
-import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.JettySessionSettings;
 import de.enflexit.awb.ws.restapi.AwbWebServerAccess;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
@@ -27,9 +24,9 @@ import de.enflexit.awb.ws.restapi.gen.model.Message;
 import de.enflexit.awb.ws.restapi.gen.model.MessageType;
 import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
-import de.enflexit.awb.ws.server.AwbServer;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
+import de.enflexit.common.fileConfiguration.FileConfigurationServiceManager;
 import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.ApplicationPropertyBus;
 import jakarta.servlet.http.HttpServletRequest;
@@ -318,37 +315,18 @@ public class AppApiServiceImpl extends AppApiService {
     @Override
     public Response uploadAppSettingsFile(FormDataBodyPart _fileBodypart, String xPerformative, SecurityContext securityContext) throws NotFoundException {
     	
-    	if (securityContext.getUserPrincipal() == null) {
+    	// --- Check who is the user --------------------------------
+    	Principal principal = securityContext.getUserPrincipal();
+    	if (principal==null) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
     	}
-    	try {
-    		InputStream inputStream = _fileBodypart.getEntityAs(InputStream.class);
-//	    	if (xPerformative.equalsIgnoreCase("jettyconfiguration")) {
-    		JettyConfiguration jettyConfig = JettyConfiguration.load(inputStream);
-    		if (jettyConfig != null) {
-    			new Thread(new Runnable() {
-    				
-    				@Override
-    				public void run() {
-    					try {
-    						Thread.sleep(1000);
-    						JettyServerManager.getInstance().stopServer(jettyConfig.getServerName());
-    						JettyCustomizer customizer = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfigurationFromPropertiesFile().getJettyCustomizer();
-    						JettyConfiguration.save(jettyConfig);
-    						jettyConfig.setJettyCustomizer(customizer);
-    						JettyServerManager.getInstance().startServer(jettyConfig);
-    					} catch (Exception ex) {
-    						ex.printStackTrace();
-    					}
-    				}
-    			}, "Server-restart-Thread").start();
-    		}
-//	    	}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    	}
+    	boolean success = FileConfigurationServiceManager.getInstance().processFile(xPerformative, _fileBodypart.getEntityAs(InputStream.class));
     	Message message = new Message();
-    	message.setMessage("Configuration uploaded. Server restarting...");
+    	if (success == true) {
+    		message.setMessage("File processed successfully.");
+    	} else {
+    		message.setMessage("File could not be processed.");
+    	}
     	message.setDateTime(System.currentTimeMillis()+"");
     	message.setMessageType(MessageType.INFO);
     	

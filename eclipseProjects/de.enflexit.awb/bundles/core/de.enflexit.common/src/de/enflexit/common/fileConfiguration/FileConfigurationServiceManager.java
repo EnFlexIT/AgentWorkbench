@@ -1,9 +1,9 @@
 package de.enflexit.common.fileConfiguration;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class FileConfigurationServiceManager {
 	 * Returns the performative service hash map.
 	 * @return the performative service hash map
 	 */
-	private HashMap<String, FileConfigurationService> getPerformativeServiceHashMap() {
+	private synchronized HashMap<String, FileConfigurationService> getPerformativeServiceHashMap() {
 		if (performativeServiceHashMap == null) {
 			performativeServiceHashMap = new HashMap<String, FileConfigurationService>();
 			this.updatePerformativeServiceHashMap();
@@ -97,7 +97,7 @@ public class FileConfigurationServiceManager {
 	 * @param file2Process the file 2 process
 	 * @return true, if successful
 	 */
-	public boolean processFile(String performative, FormDataBodyPart file2Process) {
+	public boolean processFile(String performative, InputStream file2Process) {
 		
 		if (performative == null || performative.isBlank() || file2Process == null) return false;
 		

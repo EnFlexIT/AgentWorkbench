@@ -1,6 +1,6 @@
 package de.enflexit.common.fileConfiguration;
 
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import java.io.InputStream;
 
 /**
  * The Interface FileConfigurationService.
@@ -9,9 +9,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
  */
 public interface FileConfigurationService {
 
-	public boolean processFile(FormDataBodyPart file2Process);
 	public String getPerformative();
-	
 	public default String getPerformativeNotNull() {
 		String perf = this.getPerformative();
 		if (perf==null || perf.isBlank()==true) {
@@ -19,4 +17,6 @@ public interface FileConfigurationService {
 		}
 		return perf.toLowerCase();
 	}
+	
+	public boolean processFile(InputStream file2Process);
 }
