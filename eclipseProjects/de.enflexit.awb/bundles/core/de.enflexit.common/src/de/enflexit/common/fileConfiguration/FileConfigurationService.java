@@ -1,7 +1,5 @@
 package de.enflexit.common.fileConfiguration;
 
-import java.io.InputStream;
-
 /**
  * The Interface FileConfigurationService.
  *
@@ -18,5 +16,5 @@ public interface FileConfigurationService {
 		return perf.toLowerCase();
 	}
 	
-	public boolean processFile(InputStream file2Process);
+	public FileProcessingResult processFile(UploadedFile file2Process);
 }

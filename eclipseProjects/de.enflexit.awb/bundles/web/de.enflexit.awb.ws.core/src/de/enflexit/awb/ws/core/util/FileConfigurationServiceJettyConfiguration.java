@@ -5,10 +5,17 @@ import de.enflexit.awb.ws.core.JettyCustomizer;
 import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.server.AwbServer;
 import de.enflexit.common.fileConfiguration.FileConfigurationService;
+import de.enflexit.common.fileConfiguration.FileProcessingResult;
+import de.enflexit.common.fileConfiguration.UploadedFile;
 
 import java.io.InputStream;
 
 
+/**
+ * The Class FileConfigurationServiceJettyConfiguration.
+ *
+ * @author Daniel Bormann - EnFlex.IT GmbH
+ */
 public class FileConfigurationServiceJettyConfiguration implements FileConfigurationService {
 
 	@Override
@@ -17,11 +24,11 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	}
 	
 	@Override
-	public boolean processFile(InputStream file2Process) {
-
+	public FileProcessingResult processFile(UploadedFile file2Process) {
+		
+		FileProcessingResult result = new FileProcessingResult();
 //    	try {
-//    		InputStream inputStream = file2Process.getEntityAs(InputStream.class);
-//    		JettyConfiguration jettyConfig = JettyConfiguration.load(inputStream);
+//    		JettyConfiguration jettyConfig = JettyConfiguration.load(file2Process.getBody());
 //    		
 //    		if (this.isWellFormedXml(jettyConfig)== false) return false;
 //    		if (this.hasValidProperties(jettyConfig) == false) return false;
@@ -44,7 +51,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 //    	} catch (Exception ex) {
 //    		ex.printStackTrace();
 //    	}
-		return true;
+		return result;
 	}
 	
 

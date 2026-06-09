@@ -27,6 +27,8 @@ import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
 import de.enflexit.common.fileConfiguration.FileConfigurationServiceManager;
+import de.enflexit.common.fileConfiguration.FileProcessingResult;
+import de.enflexit.common.fileConfiguration.UploadedFile;
 import de.enflexit.common.properties.PropertyMessage;
 import de.enflexit.common.properties.bus.ApplicationPropertyBus;
 import jakarta.servlet.http.HttpServletRequest;
@@ -315,18 +317,22 @@ public class AppApiServiceImpl extends AppApiService {
     @Override
     public Response uploadAppSettingsFile(FormDataBodyPart _fileBodypart, String xPerformative, SecurityContext securityContext) throws NotFoundException {
     	
-    	// --- Check who is the user --------------------------------
+    	// --- Check who is the user ----------------------------------------------------
     	Principal principal = securityContext.getUserPrincipal();
     	if (principal==null) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
     	}
-    	boolean success = FileConfigurationServiceManager.getInstance().processFile(xPerformative, _fileBodypart.getEntityAs(InputStream.class));
+    	// --- Prepare the file for processing ------------------------------------------
+    	String fileName = _fileBodypart.getContentDisposition().getFileName();
+    	String mediaType = _fileBodypart.getMediaType().toString();
+    	InputStream body = _fileBodypart.getEntityAs(InputStream.class);
+    	UploadedFile uploadedFile = new UploadedFile(fileName, mediaType, body);
+    	// --- Process the file ---------------------------------------------------------
+    	FileProcessingResult result = FileConfigurationServiceManager.getInstance().processFile(xPerformative, uploadedFile);
+    	
+    	// --- Return the result --------------------------------------------------------
     	Message message = new Message();
-    	if (success == true) {
-    		message.setMessage("File processed successfully.");
-    	} else {
-    		message.setMessage("File could not be processed.");
-    	}
+    	message.setMessage(result.getMessage());
     	message.setDateTime(System.currentTimeMillis()+"");
     	message.setMessageType(MessageType.INFO);
     	
