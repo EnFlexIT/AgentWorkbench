@@ -79,7 +79,8 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 	private JLabel jLabelWebAppAvailable;
 	private JLabel jLabelHeader;
 	private JLabel jLabelVisitWebApplication;
-	private JLabel jLabelUpdateDateLastCheck;
+	private JLabel jLabelLastCheck;
+	private JLabel jLabelDateLastCheck;
 	private JHyperLink jHyperLinkWebApplication;
 
 	
@@ -185,12 +186,18 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		gbc_jButtonCheckForUpdates.gridx = 1;
 		gbc_jButtonCheckForUpdates.gridy = 5;
 		add(getJButtonCheckForUpdates(), gbc_jButtonCheckForUpdates);
-		GridBagConstraints gbc_jLabelUpdateLastCheck = new GridBagConstraints();
-		gbc_jLabelUpdateLastCheck.insets = new Insets(10, 5, 0, 0);
-		gbc_jLabelUpdateLastCheck.anchor = GridBagConstraints.NORTHWEST;
-		gbc_jLabelUpdateLastCheck.gridx = 1;
-		gbc_jLabelUpdateLastCheck.gridy = 6;
-		add(getJLabelUpdateDateLastCheck(), gbc_jLabelUpdateLastCheck);
+		GridBagConstraints gbc_jLabelLastCheck = new GridBagConstraints();
+		gbc_jLabelLastCheck.insets = new Insets(10, 5, 0, 0);
+		gbc_jLabelLastCheck.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelLastCheck.gridx = 0;
+		gbc_jLabelLastCheck.gridy = 6;
+		add(getJLabelLastCheck(),gbc_jLabelLastCheck);
+		GridBagConstraints gbc_jLabeldateLastCheck = new GridBagConstraints();
+		gbc_jLabeldateLastCheck.insets = new Insets(10, 5, 0, 0);
+		gbc_jLabeldateLastCheck.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabeldateLastCheck.gridx = 1;
+		gbc_jLabeldateLastCheck.gridy = 6;
+		add(getJLabelDateLastCheck(), gbc_jLabeldateLastCheck);
 	}
 	
 	private JLabel getJLabelHeader() {
@@ -338,18 +345,30 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		return jButtonCheckForUpdates;
 	}
 	
-	private JLabel getJLabelUpdateDateLastCheck() {
-		if (jLabelUpdateDateLastCheck == null) {
-			jLabelUpdateDateLastCheck = new JLabel("Last Check: ");
-			jLabelUpdateDateLastCheck.setFont(new Font("Dialog", Font.PLAIN, 12));
+	private JLabel getJLabelLastCheck() {
+		if (jLabelLastCheck == null) {
+			jLabelLastCheck = new JLabel("Last Check: ");
+			jLabelLastCheck.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
-		return jLabelUpdateDateLastCheck;
+		return jLabelLastCheck;
 	}
 	
-	private void updateJLabelUpdateDateLastCheck() {
+	private JLabel getJLabelDateLastCheck() {
+		if (jLabelDateLastCheck == null) {
+			jLabelDateLastCheck = new JLabel();
+			this.updateJLabelDateLastCheck();
+			jLabelDateLastCheck.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelDateLastCheck;
+	}
+	
+	private void updateJLabelDateLastCheck() {
 		JettyWebApplicationSettings webAppSettings = this.getWebApplicationSettings();
-		if (webAppSettings == null) return;
-		this.getJLabelUpdateDateLastCheck().setText(("Last Check: " + new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(webAppSettings.getUpdateLastCheck()))));
+		if (webAppSettings != null && webAppSettings.getUpdateLastCheck() > 0) {
+				this.getJLabelDateLastCheck().setText(new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(webAppSettings.getUpdateLastCheck())));
+		} else {
+			this.getJLabelDateLastCheck().setText("-");
+		}
 	}
 	
 	private JLabel getJLabelWebAppAvailable() {
@@ -460,7 +479,7 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 		this.isPauseActionListener = true;
 		this.getJTextFieldWebAppURL().setText(webAppSettings.getDownloadURL());
 		this.getJComboBoxUpdateStrategy().setSelectedItem(webAppSettings.getUpdateStrategy());
-		this.updateJLabelUpdateDateLastCheck();
+		this.updateJLabelDateLastCheck();
 		this.isPauseActionListener = false;
 		this.isPauseDocumentListener = false;
 	}
@@ -533,7 +552,7 @@ public class JPanelSettingsWebApplication extends JPanel implements JettyConfigu
 			WebApplicationVersion appVersionUpdate = WebApplicationUpdate.getWebApplicationUpdate(this.getJTextFieldWebAppURL().getText());
 			if (this.getWebApplicationSettings() != null) {
 				this.getWebApplicationSettings().setUpdateLastCheck(System.currentTimeMillis());
-				this.updateJLabelUpdateDateLastCheck();
+				this.updateJLabelDateLastCheck();
 			}
 			if (appVersionUpdate==null) {
 				JOptionPane.showMessageDialog(owner, "There is no update available!", "Check for Update", JOptionPane.INFORMATION_MESSAGE);
