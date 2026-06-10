@@ -115,9 +115,13 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 				public void subTask(String name) {
 					PropertyBusServiceUpdateBackend.this.pmSubTask = name;
 				}
-
 				@Override
-				public void done() { }
+				public void done() {
+					PropertyBusServiceUpdateBackend.this.pmTotalWorkCount = 0;
+					PropertyBusServiceUpdateBackend.this.pmProgressCount =  0;
+					PropertyBusServiceUpdateBackend.this.pmProgressPercent = 100;
+				}
+				
 				@Override
 				public void internalWorked(double work) { }
 				@Override
