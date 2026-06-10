@@ -1,6 +1,5 @@
 package de.enflexit.common.fileConfiguration;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -97,16 +96,33 @@ public class FileConfigurationServiceManager {
 	 * @param file2Process the file 2 process
 	 * @return true, if successful
 	 */
-	public boolean processFile(String performative, InputStream file2Process) {
+	public FileProcessingResult processFile(String performative, UploadedFile file2Process) {
 		
-		if (performative == null || performative.isBlank() || file2Process == null) return false;
+		FileProcessingResult result = new FileProcessingResult();
 		
+		// --- Check whether there is a performative ------------------------------------
+		if (performative == null || performative.isBlank()) {
+			result.setMessage("File could not be processed");
+			result.addError("Performative is missing");
+			return result;
+		}
+		// --- Look for a corresponding service -----------------------------------------
 		FileConfigurationService fcs = this.getPerformativeServiceHashMap().get(performative);
 		if (fcs == null) {
 			LOGGER.error("No service was found for the performative " + performative);
-			return false;
+			result.setMessage("No service was found for the performative " + performative);
+			result.addError("Invalid performative");
+			return result;
 		}
-		return fcs.processFile(file2Process);
+		// --- Check if there is a file -------------------------------------------------
+		if (file2Process.getBody() == null) {
+			result.setMessage("File could not be processed");
+			result.addError("File is missing");
+			return result;
+		}
+		// --- Process the file and return the result -----------------------------------
+		result = fcs.processFile(file2Process);
+		return result;
 	}
 	
 }
