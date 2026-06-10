@@ -25,6 +25,7 @@ public class PropertyBusServiceUpdateWebApp implements PropertyBusService, WebAp
 	
 	private boolean isUpdateDone;
 	private boolean hasInstalledUpdate;
+	
 	private Thread workerThread;
 	
 	/* (non-Javadoc)
@@ -57,27 +58,21 @@ public class PropertyBusServiceUpdateWebApp implements PropertyBusService, WebAp
 			workerThread.start();
 			properties.setStringValue(STATUS, "Pending");
 			properties.setStringValue(MESSAGE, "");
-			return properties;
 			
 		} else {
 			// --- Update thread already started, evaluating results ------------------------------
 			if (this.isUpdateDone == false) {
 				properties.setStringValue(STATUS, "Pending");
 				properties.setStringValue(MESSAGE, "");
-				
+
+			} else if (this.hasInstalledUpdate == true) {
+				properties.setStringValue(STATUS, "Done");
+				properties.setStringValue(MESSAGE, "Update installed");
+				this.reset();
 			} else {
-				
-				if (this.hasInstalledUpdate == true) {
-					properties.setStringValue(STATUS, "Done");
-					properties.setStringValue(MESSAGE, "Update installed");
-				} else {
-					properties.setStringValue(STATUS, "Error");
-					properties.setStringValue(MESSAGE, "Nothing to update");
-				}
-				// --- Reset everything for next call ---------------------------------------------
-				workerThread = null;
-				isUpdateDone = false;
-				hasInstalledUpdate = false;	
+				properties.setStringValue(STATUS, "Error");
+				properties.setStringValue(MESSAGE, "Nothing to update");
+				this.reset();
 			}
 		}
 		return properties;
@@ -109,6 +104,15 @@ public class PropertyBusServiceUpdateWebApp implements PropertyBusService, WebAp
 	public void onUpdateProcessFinalized() {
 		this.isUpdateDone = true;
 		this.hasInstalledUpdate = true;
+	}
+	
+	/**
+	 * Reset fields for the next call.
+	 */
+	public void reset() {
+		workerThread = null;
+		isUpdateDone = false;
+		hasInstalledUpdate = false;	
 	}
 
 }
