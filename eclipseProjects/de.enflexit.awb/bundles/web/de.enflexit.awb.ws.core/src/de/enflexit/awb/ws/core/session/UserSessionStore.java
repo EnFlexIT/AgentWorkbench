@@ -221,16 +221,25 @@ public class UserSessionStore {
 				try {
 					// --- Check to refresh token -----------------------------
 					List<String> userIDList = new ArrayList<>(UserSessionStore.this.getUserSessionRefreshTokenHashMap().keySet());
+					String debugMsg = "Found " + userIDList.size() + " UserSession for refreshment";
 					for (String userID : userIDList) {
 						UserSession uSess = UserSessionStore.this.getUserSessionRefreshTokenHashMap().get(userID);
-						// --- Reached latest time to do token refreshment ---- 
-						if (uSess.getAccessTokenExpiration() - System.currentTimeMillis() <= this.minDurationMillis) {
+						// --- Reached latest time to do token refreshment ----
+						long timeToLogoutMillis = uSess.getAccessTokenExpiration() - System.currentTimeMillis();
+						long timeToLogoutSec = timeToLogoutMillis / 1000;
+						boolean isRefreshNow = timeToLogoutMillis <= this.minDurationMillis;
+						debugMsg += "\nUserID: " + userID + ", time to logout: " + timeToLogoutSec + " s, Refresh now: " + isRefreshNow;
+						if (isRefreshNow==true) {
 							// --- Execute update -----------------------------
 							if (this.refreshAccessToken(uSess)==true) {
 								UserSessionStore.this.removeRemindForTokenRefreshment(uSess);
 							}
 						}
 						if (this.doTerminate==true) break;
+					}
+					
+					if (this.isDebug==true) {
+						System.out.println("[" + this.getClass().getSimpleName() + "] " + debugMsg);
 					}
 					
 				} catch (Exception ex) {
@@ -243,7 +252,7 @@ public class UserSessionStore {
 					List<String> userIDList = new ArrayList<>(UserSessionStore.this.getUserSessionHashMap().keySet());
 					for (String userID : userIDList) {
 						UserSession uSess = UserSessionStore.this.getUserSessionRefreshTokenHashMap().get(userID);
-						if (uSess!=null && uSess.isExpired()==true && uSess.isExpiredAccessToken()==true) {
+						if (uSess!=null && uSess.isExpired()==true) {
 							UserSessionStore.this.destroyUserSession(uSess);
 						}
 					}
