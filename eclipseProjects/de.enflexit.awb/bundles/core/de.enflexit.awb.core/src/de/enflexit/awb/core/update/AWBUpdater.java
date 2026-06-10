@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
@@ -283,7 +284,7 @@ public class AWBUpdater extends Thread {
 			} else {
 				// --- Ask for user confirmation if specified in the settings -----------------------------------------
 				boolean installUpdates = true;
-				if (this.askBeforeDownload==true) {
+				if (Application.getGlobalInfo().getAWBProduct() != AWBProduct.WEB && this.askBeforeDownload==true) {
 					
 					// --- Temporary hide the progress dialog, otherwise the confirmation dialog would not be shown --- 
 					if (this.executionMode == ExecutionMode.APPLICATION) {
