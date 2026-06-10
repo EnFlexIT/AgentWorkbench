@@ -2,9 +2,15 @@ package de.enflexit.awb.ws.core.session;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
+import de.enflexit.awb.ws.core.security.AccessTokenRefreshment;
+import de.enflexit.awb.ws.core.security.AccessTokenRefreshment.TokenResponse;
 import de.enflexit.awb.ws.core.security.OIDCSecurityService;
+import de.enflexit.awb.ws.core.security.OIDCTokenRefreshment;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.NumberHelper;
@@ -15,6 +21,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * The Class UserSessionFilter.
@@ -23,6 +30,8 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class UserSessionFilter implements Filter {
 
+	 private static final String OIDC_SESSION_RESPONSE = "org.eclipse.jetty.security.openid.response";
+	
 	public static final String SECURITY_HANDLER_SERVICE = "securityHandlerService";
 	public static final String USER_SESSION_LENGTH_IN_SECONDS = "userSessionLength";
 	
@@ -96,7 +105,7 @@ public class UserSessionFilter implements Filter {
 		try {
 			principal = sRequest.getUserPrincipal();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 		return principal;
 	}
@@ -147,19 +156,37 @@ public class UserSessionFilter implements Filter {
 							// ------------------------------------------------ 
 							// --- Extend the token expiration? ---------------
 							// ------------------------------------------------
-							if (reqURI.toLowerCase().equals("/api/user/login".toLowerCase())) {
+							if (uSess.getExpiration() > uSess.getAccessTokenExpiration()) {
 								// ------------------------------------------------------------------------------------
 								// --- For both, a new JWT-token can be obtained by calling '/api/user/login' ! -------
 								if (this.getSecurityHandlerServiceClassName().equals(JwtSingleUserSecurityService.class.getName())==true) {
 									// --- The JWT use-case: ---------------------------------------------------------- 
 									// --- => Nothing to do here, since renew of token will already be executed
 									// ---    by the JwtAuthenticator for this path. 
+									// --------------------------------------------------------------------------------
 									
 								} else if (this.getSecurityHandlerServiceClassName().equals(OIDCSecurityService.class.getName())==true) {
 									// --- The OIDC use-case ----------------------------------------------------------
 									// --- => Call OIDC token end point to renew JWT ----------------------------------
-									this.updateOidcAccessToken();
-								}
+									// --------------------------------------------------------------------------------
+									// --- The access token needs to be renewed ---------------------------------------
+									// --------------------------------------------------------------------------------
+									synchronized (uSess) {
+										if (uSess.getAccessTokenRefreshment()==null) {
+											// --- Create a task to get a new access token ------------ 
+											this.createAccessTokenRefreshment(uSess, sRequest.getSession(false));
+											
+										} else {
+											// --- Check if a new token has already arrived -----------
+											TokenResponse tr = uSess.getAccessTokenRefreshment().getTokenResponse();
+											if (tr!=null) {
+												// --- Set values to HTTP- and USerSession ------------
+												this.setAccessTokenRefreshmentResultToSession(uSess, sRequest.getSession(false), tr);
+											}
+										}
+									}
+									
+								} // --- end security handler ---
 							}
 							
 						}
@@ -170,7 +197,6 @@ public class UserSessionFilter implements Filter {
 					}
 					
 					
-					
 				} // --- end principal ----
 			} // --- end excluded URI's ---
 		} // --- end HttpServletRequest ---
@@ -178,22 +204,83 @@ public class UserSessionFilter implements Filter {
 		// ----------------------------------------------------------
 		// --- Forward to further filter jobs -----------------------
 		chain.doFilter(request, response);
-		
 	}
 	
 	/**
-	 * Update OIDC access token.
+	 * Sets the access token refreshment result to session.
+	 *
+	 * @param uSess the UserSession
+	 * @param session the session
+	 * @param tr the TokenResponse 
 	 */
-	private void updateOidcAccessToken() {
+	private void setAccessTokenRefreshmentResultToSession(UserSession uSess, HttpSession session, TokenResponse tr) {
 		
+		@SuppressWarnings("unchecked")
+		Map<String, Object> oidcResponse = (Map<String, Object>) session.getAttribute(OIDC_SESSION_RESPONSE);
+		if (oidcResponse!=null) {
+			oidcResponse.put(OIDCTokenRefreshment.ACCESS_TOKEN, tr.getAccessToken());
+			if (tr.getRefreshToken()!=null) {
+				oidcResponse.put(OIDCTokenRefreshment.REFRESH_TOKEN, tr.getRefreshToken()); // rotating tokens
+			}
+			session.setAttribute(OIDC_SESSION_RESPONSE, oidcResponse);
+		}
 		
+		uSess.setAccessToken(tr.getAccessToken());
+		uSess.setAccessTokenRefreshment(null);
+	}
+
+	/**
+	 * Creates the access token refreshment for the specified UserSession.
+	 *
+	 * @param uSess the UserSession at which the AccessTokenRefreshment has to be added
+	 * @param session the current HttpSession
+	 */
+	private void createAccessTokenRefreshment(UserSession uSess, HttpSession session) {
+		
+		String refreshToken = null;
+		
+        @SuppressWarnings("unchecked")
+		Map<String, Object> oidcResponse = (Map<String, Object>) session.getAttribute(OIDC_SESSION_RESPONSE);
+		if (oidcResponse != null) {
+			refreshToken = (String) oidcResponse.get(OIDCTokenRefreshment.REFRESH_TOKEN);
+		}
+
+		// --- Collect the configuration ------------------------------
+		HashMap<String, String> config = this.copyFilterConfigToHashMap();
+		config.put(OIDCTokenRefreshment.REFRESH_TOKEN, refreshToken);
+		
+		// --- Create an AccessTokenRefreshment -----------------------
+		AccessTokenRefreshment accTknRefresh = new OIDCTokenRefreshment();
+		accTknRefresh.setConfiguration(config);
+		
+		// --- Set refreshment action to UserSession ------------------
+		uSess.setAccessTokenRefreshment(accTknRefresh);
+		
+		// --- Remind for token refreshment ---------------------------
+		UserSessionStore.getInstance().setRemindForTokenRefreshment(uSess);
 	}
 	
+	/**
+	 * Copies the local FilterConfig to a HashMap.
+	 * @return a configuration HashMap or <code>null</code>
+	 */
+	private HashMap<String, String> copyFilterConfigToHashMap() {
+		
+		if (this.filterConfig==null) return null;
+		
+		HashMap<String, String> config = new HashMap<>();
+		Enumeration<String> paraEnum = this.filterConfig.getInitParameterNames();
+		while (paraEnum.hasMoreElements()) {
+			String para  = paraEnum.nextElement();
+			String value = this.filterConfig.getInitParameter(para);
+			config.put(para, value);
+		}
+		return config;
+	}
 	
 	
 	/**
 	 * Debug prints the specified message to the console.
-	 *
 	 * @param message the message
 	 */
 	private void debugPrint(String message) {

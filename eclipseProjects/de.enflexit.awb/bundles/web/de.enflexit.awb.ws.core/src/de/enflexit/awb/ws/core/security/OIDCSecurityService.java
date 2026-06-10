@@ -29,6 +29,7 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 
 	public enum OIDCParameter {
 		Issuer("Issuer", String.class),
+		TokenEndpoint("TokenEndpoint", String.class),
 		ClientID("ClientID", String.class),
 		ClientSecrete("ClientSecrete", String.class)
 		;
@@ -130,22 +131,19 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 		
 		// --- Get the required parameter ---------------------------
 		ServletSecurityConfiguration ssc = jConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
-		String issuer = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.Issuer.getKey());
+		String tokenEndpoint = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.TokenEndpoint.getKey());
 		String clientID = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientID.getKey());
 		String clientSecret = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientSecrete.getKey());
 		
 		Integer maxSessionLength = (int) jConfiguration.getSessionSettings().getSessionAttribute(JettySessionSettings.KEY_SET_MAX_INACTIVE_INTERVAL).getValue();
 		
-		// --- As example:  https://your-idp.example.com/realms/myrealm/protocol/openid-connect/token
-		String tokenEndPoint = issuer + "/protocol/openid-connect/token";
-		
 		FilterHolder refreshFilter = new FilterHolder(UserSessionFilter.class);
 		refreshFilter.setInitParameter(UserSessionFilter.SECURITY_HANDLER_SERVICE, this.getClass().getName());
 		refreshFilter.setInitParameter(UserSessionFilter.USER_SESSION_LENGTH_IN_SECONDS, maxSessionLength.toString());
 
-		refreshFilter.setInitParameter("tokenEndpoint", tokenEndPoint); 
-		refreshFilter.setInitParameter("clientId",     clientID);
-		refreshFilter.setInitParameter("clientSecret", clientSecret);
+		refreshFilter.setInitParameter(OIDCParameter.TokenEndpoint.getKey(), tokenEndpoint); 
+		refreshFilter.setInitParameter(OIDCParameter.ClientID.getKey(),      clientID);
+		refreshFilter.setInitParameter(OIDCParameter.ClientSecrete.getKey(), clientSecret);
 
 		// --- Apply to secured paths -------------------------------
 		serCtxHandle.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
