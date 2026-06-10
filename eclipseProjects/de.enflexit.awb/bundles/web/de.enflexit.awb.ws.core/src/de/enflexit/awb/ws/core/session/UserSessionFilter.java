@@ -30,7 +30,7 @@ import jakarta.servlet.http.HttpSession;
  */
 public class UserSessionFilter implements Filter {
 
-	 private static final String OIDC_SESSION_RESPONSE = "org.eclipse.jetty.security.openid.response";
+	private static final String OIDC_SESSION_RESPONSE = "org.eclipse.jetty.security.openid.response";
 	
 	public static final String SECURITY_HANDLER_SERVICE = "securityHandlerService";
 	public static final String USER_SESSION_LENGTH_IN_SECONDS = "userSessionLength";
@@ -49,6 +49,7 @@ public class UserSessionFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		this.filterConfig = filterConfig;
+		this.debugPrint("Using " + this.getSecurityHandlerServiceSimpleClassName());
 	}
 	/**
 	 * Returns the security handler service class name.
@@ -122,12 +123,13 @@ public class UserSessionFilter implements Filter {
 			String reqURI = sRequest.getRequestURI();
 			if (this.getExcludedUriForSessionExtension().contains(reqURI.toLowerCase())==false) {
 				
+				String addedTimeDesc = null;
 				// --- Get the registered user / Principal --------------------
 				Principal principal = this.getPrincipal(sRequest);
 				if (principal!=null) {
 					// --- Find the UserID ------------------------------------
 					String userID = principal.getName();
-					this.debugPrint("Security Service: " + this.getSecurityHandlerServiceSimpleClassName() +  " - User-ID is: " + userID + " - Requested URL: " + reqURI);
+					this.debugPrint( reqURI +  " [User-ID is: " + userID + "]");
 					
 					// --- Try getting the user session -----------------------
 					UserSession uSess = UserSessionStore.getInstance().getUserSession(userID);
@@ -141,7 +143,7 @@ public class UserSessionFilter implements Filter {
 						// ----------------------------------------------------
 						// --- Session is known -------------------------------
 						// ----------------------------------------------------
-						if (uSess.isExpired()==true ) {
+						if (uSess.isExpired()==true || uSess.isExpiredAccessToken()==true) {
 							UserSessionStore.getInstance().destroyUserSession(uSess);
 							uSess = null;
 							this.debugPrint("=> Session was expired - create a new one !");
@@ -149,9 +151,10 @@ public class UserSessionFilter implements Filter {
 							
 						} else {
 							// --- Extend the user session --------------------
-							String msg = DateTimeHelper.getTimeAsString(uSess.getExpiration());
+							long oldExpiration = uSess.getExpiration();
 							uSess.setLastActivityToNow();
-							this.debugPrint("=> Extended session end from " + msg + " to " + DateTimeHelper.getTimeAsString(uSess.getExpiration()));
+							long addedTime = uSess.getExpiration() - oldExpiration;
+							addedTimeDesc = "[ + " + addedTime + " ms] ";
 							
 							// ------------------------------------------------ 
 							// --- Extend the token expiration? ---------------
@@ -193,7 +196,7 @@ public class UserSessionFilter implements Filter {
 					}
 					
 					if (uSess!=null) {
-						this.debugPrint("Session Time: " + DateTimeHelper.getTimeAsString(uSess.getLastActivity()) + " - " + DateTimeHelper.getTimeAsString(uSess.getExpiration()) + " - A.-Token-Exp.: " + DateTimeHelper.getTimeAsString(uSess.getAccessTokenExpiration()));
+						this.debugPrint((addedTimeDesc==null ? "" : addedTimeDesc) + "Session Time: " + DateTimeHelper.getTimeAsString(uSess.getLastActivity(), "HH:mm:ss") + " - " + DateTimeHelper.getTimeAsString(uSess.getExpiration(), "HH:mm:ss") + " - A.-Token-Exp.: " + DateTimeHelper.getTimeAsString(uSess.getAccessTokenExpiration(), "HH:mm:ss"));
 					}
 					
 					
@@ -225,8 +228,13 @@ public class UserSessionFilter implements Filter {
 			session.setAttribute(OIDC_SESSION_RESPONSE, oidcResponse);
 		}
 		
+		String oldAccessToken = uSess.getAccessToken();
+		
 		uSess.setAccessToken(tr.getAccessToken());
 		uSess.setAccessTokenRefreshment(null);
+		this.debugPrint("=> AccessToken was extended to " + DateTimeHelper.getTimeAsString(uSess.getAccessTokenExpiration(), "HH:mm:ss") );
+		this.debugPrint("=> Old AccessToken: " + oldAccessToken);
+		this.debugPrint("=> New AccessToken: " + uSess.getAccessToken());
 	}
 
 	/**
