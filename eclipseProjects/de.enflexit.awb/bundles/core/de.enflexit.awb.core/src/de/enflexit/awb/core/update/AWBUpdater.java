@@ -219,7 +219,7 @@ public class AWBUpdater extends Thread {
 			String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			this.setFinalMessage(infoString);
-			if (Application.isOperatingHeadless()==false) {
+			if (Application.getGlobalInfo().getAWBProduct() != AWBProduct.WEB && Application.isOperatingHeadless()==false) {
 				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "Updates available", AwbMessageDialog.WARNING_MESSAGE);
 			}
 			
@@ -227,7 +227,7 @@ public class AWBUpdater extends Thread {
 			String infoString = "Your target platform is up to date!";
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			this.setFinalMessage(infoString);
-			if (this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
+			if (Application.getGlobalInfo().getAWBProduct() != AWBProduct.WEB && this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
 				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbMessageDialog.INFORMATION_MESSAGE);
 			}
 			
@@ -277,7 +277,7 @@ public class AWBUpdater extends Thread {
 					this.disposeAwbProgressMonitor();
 				}
 				
-				if (Application.isOperatingHeadless()==false && this.manualyExecutedByUser==true) {
+				if (Application.getGlobalInfo().getAWBProduct() != AWBProduct.WEB && Application.isOperatingHeadless()==false && this.manualyExecutedByUser==true) {
 					AwbMessageDialog.showMessageDialog(null, Language.translate("Keine Updates gefunden") + "!", Language.translate("Keine Updates gefunden"), AwbMessageDialog.INFORMATION_MESSAGE);
 				}
 
@@ -293,8 +293,8 @@ public class AWBUpdater extends Thread {
 					
 					// --- Show confirmation dialog -------------------------------------------------------------------
 					int userAnswer = AwbMessageDialog.showConfirmDialog(null, Language.translate("Updates verfügbar, installieren?"), Application.getGlobalInfo().getApplicationTitle() + " Update", AwbMessageDialog.YES_NO_OPTION);
-					if (userAnswer == AwbMessageDialog.NO_OPTION) {
-						installUpdates = false;
+					installUpdates = (userAnswer == AwbMessageDialog.YES_OPTION);
+					if (installUpdates==false) {
 						finalMessage = "P2 Update: Update canceled by user.";
 						System.out.println("[" + this.getClass().getSimpleName() + "] " + finalMessage);
 						if (Application.isOperatingHeadless() == false) {
