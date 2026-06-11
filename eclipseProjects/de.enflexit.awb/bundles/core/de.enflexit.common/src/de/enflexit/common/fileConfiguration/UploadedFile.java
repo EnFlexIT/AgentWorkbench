@@ -3,7 +3,7 @@ package de.enflexit.common.fileConfiguration;
 import java.io.InputStream;
 
 /**
- * The Class UploadedFile is a DTO for uploaded files, carrying the body
+ * The Class UploadedFile is a DTO for uploaded files, carrying the inputStream
  * as an InputStream as well as file name and media type as Strings.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
@@ -12,26 +12,37 @@ public class UploadedFile {
 
 	private String fileName;
 	private String mediaType;
-	private InputStream body;
+	private InputStream inputStream;
 	
-	public UploadedFile(InputStream body) {
-		this("", "", body);
+	/**
+	 * Instantiates a new uploaded file.
+	 * @param inputStream the body input stream
+	 */
+	public UploadedFile(InputStream inputStream) {
+		this("", "", inputStream);
 	}
-	
-	public UploadedFile(String fileName, String mediaType, InputStream body) {
+	/**
+	 * Instantiates a new uploaded file.
+	 *
+	 * @param fileName the file name
+	 * @param mediaType the media type
+	 * @param inputStream the input stream
+	 */
+	public UploadedFile(String fileName, String mediaType, InputStream inputStream) {
 		this.setFileName(fileName);
 		this.setMediaType(mediaType);
-		this.setBody(body);
+		this.setInputStream(inputStream);
 	}
 
 	/**
+	 * Returns the file name.
 	 * @return the fileName
 	 */
 	public String getFileName() {
 		return fileName;
 	}
-
 	/**
+	 * Sets the file name.
 	 * @param fileName the fileName to set
 	 */
 	public void setFileName(String fileName) {
@@ -39,13 +50,14 @@ public class UploadedFile {
 	}
 
 	/**
+	 * Returns the media type.
 	 * @return the mediaType
 	 */
 	public String getMediaType() {
 		return mediaType;
 	}
-
 	/**
+	 * Sets the media type.
 	 * @param mediaType the mediaType to set
 	 */
 	public void setMediaType(String mediaType) {
@@ -53,16 +65,17 @@ public class UploadedFile {
 	}
 
 	/**
-	 * @return the body
+	 * Returns the input stream.
+	 * @return the inputStream
 	 */
-	public InputStream getBody() {
-		return body;
+	public InputStream getInputStream() {
+		return inputStream;
 	}
-
 	/**
-	 * @param body the body to set
+	 * Sets the input stream.
+	 * @param inputStream the inputStream to set
 	 */
-	public void setBody(InputStream body) {
-		this.body = body;
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
 	}
 }

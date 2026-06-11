@@ -115,7 +115,7 @@ public class FileConfigurationServiceManager {
 			return result;
 		}
 		// --- Check if there is a file -------------------------------------------------
-		if (file2Process.getBody() == null) {
+		if (file2Process.getInputStream() == null) {
 			result.setMessage("File could not be processed");
 			result.addError("File is missing");
 			return result;

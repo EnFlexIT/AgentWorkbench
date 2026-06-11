@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.util;
 
+import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConstants;
@@ -10,37 +11,62 @@ import de.enflexit.common.fileConfiguration.FileConfigurationService;
 import de.enflexit.common.fileConfiguration.FileProcessingResult;
 import de.enflexit.common.fileConfiguration.UploadedFile;
 
-
 /**
  * The Class FileConfigurationServiceJettyConfiguration.
- *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
 public class FileConfigurationServiceJettyConfiguration implements FileConfigurationService {
 
-	FileProcessingResult result;
+	private FileProcessingResult fileProcessingResult;
 	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.fileConfiguration.FileConfigurationService#getPerformative()
+	 */
 	@Override
 	public String getPerformative() {
 		return "JettyConfiguration";
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.common.fileConfiguration.FileConfigurationService#processFile(de.enflexit.common.fileConfiguration.UploadedFile)
+	 */
 	@Override
 	public FileProcessingResult processFile(UploadedFile file2Process) {
 		
-		result = new FileProcessingResult();
-
-		JettyConfiguration jettyConfig = JettyConfiguration.load(file2Process.getBody());
+		JettyConfiguration jettyConfig = JettyConfiguration.load(file2Process.getInputStream());
 
 		if (this.hasValidProperties(jettyConfig) == false) {
-			result.setSuccess(false);
-			result.setMessage("Properties are not valid");
+			this.getFileProcessingResult().setSuccess(false);
+			this.getFileProcessingResult().setMessage("Properties are not valid");
 		}
-		result.setSuccess(true);
-		result.setMessage("Upload validated. Restarting server..");
+		this.getFileProcessingResult().setSuccess(true);
+		this.getFileProcessingResult().setMessage("Upload validated. Restarting server..");
 		new Thread(() -> applyJettyConfiguration(jettyConfig), "Server restart thread").start();
 
-		return result;
+		// --- Get return value ---------------------------
+		FileProcessingResult fpr = this.getFileProcessingResult();
+		this.setFileProcessingResult(null);
+		return fpr;
+	}
+	
+	
+	/**
+	 * Returns the file processing result.
+	 * @return the file processing result
+	 */
+	private FileProcessingResult getFileProcessingResult() {
+		if (fileProcessingResult==null) {
+			fileProcessingResult = new FileProcessingResult();
+		}
+		return fileProcessingResult;
+	}
+	/**
+	 * Sets the file processing result.
+	 * @param fileProcessingResult the new file processing result
+	 */
+	private void setFileProcessingResult(FileProcessingResult fileProcessingResult) {
+		this.fileProcessingResult = fileProcessingResult;
 	}
 	
 	/**
@@ -51,9 +77,9 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	 */
 	private boolean hasValidProperties(JettyConfiguration jettyConfig) {
 		
-		if (jettyConfig == null) result.addError("Jetty configuration could not be loaded");
+		if (jettyConfig == null) this.getFileProcessingResult().addError("Jetty configuration could not be loaded");
 		if (jettyConfig.getServerName() == null || jettyConfig.getServerName().isBlank()) {
-			result.addError("Server name is empty");
+			this.getFileProcessingResult().addError("Server name is empty");
 		}
 		
 		Boolean httpEnabled = this.getBool(jettyConfig, JettyConstants.HTTP_ENABLED);
@@ -62,7 +88,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 			return false;
 		}
 		if (httpEnabled == false && httpsEnabled == false) {
-			result.addError("http and https disabled");
+			this.getFileProcessingResult().addError("http and https disabled");
 		}
 		
 		if (httpEnabled == true) {
@@ -71,7 +97,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 				return false;
 			}
 			if (httpPort < 1024 || httpPort > 65535) {
-				result.addError("Invalid http port: " + httpPort);
+				this.getFileProcessingResult().addError("Invalid http port: " + httpPort);
 				return false;
 			}
 		}
@@ -81,41 +107,64 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 				return false;
 			}
 			if (httpsPort < 1024 || httpsPort > 65535) {
-				result.addError("Invalid http port: " + httpsPort);
+				this.getFileProcessingResult().addError("Invalid http port: " + httpsPort);
 				return false;
 			}
 			String keystore = this.getString(jettyConfig, JettyConstants.SSL_KEYSTORE);
 			
 		}		
-		
 
 		return true;
 	}
 
 	/**
 	 * Apply the jetty configuration and restart the server.
-	 *
-	 * @param jettyConfig the jetty config
+	 * @param newJettyConfiguration the new JettyConfiguration
 	 */
-	private void applyJettyConfiguration(JettyConfiguration jettyConfig) {
+	private void applyJettyConfiguration(JettyConfiguration newJettyConfiguration) {
 		try {
+			
+			// --- WEhy the fuck sleep now ? ----
 			Thread.sleep(1000);
-			JettyServerManager.getInstance().stopServer(jettyConfig.getServerName());
-			JettyCustomizer customizer = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfigurationFromPropertiesFile().getJettyCustomizer();
-			jettyConfig.setJettyCustomizer(customizer);
-			JettyConfiguration.save(jettyConfig);
-			JettyServerManager.getInstance().startServer(jettyConfig);
+			
+			String serverName = newJettyConfiguration.getServerName();
+			AwbWebServerServiceWrapper serviceWrapped = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(serverName);
+			if (serviceWrapped==null) return;
+			
+			JettyConfiguration oldJettyConfiguration = serviceWrapped.getJettyConfiguration(); 
+			if (this.startServer(newJettyConfiguration)==false) {
+				this.startServer(oldJettyConfiguration);
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Starts a Jetty server based on the specified JettyConfiguration.
+	 *
+	 * @param jettyConfiguration the jetty configuration
+	 * @return true, if successful
+	 */
+	private boolean startServer(JettyConfiguration jettyConfiguration) {
+		
+		String serverName = jettyConfiguration.getServerName();
+		
+		AwbWebServerServiceWrapper serviceWrapped = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(serverName);
+		serviceWrapped.setJettyConfiguration(jettyConfiguration);
+		
+		JettyServerManager.getInstance().stopServer(serverName);
+		return JettyServerManager.getInstance().startServer(serverName);
+	}
+	
 	
 	private Boolean getBool(JettyConfiguration config, JettyConstants key) {
 
 		JettyAttribute<?> attribute = config.get(key);
 
 		if (attribute == null || attribute.getValue() == null) {
-			result.addError("No value found for key: " + key);
+			this.getFileProcessingResult().addError("No value found for key: " + key);
 			return null;
 		}
 
@@ -130,7 +179,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 				return Boolean.parseBoolean(valueString);
 			}
 		}
-		result.addError("Invalid boolean value for key: " + key + " (" + value + ")");
+		this.getFileProcessingResult().addError("Invalid boolean value for key: " + key + " (" + value + ")");
 		return null;
 	}
 	
@@ -138,14 +187,14 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		
 		JettyAttribute<?> attribute = jettyConfig.get(key);
 		if (attribute == null || attribute.getValue() == null) {
-			result.addError("No attribute found for the key: "+ key);
+			this.getFileProcessingResult().addError("No attribute found for the key: "+ key);
 			return null;
 		}
 		Object value = attribute.getValue();
 		if (value instanceof String) {
 			return (String) value;
 		}
-		result.addError("Invalid string value for key: " + key + " (" + value + ")");
+		this.getFileProcessingResult().addError("Invalid string value for key: " + key + " (" + value + ")");
 		return null;
 	}
 	
@@ -154,7 +203,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	    JettyAttribute<?> attribute = config.get(key);
 
 	    if (attribute == null || attribute.getValue() == null) {
-	        result.addError("No value found for key: " + key);
+	        this.getFileProcessingResult().addError("No value found for key: " + key);
 	        return null;
 	    }
 
@@ -172,7 +221,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	            // --- Nothing to do, error will be added below ---------------
 	        }
 	    }
-	    result.addError("Invalid integer value for key: " + key + " (" + value + ")");
+	    this.getFileProcessingResult().addError("Invalid integer value for key: " + key + " (" + value + ")");
 	    return null;
 	}
 

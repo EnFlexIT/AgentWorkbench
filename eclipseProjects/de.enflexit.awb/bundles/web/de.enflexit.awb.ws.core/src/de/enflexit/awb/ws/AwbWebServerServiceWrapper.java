@@ -84,7 +84,14 @@ public class AwbWebServerServiceWrapper {
 		}
 		return jettyConfigurationForEditing;
 	}
-	
+	/**
+	 * Allows to externally set the JettyConfiguration.
+	 * @param jettyConfigurationForEditing the new jetty configuration
+	 */
+	public void setJettyConfiguration(JettyConfiguration jettyConfigurationForEditing) {
+		this.jettyConfigurationForEditing = jettyConfigurationForEditing;
+		this.save();
+	}
 	
 	/**
 	 * Reverts the JettyConfiguration to the last stored file version.<br>
