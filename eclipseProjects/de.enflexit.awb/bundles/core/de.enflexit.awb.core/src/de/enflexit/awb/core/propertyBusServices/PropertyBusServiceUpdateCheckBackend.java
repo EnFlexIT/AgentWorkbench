@@ -43,10 +43,8 @@ public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 	public Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
-		if (arguments == null) return properties;
 		
-		boolean forceNewCheck = arguments.equalsIgnoreCase("true") ? true : false;
-		UpdateCheckCoordinatorBackend.getInstance().triggerCheck(forceNewCheck);
+		UpdateCheckCoordinatorBackend.getInstance().triggerCheck();
 		UpdateCheckStatusBackend status = UpdateCheckCoordinatorBackend.getInstance().getUpdateCheckStatusBackend();
 		if (status.isPending()) {
 			properties.setBooleanValue(PENDING, true);
