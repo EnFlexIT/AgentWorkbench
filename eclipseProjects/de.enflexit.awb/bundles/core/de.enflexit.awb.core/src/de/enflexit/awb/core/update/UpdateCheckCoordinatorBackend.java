@@ -48,19 +48,12 @@ public class UpdateCheckCoordinatorBackend {
      * Starts a thread which checks for newer bundles.
      * @param forceNewCheck the force new check
      */
-    public synchronized void triggerCheck(boolean forceNewCheck) {
+    public synchronized void triggerCheck() {
     	
     	if (workerThread != null) return;
     	
-    	long now = System.currentTimeMillis();
-    	if (forceNewCheck == false) {
-    		// --- workerThread is already running but not finished yet ---------------------------
-    		if (now < this.getUpdateCheckStatusBackend().getLastCheck() + AWBUpdater.UPDATE_CHECK_PERIOD) {
-    			return;
-    		}
-    	}
-    	
     	// --- Avoid to frequent checks ----------------------------------------------------------
+    	long now = System.currentTimeMillis();
     	if (now >= lastExecution + EXECUTION_WAIT_TIME) {
     		this.getUpdateCheckStatusBackend().setPending(true);
     		workerThread = new Thread(this::runBackendCheck,"P2-Update-Check-Thread");

@@ -48,7 +48,7 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getProperties(de.enflexit.common.properties.Properties, java.lang.String)
 	*/
 	@Override
-	public Properties getProperties(Properties properties, String arguments) {
+	public synchronized Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
 		
@@ -100,12 +100,25 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 				public void beginTask(String name, int totalWork) {
 					this.setTaskName(name);
 					PropertyBusServiceUpdateBackend.this.pmTotalWorkCount = totalWork;
+					PropertyBusServiceUpdateBackend.this.pmProgressCount =  0;
+					PropertyBusServiceUpdateBackend.this.pmProgressPercent = 0;
 				}
+
 				@Override
 				public void worked(int work) {
 					PropertyBusServiceUpdateBackend.this.pmProgressCount += work;
-					Long percentLong = Math.round(((double)PropertyBusServiceUpdateBackend.this.pmProgressCount / PropertyBusServiceUpdateBackend.this.pmTotalWorkCount) * 100.0);
-					PropertyBusServiceUpdateBackend.this.pmProgressPercent = percentLong.intValue();
+
+					if (PropertyBusServiceUpdateBackend.this.pmProgressCount > PropertyBusServiceUpdateBackend.this.pmTotalWorkCount) {
+						PropertyBusServiceUpdateBackend.this.pmProgressCount = PropertyBusServiceUpdateBackend.this.pmTotalWorkCount;
+					}
+					if (PropertyBusServiceUpdateBackend.this.pmTotalWorkCount > 0) {
+						Long percentLong = Math.round(((double) PropertyBusServiceUpdateBackend.this.pmProgressCount
+								/ PropertyBusServiceUpdateBackend.this.pmTotalWorkCount) * 100.0);
+						PropertyBusServiceUpdateBackend.this.pmProgressPercent = percentLong.intValue();
+					} else {
+						PropertyBusServiceUpdateBackend.this.pmProgressPercent = 0;
+					}
+
 				}
 				@Override
 				public void setTaskName(String name) {
@@ -117,8 +130,6 @@ public class PropertyBusServiceUpdateBackend implements PropertyBusService{
 				}
 				@Override
 				public void done() {
-					PropertyBusServiceUpdateBackend.this.pmTotalWorkCount = 0;
-					PropertyBusServiceUpdateBackend.this.pmProgressCount =  0;
 					PropertyBusServiceUpdateBackend.this.pmProgressPercent = 100;
 				}
 				
