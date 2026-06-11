@@ -16,6 +16,7 @@ import de.enflexit.common.fileConfiguration.UploadedFile;
 public class FileConfigurationServiceJettyConfiguration implements FileConfigurationService {
 
 	private FileProcessingResult fileProcessingResult;
+	private JettyConfiguration jettyConfig;
 	
 	
 	/* (non-Javadoc)
@@ -32,12 +33,14 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	@Override
 	public FileProcessingResult processFile(UploadedFile file2Process) {
 		
-		JettyConfiguration jettyConfig = JettyConfiguration.load(file2Process.getInputStream());
+		jettyConfig = JettyConfiguration.load(file2Process.getInputStream());
 
-		if (this.hasValidProperties(jettyConfig) == false) {
-			this.getFileProcessingResult().setSuccess(false);
+		this.validateProperties();
+		if (this.getFileProcessingResult().getErrorList().size() > 0) {
 			this.getFileProcessingResult().setMessage("Properties are not valid");
+			return this.getFileProcessingResult();
 		}
+		
 		this.getFileProcessingResult().setSuccess(true);
 		this.getFileProcessingResult().setMessage("Upload validated. Restarting server..");
 		new Thread(() -> applyJettyConfiguration(jettyConfig), "Server restart thread").start();
@@ -67,62 +70,16 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		this.fileProcessingResult = fileProcessingResult;
 	}
 	
-	/**
-	 * Checks for valid properties.
-	 *
-	 * @param jettyConfig the jetty config
-	 * @return true, if successful
-	 */
-	private boolean hasValidProperties(JettyConfiguration jettyConfig) {
-		
-		if (jettyConfig == null) this.getFileProcessingResult().addError("Jetty configuration could not be loaded");
-		if (jettyConfig.getServerName() == null || jettyConfig.getServerName().isBlank()) {
-			this.getFileProcessingResult().addError("Server name is empty");
-		}
-		
-		Boolean httpEnabled = this.getBool(jettyConfig, JettyConstants.HTTP_ENABLED);
-		Boolean httpsEnabled = this.getBool(jettyConfig, JettyConstants.HTTPS_ENABLED);
-		if (httpEnabled == null || httpsEnabled == null) {
-			return false;
-		}
-		if (httpEnabled == false && httpsEnabled == false) {
-			this.getFileProcessingResult().addError("http and https disabled");
-		}
-		
-		if (httpEnabled == true) {
-			Integer httpPort = this.getInt(jettyConfig, JettyConstants.HTTP_PORT);
-			if (httpPort == null) {
-				return false;
-			}
-			if (httpPort < 1024 || httpPort > 65535) {
-				this.getFileProcessingResult().addError("Invalid http port: " + httpPort);
-				return false;
-			}
-		}
-		if (httpsEnabled == true) {
-			Integer httpsPort = this.getInt(jettyConfig, JettyConstants.HTTPS_PORT);
-			if (httpsPort == null) {
-				return false;
-			}
-			if (httpsPort < 1024 || httpsPort > 65535) {
-				this.getFileProcessingResult().addError("Invalid http port: " + httpsPort);
-				return false;
-			}
-			String keystore = this.getString(jettyConfig, JettyConstants.SSL_KEYSTORE);
-			
-		}		
 
-		return true;
-	}
 
 	/**
 	 * Apply the jetty configuration and restart the server.
 	 * @param newJettyConfiguration the new JettyConfiguration
 	 */
 	private void applyJettyConfiguration(JettyConfiguration newJettyConfiguration) {
+		
 		try {
-			
-			// --- WEhy the fuck sleep now ? ----
+			// --- Wait for response to be sent -----------------------------------------
 			Thread.sleep(1000);
 			
 			String serverName = newJettyConfiguration.getServerName();
@@ -157,12 +114,136 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	}
 	
 	
-	private Boolean getBool(JettyConfiguration config, JettyConstants key) {
+	/**
+	 * Checks for valid properties.
+	 *
+	 * @param jettyConfig the jetty config
+	 * @return true, if successful
+	 */
+	private void validateProperties() {
+		
+		// --- General Checks -----------------------------------------------------------
+		if (jettyConfig == null) {
+			this.getFileProcessingResult().addError("Jetty configuration could not be loaded");
+			return;
+		}
+		if (jettyConfig.getServerName() == null || jettyConfig.getServerName().isBlank()) {
+			this.getFileProcessingResult().addError("Server name is empty");
+			return;
+		}
+		if (jettyConfig.getStartOn() == null) {
+			this.getFileProcessingResult().addError("StartOn not defined");
+		}
+		// ------------------------------------------------------------------------------
+		// --- HTTP/ HTTPS --------------------------------------------------------------
+		// ------------------------------------------------------------------------------
+		Boolean httpEnabled = this.getBool(JettyConstants.HTTP_ENABLED);
+		this.requireTrue(httpEnabled != null, JettyConstants.HTTP_ENABLED.getJettyKey()+ " is missing");
+		
+		boolean http = Boolean.TRUE.equals(httpEnabled);
+		Integer httpPort = this.getInt(JettyConstants.HTTPS_PORT);
 
-		JettyAttribute<?> attribute = config.get(key);
+		this.requireTrueIf(http == true, httpPort != null, JettyConstants.HTTP_PORT.getJettyKey() + "is missing");
+		this.requireTrueIf(http == true , httpPort != null && httpPort > 1024 && httpPort < 65535, JettyConstants.HTTP_PORT.getJettyKey() + " invalid: " + httpPort);
+		
+		Boolean httpsEnabled = this.getBool(JettyConstants.HTTPS_ENABLED);
+		this.requireTrue(httpsEnabled != null, JettyConstants.HTTPS_ENABLED.getJettyKey()+ " is missing");		
+		
+		boolean https = Boolean.TRUE.equals(httpsEnabled);
+		this.requireTrue(http || https, "Either http or https must be enabled");
+		
+		Integer httpsPort = this.getInt(JettyConstants.HTTPS_PORT);
+		this.requireTrueIf(https == true, httpsPort != null, "https enabled but" + JettyConstants.HTTPS_PORT.getJettyKey() +"  is missing");
+		this.requireTrueIf(https == true && httpsPort != null, httpsPort > 1024 && httpsPort < 65535, JettyConstants.HTTPS_PORT.getJettyKey() + " invalid: " + httpsPort);
+
+		String keystore = this.getString(JettyConstants.SSL_KEYSTORE);
+		this.requireTrueIf(https == true, keystore != null, JettyConstants.SSL_KEYSTORE.getJettyKey() + " is missing");
+		
+		String sslKeyPassword = this.getString(JettyConstants.SSL_KEYPASSWORD);
+		this.requireTrueIf(https == true, sslKeyPassword != null, JettyConstants.SSL_KEYPASSWORD.getJettyKey() + " is missing");
+		
+		String sslProtocol = this.getString(JettyConstants.SSL_PROTOCOL);
+		this.requireTrueIf(https == true, sslProtocol != null, JettyConstants.SSL_PROTOCOL.getJettyKey() + " is missing");
+		
+		
+		// ------------------------------------------------------------------------------
+		// --- Thread limits ------------------------------------------------------------
+		Integer minThreads = this.getInt(JettyConstants.HTTP_MINTHREADS);
+		Integer maxThreads = this.getInt(JettyConstants.HTTP_MAXTHREADS);
+		
+		this.requireTrueIf(http == true, minThreads != null, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " is missing");
+		this.requireTrueIf(http == true, maxThreads != null, JettyConstants.HTTP_MAXTHREADS.getJettyKey() + " is missing");
+		
+		this.requireTrueIf(http == true && maxThreads != null, maxThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
+		
+		this.requireTrueIf(http == true && minThreads != null, minThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
+		this.requireTrueIf(http == true && minThreads != null && maxThreads != null, minThreads < maxThreads, "minThreads can't be smaller than maxThreads");		
+		
+		// ------------------------------------------------------------------------------
+		// --- CORS ---------------------------------------------------------------------
+		Boolean corsEnabled = this.getBool(JettyConstants.CORS_ENABLED);
+		this.requireTrue(corsEnabled != null, JettyConstants.CORS_ENABLED.getJettyKey() + " is missing");
+		
+		boolean cors = Boolean.TRUE.equals(corsEnabled);
+		
+		String corsOrigins = this.getString(JettyConstants.CORS_ALLOWED_ORIGINS_PARAM);
+		this.requireTrueIf(cors == true, corsOrigins != null, "cors enabled but " + JettyConstants.CORS_ALLOWED_ORIGINS_PARAM.getJettyKey() + " is missing");
+
+		String corsMethods = this.getString(JettyConstants.CORS_ALLOWED_METHODS_PARAM);
+		this.requireTrueIf(cors == true, corsMethods != null, "cors enabled but " + JettyConstants.CORS_ALLOWED_METHODS_PARAM.getJettyKey() + " is missing");
+		
+		String corsHeaders = this.getString(JettyConstants.CORS_ALLOWED_HEADERS_PARAM);
+		this.requireTrueIf(cors == true, corsHeaders != null, "cors enabled but " + JettyConstants.CORS_ALLOWED_HEADERS_PARAM.getJettyKey() + " is missing");
+		
+	}
+
+	// ----------------------------------------------------------------------------------
+	// --- Helper methods for validation ------------------------------------------------
+	// ----------------------------------------------------------------------------------
+	
+	/**
+	 * Adds the errorMessage if the expression is false while the condition is true.
+	 *
+	 * @param condition the condition determining if the expression must be true
+	 * @param expression2validate the expression which must be true if the condition is true
+	 * @param errorMessage the error message to add if the expression is false
+	 */
+	private void requireTrueIf(boolean condition, boolean expression2validate, String errorMessage) {
+	    if (condition == true && expression2validate == false) {
+	        this.getFileProcessingResult().addError(errorMessage);
+	    }
+	}
+	
+	/**
+	 * Adds the errorMessage if the condition is false
+	 *
+	 * @param condition the condition
+	 * @param errorMessage the message
+	 */
+	private void requireTrue(Boolean condition, String errorMessage) {
+	    if (condition == false) {
+	        this.getFileProcessingResult().addError(errorMessage);
+	    }
+	}
+
+	
+	//-----------------------------------------------------------------------------------
+	// --- From here, helper methods for extracting values ------------------------------
+	//-----------------------------------------------------------------------------------
+	
+	/**
+	 * Returns the Boolean value of the JettyAttribute corresponding 
+	 * to the specified key, or null, if the attribute can't be found 
+	 * or the value not parsed.
+	 *
+	 * @param key the key
+	 * @return the Boolean value of the jettyAttribute corresponding to the specified key
+	 */
+	private Boolean getBool(JettyConstants key) {
+
+		JettyAttribute<?> attribute = jettyConfig.get(key);
 
 		if (attribute == null || attribute.getValue() == null) {
-			this.getFileProcessingResult().addError("No value found for key: " + key);
 			return null;
 		}
 
@@ -180,12 +261,19 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		this.getFileProcessingResult().addError("Invalid boolean value for key: " + key + " (" + value + ")");
 		return null;
 	}
-	
-	private String getString(JettyConfiguration jettyConfig, JettyConstants key) {
+
+	/**
+	 * Returns the String value of the JettyAttribute corresponding 
+	 * to the specified key, or null, if the attribute can't be found 
+	 * or is not of type String.
+	 *
+	 * @param key the key
+	 * @return the String value of the jettyAttribute corresponding to the specified key
+	 */
+	private String getString(JettyConstants key) {
 		
 		JettyAttribute<?> attribute = jettyConfig.get(key);
 		if (attribute == null || attribute.getValue() == null) {
-			this.getFileProcessingResult().addError("No attribute found for the key: "+ key);
 			return null;
 		}
 		Object value = attribute.getValue();
@@ -196,12 +284,19 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		return null;
 	}
 	
-	private Integer getInt(JettyConfiguration config, JettyConstants key) {
+	/**
+	 * Returns the Integer value of the JettyAttribute corresponding 
+	 * to the specified key, or null, if the attribute can't be found 
+	 * or is not a number/ parseable String.
+	 *
+	 * @param key the key
+	 * @return the Boolean value of the jettyAttribute corresponding to the specified key
+	 */	
+	private Integer getInt(JettyConstants key) {
 
-	    JettyAttribute<?> attribute = config.get(key);
+	    JettyAttribute<?> attribute = jettyConfig.get(key);
 
 	    if (attribute == null || attribute.getValue() == null) {
-	        this.getFileProcessingResult().addError("No value found for key: " + key);
 	        return null;
 	    }
 

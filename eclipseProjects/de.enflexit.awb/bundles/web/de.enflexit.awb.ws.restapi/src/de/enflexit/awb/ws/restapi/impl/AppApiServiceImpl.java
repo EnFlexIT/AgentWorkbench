@@ -325,14 +325,22 @@ public class AppApiServiceImpl extends AppApiService {
     	// --- Prepare the file for processing ------------------------------------------
     	String fileName = _fileBodypart.getContentDisposition().getFileName();
     	String mediaType = _fileBodypart.getMediaType().toString();
-    	InputStream body = _fileBodypart.getEntityAs(InputStream.class);
-    	UploadedFile uploadedFile = new UploadedFile(fileName, mediaType, body);
+    	InputStream inputStream = _fileBodypart.getEntityAs(InputStream.class);
+    	UploadedFile uploadedFile = new UploadedFile(fileName, mediaType, inputStream);
     	// --- Process the file ---------------------------------------------------------
     	FileProcessingResult result = FileConfigurationServiceManager.getInstance().processFile(xPerformative, uploadedFile);
     	
     	// --- Return the result --------------------------------------------------------
     	Message message = new Message();
-    	message.setMessage(result.getMessage());
+    	// --- If errors ocurred, add them to the message -------------------------------
+    	if (result.getErrorList().size() > 0) {
+    		String errors = String.join(", ", result.getErrorList());
+    		message.setMessage(result.getMessage()+ ": " + errors);
+
+    	} else {
+    		message.setMessage(result.getMessage());
+    	}
+    	
     	message.setDateTime(System.currentTimeMillis()+"");
     	message.setMessageType(MessageType.INFO);
     	
