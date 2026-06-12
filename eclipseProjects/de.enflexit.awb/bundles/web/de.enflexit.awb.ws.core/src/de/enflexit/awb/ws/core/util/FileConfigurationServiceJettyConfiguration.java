@@ -50,28 +50,8 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		this.setFileProcessingResult(null);
 		return fpr;
 	}
-	
-	
-	/**
-	 * Returns the file processing result.
-	 * @return the file processing result
-	 */
-	private FileProcessingResult getFileProcessingResult() {
-		if (fileProcessingResult==null) {
-			fileProcessingResult = new FileProcessingResult();
-		}
-		return fileProcessingResult;
-	}
-	/**
-	 * Sets the file processing result.
-	 * @param fileProcessingResult the new file processing result
-	 */
-	private void setFileProcessingResult(FileProcessingResult fileProcessingResult) {
-		this.fileProcessingResult = fileProcessingResult;
-	}
-	
 
-
+	
 	/**
 	 * Apply the jetty configuration and restart the server.
 	 * @param newJettyConfiguration the new JettyConfiguration
@@ -80,21 +60,21 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		
 		try {
 			// --- Wait for response to be sent -----------------------------------------
-			Thread.sleep(1000);
-			
-			String serverName = newJettyConfiguration.getServerName();
-			AwbWebServerServiceWrapper serviceWrapped = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(serverName);
-			if (serviceWrapped==null) return;
-			
-			JettyConfiguration oldJettyConfiguration = serviceWrapped.getJettyConfiguration(); 
-			if (this.startServer(newJettyConfiguration)==false) {
-				this.startServer(oldJettyConfiguration);
-			}
-			
+			Thread.sleep(500);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		String serverName = newJettyConfiguration.getServerName();
+		AwbWebServerServiceWrapper serviceWrapped = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(serverName);
+		if (serviceWrapped == null) return;
+
+		JettyConfiguration oldJettyConfiguration = serviceWrapped.getJettyConfiguration();
+		if (this.startServer(newJettyConfiguration) == false) {
+			this.startServer(oldJettyConfiguration);
+		}
+			
 	}
+	
 	
 	/**
 	 * Starts a Jetty server based on the specified JettyConfiguration.
@@ -115,10 +95,10 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	
 	
 	/**
-	 * Checks for valid properties.
+	 * Checks for valid properties. Error messages are stored within
+	 * the fileProcessingresult.
 	 *
 	 * @param jettyConfig the jetty config
-	 * @return true, if successful
 	 */
 	private void validateProperties() {
 		
@@ -134,17 +114,19 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		if (jettyConfig.getStartOn() == null) {
 			this.getFileProcessingResult().addError("StartOn not defined");
 		}
+		
 		// ------------------------------------------------------------------------------
 		// --- HTTP/ HTTPS --------------------------------------------------------------
 		// ------------------------------------------------------------------------------
+		
 		Boolean httpEnabled = this.getBool(JettyConstants.HTTP_ENABLED);
 		this.requireTrue(httpEnabled != null, JettyConstants.HTTP_ENABLED.getJettyKey()+ " is missing");
 		
 		boolean http = Boolean.TRUE.equals(httpEnabled);
-		Integer httpPort = this.getInt(JettyConstants.HTTPS_PORT);
+		Integer httpPort = this.getInt(JettyConstants.HTTP_PORT);
 
 		this.requireTrueIf(http == true, httpPort != null, JettyConstants.HTTP_PORT.getJettyKey() + "is missing");
-		this.requireTrueIf(http == true , httpPort != null && httpPort > 1024 && httpPort < 65535, JettyConstants.HTTP_PORT.getJettyKey() + " invalid: " + httpPort);
+		this.requireTrueIf(http == true , httpPort != null && (httpPort > 1024 && httpPort < 65535), JettyConstants.HTTP_PORT.getJettyKey() + " invalid: " + httpPort);
 		
 		Boolean httpsEnabled = this.getBool(JettyConstants.HTTPS_ENABLED);
 		this.requireTrue(httpsEnabled != null, JettyConstants.HTTPS_ENABLED.getJettyKey()+ " is missing");		
@@ -154,7 +136,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		
 		Integer httpsPort = this.getInt(JettyConstants.HTTPS_PORT);
 		this.requireTrueIf(https == true, httpsPort != null, "https enabled but" + JettyConstants.HTTPS_PORT.getJettyKey() +"  is missing");
-		this.requireTrueIf(https == true && httpsPort != null, httpsPort > 1024 && httpsPort < 65535, JettyConstants.HTTPS_PORT.getJettyKey() + " invalid: " + httpsPort);
+		this.requireTrueIf(https == true, httpsPort != null && (httpsPort > 1024 && httpsPort < 65535), JettyConstants.HTTPS_PORT.getJettyKey() + " invalid: " + httpsPort);
 
 		String keystore = this.getString(JettyConstants.SSL_KEYSTORE);
 		this.requireTrueIf(https == true, keystore != null, JettyConstants.SSL_KEYSTORE.getJettyKey() + " is missing");
@@ -168,19 +150,23 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		
 		// ------------------------------------------------------------------------------
 		// --- Thread limits ------------------------------------------------------------
+		// ------------------------------------------------------------------------------
+		
 		Integer minThreads = this.getInt(JettyConstants.HTTP_MINTHREADS);
 		Integer maxThreads = this.getInt(JettyConstants.HTTP_MAXTHREADS);
 		
 		this.requireTrueIf(http == true, minThreads != null, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " is missing");
 		this.requireTrueIf(http == true, maxThreads != null, JettyConstants.HTTP_MAXTHREADS.getJettyKey() + " is missing");
 		
-		this.requireTrueIf(http == true && maxThreads != null, maxThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
+		this.requireTrueIf(http == true, maxThreads != null && maxThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
 		
-		this.requireTrueIf(http == true && minThreads != null, minThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
-		this.requireTrueIf(http == true && minThreads != null && maxThreads != null, minThreads < maxThreads, "minThreads can't be smaller than maxThreads");		
+		this.requireTrueIf(http == true, minThreads != null && minThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
+		this.requireTrueIf(http == true , (minThreads != null && maxThreads != null) &&  (minThreads < maxThreads), "minThreads can't be smaller than maxThreads");		
 		
 		// ------------------------------------------------------------------------------
 		// --- CORS ---------------------------------------------------------------------
+		// ------------------------------------------------------------------------------
+		
 		Boolean corsEnabled = this.getBool(JettyConstants.CORS_ENABLED);
 		this.requireTrue(corsEnabled != null, JettyConstants.CORS_ENABLED.getJettyKey() + " is missing");
 		
@@ -197,6 +183,25 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		
 	}
 
+	
+	/**
+	 * Returns the file processing result.
+	 * @return the file processing result
+	 */
+	private FileProcessingResult getFileProcessingResult() {
+		if (fileProcessingResult==null) {
+			fileProcessingResult = new FileProcessingResult();
+		}
+		return fileProcessingResult;
+	}
+	/**
+	 * Sets the file processing result.
+	 * @param fileProcessingResult the new file processing result
+	 */
+	private void setFileProcessingResult(FileProcessingResult fileProcessingResult) {
+		this.fileProcessingResult = fileProcessingResult;
+	}
+	
 	// ----------------------------------------------------------------------------------
 	// --- Helper methods for validation ------------------------------------------------
 	// ----------------------------------------------------------------------------------
