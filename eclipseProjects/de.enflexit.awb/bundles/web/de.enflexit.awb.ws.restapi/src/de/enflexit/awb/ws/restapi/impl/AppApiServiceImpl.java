@@ -322,28 +322,42 @@ public class AppApiServiceImpl extends AppApiService {
     	if (principal==null) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
     	}
+    	Message message = new Message();
+    	
+    	// --- Check if there is a performative -----------------------------------------
+    	if (xPerformative == null || xPerformative.isBlank()) {
+    		message.setDateTime(System.currentTimeMillis()+"");
+    		message.setMessage("Performative is missing");
+    		message.setMessageType(MessageType.ERROR);
+        	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
+    	}
+    	
     	// --- Prepare the file for processing ------------------------------------------
     	String fileName = _fileBodypart.getContentDisposition().getFileName();
     	String mediaType = _fileBodypart.getMediaType().toString();
     	InputStream inputStream = _fileBodypart.getEntityAs(InputStream.class);
     	UploadedFile uploadedFile = new UploadedFile(fileName, mediaType, inputStream);
+    	
     	// --- Process the file ---------------------------------------------------------
     	FileProcessingResult result = FileConfigurationServiceManager.getInstance().processFile(xPerformative, uploadedFile);
     	
-    	// --- Build return message -----------------------------------------------------
-    	Message message = new Message();
-    	// --- If errors ocurred, add them to the message -------------------------------
+    	// --- Evaluate and return the result -------------------------------------------
+    	if (result.isSuccess() == true) {
+    		message.setMessageType(MessageType.INFO);
+    	} else {
+    		message.setMessageType(MessageType.WARNING);
+    	}
+    	
+    	// --- If errors occurred, add them to the message ------------------------------
     	if (result.getErrorList().size() > 0) {
     		String errors = String.join(", ", result.getErrorList());
-    		message.setMessage(result.getMessage() + errors);
+    		message.setMessage(result.getMessage() + " " + errors);
 
     	} else {
     		message.setMessage(result.getMessage());
     	}
     	
     	message.setDateTime(System.currentTimeMillis()+"");
-    	message.setMessageType(MessageType.INFO);
-    	
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     }
     
