@@ -330,12 +330,12 @@ public class AppApiServiceImpl extends AppApiService {
     	// --- Process the file ---------------------------------------------------------
     	FileProcessingResult result = FileConfigurationServiceManager.getInstance().processFile(xPerformative, uploadedFile);
     	
-    	// --- Return the result --------------------------------------------------------
+    	// --- Build return message -----------------------------------------------------
     	Message message = new Message();
     	// --- If errors ocurred, add them to the message -------------------------------
     	if (result.getErrorList().size() > 0) {
     		String errors = String.join(", ", result.getErrorList());
-    		message.setMessage(result.getMessage()+ ": " + errors);
+    		message.setMessage(result.getMessage() + errors);
 
     	} else {
     		message.setMessage(result.getMessage());

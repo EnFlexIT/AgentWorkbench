@@ -33,22 +33,30 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	@Override
 	public FileProcessingResult processFile(UploadedFile file2Process) {
 		
+		// --- Server just restarted, just giving back the result -----------------------
+		if (fileProcessingResult != null) {
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.setFileProcessingResult(null);
+			return fpr;
+			
+		}
+		
 		jettyConfig = JettyConfiguration.load(file2Process.getInputStream());
 
 		this.validateProperties();
+		// --- Set results based on validation ------------------------------------------
 		if (this.getFileProcessingResult().getErrorList().size() > 0) {
-			this.getFileProcessingResult().setMessage("Properties are not valid");
+			this.getFileProcessingResult().setMessage("Error while validating: ");
 			return this.getFileProcessingResult();
 		}
 		
 		this.getFileProcessingResult().setSuccess(true);
 		this.getFileProcessingResult().setMessage("Upload validated. Restarting server..");
+		// --- Try to apply the configuration and restart the server --------------------
 		new Thread(() -> applyJettyConfiguration(jettyConfig), "Server restart thread").start();
 
-		// --- Get return value ---------------------------
-		FileProcessingResult fpr = this.getFileProcessingResult();
-		this.setFileProcessingResult(null);
-		return fpr;
+		// --- Get return value ---------------------------------------------------------
+		return this.getFileProcessingResult();
 	}
 
 	
@@ -69,9 +77,15 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		if (serviceWrapped == null) return;
 
 		JettyConfiguration oldJettyConfiguration = serviceWrapped.getJettyConfiguration();
-		if (this.startServer(newJettyConfiguration) == false) {
-			this.startServer(oldJettyConfiguration);
+		if (this.restartServer(newJettyConfiguration) == false) {
+			this.getFileProcessingResult().setSuccess(false);
+			this.getFileProcessingResult().setMessage("Error while restarting the server. Reverting back to old configuration.");
+			this.restartServer(oldJettyConfiguration);
+		} else {
+			this.getFileProcessingResult().setSuccess(true);
+			this.getFileProcessingResult().setMessage("New configuration applied.");
 		}
+		
 			
 	}
 	
@@ -82,7 +96,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	 * @param jettyConfiguration the jetty configuration
 	 * @return true, if successful
 	 */
-	private boolean startServer(JettyConfiguration jettyConfiguration) {
+	private boolean restartServer(JettyConfiguration jettyConfiguration) {
 		
 		String serverName = jettyConfiguration.getServerName();
 		

@@ -1,5 +1,7 @@
 package de.enflexit.common.fileConfiguration;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -72,10 +74,31 @@ public class UploadedFile {
 		return inputStream;
 	}
 	/**
-	 * Sets the input stream.
+	 * Sets the input stream. Will be set to null
+	 * if the inputStream has no data.
 	 * @param inputStream the inputStream to set
 	 */
 	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
+		
+		try {
+			byte[] data = inputStream.readAllBytes();
+			if (data.length == 0) {
+				this.inputStream = null;
+			} else {
+				this.inputStream = new ByteArrayInputStream(data);
+			}
+		} catch (IOException ioExceptionRead) {
+			ioExceptionRead.printStackTrace();
+
+		} finally {
+			
+			try {
+				if (inputStream != null) inputStream.close();
+				
+			} catch (IOException ioExceptionClose) {
+				ioExceptionClose.printStackTrace();
+			}
+		}
 	}
+	
 }

@@ -114,12 +114,7 @@ public class FileConfigurationServiceManager {
 			result.addError("Invalid performative");
 			return result;
 		}
-		// --- Check if there is a file -------------------------------------------------
-		if (file2Process.getInputStream() == null) {
-			result.setMessage("File could not be processed");
-			result.addError("File is missing");
-			return result;
-		}
+
 		// --- Process the file and return the result -----------------------------------
 		result = fcs.processFile(file2Process);
 		return result;
