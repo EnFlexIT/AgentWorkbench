@@ -404,6 +404,19 @@
 			</dependencies>
 		</location>
 
+		<!-- Dependencies for websocket server -->
+		<location includeConfigurePhase="true" includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
+			<dependency>
+				<groupId>org.eclipse.jetty.ee10.websocket</groupId>
+				<artifactId>jetty-ee10-websocket-jakarta-server</artifactId>
+				<version>12.1.8</version>
+			</dependency>
+			<dependency>
+				<groupId>jakarta.websocket</groupId>
+			    <artifactId>jakarta.websocket-api</artifactId>
+			    <version>2.1.1</version>
+			</dependency>
+		</location>
 
 		<!-- Integration of latest Jersey version compatible to Jetty -->
 		<location includeConfigurePhase="true" includeDependencyDepth="infinite" includeDependencyScopes="compile" includeSource="true" missingManifest="generate" type="Maven">
