@@ -33,6 +33,7 @@ import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
 import de.enflexit.awb.core.update.AWBUpdater;
+import de.enflexit.awb.core.update.MaintenanceScheduler;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -77,8 +78,6 @@ public class Application {
 	private static AwbConsole console;
 	/** In case that a log file has to be written */
 	private static ShutdownThread shutdownThread;
-	/** Checks for updates on a fixed interval */
-	private static MaintenanceScheduler maintenanceScheduler;
 	/** With this attribute/class the agent platform (JADE) will be controlled. */
 	private static Platform jadePlatform;
 		
@@ -184,36 +183,6 @@ public class Application {
 			shutdownThread.stopObserving();
 		}
 		shutdownThread = newShutdownThread;
-	}
-	
-	/**
-	 * Starts the maintenance scheduler to automatically 
-	 * check for updates.
-	 */
-	public static void startMaintenanceScheduler() {
-		if (maintenanceScheduler == null) {
-			maintenanceScheduler = new MaintenanceScheduler();
-			maintenanceScheduler.start();
-		}
-	}
-
-	/**
-	 * Stops the maintenance scheduler.
-	 */
-	public static void stopMaintenanceScheduler() {
-		if (maintenanceScheduler != null) {
-			maintenanceScheduler.stop();
-		}
-		 maintenanceScheduler = null;
-	}
-	
-	/**
-	 * Returns the maintenance scheduler.
-	 *
-	 * @return the maintenance scheduler
-	 */
-	public static MaintenanceScheduler getMaintenanceScheduler() {
-		return maintenanceScheduler;
 	}
 	
 	/**
@@ -595,7 +564,10 @@ public class Application {
 				return;
 			}
 		}
-		
+		// --- Start maintenance thread -----------------------------
+		if (Application.getGlobalInfo().getUpdateAutoConfiguration() == AWBUpdater.UPDATE_MODE_AUTOMATIC) {
+			MaintenanceScheduler.getInstance().startSchedulingUpdateChecks();
+		}	
 		// ----------------------------------------------------------		
 		// --- Start Agent.Workbench as defined by 'ExecutionMode' --
 		// ----------------------------------------------------------
@@ -627,10 +599,7 @@ public class Application {
 					AWBUpdater updater = new AWBUpdater();
 					updater.start();
 					updater.waitForUpdate();
-					// --- Start maintenance thread -----------------
-					if (Application.getGlobalInfo().getUpdateAutoConfiguration() == AWBUpdater.UPDATE_MODE_AUTOMATIC) {
-						Application.startMaintenanceScheduler();
-					}
+
 					// --- Open project? ----------------------------
 					Application.proceedStartArgumentOpenProject();
 					
