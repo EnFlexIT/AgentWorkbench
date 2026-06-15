@@ -37,6 +37,7 @@ import de.enflexit.awb.core.jade.JadeUrlConfiguration;
 import de.enflexit.awb.core.project.PlatformJadeConfig;
 import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
 import de.enflexit.awb.core.project.Project;
+import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.simulation.environment.time.TimeModel;
 import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.common.ExecutionEnvironment;
@@ -1708,11 +1709,19 @@ public class GlobalInfo implements ZoneIdResolver {
 	}
 
 	/**
-	 * Sets the update auto configuration.
+	 * Sets the update auto configuration. Will start a maintenance thread
+	 * if set to {@code AWBUpdater.UPDATE_MODE_AUTOMATIC} and stop the thread
+	 * else.
 	 * @param updateAutoConfiguration the new update auto configuration
 	 */
 	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
 		this.updateAutoConfiguration = updateAutoConfiguration;
+		
+		if (updateAutoConfiguration == AWBUpdater.UPDATE_MODE_AUTOMATIC && Application.getMaintenanceScheduler() == null) {
+			Application.startMaintenanceScheduler();
+		} else if(updateAutoConfiguration != AWBUpdater.UPDATE_MODE_AUTOMATIC) {
+			Application.stopMaintenanceScheduler();
+		}
 	}
 	/**
 	 * Returns the update auto configuration.
