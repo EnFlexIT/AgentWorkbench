@@ -1,4 +1,4 @@
-package de.enflexit.awb.ws.core.util;
+package de.enflexit.awb.ws.core.websocket;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
