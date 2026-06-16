@@ -1,5 +1,8 @@
 package de.enflexit.logging;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 
@@ -9,10 +12,23 @@ import ch.qos.logback.core.AppenderBase;
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
+@Component
 public class WebSocketAppender extends AppenderBase<ILoggingEvent> {
 
-	private static LogTransportService logTransportService;
+	private volatile LogTransportService logTransportService;
 	
+	@Reference
+	void setTransportService(LogTransportService logTransportService) {
+		System.out.println("Transport service successfully set.");
+		this.logTransportService = logTransportService;
+	}
+
+	public void unsetTransportService(LogTransportService transport) {
+		if (this.logTransportService == transport) {
+			this.logTransportService = null;
+		}
+	}
+
 	
 	/* (non-Javadoc)
 	* @see ch.qos.logback.core.AppenderBase#append(java.lang.Object)
@@ -22,6 +38,7 @@ public class WebSocketAppender extends AppenderBase<ILoggingEvent> {
 		super.start();
 		addInfo("Websocket appender started");
 	}
+	
 	
 	/* (non-Javadoc)
 	* @see ch.qos.logback.core.AppenderBase#append(java.lang.Object)

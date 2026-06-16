@@ -5,6 +5,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-SymbolicName: de.enflexit.logging
 Bundle-Name: SLF4J + Logback
 Bundle-Version: 1.5.26.qualifier
+Service-Component: OSGI-INF/WebSocketAppender.xml
 Export-Package: ch.qos.logback.classic;version="1.5.26",
  ch.qos.logback.classic.boolex;version="1.5.26",
  ch.qos.logback.classic.db;version="1.2.11.1",
