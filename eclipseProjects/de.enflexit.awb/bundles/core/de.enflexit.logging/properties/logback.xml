@@ -7,8 +7,17 @@
 		</encoder>
 	</appender>
 	
+    <appender name="WS" class="de.enflexit.logging.WebSocketAppender"/>
+    	
+	<appender name="ASYNC_WS" class="ch.qos.logback.classic.AsyncAppender">
+	    <queueSize>500</queueSize>
+	    <discardingThreshold>0</discardingThreshold>
+	    <appender-ref ref="WS"/>
+	</appender>
+    	
 	<root level="WARN">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="ASYNC_WS" />
     </root>
     
     <logger name="de.enflexit.common.p2" level="error" />
