@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Class LogTransportServiceRegistry.
+ * This class manages log transport services. It receives log
+ * messages from the @see TransportAppender and sends them to every
+ * registered LogTransportService.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
@@ -30,7 +32,7 @@ public class LogTransportServiceRegistry {
 	 *
 	 * @param transportService2Register the transport service to register
 	 */
-	public static void register(LogTransportService transportService2Register) {
+	public static void registerTransportService(LogTransportService transportService2Register) {
 		getLogTransportServices().add(transportService2Register);
 	}
 
@@ -39,7 +41,7 @@ public class LogTransportServiceRegistry {
 	 *
 	 * @param transportService2Remove the transport service to remove from registry
 	 */
-	public static void unregister(LogTransportService transportService2Remove) {
+	public static void unregisterTransportService(LogTransportService transportService2Remove) {
 		getLogTransportServices().remove(transportService2Remove);
 	}
 

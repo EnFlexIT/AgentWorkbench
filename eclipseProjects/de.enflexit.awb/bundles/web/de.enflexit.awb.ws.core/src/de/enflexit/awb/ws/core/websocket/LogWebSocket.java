@@ -5,12 +5,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.websocket.OnClose;
+import jakarta.websocket.OnError;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
 /**
- * The Class LogWebSocket.
+ * The Class LogWebSocket is used to send log messages 
+ * to connected clients via websocket.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
@@ -20,7 +22,7 @@ public class LogWebSocket {
 	private static final Set<Session> sessions = ConcurrentHashMap.newKeySet();
 	
 	/**
-	 * Called whenever a new web socket session is opened
+	 * Called whenever a new websocket session is opened
 	 *
 	 * @param session the session to add
 	 */
@@ -31,7 +33,7 @@ public class LogWebSocket {
 	}
 	
 	/**
-	 * Called whenever a web socket session is closed.
+	 * Called whenever a websocket session is closed.
 	 *
 	 * @param session the session to remove
 	 */
@@ -42,18 +44,34 @@ public class LogWebSocket {
 	}
 	
 	/**
+	 * Called when a websocket related error occurs.
+	 *
+	 * @param session the session
+	 * @param error the error
+	 */
+	@OnError
+	public void onError(Session session, Throwable error) {
+		//TODO How to handle errors? Websocket usually throws a
+		//ClosedChannelException when the server stops. 
+		System.out.println("Error in websocket");
+	}
+	
+	/**
 	 * Attempts to close all open sessions.
 	 */
-	public static void shutdown() {
+	public static void closeAllSessions() {
+		
 		for (Session session: sessions) {
 			if (session.isOpen()) {
 				try {
 					session.close();
+					
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				}
 			}
 		}
+		
 	}
 	
 	/**

@@ -17,33 +17,9 @@ public class TransportAppender extends AppenderBase<ILoggingEvent> {
 	* @see ch.qos.logback.core.AppenderBase#append(java.lang.Object)
 	*/
 	@Override
-	public void start() {
-		super.start();
-	}
-	
-	/* (non-Javadoc)
-	* @see ch.qos.logback.core.AppenderBase#append(java.lang.Object)
-	*/
-	@Override
 	protected void append(ILoggingEvent event) {
-		String message = format(event);
-		LogTransportServiceRegistry.send(message);
+		LogTransportServiceRegistry.send(event.getFormattedMessage());
 	}
 
-    /**
-     * Returns a formatted String representation
-     * of the passed ILoggingEvent.
-     *
-     * @param iLoggingEvent the event to format
-     * @return the formatted string
-     */
-    private String format(ILoggingEvent iLoggingEvent) {
-        return String.format(
-            "[%s] %s - %s",
-            iLoggingEvent.getLevel(),
-            iLoggingEvent.getLoggerName(),
-            iLoggingEvent.getFormattedMessage()
-        );
-    }
 
 }

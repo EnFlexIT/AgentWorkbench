@@ -7,17 +7,20 @@
 		</encoder>
 	</appender>
 	
-    <appender name="WS" class="de.enflexit.logging.TransportAppender"/>
-    	
-	<appender name="ASYNC_WS" class="ch.qos.logback.classic.AsyncAppender">
+    <appender name="Transport" class="de.enflexit.logging.TransportAppender"/>
+    	<encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{48} - %msg%n</pattern>
+		</encoder>
+		
+	<appender name="ASYNC_Transport" class="ch.qos.logback.classic.AsyncAppender">
 	    <queueSize>500</queueSize>
 	    <discardingThreshold>0</discardingThreshold>
-	    <appender-ref ref="WS"/>
+	    <appender-ref ref="Transport"/>
 	</appender>
     	
 	<root level="WARN">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="ASYNC_WS" />
+        <appender-ref ref="ASYNC_Transport" />
     </root>
     
     <logger name="de.enflexit.common.p2" level="error" />
