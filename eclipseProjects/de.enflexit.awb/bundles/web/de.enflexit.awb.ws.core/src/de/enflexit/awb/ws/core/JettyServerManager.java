@@ -46,7 +46,9 @@ import de.enflexit.awb.ws.core.security.SecurityHandlerService;
 import de.enflexit.awb.ws.core.session.AWBSessionHandler;
 import de.enflexit.awb.ws.core.session.UserSessionStore;
 import de.enflexit.awb.ws.core.util.MonitoringFilter;
+import de.enflexit.awb.ws.core.websocket.LogWebSocket;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
+import de.enflexit.logging.LogTransportServiceRegistry;
 
 /**
  * The Singleton <i>JettyServerManager</i> is used to control the start of {@link Server} instances
@@ -835,7 +837,10 @@ public class JettyServerManager {
 		try {
 			// --- Stop the server ----------------------------------
 			server.stop();
-			// --- Remove security handler -------------------------
+			// --- Shut down open websocket sessions ----------------
+			LogWebSocket.shutdown();
+			LogTransportServiceRegistry.unregister(null);
+			// --- Remove security handler --------------------------
 			List<Handler> handlerList = server.getHandlers();
 			this.removeSecurityHandler(handlerList);
 			this.removeCorsFilter(handlerList);

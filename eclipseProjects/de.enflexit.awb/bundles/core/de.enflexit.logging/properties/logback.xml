@@ -7,7 +7,7 @@
 		</encoder>
 	</appender>
 	
-    <appender name="WS" class="de.enflexit.logging.WebSocketAppender"/>
+    <appender name="WS" class="de.enflexit.logging.TransportAppender"/>
     	
 	<appender name="ASYNC_WS" class="ch.qos.logback.classic.AsyncAppender">
 	    <queueSize>500</queueSize>

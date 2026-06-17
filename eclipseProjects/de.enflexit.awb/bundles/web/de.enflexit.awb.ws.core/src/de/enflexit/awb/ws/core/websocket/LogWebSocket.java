@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.websocket;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,21 +20,20 @@ public class LogWebSocket {
 	private static final Set<Session> sessions = ConcurrentHashMap.newKeySet();
 	
 	/**
-	 * On open.
+	 * Called whenever a new web socket session is opened
 	 *
-	 * @param session the session
+	 * @param session the session to add
 	 */
 	@OnOpen
 	public void onOpen(Session session) {
 		sessions.add(session);
-
 		session.getAsyncRemote().sendText("Hello from server");
 	}
 	
 	/**
-	 * On close.
+	 * Called whenever a web socket session is closed.
 	 *
-	 * @param session the session
+	 * @param session the session to remove
 	 */
 	@OnClose
 	public void onClose(Session session) {
@@ -42,9 +42,24 @@ public class LogWebSocket {
 	}
 	
 	/**
-	 * Broadcast.
+	 * Attempts to close all open sessions.
+	 */
+	public static void shutdown() {
+		for (Session session: sessions) {
+			if (session.isOpen()) {
+				try {
+					session.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Broadcasts the message to all open sessions.
 	 *
-	 * @param message the message
+	 * @param message the message to broadcast
 	 */
 	public static void broadcast(String message) {
 	    System.out.println("Broadcast to " + sessions.size() + " sessions");
@@ -54,4 +69,6 @@ public class LogWebSocket {
 			}
 		}
 	}
+	
+	
 }
