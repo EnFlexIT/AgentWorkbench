@@ -1,44 +1,22 @@
-/**
- * ***************************************************************
- * Agent.GUI is a framework to develop Multi-agent based simulation 
- * applications based on the JADE - Framework in compliance with the 
- * FIPA specifications. 
- * Copyright (C) 2010 Christian Derksen and DAWIS
- * http://www.dawis.wiwi.uni-due.de
- * http://sourceforge.net/projects/agentgui/
- * http://www.agentgui.org 
- *
- * GNU Lesser General Public License
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation,
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA  02111-1307, USA.
- * **************************************************************
- */
-package de.enflexit.awb.simulation.logging;
+package de.enflexit.logging.console;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+/**
+ * The PrintStreamListener extends a regular PrintStream and enables to listen and forward its output.
+ * This is used to redirect the System.out and System.err - output to another component (e.g. an
+ * visualization within Agent.Workbench).  
+ *  
+ * @author Christian Derksen - SOFTEC - University Duisburg-Essen
+ */
 public class PrintStreamListener extends PrintStream {
 
 	public final static String SystemOutput = "[SysOut]";
 	public final static String SystemError = "[SysErr]";
 	
-	private SysOutScanner sos = null;
+	private ConsoleScanner sos = null;
 	private String prefix2use = null;
-	
 	
 	/**
 	 * Constructor for remote outputs.
@@ -47,13 +25,11 @@ public class PrintStreamListener extends PrintStream {
 	 * @param scanner the scanner
 	 * @param prefix the prefix
 	 */
-	public PrintStreamListener(OutputStream outputStream, SysOutScanner scanner, String prefix) {
+	public PrintStreamListener(OutputStream outputStream, ConsoleScanner scanner, String prefix) {
 		super(outputStream);
 		this.sos = scanner;
 		this.prefix2use = prefix;
 	}
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see java.io.PrintStream#write(byte[], int, int)
@@ -63,8 +39,7 @@ public class PrintStreamListener extends PrintStream {
 		// --- Some Error handling ------------------------
 		if (buf == null) {
 		    throw new NullPointerException();
-		} else if ((off < 0) || (off > buf.length) || (len < 0) ||
-			   ((off + len) > buf.length) || ((off + len) < 0)) {
+		} else if ((off < 0) || (off > buf.length) || (len < 0) || ((off + len) > buf.length) || ((off + len) < 0)) {
 		    throw new IndexOutOfBoundsException();
 		} else if (len == 0) {
 		    return;

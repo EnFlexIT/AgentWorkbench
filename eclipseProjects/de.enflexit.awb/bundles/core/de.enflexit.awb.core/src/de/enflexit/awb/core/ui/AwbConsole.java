@@ -1,5 +1,6 @@
 package de.enflexit.awb.core.ui;
 
+import de.enflexit.logging.console.ConsoleListener;
 import java.util.Vector;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Vector;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public interface AwbConsole {
+public interface AwbConsole extends ConsoleListener {
 
 
 	/**
