@@ -42,6 +42,7 @@ import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.language.Language;
 import de.enflexit.logging.LoggingWriter;
+import de.enflexit.logging.console.ConsoleScanner;
 
 
 /**
@@ -363,6 +364,9 @@ public class Application {
 
 		// --- Remind the IApplication of the eclipse framework -----
 		iApplication = iApp;
+		
+		// --- Ensure to start the ConsoleScanner ---------------
+		ConsoleScanner.getInstance();
 		
 		// --- Read the start arguments and react on it?! -----------
 		String[] remainingArgs = proceedStartArguments(org.eclipse.core.runtime.Platform.getApplicationArgs());

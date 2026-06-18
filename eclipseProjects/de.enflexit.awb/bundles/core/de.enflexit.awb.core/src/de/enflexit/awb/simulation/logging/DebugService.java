@@ -9,6 +9,9 @@ import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
 import de.enflexit.awb.core.ui.AwbConsoleFolder;
+import de.enflexit.logging.console.PrintStreamListener;
+import de.enflexit.logging.console.ConsoleListener;
+import de.enflexit.logging.console.ConsoleScanner;
 import jade.core.Agent;
 import jade.core.AgentContainer;
 import jade.core.BaseService;
@@ -43,7 +46,7 @@ import jade.util.Logger;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg / Essen
  */
-public class DebugService extends BaseService {
+public class DebugService extends BaseService implements ConsoleListener {
 
 	public static final String NAME = DebugServiceHelper.SERVICE_NAME;
 	
@@ -78,6 +81,19 @@ public class DebugService extends BaseService {
 		
 	}
 	
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.logging.console.ConsoleListener#appendConsoleOutput(java.lang.String)
+	 */
+	@Override
+	public void appendConsoleOutput(String line) {
+		try {
+			this.sendLocalConsoleOutput2Main(ConsoleScanner.getInstance().getStack());
+		} catch (ServiceException sEx) {
+			sEx.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Depending on the execution location the service configures independently.
 	 *
@@ -92,14 +108,12 @@ public class DebugService extends BaseService {
 			// -----------------------------------------------------------------------
 			if (SysOutBoard.isLocationOfMainContainer()==false) {
 				
-				if (SysOutBoard.isRunningSysOutScanner()==false) {
-					// --- Start the console Scanner --------------
-					if (myLogger.isLoggable(Logger.FINE)) {
-						myLogger.log(Logger.FINE, "Satellite container '" + localSlice.getNode().getName() + "': Attaching SystemOutputScanner");
-					}
-					SysOutBoard.setSysOutScanner(new SysOutScanner(this));
-					
+				// --- Start the console Scanner ----------------
+				if (myLogger.isLoggable(Logger.FINE)) {
+					myLogger.log(Logger.FINE, "Satellite container '" + localSlice.getNode().getName() + "': Attaching SystemOutputScanner");
 				}
+				// --- Add instance as ConsoleListener ----------
+				ConsoleScanner.getInstance().addConsoleListener(this);
 				
 			} else {
 				// --- Remove such local consoles because the output ---------- 
@@ -215,11 +229,7 @@ public class DebugService extends BaseService {
 		}		
 
 		public void sendLocalConsoleOutput() throws ServiceException {
-			Vector<String> lines2transfer = null;
-			synchronized (SysOutBoard.getSysOutScanner()) {
-				lines2transfer = SysOutBoard.getSysOutScanner().getStack();	
-			}
-			sendLocalConsoleOutput2Main(lines2transfer);
+			DebugService.this.sendLocalConsoleOutput2Main(ConsoleScanner.getInstance().getStack());
 		}
 
 	}
@@ -427,6 +437,5 @@ public class DebugService extends BaseService {
 			
 		}
 	}
-
 	
 }

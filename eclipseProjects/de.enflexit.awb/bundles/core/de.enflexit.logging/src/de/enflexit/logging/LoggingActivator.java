@@ -17,6 +17,7 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.classic.spi.LogbackServiceProvider;
 import ch.qos.logback.core.joran.spi.JoranException;
 import de.enflexit.logging.PropertyContentProvider.FileToProvide;
+import de.enflexit.logging.console.ConsoleScanner;
 
 /**
  * The Class LoggingActivator configures the SLF4J for the usage of 
@@ -31,6 +32,7 @@ public class LoggingActivator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
+		this.startConsoleScanner();
 		this.doLogbackInitialization();
 		this.doLogbackConfiguration(context.getBundle());
 		this.doHibernateLoggerConfiguration();
@@ -125,6 +127,13 @@ public class LoggingActivator implements BundleActivator {
 		// --- Set level of C3P0 logging output -----------
 		System.setProperty("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
 		System.setProperty("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
+	}
+	
+	/**
+	 * Starts the AWB {@link ConsoleScanner}.
+	 */
+	private void startConsoleScanner() {
+		ConsoleScanner.getInstance();
 	}
 	
 }

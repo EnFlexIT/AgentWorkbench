@@ -20,11 +20,10 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import de.enflexit.awb.core.ui.AwbConsole;
-import de.enflexit.awb.simulation.logging.PrintStreamListener;
-import de.enflexit.awb.simulation.logging.SysOutBoard;
-import de.enflexit.awb.simulation.logging.SysOutScanner;
 import de.enflexit.common.swing.AwbThemeColor;
-
+import de.enflexit.logging.console.PrintStreamListener;
+import de.enflexit.logging.console.ConsoleListener;
+import de.enflexit.logging.console.ConsoleScanner;
 
 /**
  * This JPanel is used for the console output of the local and remote nodes 
@@ -40,7 +39,6 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 	
 	private String fontFamily;// = "Consolas";//"Courier New";
 	private final int fontSize      = 13;
-	
 	
 	
 	private AttributeSet attribute;
@@ -71,6 +69,7 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 	public JPanelConsole(boolean isLocalConsole) {
 		super();
 		this.setLocalConsole(isLocalConsole);
+		this.registerConsoleListener();
 		this.initialize();
 	}
 
@@ -121,10 +120,6 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 		this.setPreferredSize(new Dimension(400, 100));
 	    this.add(getJScrollPane(),BorderLayout.CENTER);
 		
-		if (this.isLocalConsole()==true) {
-			// --- listen to local Out/Err-Output ---------
-			SysOutBoard.setSysOutScanner(new SysOutScanner(this));
-		}
 		
 	}
 	
@@ -153,6 +148,23 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 		}
 		return jEditorPaneOutput;
 	}
+	
+	
+	/**
+	 * Registers the local {@link ConsoleListener} that is part of the {@link AwbConsole}.
+	 */
+	private void registerConsoleListener() {
+		ConsoleScanner.getInstance().addConsoleListener(this);
+		this.appendText(ConsoleScanner.getInstance().getStack());
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.logging.console.ConsoleListener#appendConsoleOutput(java.lang.String)
+	 */
+	@Override
+	public void appendConsoleOutput(String line) {
+		this.appendText(line);
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see org.agentgui.gui.AwbConsole#appendText(java.util.Vector)
@@ -251,7 +263,6 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 		
         // --- Focus to the end ---------------------------
         this.getJEditorPaneOutput().setCaretPosition(doc.getLength());
-		
 	}
 	
 

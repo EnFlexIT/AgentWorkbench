@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.enflexit.awb.core.ui.AwbConsole;
 import de.enflexit.awb.core.ui.AwbConsoleDialog;
 import de.enflexit.awb.core.ui.AwbConsoleFolder;
+import de.enflexit.logging.console.ConsoleScanner;
 
 /**
  * This static class is used in order to identify, if the console output<br>
@@ -14,13 +15,11 @@ import de.enflexit.awb.core.ui.AwbConsoleFolder;
  * the Main-Container of the platform and which JTabbedPane can be used in order<br>
  * to display the console output of remote containers.<br>
  * 
- * @see SysOutScanner
+ * @see ConsoleScanner
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class SysOutBoard {
 
-	/** Reminder for the current output scanner  */
-	private static SysOutScanner sosRunning;
 	/** Reminder if the JADE Main-Container is located in the current JVM */
 	private static boolean locationOfMainContainer;
 	
@@ -32,32 +31,6 @@ public class SysOutBoard {
 	private static HashMap<String, AwbConsole> consoleHashMap;
 	
 
-	/**
-	 * Gets the current {@link SysOutScanner}.
-	 * @return the sosRunning
-	 */
-	public static SysOutScanner getSysOutScanner() {
-		return sosRunning;
-	}
-	/**
-	 * Sets the current {@link SysOutScanner}.
-	 * @param sosRunning the new SysOutScanner
-	 */
-	public static void setSysOutScanner(SysOutScanner sosRunning) {
-		SysOutBoard.sosRunning = sosRunning;
-	}
-	/**
-	 * Returns true, if a SysOutScanner is defined 
-	 * @return true, if a scanner is defined
-	 */
-	public static boolean isRunningSysOutScanner() {
-		if (sosRunning==null) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
 	/**
 	 * Sets the checks if is location of main container.
 	 * @param locationMainContainer the locationMainContainer to set
