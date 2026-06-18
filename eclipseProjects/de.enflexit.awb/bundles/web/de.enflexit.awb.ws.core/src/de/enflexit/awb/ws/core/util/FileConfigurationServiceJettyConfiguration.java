@@ -1,10 +1,18 @@
 package de.enflexit.awb.ws.core.util;
 
+import java.sql.ClientInfoStatus;
+import java.util.TreeMap;
+
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
 import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConfiguration;
 import de.enflexit.awb.ws.core.JettyConstants;
+import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.awb.ws.core.JettyServerManager;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
+import de.enflexit.awb.ws.core.security.OIDCSecurityService.OIDCParameter;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityHandler;
+import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 import de.enflexit.common.fileConfiguration.FileConfigurationService;
 import de.enflexit.common.fileConfiguration.FileProcessingResult;
 import de.enflexit.common.fileConfiguration.UploadedFile;
@@ -46,8 +54,10 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		this.validateProperties();
 		// --- Set results based on validation ------------------------------------------
 		if (this.getFileProcessingResult().getErrorList().size() > 0) {
-			this.getFileProcessingResult().setMessage("Error while validating.");
-			return this.getFileProcessingResult();
+			this.getFileProcessingResult().setMessage("Validation error.");
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.setFileProcessingResult(null);
+			return fpr;
 		}
 		
 		this.getFileProcessingResult().setSuccess(true);
@@ -129,11 +139,10 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 			return;
 		}
 		if (jettyConfig.getServerName() == null || jettyConfig.getServerName().isBlank()) {
-			this.getFileProcessingResult().addError("Server name is empty");
-			return;
+			this.getFileProcessingResult().addError("Server name is missing");
 		}
 		if (jettyConfig.getStartOn() == null) {
-			this.getFileProcessingResult().addError("StartOn not defined");
+			this.getFileProcessingResult().addError("StartOn is missing");
 		}
 		
 		// ------------------------------------------------------------------------------
@@ -168,17 +177,17 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		String keyStore = this.getString(JettyConstants.SSL_KEYSTORE);
 		
 		// --- Check keyStore != null ---------------------
-		this.requireTrueIf(https == true, keyStore != null, JettyConstants.SSL_KEYSTORE.getJettyKey() + " is missing");
+		this.requireTrueIf(https == true, keyStore != null, "https enabled but" + JettyConstants.SSL_KEYSTORE.getJettyKey() + " is missing");
 		
 		String sslKeyPassword = this.getString(JettyConstants.SSL_KEYPASSWORD);
 		
 		// --- Check sslKeyPassword != null ---------------
-		this.requireTrueIf(https == true, sslKeyPassword != null, JettyConstants.SSL_KEYPASSWORD.getJettyKey() + " is missing");
+		this.requireTrueIf(https == true, sslKeyPassword != null, "https enabled but" + JettyConstants.SSL_KEYPASSWORD.getJettyKey() + " is missing");
 		
 		String sslProtocol = this.getString(JettyConstants.SSL_PROTOCOL);
 		
 		// --- Check sslProtocol != null ------------------
-		this.requireTrueIf(https == true, sslProtocol != null, JettyConstants.SSL_PROTOCOL.getJettyKey() + " is missing");
+		this.requireTrueIf(https == true, sslProtocol != null,  "https enabled but" +JettyConstants.SSL_PROTOCOL.getJettyKey() + " is missing");
 		
 		
 		// ------------------------------------------------------------------------------
@@ -188,16 +197,16 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		Integer maxThreads = this.getInt(JettyConstants.HTTP_MAXTHREADS);
 		
 		// --- Check minThreads != null -------------------
-		this.requireTrueIf(http == true, minThreads != null, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " is missing");
+		this.requireTrueIf(http == true, minThreads != null, "http enabled but" + JettyConstants.HTTP_MINTHREADS.getJettyKey() + " is missing");
 		
 		// --- Check maxThreads != null -------------------
-		this.requireTrueIf(http == true, maxThreads != null, JettyConstants.HTTP_MAXTHREADS.getJettyKey() + " is missing");
+		this.requireTrueIf(http == true, maxThreads != null, "http enabled but" + JettyConstants.HTTP_MAXTHREADS.getJettyKey() + " is missing");
 		
 		// --- Check maxThreads > 0 -----------------------
-		this.requireTrueIf(http == true, maxThreads != null && maxThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
+		this.requireTrueIf(http == true, maxThreads != null && maxThreads > 0, "http enabled but" + JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
 		
 		// --- Check minThreads > 0 -----------------------
-		this.requireTrueIf(http == true, minThreads != null && minThreads > 0, JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
+		this.requireTrueIf(http == true, minThreads != null && minThreads > 0, "http enabled but" + JettyConstants.HTTP_MINTHREADS.getJettyKey() + " invalid: " + minThreads);
 		
 		// --- Check minThreads < maxThreads---------------
 		this.requireTrueIf(http == true , (minThreads != null && maxThreads != null) &&  (minThreads < maxThreads), "minThreads can't be smaller than maxThreads");		
@@ -207,9 +216,8 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		// ------------------------------------------------------------------------------
 		Boolean corsEnabled = this.getBool(JettyConstants.CORS_ENABLED);
 		this.requireTrue(corsEnabled != null, JettyConstants.CORS_ENABLED.getJettyKey() + " is missing");
-		
+		// --- Get the boolean value avoiding null --------
 		boolean cors = Boolean.TRUE.equals(corsEnabled);
-		
 		
 		// --- Check corsOrigins != null ------------------
 		String corsOrigins = this.getString(JettyConstants.CORS_ALLOWED_ORIGINS_PARAM);
@@ -223,9 +231,62 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		String corsHeaders = this.getString(JettyConstants.CORS_ALLOWED_HEADERS_PARAM);
 		this.requireTrueIf(cors == true, corsHeaders != null, "cors enabled but " + JettyConstants.CORS_ALLOWED_HEADERS_PARAM.getJettyKey() + " is missing");
 		
+		// ------------------------------------------------------------------------------
+		// --- Security Settings --------------------------------------------------------
+		// ------------------------------------------------------------------------------
+		JettySecuritySettings securitySettings = jettyConfig.getSecuritySettings();
+		ServletSecurityConfiguration servletConfig = securitySettings.getActivedServletSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
+		
+		// --- General settings ---------------------------------------------------------
+		Boolean securityHandlerEnabled = servletConfig.isSecurityHandlerActivated();
+		// --- Check securityHandlerEnabled != null -------
+		this.requireTrue(securityHandlerEnabled != null, "securityHandlerActivated is missing");
+		// --- Get the boolean value avoiding null --------
+		boolean securityEnabled = Boolean.TRUE.equals(securityHandlerEnabled);
+		String handlerName = servletConfig.getSecurityHandlerName();
+		// --- Check handler name != null -----------------
+		this.requireTrueIf(securityEnabled == true, handlerName != null, "security handler activated but handler name is missing");
+		
+		// --- Security handler configuration -------------------------------------------
+		if (securityEnabled == true) {
+			TreeMap<String, String> securityHandlerConfiguration = servletConfig.getSecurityHandlerConfiguration();
+			this.validateSecurityConfiguration(securityHandlerConfiguration, handlerName);
+		}
+		
 	}
 
 	
+	/**
+	 * Checks if there are values missing in the specified security configuration.
+	 *
+	 * @param securityHandlerConfiguration the security handler configuration
+	 * @param handlerName the handler name
+	 */
+	private void validateSecurityConfiguration(TreeMap<String, String> securityHandlerConfiguration, String handlerName) {
+		switch (handlerName) {
+		case "JwtSingleUserSecurityHandler":
+			// --- Check whether essential values are null ------------------------------
+			boolean userName = securityHandlerConfiguration.get(JwtParameter.UserName.getKey()) != null;
+			boolean password = securityHandlerConfiguration.get(JwtParameter.Password.getKey()) != null;
+			boolean jwtIssuer = securityHandlerConfiguration.get(JwtParameter.JwtIssuer.getKey()) != null;
+			boolean jwtSecrete = securityHandlerConfiguration.get(JwtParameter.JwtSecrete.getKey()) != null;
+			boolean jwtValidityPeriod = securityHandlerConfiguration.get(JwtParameter.JwtValidityPeriod.getKey()) != null;
+			// --- If any value is false (null) add the error message -------------------
+			this.requireTrue((userName && password && jwtIssuer  && jwtSecrete  && jwtValidityPeriod), "Missing jwt configuration");
+			break;
+			
+		case "OIDCSecurityHandler":
+			// --- Check whether essential values are null ------------------------------
+			boolean issuer = securityHandlerConfiguration.get(OIDCParameter.Issuer.getKey()) != null;
+			boolean tokenEndpoint = securityHandlerConfiguration.get(OIDCParameter.TokenEndpoint.getKey()) != null;
+			boolean clientId = securityHandlerConfiguration.get(OIDCParameter.ClientID.getKey()) != null;
+			boolean clientSecrete = securityHandlerConfiguration.get(OIDCParameter.ClientSecrete.getKey()) != null;
+			// --- If any value is false (null) add the error message -------------------
+			this.requireTrue(issuer && tokenEndpoint && clientId && clientSecrete, "Missing OIDC configuration");
+			break;
+		}
+	}
+
 	/**
 	 * Returns the file processing result.
 	 * @return the file processing result
