@@ -5,10 +5,8 @@ import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import de.enflexit.awb.ws.AwbWebHandlerService;
-import de.enflexit.awb.ws.core.websocket.LogTransportServiceWebSocket;
 import de.enflexit.awb.ws.core.websocket.LogWebSocket;
 import de.enflexit.awb.ws.server.AwbServer;
-import de.enflexit.logging.LogTransportServiceRegistry;
 
 /**
  * The Class AwbRestApiServiceHandler defines the AWB Rest API for the {@link AwbServer}.
@@ -18,7 +16,6 @@ import de.enflexit.logging.LogTransportServiceRegistry;
 public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 
 	private ServletContextHandler servletContextHandler;
-	private LogTransportServiceWebSocket logTransportServiceWebSocket;
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.AwbWebHandlerService#getServerName()
 	 */
@@ -45,11 +42,7 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 					(ctx, container) -> {
 						container.addEndpoint(LogWebSocket.class);
 					});
-			// --- Register a transport service for the web socket ------------
-			if (logTransportServiceWebSocket == null) {
-				logTransportServiceWebSocket = new LogTransportServiceWebSocket();
-				LogTransportServiceRegistry.registerTransportService(logTransportServiceWebSocket);
-			}
+
 			
 		}
 		return servletContextHandler;
@@ -62,11 +55,6 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 	public void disposeHandler() {
 		if (this.servletContextHandler!=null) {
 			this.servletContextHandler.destroy();
-		}
-		// --- Unregister the web socket transport service --------------------
-		if  (this.logTransportServiceWebSocket != null) {
-			LogTransportServiceRegistry.unregisterTransportService(logTransportServiceWebSocket);
-			this.logTransportServiceWebSocket = null;
 		}
 		this.servletContextHandler = null;
 	}
