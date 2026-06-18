@@ -98,26 +98,18 @@ public class FileConfigurationServiceManager {
 	 */
 	public FileProcessingResult processFile(String performative, UploadedFile file2Process) {
 		
-		FileProcessingResult result = new FileProcessingResult();
 		
-		// --- Check whether there is a performative ------------------------------------
-		if (performative == null || performative.isBlank()) {
-			result.setMessage("File could not be processed");
-			result.addError("Performative is missing");
-			return result;
-		}
 		// --- Look for a corresponding service -----------------------------------------
 		FileConfigurationService fcs = this.getPerformativeServiceHashMap().get(performative);
+		FileProcessingResult fileProcessingResult = new FileProcessingResult();
 		if (fcs == null) {
 			LOGGER.error("No service was found for the performative " + performative);
-			result.setMessage("No service was found for the performative " + performative);
-			result.addError("Invalid performative");
-			return result;
+			fileProcessingResult.setMessage("No service was found for the performative " + performative);
+			return fileProcessingResult;
 		}
-
 		// --- Process the file and return the result -----------------------------------
-		result = fcs.processFile(file2Process);
-		return result;
+		fileProcessingResult = fcs.processFile(file2Process);
+		return fileProcessingResult;
 	}
 	
 }

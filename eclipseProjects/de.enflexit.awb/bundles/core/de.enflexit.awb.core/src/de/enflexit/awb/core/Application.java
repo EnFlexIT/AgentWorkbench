@@ -33,6 +33,7 @@ import de.enflexit.awb.core.ui.AwbMainWindow;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
 import de.enflexit.awb.core.update.AWBUpdater;
+import de.enflexit.awb.core.update.MaintenanceScheduler;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -567,7 +568,10 @@ public class Application {
 				return;
 			}
 		}
-		
+		// --- Start maintenance thread -----------------------------
+		if (Application.getGlobalInfo().getUpdateAutoConfiguration() == AWBUpdater.UPDATE_MODE_AUTOMATIC) {
+			MaintenanceScheduler.getInstance().startSchedulingUpdateChecks();
+		}	
 		// ----------------------------------------------------------		
 		// --- Start Agent.Workbench as defined by 'ExecutionMode' --
 		// ----------------------------------------------------------
@@ -599,7 +603,7 @@ public class Application {
 					AWBUpdater updater = new AWBUpdater();
 					updater.start();
 					updater.waitForUpdate();
-					
+
 					// --- Open project? ----------------------------
 					Application.proceedStartArgumentOpenProject();
 					

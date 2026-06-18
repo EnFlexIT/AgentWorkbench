@@ -10,24 +10,24 @@ import java.util.List;
  */
 public class FileProcessingResult {
 	
-	private boolean wasSuccess;
+	private boolean isSuccess;
 	private String message;
 	private List<String> errorList;
 	
 	
 	/**
-	 * Was success.
+	 * Returns whether the file was processed successfully.
 	 * @return true, if successful
 	 */
-	public boolean wasSuccess() {
-		return wasSuccess;
+	public boolean isSuccess() {
+		return isSuccess;
 	}
 	/**
 	 * Sets success for the file processing
 	 * @param success the new success
 	 */
 	public void setSuccess(boolean success) {
-		this.wasSuccess = success;
+		this.isSuccess = success;
 	}
 	
 	/**

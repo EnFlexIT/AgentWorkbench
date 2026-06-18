@@ -79,11 +79,19 @@ public class UploadedFile {
 	 * @param inputStream the inputStream to set
 	 */
 	public void setInputStream(InputStream inputStream) {
-		
+
+		if (inputStream == null) {
+			this.inputStream = null;
+			return;
+		}
+
 		try {
+			// --- Find out whether the inputStream contains data -------------
 			byte[] data = inputStream.readAllBytes();
+			// --- Set inputStream to null if it doesn't ------------------
 			if (data.length == 0) {
 				this.inputStream = null;
+			
 			} else {
 				this.inputStream = new ByteArrayInputStream(data);
 			}
@@ -91,10 +99,10 @@ public class UploadedFile {
 			ioExceptionRead.printStackTrace();
 
 		} finally {
-			
+
 			try {
-				if (inputStream != null) inputStream.close();
-				
+					inputStream.close();
+
 			} catch (IOException ioExceptionClose) {
 				ioExceptionClose.printStackTrace();
 			}

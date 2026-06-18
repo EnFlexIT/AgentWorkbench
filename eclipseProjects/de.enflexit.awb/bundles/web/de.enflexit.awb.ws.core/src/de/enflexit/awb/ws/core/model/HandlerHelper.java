@@ -63,18 +63,16 @@ public class HandlerHelper {
 		return handlerList;
 	}
 	
+	/**
+	 * Sorts the specified list into a new, sorted list.
+	 *
+	 * @param handlerList the handler list to be sorted.
+	 * @return the new and sorted list
+	 */
 	public static List<Handler> sortIntoNewList(List<Handler> handlerList) {
 		if (handlerList==null) return null;
-		List<Handler> handlerListCopy = new ArrayList<>(handlerList);
-		Collections.sort(handlerListCopy, new Comparator<Handler>() {
-			@Override
-			public int compare(Handler h1, Handler h2) {
-				String cp1 = HandlerHelper.getContextPath(h1);
-				String cp2 = HandlerHelper.getContextPath(h2);
-				return cp1.compareTo(cp2);
-			}
-		});
-		return handlerListCopy;
+		return HandlerHelper.sort(new ArrayList<>(handlerList));
+
 	}
 	
 	/**
