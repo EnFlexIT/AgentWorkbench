@@ -181,9 +181,11 @@ public class AppApiServiceImpl extends AppApiService {
     private void addSessionInformation(HttpServletRequest request, de.enflexit.common.properties.Properties awbProps) {
     	
     	if (request==null || awbProps==null) return;
-    	
+
+    	boolean isAddSessionInformation = false;
     	HttpSession session = request.getSession(false);
-    	if (session!=null) {
+    	if (isAddSessionInformation==true && session!=null) {
+    		
     		String sessionID = session.getId();
     		String sessionPathParameter = AwbWebServerAccess.getJettyConfiguration().getSessionSettings().getSessionAttribute(JettySessionSettings.KEY_SET_SESSION_ID_PATH_PARAMETER_NAME).getValue().toString();
     		awbProps.setStringValue("_session.pathParameter", sessionPathParameter);
@@ -205,10 +207,8 @@ public class AppApiServiceImpl extends AppApiService {
     				System.out.println(attribute + ": " + attributeValue.toString() );
     			}
     		}
-    		
     	}
     }
-    
     /**
      * Adds the principal information.
      *
@@ -230,24 +230,23 @@ public class AppApiServiceImpl extends AppApiService {
     		Map<String, Object> response = credentials.getResponse();
     		//response.keySet().forEach(key -> System.out.println(key + ": " + response.get(key)));
     		
-    		boolean isAddAccessTokenParameter = true;
+    		boolean isAddAccessTokenParameter = false;
     		if (isAddAccessTokenParameter==true) {
     			this.addAccessTokenParameter(awbProps, claims, response);
     		}
     		
-    		String access_token = (String) response.get("access_token");
-    		awbProps.setStringValue("_oidc.access_token", access_token);
+//    		String access_token = (String) response.get("access_token");
+//    		awbProps.setStringValue("_oidc.access_token", access_token);
+//
+//    		String refresh_token = (String) response.get("refresh_token");
+//    		awbProps.setStringValue("_oidc.refresh_token", refresh_token);
+//    		
+//    		String id_token = (String) response.get("id_token");
+//    		awbProps.setStringValue("_oidc.id_token", id_token);
 
-    		String refresh_token = (String) response.get("refresh_token");
-    		awbProps.setStringValue("_oidc.refresh_token", refresh_token);
     		
-    		String id_token = (String) response.get("id_token");
-    		awbProps.setStringValue("_oidc.id_token", id_token);
-    		
-
-    		
-    		String id = (String) claims.get("sub");
-    		awbProps.setStringValue("_oidc.id", id);
+//    		String id = (String) claims.get("sub");
+//    		awbProps.setStringValue("_oidc.id", id);
     		
     		String name = (String) claims.get("name");
     		awbProps.setStringValue("_oidc.name", name);
