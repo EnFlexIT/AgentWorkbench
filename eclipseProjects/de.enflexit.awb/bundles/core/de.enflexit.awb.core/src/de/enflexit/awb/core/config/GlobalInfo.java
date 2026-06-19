@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
@@ -37,8 +38,6 @@ import de.enflexit.awb.core.jade.JadeUrlConfiguration;
 import de.enflexit.awb.core.project.PlatformJadeConfig;
 import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
 import de.enflexit.awb.core.project.Project;
-import de.enflexit.awb.core.update.AWBUpdater;
-import de.enflexit.awb.core.update.MaintenanceScheduler;
 import de.enflexit.awb.simulation.environment.time.TimeModel;
 import de.enflexit.awb.simulation.environment.time.TimeModelDateBased;
 import de.enflexit.common.ExecutionEnvironment;
@@ -1717,13 +1716,6 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
 		this.updateAutoConfiguration = updateAutoConfiguration;
-		
-		if (updateAutoConfiguration == AWBUpdater.UPDATE_MODE_AUTOMATIC) {
-			MaintenanceScheduler.getInstance().startSchedulingUpdateChecks();
-			
-		} else {
-			MaintenanceScheduler.getInstance().stopSchedulingUpdateChecks();
-		}
 	}
 	/**
 	 * Returns the update auto configuration.
