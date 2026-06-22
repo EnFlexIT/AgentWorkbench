@@ -1,11 +1,10 @@
 package de.enflexit.awb.ws.restapi;
 
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
-import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
+import org.eclipse.jetty.server.Handler;
+
 import de.enflexit.awb.ws.AwbWebHandlerService;
-import de.enflexit.awb.ws.core.websocket.LogWebSocket;
 import de.enflexit.awb.ws.server.AwbServer;
 
 /**
@@ -36,13 +35,6 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 			ServletHolder jersey = servletContextHandler.addServlet(JereseyServletContainer.class, "/*");
 			jersey.setInitParameters(new ServletInitParameter());
 			jersey.setInitOrder(1);
-
-			// --- Initialize the web socket ----------------------------------
-			JakartaWebSocketServletContainerInitializer.configure(servletContextHandler,(ctx, container) -> {
-				container.addEndpoint(LogWebSocket.class);
-				container.setDefaultMaxSessionIdleTimeout(0);
-			});
-
 		}
 		return servletContextHandler;
 	}

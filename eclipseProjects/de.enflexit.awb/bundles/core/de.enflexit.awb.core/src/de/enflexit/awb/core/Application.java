@@ -411,6 +411,10 @@ public class Application {
 		
 		// --- Start ShutdownExecuter, if needed --------------------
 		if (isOperatingHeadless()==true) startShutdownThread();
+		
+		// --- Check to start MaintenanceScheduler ------------------
+		Application.checkToStartMaintenanceScheduler();
+		
 	}	
 
 	/**
@@ -641,6 +645,9 @@ public class Application {
 	 * Check if the maintenance scheduler should be started
 	 */
 	public static void checkToStartMaintenanceScheduler() {
+		
+		// --- Ensure that GlobalInfo is already initiated ----------
+		if (Application.globalInfo == null) return;
 		
 		// --- Start maintenance thread -----------------------------
 		if (Application.getGlobalInfo().getUpdateAutoConfiguration() != AWBUpdater.UPDATE_MODE_AUTOMATIC) {
