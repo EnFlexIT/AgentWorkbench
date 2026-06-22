@@ -1716,6 +1716,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
 		this.updateAutoConfiguration = updateAutoConfiguration;
+		Application.checkToStartMaintenanceScheduler();
 	}
 	/**
 	 * Returns the update auto configuration.

@@ -38,12 +38,11 @@ public class AwbRestApiServiceHandler implements AwbWebHandlerService {
 			jersey.setInitOrder(1);
 
 			// --- Initialize the web socket ----------------------------------
-			JakartaWebSocketServletContainerInitializer.configure(servletContextHandler,
-					(ctx, container) -> {
-						container.addEndpoint(LogWebSocket.class);
-					});
+			JakartaWebSocketServletContainerInitializer.configure(servletContextHandler,(ctx, container) -> {
+				container.addEndpoint(LogWebSocket.class);
+				container.setDefaultMaxSessionIdleTimeout(0);
+			});
 
-			
 		}
 		return servletContextHandler;
 	}

@@ -32,7 +32,15 @@ public class MaintenanceScheduler {
 		}
 		return instance;
 	}
-	
+	/**
+	 * Dispose.
+	 */
+	public static void dispose() {
+		if (instance != null) {
+			instance.stopSchedulingUpdateChecks();
+			instance = null;
+		}
+	}
 	/**
 	 * Instantiates a new maintenance scheduledExecutorService. Configures the 
 	 * Thread factory of ScheduledExecutorService to produce a
@@ -48,7 +56,7 @@ public class MaintenanceScheduler {
 	}
 	
 	
-	private final ScheduledExecutorService scheduledExecutorService;
+	private ScheduledExecutorService scheduledExecutorService;
 	private ScheduledFuture<?> updateCheckTask;
 	
 	/**
@@ -66,32 +74,24 @@ public class MaintenanceScheduler {
 	 * Checks whether an update is available.
 	 */
 	private void checkForUpdate() {
-		
-		if (P2OperationsHandler.getInstance().checkForNewerBundles() == true) {
-			LOGGER.info("Update available");
-		} else {
-			LOGGER.info("No update found");
-		}
-		Application.getGlobalInfo().setUpdateDateLastChecked(System.currentTimeMillis());
-		Application.getGlobalInfo().doSaveConfiguration();
+
+		LOGGER.info("Starting AWBUpdater...");
+		AWBUpdater updater = new AWBUpdater();
+		updater.start();
 	}
 			
 	/**
 	 * Stop scheduling update checks. Does not cancel an
 	 * actively running update check.
 	 */
-	public void stopSchedulingUpdateChecks() {
+	private void stopSchedulingUpdateChecks() {
 		
-		if (updateCheckTask != null || updateCheckTask.isCancelled() == false) {
+		if (updateCheckTask != null && updateCheckTask.isCancelled() == false) {
 			updateCheckTask.cancel(false);
+			scheduledExecutorService.shutdown();
+			updateCheckTask = null;
+			scheduledExecutorService = null;
 		}
 	}
 	
-	/**
-	 * Shutdown the ScheduledExecutorService.
-	 */
-	public void shutdown() {
-		scheduledExecutorService.shutdown();
-	}
-
 }

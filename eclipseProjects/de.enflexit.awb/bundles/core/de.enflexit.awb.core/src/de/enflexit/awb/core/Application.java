@@ -411,7 +411,6 @@ public class Application {
 		
 		// --- Start ShutdownExecuter, if needed --------------------
 		if (isOperatingHeadless()==true) startShutdownThread();
-		
 	}	
 
 	/**
@@ -568,10 +567,7 @@ public class Application {
 				return;
 			}
 		}
-		// --- Start maintenance thread -----------------------------
-		if (Application.getGlobalInfo().getUpdateAutoConfiguration() == AWBUpdater.UPDATE_MODE_AUTOMATIC) {
-			MaintenanceScheduler.getInstance().startSchedulingUpdateChecks();
-		}	
+		
 		// ----------------------------------------------------------		
 		// --- Start Agent.Workbench as defined by 'ExecutionMode' --
 		// ----------------------------------------------------------
@@ -641,6 +637,30 @@ public class Application {
 		
 	}
 	
+	/**
+	 * Check if the maintenance scheduler should be started
+	 */
+	public static void checkToStartMaintenanceScheduler() {
+		
+		// --- Start maintenance thread -----------------------------
+		if (Application.getGlobalInfo().getUpdateAutoConfiguration() != AWBUpdater.UPDATE_MODE_AUTOMATIC) {
+			MaintenanceScheduler.dispose();
+			return;
+		}
+		
+		// --- Evaluate execution mode ------------------------------
+		switch (getGlobalInfo().getExecutionMode()) {
+		case APPLICATION:
+			break;
+			
+		case SERVER:
+		case SERVER_MASTER:
+		case SERVER_SLAVE:
+		case DEVICE_SYSTEM:
+			MaintenanceScheduler.getInstance().startSchedulingUpdateChecks();
+			break;
+		}
+	}
 	
 	/**
 	 * Starts the main procedure for the Server-Version of Agent.Workbench
