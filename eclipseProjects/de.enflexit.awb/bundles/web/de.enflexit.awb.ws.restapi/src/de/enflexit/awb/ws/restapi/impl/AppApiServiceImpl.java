@@ -14,6 +14,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import com.nimbusds.jwt.SignedJWT;
 
 import de.enflexit.awb.ws.core.JettySessionSettings;
+import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.restapi.AwbWebServerAccess;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
 import de.enflexit.awb.ws.restapi.gen.ApiResponseMessage;
@@ -147,6 +148,7 @@ public class AppApiServiceImpl extends AppApiService {
     		// --- If not Authenticated, return public properties ---
     		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.PublicProperties);
     		awbProps.setBooleanValue("_Authenticated", false);
+    		awbProps.setStringValue("_AuthenticationMethod", this.getSecurityHandlerName());
     		this.addSessionInformation(request, awbProps);
 
     	} else {
@@ -155,6 +157,7 @@ public class AppApiServiceImpl extends AppApiService {
     			// --- return properties of web application ---------
     			awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties);
     			awbProps.setBooleanValue("_Authenticated", true);
+    			awbProps.setStringValue("_AuthenticationMethod", this.getSecurityHandlerName());
     			this.addSessionInformation(request, awbProps);
     			this.addOIDCPrincipalInformation(principal, awbProps);
     			
@@ -170,6 +173,24 @@ public class AppApiServiceImpl extends AppApiService {
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(endpointProps).build();
     }
     
+    /**
+     * Returns the security handler name.
+     * @return the security handler name
+     */
+    private String getSecurityHandlerName() {
+    	
+    	String securityHandlerName = "unknown";
+    	try {
+    		ServletSecurityConfiguration ssc = AwbWebServerAccess.getServletSecurityConfiguration();
+    		if (ssc!=null) {
+    			securityHandlerName = ssc.getSecurityHandlerName();
+    		}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+    	return securityHandlerName;
+    }
     
     /**
      * Adds the session ID to the properties.
