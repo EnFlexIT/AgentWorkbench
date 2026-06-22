@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Handler.Sequence;
@@ -42,6 +43,7 @@ import de.enflexit.awb.ws.core.util.MonitoringFilter;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdate;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdateProcess;
 import de.enflexit.awb.ws.core.util.WebApplicationVersion;
+import de.enflexit.awb.ws.core.websocket.LogWebSocket;
 
 /**
  * The Class for the default AWB Server.
@@ -151,6 +153,13 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 				securityService.customizeServletContextHandler(jettyConfiguration, servletContextHandler);
     		}
         }
+        
+		// --- Initialize the web socket ----------------------------------
+		JakartaWebSocketServletContainerInitializer.configure(servletContextHandler,(ctx, container) -> {
+			container.addEndpoint(LogWebSocket.class);
+			container.setDefaultMaxSessionIdleTimeout(0);
+		});
+
         
 		// ----------------------------------------------------------
         // --- Define a ContextHandlerCollection --------------------
