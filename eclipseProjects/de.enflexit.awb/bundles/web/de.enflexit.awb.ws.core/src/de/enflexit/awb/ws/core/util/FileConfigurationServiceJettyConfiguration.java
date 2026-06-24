@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.core.util;
 
-import java.sql.ClientInfoStatus;
 import java.util.TreeMap;
 
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
@@ -11,7 +10,6 @@ import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.OIDCSecurityService.OIDCParameter;
-import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityHandler;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 import de.enflexit.common.fileConfiguration.FileConfigurationService;
 import de.enflexit.common.fileConfiguration.FileProcessingResult;

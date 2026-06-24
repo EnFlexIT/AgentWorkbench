@@ -34,6 +34,7 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbTrayIcon;
 import de.enflexit.awb.core.update.AWBUpdater;
 import de.enflexit.awb.core.update.MaintenanceScheduler;
+import de.enflexit.awb.core.update.MaintenanceTask;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -413,7 +414,7 @@ public class Application {
 		if (isOperatingHeadless()==true) startShutdownThread();
 		
 		// --- Check to start MaintenanceScheduler ------------------
-		Application.checkToStartMaintenanceScheduler();
+		Application.checkToRegisterUpdateTask();
 		
 	}	
 
@@ -644,27 +645,40 @@ public class Application {
 	/**
 	 * Check if the maintenance scheduler should be started
 	 */
-	public static void checkToStartMaintenanceScheduler() {
+	public static void checkToRegisterUpdateTask() {
 		
 		// --- Ensure that GlobalInfo is already initiated ----------
 		if (Application.globalInfo == null) return;
 		
-		// --- Start maintenance thread -----------------------------
+		final String updateTaskId = "AWB-Update Task";
+		
+		// --- Stop maintenanceScheduler if not in automatic mode ---
 		if (Application.getGlobalInfo().getUpdateAutoConfiguration() != AWBUpdater.UPDATE_MODE_AUTOMATIC) {
-			MaintenanceScheduler.dispose();
+			MaintenanceScheduler.getInstance().unregisterTask(updateTaskId);
 			return;
 		}
 		
 		// --- Evaluate execution mode ------------------------------
 		switch (getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
+			// --- No maintenance in Application mode ---------------
+			MaintenanceScheduler.getInstance().unregisterTask(updateTaskId);
 			break;
 			
 		case SERVER:
 		case SERVER_MASTER:
 		case SERVER_SLAVE:
 		case DEVICE_SYSTEM:
-			MaintenanceScheduler.getInstance().startSchedulingUpdateChecks();
+			MaintenanceScheduler.getInstance().registerTask(new MaintenanceTask() {
+				@Override
+				public Runnable getTask() {
+					return () -> new AWBUpdater().start();
+				}
+				@Override
+				public String getId() {
+					return updateTaskId;
+				}
+			});
 			break;
 		}
 	}

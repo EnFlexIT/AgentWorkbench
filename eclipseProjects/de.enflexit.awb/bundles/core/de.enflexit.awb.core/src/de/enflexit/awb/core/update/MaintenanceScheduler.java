@@ -1,17 +1,22 @@
 package de.enflexit.awb.core.update;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.enflexit.awb.core.Application;
-import de.enflexit.common.p2.P2OperationsHandler;
-
 /**
- * The Class MaintenanceScheduler is used to schedule update checks
+ * The Class MaintenanceScheduler is used to register and execute {@link MaintenanceTask}
+ * at their respective intervals. Stopping the scheduler using stop() will 
+ * cancel and remove all running tasks, while registered tasks will be kept until unregistered.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
@@ -29,69 +34,206 @@ public class MaintenanceScheduler {
 	public static MaintenanceScheduler getInstance() {
 		if (instance == null) {
 			instance = new MaintenanceScheduler();
+			instance.start();
 		}
 		return instance;
 	}
 	/**
-	 * Dispose.
+	 * Instantiates a new maintenance scheduledExecutorService.
 	 */
-	public static void dispose() {
-		if (instance != null) {
-			instance.stopSchedulingUpdateChecks();
-			instance = null;
-		}
-	}
-	/**
-	 * Instantiates a new maintenance scheduledExecutorService. Configures the 
-	 * Thread factory of ScheduledExecutorService to produce a
-	 * Daemon thread with name "maintenance-thread"
-	 */
-	private MaintenanceScheduler() {
-		scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(r -> {
-			Thread maintenanceThread = new Thread(r);
-			maintenanceThread.setName("maintenance-thread");
-			maintenanceThread.setDaemon(true);
-			return maintenanceThread;
-		});
-	}
+	private MaintenanceScheduler() {}
 	
+	
+	private boolean running;
 	
 	private ScheduledExecutorService scheduledExecutorService;
-	private ScheduledFuture<?> updateCheckTask;
+	private HashMap<String, MaintenanceTask> registeredTasks;
+	private HashMap<String, ScheduledFuture<?>> runningTasks;
+
+	/**
+	 * Initializes the scheduledExecutorService and starts scheduling all registered tasks.
+	 */
+	public void start() {
+		if (this.isRunning() == true) return;
+		
+		scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+
+			@Override
+			public Thread newThread(Runnable task) {
+				Thread maintenanceThread = new Thread(task);
+				maintenanceThread.setName("maintenance-thread");
+				maintenanceThread.setDaemon(true);
+				return maintenanceThread;
+			}
+		});
+		this.running = true;
+
+		for (MaintenanceTask task : this.getRegisteredTasks().values()) {
+			this.scheduleTask(task);
+		}
+	}
 	
 	/**
-	 * Start scheduling update checks at intervals defined by UPDATE_CHECK_PERIOD 
-	 * defined in @see AWBUpdater.
+	 * Sets everything to null except for the singleton instance
+	 * and the registered tasks.
 	 */
-	public void startSchedulingUpdateChecks() {
-
-		if (updateCheckTask == null || updateCheckTask.isCancelled()) {
-			updateCheckTask = scheduledExecutorService.scheduleAtFixedRate(this::checkForUpdate, 0, AWBUpdater.UPDATE_CHECK_PERIOD, TimeUnit.MILLISECONDS);
-		}
-	}
-
-	/**
-	 * Checks whether an update is available.
-	 */
-	private void checkForUpdate() {
-
-		LOGGER.info("Starting AWBUpdater...");
-		AWBUpdater updater = new AWBUpdater();
-		updater.start();
-	}
-			
-	/**
-	 * Stop scheduling update checks. Does not cancel an
-	 * actively running update check.
-	 */
-	private void stopSchedulingUpdateChecks() {
+	public void stop() {
 		
-		if (updateCheckTask != null && updateCheckTask.isCancelled() == false) {
-			updateCheckTask.cancel(false);
-			scheduledExecutorService.shutdown();
-			updateCheckTask = null;
-			scheduledExecutorService = null;
+		if (this.isRunning() == false) return;
+		
+		this.getRunningTasks().keySet().forEach(taskId -> this.cancelTask(taskId));
+		this.runningTasks = null;
+		this.scheduledExecutorService.shutdown();
+		this.scheduledExecutorService = null;
+		this.running = false;
+	}
+	
+	/**
+	 * Register a task which will be scheduled at fixed intervals if
+	 * the MaintenanceScheduler is running.
+	 *
+	 * @param task2Register the task to register
+	 */
+	public void registerTask(MaintenanceTask task2Register) {
+		
+		this.getRegisteredTasks().put(task2Register.getId(), task2Register);
+		
+		if (this.isRunning() == true) {
+			this.scheduleTask(task2Register);
 		}
 	}
+	
+	/**
+	 * Unregisters the task corresponding to the specified id.
+	 *
+	 * @param taskId id of the task to unregister
+	 */
+	public void unregisterTask(String taskId) {
+		
+		this.getRegisteredTasks().remove(taskId);
+		
+		if (this.isRunning() == true) {
+			this.cancelTask(taskId);
+			this.getRunningTasks().remove(taskId);
+			if (this.getRunningTasks().size() == 0) this.stop();
+		}
+	}
+	
+	/**
+	 * Schedules the task to be executed periodically.
+	 *
+	 * @param task the task to schedule
+	 */
+	private void scheduleTask(MaintenanceTask task) {
+		
+		// --- Don't act if the task is already known or running ----
+		if (this.getRunningTasks().get(task.getId()) == null || this.getRunningTasks().get(task.getId()).isCancelled()) {
+			
+			// --- Prepare delay and interval -----------------------
+			long initialDelayInMillis = this.calculateExecutionDelay(task.getStartTime(), task.getIntervalInHours(), task.getMinutesToRandomize());
+			long checkIntervalInMillis = task.getIntervalInHours() * 1000 * 60 * 60; 
+			
+			// --- Schedule the task --------------------------------
+			ScheduledFuture<?> scheduledTask = scheduledExecutorService.scheduleAtFixedRate(task.getTask(), initialDelayInMillis, checkIntervalInMillis, TimeUnit.MILLISECONDS);
+			this.getRunningTasks().put(task.getId(), scheduledTask);
+		}
+		
+	}
+
+	/**
+	 * Cancels the task identified by the specified
+	 * taskId.
+	 */
+	private void cancelTask(String taskId) {
+		
+		if (this.getRunningTasks().get(taskId) != null) {
+			this.getRunningTasks().get(taskId).cancel(false);
+		}
+	}
+	
+	/**
+	 * Calculates the delay before the first execution of the task.
+	 *
+	 * @param startingTime the starting time
+	 * @param intervalInHours the interval in hours
+	 * @param randomizerRangeInMinutes the randomizer range in minutes
+	 * @return the milliseconds to wait before first execution.
+	 */
+	private long calculateExecutionDelay(LocalTime startingTime, int intervalInHours, int randomizerRangeInMinutes) {
+		LocalTime targetTime;
+		// --- Define the time to do the first check ----------------
+		if (randomizerRangeInMinutes > 0) {
+			targetTime = this.getRandomizedStartTime(startingTime, randomizerRangeInMinutes);
+		} else {
+			targetTime = startingTime;
+		}
+		
+		// --- first check is Date of now at targetTime -------------
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime dateTimeFirstCheck = now.with(targetTime);
+		
+		// --- Add the interval until first check is in the future --
+		while (now.isAfter(dateTimeFirstCheck)) {
+			dateTimeFirstCheck = dateTimeFirstCheck.plusHours(intervalInHours);
+		}
+		
+		// --- Calculate wait time before first check ---------------
+		Duration timeToWait = Duration.between(now, dateTimeFirstCheck);
+		return timeToWait.toMillis();
+	}
+	
+	/**
+	 * Returns a LocalTime object with time set to the 
+	 * starting time +/- randomizerRange/2. 
+	 *
+	 * @param startingTime the starting time
+	 * @param randomizerRangeInMinutes the randomizer range in minutes
+	 * @return the randomized start time
+	 */
+	private LocalTime getRandomizedStartTime(LocalTime startingTime, int randomizerRangeInMinutes) {
+		
+		// --- Generate random offset -------------------------------
+		int randomAmountOfMinutes = new Random().nextInt(0, randomizerRangeInMinutes);
+		
+		LocalTime randomizedResult;
+		// --- Adjust the starting time -----------------------------
+		if (randomAmountOfMinutes > randomAmountOfMinutes / 2) {
+			randomizedResult = startingTime.plusMinutes(randomAmountOfMinutes);
+		} else {
+			randomizedResult = startingTime.minusMinutes(randomAmountOfMinutes);
+		}
+		return randomizedResult;
+	}
+
+	
+	/**
+	 * @return true if the the Scheduler is actively scheduling tasks.
+	 */
+	private boolean isRunning() {
+		return running;
+	}
+	/**
+	 * Returns the runningTasks, meaning tasks which have been scheduled.
+	 *
+	 * @return the runningTasks
+	 */
+	private HashMap<String, ScheduledFuture<?>> getRunningTasks() {
+		if (runningTasks == null) {
+			runningTasks = new HashMap<String, ScheduledFuture<?>>();
+		}
+		return runningTasks;
+	}
+	/**
+	 * Returns the registered tasks.
+	 *
+	 * @return the registered tasks
+	 */
+	private HashMap<String, MaintenanceTask> getRegisteredTasks() {
+		if (registeredTasks == null) {
+			registeredTasks = new HashMap<String, MaintenanceTask>();
+		}
+		return registeredTasks;
+	}
+
 	
 }

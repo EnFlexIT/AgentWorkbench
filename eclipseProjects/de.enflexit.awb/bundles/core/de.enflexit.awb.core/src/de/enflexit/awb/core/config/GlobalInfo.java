@@ -399,6 +399,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public void setExecutionMode(ExecutionMode executionMode) {
 		this.fileExecutionMode = executionMode;
+		Application.checkToRegisterUpdateTask();
 	}
 	
 	/**
@@ -1716,7 +1717,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	 */
 	public void setUpdateAutoConfiguration(Integer updateAutoConfiguration) {
 		this.updateAutoConfiguration = updateAutoConfiguration;
-		Application.checkToStartMaintenanceScheduler();
+		Application.checkToRegisterUpdateTask();
 	}
 	/**
 	 * Returns the update auto configuration.
