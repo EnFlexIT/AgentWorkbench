@@ -39,6 +39,16 @@ public class ServletHelper {
 	public static boolean isLoginPathRequest(Request request) {
 		return Request.getPathInContext(request).endsWith(lOGIN_PATH);
 	}
+	/**
+	 * Checks if the specified contextPath is a login request.
+	 *
+	 * @param contextPath the context path
+	 * @return true, if is login path request
+	 */
+	public static boolean isLoginPathRequest(String contextPath) {
+		return contextPath.toLowerCase().endsWith(lOGIN_PATH);
+	}
+	
 	
 	/**
 	 * Checks if the specified request is a logout request.
@@ -49,5 +59,13 @@ public class ServletHelper {
 	public static boolean isLogoutPathRequest(Request request) {
 		return Request.getPathInContext(request).endsWith(lOGOUT_PATH);
 	}
-	
+	/**
+	 * Checks if the specified contextPath is a logout request.
+	 *
+	 * @param contextPath the context path
+	 * @return true, if is logout path request
+	 */
+	public static boolean isLogoutPathRequest(String contextPath) {
+		return contextPath.toLowerCase().endsWith(lOGOUT_PATH);
+	}
 }

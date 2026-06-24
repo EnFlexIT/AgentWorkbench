@@ -817,6 +817,7 @@ public class JettyServerManager {
 			UserSessionStore.dispose();
 			// --- Reset the OpenIdAuthenticator --------------------
 			OIDCSecurityService.resetOpenIdAuthenticator();
+			OIDCSecurityService.resetOpenIdConfigurationEvaluator();
 			
 			BundleHelper.systemPrintln(this, "Stopped  server '" + serverName + "'.", false);
 			return true;
