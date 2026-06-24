@@ -1,3 +1,4 @@
+.openapi-generator-ignore
 README.md
 pom.xml
 src/gen/java/de/enflexit/awb/ws/restapi/gen/AliveApi.java
@@ -7,8 +8,6 @@ src/gen/java/de/enflexit/awb/ws/restapi/gen/ApiOriginFilter.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/ApiResponseMessage.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/AppApi.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/AppApiService.java
-src/gen/java/de/enflexit/awb/ws/restapi/gen/DoRestartApi.java
-src/gen/java/de/enflexit/awb/ws/restapi/gen/DoRestartApiService.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/EventLogApi.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/EventLogApiService.java
 src/gen/java/de/enflexit/awb/ws/restapi/gen/ExecutionStateApi.java
@@ -47,7 +46,6 @@ src/gen/java/de/enflexit/awb/ws/restapi/gen/model/Version.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/Bootstrap.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/AliveApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/AppApiServiceFactory.java
-src/main/java/de/enflexit/awb/ws/restapi/gen/factories/DoRestartApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/EventLogApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/ExecutionStateApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/InfoApiServiceFactory.java
@@ -56,7 +54,6 @@ src/main/java/de/enflexit/awb/ws/restapi/gen/factories/UserApiServiceFactory.jav
 src/main/java/de/enflexit/awb/ws/restapi/gen/factories/VersionApiServiceFactory.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/AliveApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/AppApiServiceImpl.java
-src/main/java/de/enflexit/awb/ws/restapi/gen/impl/DoRestartApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/EventLogApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/ExecutionStateApiServiceImpl.java
 src/main/java/de/enflexit/awb/ws/restapi/gen/impl/InfoApiServiceImpl.java

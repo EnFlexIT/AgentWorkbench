@@ -175,6 +175,14 @@ public class UserApiImpl extends UserApiService {
 	}
 
     /* (non-Javadoc)
+     * @see de.enflexit.awb.ws.restapi.gen.UserApiService#extendSessionTime(jakarta.ws.rs.core.SecurityContext)
+     */
+    @Override
+	public Response extendSessionTime(SecurityContext securityContext) throws NotFoundException {
+		return this.getSessionTime(securityContext);
+	}
+    
+    /* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.restapi.gen.UserApiService#logout(javax.ws.rs.core.SecurityContext)
 	 */
 	@Override
@@ -182,5 +190,6 @@ public class UserApiImpl extends UserApiService {
 		// --- Nothing to do here ! ---
 		return null;
 	}
+	
 
 }
