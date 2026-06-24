@@ -29,9 +29,10 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 
 	public enum OIDCParameter {
 		Issuer("Issuer", String.class),
-		TokenEndpoint("TokenEndpoint", String.class),
 		ClientID("ClientID", String.class),
-		ClientSecrete("ClientSecrete", String.class)
+		ClientSecrete("ClientSecrete", String.class),
+		TokenEndpoint("TokenEndpoint", String.class),
+		EndSessionEndpoint("EndSessionEndpoint", String.class)
 		;
 		
 		private String displayText;
@@ -60,7 +61,7 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 	
 	private static boolean useOneAuthenticator = false;
 	private static OpenIdAuthenticator openIdAuthenticator;
-	
+	private static OIDCConfigurationEvaluator oidcConfigurationEvaluator;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.ws.AwbSecurityHandlerService#getSecurityHandlerName()
@@ -130,21 +131,36 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 	public void customizeServletContextHandler(JettyConfiguration jConfiguration, ServletContextHandler serCtxHandle) {
 		
 		// --- Get the required parameter ---------------------------
+		String clientID = null;
+		String clientSecret = null;
+		String tokenEndpoint = null;
+		String endSessionEndPoint = null;
+		
 		ServletSecurityConfiguration ssc = jConfiguration.getSecuritySettings().getSecurityConfiguration(JettySecuritySettings.ID_SERVER_SECURITY);
-		String tokenEndpoint = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.TokenEndpoint.getKey());
-		String clientID = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientID.getKey());
-		String clientSecret = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientSecrete.getKey());
+		clientID = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientID.getKey());
+		clientSecret = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.ClientSecrete.getKey());
+
+		OIDCConfigurationEvaluator oidcEvaluator = OIDCSecurityService.getOpenIdConfigurationEvaluator(ssc.getSecurityHandlerConfiguration());
+		if (oidcEvaluator!=null) {
+			tokenEndpoint = oidcEvaluator.getTokenEndpoint();
+			endSessionEndPoint = oidcEvaluator.getEndSessionEndpoint();
+		} else {
+			tokenEndpoint = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.TokenEndpoint.getKey());
+			endSessionEndPoint  = ssc.getSecurityHandlerConfiguration().get(OIDCParameter.EndSessionEndpoint.getKey());
+		}
 		
 		Integer maxSessionLength = (int) jConfiguration.getSessionSettings().getSessionAttribute(JettySessionSettings.KEY_SET_MAX_INACTIVE_INTERVAL).getValue();
 		
+		// --- Create filter ----------------------------------------
 		FilterHolder refreshFilter = new FilterHolder(UserSessionFilter.class);
 		refreshFilter.setInitParameter(UserSessionFilter.SECURITY_HANDLER_SERVICE, this.getClass().getName());
 		refreshFilter.setInitParameter(UserSessionFilter.USER_SESSION_LENGTH_IN_SECONDS, maxSessionLength.toString());
 
-		refreshFilter.setInitParameter(OIDCParameter.TokenEndpoint.getKey(), tokenEndpoint); 
 		refreshFilter.setInitParameter(OIDCParameter.ClientID.getKey(),      clientID);
 		refreshFilter.setInitParameter(OIDCParameter.ClientSecrete.getKey(), clientSecret);
-
+		refreshFilter.setInitParameter(OIDCParameter.TokenEndpoint.getKey(), tokenEndpoint); 
+		refreshFilter.setInitParameter(OIDCParameter.EndSessionEndpoint.getKey(), endSessionEndPoint);
+		
 		// --- Apply to secured paths -------------------------------
 		serCtxHandle.addFilter(refreshFilter, "/*", EnumSet.of(DispatcherType.REQUEST));
 	}
@@ -173,6 +189,34 @@ public class OIDCSecurityService implements AwbSecurityHandlerService {
 	 */
 	private static void setOpenIdAuthenticator(OpenIdAuthenticator openIdAuthenticator) {
 		OIDCSecurityService.openIdAuthenticator = openIdAuthenticator;
+	}
+
+	
+	/**
+	 * Resets the OIDCConfigurationEvaluator.
+	 */
+	public static void resetOpenIdConfigurationEvaluator() {
+		OIDCSecurityService.setOpenIdConfigurationEvaluator(null);
+	}
+	/**
+	 * Based on the security handler configuration, returns the OIDCConfigurationEvaluator.
+	 * @param securityHandlerConfiguration the security handler configuration
+	 * @return the evaluated OIDC configuration
+	 */
+	private static OIDCConfigurationEvaluator getOpenIdConfigurationEvaluator(TreeMap<String, String> securityHandlerConfiguration) {
+		if (oidcConfigurationEvaluator==null) {
+			String issuer = securityHandlerConfiguration.get(OIDCParameter.Issuer.getKey());
+			if (issuer==null || issuer.isBlank()) return null;
+			oidcConfigurationEvaluator = new OIDCConfigurationEvaluator(issuer);
+		}
+		return oidcConfigurationEvaluator;
+	}
+	/**
+	 * Sets the OIDCConfigurationEvaluator.
+	 * @param oidcConfigurationEvaluator the new open id configuration
+	 */
+	private static void setOpenIdConfigurationEvaluator(OIDCConfigurationEvaluator openIdConfigurationEvaluator) {
+		OIDCSecurityService.oidcConfigurationEvaluator = openIdConfigurationEvaluator;
 	}
 	
 }

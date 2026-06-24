@@ -1,6 +1,8 @@
 package de.enflexit.awb.ws.core.session;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -10,8 +12,10 @@ import java.util.Map;
 import de.enflexit.awb.ws.core.security.AccessTokenRefreshment;
 import de.enflexit.awb.ws.core.security.AccessTokenRefreshment.TokenResponse;
 import de.enflexit.awb.ws.core.security.OIDCSecurityService;
+import de.enflexit.awb.ws.core.security.OIDCSecurityService.OIDCParameter;
 import de.enflexit.awb.ws.core.security.OIDCTokenRefreshment;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService;
+import de.enflexit.awb.ws.core.util.ServletHelper;
 import de.enflexit.common.DateTimeHelper;
 import de.enflexit.common.NumberHelper;
 import jakarta.servlet.Filter;
@@ -21,6 +25,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
@@ -129,7 +134,49 @@ public class UserSessionFilter implements Filter {
 				if (principal!=null) {
 					// --- Find the UserID ------------------------------------
 					String userID = principal.getName();
-					this.debugPrint( reqURI +  " [User-ID is: " + userID + "]");
+					this.debugPrint(reqURI +  " [User-ID is: " + userID + "]");
+					
+					// --------------------------------------------------------
+					// --- Check if this is a logout request ------------------
+					// --------------------------------------------------------
+					// --- In case of a logout request ------------------------
+					boolean isLogoutRequest = ServletHelper.isLogoutPathRequest(reqURI);
+					if (isLogoutRequest==true) {
+						this.debugPrint(reqURI +  " Creating reaction on logout request !!! ");
+						if (this.getSecurityHandlerServiceClassName().equals(JwtSingleUserSecurityService.class.getName())==true) {
+							// --- The JWT use-case: NOTHING TO DO !! ---------
+							
+						} else if (this.getSecurityHandlerServiceClassName().equals(OIDCSecurityService.class.getName())==true) {
+							// --- The OIDC use-case: -------------------------
+							String idTokenHint = null;
+							// --- 1. Invalidate session ----------------------
+							HttpSession session = sRequest.getSession(false);
+							if (session!=null) {
+								@SuppressWarnings("unchecked")
+					            Map<String, Object> oidcResponse = (Map<String, Object>) session.getAttribute("org.eclipse.jetty.security.openid.response");
+					            if (oidcResponse!=null) {
+					                idTokenHint = (String) oidcResponse.get("id_token");
+					            }
+					            session.invalidate();
+							}
+							
+							// --- 2. Remove UserSession from store ------------
+							UserSessionStore.getInstance().destroyUserSession(userID);
+							
+							// --- 3. Prepare redirect and redirect -----------
+							String redirectUrl = this.buildLogoutUrl(idTokenHint);
+							if (response instanceof HttpServletResponse sResponse) {
+								sResponse.sendRedirect(redirectUrl);
+							}
+							
+							// --- 4. Call 'logout' on request ----------------
+							sRequest.logout();
+							return;
+						}
+						
+					}
+					// --------------------------------------------------------
+					// --------------------------------------------------------
 					
 					// --- Try getting the user session -----------------------
 					UserSession uSess = UserSessionStore.getInstance().getUserSession(userID);
@@ -208,6 +255,37 @@ public class UserSessionFilter implements Filter {
 		// --- Forward to further filter jobs -----------------------
 		chain.doFilter(request, response);
 	}
+	
+	/**
+	 * Builds the logout URL to which we will redirect to logout from OIDC.
+	 *
+	 * @param idTokenHint the id token hint
+	 * @return the string
+	 */
+	private String buildLogoutUrl(String idTokenHint) {
+		
+		StringBuilder url = new StringBuilder(this.filterConfig.getInitParameter(OIDCParameter.EndSessionEndpoint.getKey()));
+		url.append("?client_id=").append(encode(this.filterConfig.getInitParameter(OIDCParameter.ClientID.getKey())));
+		//url.append("&post_logout_redirect_uri=").append(encode("/user/login"));
+		url.append("&prompt=login");
+		
+		
+		// --- logout without confirmation? -------------------------
+		if (idTokenHint != null) {
+			url.append("&id_token_hint=").append(encode(idTokenHint));
+		}
+		return url.toString();
+	}
+	/**
+	 * Encodes the specified String.
+	 *
+	 * @param s2e the String to encode
+	 * @return the encoded string
+	 */
+	private static String encode(String s2e) {
+		return URLEncoder.encode(s2e, StandardCharsets.UTF_8);
+	}
+	
 	
 	/**
 	 * Sets the access token refreshment result to session.
