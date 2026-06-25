@@ -1,5 +1,8 @@
 package de.enflexit.awb.ws.core.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.TreeMap;
 
 import de.enflexit.awb.ws.AwbWebServerServiceWrapper;
@@ -11,7 +14,9 @@ import de.enflexit.awb.ws.core.JettyServerManager;
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.core.security.OIDCSecurityService.OIDCParameter;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
+import de.enflexit.awb.ws.server.AwbServer;
 import de.enflexit.common.fileConfiguration.FileConfigurationService;
+import de.enflexit.common.fileConfiguration.FileDownload;
 import de.enflexit.common.fileConfiguration.FileProcessingResult;
 import de.enflexit.common.fileConfiguration.UploadedFile;
 
@@ -30,7 +35,31 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	 */
 	@Override
 	public String getPerformative() {
-		return "JettyConfiguration";
+		return "JETTYCONFIGURATION";
+	}
+	
+	@Override
+	public FileDownload getCurrentConfigurationFile() {
+		
+		//TODO Always AWBServer.NAME? Where should the name come from?
+		JettyConfiguration jettyConfig = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration();
+		if (jettyConfig == null) {
+			return null;
+		}
+		
+		File currentConfigurationFile = JettyConfiguration.getFile(jettyConfig);
+		byte[] content;
+		try {
+			content = Files.readAllBytes(currentConfigurationFile.toPath());
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			return null;
+		}
+		FileDownload fileDownload = new FileDownload();
+		fileDownload.setFileName(currentConfigurationFile.getName());
+		fileDownload.setContentType(FileDownload.XML_CONTENT_TYPE);
+		fileDownload.setContent(content);
+		return fileDownload;
 	}
 	
 	/* (non-Javadoc)
@@ -68,6 +97,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 
 	/**
 	 * Apply the jetty configuration and restart the server.
+	 * 
 	 * @param newJettyConfiguration the new JettyConfiguration
 	 */
 	private void applyJettyConfiguration(JettyConfiguration newJettyConfiguration) {
@@ -428,5 +458,6 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	    this.getFileProcessingResult().addError("Invalid integer value for key: " + key + " (" + value + ")");
 	    return null;
 	}
+
 
 }

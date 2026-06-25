@@ -28,6 +28,7 @@ import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
 import de.enflexit.common.fileConfiguration.FileConfigurationServiceManager;
+import de.enflexit.common.fileConfiguration.FileDownload;
 import de.enflexit.common.fileConfiguration.FileProcessingResult;
 import de.enflexit.common.fileConfiguration.UploadedFile;
 import de.enflexit.common.properties.PropertyMessage;
@@ -380,5 +381,35 @@ public class AppApiServiceImpl extends AppApiService {
     	message.setDateTime(System.currentTimeMillis()+"");
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     }
-    
+
+	@Override
+	public Response downloadAppSettingsFile(String xPerformative, SecurityContext securityContext) throws NotFoundException {
+
+		// --- Check who is the user ----------------------------------------------------
+		Principal principal = securityContext.getUserPrincipal();
+		if (principal == null) {
+			return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
+		}
+		
+    	Message message = new Message();
+    	message.setDateTime(System.currentTimeMillis()+"");
+    	// --- Check if there is a performative -----------------------------------------
+    	if (xPerformative == null || xPerformative.isBlank()) {
+    		message.setMessage("Performative is missing");
+    		message.setMessageType(MessageType.ERROR);
+        	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
+    	}
+    	
+    	// --- Get the file -------------------------------------------------------------
+    	FileDownload fileDownload = FileConfigurationServiceManager.getInstance().getCurrentConfigurationFile(xPerformative);
+    	if (fileDownload == null) {
+    		message.setMessage("File could not be loaded.");
+    		message.setMessageType(MessageType.ERROR);
+        	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
+		}
+    	
+		return Response.ok(fileDownload.getContent()).header("Content-Disposition", "attachment; filename=\"" + fileDownload.getFileName() + "\"").type(fileDownload.getContentType()).build();
+	}
+	
+	
 }

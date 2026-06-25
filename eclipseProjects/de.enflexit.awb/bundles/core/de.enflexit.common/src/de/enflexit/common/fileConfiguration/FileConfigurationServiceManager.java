@@ -43,6 +43,7 @@ public class FileConfigurationServiceManager {
 	
 	/**
 	 * Returns the performative service hash map.
+	 * 
 	 * @return the performative service hash map
 	 */
 	private synchronized HashMap<String, FileConfigurationService> getPerformativeServiceHashMap() {
@@ -89,27 +90,58 @@ public class FileConfigurationServiceManager {
 	
 	/**
 	 * Searches for a known service with corresponding performative and 
-	 * passes the file to its processFile() method. Returns true if the
-	 * parameters are valid, a service is found and successfully processes the file.
+	 * returns the result of the services processing operation. 
 	 *
 	 * @param performative the performative
 	 * @param file2Process the file 2 process
-	 * @return true, if successful
+	 * @return the result of the processing operation
 	 */
 	public FileProcessingResult processFile(String performative, UploadedFile file2Process) {
 		
 		
 		// --- Look for a corresponding service -----------------------------------------
-		FileConfigurationService fcs = this.getPerformativeServiceHashMap().get(performative);
+		FileConfigurationService fcs = this.getFileConfigurationService(performative);
 		FileProcessingResult fileProcessingResult = new FileProcessingResult();
 		if (fcs == null) {
-			LOGGER.error("No service was found for the performative " + performative);
 			fileProcessingResult.setMessage("No service was found for the performative " + performative);
 			return fileProcessingResult;
 		}
 		// --- Process the file and return the result -----------------------------------
 		fileProcessingResult = fcs.processFile(file2Process);
 		return fileProcessingResult;
+	}
+	
+	/**
+	 * Returns the current configuration file for the specified performative
+	 *
+	 * @param performative the performative to identify the service
+	 * @return the current configuration file
+	 */
+	public FileDownload getCurrentConfigurationFile(String performative) {
+		
+		// --- Look for a corresponding service -----------------------------------------
+		FileConfigurationService fcs = this.getFileConfigurationService(performative);
+		if (fcs != null) {
+			return fcs.getCurrentConfigurationFile();
+
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the file configuration service identified by the specified performative.
+	 *
+	 * @param performative the performative
+	 * @return the file configuration service
+	 */
+	public FileConfigurationService getFileConfigurationService(String performative) {
+		
+		FileConfigurationService fcs = this.getPerformativeServiceHashMap().get(performative.trim().toLowerCase());
+		if (fcs == null) {
+			LOGGER.error("No service was found for the performative " + performative);
+			return null;
+		}
+		return fcs;
 	}
 	
 }
