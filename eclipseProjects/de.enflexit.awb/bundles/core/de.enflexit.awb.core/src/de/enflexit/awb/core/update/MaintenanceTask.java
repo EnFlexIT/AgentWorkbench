@@ -56,4 +56,13 @@ public interface MaintenanceTask {
 		return 60;
 	}
 	
+	/**
+	 * Return true if the task should be executed in a separate thread.
+	 *
+	 * @return default true, can be overridden if the task doesn't require it's own Thread.
+	 */
+	public default boolean requiresDedicatedThread() {
+		return true;
+	}
+	
 }

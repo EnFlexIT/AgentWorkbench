@@ -61,7 +61,7 @@ public class MaintenanceScheduler {
 			@Override
 			public Thread newThread(Runnable task) {
 				Thread maintenanceThread = new Thread(task);
-				maintenanceThread.setName("maintenance-thread");
+				maintenanceThread.setName("AWB-Maintenance-Thread");
 				maintenanceThread.setDaemon(true);
 				return maintenanceThread;
 			}
@@ -124,7 +124,7 @@ public class MaintenanceScheduler {
 	 *
 	 * @param task the task to schedule
 	 */
-	private void scheduleTask(MaintenanceTask task) {
+	private void scheduleTask(final MaintenanceTask task) {
 		
 		// --- Don't act if the task is already known or running ----
 		if (this.getRunningTasks().get(task.getId()) == null || this.getRunningTasks().get(task.getId()).isCancelled()) {
@@ -133,8 +133,17 @@ public class MaintenanceScheduler {
 			long initialDelayInMillis = this.calculateExecutionDelay(task.getStartTime(), task.getIntervalInHours(), task.getMinutesToRandomize());
 			long checkIntervalInMillis = task.getIntervalInHours() * 1000 * 60 * 60; 
 			
+			Runnable run = task.getTask();
+			if (task.requiresDedicatedThread() == true) {
+				run = new Runnable() {
+					@Override
+					public void run() {
+						new Thread(task.getTask(), task.getId()).start();
+					}
+				};
+			}
 			// --- Schedule the task --------------------------------
-			ScheduledFuture<?> scheduledTask = scheduledExecutorService.scheduleAtFixedRate(task.getTask(), initialDelayInMillis, checkIntervalInMillis, TimeUnit.MILLISECONDS);
+			ScheduledFuture<?> scheduledTask = scheduledExecutorService.scheduleAtFixedRate(run, initialDelayInMillis, checkIntervalInMillis, TimeUnit.MILLISECONDS);
 			this.getRunningTasks().put(task.getId(), scheduledTask);
 		}
 		
