@@ -15,14 +15,14 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  */
 public class PropertyBusServiceFileConfigTypes implements PropertyBusService{
 
-	public static final String FILE_CONFIGURATION = "configurationtype[X]";
+	public static final String CONFIGURATION_TYPE = "configurationtype[X]";
 	
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
 	*/
 	@Override
 	public String getPerformative() {
-		return "FILECONFIGURATION";
+		return "File.Configuration";
 	}
 
 	/* (non-Javadoc)
@@ -46,7 +46,7 @@ public class PropertyBusServiceFileConfigTypes implements PropertyBusService{
 		
 		// --- Set results --------------------------------------------------------------
 		for (int serviceCounter = 0; serviceCounter < fileConfigurationServices.size(); serviceCounter++) {
-			properties.setStringValue(FILE_CONFIGURATION.replace("X", serviceCounter+""), fileConfigurationServices.get(serviceCounter).getPerformative());
+			properties.setStringValue(CONFIGURATION_TYPE.replace("X", serviceCounter+""), fileConfigurationServices.get(serviceCounter).getPerformative());
 		}
 		
 		return properties;

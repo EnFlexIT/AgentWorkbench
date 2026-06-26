@@ -1,16 +1,29 @@
 package de.enflexit.awb.ws.restapi.gen.impl;
 
+import de.enflexit.awb.ws.restapi.gen.*;
+import java.io.File;
+import de.enflexit.awb.ws.restapi.gen.model.Message;
+import de.enflexit.awb.ws.restapi.gen.model.Properties;
+
+import java.util.List;
+import de.enflexit.awb.ws.restapi.gen.NotFoundException;
+
+import java.io.InputStream;
+
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
-import de.enflexit.awb.ws.restapi.gen.ApiResponseMessage;
-import de.enflexit.awb.ws.restapi.gen.AppApiService;
-import de.enflexit.awb.ws.restapi.gen.NotFoundException;
-import de.enflexit.awb.ws.restapi.gen.model.Properties;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-08T12:08:47.460531100+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+import jakarta.validation.constraints.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-25T11:45:17.027739100+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class AppApiServiceImpl extends AppApiService {
+    @Override
+    public Response downloadAppSettingsFile(String xPerformative, SecurityContext securityContext) throws NotFoundException {
+        // do some magic!
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    }
     @Override
     public Response getAppSettings(String xPerformative, HttpServletRequest request, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
@@ -26,4 +39,5 @@ public class AppApiServiceImpl extends AppApiService {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
+
 }
