@@ -41,6 +41,11 @@ public abstract class AbstractDataSource implements Serializable {
 
 	private static final long serialVersionUID = -1124708006041779794L;
 
+	public final static String KEY_ID = "ID";
+	public final static String KEY_NAME = "Name";
+	public final static String KEY_DESCRIPTION = "Description";
+	public final static String KEY_ROWS_PER_PAGE = "RowsPerPage";
+	
 	public static final String CHANGED_ID = "CHANGED_ID";
 	public static final String CHANGED_NAME = "CHANGED_NAME";
 	public static final String CHANGED_DESCRIPTION = "CHANGED_DESCRIPTION";

@@ -69,7 +69,7 @@ public class DataWorkbook4XML extends DataWorkbook {
 	 */
 	@Override
 	public DataWorkbookLocation getDataWorkbookLocation() {
-		return new DataWorkbookLocation(this.getClass(), this.getDataWorkbookFile().getAbsolutePath());
+		return new DataWorkbookLocation(this.getID(), this.getClass(), this.getDataWorkbookFile().getAbsolutePath());
 	}
 	/**
 	 * Load from data work book location.
@@ -203,14 +203,13 @@ public class DataWorkbook4XML extends DataWorkbook {
 		File xmlFile = FileSelection.selectXMLFile(owner, JFileChooser.SAVE_DIALOG, "Create Workbook", "Create XML DataWorkbook", null, null);
 		if (xmlFile==null) return null;
 
-		DataWorkbookLocation dwLocation = new DataWorkbookLocation(DataWorkbook4XML.class, xmlFile.getAbsolutePath());
-		if (dataController.getDataWorkbookReminder().getDataWorkbookLocationList().contains(dwLocation)==true) {
+		if (dataController.getDataWorkbookReminder().getDataWorkbookLocation(DataWorkbook4XML.class, xmlFile.getAbsolutePath())!=null) {
 			AwbMessageDialog.showMessageDialog(owner, "The Data Workbook '" + xmlFile.getName() + "' was already loaded to the data viewer and thus cannot be overwritten!", "Data Workbook already loaded!", AwbMessageDialog.ERROR_MESSAGE);
 			return null;
 		} 
 		
 		DataWorkbook4XML dwbXML = new DataWorkbook4XML(xmlFile);
-		dwbXML.createRandomID();
+		dwbXML.getID();
 		dwbXML.setName(xmlFile.getName());
 		dwbXML.setDescription("Description of the XML DataWorkbook");
 		dwbXML.save();

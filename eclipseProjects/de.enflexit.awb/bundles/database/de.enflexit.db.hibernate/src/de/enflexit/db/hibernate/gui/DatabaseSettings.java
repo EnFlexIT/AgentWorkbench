@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import org.hibernate.cfg.Configuration;
 
+import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
 import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
@@ -160,12 +161,20 @@ public class DatabaseSettings implements Serializable {
 		if (dbSettings==null) return null;
 		
 		DatabaseDataSource dbDS = new DatabaseDataSource();
+		
 		dbDS.setDBMSName(dbSettings.getDatabaseSystemName());
 		dbDS.setConnectionURL(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
 		dbDS.setDbName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
 		
 		dbDS.setUserName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName));
 		dbDS.setPassword(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password));
+
+		// --- Super class attributes -----------
+		dbDS.setId(NumberHelper.parseInteger(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ID)));
+		dbDS.setName(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_NAME));
+		dbDS.setDescription(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_DESCRIPTION));
+		Integer rowsPerPage = NumberHelper.parseInteger(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE));
+		if (rowsPerPage!=null) dbDS.setRowsPerPage(rowsPerPage);
 		
 		return dbDS;
 	}
@@ -189,6 +198,12 @@ public class DatabaseSettings implements Serializable {
 		
 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
+		
+		// --- Super class attributes -----------
+		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId()==null ? "" : dbDataSource.getId().toString());
+		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
+		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
+		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE, dbDataSource.getRowsPerPage() + "");
 		
 		return dbSettings;
 	}

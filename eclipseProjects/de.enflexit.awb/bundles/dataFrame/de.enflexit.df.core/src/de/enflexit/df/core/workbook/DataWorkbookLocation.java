@@ -8,29 +8,49 @@ import de.enflexit.common.StringHelper;
  */
 public class DataWorkbookLocation {
 	
+	private int id;
 	private String dataWorkbookClassName;
 	private String dataWorkbookLocation;
+	
 	
 	/**
 	 * Instantiates a new data workbook description.
 	 *
-	 * @param dataWorkbookClassName the data workbook class
+	 * @param id the ID of the DataWorkbook
+	 * @param dataWorkbookClass the data workbook class
 	 * @param dataWorkbookLocation the data workbook location
 	 */
-	public DataWorkbookLocation(Class<? extends DataWorkbook> dataWorkbookClass, String dataWorkbookLocation) {
-		this(dataWorkbookClass.getName(), dataWorkbookLocation);
+	public DataWorkbookLocation(int id, Class<? extends DataWorkbook> dataWorkbookClass, String dataWorkbookLocation) {
+		this(id, dataWorkbookClass.getName(), dataWorkbookLocation);
 	}
 	/**
 	 * Instantiates a new data workbook description.
 	 *
+	 * @param id the ID of the DataWorkbook
 	 * @param dataWorkbookClassName the data workbook class name
 	 * @param dataWorkbookLocation the data workbook location
 	 */
-	public DataWorkbookLocation(String dataWorkbookClassName, String dataWorkbookLocation) {
+	public DataWorkbookLocation(int id, String dataWorkbookClassName, String dataWorkbookLocation) {
+		this.setID(id);
 		this.setDataWorkbookClassName(dataWorkbookClassName);
 		this.setDataWorkbookLocation(dataWorkbookLocation);
 	}
 
+	
+	/**
+	 * Returns the ID of the DataWorkbook.
+	 * @return the id
+	 */
+	public int getID() {
+		return id;
+	}
+	/**
+	 * Sets the ID of the DataWorkbook.
+	 * @param id the new id
+	 */
+	public void setID(int id) {
+		this.id = id;
+	}
 	
 	/**
 	 * Returns the data workbook type.
@@ -72,6 +92,7 @@ public class DataWorkbookLocation {
 		if (compObj==this) return true;
 		
 		DataWorkbookLocation compLocation = (DataWorkbookLocation)compObj;
+		if (compLocation.getID()!=this.getID()) return false; 
 		if (StringHelper.isEqualString(compLocation.getDataWorkbookClassName(), this.getDataWorkbookClassName())==false) return false;
 		if (StringHelper.isEqualString(compLocation.getDataWorkbookLocation(),  this.getDataWorkbookLocation())==false)  return false;
 		
