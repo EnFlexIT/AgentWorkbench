@@ -16,6 +16,7 @@ import agentgui.core.charts.xyChart.XyChartVisualisation;
 import de.enflexit.awb.core.ApplicationListener.ApplicationEvent;
 import de.enflexit.awb.core.bundleEvaluation.BundleClassFilterCollector;
 import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
@@ -560,9 +561,9 @@ public class Application {
 		// ----------------------------------------------------------
 		// --- Check if Agent.Workbench is operated headless --------
 		// ----------------------------------------------------------
-		if (isOperatingHeadless()==true) {
+		if (Application.getGlobalInfo().getAWBProduct()!=AWBProduct.WEB && isOperatingHeadless()==true) {
 			// --- Check start settings for headless operation ------
-			if (getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
+			if (Application.getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
 				String configFile = getGlobalInfo().getPathConfigFile(false);
 				String msg = "Agent.Workbench-Execution Mode was set to 'Application', but this mode can't be executed headless.\n";
 				msg+= "Please, check the argument '01_RUNAS' in file '" + configFile + "' and set this argument\n";
@@ -580,7 +581,7 @@ public class Application {
 		// --- Fire ApplicationEvent AWB_START ----------------------
 		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.AWB_START));
 		
-		switch (getGlobalInfo().getExecutionMode()) {
+		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
 			
 			// ------------------------------------------------------
