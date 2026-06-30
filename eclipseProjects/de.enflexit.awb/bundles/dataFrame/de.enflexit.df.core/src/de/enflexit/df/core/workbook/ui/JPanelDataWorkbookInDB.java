@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -21,7 +19,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -34,7 +31,6 @@ import javax.swing.event.DocumentListener;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
@@ -44,6 +40,8 @@ import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.data.DatabaseHelper;
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 
@@ -59,6 +57,8 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	
 	private DataController dataController;
 	private DataWorkbook4DB dataWorkbook;
+	
+	private boolean pauseDocumentListener;
 	
 	private JLabel jLabelCaptionID;
 	private JLabel jLabelID;
@@ -210,7 +210,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	 */
 	protected void informDataWorkbookSettingChanged() {
 		if (this.getDataController()!=null) {
-			this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, null);	
+			this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, AffectedDataObjects.create(this.getDataWorkbook()));	
 		}
 	}
 	
@@ -232,9 +232,11 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 			this.getJTextFieldName().setText("");
 			this.getJTextAreaDescription().setText("");
 		} else {
+			this.pauseDocumentListener = true;
 			this.getJLabelID().setText(this.dataWorkbook.getID() + "");
 			this.getJTextFieldName().setText(this.dataWorkbook.getName());
 			this.getJTextAreaDescription().setText(this.dataWorkbook.getDescription());
+			this.pauseDocumentListener = false;
 			
 			if (this.dataWorkbook.getFactoryID()==null) {
 				this.switchSourceOfDatabaseSettings(true);
@@ -445,7 +447,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		tbComponents.add(new JToolBar.Separator());
 		tbComponents.add(this.getJButtonTestConnection());
 		tbComponents.add(new JToolBar.Separator());
-		tbComponents.add(this.getJButtonApply());
+		tbComponents.add(this.getJButtonSave());
 		return tbComponents;
 	}
 	private JToggleButton getJToggleButtonSettingsManual() {
@@ -478,7 +480,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jButtonTestConnection;
 	}
-	private JButton getJButtonApply() {
+	private JButton getJButtonSave() {
 		if (jButtonApply == null) {
 			jButtonApply = new JButton();
 			jButtonApply.setToolTipText("Apply settings");
@@ -515,6 +517,8 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	 * @param de the DocumentEvent
 	 */
 	private void onChange(DocumentEvent de) {
+		
+		if (this.pauseDocumentListener==true) return;
 		
 		if (de.getDocument()==this.getJTextFieldName().getDocument()) {
 			this.getDataWorkbook().setName(this.getJTextFieldName().getText());
@@ -577,26 +581,13 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 				String factoryID = (String)this.getJComboBoxFactoryID().getSelectedItem();
 				dbSettings = DatabaseConnectionManager.getInstance().getDatabaseSettings(factoryID);
 			}
-			
-			Vector<String> msgVector = new Vector<>();
-			HibernateDatabaseService hds = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
-			if (hds!=null) {
-				Properties props = dbSettings.getHibernateDatabaseSettings();
-				if (hds.isDatabaseAccessible(props, msgVector, true)==true) {
-					JOptionPane.showMessageDialog(this, "Connection test successful!", "Connection Test", JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					String message = "Connection test failed!";
-					if (msgVector.isEmpty()==false) {
-						message += "\n\n";
-						for (String singelMessage : msgVector) {
-							message += singelMessage + "\n";
-						}
-					}
-					JOptionPane.showMessageDialog(this, message, "Connection Test", JOptionPane.ERROR_MESSAGE);
-				}
+			if (DatabaseHelper.providesValidDatabaseSettings(dbSettings, true, this)==true) {
+				this.getJButtonTestConnection().setIcon(BundleHelper.getImageIcon("MBcheckGreen.png"));
+			} else {
+				this.getJButtonTestConnection().setIcon(BundleHelper.getImageIcon("MBcheckRed.png"));
 			}
 			
-		} else if (ae.getSource()==this.getJButtonApply()) {
+		} else if (ae.getSource()==this.getJButtonSave()) {
 			// ----------------------------------------------------------------
 			// --- Apply and save settings ------------------------------------
 			// ----------------------------------------------------------------
@@ -614,9 +605,10 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 				this.getDataWorkbook().setFactoryID(null);
 				this.getDataWorkbook().setWorkbookDataSource(dbSettings.toDataSource());
 			}
+			this.getDataWorkbook().save();
+			this.informDataWorkbookSettingChanged();
 			
 		}
 	}
-	
 	
 }

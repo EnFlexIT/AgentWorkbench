@@ -69,8 +69,11 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 	private JPanel jPanelFactorySettings;
 	private JLabel jLabelHeader;
 	private JLabel jLabelFactoryID;
+	
 	private DefaultComboBoxModel<String> comboBoxModelFactoryID;
 	private JComboBox<String> jComboBoxFactoryID;
+	private boolean isActivatedActionListenerOfJComboBoxFactoryID;
+	
 	private JSeparator separator;
 
 	private JPanel JPanelNoDatabaseConnections;
@@ -98,6 +101,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			// --- Set selection to argument factoryID ----
 			this.getJTabbedPaneSettings().setSelectedIndex(1);
 			this.getJComboBoxFactoryID().setSelectedItem(factoryID);
+			this.loadDatabaseSettings(factoryID);
 		} else {
 			if (this.getComboBoxModelFactoryID().getSize()>0) {
 				// --- Reset current selection ------------
@@ -108,6 +112,7 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 				this.getJTabbedPaneSettings().setSelectedIndex(1);
 			}
 		}
+		this.isActivatedActionListenerOfJComboBoxFactoryID = true;
 		this.updateSettingsUI();
 		this.updateButtonUI();
 	}
@@ -639,8 +644,8 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			}
 		}
 		
-		// --- If a factory connection is edited --------------------
-		String factoryID = this.getFactoryIdSelected();
+		// --- Were the factory settings edited ---------------------
+		String factoryID = this.currentFactoryID;
 		if (factoryID==null) return false;
 		if (this.hasChangedFactoryDatabaseSettings(factoryID)==true) {
 			// --- Save changes? ------------------------------------
@@ -729,7 +734,9 @@ public class DatabaseConnectionSettingsDialog extends JDialog implements ActionL
 			
 		} else if (ae.getSource()==this.getJComboBoxFactoryID()) {
 			// --- Selection of new FactoryID -----------------------
-			this.updateFactorySettings();
+			if (this.isActivatedActionListenerOfJComboBoxFactoryID==true) {
+				this.updateFactorySettings();
+			}
 
 		} else if (ae.getSource()==this.getJButtonSave()) {
 			// --- Save the current settings ------------------------

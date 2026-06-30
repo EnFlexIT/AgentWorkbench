@@ -14,6 +14,10 @@ public class ServletHelper {
 	public static final String lOGIN_PATH = "/user/login";
 	public static final String lOGOUT_PATH = "/user/logout";
 	
+	public static final String INDEX_HTML = "/index.html";
+	public static final String LOGOUT_REDIRECT_PATH = INDEX_HTML;
+	
+	
 	/**
 	 * Checks if the specified request is a preflight request.
 	 *

@@ -2,6 +2,7 @@ package de.enflexit.df.core.workbook.ui;
 
 import javax.swing.JPanel;
 
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
@@ -148,7 +149,7 @@ public class JPanelDataWorkbookInFile extends JPanel implements DocumentListener
 	 */
 	protected void informDataWorkbookSettingChanged() {
 		if (this.getDataController()!=null) {
-			this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, null);	
+			this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, AffectedDataObjects.create(this.getDataWorkbook()));	
 		}
 	}
 	

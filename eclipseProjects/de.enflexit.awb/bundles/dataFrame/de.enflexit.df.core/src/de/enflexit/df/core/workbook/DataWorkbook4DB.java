@@ -25,6 +25,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	private DatabaseDataSource dataSource;
 	private String factoryID;
 	
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookFile()
 	 */
@@ -48,6 +49,13 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 */
 	public void setWorkbookDataSource(DatabaseDataSource dataSource) {
 		this.dataSource = dataSource;
+		// --- Synchronize general information ------------ 
+		if (this.dataSource!=null) {
+			this.dataSource.setId(this.getID());
+			this.dataSource.setName(this.getName());
+			this.dataSource.setDescription(this.getDescription());
+			this.dataSource.setRowsPerPage(0);
+		}
 	}
 	
 	/**
@@ -71,12 +79,13 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 */
 	@Override
 	public DataWorkbookLocation getDataWorkbookLocation() {
-				
-		String locationDescription = "";
 		
+		if (this.getWorkbookDataSource()==null && this.getFactoryID()==null) return null;
+		
+		String locationDescription = "";
 		if (this.getFactoryID()==null) {
 			// --- Manual connection Settings -----------------------
-			String configString = ""; // TODO
+			String configString = this.getWorkbookDataSource().toConfigurationString();
 			locationDescription = CONNECTION_MASK_CONFIGURATION.replace(TAG_CONFIGURATION, configString);
 			
 		} else {
@@ -84,7 +93,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 			locationDescription = CONNECTION_MASK_FACTORY.replace(TAG_FACTORY_ID, this.getFactoryID());
 			
 		}
-		return new DataWorkbookLocation(this.getClass(), locationDescription);
+		return new DataWorkbookLocation(this.getID(), this.getClass(), locationDescription);
 	}
 	/**
 	 * Load from data work book location.
@@ -96,20 +105,32 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
-		String locationDescription = dwLocation.getDataWorkbookLocation();
-		String connectionType = locationDescription.substring(0, locationDescription.indexOf(":")); 
+		String location = dwLocation.getDataWorkbookLocation();
+		String connectionType = location.substring(0, location.indexOf(":")); 
 		
+		int cutStart  = location.indexOf("::") + 2;
+		int cutStop = location.length();
+		
+		String valueString = location.substring(cutStart, cutStop);
+		
+		DataWorkbook4DB dataWorkbook = new DataWorkbook4DB();
+		dataWorkbook.setID(dwLocation.getID());
 		
 		if (connectionType.toLowerCase().equals("CONNECTION".toLowerCase())==true) {
 			// --- Manual connection Settings -----------------------
+			DatabaseDataSource ds = DatabaseDataSource.fromConfigurationString(valueString);
+			dataWorkbook.setName(ds.getName());
+			dataWorkbook.setDescription(ds.getDescription());
+
+			dataWorkbook.setWorkbookDataSource(ds);
+			dataWorkbook.setFactoryID(null);
 			
 		} else {
 			// --- Settings according to factory --------------------
-			
+			dataWorkbook.setWorkbookDataSource(null);
+			dataWorkbook.setFactoryID(valueString);
 		}
-		
-		// TODO
-		return null;
+		return dataWorkbook;
 	}
 	
 	/* (non-Javadoc)
@@ -132,6 +153,13 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		try {
 			
+			DataWorkbookLocation dwLoc = dataWorkbook.getDataWorkbookLocation();
+			
+			// --- Check if the DB settings are valid -------------------------
+			
+			// --- Create a DB-Connection or factory respectively -------------
+			
+			// --- Ensure that the required data structure is available -------  
 			
 			
 			return true;
@@ -152,6 +180,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		DataWorkbook4DB dwb = null;
 		try {
+			
 			
 			
 			
@@ -183,9 +212,10 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		DataWorkbook4DB dwbDB = new DataWorkbook4DB();
 		
-		dwbDB.createRandomID();
+		dwbDB.getID();
 		dwbDB.setName("Database Data Workbook");
 		dwbDB.setDescription("Description of the DataWorkbook, stored in a database");
+		dwbDB.setWorkbookDataSource(new DatabaseDataSource());
 		return dwbDB;
 	}
 

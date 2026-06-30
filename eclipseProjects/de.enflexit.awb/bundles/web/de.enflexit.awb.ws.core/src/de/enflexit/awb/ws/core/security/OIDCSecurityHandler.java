@@ -8,6 +8,8 @@ import org.eclipse.jetty.security.openid.OpenIdConfiguration;
 import org.eclipse.jetty.security.openid.OpenIdConfiguration.Builder;
 import org.eclipse.jetty.security.openid.OpenIdLoginService;
 
+import de.enflexit.awb.ws.core.util.ServletHelper;
+
 /**
  * The Class OIDCSecurityHandler
  * 
@@ -56,9 +58,9 @@ public class OIDCSecurityHandler extends SecurityHandler.PathMapped {
 		this.setLoginService(new OpenIdLoginService(openIdConfig, this.createNestedLoginService()));
 
 		this.setAuthenticator(new OpenIdAuthenticator(openIdConfig,
-		    "/j_security_check", 	// --- The path where the OIDC provider redirects back to Jetty.
-		    "/error", 				// --- Optional page where authentication errors are redirected.
-		    "/logoutRedirect" 		// --- Optional page where the user is redirected to this page after logout.
+			ServletHelper.LOGOUT_REDIRECT_PATH, // --- The path where the OIDC provider redirects back to Jetty.
+		    "/error", 							// --- Optional page where authentication errors are redirected.
+		    ServletHelper.LOGOUT_REDIRECT_PATH 	// --- Optional page where the user is redirected to this page after logout.
 		));
 		
 		// --- Use central method to secure the individual paths ----------------------------------------------------------------

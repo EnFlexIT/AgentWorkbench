@@ -10,6 +10,7 @@ import java.util.List;
 import org.osgi.framework.FrameworkUtil;
 
 import de.enflexit.awb.core.Application;
+import de.enflexit.common.NumberHelper;
 import de.enflexit.common.crypto.SecuredProperties;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
@@ -77,11 +78,19 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_WORKBOOK)==true) {
 			DataWorkbook dw = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
 			this.addDataWorkbookLocation(dw.getDataWorkbookLocation(), true);
-			this.saveToSecuredStorage();
+			
+		} else if (evt.getPropertyName().equals(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED)==true) {
+			DataWorkbook dw = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
+			int idxDWBL = this.indexOfDataWorkbookLocation(dw.getID());
+			if (idxDWBL!=-1) {
+				this.getDataWorkbookLocationList().set(idxDWBL, dw.getDataWorkbookLocation());
+				this.saveToSecuredStorage();
+			}
+			
 		} else if (evt.getPropertyName().equals(DataController.DC_REMOVED_DATA_WORKBOOK)==true) {
 			DataWorkbook dw = ((AffectedDataObjects) evt.getOldValue()).getDataWorkbook();
 			this.removeDataWorkbookLocation(dw.getDataWorkbookLocation(), true);
-			this.saveToSecuredStorage();
+			
 		}
 	}
 	
@@ -121,12 +130,67 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 	private boolean removeDataWorkbookLocation(DataWorkbookLocation dwLocation, boolean isDoSave) {
 		if (dwLocation!=null) {
 			boolean removed = this.getDataWorkbookLocationList().remove(dwLocation); 
+			if (removed==false) {
+				// --- Try using the ID -------------------
+				int idxDwLocation = this.indexOfDataWorkbookLocation(dwLocation.getID());
+				if (idxDwLocation!=-1) {
+					removed = this.getDataWorkbookLocationList().remove(idxDwLocation)!=null;
+				}
+			}
 			if (isDoSave==true && removed==true) this.saveToSecuredStorage();
 			return removed;
 		}
 		return false;
 	}
-
+	/**
+	 * Return the DataWorkbookLocation of the specified class and location.
+	 *
+	 * @param clazz the class to be used as seach parameter
+	 * @param location the location
+	 * @return the data workbook location
+	 */
+	public DataWorkbookLocation getDataWorkbookLocation(Class<? extends DataWorkbook > clazz, String location) {
+		return this.getDataWorkbookLocation(clazz.getName(), location);
+	}
+	/**
+	 * Return the DataWorkbookLocation of the specified class and location.
+	 *
+	 * @param className the class name
+	 * @param location the location
+	 * @return the data workbook location
+	 */
+	public DataWorkbookLocation getDataWorkbookLocation(String className, String location) {
+		
+		for (DataWorkbookLocation dwbl : this.getDataWorkbookLocationList()) {
+			
+			boolean isEqualClassName = dwbl.getDataWorkbookClassName().equals(className);
+			boolean isEqualLocation  = dwbl.getDataWorkbookLocation().equals(location);		
+			
+			if (isEqualClassName==true && isEqualLocation==true) {
+				return dwbl;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the index of the DataWorkbookLocation that matches the specified ID.
+	 *
+	 * @param id the id search
+	 * @return the index position of the DataWorkbookLocation
+	 */
+	private int indexOfDataWorkbookLocation(int id) {
+		
+		for (int i = 0; i < this.getDataWorkbookLocationList().size(); i++) {
+			DataWorkbookLocation dwbl = this.getDataWorkbookLocationList().get(i);
+			if (dwbl.getID()==id) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	
+	
 	/**
 	 * Opens all data workbooks.
 	 */
@@ -149,6 +213,7 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 			} else if (dwLocation.getDataWorkbookClassName().equals(DataWorkbook4DB.class.getName())) {
 				dw = DataWorkbook4DB.loadFromDataWorkBookLocation(dwLocation);
 			}
+			
 			this.getDataController().addDataWorkbook(dw);
 			if (openDataWorkbooks==true) {
 				this.getDataController().openDataWorkbook(dw);
@@ -176,7 +241,7 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 			
 			DataWorkbookLocation dwLocation = this.getDataWorkbookLocationList().get(i);
 			String locationKey = DATA_WORKBOOK_LOCATION_PREFIX + "[" + i + "]"; 
-			String locationValue = dwLocation.getDataWorkbookClassName() + "|" + dwLocation.getDataWorkbookLocation();
+			String locationValue = dwLocation.getID() +  "|" + dwLocation.getDataWorkbookClassName() + "|" + dwLocation.getDataWorkbookLocation();
 			String locationValue64 = Base64.getEncoder().encodeToString(locationValue.getBytes(StandardCharsets.UTF_8));      
 			this.getSecuredProperties().putString(this.getSecuredPropertiesNodeName(), locationKey, locationValue64);
 		}
@@ -206,10 +271,28 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 			String locationKey = DATA_WORKBOOK_LOCATION_PREFIX + "[" + i + "]"; 
 			String locationValue64 = this.getSecuredProperties().getString(this.getSecuredPropertiesNodeName(), locationKey, null);
 			if (locationValue64!=null) {
-				String locationValue = new String(Base64.getDecoder().decode(locationValue64), StandardCharsets.UTF_8);
-				String locationArray[] = locationValue.split("\\|");
-				DataWorkbookLocation dwLocation = new DataWorkbookLocation(locationArray[0], locationArray[1]);
-				this.addDataWorkbookLocation(dwLocation, false);
+				
+				String locationValue = null;
+				try {
+					locationValue = new String(Base64.getDecoder().decode(locationValue64), StandardCharsets.UTF_8);
+					String locationArray[] = locationValue.split("\\|");
+					
+					if (locationArray.length > 3) {
+						String dwLoation = locationArray[2];
+						for (int j = 3; j < locationArray.length; j++) {
+							dwLoation += "|" + locationArray[j];
+						}
+						locationArray[2] = dwLoation;
+					}
+					
+					DataWorkbookLocation dwLocation = new DataWorkbookLocation(NumberHelper.parseInteger(locationArray[0]), locationArray[1], locationArray[2]);
+					this.addDataWorkbookLocation(dwLocation, false);
+					
+				} catch (Exception ex) {
+					System.err.println("Error parsing DataWorkbookLocation - removing '" + locationKey + "'- " + locationValue);
+					ex.printStackTrace();
+				}
+				
 			} else {
 				break;
 			}

@@ -63,7 +63,7 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 */
 	@Override
 	public DataWorkbookLocation getDataWorkbookLocation() {
-		return new DataWorkbookLocation(this.getClass(), this.getDataWorkbookFile().getAbsolutePath());
+		return new DataWorkbookLocation(this.getID(), this.getClass(), this.getDataWorkbookFile().getAbsolutePath());
 	}
 	/**
 	 * Load from DataWorkbookLocation.
@@ -193,18 +193,17 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 */
 	public static DataWorkbook4JSON create(DataController dataController, Window owner) {
 		
-		File xmlFile = FileSelection.selectJsonFile(owner, JFileChooser.SAVE_DIALOG, "Create Workbook", "Create JSON DataWorkbook", null, null);
-		if (xmlFile==null) return null;
+		File jsonFile = FileSelection.selectJsonFile(owner, JFileChooser.SAVE_DIALOG, "Create Workbook", "Create JSON DataWorkbook", null, null);
+		if (jsonFile==null) return null;
 		
-		DataWorkbookLocation dwLocation = new DataWorkbookLocation(DataWorkbook4JSON.class, xmlFile.getAbsolutePath());
-		if (dataController.getDataWorkbookReminder().getDataWorkbookLocationList().contains(dwLocation)==true) {
-			AwbMessageDialog.showMessageDialog(owner, "The Data Workbook '" + xmlFile.getName() + "' was already loaded to the data viewer and thus cannot be overwritten!", "Data Workbook already loaded!", AwbMessageDialog.ERROR_MESSAGE);
+		if (dataController.getDataWorkbookReminder().getDataWorkbookLocation(DataWorkbook4JSON.class, jsonFile.getAbsolutePath())!=null) {
+			AwbMessageDialog.showMessageDialog(owner, "The Data Workbook '" + jsonFile.getName() + "' was already loaded to the data viewer and thus cannot be overwritten!", "Data Workbook already loaded!", AwbMessageDialog.ERROR_MESSAGE);
 			return null;
 		} 
 		
-		DataWorkbook4JSON dwbJSON = new DataWorkbook4JSON(xmlFile);
-		dwbJSON.createRandomID();
-		dwbJSON.setName(xmlFile.getName());
+		DataWorkbook4JSON dwbJSON = new DataWorkbook4JSON(jsonFile);
+		dwbJSON.getID();
+		dwbJSON.setName(jsonFile.getName());
 		dwbJSON.setDescription("Description of the XML DataWorkbook");
 		dwbJSON.save();
 		return dwbJSON;

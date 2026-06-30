@@ -144,29 +144,30 @@ public class UserSessionFilter implements Filter {
 					if (isLogoutRequest==true) {
 						this.debugPrint(reqURI +  " Creating reaction on logout request !!! ");
 						if (this.getSecurityHandlerServiceClassName().equals(JwtSingleUserSecurityService.class.getName())==true) {
+							// ------------------------------------------------
 							// --- The JWT use-case: NOTHING TO DO !! ---------
+							// ------------------------------------------------
 							
 						} else if (this.getSecurityHandlerServiceClassName().equals(OIDCSecurityService.class.getName())==true) {
+							// ------------------------------------------------
 							// --- The OIDC use-case: -------------------------
-							String idTokenHint = null;
-							// --- 1. Invalidate session ----------------------
+							// ------------------------------------------------
+							
+							// --- 1. Create logout URL ----------------------- 
+							String logoutURL = this.buildLogoutUrl(sRequest);
+							
+							// --- 2. Invalidate session ----------------------
 							HttpSession session = sRequest.getSession(false);
 							if (session!=null) {
-								@SuppressWarnings("unchecked")
-					            Map<String, Object> oidcResponse = (Map<String, Object>) session.getAttribute("org.eclipse.jetty.security.openid.response");
-					            if (oidcResponse!=null) {
-					                idTokenHint = (String) oidcResponse.get("id_token");
-					            }
-					            session.invalidate();
+								 session.invalidate();
 							}
 							
-							// --- 2. Remove UserSession from store ------------
+							// --- 3. Remove UserSession from store ------------
 							UserSessionStore.getInstance().destroyUserSession(userID);
 							
-							// --- 3. Prepare redirect and redirect -----------
-							String redirectUrl = this.buildLogoutUrl(idTokenHint);
+							// --- 4. Prepare redirect and redirect -----------
 							if (response instanceof HttpServletResponse sResponse) {
-								sResponse.sendRedirect(redirectUrl);
+								sResponse.sendRedirect(logoutURL);
 							}
 							
 							// --- 4. Call 'logout' on request ----------------
@@ -259,16 +260,38 @@ public class UserSessionFilter implements Filter {
 	/**
 	 * Builds the logout URL to which we will redirect to logout from OIDC.
 	 *
-	 * @param idTokenHint the id token hint
+	 * @param sRequest the HttpServletRequest
 	 * @return the string
 	 */
-	private String buildLogoutUrl(String idTokenHint) {
+	private String buildLogoutUrl(HttpServletRequest sRequest) {
 		
+		// --- Create absolute post logout URL ----------------------
+		String scheme 	= sRequest.getScheme();
+		String host		= sRequest.getServerName();
+		int port 		= sRequest.getServerPort();
+
+		String baseUrl = scheme + "://" + host;
+		if ( (scheme.equals("https") && port != 443) || (scheme.equals("http") && port != 80) ) {
+			baseUrl += ":" + port;
+		}
+		String postLogoutUri = baseUrl + ServletHelper.LOGOUT_REDIRECT_PATH;
+		
+		// --- Find the id_token value ------------------------------
+		String idTokenHint = null;
+		HttpSession session = sRequest.getSession(false);
+		if (session!=null) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> oidcResponse = (Map<String, Object>) session.getAttribute("org.eclipse.jetty.security.openid.response");
+			if (oidcResponse!=null) {
+				idTokenHint = (String) oidcResponse.get("id_token");
+			}
+		}
+		
+		
+		// --- Create the logout URL --------------------------------
 		StringBuilder url = new StringBuilder(this.filterConfig.getInitParameter(OIDCParameter.EndSessionEndpoint.getKey()));
 		url.append("?client_id=").append(encode(this.filterConfig.getInitParameter(OIDCParameter.ClientID.getKey())));
-		//url.append("&post_logout_redirect_uri=").append(encode("/user/login"));
-		url.append("&prompt=login");
-		
+		url.append("&post_logout_redirect_uri=").append(encode(postLogoutUri));
 		
 		// --- logout without confirmation? -------------------------
 		if (idTokenHint != null) {

@@ -26,6 +26,7 @@ import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
@@ -503,7 +504,10 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		} else if (ae.getSource()==this.getJButtonDataWorkbookSave()) {
 			// --- Save current DataWorkbook ----------------------------------
 			DataWorkbook dw = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
-			if (dw!=null) dw.save();
+			if (dw!=null) {
+				dw.save();
+				this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, AffectedDataObjects.create(dw));
+			}
 			
 		} else if (ae.getSource()==this.getJButtonDataWorkbookDelete()) {
 			// --- Delete selected DataWorkbook: ------------------------------

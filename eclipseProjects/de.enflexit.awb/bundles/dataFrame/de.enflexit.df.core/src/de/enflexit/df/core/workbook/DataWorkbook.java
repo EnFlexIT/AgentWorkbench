@@ -87,6 +87,9 @@ public abstract class DataWorkbook implements Serializable {
 	 * @return the id
 	 */
 	public Integer getID() {
+		if (id==null) {
+			this.createRandomID();
+		}
 		return id;
 	}
 	/**
@@ -100,11 +103,10 @@ public abstract class DataWorkbook implements Serializable {
 	 * Creates a random integer ID, if the ID is not already defined for the {@link DataWorkbook}.
 	 * @return the ID of the DataWorkbook, the current or the newly defined ID
 	 */
-	public Integer createRandomID() {
+	private void createRandomID() {
 		if (this.id==null) {
 			this.id = NumberHelper.getRandomInteger(0, Integer.MAX_VALUE);
 		}
-		return this.getID();
 	}
 	
 	
