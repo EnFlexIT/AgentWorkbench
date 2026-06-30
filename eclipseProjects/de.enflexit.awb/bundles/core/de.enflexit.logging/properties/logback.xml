@@ -1,26 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT" class="de.enflexit.logging.appender.AwbConsoleAppender">
     	<encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{48} - %msg%n</pattern>
 		</encoder>
 	</appender>
 	
-    <appender name="Transport" class="de.enflexit.logging.TransportAppender"/>
-    	<encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{48} - %msg%n</pattern>
-		</encoder>
-		
-	<appender name="ASYNC_Transport" class="ch.qos.logback.classic.AsyncAppender">
-	    <queueSize>500</queueSize>
-	    <discardingThreshold>0</discardingThreshold>
-	    <appender-ref ref="Transport"/>
-	</appender>
-    	
-	<root level="WARN">
+	<root level="ERROR">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="ASYNC_Transport" />
     </root>
     
     <logger name="de.enflexit.common.p2" level="error" />

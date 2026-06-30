@@ -35,9 +35,12 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	 */
 	@Override
 	public String getPerformative() {
-		return "JETTYCONFIGURATION";
+		return "JettyConfiguration";
 	}
 	
+	/* (non-Javadoc)
+	* @see de.enflexit.common.fileConfiguration.FileConfigurationService#getCurrentConfigurationFile()
+	*/
 	@Override
 	public FileDownload getCurrentConfigurationFile() {
 		
