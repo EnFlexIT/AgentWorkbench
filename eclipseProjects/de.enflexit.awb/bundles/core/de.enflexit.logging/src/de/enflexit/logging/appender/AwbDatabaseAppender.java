@@ -1,4 +1,4 @@
-package de.enflexit.logging;
+package de.enflexit.logging.appender;
 
 import ch.qos.logback.classic.db.DBAppender;
 
@@ -7,24 +7,24 @@ import ch.qos.logback.classic.db.DBAppender;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class LoggingWriter extends DBAppender {
+public class AwbDatabaseAppender extends DBAppender {
 
-	private static LoggingWriter thisInstance;
+	private static AwbDatabaseAppender thisInstance;
 
 	/**
-	 * Returns the single instance of LoggingWriter if available.
-	 * @return single instance of LoggingWriter
+	 * Returns the single instance of AwbDatabaseAppender if available.
+	 * @return single instance of AwbDatabaseAppender
 	 */
-	public static LoggingWriter getInstance() {
+	public static AwbDatabaseAppender getInstance() {
 		if (thisInstance==null) {
-			thisInstance = new LoggingWriter();
+			thisInstance = new AwbDatabaseAppender();
 		}
 		return thisInstance;
 	}
 	/**
 	 * Instantiates a new logging file writer.
 	 */
-	private LoggingWriter() { }
+	private AwbDatabaseAppender() { }
 
 	
 	/**

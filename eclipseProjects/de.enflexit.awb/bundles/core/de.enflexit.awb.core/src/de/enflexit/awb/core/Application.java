@@ -44,7 +44,7 @@ import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.language.Language;
-import de.enflexit.logging.LoggingWriter;
+import de.enflexit.logging.appender.AwbDatabaseAppender;
 import de.enflexit.logging.console.ConsoleScanner;
 
 
@@ -205,21 +205,21 @@ public class Application {
 	 * @return the logging file writer
 	 */
 	public static void startLoggingWriter() {
-		LoggingWriter.getInstance().setWriteToLoggingStorage(true);
+		AwbDatabaseAppender.getInstance().setWriteToLoggingStorage(true);
 	}
 	/**
 	 * Stops the logging file writer.
 	 * @return the logging file writer
 	 */
 	public static void stopLoggingWriter() {
-		LoggingWriter.getInstance().setWriteToLoggingStorage(false);
+		AwbDatabaseAppender.getInstance().setWriteToLoggingStorage(false);
 	}
 	/**
-	 * Returns the current {@link LoggingWriter} of the application.
+	 * Returns the current {@link AwbDatabaseAppender} of the application.
 	 * @return the LogFileWriter
 	 */
 	public static boolean isStartedLoggingWriter() {
-		return LoggingWriter.getInstance().isWriteToLoggingStorage();
+		return AwbDatabaseAppender.getInstance().isWriteToLoggingStorage();
 	}
 	
 	

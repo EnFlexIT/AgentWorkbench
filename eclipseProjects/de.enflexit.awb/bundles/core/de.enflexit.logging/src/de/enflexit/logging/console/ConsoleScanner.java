@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
+import de.enflexit.logging.appender.AwbConsoleAppender;
+
+
 
 /**
  * This Class can be used in order to listen to the output which will be generated<br> 
@@ -21,6 +29,8 @@ import java.util.Vector;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class ConsoleScanner {
+	
+	private static Logger logger = LoggerFactory.getLogger(ConsoleScanner.class);
 
 	private static ConsoleScanner scanner;
 	/**
@@ -115,6 +125,14 @@ public class ConsoleScanner {
 			this.outputStack.remove(0);
 		}
 		this.outputStack.add(lineOutput);
+		
+		// --- Log the output with a marker to avoid recursion ------
+		Marker sysOutMarker = MarkerFactory.getMarker(AwbConsoleAppender.SYSTEM_OUT_MARKER);
+		if (lineOutput.startsWith(PrintStreamListener.SystemError)) {
+			logger.error(sysOutMarker, lineOutput);
+		} else {
+			logger.info(sysOutMarker, lineOutput);
+		}
 		
 		// --- Forward information to each ConsoleListener ----------
 		for (ConsoleListener cl : this.getConsoleListener()) {
