@@ -124,6 +124,7 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 
 		// --- Keep the current jettyConfiguration to revert back to --------------------
 		JettyConfiguration oldJettyConfiguration = serviceWrapped.getJettyConfiguration();
+		newJettyConfiguration.setJettyCustomizer(oldJettyConfiguration.getJettyCustomizer());
 		// --- Server couldn't be startet with the new config ---------------------------
 		if (this.restartServer(newJettyConfiguration) == false) {
 			// --- Set result accordingly and revert back to the old configuration ------
