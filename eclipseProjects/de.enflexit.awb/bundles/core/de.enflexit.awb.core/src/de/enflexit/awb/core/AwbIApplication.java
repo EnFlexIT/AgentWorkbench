@@ -1,11 +1,16 @@
 package de.enflexit.awb.core;
 
+import javax.swing.SwingUtilities;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.language.Language;
 
 /**
@@ -15,6 +20,17 @@ import de.enflexit.language.Language;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class AwbIApplication implements AwbIApplicationInterface {
+	
+	/**
+	 * The Enumeration ApplicationVisualizationBy.
+	 */
+	public enum ApplicationVisualizationBy {
+		AgentWorkbenchSwing,
+		EclipseFramework
+	}
+	
+	/** Set this variable to switch the visualization */
+	private final ApplicationVisualizationBy visualisationBy = ApplicationVisualizationBy.AgentWorkbenchSwing;
 
 	private IApplicationContext iApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
@@ -90,8 +106,25 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		// --- Remind application context -----------------
 		this.setIApplicationContext(context);
 		
-		// --- Start the actual application ---------------
-		this.startApplication();
+		if (this.isSpecialStartOnMac()==true) {
+			// --- Special start mechanism for Mac OS -----
+			final IWorkbench workbench = PlatformUI.getWorkbench();
+			final Display display = workbench.getDisplay();
+			display.asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					// --- Minimize display -------
+					AwbIApplication.this.eclipseUiMinimize(display);
+					// --- Do  regular start ------
+					AwbIApplication.this.startApplicationInOwnThread();
+					// --- Close the --------------
+					AwbIApplication.this.eclipseUiHide(display);
+				}
+			});
+		} else {
+			// --- Regular start for Windows and Linux ----
+			this.startApplication();
+		}
 		
 		// --- Wait for termination of application --------
 		this.waitForApplicationTermination();
@@ -110,6 +143,66 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	 */
 	private void startApplication() throws Exception {
 		Application.start(this);
+	}
+	
+	/**
+	 * Starts the application in a separate thread.
+	 */
+	private void startApplicationInOwnThread() {
+		Thread awbStarter = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							try {
+								AwbIApplication.this.startApplication();
+							} catch(Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+					});
+				} catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		awbStarter.setName("AWB-Starter");
+		awbStarter.start();
+	}
+	
+	/**
+	 * Minimizes the Eclipse workbench .
+	 * @param display the current display
+	 */
+	private void eclipseUiMinimize(Display display) {
+		if (display!=null) {
+			if (display.getActiveShell()!=null) {
+				display.getActiveShell().setMinimized(true);
+			} else {
+				for (int i = 0; i < display.getShells().length; i++) {
+					display.getShells()[i].setMinimized(true);
+				} 
+			}
+		}
+	}
+	/**
+	 * Hides the Eclipse workbench.
+	 * @param display the display
+	 */
+	private void eclipseUiHide(Display display) {
+		if (display!=null) {
+			if (display.getActiveShell()!=null) {
+				display.getActiveShell().setVisible(false);
+			} else {
+				for (int i = 0; i < display.getShells().length; i++) {
+					display.getShells()[i].setVisible(false);
+				} 
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -201,6 +294,24 @@ public class AwbIApplication implements AwbIApplicationInterface {
 			}
 		});
 		return IApplication.EXIT_OK;
+	}
+	
+	/**
+	 * Checks if is the special MAC start is required.
+	 * @return true, if is special start on mac
+	 */
+	private boolean isSpecialStartOnMac() {
+		boolean isMac = SystemEnvironmentHelper.isMacOperatingSystem();
+		boolean isSwingVisualiszation = this.getVisualisationPlatform()==ApplicationVisualizationBy.AgentWorkbenchSwing;
+		return isMac & isSwingVisualiszation;
+	}
+	
+	/**
+	 * Returns the visualization platform that is either swing or the Eclipse UI.
+	 * @return the visualization by
+	 */
+	public ApplicationVisualizationBy getVisualisationPlatform() {
+		return visualisationBy;
 	}
 	
 }
