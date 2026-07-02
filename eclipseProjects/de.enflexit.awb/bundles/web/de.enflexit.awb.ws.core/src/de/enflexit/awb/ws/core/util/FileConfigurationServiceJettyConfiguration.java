@@ -113,28 +113,30 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		}
 		
 		// --- Look if there is a WebServerService for the new Server name --------------
-		String serverName = newJettyConfiguration.getServerName();
+		String serverName = AwbServer.NAME;
 		AwbWebServerServiceWrapper serviceWrapped = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(serverName);
-		// --- If there is no service, set the result accordingly -----------------------
 		if (serviceWrapped == null) {
+			// --- If there is no service, set the result accordingly -------------------
 			this.getFileProcessingResult().setSuccess(false);
 			this.getFileProcessingResult().setMessage("No webserver service found for the servername: " + serverName);
 			return;
 		}
 
 		// --- Keep the current jettyConfiguration to revert back to --------------------
-		JettyConfiguration oldJettyConfiguration = serviceWrapped.getJettyConfiguration();
-		newJettyConfiguration.setJettyCustomizer(oldJettyConfiguration.getJettyCustomizer());
-		// --- Server couldn't be startet with the new config ---------------------------
+		JettyConfiguration prevJettyConfiguration = serviceWrapped.getJettyConfiguration();
+		newJettyConfiguration.setJettyCustomizer(prevJettyConfiguration.getJettyCustomizer());
+		// --- Check if server could be started with the new configuration --------------
 		if (this.restartServer(newJettyConfiguration) == false) {
 			// --- Set result accordingly and revert back to the old configuration ------
 			this.getFileProcessingResult().setSuccess(false);
 			this.getFileProcessingResult().setMessage("Error while restarting the server. Reverting back to old configuration.");
-			this.restartServer(oldJettyConfiguration);
-			// --- Server restarted with the new configuration, set the result ----------
+			this.restartServer(prevJettyConfiguration);
+			
 		} else {
+			// --- Server restarted with the new configuration, set the result ----------
 			this.getFileProcessingResult().setSuccess(true);
 			this.getFileProcessingResult().setMessage("New configuration applied.");
+			
 		}
 		
 	}
