@@ -96,6 +96,7 @@ Pre-built releases are available on the [Releases page](https://github.com/EnFle
 | Windows (x86_64) | [de.enflexit.awb-win32.win32.x86_64.zip](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb-win32.win32.x86_64.zip) |
 | Linux (x86_64) | [de.enflexit.awb-linux.gtk.x86_64.tar.gz](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb-linux.gtk.x86_64.tar.gz) |
 | macOS (x86_64) | [de.enflexit.awb-macosx.cocoa.x86_64.tar.gz](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb-macosx.cocoa.x86_64.tar.gz) |
+| macOS (aarch64) | [de.enflexit.awb-macosx.cocoa.aarch64.tar.gz](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb-macosx.cocoa.aarch64.tar.gz) |
 
 **AWB Web Server Application** (headless REST API + system tray base UI):
 
@@ -104,6 +105,7 @@ Pre-built releases are available on the [Releases page](https://github.com/EnFle
 | Windows (x86_64) | [de.enflexit.awb.ws-win32.win32.x86_64.zip](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb.ws-win32.win32.x86_64.zip) |
 | Linux (x86_64) | [de.enflexit.awb.ws-linux.gtk.x86_64.tar.gz](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb.ws-linux.gtk.x86_64.tar.gz) |
 | macOS (x86_64) | [de.enflexit.awb.ws-macosx.cocoa.x86_64.tar.gz](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb.ws-macosx.cocoa.x86_64.tar.gz) |
+| macOS (aarch64) | [	de.enflexit.awb.ws-macosx.cocoa.aarch64.tar.gz](https://p2.enflex.it/awb/product/3.0.0/de.enflexit.awb.ws-macosx.cocoa.aarch64.tar.gz) |
 
 1. Download the archive for your platform and product variant.
 2. Extract and launch the `AgentWorkbench` executable (Desktop) or the start script (Web Server).
