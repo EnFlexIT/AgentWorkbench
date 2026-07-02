@@ -121,18 +121,11 @@ public class ConsoleScanner {
 	 * @param lineOutput the line output to display
 	 */
 	public void append2Stack(String lineOutput) {
+		
 		if (this.outputStack.size()>=20) {
 			this.outputStack.remove(0);
 		}
 		this.outputStack.add(lineOutput);
-		
-		// --- Log the output with a marker to avoid recursion ------
-		Marker sysOutMarker = MarkerFactory.getMarker(AwbConsoleAppender.SYSTEM_OUT_MARKER);
-		if (lineOutput.startsWith(PrintStreamListener.SystemError)) {
-			logger.error(sysOutMarker, lineOutput);
-		} else {
-			logger.info(sysOutMarker, lineOutput);
-		}
 		
 		// --- Forward information to each ConsoleListener ----------
 		for (ConsoleListener cl : this.getConsoleListener()) {
@@ -141,6 +134,27 @@ public class ConsoleScanner {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+		}
+
+		// --- Log the output with a marker to avoid recursion ------
+		Marker sysOutMarker = MarkerFactory.getMarker(AwbConsoleAppender.SYSTEM_OUT_MARKER);
+		String tempString;
+		if (lineOutput.startsWith(PrintStreamListener.SystemError)) {
+			tempString = lineOutput.substring(lineOutput.indexOf(PrintStreamListener.SystemError)+PrintStreamListener.SystemError.length()).trim();
+			if (tempString != null && tempString.isBlank() == false) {
+				logger.error(sysOutMarker, tempString);
+			}
+		} else if (lineOutput.startsWith(PrintStreamListener.SystemOutput)) {
+			tempString = lineOutput.substring(lineOutput.indexOf(PrintStreamListener.SystemOutput)+PrintStreamListener.SystemOutput.length()).trim();
+			if (tempString != null && tempString.isBlank() == false) {
+				logger.info(sysOutMarker, tempString);
+			}
+		} else {
+			tempString = lineOutput.trim();
+			if (tempString != null && tempString.isBlank() == false) {
+				logger.info(sysOutMarker, lineOutput.trim());
+			}
+	
 		}
 	}
 	

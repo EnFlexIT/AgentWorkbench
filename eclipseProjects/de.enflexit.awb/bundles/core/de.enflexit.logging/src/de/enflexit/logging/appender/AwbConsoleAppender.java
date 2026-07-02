@@ -8,9 +8,11 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 
 /**
- * The Class AwbConsoleAppender is basically a ConsoleAppender, except it
- * only appends messages without the SYSTEM_OUT_MARKER to avoid loops and
- * duplicates with @see ConsoleScanner.
+ * The Class AwbConsoleAppender is mostly a ConsoleAppender. It
+ * only appends messages without the SYSTEM_OUT_MARKER to avoid loops 
+ * with @see ConsoleScanner.
+ * The ThreadLocal APPENDER_OUTPUT is used to avoid duplicate log messages
+ * in other Appenders.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
@@ -18,11 +20,13 @@ public class AwbConsoleAppender extends ConsoleAppender<ILoggingEvent> {
 	
 	public static final String SYSTEM_OUT_MARKER = "SYSTEM_OUT";
 	
+	
 	/* (non-Javadoc)
 	* @see ch.qos.logback.core.OutputStreamAppender#append(java.lang.Object)
 	*/
 	@Override
 	protected void append(ILoggingEvent iLoggingEvent) {
+		
 		if (this.hasSysOutMarker(iLoggingEvent) == false) { 
 			super.append(iLoggingEvent);
 		}
