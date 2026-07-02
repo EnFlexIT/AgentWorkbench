@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature id="de.enflexit.awb.desktop.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
+   <feature id="de.enflexit.awb.desktop.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64,aarch64">
       <category name="de.enflexit.awb.desktop"/>
    </feature>
    <feature id="de.enflexit.awb.desktop.feature.source">
       <category name="de.enflexit.awb.desktop"/>
    </feature>
-   <feature id="de.enflexit.awb.ws.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
+   <feature id="de.enflexit.awb.ws.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64,aarch64">
       <category name="de.enflexit.awb.ws"/>
    </feature>
    <feature id="de.enflexit.awb.ws.feature.source">
       <category name="de.enflexit.awb.ws"/>
    </feature>
-   <feature id="de.enflexit.awb.docker.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64">
+   <feature id="de.enflexit.awb.docker.feature" version="0.0.0" os="linux,macosx,win32" arch="x86_64,aarch64">
       <category name="de.enflexit.awb.extras"/>
    </feature>
    <feature id="de.enflexit.awb.docker.feature.source">
