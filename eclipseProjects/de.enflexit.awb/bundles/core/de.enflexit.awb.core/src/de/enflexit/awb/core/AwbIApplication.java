@@ -3,6 +3,8 @@ package de.enflexit.awb.core;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
+import de.enflexit.awb.core.config.GlobalInfo;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.language.Language;
 
@@ -68,7 +70,13 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		}
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplicationInterface#getAwbProduct()
+	 */
+	@Override
+	public AWBProduct getAwbProduct() {
+		return AWBProduct.DESKTOP_SWING;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
@@ -76,6 +84,9 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 
+		// --- Set the product indicator ------------------
+		GlobalInfo.catchProduct(this.getAwbProduct());
+		
 		// --- Remind application context -----------------
 		this.setIApplicationContext(context);
 		

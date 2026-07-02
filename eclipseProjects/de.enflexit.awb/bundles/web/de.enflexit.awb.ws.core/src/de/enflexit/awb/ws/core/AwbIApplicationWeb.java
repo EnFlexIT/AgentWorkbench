@@ -1,6 +1,7 @@
 package de.enflexit.awb.ws.core;
 
 import de.enflexit.awb.core.AwbIApplication;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 
 /**
  * The Class AwbIApplicationWeb.
@@ -9,4 +10,12 @@ import de.enflexit.awb.core.AwbIApplication;
  */
 public class AwbIApplicationWeb extends AwbIApplication {
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplication#getAwbProduct()
+	 */
+	@Override
+	public AWBProduct getAwbProduct() {
+		return AWBProduct.WEB;
+	}
+	
 }

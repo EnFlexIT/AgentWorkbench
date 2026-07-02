@@ -3,6 +3,8 @@ package de.enflexit.awb.core;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
+
 /**
  * The Interface AwbIApplicationInterface.
  *
@@ -10,6 +12,14 @@ import org.eclipse.equinox.app.IApplicationContext;
  */
 public interface AwbIApplicationInterface extends IApplication {
 
+	
+	/**
+	 * Has to returns the AWBProduct.
+	 * @return the AWBProduct
+	 */
+	public AWBProduct getAwbProduct();
+	
+	
 	/**
 	 * Has to return the current IApplicationContext.
 	 * @return the i application context

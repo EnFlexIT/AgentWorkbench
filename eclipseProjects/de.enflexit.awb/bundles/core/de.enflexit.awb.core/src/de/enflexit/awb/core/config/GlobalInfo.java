@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.osgi.framework.Bundle;
@@ -106,6 +107,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	private PropertyContentProvider propertyContentProvider;
 	
 	// --- File-Properties ------------------------------------------
+	private static AWBProduct awbProductCatcher;
 	private AWBProduct awbProduct;
 	private ExecutionMode fileExecutionMode;
 	private String processID;
@@ -376,20 +378,55 @@ public class GlobalInfo implements ZoneIdResolver {
 	
 	
 	/**
+	 * Catch product.
+	 * @param awbProduct the AWBProduct
+	 */
+	public static void catchProduct(AWBProduct awbProduct) {
+		awbProductCatcher = awbProduct;
+	}
+	/**
 	 * Returns the current AWB product that is currently executed.
 	 * @return the AWB product
 	 */
 	public AWBProduct getAWBProduct() {
 		if (awbProduct==null) {
-			String currProductID = Platform.getProduct().getId();
-			for (AWBProduct awbProductCheck : AWBProduct.values()) {
-				if (awbProductCheck.getProductID().equals(currProductID)==true) {
-					this.awbProduct = awbProductCheck;
-					break;
+			if (GlobalInfo.awbProductCatcher!=null) {
+				this.awbProduct = GlobalInfo.awbProductCatcher;
+			} else {
+				IProduct iProduct = Platform.getProduct();
+				if (iProduct==null) {
+					// --- Could not find a product definition ---------------
+					awbProduct = this.getProductFromApplicationClass();
+				} else {
+					// --- Found a product definition -------------------------
+					String currProductID = iProduct.getId();
+					for (AWBProduct awbProductCheck : AWBProduct.values()) {
+						if (awbProductCheck.getProductID().equals(currProductID)==true) {
+							this.awbProduct = awbProductCheck;
+							break;
+						}
+					}
 				}
 			}
 		}
 		return awbProduct;
+	}
+	/**
+	 * Gets the product from application class.
+	 * @return the product from application class
+	 */
+	private AWBProduct getProductFromApplicationClass() {
+		
+		String className = System.getProperty("eclipse.application");
+		if (className==null) return null;
+		
+		for (AWBProduct awbProductCheck : AWBProduct.values()) {
+			String awbProductClass = awbProductCheck.getProductID().replace(".product", ".application");
+			if (awbProductClass.equals(className)==true) {
+				return awbProductCheck;
+			}
+		}
+		return null;
 	}
 	
 	

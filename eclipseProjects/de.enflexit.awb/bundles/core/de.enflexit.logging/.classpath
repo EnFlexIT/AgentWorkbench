@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="lib" path="lib/logback-classic-1.5.26.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback-core-1.5.26.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback-classic-db-1.2.11.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback-core-1.5.26.jar" sourcepath="lib/logback-core-1.5.26-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/logback-classic-db-1.2.11.1.jar" sourcepath="lib/logback-classic-db-1.2.11.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/logback-core-db-1.2.11.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-2.0.17.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21">

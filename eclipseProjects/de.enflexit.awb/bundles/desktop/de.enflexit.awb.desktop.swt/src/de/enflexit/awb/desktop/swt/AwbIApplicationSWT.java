@@ -7,6 +7,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.AwbIApplication;
+import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 
 /**
  * This class controls all aspects of the application's execution
@@ -15,7 +16,15 @@ import de.enflexit.awb.core.AwbIApplication;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class AwbIApplicationSWT extends AwbIApplication {
-
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplication#getAwbProduct()
+	 */
+	@Override
+	public AWBProduct getAwbProduct() {
+		return AWBProduct.DESKTOP_SWT;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.AwbIApplication#startEndUserApplication(java.lang.Runnable)
 	 */
@@ -34,6 +43,7 @@ public class AwbIApplicationSWT extends AwbIApplication {
 	}
 	
 
+	
 	/**
 	 * Starts the eclipse UI.
 	 * @param postWindowOpenRunnable the post window open runnable
