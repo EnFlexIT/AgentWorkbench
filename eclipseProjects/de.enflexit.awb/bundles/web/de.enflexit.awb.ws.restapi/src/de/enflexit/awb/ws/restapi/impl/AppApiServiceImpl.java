@@ -14,6 +14,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import com.nimbusds.jwt.SignedJWT;
 
 import de.enflexit.awb.ws.core.JettySessionSettings;
+import de.enflexit.awb.ws.core.JettyWebApplicationSettings;
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
 import de.enflexit.awb.ws.restapi.AwbWebServerAccess;
 import de.enflexit.awb.ws.restapi.RestApiConfiguration;
@@ -27,6 +28,7 @@ import de.enflexit.awb.ws.restapi.gen.model.Properties;
 import de.enflexit.awb.ws.restapi.tools.PropertyConverter;
 import de.enflexit.awb.ws.webApp.AwbWebApplication;
 import de.enflexit.awb.ws.webApp.AwbWebApplicationManager;
+import de.enflexit.awb.ws.webApp.AwbWebApplicationManager.WebAppReleaseType;
 import de.enflexit.common.fileConfiguration.FileConfigurationServiceManager;
 import de.enflexit.common.fileConfiguration.FileDownload;
 import de.enflexit.common.fileConfiguration.FileProcessingResult;
@@ -150,6 +152,7 @@ public class AppApiServiceImpl extends AppApiService {
     		awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.PublicProperties);
     		awbProps.setBooleanValue("_Authenticated", false);
     		awbProps.setStringValue("_AuthenticationMethod", this.getSecurityHandlerName());
+    		this.addReleaseType(awbProps);
     		this.addSessionInformation(request, awbProps);
 
     	} else {
@@ -159,6 +162,7 @@ public class AppApiServiceImpl extends AppApiService {
     			awbProps = AwbWebApplicationManager.getProperties(AwbWebApplication.PropertyType.AllProperties);
     			awbProps.setBooleanValue("_Authenticated", true);
     			awbProps.setStringValue("_AuthenticationMethod", this.getSecurityHandlerName());
+    			this.addReleaseType(awbProps);
     			this.addSessionInformation(request, awbProps);
     			this.addOIDCPrincipalInformation(principal, awbProps);
     			
@@ -191,6 +195,33 @@ public class AppApiServiceImpl extends AppApiService {
 			ex.printStackTrace();
 		}
     	return securityHandlerName;
+    }
+    
+    /**
+     * Adds the release type of the WebApp.
+     * @param awbProps the AWB props
+     */
+    private void addReleaseType( de.enflexit.common.properties.Properties awbProps) {
+    	
+    	JettyWebApplicationSettings webSettings = AwbWebServerAccess.getJettyConfiguration().getWebApplicationSettings();
+    	if (webSettings==null) return;
+    	String downloadURL = webSettings.getDownloadURL();
+    	if (downloadURL==null || downloadURL.isBlank()==true) return;
+    	String[] downloadURLParts = downloadURL.split("/");
+    	if (downloadURLParts==null || downloadURLParts.length==0) return;
+    			
+    	WebAppReleaseType webAppReleaseType = WebAppReleaseType.PRODUCTION_RELEASE;
+    	String subPathCheck = downloadURLParts[downloadURLParts.length-1].toLowerCase();
+    	for (WebAppReleaseType warType : WebAppReleaseType.values()) {
+    		if (warType.getSubPath().toLowerCase().equals(subPathCheck)) {
+    			webAppReleaseType = warType;
+    			break;
+    		}
+    	}
+    	// --- Only in case of non-productive web application -------
+    	if (webAppReleaseType!=WebAppReleaseType.PRODUCTION_RELEASE) {
+    		awbProps.setStringValue("_WebAppReleaseType", webAppReleaseType.name());
+    	}
     }
     
     /**
