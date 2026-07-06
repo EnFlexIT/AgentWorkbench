@@ -197,7 +197,7 @@ public class BundleProperties {
 
 		// --- this.DEF_RUNAS ------------------------
 		stringPrefValue = eclipsePreferences.get(DEF_RUNAS, ExecutionMode.APPLICATION.toString());
-		ExecutionMode execMode = ExecutionMode.valueOf(stringPrefValue);
+		ExecutionMode execMode = AwbEnumeration.getExecutionMode(stringPrefValue);
 		this.globalInfo.setExecutionMode(execMode);
 
 
@@ -243,13 +243,13 @@ public class BundleProperties {
 		this.globalInfo.setServerMasterPort4MTP(integerPrefValue);
 		// --- this.DEF_MASTER_PROTOCOL --------------
 		stringPrefValue = eclipsePreferences.get(DEF_MASTER_PROTOCOL, MtpProtocol.HTTP.toString());
-		mtpProtocol = MtpProtocol.valueOf(stringPrefValue);
+		mtpProtocol = AwbEnumeration.getMtpProtocol(stringPrefValue);
 		this.globalInfo.setServerMasterProtocol(mtpProtocol);
 		
 		
 		// --- this.DEF_OWN_MTP_CREATION -------------
 		stringPrefValue = eclipsePreferences.get(DEF_OWN_MTP_CREATION, MTP_Creation.ConfiguredByJADE.toString());
-		MTP_Creation ownMtpCreation = MTP_Creation.valueOf(stringPrefValue.trim());
+		MTP_Creation ownMtpCreation = AwbEnumeration.getMtpCreation(stringPrefValue.trim());
 		this.globalInfo.setOwnMtpCreation(ownMtpCreation);
 		// --- this.DEF_OWN_MTP_IP -------------------
 		stringPrefValue = eclipsePreferences.get(DEF_OWN_MTP_IP, PlatformJadeConfig.MTP_IP_AUTO_Config);
@@ -259,7 +259,7 @@ public class BundleProperties {
 		this.globalInfo.setOwnMtpPort(integerPrefValue);
 		// --- this.DEF_OWN_MTP_PROTOCOL -------------------
 		stringPrefValue = eclipsePreferences.get(DEF_OWN_MTP_PROTOCOL, MtpProtocol.HTTP.toString());
-		mtpProtocol = MtpProtocol.valueOf(stringPrefValue);
+		mtpProtocol = AwbEnumeration.getMtpProtocol(stringPrefValue);
 		this.globalInfo.setMtpProtocol(mtpProtocol);
 		
 		
@@ -279,7 +279,7 @@ public class BundleProperties {
 		this.globalInfo.setDeviceServiceProjectFolder(stringPrefValue);	
 		// --- this.DEF_DeviceServcie_ExecAs ----------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_EXEC_AS, DeviceSystemExecutionMode.SETUP.toString());
-		DeviceSystemExecutionMode dsem = DeviceSystemExecutionMode.valueOf(stringPrefValue);
+		DeviceSystemExecutionMode dsem = AwbEnumeration.getDeviceSystemExecutionMode(stringPrefValue);
 		this.globalInfo.setDeviceServiceExecutionMode(dsem);
 		// --- this.DEF_DeviceServcie_Setup -----------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_SETUP, "");
@@ -289,7 +289,7 @@ public class BundleProperties {
 		this.globalInfo.setDeviceServiceAgents(this.getDeviceAgentsVector(stringPrefValue.trim()));
 		// --- this.DEF_DeviceServcie_Vis ------------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_VISUALIZATION, EmbeddedSystemAgentVisualisation.TRAY_ICON.toString());
-		EmbeddedSystemAgentVisualisation esaVis = EmbeddedSystemAgentVisualisation.TRAY_ICON;
+		EmbeddedSystemAgentVisualisation esaVis = AwbEnumeration.getEmbeddedSystemAgentVisualization(stringPrefValue);
 		if (stringPrefValue.equals(EmbeddedSystemAgentVisualisation.NONE.name())==true || stringPrefValue.equals(EmbeddedSystemAgentVisualisation.TRAY_ICON.name())==true) {
 			esaVis = EmbeddedSystemAgentVisualisation.valueOf(stringPrefValue); 
 		}

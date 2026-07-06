@@ -435,6 +435,10 @@ public class GlobalInfo implements ZoneIdResolver {
 	 * @param executionMode the new execution mode
 	 */
 	public void setExecutionMode(ExecutionMode executionMode) {
+		if (executionMode == null) {
+			executionMode = ExecutionMode.APPLICATION;
+			Application.getApplicationLogger().warn("Attempted to set execution mode to null. Defaulting to Application mode instead.");
+		}
 		this.fileExecutionMode = executionMode;
 		Application.checkToRegisterUpdateTask();
 	}

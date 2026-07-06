@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.equinox.app.IApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import agentgui.core.charts.timeseriesChart.TimeSeriesVisualisation;
 import agentgui.core.charts.xyChart.XyChartVisualisation;
@@ -55,7 +57,9 @@ import de.enflexit.logging.console.ConsoleScanner;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class Application {
-	
+
+	/** The Application logger */
+	private static Logger logger = LoggerFactory.getLogger(Application.class);
 	/** True, if a remote container has to be started (see start arguments) */
 	private static boolean justStartJade = false;
 	/** Indicates if the benchmark is currently running */
@@ -197,6 +201,15 @@ public class Application {
 			console = AgentWorkbenchUiManager.getInstance().getConsole(true);
 		}
 		return console;
+	}
+	
+	
+	/**
+	 * Returns the application logger.
+	 * @return the application logger
+	 */
+	public static Logger getApplicationLogger() {
+		return Application.logger;
 	}
 	
 	
