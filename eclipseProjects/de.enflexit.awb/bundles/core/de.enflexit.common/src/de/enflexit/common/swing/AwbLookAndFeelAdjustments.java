@@ -91,7 +91,13 @@ public class AwbLookAndFeelAdjustments {
 		}
 	}
 	
-	
+	/**
+	 * Sets the look and feel to the swing UI Manager.
+	 * @param lafClassNameNew the new look and feel
+	 */
+	public static void setLookAndFeelUsingSwingUtilities(final String lafClassNameNew) {
+		SwingUtilities.invokeLater(() -> setLookAndFeel(lafClassNameNew));
+	}
 	/**
 	 * Sets the look and feel to the swing UI Manager.
 	 * @param lafClassNameNew the new look and feel

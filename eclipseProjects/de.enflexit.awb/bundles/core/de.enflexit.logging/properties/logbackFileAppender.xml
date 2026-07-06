@@ -7,6 +7,23 @@
 		</encoder>
 	</appender>
 	  
+    <appender name="FILE_APPENDER" class="de.enflexit.logging.appender.AwbRollingFileAppender">
+	    <encoder>
+		<!--   <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{48} - %msg</pattern> -->
+	    <pattern>%msg%n</pattern>
+		</encoder>	
+		<!--  Name of the active log file -->
+		<file>${LOG_DIR}/Agent.Workbench.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+    		<!-- Create folders for every month, rollover daily (midnight) -->
+    		<fileNamePattern>${LOG_DIR}/%d{yyyy-MM, aux}/Agent.Workbench-%d{yyyy-MM-dd}.log</fileNamePattern>
+    		<!-- Keep 30 units worth of logs, unit is defined by the last digits of file name pattern -->
+    		<maxHistory>30</maxHistory>
+    		<!-- If combined log size > cap, logs will be deleted at roll over regardless of maxHistory -->
+    		<totalSizeCap>10GB</totalSizeCap>
+		</rollingPolicy>
+    </appender>
+		
 	<root level="WARN">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE_APPENDER" />

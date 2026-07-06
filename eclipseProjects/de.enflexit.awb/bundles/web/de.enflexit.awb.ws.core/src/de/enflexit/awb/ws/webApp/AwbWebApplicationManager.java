@@ -34,6 +34,20 @@ import de.enflexit.db.hibernate.connection.GeneralDatabaseSettings;
  */
 public class AwbWebApplicationManager {
 	
+	public enum WebAppReleaseType {
+		PRODUCTION_RELEASE(""),
+		TEST_RELEASE("test");
+		
+		private final String subPath;
+		
+		private WebAppReleaseType(String subPath) {
+			this.subPath = subPath;
+		}
+		public String getSubPath() {
+			return subPath;
+		}
+	}
+	
 	static Logger LOGGER = LoggerFactory.getLogger(AwbWebApplicationManager.class);
 	
 	private static AwbWebApplication awbWebApplication;

@@ -1,11 +1,15 @@
 package de.enflexit.awb.core;
 
+import java.awt.Toolkit;
+
+import javax.swing.SwingUtilities;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.language.Language;
 
 /**
@@ -15,10 +19,9 @@ import de.enflexit.language.Language;
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
 public class AwbIApplication implements AwbIApplicationInterface {
-
+	
 	private IApplicationContext iApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
-	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.AwbIApplicationInterface#getIApplicationContext()
@@ -84,14 +87,26 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 
+		// --- Preparations for MAC environment -----------
+		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			// --- Ensure to start AWT --------------------
+		    Toolkit.getDefaultToolkit();
+		}
+		
 		// --- Set the product indicator ------------------
 		GlobalInfo.catchProduct(this.getAwbProduct());
 		
 		// --- Remind application context -----------------
 		this.setIApplicationContext(context);
-		
-		// --- Start the actual application ---------------
-		this.startApplication();
+
+		// --- OS-dependent system start ------------------
+		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			// --- Start for MacOS ------------------------
+			this.startApplicationInOwnThread();
+		} else {
+			// --- Regular start for Windows and Linux ----
+			this.startApplication();
+		}
 		
 		// --- Wait for termination of application --------
 		this.waitForApplicationTermination();
@@ -110,6 +125,35 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	 */
 	private void startApplication() throws Exception {
 		Application.start(this);
+	}
+	
+	/**
+	 * Starts the application in a separate thread.
+	 */
+	private void startApplicationInOwnThread() {
+		Thread awbStarter = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							try {
+								AwbIApplication.this.startApplication();
+							} catch(Exception ex) {
+								ex.printStackTrace();
+							}
+						}
+					});
+				} catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		awbStarter.setName("AWB-Starter");
+		awbStarter.start();
 	}
 	
 	/* (non-Javadoc)
