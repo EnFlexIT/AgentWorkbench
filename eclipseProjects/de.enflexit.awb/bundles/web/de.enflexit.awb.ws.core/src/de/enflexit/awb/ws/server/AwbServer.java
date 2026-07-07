@@ -289,7 +289,7 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
 		if (jwas.getUpdateStrategy()!=null && jwas.getUpdateStrategy()!=UpdateStrategy.Automatic) return;
 
 		// --- Check for an update of the web application -----------
-		WebApplicationVersion webAppVersion = WebApplicationUpdate.getWebApplicationUpdate(jwas.getDownloadURL());
+		WebApplicationVersion webAppVersion = WebApplicationUpdate.getWebApplicationUpdate(jwas.getDownloadURLIncludingEndSlash());
 		if (webAppVersion!=null) {
 			new WebApplicationUpdateProcess(webAppVersion, null).start();
 		}

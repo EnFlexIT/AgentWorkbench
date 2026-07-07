@@ -31,6 +31,17 @@ public class JettyWebApplicationSettings implements Serializable {
 	private UpdateStrategy updateStrategy;
 	private long updateLastCheck;
 	
+	
+	/**
+	 * Returns the download URL and includes an ending slash
+	 * @return the download URL
+	 */
+	public String getDownloadURLIncludingEndSlash() {
+		if (downloadURL != null && downloadURL.isBlank() == false && downloadURL.endsWith("/") == false) {
+			downloadURL += "/";
+		}
+		return downloadURL;
+	}
 	/**
 	 * Gets the download URL.
 	 * @return the download URL

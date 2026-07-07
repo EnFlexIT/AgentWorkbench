@@ -87,7 +87,7 @@ public class PropertyBusServiceUpdateWebApp implements PropertyBusService, WebAp
 		JettyConfiguration jettyConfig = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration();
 		JettyWebApplicationSettings webAppSettings = jettyConfig.getWebApplicationSettings();
 		// --- Search for the latest version ----------------------------------------------------------------
-		WebApplicationVersion latestVersion = WebApplicationUpdate.getWebApplicationUpdate(webAppSettings.getDownloadURL());
+		WebApplicationVersion latestVersion = WebApplicationUpdate.getWebApplicationUpdate(webAppSettings.getDownloadURLIncludingEndSlash());
 		// --- Start the update process if a newer version was found ----------------------------------------
 		if (latestVersion != null) {
 			 new WebApplicationUpdateProcess(latestVersion, this).start();
