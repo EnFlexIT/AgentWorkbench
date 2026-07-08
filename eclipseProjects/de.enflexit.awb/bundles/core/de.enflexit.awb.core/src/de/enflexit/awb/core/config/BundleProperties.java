@@ -115,7 +115,11 @@ public class BundleProperties {
 	public BundleProperties(GlobalInfo globalInfo, boolean isSetPreferencesToGlobal) {
 		this.globalInfo = globalInfo;
 		if (isSetPreferencesToGlobal==true) {
-			this.setPreferencesGlobal();
+			try {
+				this.setPreferencesGlobal();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 	
@@ -163,8 +167,8 @@ public class BundleProperties {
 	 * Saves the bundle properties.
 	 */
 	public void save() {
-		this.setGlobal2Preferences();
 		try {
+			this.setGlobal2Preferences();
 			this.getEclipsePreferences().flush();
 		} catch (BackingStoreException bsEx) {
 			bsEx.printStackTrace();
@@ -219,7 +223,9 @@ public class BundleProperties {
 
 		// --- this.DEF_LOOK_AND_FEEL ----------------
 		stringPrefValue = eclipsePreferences.get(DEF_LOOK_AND_FEEL, GlobalInfo.DEFAUL_LOOK_AND_FEEL_CLASS);
-		this.globalInfo.setAppLookAndFeelClassName(stringPrefValue);
+		if (stringPrefValue.isBlank() == false) {
+			this.globalInfo.setAppLookAndFeelClassName(stringPrefValue);
+		}
 
 		// --- this.DEF_LOGGING_ENABLED --------------
 		booleanPrefValue = eclipsePreferences.getBoolean(DEF_LOGGING_ENABLED, false);

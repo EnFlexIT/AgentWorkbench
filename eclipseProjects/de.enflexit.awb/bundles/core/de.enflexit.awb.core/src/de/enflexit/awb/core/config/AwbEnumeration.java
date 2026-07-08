@@ -19,7 +19,7 @@ public class AwbEnumeration {
 	 * if no match is found. 
 	 *
 	 * @param executionModeString the execution mode as a string
-	 * @return the execution mode
+	 * @return the execution mode corresponding to the provided string
 	 */
 	public static ExecutionMode getExecutionMode(String executionModeString) {
 		
@@ -43,7 +43,7 @@ public class AwbEnumeration {
 	 * if no match is found
 	 *
 	 * @param deviceSystemExecutionModeString the device system execution mode string
-	 * @return the device system execution mode
+	 * @return the device system execution mode corresponding to the provided string
 	 */
 	public static DeviceSystemExecutionMode getDeviceSystemExecutionMode(String deviceSystemExecutionModeString) {
 		
@@ -67,7 +67,7 @@ public class AwbEnumeration {
 	 * if no match is found.
 	 * 
 	 * @param mtpCreationString the mtp creation string
-	 * @return the mtp creation
+	 * @return the mtp creation corresponding to the provided string
 	 */
 	public static MTP_Creation getMtpCreation(String mtpCreationString) {
 		
@@ -91,7 +91,7 @@ public class AwbEnumeration {
 	 * if no match is found.
 	 *
 	 * @param mtpProtocolString the mtp protocol string
-	 * @return the mtp protocol
+	 * @return the mtp protocol corresponding to the provided string
 	 */
 	public static MtpProtocol getMtpProtocol(String mtpProtocolString) {
 		
@@ -110,11 +110,11 @@ public class AwbEnumeration {
 		return null;
 	}
 	/**
-	 * Returns the MtpProtocol equivalent for the provided string, ignoring case, or null,
+	 * Returns the EmbeddedSystemAgentVisualization equivalent for the provided string, ignoring case, or null,
 	 * if no match is found.
 	 *
-	 * @param embeddedSystemAgentVisualizationString the mtp protocol string
-	 * @return the mtp protocol
+	 * @param embeddedSystemAgentVisualizationString the EmbeddedSystemAgentVisualisation string
+	 * @return the EmbeddedSystemAgentVisualisation corresponding to the provided string
 	 */
 	public static EmbeddedSystemAgentVisualisation getEmbeddedSystemAgentVisualization(String embeddedSystemAgentVisualizationString) {
 		
