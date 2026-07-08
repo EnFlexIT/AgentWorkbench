@@ -46,8 +46,21 @@ public class AwbEnumeration {
 	 * @return the device system execution mode corresponding to the provided string
 	 */
 	public static DeviceSystemExecutionMode getDeviceSystemExecutionMode(String deviceSystemExecutionModeString) {
+		return getDeviceSystemExecutionMode(deviceSystemExecutionModeString, null);
+	}
+	/**
+	 * Returns the DeviceSystemExecution mode equivalent for the provided string, ignoring case, or null,
+	 * if no match is found
+	 *
+	 * @param deviceSystemExecutionModeString the device system execution mode string
+	 * @return the device system execution mode corresponding to the provided string
+	 */
+	public static DeviceSystemExecutionMode getDeviceSystemExecutionMode(String deviceSystemExecutionModeString, DeviceSystemExecutionMode defaultValue) {
 		
-		if (deviceSystemExecutionModeString==null || deviceSystemExecutionModeString.isBlank()==true) return null;
+		if (deviceSystemExecutionModeString==null || deviceSystemExecutionModeString.isBlank()==true) {
+			if (defaultValue != null) return defaultValue;
+			return null;
+		}
 		
 		try {
 			return DeviceSystemExecutionMode.valueOf(deviceSystemExecutionModeString);
@@ -59,6 +72,7 @@ public class AwbEnumeration {
 				return deviceExecMode;
 			}
 		}
+		if (defaultValue != null) return defaultValue;
 		return null;
 	}
 	

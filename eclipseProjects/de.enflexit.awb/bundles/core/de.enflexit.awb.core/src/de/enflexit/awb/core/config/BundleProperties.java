@@ -285,7 +285,7 @@ public class BundleProperties {
 		this.globalInfo.setDeviceServiceProjectFolder(stringPrefValue);	
 		// --- this.DEF_DeviceServcie_ExecAs ----------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_EXEC_AS, DeviceSystemExecutionMode.SETUP.toString());
-		DeviceSystemExecutionMode dsem = AwbEnumeration.getDeviceSystemExecutionMode(stringPrefValue);
+		DeviceSystemExecutionMode dsem = AwbEnumeration.getDeviceSystemExecutionMode(stringPrefValue, DeviceSystemExecutionMode.SETUP);
 		this.globalInfo.setDeviceServiceExecutionMode(dsem);
 		// --- this.DEF_DeviceServcie_Setup -----------
 		stringPrefValue = eclipsePreferences.get(DEF_DEVICE_SERVICE_SETUP, "");

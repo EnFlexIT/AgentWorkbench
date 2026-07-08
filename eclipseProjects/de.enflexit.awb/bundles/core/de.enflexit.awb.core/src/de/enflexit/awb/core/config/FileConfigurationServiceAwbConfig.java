@@ -13,20 +13,27 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
+import de.enflexit.awb.core.config.GlobalInfo.EmbeddedSystemAgentVisualisation;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
+import de.enflexit.awb.core.config.GlobalInfo.MtpProtocol;
+import de.enflexit.awb.core.project.PlatformJadeConfig.MTP_Creation;
 import de.enflexit.common.fileConfiguration.FileConfigurationService;
 import de.enflexit.common.fileConfiguration.FileDownload;
 import de.enflexit.common.fileConfiguration.FileProcessingResult;
 import de.enflexit.common.fileConfiguration.UploadedFile;
 
 /**
- * The Class FileConfigurationServiceAwbConfig.
+ * The Class FileConfigurationServiceAwbConfig provides one method to download the current
+ * de.enflexit.awb.core.prefs file and one to overwrite the existing one through a
+ * file upload. 
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
 public class FileConfigurationServiceAwbConfig implements FileConfigurationService {
 
-	FileProcessingResult fileProcessingresult;
+	private FileProcessingResult fileProcessingresult;
+	private Properties properties;
 	
 	/* (non-Javadoc)
 	* @see de.enflexit.common.fileConfiguration.FileConfigurationService#getPerformative()
@@ -41,152 +48,132 @@ public class FileConfigurationServiceAwbConfig implements FileConfigurationServi
 	*/
 	@Override
 	public FileProcessingResult processFile(UploadedFile file2Process) {
-		
-		Properties properties = new Properties();
+
+		// --- Check if there is an input stream ----------------------------------------
+		if (file2Process.getInputStream() == null) {
+			this.getFileProcessingResult().setMessage("No input stream found.");
+			return this.getFileProcessingResult();
+		}
 		byte[] content;
-		
-		// --- Load the file as properties ------------------------------------
+		properties = new Properties();
+		// --- Load the file as properties ----------------------------------------------
 		try {
 			content = file2Process.getInputStream().readAllBytes();
 			properties.load(new ByteArrayInputStream(content));
 
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-			this.getFileProcessingResult().setMessage("Error while loading the file");
-			return this.getFileProcessingResult();
+			this.getFileProcessingResult().setMessage("Error while loading the file.");
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.reset();
+			return fpr;
 		}
 		
-		properties = this.checkAndReplaceWithDefault(properties);
+		// --- Validate -----------------------------------------------------------------
+		this.validateProperties();
 		if (this.getFileProcessingResult().getErrorList().size() > 0) {
+			// --- Errors occured while validating, don't apply and return --------------
 			this.getFileProcessingResult().setMessage("Validation error.");
-			return this.getFileProcessingResult();
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.reset();
+			return fpr;
 		}
-//		try {
-//			Files.write(this.getPreferencesFile().toPath(), content);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			this.getFileProcessingResult().setMessage("Error while overwriting AwbConfiguration.");
-//			return this.getFileProcessingResult();
-//		}
+		
+		try  {
+			// --- Write file ---------------------------------------------------------------
+			Files.write(this.getPreferencesFile().toPath(), content);
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.getFileProcessingResult().setMessage("Error while writing new file.");
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.reset();
+			return fpr;
+		}
+		
 		this.getFileProcessingResult().setSuccess(true);
 		this.getFileProcessingResult().setMessage("File upload successful. Restarting Agent.Workbench...");
-		return this.getFileProcessingResult();
+		
+		// --- Return result while asynchronously restarting ----------------------------
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					// --- Wait for response to be sent ---------------------------------
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				Application.restart();
+			}
+		}).start();
+		
+		FileProcessingResult fpr = this.getFileProcessingResult();
+		this.reset();
+		return fpr;
 	}
 
 	/**
-	 * Validate properties.
-	 *
-	 * @param properties the properties 2 validate
-	 * @return true, if successful
+	 * Checks the properties for crucial missing values. 
 	 */
-	private Properties checkAndReplaceWithDefault(Properties properties) {
+	private void validateProperties() {
 
-		String awbCoreBundleVersion = properties.getProperty(BundleProperties.DEF_AWG_CORE_BUNLDE_VERSION, Application.getGlobalInfo().getVersionInfo().getVersionInfo());
+		ExecutionMode runAs = AwbEnumeration.getExecutionMode(this.getProperties().getProperty(BundleProperties.DEF_RUNAS));
+		if (runAs == null) {
+			// --- Validating without execution mode is pointless -----------------------
+			this.getFileProcessingResult().addError(BundleProperties.DEF_RUNAS + " is missing or invalid");
+			return;
+		}
+		MtpProtocol masterProtocol = AwbEnumeration.getMtpProtocol(properties.getProperty(BundleProperties.DEF_MASTER_PROTOCOL));
+		if (masterProtocol == null) {
+			this.getFileProcessingResult().addError(BundleProperties.DEF_MASTER_PROTOCOL + " is missing");
+		}
+		MtpProtocol ownMtpProtocol = AwbEnumeration.getMtpProtocol(properties.getProperty(BundleProperties.DEF_OWN_MTP_PROTOCOL));
+		if (ownMtpProtocol == null) {
+			this.getFileProcessingResult().addError(BundleProperties.DEF_OWN_MTP_PROTOCOL + " is missing");
+		}
+		MTP_Creation ownMtpCreation = AwbEnumeration.getMtpCreation(properties.getProperty(BundleProperties.DEF_OWN_MTP_CREATION));
+		if (ownMtpCreation == null) {
+			this.getFileProcessingResult().addError(BundleProperties.DEF_OWN_MTP_CREATION + " is missing");
+		}
 		
-		String projectDir = properties.getProperty(BundleProperties.DEF_PROJECTS_DIRECTORY, Application.getGlobalInfo().getPathProjects());
-		if (projectDir != null) properties.put(BundleProperties.DEF_PROJECTS_DIRECTORY, projectDir);
-		
-		String runAs = properties.getProperty(BundleProperties.DEF_RUNAS, Application.getGlobalInfo().getExecutionMode().toString());
-		if (runAs != null) properties.put(BundleProperties.DEF_RUNAS, runAs);
-		
-		String benchValue = properties.getProperty(BundleProperties.DEF_BENCH_VALUE, ""+ Application.getGlobalInfo().getBenchValue());
-		if (benchValue != null) properties.put(BundleProperties.DEF_BENCH_VALUE, benchValue);
-		String benchExecOn = properties.getProperty(BundleProperties.DEF_BENCH_EXEC_ON, Application.getGlobalInfo().getBenchExecOn());
-		if (benchExecOn != null) properties.put(BundleProperties.DEF_BENCH_EXEC_ON, benchExecOn);
-		String benchSkipAllways = properties.getProperty(BundleProperties.DEF_BENCH_SKIP_ALLWAYS, ""+ Application.getGlobalInfo().isBenchAlwaysSkip());
-		if (benchSkipAllways != null) properties.put(BundleProperties.DEF_BENCH_SKIP_ALLWAYS, benchSkipAllways);
-		
-		String maximizeMainWindow = properties.getProperty(BundleProperties.DEF_MAXIMiZE_MAIN_WINDOW, ""+ Application.getGlobalInfo().isMaximzeMainWindow());
-		if (maximizeMainWindow != null) properties.put(BundleProperties.DEF_MAXIMiZE_MAIN_WINDOW, maximizeMainWindow);
-		String lookAndFeel = properties.getProperty(BundleProperties.DEF_LOOK_AND_FEEL, Application.getGlobalInfo().getAppLookAndFeelClassName());
-		if (lookAndFeel != null) properties.put(BundleProperties.DEF_LOOK_AND_FEEL, lookAndFeel);
-		
-		String loggingEnabled = properties.getProperty(BundleProperties.DEF_LOGGING_ENABLED, ""+ Application.getGlobalInfo().isLoggingEnabled());
-		if (loggingEnabled != null) properties.put(BundleProperties.DEF_LOGGING_ENABLED, loggingEnabled);
-		String loggingBasePath = properties.getProperty(BundleProperties.DEF_LOGGING_BASE_PATH, Application.getGlobalInfo().getLoggingBasePath());
-		if (loggingBasePath != null) properties.put(BundleProperties.DEF_LOGGING_BASE_PATH, loggingBasePath);
-		
-		// --- Check required values for all server modes ---------------------
-		if (runAs.equalsIgnoreCase(ExecutionMode.SERVER.toString()) || runAs.equalsIgnoreCase(ExecutionMode.SERVER_MASTER.toString()) || runAs.equalsIgnoreCase(ExecutionMode.SERVER_SLAVE.toString())) {
-			
-			String autoStart = properties.getProperty(BundleProperties.DEF_AUTOSTART, ""+ Application.getGlobalInfo().isServerAutoRun());
-			if (autoStart != null) {
-				properties.put(BundleProperties.DEF_AUTOSTART, autoStart);
-			} else {
+		if (runAs == ExecutionMode.SERVER || runAs == ExecutionMode.SERVER_MASTER || runAs == ExecutionMode.SERVER_SLAVE) {
+			String autoStart = properties.getProperty(BundleProperties.DEF_AUTOSTART);
+			if (autoStart == null || autoStart.isBlank()) {
 				this.getFileProcessingResult().addError(BundleProperties.DEF_AUTOSTART + " is missing");
 			}
 			
-			String masterUrl = properties.getProperty(BundleProperties.DEF_MASTER_URL, Application.getGlobalInfo().getServerMasterURL());
-			if (masterUrl != null) {
-				properties.put(BundleProperties.DEF_MASTER_URL, masterUrl);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_MASTER_URL + " is missing");
-			}
+		} else if (runAs == ExecutionMode.DEVICE_SYSTEM) {
 			
-			String masterPort = properties.getProperty(BundleProperties.DEF_MASTER_PORT, ""+ Application.getGlobalInfo().getServerMasterPort());
-			if (masterPort != null) {
-				properties.put(BundleProperties.DEF_MASTER_PORT, masterPort);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_MASTER_PORT + " is missing");
-			}
-			
-			String masterPortMtp = properties.getProperty(BundleProperties.DEF_MASTER_PORT4MTP, ""+ Application.getGlobalInfo().getServerMasterPort4MTP());
-			if (masterPortMtp != null) {
-				properties.put(BundleProperties.DEF_MASTER_PORT4MTP, masterPortMtp);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_MASTER_PORT4MTP + " is missing");
-			}
-			
-			String masterProtocol = properties.getProperty(BundleProperties.DEF_MASTER_PROTOCOL, ""+ Application.getGlobalInfo().getServerMasterProtocol());
-			if (masterProtocol != null) {
-				properties.put(BundleProperties.DEF_MASTER_PROTOCOL, masterProtocol);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_MASTER_PROTOCOL + " is missing");
-			}
-			
-			String ownMtpCreation = properties.getProperty(BundleProperties.DEF_OWN_MTP_CREATION, Application.getGlobalInfo().getOwnMtpCreation().toString());
-			if (ownMtpCreation != null) {
-				properties.put(BundleProperties.DEF_OWN_MTP_CREATION, ownMtpCreation);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_OWN_MTP_CREATION + " is missing");
-			}
-			
-			String ownMtpIp = properties.getProperty(BundleProperties.DEF_OWN_MTP_IP, Application.getGlobalInfo().getOwnMtpIP());
-			if (ownMtpIp != null) {
-				properties.put(BundleProperties.DEF_OWN_MTP_IP, ownMtpIp);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_OWN_MTP_IP + " is missing");
-			}
-			
-			String ownMtpPort = properties.getProperty(BundleProperties.DEF_OWN_MTP_PORT, ""+ Application.getGlobalInfo().getOwnMtpPort());
-			if (ownMtpPort != null) {
-				properties.put(BundleProperties.DEF_OWN_MTP_CREATION, ownMtpCreation);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_OWN_MTP_CREATION + " is missing");
-			}
-			String ownMtpProtocol = properties.getProperty(BundleProperties.DEF_OWN_MTP_PROTOCOL, Application.getGlobalInfo().getMtpProtocol().toString());
-			if (ownMtpProtocol != null) {
-				properties.put(BundleProperties.DEF_OWN_MTP_PROTOCOL, ownMtpProtocol);
-			} else {
-				this.getFileProcessingResult().addError(BundleProperties.DEF_OWN_MTP_PROTOCOL + " is missing");
-			}
-		}
-		
-		String updateAutoConfig = properties.getProperty(BundleProperties.DEF_UPDATE_AUTOCONFIG, ""+ Application.getGlobalInfo().getUpdateAutoConfiguration());
-		if (updateAutoConfig != null) properties.put(BundleProperties.DEF_UPDATE_AUTOCONFIG, updateAutoConfig);
-		String updateKeepDictionary = properties.getProperty(BundleProperties.DEF_UPDATE_KEEP_DICTIONARY, ""+ Application.getGlobalInfo().getUpdateKeepDictionary());
-		if (updateKeepDictionary != null) properties.put(BundleProperties.DEF_UPDATE_KEEP_DICTIONARY, updateKeepDictionary);
-		String updateLastChecked = properties.getProperty(BundleProperties.DEF_UPDATE_DATE_LAST_CHECKED, ""+ Application.getGlobalInfo().getUpdateDateLastChecked());
-		if (updateLastChecked != null) properties.put(BundleProperties.DEF_UPDATE_DATE_LAST_CHECKED, updateLastChecked);
-		
-		if (runAs.equalsIgnoreCase(ExecutionMode.DEVICE_SYSTEM.toString())) {
+			// --- Checks for Device_System execution mode ------------------------------
 			String deviceServiceProject = properties.getProperty(BundleProperties.DEF_DEVICE_SERVICE_PROJECT_FOLDER);
-		}
-		
-		
-		return properties;
-	}
+			if (deviceServiceProject == null || deviceServiceProject.isBlank()) {
+				this.getFileProcessingResult().addError(BundleProperties.DEF_DEVICE_SERVICE_PROJECT_FOLDER + " is missing");
+			}
+			// --- Check for valid device system execution mode -------------------------
+			DeviceSystemExecutionMode deviceServiceExecAs = AwbEnumeration.getDeviceSystemExecutionMode(properties.getProperty(BundleProperties.DEF_DEVICE_SERVICE_EXEC_AS));
+			if (deviceServiceExecAs == null) {
+				this.getFileProcessingResult().addError(BundleProperties.DEF_DEVICE_SERVICE_EXEC_AS + " is missing or invalid");
+				
+			} else if (deviceServiceExecAs == DeviceSystemExecutionMode.SETUP) {
+				// --- In setup mode service setup has to be specified ------------------
+				String serviceSetup = properties.getProperty(BundleProperties.DEF_DEVICE_SERVICE_SETUP);
+				if (serviceSetup == null || serviceSetup.isBlank()) {
+					this.getFileProcessingResult().addError(BundleProperties.DEF_DEVICE_SERVICE_SETUP + " is missing");
+				}
+				
+			} else if (deviceServiceExecAs == DeviceSystemExecutionMode.AGENT) {
+				// --- In agent mode at least one agent name and class are needed -------
+				String agentName = properties.getProperty(BundleProperties.DEF_DEVICE_SERVICE_AGENT_NAME);
+				if (agentName == null || agentName.isBlank()) this.getFileProcessingResult().addError(BundleProperties.DEF_DEVICE_SERVICE_AGENT_NAME+ " is missing");
 
+				EmbeddedSystemAgentVisualisation agentVisualization = AwbEnumeration.getEmbeddedSystemAgentVisualization(properties.getProperty(BundleProperties.DEF_DEVICE_SERVICE_VISUALIZATION));
+				if (agentVisualization == null) {
+					this.getFileProcessingResult().addError(BundleProperties.DEF_DEVICE_SERVICE_VISUALIZATION + " is missing or invalid");
+				}
+			}
+		}
+	}
 	
 	/* (non-Javadoc)
 	* @see de.enflexit.common.fileConfiguration.FileConfigurationService#getCurrentConfigurationFile()
@@ -220,7 +207,6 @@ public class FileConfigurationServiceAwbConfig implements FileConfigurationServi
 	private File getPreferencesFile() {
 
 		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-
 		URL configUrl = Platform.getConfigurationLocation().getURL();
 		Path configDirectory = new File(configUrl.getFile()).toPath();
 
@@ -239,5 +225,36 @@ public class FileConfigurationServiceAwbConfig implements FileConfigurationServi
 		return fileProcessingresult;
 	}
 
+	/**
+	 * Sets the file processing result.
+	 *
+	 * @param fileProcessingresult the new file processing result
+	 */
+	private void setFileProcessingResult(FileProcessingResult fileProcessingresult) {
+		this.fileProcessingresult = fileProcessingresult;
+	}
 	
+	/**
+	 * Returns the properties.
+	 *
+	 * @return the properties
+	 */
+	private Properties getProperties() {
+		return properties;
+	}
+	/**
+	 * Sets the properties.
+	 *
+	 * @param properties the new properties
+	 */
+	private void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	/**
+	 * Sets fileProcessingResult and properties to null.
+	 */
+	private void reset() {
+		this.setFileProcessingResult(null);
+		this.setProperties(null);
+	}
 }

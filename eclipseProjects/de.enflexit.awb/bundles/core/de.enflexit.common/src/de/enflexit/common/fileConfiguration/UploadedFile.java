@@ -91,7 +91,7 @@ public class UploadedFile {
 			// --- Set inputStream to null if it doesn't ------------------
 			if (data.length == 0) {
 				this.inputStream = null;
-			
+				
 			} else {
 				this.inputStream = new ByteArrayInputStream(data);
 			}
@@ -99,9 +99,8 @@ public class UploadedFile {
 			ioExceptionRead.printStackTrace();
 
 		} finally {
-
 			try {
-					inputStream.close();
+				inputStream.close();
 
 			} catch (IOException ioExceptionClose) {
 				ioExceptionClose.printStackTrace();
