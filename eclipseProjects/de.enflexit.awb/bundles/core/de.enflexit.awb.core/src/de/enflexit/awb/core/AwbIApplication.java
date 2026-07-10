@@ -67,10 +67,13 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	 * Waits for the termination of the application.
 	 */
 	protected void waitForApplicationTermination() throws Exception {
-		// --- Wait for termination of the application ----
 		while (Application.isQuitJVM()==false) {
-			Thread.sleep(250);
-		}
+			if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+				MacRunLoopJNA.pumpRunLoop(0.25);
+			} else {
+				Thread.sleep(250);
+			}
+		}		
 	}
 	
 	/* (non-Javadoc)
@@ -91,6 +94,7 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
 			// --- Ensure to start AWT --------------------
 		    Toolkit.getDefaultToolkit();
+		    MacRunLoopJNA.activateApplication();
 		}
 		
 		// --- Set the product indicator ------------------
@@ -168,12 +172,9 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplicationInterface#stop()
-	 */
 	@Override
 	public void stop() {
-
+		
 		// --- Check for open projects ------
 		if (Application.stopAgentWorkbench()==false) return;
 		// --- Stop Eclipse workbench -------
@@ -184,6 +185,15 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		Application.setShutdownThread(null);
 		// --- Indicate to stop the JVM -----
 		Application.setQuitJVM(true);
+		
+		// --- Signal quit so the main thread's polling exits -------
+		MacRunLoopJNA.stopMainRunLoop();
+		// --- macOS: all cleanup done, force-JVM exit. The main thread ------
+		// --- is stuck in CFRunLoopRunInMode and will never return, so -------
+		// --- halt() is the only reliable way to quit.                      ---
+		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			Runtime.getRuntime().halt(0);
+		}
 	}
 	
 	/* (non-Javadoc)

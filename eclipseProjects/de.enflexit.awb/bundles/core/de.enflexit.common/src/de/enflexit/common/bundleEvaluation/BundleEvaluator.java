@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
@@ -50,7 +51,7 @@ public class BundleEvaluator {
 	private Vector<BundleEvaluatorThread> bundleEvaluatorThreadVectorWaiting;
 	private Vector<BundleEvaluatorThread> bundleEvaluatorThreadVectorRunning;
 	
-	private HashMap<String, ClassRequest> classRequestHash;
+	private ConcurrentHashMap<String, ClassRequest> classRequestHash;
 	private long requestMaxStayTime = 1000 * 10; // 10 seconds
 	
 	private Cache cache;
@@ -1255,9 +1256,9 @@ public class BundleEvaluator {
 	 * Returns the class request HashMap.
 	 * @return the class request HashMap
 	 */
-	private HashMap<String, ClassRequest> getClassRequestHash() {
+	private ConcurrentHashMap<String, ClassRequest> getClassRequestHash() {
 		if (classRequestHash==null) {
-			classRequestHash = new HashMap<>();
+			classRequestHash = new ConcurrentHashMap<>();
 		}
 		return classRequestHash;
 	}
@@ -1302,13 +1303,11 @@ public class BundleEvaluator {
 	 */
 	private void cleanClassRequests() {
 		if (this.getClassRequestHash().size()<=0) return;
-		synchronized (this.getClassRequestHash()) {
-			Vector<ClassRequest> classRequests = new Vector<>(this.getClassRequestHash().values());
-			for (int i = 0; i < classRequests.size(); i++) {
-				ClassRequest classRequest = classRequests.get(i);
-				if (classRequest!=null && System.currentTimeMillis()>=classRequest.getRequestTime() + this.requestMaxStayTime) {
-					this.getClassRequestHash().remove(classRequest.getRequestID());
-				}
+		Vector<ClassRequest> classRequests = new Vector<>(this.getClassRequestHash().values());
+		for (int i = 0; i < classRequests.size(); i++) {
+			ClassRequest classRequest = classRequests.get(i);
+			if (classRequest!=null && System.currentTimeMillis()>=classRequest.getRequestTime() + this.requestMaxStayTime) {
+				this.getClassRequestHash().remove(classRequest.getRequestID());
 			}
 		}
 	}

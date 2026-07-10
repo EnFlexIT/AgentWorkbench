@@ -240,8 +240,7 @@ public class GlobalInfo implements ZoneIdResolver {
 			
 			this.getVersionInfo();
 			this.getBundleProperties();
-			this.getSecuredProperties();
-			this.setApplicationsLookAndFeel();
+			this.getSecuredProperties();			
 			
 			// --- Some debug stuff -----------------------
 			boolean debug = false;
@@ -561,7 +560,7 @@ public class GlobalInfo implements ZoneIdResolver {
 	/**
 	 * Sets the applications look and feel.
 	 */
-	private void setApplicationsLookAndFeel() {
+	public void setApplicationsLookAndFeel() {
 		AwbLookAndFeelAdjustments.setLookAndFeelUsingSwingUtilities(this.getAppLookAndFeelClassName());
 	}
 	/**

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -206,6 +207,7 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		
 		// --- Place MainWindow center on screen --------------------
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
+		Desktop.getDesktop().requestForeground(true);
 		this.toFront();
 		
 		// --- Add the MainWindow as an Application Listener --------

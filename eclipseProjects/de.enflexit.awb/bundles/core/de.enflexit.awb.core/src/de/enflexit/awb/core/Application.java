@@ -383,7 +383,7 @@ public class Application {
 			// --- Start required Agent.Workbench instances ---------
 			// ------------------------------------------------------
 			Application.getConsole();
-			Application.getGlobalInfo();
+			Application.getGlobalInfo();			
 			Application.startBundleEvaluation();
 			
 			new LoadMeasureThread().start();  
@@ -394,7 +394,7 @@ public class Application {
 			// --- Just start JADE ----------------------------------
 			// ------------------------------------------------------
 			Application.getGlobalInfo();
-
+			
 			// --- Load project resources ? -------------------------
 			if (project2OpenAfterStart!=null) {
 				try {
@@ -580,6 +580,9 @@ public class Application {
 		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		// --- Fire ApplicationEvent AWB_START ----------------------
 		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.AWB_START));
+		
+		// --- Deferred L&F init (avoid macOS AWT deadlock during bundle activation) ---
+		Application.getGlobalInfo().setApplicationsLookAndFeel();
 		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
@@ -810,7 +813,7 @@ public class Application {
 
 		// --- Close open projects --------------
 		if (getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
-			if (getProjectsLoaded().closeAll()==false) return false;	
+			if (getProjectsLoaded().closeAll()==false) return false;
 		} else {
 			getProjectsLoaded().closeAll(null, true);
 		}

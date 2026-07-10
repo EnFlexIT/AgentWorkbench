@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
@@ -53,7 +53,7 @@ public class Cache {
 	@XmlElement(name = "BundleResult")
 	private ArrayList<CacheBundleResult> bundleResultList; 
 	
-	private transient TreeMap<String, CacheBundleResult> bundleResults;
+	private transient ConcurrentSkipListMap<String, CacheBundleResult> bundleResults;
 	
 	
 	/**
@@ -77,9 +77,9 @@ public class Cache {
 	 * Returns the cache tree map.
 	 * @return the cache tree map
 	 */
-	private TreeMap<String, CacheBundleResult> getBundleResultTreeMap() {
+	private ConcurrentSkipListMap<String, CacheBundleResult> getBundleResultTreeMap() {
 		if (bundleResults==null) {
-			bundleResults = new TreeMap<>();
+			bundleResults = new ConcurrentSkipListMap<>();
 		}
 		return bundleResults;
 	}
