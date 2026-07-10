@@ -185,13 +185,10 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		Application.setShutdownThread(null);
 		// --- Indicate to stop the JVM -----
 		Application.setQuitJVM(true);
-		
-		// --- Signal quit so the main thread's polling exits -------
-		MacRunLoopJNA.stopMainRunLoop();
-		// --- macOS: all cleanup done, force-JVM exit. The main thread ------
-		// --- is stuck in CFRunLoopRunInMode and will never return, so -------
-		// --- halt() is the only reliable way to quit.                      ---
+
+		// --- Special shutdown handling for MAC ----------
 		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			MacRunLoopJNA.stopMainRunLoop();
 			Runtime.getRuntime().halt(0);
 		}
 	}

@@ -73,13 +73,6 @@ public class AwbIApplicationSWT extends AwbIApplication {
 			// --- Regular start for Windows and Linux ----
 			this.startApplication();
 		}
-		
-		// --- Wait for termination of application --------
-		//this.waitForApplicationTermination();
-
-		// --- Stop the Application class -----------------
-//		System.out.println(Language.translate("Programmende... "));
-//		this.stop();
 
 	}
 	
