@@ -127,14 +127,14 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	 * @throws Exception the exception
 	 * @see Application#start(AwbIApplication)
 	 */
-	private void startApplication() throws Exception {
+	protected void startApplication() throws Exception {
 		Application.start(this);
 	}
 	
 	/**
 	 * Starts the application in a separate thread.
 	 */
-	private void startApplicationInOwnThread() {
+	protected void startApplicationInOwnThread() {
 		Thread awbStarter = new Thread(new Runnable() {
 			
 			@Override
