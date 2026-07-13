@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
-import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.AbstractDataSource;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,7 +49,7 @@ public abstract class DataWorkbook implements Serializable {
 	
 	@XmlElementWrapper(name = "dataSources")
 	@XmlElementRef 
-	private List<AbstractDataSource> dataSources;
+	protected List<AbstractDataSource> dataSources;
 	
 	/**
 	 * Instantiates a new data workbook.

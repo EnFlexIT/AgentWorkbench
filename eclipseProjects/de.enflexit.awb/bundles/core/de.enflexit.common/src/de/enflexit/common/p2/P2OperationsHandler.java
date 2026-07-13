@@ -427,7 +427,7 @@ public class P2OperationsHandler {
 	 * @return true, if is web or headless
 	 */
 	private boolean isWebOrHeadless() {
-		String currProductID = Platform.getProduct().getId();
+		String currProductID = Platform.getProduct()==null ? null : Platform.getProduct().getId();
 		boolean isWebProduct = (currProductID!=null && currProductID.equals(GlobalConstants.AWB_PRODUCT_ID_WEB));
 		boolean isHeadlessOp = SystemEnvironmentHelper.isHeadlessOperation();
 		return isWebProduct || isHeadlessOp;

@@ -1,4 +1,4 @@
-package de.enflexit.common.dataSources;
+package de.enflexit.db.dataSources;
 
 import java.io.Serializable;
 

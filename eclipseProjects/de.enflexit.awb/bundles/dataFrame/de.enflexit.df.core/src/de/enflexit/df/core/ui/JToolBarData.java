@@ -19,14 +19,13 @@ import javax.swing.JToolBar;
 import javax.swing.border.EtchedBorder;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
-import de.enflexit.common.dataSources.CsvDataSource;
-import de.enflexit.common.dataSources.DatabaseDataSource;
-import de.enflexit.common.dataSources.ExcelDataSource;
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.db.dataSources.CsvDataSource;
+import de.enflexit.db.dataSources.DatabaseDataSource;
+import de.enflexit.db.dataSources.ExcelDataSource;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
@@ -498,16 +497,12 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 			this.dataController.openDataWorkbook(DataWorkbook4JSON.loadFromFile(this));
 		} else if (ae.getSource()==this.getJMenuItemOpenDataWorkbookDB()) {
 			// --- Open database DataWorkbook ---------------------------------
-			this.dataController.openDataWorkbook(DataWorkbook4DB.loadFromDatabase());
+			this.dataController.openDataWorkbook(DataWorkbook4DB.create(this.dataController, this));
 
 			
 		} else if (ae.getSource()==this.getJButtonDataWorkbookSave()) {
 			// --- Save current DataWorkbook ----------------------------------
-			DataWorkbook dw = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
-			if (dw!=null) {
-				dw.save();
-				this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, AffectedDataObjects.create(dw));
-			}
+			this.getDataController().saveDataWorkBook(this.getDataController().getSelectionModel().getSelectedDataWorkbook());
 			
 		} else if (ae.getSource()==this.getJButtonDataWorkbookDelete()) {
 			// --- Delete selected DataWorkbook: ------------------------------

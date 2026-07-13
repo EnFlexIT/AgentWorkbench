@@ -1,4 +1,4 @@
-package de.enflexit.common.dataSources;
+package de.enflexit.db.dataSources;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
@@ -15,7 +15,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-@DiscriminatorValue("csv")
+@DiscriminatorValue("excel")
 
 @XmlRootElement(name = "ExcelDataSource")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -25,7 +25,6 @@ import jakarta.xml.bind.annotation.XmlType;
     "columnSeparator",
     "headline"
 })
-
 public class ExcelDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;

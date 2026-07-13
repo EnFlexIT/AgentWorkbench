@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
-import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.AbstractDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
 import de.enflexit.df.core.workbook.DataWorkbookReminder;
@@ -38,6 +38,8 @@ public class DataController {
 	public static final String DC_REMOVED_DATA_WORKBOOK = "DC_REMOVED_DATA_WORKBOOK";
 	
 	public static final String DC_DATA_WORKBOOK_CONFIGURATION_CHANGED = "DC_DATA_WORKBOOK_CONFIGURATION_CHANGED";
+	public static final String DC_PREPARE_FOR_SAVING_DATA_WORKBOOK = "DC_PREPARE_FOR_SAVING_DATA_WORKBOOK";
+	public static final String DC_SAVED_DATA_WORKBOOK = "DC_SAVED_DATA_WORKBOOK";
 	
 	public static final String DC_ADDED_DATA_SOURCE = "DC_ADDED_DATA_SOURCE";
 	public static final String DC_OPENED_DATA_SOURCE = "DC_OPENED_DATA_SOURCE";
@@ -201,6 +203,24 @@ public class DataController {
 			this.openDataSource(dataWorkbookWork, ds);
 		}
 		this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbookWork));
+	}
+	/**
+	 * Saves the specified DataWorkbook.
+	 * @param dataWorkbook the data workbook
+	 */
+	public void saveDataWorkBook(DataWorkbook dataWorkbook) {
+		
+		if (dataWorkbook==null) return;
+		// --- Inform that we're about to save the workbook ---------
+		this.getPropertyChangeSupport().firePropertyChange(DC_PREPARE_FOR_SAVING_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
+		try {
+			// --- Call to save the workbook ------------------------
+			dataWorkbook.save();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		// --- Inform that the workbook was saved -------------------
+		this.getPropertyChangeSupport().firePropertyChange(DC_SAVED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 	}
 	/**
 	 * Close data workbook.

@@ -8,10 +8,10 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import de.enflexit.common.dataSources.AbstractDataSource;
-import de.enflexit.common.dataSources.CsvDataSource;
-import de.enflexit.common.dataSources.DatabaseDataSource;
-import de.enflexit.common.dataSources.ExcelDataSource;
+import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.CsvDataSource;
+import de.enflexit.db.dataSources.DatabaseDataSource;
+import de.enflexit.db.dataSources.ExcelDataSource;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceCsv;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceDatabase;

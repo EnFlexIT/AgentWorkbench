@@ -4,17 +4,12 @@ Bundle-Name: Data Frame - Core Bundel
 Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.df.core
 Automatic-Module-Name: de.enflexit.df.core
-Bundle-Version: 0.0.1.qualifier
-Export-Package: de.enflexit.df.core,
- de.enflexit.df.core.data,
- de.enflexit.df.core.model,
- de.enflexit.df.core.model.treeNode,
- de.enflexit.df.core.ui,
- de.enflexit.df.core.ui.dataSource,
- de.enflexit.df.core.workbook,
- de.enflexit.df.core.workbook.ui
+Bundle-Version: 0.0.2.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate
+Require-Bundle: de.enflexit.df.tablesaw,
+ de.enflexit.db.hibernate
 Import-Package: com.google.gson,
  de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,
@@ -23,18 +18,27 @@ Import-Package: com.google.gson,
  de.enflexit.awb.core.ui,
  de.enflexit.common,
  de.enflexit.common.crypto,
- de.enflexit.common.dataSources,
  de.enflexit.common.images,
  de.enflexit.common.swing,
- de.enflexit.db.hibernate,
- de.enflexit.db.hibernate.connection,
- de.enflexit.db.hibernate.gui,
+ de.enflexit.db.dataSources,
+ de.enflexit.db.userManagement,
  jakarta.persistence,
  jakarta.xml.bind,
  jakarta.xml.bind.annotation,
  org.eclipse.core.runtime.preferences,
+ org.hibernate,
+ org.hibernate.cfg,
  org.osgi.framework,
+ org.osgi.framework.wiring;version="[1.2.0,2.0.0)",
  org.osgi.service.prefs,
  org.slf4j
-Require-Bundle: de.enflexit.df.tablesaw
 Service-Component: OSGI-INF/dataFramePerspectiveService.xml
+Export-Package: de.enflexit.df.core,
+ de.enflexit.df.core.data,
+ de.enflexit.df.core.db,
+ de.enflexit.df.core.model,
+ de.enflexit.df.core.model.treeNode,
+ de.enflexit.df.core.ui,
+ de.enflexit.df.core.ui.dataSource,
+ de.enflexit.df.core.workbook,
+ de.enflexit.df.core.workbook.ui

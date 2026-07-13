@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import de.enflexit.common.dataSources.CsvDataSource;
+import de.enflexit.db.dataSources.CsvDataSource;
 import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DateColumn;

@@ -22,9 +22,9 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import de.enflexit.common.dataSources.CsvDataSource;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.TimeFormatSelection;
+import de.enflexit.db.dataSources.CsvDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.DataController;

@@ -1,4 +1,4 @@
-package de.enflexit.common.dataSources;
+package de.enflexit.db.dataSources;
 
 import de.enflexit.common.StringHelper;
 import jakarta.persistence.Column;
@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlType;
     "columnSeparator",
     "headline"
 })
-
 public class CsvDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;
@@ -121,7 +120,7 @@ public class CsvDataSource extends AbstractDataSource {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.common.dataSources.AbstractDataSource#equals(java.lang.Object)
+	 * @see de.enflexit.db.dataSources.AbstractDataSource#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object compObj) {

@@ -10,6 +10,8 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -43,23 +46,23 @@ import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.data.DatabaseHelper;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
-
 
 /**
  * The Class JPanelDataWorkbookInDB.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, ActionListener, HibernateStateVisualizationService {
+public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeListener, DocumentListener, ActionListener, HibernateStateVisualizationService {
 
 	private static final long serialVersionUID = -3104101192788727464L;
-	
+
 	private DataController dataController;
 	private DataWorkbook4DB dataWorkbook;
-	
+
 	private boolean pauseDocumentListener;
-	
+
 	private JLabel jLabelCaptionID;
 	private JLabel jLabelID;
 	private JLabel jLableCaptionName;
@@ -67,13 +70,13 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	private JLabel jLabelDescription;
 	private JScrollPane jScrollPaneDescription;
 	private JTextArea jTextAreaDescription;
-	
+
 	private JSeparator jSeparatorToDbSettings;
 	private DatabaseSettingsPanel jPanelDbSettings;
 
 	private JPanel jPanelFactorySettings;
 	private JLabel jLabelFactoryID;
-	private JLabel jLabelFactroyState;
+	private JLabel jLabelFactoryState;
 	private DefaultComboBoxModel<String> comboBoxModelFactoryID;
 	private JComboBox<String> jComboBoxFactoryID;
 
@@ -90,72 +93,73 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	public JPanelDataWorkbookInDB() {
 		this(null, null);
 	}
+
 	/**
-	 * Instantiates a  JPanelDataWorkbookInFile.
+	 * Instantiates a JPanelDataWorkbookInFile.
 	 *
 	 * @param dataController the data controller
-	 * @param dataWorkbook the data workbook
+	 * @param dataWorkbook   the data workbook
 	 */
 	public JPanelDataWorkbookInDB(DataController dataController, DataWorkbook4DB dataWorkbook) {
 		this.initialize();
 		this.setDataController(dataController);
 		this.setDataWorkbook(dataWorkbook);
+		SwingUtilities.invokeLater(() -> this.checkDatabaseSettings(false));
 	}
-	
 	/**
 	 * Initialize.
 	 */
 	private void initialize() {
-		
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
 		this.setLayout(gridBagLayout);
-		
+
 		GridBagConstraints gbc_jLabelCaptionID = new GridBagConstraints();
 		gbc_jLabelCaptionID.insets = new Insets(5, 5, 0, 0);
 		gbc_jLabelCaptionID.anchor = GridBagConstraints.WEST;
 		gbc_jLabelCaptionID.gridx = 0;
 		gbc_jLabelCaptionID.gridy = 0;
 		this.add(this.getJLabelCaptionID(), gbc_jLabelCaptionID);
-		
+
 		GridBagConstraints gbc_jLabelID = new GridBagConstraints();
 		gbc_jLabelID.insets = new Insets(5, 5, 0, 5);
 		gbc_jLabelID.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jLabelID.gridx = 1;
 		gbc_jLabelID.gridy = 0;
 		this.add(this.getJLabelID(), gbc_jLabelID);
-		
+
 		GridBagConstraints gbc_jLableCaptionName = new GridBagConstraints();
 		gbc_jLableCaptionName.anchor = GridBagConstraints.WEST;
 		gbc_jLableCaptionName.insets = new Insets(5, 5, 0, 0);
 		gbc_jLableCaptionName.gridx = 0;
 		gbc_jLableCaptionName.gridy = 1;
 		this.add(this.getJLableCaptionName(), gbc_jLableCaptionName);
-		
+
 		GridBagConstraints gbc_jTextFieldName = new GridBagConstraints();
 		gbc_jTextFieldName.insets = new Insets(5, 5, 0, 5);
 		gbc_jTextFieldName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldName.gridx = 1;
 		gbc_jTextFieldName.gridy = 1;
 		this.add(this.getJTextFieldName(), gbc_jTextFieldName);
-		
+
 		GridBagConstraints gbc_jLabelDescription = new GridBagConstraints();
 		gbc_jLabelDescription.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jLabelDescription.insets = new Insets(5, 5, 0, 0);
 		gbc_jLabelDescription.gridx = 0;
 		gbc_jLabelDescription.gridy = 2;
 		this.add(this.getJLabelDescription(), gbc_jLabelDescription);
-		
+
 		GridBagConstraints gbc_jScrollPaneDescription = new GridBagConstraints();
 		gbc_jScrollPaneDescription.insets = new Insets(5, 5, 0, 5);
 		gbc_jScrollPaneDescription.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneDescription.gridx = 1;
 		gbc_jScrollPaneDescription.gridy = 2;
 		this.add(this.getJScrollPaneDescription(), gbc_jScrollPaneDescription);
-		
+
 		GridBagConstraints gbc_jSeparatorToDbSettings = new GridBagConstraints();
 		gbc_jSeparatorToDbSettings.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jSeparatorToDbSettings.gridwidth = 2;
@@ -163,21 +167,21 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		gbc_jSeparatorToDbSettings.gridx = 0;
 		gbc_jSeparatorToDbSettings.gridy = 3;
 		this.add(this.getJSeparatorToDbSettings(), gbc_jSeparatorToDbSettings);
-		
+
 		GridBagConstraints gbc_jLabelFactoryID = new GridBagConstraints();
 		gbc_jLabelFactoryID.anchor = GridBagConstraints.WEST;
 		gbc_jLabelFactoryID.insets = new Insets(10, 5, 0, 0);
 		gbc_jLabelFactoryID.gridx = 0;
 		gbc_jLabelFactoryID.gridy = 4;
 		add(getJLabelFactoryID(), gbc_jLabelFactoryID);
-		
+
 		GridBagConstraints gbc_jPanelFactorySettings = new GridBagConstraints();
 		gbc_jPanelFactorySettings.insets = new Insets(10, 5, 0, 5);
 		gbc_jPanelFactorySettings.fill = GridBagConstraints.BOTH;
 		gbc_jPanelFactorySettings.gridx = 1;
 		gbc_jPanelFactorySettings.gridy = 4;
 		add(this.getJPanelFactorySettings(), gbc_jPanelFactorySettings);
-		
+
 		GridBagConstraints gbc_jPanelDbSettings = new GridBagConstraints();
 		gbc_jPanelDbSettings.insets = new Insets(10, 0, 0, 0);
 		gbc_jPanelDbSettings.gridwidth = 2;
@@ -185,12 +189,12 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		gbc_jPanelDbSettings.gridx = 0;
 		gbc_jPanelDbSettings.gridy = 5;
 		this.add(this.getJPanelDbSettings(), gbc_jPanelDbSettings);
-	
+
 		ButtonGroup bgDBSource = new ButtonGroup();
 		bgDBSource.add(this.getJToggleButtonSettingsManual());
 		bgDBSource.add(this.getJToggleButtonSettingsFactory());
 	}
-	
+
 	/**
 	 * Returns the controller.
 	 * @return the controller
@@ -204,16 +208,19 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	 */
 	public void setDataController(DataController dataController) {
 		this.dataController = dataController;
+		if (dataController != null) {
+			dataController.addPropertyChangeListener(this);
+		}
 	}
 	/**
 	 * Informs the data controller about settings changes.
 	 */
 	protected void informDataWorkbookSettingChanged() {
-		if (this.getDataController()!=null) {
-			this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, AffectedDataObjects.create(this.getDataWorkbook()));	
+		if (this.getDataController() != null) {
+			this.getDataController().firePropertyChange(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED, null, AffectedDataObjects.create(this.getDataWorkbook()));
 		}
 	}
-	
+
 	/**
 	 * Returns the data workbook.
 	 * @return the data workbook
@@ -227,7 +234,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	 */
 	public void setDataWorkbook(DataWorkbook4DB dataWorkbook) {
 		this.dataWorkbook = dataWorkbook;
-		if (this.dataWorkbook==null) {
+		if (this.dataWorkbook == null) {
 			this.getJLabelID().setText("");
 			this.getJTextFieldName().setText("");
 			this.getJTextAreaDescription().setText("");
@@ -237,17 +244,18 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 			this.getJTextFieldName().setText(this.dataWorkbook.getName());
 			this.getJTextAreaDescription().setText(this.dataWorkbook.getDescription());
 			this.pauseDocumentListener = false;
-			
-			if (this.dataWorkbook.getFactoryID()==null) {
+
+			if (this.dataWorkbook.getFactoryID() == null) {
 				this.switchSourceOfDatabaseSettings(true);
+				this.getJPanelDbSettings().setDatabaseSettings(DatabaseSettings.fromDataSource(this.dataWorkbook.getWorkbookDataSource()));
 			} else {
 				this.switchSourceOfDatabaseSettings(false);
+				this.getComboBoxModelFactoryID().setSelectedItem(this.dataWorkbook.getFactoryID());
+				this.getJPanelDbSettings().setDatabaseSettings(null);
 			}
-			// TODO
 		}
 	}
-	
-	
+
 	private JLabel getJLabelCaptionID() {
 		if (jLabelCaptionID == null) {
 			jLabelCaptionID = new JLabel("ID:");
@@ -256,6 +264,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jLabelCaptionID;
 	}
+
 	private JLabel getJLabelID() {
 		if (jLabelID == null) {
 			jLabelID = new JLabel();
@@ -265,7 +274,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jLabelID;
 	}
-	
+
 	private JLabel getJLableCaptionName() {
 		if (jLableCaptionName == null) {
 			jLableCaptionName = new JLabel("Name:");
@@ -273,6 +282,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jLableCaptionName;
 	}
+
 	private JTextField getJTextFieldName() {
 		if (jTextFieldName == null) {
 			jTextFieldName = new JTextField();
@@ -282,7 +292,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jTextFieldName;
 	}
-	
+
 	private JLabel getJLabelDescription() {
 		if (jLabelDescription == null) {
 			jLabelDescription = new JLabel("Description:");
@@ -290,6 +300,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jLabelDescription;
 	}
+
 	private JScrollPane getJScrollPaneDescription() {
 		if (jScrollPaneDescription == null) {
 			jScrollPaneDescription = new JScrollPane((Component) null);
@@ -299,6 +310,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jScrollPaneDescription;
 	}
+
 	private JTextArea getJTextAreaDescription() {
 		if (jTextAreaDescription == null) {
 			jTextAreaDescription = new JTextArea();
@@ -308,29 +320,28 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jTextAreaDescription;
 	}
-	
+
 	private JSeparator getJSeparatorToDbSettings() {
 		if (jSeparatorToDbSettings == null) {
 			jSeparatorToDbSettings = new JSeparator();
 		}
 		return jSeparatorToDbSettings;
 	}
-	
-	
+
 	private JPanel getJPanelFactorySettings() {
 		if (jPanelFactorySettings == null) {
 			jPanelFactorySettings = new JPanel();
 			GridBagLayout gbl_jPanelFactorySettings = new GridBagLayout();
-			gbl_jPanelFactorySettings.columnWidths = new int[]{0, 0, 0, 0};
-			gbl_jPanelFactorySettings.rowHeights = new int[]{0, 0};
-			gbl_jPanelFactorySettings.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-			gbl_jPanelFactorySettings.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+			gbl_jPanelFactorySettings.columnWidths = new int[] { 0, 0, 0, 0 };
+			gbl_jPanelFactorySettings.rowHeights = new int[] { 0, 0 };
+			gbl_jPanelFactorySettings.columnWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+			gbl_jPanelFactorySettings.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 			jPanelFactorySettings.setLayout(gbl_jPanelFactorySettings);
 			GridBagConstraints gbc_jLabelFactroyState = new GridBagConstraints();
 			gbc_jLabelFactroyState.anchor = GridBagConstraints.EAST;
 			gbc_jLabelFactroyState.gridx = 0;
 			gbc_jLabelFactroyState.gridy = 0;
-			jPanelFactorySettings.add(getJLabelFactroyState(), gbc_jLabelFactroyState);
+			jPanelFactorySettings.add(getJLabelFactoryState(), gbc_jLabelFactroyState);
 			GridBagConstraints gbc_jComboBoxFactoryID = new GridBagConstraints();
 			gbc_jComboBoxFactoryID.insets = new Insets(0, 5, 0, 0);
 			gbc_jComboBoxFactoryID.fill = GridBagConstraints.HORIZONTAL;
@@ -345,6 +356,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jPanelFactorySettings;
 	}
+
 	private JLabel getJLabelFactoryID() {
 		if (jLabelFactoryID == null) {
 			jLabelFactoryID = new JLabel("Factory-ID:");
@@ -352,38 +364,41 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jLabelFactoryID;
 	}
-	private JLabel getJLabelFactroyState() {
-		if (jLabelFactroyState == null) {
-			jLabelFactroyState = new JLabel("");
-			jLabelFactroyState.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jLabelFactroyState.setPreferredSize(new Dimension(26, 26));
-			jLabelFactroyState.setBackground(Color.YELLOW);
+
+	private JLabel getJLabelFactoryState() {
+		if (jLabelFactoryState == null) {
+			jLabelFactoryState = new JLabel("");
+			jLabelFactoryState.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jLabelFactoryState.setPreferredSize(new Dimension(26, 26));
+			jLabelFactoryState.setBackground(Color.YELLOW);
 			// --- Register as state visualizer -------------------------
 			HibernateStateVisualizer.registerStateVisualizationService(this);
 		}
-		return jLabelFactroyState;
+		return jLabelFactoryState;
 	}
+
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.gui.HibernateStateVisualizationService#setSessionFactoryState(java.lang.String, de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState)
 	 */
 	@Override
 	public void setSessionFactoryState(String factoryID, SessionFactoryState sessionFactoryState) {
-		if (factoryID.equals(this.getJComboBoxFactoryID().getSelectedItem())==true) {
-			this.getJLabelFactroyState().setIcon(sessionFactoryState.getIconImage());
-			this.getJLabelFactroyState().setToolTipText(sessionFactoryState.getDescription());
+		if (factoryID.equals(this.getJComboBoxFactoryID().getSelectedItem()) == true) {
+			this.getJLabelFactoryState().setIcon(sessionFactoryState.getIconImage());
+			this.getJLabelFactoryState().setToolTipText(sessionFactoryState.getDescription());
 		}
 	}
 	/**
 	 * Updates the factory status.
 	 */
 	private void updateFactoryStatus() {
-		SessionFactoryState sfm = HibernateUtilities.getSessionFactoryMonitor((String)this.getJComboBoxFactoryID().getSelectedItem()).getSessionFactoryState();
-		this.getJLabelFactroyState().setIcon(sfm.getIconImage());
-		this.getJLabelFactroyState().setToolTipText(sfm.getDescription());
+		SessionFactoryState sfm = HibernateUtilities.getSessionFactoryMonitor((String) this.getJComboBoxFactoryID().getSelectedItem()).getSessionFactoryState();
+		this.getJLabelFactoryState().setIcon(sfm.getIconImage());
+		this.getJLabelFactoryState().setToolTipText(sfm.getDescription());
 	}
-	
+
 	private DefaultComboBoxModel<String> getComboBoxModelFactoryID() {
-		if (comboBoxModelFactoryID==null) {
+		if (comboBoxModelFactoryID == null) {
 			comboBoxModelFactoryID = new DefaultComboBoxModel<>();
 			// --- Fill the model ----
 			HibernateUtilities.getSessionFactoryIDList().forEach((String factoryID) -> comboBoxModelFactoryID.addElement(factoryID));
@@ -397,7 +412,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 			jComboBoxFactoryID.setToolTipText("Factory-ID of database connection");
 			jComboBoxFactoryID.setPreferredSize(new Dimension(260, 26));
 			jComboBoxFactoryID.setFont(new Font("Dialog", Font.PLAIN, 12));
-			if (cbm.getSize()!=0) {
+			if (cbm.getSize() != 0) {
 				jComboBoxFactoryID.setSelectedItem(cbm.getElementAt(0));
 				this.updateFactoryStatus();
 			}
@@ -405,6 +420,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jComboBoxFactoryID;
 	}
+
 	private JButton getJButtonEditFactorySettings() {
 		if (jButtonEditFactorySettings == null) {
 			jButtonEditFactorySettings = new JButton();
@@ -415,21 +431,22 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jButtonEditFactorySettings;
 	}
+
 	/**
 	 * Show database dialog for the specified session factory.
+	 * 
 	 * @param factoryID the factory ID
 	 */
 	private void showDatabaseDialog(String factoryID) {
-		
+
 		Window parentWindow = OwnerDetection.getOwnerWindowForComponent(this.getParent());
 		DatabaseConnectionSettingsDialog databaseConnectionSettingsDialog = new DatabaseConnectionSettingsDialog(parentWindow, factoryID);
 		databaseConnectionSettingsDialog.setVisible(true);
-		// - - - Wait for user - - - - - - - - -  
+		// - - - Wait for user - - - - - - - - -
 		databaseConnectionSettingsDialog.dispose();
 		databaseConnectionSettingsDialog = null;
 	}
-	
-	
+
 	private DatabaseSettingsPanel getJPanelDbSettings() {
 		if (jPanelDbSettings == null) {
 			jPanelDbSettings = new DatabaseSettingsPanel(null);
@@ -438,9 +455,8 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jPanelDbSettings;
 	}
-	
-	
-	public  List<JComponent> getConfigurationToolbarComponents() {
+
+	public List<JComponent> getConfigurationToolbarComponents() {
 		List<JComponent> tbComponents = new ArrayList<>();
 		tbComponents.add(this.getJToggleButtonSettingsManual());
 		tbComponents.add(this.getJToggleButtonSettingsFactory());
@@ -480,6 +496,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jButtonTestConnection;
 	}
+
 	private JButton getJButtonSave() {
 		if (jButtonApply == null) {
 			jButtonApply = new JButton();
@@ -490,24 +507,58 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 		}
 		return jButtonApply;
 	}
+
 	
 	/* (non-Javadoc)
-	 * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+
+		switch (evt.getPropertyName()) {
+		case DataController.DC_OPENED_DATA_WORKBOOK:
+			System.out.println(this.getClass().getSimpleName() + ": DC_OPENED_DATA_WORKBOOK - Stop !!!");
+			break;
+			
+		case DataController.DC_PREPARE_FOR_SAVING_DATA_WORKBOOK:
+			DataWorkbook dwtoSave = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
+			if (dwtoSave == this.getDataWorkbook()) {
+				// --- Check if the data source configuration changed ---------
+				this.setUiSettingsToDataWorkbook();
+			}
+			break;
+		}
+	}
+	/**
+	 * Sets the UI settings to data workbook.
+	 */
+	private void setUiSettingsToDataWorkbook() {
+
+		this.getDataWorkbook().setName(this.getJTextFieldName().getText());
+		this.getDataWorkbook().setDescription(this.getJTextAreaDescription().getText());
+
+		if (this.getJToggleButtonSettingsFactory().isSelected() == true) {
+			// --- For factory settings -----------------------------------
+			String factoryID = (String) this.getJComboBoxFactoryID().getSelectedItem();
+			this.getDataWorkbook().setFactoryID(factoryID);
+			this.getDataWorkbook().setWorkbookDataSource(null);
+		} else {
+			// --- For manual configured connections ----------------------
+			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+			this.getDataWorkbook().setFactoryID(null);
+			this.getDataWorkbook().setWorkbookDataSource(dbSettings.toDataSource());
+		}
+	}
+	
+	
 	@Override
 	public void insertUpdate(DocumentEvent de) {
 		this.onChange(de);
 	}
-	/* (non-Javadoc)
-	 * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
-	 */
 	@Override
 	public void removeUpdate(DocumentEvent de) {
 		this.onChange(de);
 	}
-	/* (non-Javadoc)
-	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
-	 */
 	@Override
 	public void changedUpdate(DocumentEvent de) {
 		this.onChange(de);
@@ -517,97 +568,91 @@ public class JPanelDataWorkbookInDB extends JPanel implements DocumentListener, 
 	 * @param de the DocumentEvent
 	 */
 	private void onChange(DocumentEvent de) {
-		
-		if (this.pauseDocumentListener==true) return;
-		
-		if (de.getDocument()==this.getJTextFieldName().getDocument()) {
+
+		if (this.pauseDocumentListener == true) return;
+
+		if (de.getDocument() == this.getJTextFieldName().getDocument()) {
 			this.getDataWorkbook().setName(this.getJTextFieldName().getText());
 			this.informDataWorkbookSettingChanged();
-		} else if (de.getDocument()==this.getJTextAreaDescription().getDocument()) {
+		} else if (de.getDocument() == this.getJTextAreaDescription().getDocument()) {
 			this.getDataWorkbook().setDescription(this.getJTextAreaDescription().getText());
 			this.informDataWorkbookSettingChanged();
 		}
 	}
-	
+
 	/**
 	 * Switch source of database settings.
 	 * @param toManualSettings the to manual settings
 	 */
 	private void switchSourceOfDatabaseSettings(boolean toManualSettings) {
-		
+
 		this.getJPanelDbSettings().setVisible(toManualSettings);
 		this.getJLabelFactoryID().setVisible(!toManualSettings);
 		this.getJPanelFactorySettings().setVisible(!toManualSettings);
 		this.validate();
 		this.repaint();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		
-		if (ae.getSource()==this.getJToggleButtonSettingsManual()) {
+
+		if (ae.getSource() == this.getJToggleButtonSettingsManual()) {
 			// ----------------------------------------------------------------
 			// --- Switch to manual DB connection -----------------------------
 			// ----------------------------------------------------------------
 			this.switchSourceOfDatabaseSettings(true);
-		} else if (ae.getSource()==this.getJToggleButtonSettingsFactory()) {
+		} else if (ae.getSource() == this.getJToggleButtonSettingsFactory()) {
 			// ----------------------------------------------------------------
 			// --- Switch to factory usage for DB connection ------------------
 			// ----------------------------------------------------------------
 			this.switchSourceOfDatabaseSettings(false);
-		
-		} else if (ae.getSource()==this.getJComboBoxFactoryID()) {
+
+		} else if (ae.getSource() == this.getJComboBoxFactoryID()) {
 			// ----------------------------------------------------------------
 			// --- Changed factory ID -----------------------------------------
 			// ----------------------------------------------------------------
 			this.updateFactoryStatus();
-			
-		} else if (ae.getSource()==this.getJButtonEditFactorySettings()) {
+
+		} else if (ae.getSource() == this.getJButtonEditFactorySettings()) {
 			// ----------------------------------------------------------------
 			// --- Open the actual factory settings ---------------------------
 			// ----------------------------------------------------------------
-			String factorySelected = (String)this.getJComboBoxFactoryID().getSelectedItem();
+			String factorySelected = (String) this.getJComboBoxFactoryID().getSelectedItem();
 			this.showDatabaseDialog(factorySelected);
-			
-		} else if (ae.getSource()==this.getJButtonTestConnection()) {
+
+		} else if (ae.getSource() == this.getJButtonTestConnection()) {
 			// ----------------------------------------------------------------
 			// --- Check the database connection ------------------------------
 			// ----------------------------------------------------------------
-			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
-			if (this.getJToggleButtonSettingsFactory().isSelected()==true) {
-				String factoryID = (String)this.getJComboBoxFactoryID().getSelectedItem();
-				dbSettings = DatabaseConnectionManager.getInstance().getDatabaseSettings(factoryID);
-			}
-			if (DatabaseHelper.providesValidDatabaseSettings(dbSettings, true, this)==true) {
-				this.getJButtonTestConnection().setIcon(BundleHelper.getImageIcon("MBcheckGreen.png"));
-			} else {
-				this.getJButtonTestConnection().setIcon(BundleHelper.getImageIcon("MBcheckRed.png"));
-			}
-			
-		} else if (ae.getSource()==this.getJButtonSave()) {
+			this.checkDatabaseSettings(true);
+
+		} else if (ae.getSource() == this.getJButtonSave()) {
 			// ----------------------------------------------------------------
 			// --- Apply and save settings ------------------------------------
 			// ----------------------------------------------------------------
-			this.getDataWorkbook().setName(this.getJTextFieldName().getText());
-			this.getDataWorkbook().setDescription(this.getJTextAreaDescription().getText());
-			
-			if (this.getJToggleButtonSettingsFactory().isSelected()==true) {
-				// --- For factory settings -----------------------------------
-				String factoryID = (String) this.getJComboBoxFactoryID().getSelectedItem();
-				this.getDataWorkbook().setFactoryID(factoryID);
-				this.getDataWorkbook().setWorkbookDataSource(null);
-			} else {
-				// --- For manual configured connections ---------------------- 
-				DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
-				this.getDataWorkbook().setFactoryID(null);
-				this.getDataWorkbook().setWorkbookDataSource(dbSettings.toDataSource());
-			}
-			this.getDataWorkbook().save();
-			this.informDataWorkbookSettingChanged();
-			
+			this.getDataController().saveDataWorkBook(this.getDataWorkbook());
+
+		}
+	}
+
+	/**
+	 * Checks the current database settings.
+	 * @param showUserInformation the show user information
+	 */
+	private void checkDatabaseSettings(boolean showUserInformation) {
+		
+		DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+		if (this.getJToggleButtonSettingsFactory().isSelected() == true) {
+			String factoryID = (String) this.getJComboBoxFactoryID().getSelectedItem();
+			dbSettings = DatabaseConnectionManager.getInstance().getDatabaseSettings(factoryID);
+		}
+		if (DatabaseHelper.providesValidDatabaseSettings(dbSettings, showUserInformation, this) == true) {
+			this.getJButtonTestConnection().setIcon(BundleHelper.getImageIcon("MBcheckGreen.png"));
+		} else {
+			this.getJButtonTestConnection().setIcon(BundleHelper.getImageIcon("MBcheckRed.png"));
 		}
 	}
 	

@@ -3,7 +3,7 @@ package de.enflexit.df.core.data;
 import java.io.Closeable;
 import java.io.IOException;
 
-import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.AbstractDataSource;
 import de.enflexit.df.core.DataFramePreferences;
 import tech.tablesaw.api.Table;
 

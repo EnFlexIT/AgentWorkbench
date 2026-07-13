@@ -2,7 +2,7 @@ package de.enflexit.df.core.data;
 
 import java.io.IOException;
 
-import de.enflexit.common.dataSources.ExcelDataSource;
+import de.enflexit.db.dataSources.ExcelDataSource;
 import tech.tablesaw.api.Table;
 
 /**

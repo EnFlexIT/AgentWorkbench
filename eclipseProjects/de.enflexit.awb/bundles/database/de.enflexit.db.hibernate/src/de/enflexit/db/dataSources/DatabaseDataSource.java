@@ -1,4 +1,4 @@
-package de.enflexit.common.dataSources;
+package de.enflexit.db.dataSources;
 
 import de.enflexit.common.NumberHelper;
 import jakarta.persistence.Column;
@@ -27,7 +27,6 @@ import jakarta.xml.bind.annotation.XmlType;
     "userName",
     "password"
 })
-
 public class DatabaseDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 6704254616526361690L;

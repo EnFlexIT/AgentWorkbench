@@ -1,6 +1,6 @@
 package de.enflexit.df.core.model.treeNode;
 
-import de.enflexit.common.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.AbstractDataSource;
 import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;

@@ -245,36 +245,48 @@ public class JPanelNavigation extends JPanel implements ActionListener, Property
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
-		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_WORKBOOK)==true) {
+		switch (evt.getPropertyName()) {
+		case DataController.DC_ADDED_DATA_WORKBOOK:
 			this.setConfiguration(true);
-		} else if (evt.getPropertyName().equals(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED)==true) {
-			DefaultMutableTreeNode treeNode = this.getDataController().getSelectionModel().getSelectedDataTreeNode();
-			this.getDataController().getDataTreeModel().nodeChanged(treeNode);
-		
-		} else if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
+			break;
+
+		case DataController.DC_SAVED_DATA_WORKBOOK:
+		case DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED:
+			DefaultMutableTreeNode treeNodeChanged = this.getDataController().getSelectionModel().getSelectedDataTreeNode();
+			this.getDataController().getDataTreeModel().nodeChanged(treeNodeChanged);
+			break;
+
+			
+		case DataController.DC_ADDED_DATA_SOURCE:
 			this.setConfiguration(true);
-		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW)==true) {
+			break;
+			
+		case DataController.DC_DATA_SOURCE_CONFIGURATION_SHOW:
 			boolean isShowConfig = (boolean) evt.getNewValue();
 			this.setConfiguration(isShowConfig);
-		} else if (evt.getPropertyName().equals(DataController.DC_DATA_SOURCE_CONFIGURATION_CHANGED)==true) {
+			break;
+			
+		case DataController.DC_DATA_SOURCE_CONFIGURATION_CHANGED:
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) this.getJTreeData().getSelectionPath().getLastPathComponent();
 			if (treeNode!=null) {
 				((DefaultTreeModel) this.getJTreeData().getModel()).nodeChanged(treeNode);
 			}
+			break;
+
 			
-		} else if (evt.getPropertyName().equals(DataController.DC_NEW_TREE_PATH_SELECTED)==true) {
+		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			if (this.isConfigurationVisible()==true) {
 				this.updateConfigurationView();
 			}
+			break;
 			
-		} else if (evt.getPropertyName().equals(DataController.DC_DATA_LOADED)) {
+		case DataController.DC_DATA_LOADED:
 			DataTreeNodeObjectBase dtno = this.getDataController().getSelectionModel().getSelectedDataTreeNodeObjectBase();
 			if (dtno!=null) {
 				this.getJPanelConfigurationWrapper().setError(dtno.getErrorMessage());
 			}
-			
+			break;
 		}
-		
 	}
 	
 	/* (non-Javadoc)
