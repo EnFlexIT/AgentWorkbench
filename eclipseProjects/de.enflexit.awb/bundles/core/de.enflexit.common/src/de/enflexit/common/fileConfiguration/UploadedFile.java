@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * The Class UploadedFile is a DTO for uploaded files, carrying the inputStream
+ * The Class UploadedFile is a DTO for uploaded files, carrying the content
  * as an InputStream as well as file name and media type as Strings.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH

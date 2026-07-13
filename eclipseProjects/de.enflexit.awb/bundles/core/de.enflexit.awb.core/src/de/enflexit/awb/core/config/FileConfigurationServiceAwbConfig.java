@@ -32,7 +32,7 @@ import de.enflexit.common.fileConfiguration.UploadedFile;
  */
 public class FileConfigurationServiceAwbConfig implements FileConfigurationService {
 
-	private FileProcessingResult fileProcessingresult;
+	private FileProcessingResult fileProcessingResult;
 	private Properties properties;
 	
 	/* (non-Javadoc)
@@ -219,19 +219,19 @@ public class FileConfigurationServiceAwbConfig implements FileConfigurationServi
 	 * @return the file processing result
 	 */
 	private FileProcessingResult getFileProcessingResult() {
-		if (this.fileProcessingresult == null) {
-			fileProcessingresult = new FileProcessingResult();
+		if (this.fileProcessingResult == null) {
+			fileProcessingResult = new FileProcessingResult();
 		}
-		return fileProcessingresult;
+		return fileProcessingResult;
 	}
 
 	/**
 	 * Sets the file processing result.
 	 *
-	 * @param fileProcessingresult the new file processing result
+	 * @param fileProcessingResult the new file processing result
 	 */
 	private void setFileProcessingResult(FileProcessingResult fileProcessingresult) {
-		this.fileProcessingresult = fileProcessingresult;
+		this.fileProcessingResult = fileProcessingresult;
 	}
 	
 	/**
