@@ -1,9 +1,13 @@
 package de.enflexit.awb.ws.core.websocket;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.enflexit.logging.console.ConsoleListener;
+import de.enflexit.logging.console.ConsoleScanner;
+import jakarta.websocket.CloseReason;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnOpen;
@@ -17,9 +21,16 @@ import jakarta.websocket.server.ServerEndpoint;
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
 @ServerEndpoint(value = "/ws/logs")
-public class LogWebSocket {
+public class LogWebSocket implements ConsoleListener {
 
 	private static final Set<Session> sessions = ConcurrentHashMap.newKeySet();
+	
+	/**
+	 * Instantiates a new log web socket.
+	 */
+	public LogWebSocket() {
+		ConsoleScanner.getInstance().addConsoleListener(this);
+	}
 	
 	/**
 	 * Called whenever a new websocket session is opened
@@ -28,8 +39,27 @@ public class LogWebSocket {
 	 */
 	@OnOpen
 	public void onOpen(Session session) {
-		sessions.add(session);
-		session.getAsyncRemote().sendText("Hello from server");
+
+		// --- Extract authentication ticket from URL -------------------------
+	    List<String> tickets = session.getRequestParameterMap().get("ticket");
+	    String ticket = null;
+	    if (tickets != null && tickets.isEmpty() == false) {
+	    	ticket = tickets.get(0);
+	    }
+	    // --- Check if ticket is valid ---------------------------------------
+	    if (WebSocketTicketStore.consumeTicket(ticket) == true) {
+	    	// --- Add the session and send the buffered messages -------------
+	    	sessions.add(session);
+	    	ConsoleScanner.getInstance().getStack().forEach(line -> session.getAsyncRemote().sendText(line));
+	    } else {
+	    	// --- Invalid ticket, close session ------------------------------
+			try {
+				session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Invalid ticket"));
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		}
+	    	
 	}
 	
 	/**
@@ -40,7 +70,6 @@ public class LogWebSocket {
 	@OnClose
 	public void onClose(Session session) {
 		sessions.remove(session);
-		System.out.println("Session removed");
 	}
 	
 	/**
@@ -53,7 +82,7 @@ public class LogWebSocket {
 	public void onError(Session session, Throwable error) {
 		//TODO How to handle errors? Websocket usually throws a
 		//ClosedChannelException when the server stops. 
-		System.out.println("Error in websocket");
+//		System.out.println("Error in websocket");
 	}
 	
 	/**
@@ -80,13 +109,19 @@ public class LogWebSocket {
 	 * @param message the message to broadcast
 	 */
 	public static void broadcast(String message) {
-	    System.out.println("Broadcast to " + sessions.size() + " sessions");
 		for (Session session : sessions) {
 			if (session != null && session.isOpen()) {
 				session.getAsyncRemote().sendText(message);
 			}
 		}
 	}
-	
+
+	/* (non-Javadoc)
+	* @see de.enflexit.logging.console.ConsoleListener#appendConsoleOutput(java.lang.String)
+	*/
+	@Override
+	public void appendConsoleOutput(String line) {
+		LogWebSocket.broadcast(line);
+	}
 	
 }

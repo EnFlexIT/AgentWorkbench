@@ -3,8 +3,8 @@ package de.enflexit.common.fileConfiguration;
 /**
  * The Interface FileConfigurationService defines the methods needed
  * to enable the reconfiguration of some Agent.Workbench component through
- * file upload. An implementing class should also be able to return the 
- * current configuration file for user convenience.
+ * file upload. An implementing class should be able to provide the current
+ * configuration file as well as exchanging it for a new one.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */

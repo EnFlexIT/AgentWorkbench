@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.common.fileConfiguration.FileConfigurationServiceLogback">
+   <implementation class="de.enflexit.common.fileConfiguration.FileConfigurationServiceLogback"/>
+   <service>
+      <provide interface="de.enflexit.common.fileConfiguration.FileConfigurationService"/>
+   </service>
+</scr:component>

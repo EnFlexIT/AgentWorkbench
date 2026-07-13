@@ -12,7 +12,8 @@ Service-Component: OSGI-INF/awbWebServerService.xml,
  OSGI-INF/PropertyBusServiceUpdateStrategy.xml,
  OSGI-INF/PropertyBusServiceUpdateCheckWebApp.xml,
  OSGI-INF/PropertyBusServiceUpdateWebApp.xml,
- OSGI-INF/FileConfigurationServiceJettyConfiguration.xml
+ OSGI-INF/FileConfigurationServiceJettyConfiguration.xml,
+ OSGI-INF/PropertyBusServiceWebSocketTicket.xml
 Require-Bundle: org.eclipse.osgi,
  org.eclipse.jetty.security,
  org.eclipse.jetty.server,
