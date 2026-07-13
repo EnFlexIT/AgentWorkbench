@@ -64,7 +64,7 @@ public class Application {
 	private static Boolean headlessOperation;
 	
 	/** The eclipse IApplication */
-	private static AwbIApplication iApplication;
+	private static AwbIApplicationCore iApplication;
 	
 	/** The quit application. */
 	private static boolean quitJVM = false;
@@ -355,7 +355,7 @@ public class Application {
 	 * Returns the lApplication.
 	 * @return the l application
 	 */
-	public static AwbIApplication getAwbIApplication() {
+	public static AwbIApplicationCore getAwbIApplication() {
 		return iApplication;
 	}
 	
@@ -363,7 +363,7 @@ public class Application {
 	 * Main method for the start of the application running as end user application or server-tool.
 	 * @param iApp the current {@link IApplication} instance 
 	 */
-	public static void start(AwbIApplication iApp) {
+	public static void start(AwbIApplicationCore iApp) {
 
 		// --- Remind the IApplication of the eclipse framework -----
 		iApplication = iApp;

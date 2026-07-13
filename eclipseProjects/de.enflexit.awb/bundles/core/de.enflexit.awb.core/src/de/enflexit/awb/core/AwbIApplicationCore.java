@@ -18,7 +18,7 @@ import de.enflexit.language.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AwbIApplication implements AwbIApplicationInterface {
+public class AwbIApplicationCore implements AwbIApplicationInterface {
 	
 	private IApplicationContext iApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
@@ -125,7 +125,7 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	/**
 	 * Starts the application.
 	 * @throws Exception the exception
-	 * @see Application#start(AwbIApplication)
+	 * @see Application#start(AwbIApplicationCore)
 	 */
 	protected void startApplication() throws Exception {
 		Application.start(this);
@@ -145,7 +145,7 @@ public class AwbIApplication implements AwbIApplicationInterface {
 						@Override
 						public void run() {
 							try {
-								AwbIApplication.this.startApplication();
+								AwbIApplicationCore.this.startApplication();
 							} catch(Exception ex) {
 								ex.printStackTrace();
 							}

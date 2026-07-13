@@ -31,12 +31,12 @@ public class SwingToSwtConnectorService implements de.enflexit.awb.core.ui.Swing
 				@Override
 				public void run() {
 					if (setVisible==true) {
-						AwbIApplicationSWT.startEclipseUI(null);
+						AwbIApplication.startEclipseUI(null);
 					} else {
-						AwbIApplicationSWT.startEclipseUI(new Runnable() {
+						AwbIApplication.startEclipseUI(new Runnable() {
 							@Override
 							public void run() {
-								AwbIApplicationSWT.setVisibleEclipseUi(setVisible);
+								AwbIApplication.setVisibleEclipseUi(setVisible);
 							}
 						});
 					}
@@ -54,7 +54,7 @@ public class SwingToSwtConnectorService implements de.enflexit.awb.core.ui.Swing
 			
 		} else {
 			// --- Show and focus workbench window ------------------
-			AwbIApplicationSWT.setVisibleEclipseUi(setVisible);			
+			AwbIApplication.setVisibleEclipseUi(setVisible);			
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class SwingToSwtConnectorService implements de.enflexit.awb.core.ui.Swing
 	 */
 	@Override
 	public void disposeEclipseWorkbench() {
-		AwbIApplicationSWT.stopEclipseUI();
+		AwbIApplication.stopEclipseUI();
 	}
 	
 	

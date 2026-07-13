@@ -12,12 +12,12 @@
       </children>
     </children>
     <mainMenu xmi:id="_vQVB4LpeEeeqqsE_fxRcnA" elementId="org.eclipse.ui.main.menu"/>
-    <sharedElements xsi:type="basic:Part" xmi:id="_1JTCMLojEee7X_3op2efPQ" elementId="de.enflexit.awb.desktop.swt.part.console" contributionURI="bundleclass://de.enflexit.awb.desktop.swt/de.enflexit.awb.desktop.swt.ui.parts.ConsoleView" label="Console" tooltip="Console"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_1JTCMLojEee7X_3op2efPQ" elementId="de.enflexit.awb.desktop.swt.part.console" contributionURI="bundleclass://de.enflexit.awb.desktop/de.enflexit.awb.desktop.swt.ui.parts.ConsoleView" label="Console" tooltip="Console"/>
     <trimBars xmi:id="_DCT4cJ-hEeeqz9onJxuSMg" elementId="de.enflexit.awb.desktop.swt.trimbar.main">
       <children xsi:type="menu:ToolBar" xmi:id="_XBgx0J-hEeeqz9onJxuSMg" elementId="de.enflexit.awb.desktop.swt.toolbar.main"/>
     </trimBars>
   </children>
-  <descriptors xmi:id="_9y4ykMGUEeefRs6i8TeWIg" elementId="de.enflexit.awb.desktop.swt.partdescriptor.agentproject" label="Agent Project" iconURI="platform:/plugin/de.enflexit.awb.desktop.swt/icons/core/AgentGUIGreen16.png" tooltip="Project: " allowMultiple="true" category="AgentProject" closeable="true" dirtyable="true" contributionURI="bundleclass://de.enflexit.awb.desktop.swt/de.enflexit.awb.desktop.swt.ui.project.ProjectEditor"/>
+  <descriptors xmi:id="_9y4ykMGUEeefRs6i8TeWIg" elementId="de.enflexit.awb.desktop.swt.partdescriptor.agentproject" label="Agent Project" iconURI="platform:/plugin/de.enflexit.awb.desktop/icons/core/AgentGUIGreen16.png" tooltip="Project: " allowMultiple="true" category="AgentProject" closeable="true" dirtyable="true" contributionURI="bundleclass://de.enflexit.awb.desktop/de.enflexit.awb.desktop.swt.ui.project.ProjectEditor"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

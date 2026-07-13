@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.core.AwbIApplication;
+import de.enflexit.awb.core.AwbIApplicationCore;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.common.SystemEnvironmentHelper;
@@ -20,12 +20,12 @@ import de.enflexit.common.SystemEnvironmentHelper;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AwbIApplicationSWT extends AwbIApplication {
+public class AwbIApplication extends AwbIApplicationCore {
 	
 	private static Display display;
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplication#getAwbProduct()
+	 * @see de.enflexit.awb.core.AwbIApplicationCore#getAwbProduct()
 	 */
 	@Override
 	public AWBProduct getAwbProduct() {
@@ -34,20 +34,20 @@ public class AwbIApplicationSWT extends AwbIApplication {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplication#start(org.eclipse.equinox.app.IApplicationContext)
+	 * @see de.enflexit.awb.core.AwbIApplicationCore#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		
 		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
 			// --- This is for MAC-OS -------------------------------
-			AwbIApplicationSWT.startEclipseUI(() -> { 
+			AwbIApplication.startEclipseUI(() -> { 
 				try {			
 					startSwingComponentsForMAC(context);
 					
 					display.asyncExec(() -> {
 						// --- Hide the display -------------------------
-						AwbIApplicationSWT.this.eclipseUiHide(display);					
+						AwbIApplication.this.eclipseUiHide(display);					
 					});
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -139,7 +139,7 @@ public class AwbIApplicationSWT extends AwbIApplication {
 		final Display display = workbench.getDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				AwbIApplicationSWT.setDisplayVisible(display, setVisible);
+				AwbIApplication.setDisplayVisible(display, setVisible);
 			}
 		});
 	}
@@ -170,12 +170,12 @@ public class AwbIApplicationSWT extends AwbIApplication {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplication#stop()
+	 * @see de.enflexit.awb.core.AwbIApplicationCore#stop()
 	 */
 	@Override
 	public void stop() {
 		super.stop();
-		AwbIApplicationSWT.stopEclipseUI();
+		AwbIApplication.stopEclipseUI();
 	}
 	
 	/**
