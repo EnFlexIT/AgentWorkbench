@@ -44,7 +44,6 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	@Override
 	public FileDownload getCurrentConfigurationFile() {
 		
-		//TODO Always AWBServer.NAME? Where should the name come from?
 		JettyConfiguration jettyConfig = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration();
 		if (jettyConfig == null) {
 			return null;
