@@ -61,7 +61,7 @@
          version="0.0.0"/>
 
    <plugin
-         id="de.enflexit.awb.desktop.swt"
+         id="de.enflexit.awb.desktop.swing"
          version="0.0.0"/>
 
 </feature>
