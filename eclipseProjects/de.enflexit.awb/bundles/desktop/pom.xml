@@ -15,6 +15,6 @@
 
 	<modules>
 		<module>de.enflexit.awb.desktop</module>
-		<module>de.enflexit.awb.desktop.swt</module>
+		<module>de.enflexit.awb.desktop.swing</module>
 	</modules>
 </project>

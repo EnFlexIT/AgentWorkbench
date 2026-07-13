@@ -33,7 +33,7 @@ public class BenchmarkMeasurement extends Thread {
 	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
 	private String localSystemID;
 	
-	private double min_time = Constants.RESOLUTION_DEFAULT;
+	private double min_time = Constants.RESOLUTION_DEFAULT / 2d;
 	private int FFT_size = Constants.FFT_SIZE;
 	private int SOR_size =  Constants.SOR_SIZE;
 	private int Sparse_size_M = Constants.SPARSE_SIZE_M;

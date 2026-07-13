@@ -62,7 +62,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
     	boolean isSwtBundleEclipseUI = this.isProductOfThisBundle();
     	if (isSwtBundleEclipseUI==false) {
     		// --- Used with Swing-UI - Just hide the workbench window --------
-			AwbIApplicationSWT.setVisibleEclipseUi(false);
+			AwbIApplication.setVisibleEclipseUi(false);
     		return false;
     	}
     	return true;

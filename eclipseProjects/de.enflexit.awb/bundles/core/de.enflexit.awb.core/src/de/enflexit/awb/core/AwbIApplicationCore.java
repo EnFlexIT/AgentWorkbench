@@ -18,7 +18,7 @@ import de.enflexit.language.Language;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AwbIApplication implements AwbIApplicationInterface {
+public class AwbIApplicationCore implements AwbIApplicationInterface {
 	
 	private IApplicationContext iApplicationContext;
 	private Integer appReturnValue = IApplication.EXIT_OK;
@@ -67,10 +67,13 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	 * Waits for the termination of the application.
 	 */
 	protected void waitForApplicationTermination() throws Exception {
-		// --- Wait for termination of the application ----
 		while (Application.isQuitJVM()==false) {
-			Thread.sleep(250);
-		}
+			if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+				MacRunLoopJNA.pumpRunLoop(0.25);
+			} else {
+				Thread.sleep(250);
+			}
+		}		
 	}
 	
 	/* (non-Javadoc)
@@ -91,6 +94,7 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
 			// --- Ensure to start AWT --------------------
 		    Toolkit.getDefaultToolkit();
+		    MacRunLoopJNA.activateApplication();
 		}
 		
 		// --- Set the product indicator ------------------
@@ -115,22 +119,22 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		System.out.println(Language.translate("Programmende... "));
 		this.stop();
 
-		return this.appReturnValue;
+		return this.getApplicationReturnValue();
 	}
 	
 	/**
 	 * Starts the application.
 	 * @throws Exception the exception
-	 * @see Application#start(AwbIApplication)
+	 * @see Application#start(AwbIApplicationCore)
 	 */
-	private void startApplication() throws Exception {
+	protected void startApplication() throws Exception {
 		Application.start(this);
 	}
 	
 	/**
 	 * Starts the application in a separate thread.
 	 */
-	private void startApplicationInOwnThread() {
+	protected void startApplicationInOwnThread() {
 		Thread awbStarter = new Thread(new Runnable() {
 			
 			@Override
@@ -141,7 +145,7 @@ public class AwbIApplication implements AwbIApplicationInterface {
 						@Override
 						public void run() {
 							try {
-								AwbIApplication.this.startApplication();
+								AwbIApplicationCore.this.startApplication();
 							} catch(Exception ex) {
 								ex.printStackTrace();
 							}
@@ -168,12 +172,9 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplicationInterface#stop()
-	 */
 	@Override
 	public void stop() {
-
+		
 		// --- Check for open projects ------
 		if (Application.stopAgentWorkbench()==false) return;
 		// --- Stop Eclipse workbench -------
@@ -184,6 +185,12 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		Application.setShutdownThread(null);
 		// --- Indicate to stop the JVM -----
 		Application.setQuitJVM(true);
+
+		// --- Special shutdown handling for MAC ----------
+		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			MacRunLoopJNA.stopMainRunLoop();
+			Runtime.getRuntime().halt(0);
+		}
 	}
 	
 	/* (non-Javadoc)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Agent.Workbench" uid="de.enflexit.awb" id="de.enflexit.awb.core.product" application="de.enflexit.awb.core.application" version="3.0.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Agent.Workbench" uid="de.enflexit.awb" id="de.enflexit.awb.desktop.product" application="de.enflexit.awb.desktop.application" version="3.0.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/de.enflexit.awb.core/icons/awb128.png"/>
@@ -16,7 +16,7 @@
    <launcherArgs>
       <vmArgs>-Xms512M -Xmx4G
       </vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      <vmArgsMac>--add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED
       </vmArgsMac>
    </launcherArgs>
 

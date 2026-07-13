@@ -1,52 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         id="product"
-         name="Agent.Workbench-Core Product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="de.enflexit.awb.core.application"
-            description="The core and headless runtime environment of Agent.Workbench"
-            name="Agent.Workbench">
-         <property
-         		name="applicationXMI"
-         		value="platform:/plugin/de.enflexit.awb.desktop.swt/Application.e4xmi">
-         </property>
-         <property
-               name="appName"
-               value="Agent.Workbench">
-         </property>
-         <property
-               name="startupProgressRect"
-               value="3,267,494,12">
-         </property>
-         <property
-               name="aboutImage"
-               value="platform:/plugin/de.enflexit.awb.core/icons/awb128.png">
-         </property>
-         <property
-               name="aboutText"
-               value="Agent Workbench (AWB) is an OSGI- and Eclipse-based RCP application that enables to configure and execute Agents and Multi-Agent Systems in various ways.">
-         </property>
-         <property
-               name="windowImages"
-               value="icons/awb16.png,icons/awb32.png,icons/awb48.png,icons/awb64.png,icons/awb128.png,icons/awb256.png">
-         </property>
-         <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
-         </property>
-      </product>
-   </extension>
-   <extension
-         id="application"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="de.enflexit.awb.core.AwbIApplication">
-         </run>
-      </application>
-   </extension>
 
 </plugin>

@@ -1,13 +1,18 @@
 package de.enflexit.awb.desktop.swt;
 
+import java.awt.Toolkit;
+
 import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 import de.enflexit.awb.core.Application;
-import de.enflexit.awb.core.AwbIApplication;
+import de.enflexit.awb.core.AwbIApplicationCore;
+import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
+import de.enflexit.common.SystemEnvironmentHelper;
 
 /**
  * This class controls all aspects of the application's execution
@@ -15,34 +20,81 @@ import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
  * 
  * @author Christian Derksen - DAWIS - ICB - University of Duisburg - Essen
  */
-public class AwbIApplicationSWT extends AwbIApplication {
+public class AwbIApplication extends AwbIApplicationCore {
+	
+	private static Display display;
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplication#getAwbProduct()
+	 * @see de.enflexit.awb.core.AwbIApplicationCore#getAwbProduct()
 	 */
 	@Override
 	public AWBProduct getAwbProduct() {
-		return AWBProduct.DESKTOP_SWT;
+		return AWBProduct.DESKTOP_SWING;
 	}
+	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplication#startEndUserApplication(java.lang.Runnable)
+	 * @see de.enflexit.awb.core.AwbIApplicationCore#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	@Override
-	public Integer startEndUserApplication(Runnable postWindowOpenRunnable) {
+	public Object start(IApplicationContext context) throws Exception {
 		
-		try {
-			// --- Visualization by Eclipse -----------
-			this.setApplicationReturnValue(AwbIApplicationSWT.startEclipseUI(postWindowOpenRunnable));
-			this.stop();
+		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			// --- This is for MAC-OS -------------------------------
+			AwbIApplication.startEclipseUI(() -> { 
+				try {			
+					startSwingComponentsForMAC(context);
+					
+					display.asyncExec(() -> {
+						// --- Hide the display -------------------------
+						AwbIApplication.this.eclipseUiHide(display);					
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+			});
+			return this.getApplicationReturnValue();
 			
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} else {
+			// --- This is for Windows & Linux ----------------------
+			return super.start(context);
+			
 		}
-		return this.getApplicationReturnValue();
 	}
 	
-
+	/**
+	 * Starts the Swing-UI.
+	 *
+	 * @param context the context
+	 * @throws Exception the exception
+	 */
+	private void startSwingComponentsForMAC(IApplicationContext context) throws Exception {
+		
+		// --- Preparations for MAC environment -----------
+		Toolkit.getDefaultToolkit();
+		// --- Set the product indicator ------------------
+		GlobalInfo.catchProduct(this.getAwbProduct());
+		// --- Remind application context -----------------
+		this.setIApplicationContext(context);
+		// --- Start for MacOS ------------------------
+		this.startApplicationInOwnThread();
+	}
+	
+	/**
+	 * Hides the Eclipse workbench.
+	 * @param display the display
+	 */
+	private void eclipseUiHide(Display display) {
+		if (display!=null) {
+			if (display.getActiveShell()!=null) {
+				display.getActiveShell().setVisible(false);
+			} else {
+				for (int i = 0; i < display.getShells().length; i++) {
+					display.getShells()[i].setVisible(false);
+				} 
+			}
+		}
+	}	
 	
 	/**
 	 * Starts the eclipse UI.
@@ -52,8 +104,8 @@ public class AwbIApplicationSWT extends AwbIApplication {
 	public static Integer startEclipseUI(Runnable postWindowOpenRunnable) {
 		
 		Integer eclipseReturnValue = IApplication.EXIT_OK;
-		Display display = PlatformUI.createDisplay();
-		try {
+		try {			
+			display = PlatformUI.createDisplay();
 			// --- Returns if visualization was closed ---- 
 			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor(postWindowOpenRunnable));
 			if (returnCode == PlatformUI.RETURN_RESTART) {
@@ -61,9 +113,10 @@ public class AwbIApplicationSWT extends AwbIApplication {
 			} else {
 				eclipseReturnValue = IApplication.EXIT_OK;
 			}
-			
+		} catch(Exception e) {
+			e.printStackTrace();
 		} finally {
-			display.dispose();
+			if(display != null) display.dispose();
 			// --- Just in case of the Eclipse UI ---------
 			// --- usage or after an update + restart -----
 			if (eclipseReturnValue==IApplication.EXIT_RESTART) {
@@ -74,7 +127,7 @@ public class AwbIApplicationSWT extends AwbIApplication {
 		return eclipseReturnValue;
 	}
 	
-	 /**
+	/**
  	 * Shows or hides the current Eclipse workbench.
  	 * @param setVisible the indicator to set the workbench window visible or not
  	 */
@@ -86,7 +139,7 @@ public class AwbIApplicationSWT extends AwbIApplication {
 		final Display display = workbench.getDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				AwbIApplicationSWT.setDisplayVisible(display, setVisible);
+				AwbIApplication.setDisplayVisible(display, setVisible);
 			}
 		});
 	}
@@ -117,12 +170,12 @@ public class AwbIApplicationSWT extends AwbIApplication {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.awb.core.AwbIApplication#stop()
+	 * @see de.enflexit.awb.core.AwbIApplicationCore#stop()
 	 */
 	@Override
 	public void stop() {
 		super.stop();
-		AwbIApplicationSWT.stopEclipseUI();
+		AwbIApplication.stopEclipseUI();
 	}
 	
 	/**

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -80,6 +81,7 @@ import de.enflexit.awb.desktop.project.ProjectWindow;
 import de.enflexit.awb.desktop.project.update.ProjectRepositoryExplorerDialog;
 import de.enflexit.awb.simulation.agents.LoadExecutionAgent;
 import de.enflexit.awb.simulation.logging.SysOutBoard;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.AwbLookAndFeelInfo;
@@ -206,6 +208,9 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		
 		// --- Place MainWindow center on screen --------------------
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
+		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			Desktop.getDesktop().requestForeground(true);
+		}
 		this.toFront();
 		
 		// --- Add the MainWindow as an Application Listener --------

@@ -68,7 +68,7 @@ public class Application {
 	private static Boolean headlessOperation;
 	
 	/** The eclipse IApplication */
-	private static AwbIApplication iApplication;
+	private static AwbIApplicationCore iApplication;
 	
 	/** The quit application. */
 	private static boolean quitJVM = false;
@@ -368,7 +368,7 @@ public class Application {
 	 * Returns the lApplication.
 	 * @return the l application
 	 */
-	public static AwbIApplication getAwbIApplication() {
+	public static AwbIApplicationCore getAwbIApplication() {
 		return iApplication;
 	}
 	
@@ -376,7 +376,7 @@ public class Application {
 	 * Main method for the start of the application running as end user application or server-tool.
 	 * @param iApp the current {@link IApplication} instance 
 	 */
-	public static void start(AwbIApplication iApp) {
+	public static void start(AwbIApplicationCore iApp) {
 
 		// --- Remind the IApplication of the eclipse framework -----
 		iApplication = iApp;
@@ -396,7 +396,7 @@ public class Application {
 			// --- Start required Agent.Workbench instances ---------
 			// ------------------------------------------------------
 			Application.getConsole();
-			Application.getGlobalInfo();
+			Application.getGlobalInfo();			
 			Application.startBundleEvaluation();
 			
 			new LoadMeasureThread().start();  
@@ -407,7 +407,7 @@ public class Application {
 			// --- Just start JADE ----------------------------------
 			// ------------------------------------------------------
 			Application.getGlobalInfo();
-
+			
 			// --- Load project resources ? -------------------------
 			if (project2OpenAfterStart!=null) {
 				try {
@@ -593,6 +593,9 @@ public class Application {
 		System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
 		// --- Fire ApplicationEvent AWB_START ----------------------
 		Application.informApplicationListener(new ApplicationEvent(ApplicationEvent.AWB_START));
+		
+		// --- Deferred L&F init (avoid macOS AWT deadlock during bundle activation) ---
+		Application.getGlobalInfo().setApplicationsLookAndFeel();
 		
 		switch (Application.getGlobalInfo().getExecutionMode()) {
 		case APPLICATION:
@@ -823,7 +826,7 @@ public class Application {
 
 		// --- Close open projects --------------
 		if (getGlobalInfo().getExecutionMode()==ExecutionMode.APPLICATION) {
-			if (getProjectsLoaded().closeAll()==false) return false;	
+			if (getProjectsLoaded().closeAll()==false) return false;
 		} else {
 			getProjectsLoaded().closeAll(null, true);
 		}
