@@ -16,11 +16,8 @@ public class WebSocketTicket {
 	 * Instantiates a new web socket ticket.
 	 */
 	public WebSocketTicket() {
-		// --- Lifetime 15 seconds ------------------------
 		expiresAt = System.currentTimeMillis() + TICKET_LIFETIME;
 	}
-	
-
 	
 	/**
 	 * Returns true if the ticket is expired.

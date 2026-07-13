@@ -13,6 +13,8 @@ import de.enflexit.common.properties.bus.PropertyBusService;
  */
 public class PropertyBusServiceWebSocketTicket implements PropertyBusService {
 
+	public static final String TICKET_ID = "ticket.id";
+	
 	/* (non-Javadoc)
 	* @see de.enflexit.common.properties.bus.PropertyBusService#getPerformative()
 	*/
@@ -36,9 +38,7 @@ public class PropertyBusServiceWebSocketTicket implements PropertyBusService {
 	public Properties getProperties(Properties properties, String arguments) {
 		
 		if (properties == null) properties = new Properties();
-		
-		properties.setStringValue("ticketID", WebSocketTicketStore.createTicket());
-		
+		properties.setStringValue(TICKET_ID, WebSocketTicketStore.createTicket());
 		return properties;
 	}
 

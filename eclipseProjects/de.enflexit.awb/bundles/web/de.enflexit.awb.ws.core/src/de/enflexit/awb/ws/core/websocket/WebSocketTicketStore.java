@@ -4,12 +4,22 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The Class WebSocketTicketStore manages creation, storage and
+ * consumption of web socket tickets, which are used to
+ * authenticate a web socket handshake. The static methods 
+ * createTicket and consumeTicket can be used to create a 
+ * ticket and check whether a ticket is valid respectively.
+ * 
+ *
+ * @author Daniel Bormann - EnFlex.IT GmbH
+ */
 public class WebSocketTicketStore {
 
 	private static Map <String, WebSocketTicket> tickets;
 	
 	/**
-	 * Creates a ticket to authenticate the web socket handshake.
+	 * Creates a ticket to authenticate the web socket handshake with.
 	 *
 	 * @return the id of the generated ticket
 	 */
@@ -24,7 +34,7 @@ public class WebSocketTicketStore {
 	 * Used to check if the ticket is valid.
 	 *
 	 * @param ticketId the ticket id
-	 * @return true, if the ticket was found and not yet expired
+	 * @return true, if the ticket was found and is not yet expired
 	 */
 	public static boolean consumeTicket(String ticketId) {
 		
@@ -34,9 +44,11 @@ public class WebSocketTicketStore {
 		if (ticketId == null) return false;
 		
 		WebSocketTicket ticket = WebSocketTicketStore.getTickets().remove(ticketId);
+		// --- Check if there is a ticket for the specified id ------
 		if (ticket == null) {
 			return false;
 		}
+		
 		return ticket.isExpired() == false;
 	}
 	

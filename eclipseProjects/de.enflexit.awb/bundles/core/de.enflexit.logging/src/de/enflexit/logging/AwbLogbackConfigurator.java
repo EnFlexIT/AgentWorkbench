@@ -1,6 +1,7 @@
 package de.enflexit.logging;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
@@ -11,15 +12,23 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
- * The Class LogbackReloader provides static methods to 
+ * The Class AwbLogbackConfigurator provides static methods to 
  * validate a logback.xml configuration and reload logback
  * with a new configuration.
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
-public class LogbackReloader {
+public class AwbLogbackConfigurator {
 
-	public static boolean reloadConfiguration(Path newConfig) throws Exception {
+	/**
+	 * Load logback configuration from specified path, including file 'logback.xml'.
+	 *
+	 * @param newConfig the new config
+	 * @return true, if successful
+	 * @throws JoranException the joran exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public static boolean loadConfiguration(Path newConfig) throws JoranException, IOException {
 		
 	// --- Introduced due a bug under Mac OS ------------------------
 	if (!(LoggerFactory.getILoggerFactory() instanceof LoggerContext)) return false;
@@ -41,9 +50,8 @@ public class LogbackReloader {
 		// --- Apply configuration ----------------------------------
 		jc.doConfigure(logbackXmlFile.getAbsolutePath());
 		return true;
-	} else {
-		return false;
 	}
+	return false;
 }
 	
 	/**

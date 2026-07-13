@@ -70,15 +70,10 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	@Override
 	public FileProcessingResult processFile(UploadedFile file2Process) {
 		
-		// --- Server just restarted, just giving back the result -----------------------
-		if (fileProcessingResult != null) {
-			FileProcessingResult fpr = this.getFileProcessingResult();
-			this.setFileProcessingResult(null);
-			return fpr;
-			
-		}
-		
 		jettyConfig = JettyConfiguration.load(file2Process.getInputStream());
+		if (jettyConfig == null) {
+			this.getFileProcessingResult().setMessage("Jetty configuration could not be loaded.");
+		}
 
 		this.validateProperties();
 		// --- Set results based on validation ------------------------------------------
@@ -126,16 +121,8 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 		newJettyConfiguration.setJettyCustomizer(prevJettyConfiguration.getJettyCustomizer());
 		// --- Check if server could be started with the new configuration --------------
 		if (this.restartServer(newJettyConfiguration) == false) {
-			// --- Set result accordingly and revert back to the old configuration ------
-			this.getFileProcessingResult().setSuccess(false);
-			this.getFileProcessingResult().setMessage("Error while restarting the server. Reverting back to old configuration.");
+			// --- Revert back to the old configuration ---------------------------------
 			this.restartServer(prevJettyConfiguration);
-			
-		} else {
-			// --- Server restarted with the new configuration, set the result ----------
-			this.getFileProcessingResult().setSuccess(true);
-			this.getFileProcessingResult().setMessage("New configuration applied.");
-			
 		}
 		
 	}

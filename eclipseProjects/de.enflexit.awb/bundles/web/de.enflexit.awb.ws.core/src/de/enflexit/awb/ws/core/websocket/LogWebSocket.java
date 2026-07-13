@@ -40,7 +40,7 @@ public class LogWebSocket implements ConsoleListener {
 	@OnOpen
 	public void onOpen(Session session) {
 
-		// --- Extract ticket from URL ----------------------------------------
+		// --- Extract authentication ticket from URL -------------------------
 	    List<String> tickets = session.getRequestParameterMap().get("ticket");
 	    String ticket = null;
 	    if (tickets != null && tickets.isEmpty() == false) {

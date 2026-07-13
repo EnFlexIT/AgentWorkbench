@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import de.enflexit.common.PathHandling;
-import de.enflexit.logging.LogbackReloader;
+import de.enflexit.logging.AwbLogbackConfigurator;
 import de.enflexit.logging.LoggingActivator;
 import de.enflexit.logging.PropertyContentProvider.FileToProvide;
 
@@ -59,7 +59,7 @@ public class FileConfigurationServiceLogback implements FileConfigurationService
 		Path logbackXml = PathHandling.getPropertiesPath(LoggingActivator.class, true).resolve(FileToProvide.LOGBACK_CONFIGURATION.toString());
 		
 		// --- Validate new config ------------------------------------------------------
-		if (LogbackReloader.isValidLogbackConfiguration(new ByteArrayInputStream(content)) == false) {
+		if (AwbLogbackConfigurator.isValidLogbackConfiguration(new ByteArrayInputStream(content)) == false) {
 			this.getFileProcessingResult().setMessage("Invalid configuration.");
 			return this.getFileProcessingResult();
 		}
@@ -67,7 +67,7 @@ public class FileConfigurationServiceLogback implements FileConfigurationService
 		// --- Replace existing file ----------------------------------------------------
 		try {
 			Files.write(logbackXml, content);
-			LogbackReloader.reloadConfiguration(logbackXml);
+			AwbLogbackConfigurator.loadConfiguration(logbackXml);
 			
 		} catch (IOException ioeWrite) {
 			ioeWrite.printStackTrace();
