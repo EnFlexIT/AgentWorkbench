@@ -228,8 +228,8 @@ public class OSHI_Test { // NOSONAR squid:S5786
             OSProcess p = procs.get(i);
             oshi.add(String.format(" %5d %5.1f %4.1f %9s %9s %s", p.getProcessID(),
                     100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime(),
-                    100d * p.getResidentSetSize() / memory.getTotal(), FormatUtil.formatBytes(p.getVirtualSize()),
-                    FormatUtil.formatBytes(p.getResidentSetSize()), p.getName()));
+                    100d * p.getResidentMemory() / memory.getTotal(), FormatUtil.formatBytes(p.getVirtualSize()),
+                    FormatUtil.formatBytes(p.getResidentMemory()), p.getName()));
         }
     }
 

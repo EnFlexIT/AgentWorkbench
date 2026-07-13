@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.enflexit.awg</groupId>
+	<groupId>de.enflexit.awb.oshi</groupId>
 	<artifactId>de.enflexit.ssi.core.depPull</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -8,8 +8,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.github.oshi</groupId>
-			<artifactId>oshi-core-java11</artifactId>
-			<version>6.8.2</version>
+			<artifactId>oshi-core</artifactId>
+			<version>7.4.0</version>
 		</dependency>
 	</dependencies>
 	<build>
