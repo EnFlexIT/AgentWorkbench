@@ -68,7 +68,7 @@ public class UpdateCheckCoordinatorWebApp {
 		JettyConfiguration jettyConfig = JettyServerManager.getInstance().getAwbWebRegistry().getRegisteredWebServerService(AwbServer.NAME).getJettyConfiguration();
 		JettyWebApplicationSettings webAppSettings = jettyConfig.getWebApplicationSettings();
 		// --- Search for a newer version -------------------------------------------------------------------
-		WebApplicationVersion newVersion = WebApplicationUpdate.getWebApplicationUpdate(webAppSettings.getDownloadURL());
+		WebApplicationVersion newVersion = WebApplicationUpdate.getWebApplicationUpdate(webAppSettings.getDownloadURLIncludingEndSlash());
 		// --- Set results. newVersion == null means no update available ------------------------------------
 		if (newVersion != null) {
 			this.getUpdateCheckStatusWebApp().setAvailable(true);

@@ -13,7 +13,7 @@
     </root>
     
     <logger name="de.enflexit.common.p2" level="error" />
-	
+	<logger name ="de.enflexit.awb.core.Application" level ="info"/>
 	<logger name="de.enflexit.awb.core" level="error" />
 	
 	<logger name="de.enflexit.awb.ws.webApp" level="error" />

@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import de.enflexit.awb.core.Application;
 import de.enflexit.awb.core.ApplicationSwitch;
+import de.enflexit.awb.core.config.AwbEnumeration;
 import de.enflexit.awb.core.config.DeviceAgentDescription;
 import de.enflexit.awb.core.config.GlobalInfo.DeviceSystemExecutionMode;
 import de.enflexit.awb.core.config.GlobalInfo.ExecutionMode;
@@ -72,16 +73,16 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		
 		// --- Determine old and new execution mode ---------------------------------------------------------
 		ExecutionMode oldExecutionMode = Application.getGlobalInfo().getExecutionMode(); 
-		ExecutionMode newExecutionMode = this.findExecutionModeFromString(properties.getStringValue(EXEC_MODE));
+		ExecutionMode newExecutionMode = AwbEnumeration.getExecutionMode(properties.getStringValue(EXEC_MODE));
 		
 		// --- Extract the common values --------------------------------------------------------------------
 		String serverMasterUrl = properties.getStringValue(SERVER_MASTER_URL); 
 		Integer serverMasterPort = properties.getIntegerValue(SERVER_MASTER_PORT);
 		Integer serverMasterPortMtp = properties.getIntegerValue(SERVER_MASTER_PORT_MTP);
-		MtpProtocol serverMasterProtocol = this.findMtpProtocolFromString(properties.getStringValue(SERVER_MASTER_PROTOCOL));
+		MtpProtocol serverMasterProtocol = AwbEnumeration.getMtpProtocol(properties.getStringValue(SERVER_MASTER_PROTOCOL));
 		
-		MTP_Creation localMtpCreation = this.findMtpCreationFromString(properties.getStringValue(LOCAL_MTP_CREATION));
-		MtpProtocol localMtpProtocol = this.findMtpProtocolFromString(properties.getStringValue(LOCAL_MTP_PROTOCOL));
+		MTP_Creation localMtpCreation = AwbEnumeration.getMtpCreation(properties.getStringValue(LOCAL_MTP_CREATION));
+		MtpProtocol localMtpProtocol = AwbEnumeration.getMtpProtocol(properties.getStringValue(LOCAL_MTP_PROTOCOL));
 		Integer localMtpPort = properties.getIntegerValue(LOCAL_MTP_PORT);
 		String localUrl = properties.getStringValue(LOCAL_URL);		
 		
@@ -132,7 +133,7 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 			String project = properties.getStringValue(SELECTED_PROJECT);
 			Application.getGlobalInfo().setDeviceServiceProjectFolder(project);
 			
-			DeviceSystemExecutionMode deviceExecMode = this.findDeviceSystemExecutionModeFromString(properties.getStringValue(DEVICE_EXEC_MODE));
+			DeviceSystemExecutionMode deviceExecMode = AwbEnumeration.getDeviceSystemExecutionMode(properties.getStringValue(DEVICE_EXEC_MODE));
 			Application.getGlobalInfo().setDeviceServiceExecutionMode(deviceExecMode);
 			
 			// --- Set values specific to DeviceSystemExecutionMode.SETUP -----------------------------------
@@ -186,23 +187,23 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		// --------------------------------------------------------------------------------------------------
 		// --- Checks necessary for all execution modes -----------------------------------------------------
 		// --------------------------------------------------------------------------------------------------
-		ExecutionMode execMode = this.findExecutionModeFromString(properties2check.getStringValue(EXEC_MODE));
+		ExecutionMode execMode = AwbEnumeration.getExecutionMode(properties2check.getStringValue(EXEC_MODE));
 		if (execMode == null) {
 			invalidValues.add("Execution mode is missing or invalid");
 		}
 		
 		// --- Make sure the mtp protocols to set are either HTTP or HTTPS ----------------------------------
-		MtpProtocol serverMasterProtocol = this.findMtpProtocolFromString(properties2check.getStringValue(SERVER_MASTER_PROTOCOL));
+		MtpProtocol serverMasterProtocol = AwbEnumeration.getMtpProtocol(properties2check.getStringValue(SERVER_MASTER_PROTOCOL));
 		if (serverMasterProtocol == null) {
 			invalidValues.add("server.master protocol is missing or invalid");
 		}
 		
-		MtpProtocol localMtpProtocol = this.findMtpProtocolFromString(properties2check.getStringValue(LOCAL_MTP_PROTOCOL));
+		MtpProtocol localMtpProtocol = AwbEnumeration.getMtpProtocol(properties2check.getStringValue(LOCAL_MTP_PROTOCOL));
 		if (localMtpProtocol == null) {
 			invalidValues.add("Local mtp protocol is missing or invalid");
 		}
 		
-		MTP_Creation mtpCreation = this.findMtpCreationFromString(properties2check.getStringValue(LOCAL_MTP_CREATION));
+		MTP_Creation mtpCreation = AwbEnumeration.getMtpCreation(properties2check.getStringValue(LOCAL_MTP_CREATION));
 		if (mtpCreation == null) {
 			invalidValues.add("mtp creation is missing or invalid");
 		}
@@ -304,7 +305,7 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 	 */
 	private void hasValidPropertiesForDeviceSystemMode(Properties properties2check, List<String> invalidValues) {
 		
-		DeviceSystemExecutionMode deviceExecMode = this.findDeviceSystemExecutionModeFromString(properties2check.getStringValue(DEVICE_EXEC_MODE));
+		DeviceSystemExecutionMode deviceExecMode = AwbEnumeration.getDeviceSystemExecutionMode(properties2check.getStringValue(DEVICE_EXEC_MODE));
 		if (deviceExecMode == null) {
 			invalidValues.add("Device execution mode is missing or invalid");
 		}
@@ -482,102 +483,4 @@ public class PropertyBusServiceExecMode implements PropertyBusService {
 		}
 	}
 	
-	// ------------------------------------------------------------------------------------------------------
-	// --- From here, methods to find enum constants from strings -------------------------------------------
-	// ------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Returns the de.enflexit.awb.core.config.GlobalInfo.ExecutionMode equivalent for the provided string, ignoring case, or null,
-	 * if no match is found. 
-	 *
-	 * @param executionModeString the execution mode as a string
-	 * @return the execution mode
-	 */
-	private ExecutionMode findExecutionModeFromString(String executionModeString) {
-		
-		if (executionModeString==null || executionModeString.isBlank()==true) return null;
-		
-		ExecutionMode executionMode = null;
-		try {
-			executionMode = ExecutionMode.valueOf(executionModeString.toUpperCase());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return executionMode;
-	}
-	
-	/**
-	 * Find device system execution mode from string.
-	 *
-	 * @param deviceSystemExecutionModeString the device system execution mode string
-	 * @return the device system execution mode
-	 */
-	private DeviceSystemExecutionMode findDeviceSystemExecutionModeFromString(String deviceSystemExecutionModeString) {
-		
-		if (deviceSystemExecutionModeString==null || deviceSystemExecutionModeString.isBlank()==true) return null;
-		
-		DeviceSystemExecutionMode deviceSystemExecutionMode = null;
-		try {
-			deviceSystemExecutionMode = DeviceSystemExecutionMode.valueOf(deviceSystemExecutionModeString.toUpperCase());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return deviceSystemExecutionMode;
-	}
-	
-	/**
-	 * Find MtpProtocol enum constant from string.
-	 *
-	 * @param mtpProtocolString the mtp protocol string
-	 * @returns the MtpProtocol
-	 */
-	private MtpProtocol findMtpProtocolFromString(String mtpProtocolString) {
-		
-		if (mtpProtocolString==null || mtpProtocolString.isBlank()==true) return null;
-		
-		MtpProtocol mtpProtocol = null;
-		try {
-			mtpProtocol = MtpProtocol.valueOf(mtpProtocolString.toUpperCase());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		// --- Backup-solution --------------------------------------
-		for (MtpProtocol mpc : MtpProtocol.values()) {
-			if (mpc.name().toLowerCase().equals(mtpProtocolString.toLowerCase())==true) {
-				mtpProtocol = mpc;
-				break;
-			}
-		}
-		
-		return mtpProtocol;
-	}
-	
-	/**
-	 * Find MTP_creation enum constant from string.
-	 *
-	 * @param mtpCreationString the mtp creation string
-	 * @returns the MTP_creation enum constant equivalent to the input string
-	 */
-	private MTP_Creation findMtpCreationFromString(String mtpCreationString) {
-		
-		if (mtpCreationString==null || mtpCreationString.isBlank()==true) return null;
-		
-		MTP_Creation mtpCreation = null;
-		try {
-			mtpCreation = MTP_Creation.valueOf(mtpCreationString);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		// --- Backup-solution --------------------------------------
-		for (MTP_Creation mtpC : MTP_Creation.values()) {
-			if (mtpC.name().toLowerCase().equals(mtpCreationString.toLowerCase())==true) {
-				mtpCreation = mtpC;
-				break;
-			}
-		}
-		
-		return mtpCreation;
-	}
 }
