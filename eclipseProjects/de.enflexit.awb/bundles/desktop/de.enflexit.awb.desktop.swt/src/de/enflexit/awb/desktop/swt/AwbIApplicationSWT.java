@@ -33,47 +33,51 @@ public class AwbIApplicationSWT extends AwbIApplication {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.awb.core.AwbIApplication#start(org.eclipse.equinox.app.IApplicationContext)
+	 */
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
-		if(SystemEnvironmentHelper.isMacOperatingSystem()==true) {
-			startEclipseUI(() -> { 
-			try {			
-				startSwingComponents(context);
-				
-				display.asyncExec(() -> {
-					// --- Hide the display --------------
-					AwbIApplicationSWT.this.eclipseUiHide(display);					
-				});
-			} catch (Exception e) {
-				e.printStackTrace();
-			} 
+		
+		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			// --- This is for MAC-OS -------------------------------
+			AwbIApplicationSWT.startEclipseUI(() -> { 
+				try {			
+					startSwingComponentsForMAC(context);
+					
+					display.asyncExec(() -> {
+						// --- Hide the display -------------------------
+						AwbIApplicationSWT.this.eclipseUiHide(display);					
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
 			});
+			return this.getApplicationReturnValue();
+			
+		} else {
+			// --- This is for Windows & Linux ----------------------
+			return super.start(context);
+			
 		}
-		return this.getApplicationReturnValue();
 	}
 	
-	private void startSwingComponents(IApplicationContext context) throws Exception {
-		// --- Preparations for MAC environment -----------
-		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
-			// --- Ensure to start AWT --------------------
-		    Toolkit.getDefaultToolkit();
-		}
+	/**
+	 * Starts the Swing-UI.
+	 *
+	 * @param context the context
+	 * @throws Exception the exception
+	 */
+	private void startSwingComponentsForMAC(IApplicationContext context) throws Exception {
 		
+		// --- Preparations for MAC environment -----------
+		Toolkit.getDefaultToolkit();
 		// --- Set the product indicator ------------------
 		GlobalInfo.catchProduct(this.getAwbProduct());
-		
 		// --- Remind application context -----------------
 		this.setIApplicationContext(context);
-
-		// --- OS-dependent system start ------------------
-		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
-			// --- Start for MacOS ------------------------
-			this.startApplicationInOwnThread();
-		} else {
-			// --- Regular start for Windows and Linux ----
-			this.startApplication();
-		}
-
+		// --- Start for MacOS ------------------------
+		this.startApplicationInOwnThread();
 	}
 	
 	/**

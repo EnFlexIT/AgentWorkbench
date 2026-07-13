@@ -119,7 +119,7 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		System.out.println(Language.translate("Programmende... "));
 		this.stop();
 
-		return this.appReturnValue;
+		return this.getApplicationReturnValue();
 	}
 	
 	/**
