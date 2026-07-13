@@ -3,9 +3,13 @@ package de.enflexit.df.core.workbook;
 import java.awt.Component;
 import java.awt.Window;
 import java.io.File;
+import java.util.List;
 
-import de.enflexit.common.dataSources.DatabaseDataSource;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DatabaseDataSource;
+import de.enflexit.df.core.db.DataWorkbookDatabaseHandler;
+import de.enflexit.df.core.db.SessionFactoryCreator;
 import de.enflexit.df.core.model.DataController;
 
 /**
@@ -22,8 +26,11 @@ public class DataWorkbook4DB extends DataWorkbook {
 	public static final String TAG_CONFIGURATION = "[Configuration]";
 	public static final String TAG_FACTORY_ID = "[FactoryID]";
 	
-	private DatabaseDataSource dataSource;
+	private DatabaseDataSource workbookDataSource;
 	private String factoryID;
+	
+	private SessionFactoryCreator sessionFactoryCreator;
+	private DataWorkbookDatabaseHandler dataWorkbookDatabaseHandler;
 	
 	
 	/* (non-Javadoc)
@@ -41,20 +48,20 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 * @return the workbook data source
 	 */
 	public DatabaseDataSource getWorkbookDataSource() {
-		return dataSource;
+		return workbookDataSource;
 	}
 	/**
 	 * Sets the workbooks data source.
-	 * @param dataSource the new workbook data source
+	 * @param workbookDataSource the new workbook data source
 	 */
 	public void setWorkbookDataSource(DatabaseDataSource dataSource) {
-		this.dataSource = dataSource;
+		this.workbookDataSource = dataSource;
 		// --- Synchronize general information ------------ 
-		if (this.dataSource!=null) {
-			this.dataSource.setId(this.getID());
-			this.dataSource.setName(this.getName());
-			this.dataSource.setDescription(this.getDescription());
-			this.dataSource.setRowsPerPage(0);
+		if (this.workbookDataSource!=null) {
+			this.workbookDataSource.setId(this.getID());
+			this.workbookDataSource.setName(this.getName());
+			this.workbookDataSource.setDescription(this.getDescription());
+			this.workbookDataSource.setRowsPerPage(0);
 		}
 	}
 	
@@ -73,6 +80,54 @@ public class DataWorkbook4DB extends DataWorkbook {
 		this.factoryID = factoryID;
 	}
 
+	
+	/**
+	 * Returns the session factory creator.
+	 * @return the session factory creator
+	 */
+	private SessionFactoryCreator getSessionFactoryCreator() {
+		if (sessionFactoryCreator==null) {
+			sessionFactoryCreator = new SessionFactoryCreator(this.getID());
+		}
+		return sessionFactoryCreator;
+	}
+	/**
+	 * Creates the DataWorkbookDatabaseHandler.
+	 * @return the data frame database handler
+	 */
+	public DataWorkbookDatabaseHandler createDataWorkbookDatabaseHandler() {
+		if (this.getWorkbookDataSource()!=null) {
+			return this.getSessionFactoryCreator().createDataWorkbookDatabaseHandler(this.getWorkbookDataSource());
+		} else if (this.getFactoryID()!=null) {
+			return this.getSessionFactoryCreator().createDataWorkbookDatabaseHandler(this.getFactoryID());
+		}
+		return null;
+	}
+	/**
+	 * Returns the DataWorkbookDatabaseHandler.
+	 * @return the data frame database handler
+	 */
+	public DataWorkbookDatabaseHandler getDataWorkbookDatabaseHandler() {
+		if (dataWorkbookDatabaseHandler==null) {
+			dataWorkbookDatabaseHandler = this.createDataWorkbookDatabaseHandler();
+		}
+		return dataWorkbookDatabaseHandler;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataSources()
+	 */
+	@Override
+	public List<AbstractDataSource> getDataSources() {
+		if (dataSources==null) {
+			// --- Load from database, if not already done ----------
+			DataWorkbookDatabaseHandler dbHandler = this.getDataWorkbookDatabaseHandler();
+			if (dbHandler!=null) {
+				dataSources = dbHandler.loadDataSources();
+			}
+		}
+		return dataSources;
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookLocation()
@@ -96,9 +151,9 @@ public class DataWorkbook4DB extends DataWorkbook {
 		return new DataWorkbookLocation(this.getID(), this.getClass(), locationDescription);
 	}
 	/**
-	 * Load from data work book location.
+	 * Load the DataWorkbook from the specified DataWorkbookLocation.
 	 *
-	 * @param dwLocation the dw location
+	 * @param dwLocation the DataWorkbookLocation
 	 * @return the data workbook
 	 */
 	public static DataWorkbook loadFromDataWorkBookLocation(DataWorkbookLocation dwLocation) {
@@ -138,31 +193,13 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 */
 	@Override
 	public boolean save() {
-		return DataWorkbook4DB.saveToDatabase(this);
-	}
-	
-	
-	/**
-	 * Saves the specified DataWorkbook to the database.
-	 *
-	 * @param dataWorkbook the data workbook
-	 * @param fileToSaveTo the file to save to
-	 * @return true, if successful
-	 */
-	public static boolean saveToDatabase(DataWorkbook dataWorkbook) {
-		
+
 		try {
-			
-			DataWorkbookLocation dwLoc = dataWorkbook.getDataWorkbookLocation();
-			
-			// --- Check if the DB settings are valid -------------------------
-			
-			// --- Create a DB-Connection or factory respectively -------------
-			
-			// --- Ensure that the required data structure is available -------  
-			
-			
-			return true;
+			// --- If a database handler is available, save the data sources --
+			if (this.getDataWorkbookDatabaseHandler()!=null) {
+				this.getDataWorkbookDatabaseHandler().saveDataSources(this.getDataSources());
+				return true;
+			}
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -170,27 +207,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		return false;
 	}
 	
-	/**
-	 * Loads the specified DataWorkbook from the database.
-	 *
-	 * @param fileToOpen the file to open
-	 * @return the data workbook 4 XML
-	 */
-	public static DataWorkbook4DB loadFromDatabase() {
-		
-		DataWorkbook4DB dwb = null;
-		try {
-			
-			
-			
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return dwb;
-	}
-
+	
 	/**
 	 * Creates a DB DataWorkbook by asking for a storage location.
 	 *
@@ -218,6 +235,5 @@ public class DataWorkbook4DB extends DataWorkbook {
 		dwbDB.setWorkbookDataSource(new DatabaseDataSource());
 		return dwbDB;
 	}
-
 	
 }

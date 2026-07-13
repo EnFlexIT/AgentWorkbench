@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import de.enflexit.common.dataSources.ExcelDataSource;
+import de.enflexit.db.dataSources.ExcelDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.data.PaginationDataLoader4Excel;

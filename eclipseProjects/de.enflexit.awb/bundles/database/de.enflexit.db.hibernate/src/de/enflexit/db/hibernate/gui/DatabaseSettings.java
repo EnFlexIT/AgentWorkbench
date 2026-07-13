@@ -9,7 +9,7 @@ import org.hibernate.cfg.Configuration;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
-import de.enflexit.common.dataSources.DatabaseDataSource;
+import de.enflexit.db.dataSources.DatabaseDataSource;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 
@@ -105,6 +105,16 @@ public class DatabaseSettings implements Serializable {
 		this.hibernateDatabaseSettings = hibernateDatabaseSettings;
 	}
 	
+	/**
+	 * Checks if the current instance is empty.
+	 * @return true, if the current settings instance is empty
+	 */
+	public boolean isEmpty() {
+		boolean isAvailableDatabaseSystemName = (this.getDatabaseSystemName()!=null && this.getDatabaseSystemName().isBlank()==false);
+		boolean hasDatabaseSettingEntries     = (this.hibernateDatabaseSettings!=null && this.hibernateDatabaseSettings.size()!=0);
+		return isAvailableDatabaseSystemName==false & hasDatabaseSettingEntries==false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -139,7 +149,6 @@ public class DatabaseSettings implements Serializable {
 				}
 			}
 			return true;	
-
 		}
 		return false;
 	}
@@ -193,11 +202,11 @@ public class DatabaseSettings implements Serializable {
 		dbSettings.setDatabaseSystemName(dbDataSource.getDBMSName());
 		dbSettings.setHibernateDatabaseSettings(new Properties());
 
-		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbDataSource.getConnectionURL());
-		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, dbDataSource.getDbName());
+		if (dbDataSource.getConnectionURL()!=null) 	dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbDataSource.getConnectionURL());
+		if (dbDataSource.getDbName()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, dbDataSource.getDbName());
 		
-		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
-		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
+		if (dbDataSource.getUserName()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
+		if (dbDataSource.getPassword()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
 		
 		// --- Super class attributes -----------
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId()==null ? "" : dbDataSource.getId().toString());
@@ -205,6 +214,9 @@ public class DatabaseSettings implements Serializable {
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE, dbDataSource.getRowsPerPage() + "");
 		
+		if (dbSettings.isEmpty()==true) {
+			return null;
+		}
 		return dbSettings;
 	}
 	

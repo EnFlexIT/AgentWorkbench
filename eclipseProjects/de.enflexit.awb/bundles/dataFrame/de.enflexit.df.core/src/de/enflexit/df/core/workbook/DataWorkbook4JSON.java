@@ -13,8 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
-import de.enflexit.common.dataSources.AbstractDataSource;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.db.dataSources.AbstractDataSource;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.DataController;
 

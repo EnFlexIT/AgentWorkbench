@@ -1,5 +1,6 @@
 package de.enflexit.df.core.model.treeNode;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -126,11 +127,15 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 		}
 		return jPanelConfiguration;
 	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
 	 */
 	@Override
 	public void resetConfigurationPanel() {
+		if (this.jPanelConfiguration!=null && this.jPanelConfiguration instanceof PropertyChangeListener pcl) {
+			this.dataController.removePropertyChangeListener(pcl);
+		}
 		this.jPanelConfiguration = null;
 	}
 	

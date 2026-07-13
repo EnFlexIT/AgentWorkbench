@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Common
+Bundle-Name: Common Classes & Helper
 Bundle-SymbolicName: de.enflexit.common
 Automatic-Module-Name: de.enflexit.common
-Bundle-Version: 2.3.3.qualifier
+Bundle-Version: 2.4.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/classLoadService.xml,
@@ -30,7 +30,6 @@ Export-Package: de.enflexit.common,
  de.enflexit.common.classSelection,
  de.enflexit.common.crypto,
  de.enflexit.common.csv;uses:="javax.swing.table,javax.swing",
- de.enflexit.common.dataSources,
  de.enflexit.common.featureEvaluation,
  de.enflexit.common.featureEvaluation.featureXML,
  de.enflexit.common.fileConfiguration,
@@ -65,10 +64,9 @@ Import-Package: de.enflexit.language,
  jade.content.onto,
  jade.core,
  jade.util.leap,
- jakarta.persistence,
- jakarta.xml.bind,
- jakarta.xml.bind.annotation,
- jakarta.xml.bind.annotation.adapters,
+ jakarta.xml.bind;version="[4.0.0,5.0.0)",
+ jakarta.xml.bind.annotation;version="[4.0.0,5.0.0)",
+ jakarta.xml.bind.annotation.adapters;version="[4.0.0,5.0.0)",
  org.apache.commons.codec.binary,
  org.eclipse.equinox.security.storage,
  org.eclipse.equinox.security.storage.provider,

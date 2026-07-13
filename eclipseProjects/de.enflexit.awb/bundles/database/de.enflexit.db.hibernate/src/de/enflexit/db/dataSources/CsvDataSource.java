@@ -1,5 +1,6 @@
-package de.enflexit.common.dataSources;
+package de.enflexit.db.dataSources;
 
+import de.enflexit.common.StringHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -17,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @Entity
 @DiscriminatorValue("csv")
 
-@XmlRootElement(name = "ExcelDataSource")
+@XmlRootElement(name = "CsvDataSource")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
     "csvFilePath",
@@ -25,11 +26,18 @@ import jakarta.xml.bind.annotation.XmlType;
     "columnSeparator",
     "headline"
 })
-
-public class ExcelDataSource extends AbstractDataSource {
+public class CsvDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;
 
+	public static final String CHANGED_CSV_FILE = "CHANGED_CSV_FILE";
+	public static final String CHANGED_CSV_DATE_TIME_FORMAT = "CHANGED_CSV_DATE_TIME_FORMAT";
+	public static final String CHANGED_CSV_COLUMN_SEPARATOR = "CHANGED_CSV_COLUMN_SEPARATOR";
+	public static final String CHANGED_CSV_HAS_HEADLINE = "CHANGED_CSV_HAS_HEADLINE";
+	
+	public static final String[] COLUMN_SEPARATORS = {";",",",":","."};
+	
+	
 	@Column(name="csv_file_path", nullable=false)
 	private String csvFilePath;
 	
@@ -108,6 +116,26 @@ public class ExcelDataSource extends AbstractDataSource {
 	 */
 	public void setHeadline(boolean headline) {
 		this.headline = headline;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.dataSources.AbstractDataSource#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object compObj) {
+		
+		if (super.equals(compObj)==false) return false;
+		if (compObj instanceof CsvDataSource == false) return false;
+		
+		CsvDataSource csvDsComp = (CsvDataSource) compObj;
+		
+		if (StringHelper.isEqualString(this.getCsvFilePath(), csvDsComp.getCsvFilePath())==false) return false;
+		if (StringHelper.isEqualString(this.getDateTimeFormat(), csvDsComp.getDateTimeFormat())==false) return false;
+		if (StringHelper.isEqualString(this.getColumnSeparator(), csvDsComp.getColumnSeparator())==false) return false;
+		if (this.isHeadline()!=csvDsComp.isHeadline()) return false;
+		
+		return true;
 	}
 	
 }

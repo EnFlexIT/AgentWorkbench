@@ -6,8 +6,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<logback.version>1.5.26</logback.version>
-		<logback.db.version>1.2.11.1</logback.db.version>
+		<logback.version>1.5.38</logback.version>
+		<logback.db.version>1.5.32</logback.db.version>
 	</properties>
 
 	<dependencies>

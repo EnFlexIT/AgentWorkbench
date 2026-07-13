@@ -10,10 +10,10 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import de.enflexit.common.dataSources.AbstractDataSource;
-import de.enflexit.common.dataSources.CsvDataSource;
-import de.enflexit.common.dataSources.DatabaseDataSource;
-import de.enflexit.common.dataSources.ExcelDataSource;
+import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.CsvDataSource;
+import de.enflexit.db.dataSources.DatabaseDataSource;
+import de.enflexit.db.dataSources.ExcelDataSource;
 
 /**
  * The Class JsonAdapterForDataSource.

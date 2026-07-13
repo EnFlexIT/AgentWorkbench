@@ -75,25 +75,30 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
-		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_WORKBOOK)==true) {
-			DataWorkbook dw = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
+		DataWorkbook dw = null;
+		
+		switch (evt.getPropertyName()) {
+		case DataController.DC_ADDED_DATA_WORKBOOK: 
+			dw = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
 			this.addDataWorkbookLocation(dw.getDataWorkbookLocation(), true);
+			break;
 			
-		} else if (evt.getPropertyName().equals(DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED)==true) {
-			DataWorkbook dw = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
+		case DataController.DC_SAVED_DATA_WORKBOOK:
+		case DataController.DC_DATA_WORKBOOK_CONFIGURATION_CHANGED:
+			dw = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
 			int idxDWBL = this.indexOfDataWorkbookLocation(dw.getID());
 			if (idxDWBL!=-1) {
 				this.getDataWorkbookLocationList().set(idxDWBL, dw.getDataWorkbookLocation());
 				this.saveToSecuredStorage();
 			}
-			
-		} else if (evt.getPropertyName().equals(DataController.DC_REMOVED_DATA_WORKBOOK)==true) {
-			DataWorkbook dw = ((AffectedDataObjects) evt.getOldValue()).getDataWorkbook();
+			break;
+
+		case DataController.DC_REMOVED_DATA_WORKBOOK:
+			dw = ((AffectedDataObjects) evt.getOldValue()).getDataWorkbook();
 			this.removeDataWorkbookLocation(dw.getDataWorkbookLocation(), true);
-			
+			break;
 		}
 	}
-	
 	
 	/**
 	 * Returns the data workbook location list.
