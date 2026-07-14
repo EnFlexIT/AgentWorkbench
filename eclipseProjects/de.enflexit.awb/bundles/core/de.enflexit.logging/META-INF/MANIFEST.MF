@@ -94,7 +94,9 @@ Export-Package: ch.qos.logback.classic,
  org.slf4j.event;version="2.0.17",
  org.slf4j.helpers;version="2.0.17",
  org.slf4j.spi;version="2.0.17"
-Import-Package: org.osgi.framework
+Import-Package: org.eclipse.core.runtime.preferences,
+ org.osgi.framework,
+ org.osgi.service.prefs
 Bundle-Vendor: EnFlex.IT
 Bundle-Activator: de.enflexit.logging.LoggingActivator
 Bundle-ClassPath: .,

@@ -68,9 +68,9 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 	 */
 	public JPanelConsole(boolean isLocalConsole) {
 		super();
+		this.initialize();
 		this.setLocalConsole(isLocalConsole);
 		this.registerConsoleListener();
-		this.initialize();
 	}
 
 	/**

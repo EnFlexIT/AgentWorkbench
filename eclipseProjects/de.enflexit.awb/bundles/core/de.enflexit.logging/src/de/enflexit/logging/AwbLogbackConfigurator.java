@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.LoggerContext;
@@ -20,6 +25,8 @@ import ch.qos.logback.core.joran.spi.JoranException;
  */
 public class AwbLogbackConfigurator {
 
+	private static IEclipsePreferences eclipsePreferences;
+	
 	/**
 	 * Load logback configuration from specified path, including file 'logback.xml'.
 	 *
@@ -80,4 +87,25 @@ public class AwbLogbackConfigurator {
 		}
 		
 	}
+	
+	
+	/**
+	 * Returns the local bundle.
+	 * @return the bundle
+	 */
+	private static Bundle getBundle() {
+		return FrameworkUtil.getBundle(AwbLogbackConfigurator.class);
+	}
+	/**
+	 * Returns the current eclipse preferences.
+	 * @return the eclipse preferences
+	 */
+	public static IEclipsePreferences getEclipsePreferences() {
+		if (eclipsePreferences==null) {
+			IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+			eclipsePreferences = iScopeContext.getNode(AwbLogbackConfigurator.getBundle().getSymbolicName());
+		}
+		return eclipsePreferences;
+	}
+	
 }
