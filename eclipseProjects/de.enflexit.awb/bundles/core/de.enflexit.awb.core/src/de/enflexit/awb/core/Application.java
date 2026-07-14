@@ -395,7 +395,6 @@ public class Application {
 			// ------------------------------------------------------
 			// --- Start required Agent.Workbench instances ---------
 			// ------------------------------------------------------
-			Application.getConsole();
 			Application.getGlobalInfo();			
 			Application.startBundleEvaluation();
 			

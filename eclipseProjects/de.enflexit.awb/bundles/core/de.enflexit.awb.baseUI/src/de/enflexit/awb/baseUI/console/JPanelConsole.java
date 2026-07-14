@@ -143,6 +143,7 @@ public class JPanelConsole extends JPanel implements AwbConsole {
 			jEditorPaneOutput = new JEditorPane();
 			jEditorPaneOutput.setContentType("text/html");
 			jEditorPaneOutput.setFont(new Font(this.getFontFamily(), Font.PLAIN, this.fontSize));
+			jEditorPaneOutput.setBackground(AwbThemeColor.Canvas_Background.getColor());
 			jEditorPaneOutput.setPreferredSize(new Dimension(400, 100));
 			jEditorPaneOutput.setEditable(false);
 		}
