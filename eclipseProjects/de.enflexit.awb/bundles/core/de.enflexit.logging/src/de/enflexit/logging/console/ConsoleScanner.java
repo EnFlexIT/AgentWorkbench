@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import de.enflexit.logging.AwbLogbackConfigurator;
 import de.enflexit.logging.appender.AwbConsoleAppender;
-
-
 
 /**
  * This Class can be used in order to listen to the output which will be generated<br> 
@@ -51,6 +51,9 @@ public class ConsoleScanner {
 	}
 	
 	
+	public final static int DEFAULT_STACK_SIZE = 600;
+	
+	private Integer stackSize;
 	private Vector<String> outputStack = new Vector<String>(); 
 	private List<ConsoleListener> consoleListener;
 	
@@ -114,6 +117,18 @@ public class ConsoleScanner {
 		return false;
 	}
 	
+	
+	/**
+	 * Can be used in order to get the current outputStack of the local console.
+	 * @return the current output stack
+	 */
+	public Vector<String> getStack() {
+		if (this.outputStack==null) {
+			this.outputStack = new Vector<String>();
+		}
+		return this.outputStack;
+	}
+	
 	/**
 	 * This method will be used in order to append an output line (System.out or System.err) 
 	 * to the local outputStack
@@ -122,10 +137,14 @@ public class ConsoleScanner {
 	 */
 	public void append2Stack(String lineOutput) {
 		
-		if (this.outputStack.size()>=20) {
-			this.outputStack.remove(0);
+		// --- Append to the current stack -------------------------- 
+		synchronized (this.getStack()) {
+			this.getStack().add(lineOutput);
+			// --- Reduce to the specified stack size ---------------
+			while (this.getStack().size()>this.getStackSize()) {
+				this.getStack().remove(0);
+			}
 		}
-		this.outputStack.add(lineOutput);
 		
 		// --- Forward information to each ConsoleListener ----------
 		for (ConsoleListener cl : this.getConsoleListener()) {
@@ -158,13 +177,36 @@ public class ConsoleScanner {
 		}
 	}
 	
+
+	// ------------------------------------------------------------------------
+	// --- From here stack handling methods -----------------------------------
+	// ------------------------------------------------------------------------
 	/**
-	 * Can be used in order to get the current outputStack of the local console.
-	 * @return the current output stack
+	 * Sets the stack size (must be >=20 and <1500).
+	 * @param newStackSize the new stack size
 	 */
-	public synchronized Vector<String> getStack() {
-		Vector<String> stack = this.outputStack;
-		this.outputStack = new Vector<String>();
-		return stack;
+	public void setStackSize(int newStackSize) {
+		
+		if (newStackSize<20) return;
+		if (newStackSize>1500) newStackSize=1500;
+		
+		this.stackSize = newStackSize;
+		try {
+			AwbLogbackConfigurator.getEclipsePreferences().putInt("Console-StackSize", this.stackSize);
+			AwbLogbackConfigurator.getEclipsePreferences().flush();
+		} catch (BackingStoreException bsEx) {
+			bsEx.printStackTrace();
+		}
 	}
+	/**
+	 * Returns the stack size to be used.
+	 * @return the stack size
+	 */
+	public Integer getStackSize() {
+		if (stackSize==null) {
+			stackSize = AwbLogbackConfigurator.getEclipsePreferences().getInt("Console-StackSize", DEFAULT_STACK_SIZE);
+		}
+		return stackSize;
+	}
+	
 }
