@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.status.Status;
+import ch.qos.logback.core.status.StatusManager;
 
 /**
  * The Class AwbLogbackConfigurator provides static methods to 
@@ -68,14 +70,23 @@ public class AwbLogbackConfigurator {
 			JoranConfigurator jc = new JoranConfigurator();
 			jc.setContext(testContext);
 			jc.doConfigure(inputStream);
-			return true;
+
+			// --- Check if logback registered errors without throwing exception --------
+			StatusManager statusManager = testContext.getStatusManager();
+			for (Status status : statusManager.getCopyOfStatusList()) {
+				if (status.getLevel() == Status.ERROR) {
+					return false;
+				}
+			}
+
+		    return true;
 
 		} catch (JoranException joEx) {
-			// --- Config threw JoranException, must be invalid -----
+			// --- Config threw JoranException, must be invalid -------------------------
 			return false;
 
 		} finally {
-			// --- Clean-up -----------------------------------------
+			// --- Clean-up -------------------------------------------------------------
 			testContext.stop();
 		}
 		

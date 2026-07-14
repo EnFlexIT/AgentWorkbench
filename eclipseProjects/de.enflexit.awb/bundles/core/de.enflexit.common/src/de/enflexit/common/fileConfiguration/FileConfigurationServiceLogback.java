@@ -1,7 +1,6 @@
 package de.enflexit.common.fileConfiguration;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +37,7 @@ public class FileConfigurationServiceLogback implements FileConfigurationService
 		
 		// --- Check if there is an input stream ----------------------------------------
 		if (file2Process.getInputStream() == null) {
-			this.getFileProcessingResult().setMessage("No input stream found.");
+			this.getFileProcessingResult().setMessage("Uploaded file is empty or invalid.");
 			return this.getFileProcessingResult();
 		}
 		
@@ -56,30 +55,44 @@ public class FileConfigurationServiceLogback implements FileConfigurationService
 		}	
 		
 		// --- Get path to the logback.xml ----------------------------------------------
-		Path logbackXml = PathHandling.getPropertiesPath(LoggingActivator.class, true).resolve(FileToProvide.LOGBACK_CONFIGURATION.toString());
+		Path logbackXmlFile = PathHandling.getPropertiesPath(LoggingActivator.class, true).resolve(FileToProvide.LOGBACK_CONFIGURATION.toString());
 		
 		// --- Validate new config ------------------------------------------------------
 		if (AwbLogbackConfigurator.isValidLogbackConfiguration(new ByteArrayInputStream(content)) == false) {
 			this.getFileProcessingResult().setMessage("Invalid configuration.");
-			return this.getFileProcessingResult();
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.setFileProcessingResult(null);
+			return fpr;
 		}
 		
 		// --- Replace existing file ----------------------------------------------------
 		try {
-			Files.write(logbackXml, content);
-			AwbLogbackConfigurator.loadConfiguration(logbackXml);
+			Files.write(logbackXmlFile, content);
 			
 		} catch (IOException ioeWrite) {
 			ioeWrite.printStackTrace();
 			this.getFileProcessingResult().setMessage("Error while writing new configuration file");
-			return this.getFileProcessingResult();
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.setFileProcessingResult(null);
+			return fpr;
+		}
+		// --- Load the new configuration -----------------------------------------------
+		try {
+			AwbLogbackConfigurator.loadConfiguration(logbackXmlFile);
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			this.getFileProcessingResult().setMessage("Error while applying new configuration");
+			FileProcessingResult fpr = this.getFileProcessingResult();
+			this.setFileProcessingResult(null);
+			return fpr;
 		}
 		// --- No errors occurred, return success ---------------------------------------
 		this.getFileProcessingResult().setSuccess(true);
 		this.getFileProcessingResult().setMessage("Upload Successful. Configuration applied");
-		return this.getFileProcessingResult();
+		FileProcessingResult fpr = this.getFileProcessingResult();
+		this.setFileProcessingResult(null);
+		return fpr;
 	}
 
 	/* (non-Javadoc)
@@ -89,21 +102,20 @@ public class FileConfigurationServiceLogback implements FileConfigurationService
 	public FileDownload getCurrentConfigurationFile() {
 		
 		// --- Check if the file exists ---------------------------------------
-		Path pathToLogback = PathHandling.getPropertiesPath(LoggingActivator.class, true).resolve(FileToProvide.LOGBACK_CONFIGURATION.toString());
-		File logbackXml = pathToLogback.toFile();
-		if (logbackXml.exists() == false) {
+		Path logbackXmlFile = PathHandling.getPropertiesPath(LoggingActivator.class, true).resolve(FileToProvide.LOGBACK_CONFIGURATION.toString());
+		if (logbackXmlFile.toFile().exists() == false) {
 			return null;
 		}
 		
 		byte[] content;
 		try {
 			// --- Read the file ----------------------------------------------
-			content = Files.readAllBytes(logbackXml.toPath());
+			content = Files.readAllBytes(logbackXmlFile);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			return null;
 		}
-		// --- Set and return result ------------------------------------------
+		// --- Set name, type and content --------------------------------------
 		FileDownload fileDownload = new FileDownload();
 		fileDownload.setFileName("logback");
 		fileDownload.setContentType(FileDownload.XML_CONTENT_TYPE);
