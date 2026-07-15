@@ -80,7 +80,7 @@ public class DataWorkbookDatabaseHandler {
 	 * Saves or updates the specified {@link entityInstance}.
 	 * @param entityInstance the JettySession instance to save or update
 	 */
-	public <EntityInstance> boolean dbSaveOrUpdateEntityInstance(EntityInstance entityInstance) {
+	public <EntityInstance> boolean dbSaveOrUpdateEntityInstance(EntityInstance entityInstance, boolean doUpdate) {
 		
 		boolean successful= false;
 		Session session = this.getSession();
@@ -89,7 +89,12 @@ public class DataWorkbookDatabaseHandler {
 			Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
-				session.persist(entityInstance);
+				if (doUpdate==false) {
+					session.persist(entityInstance);
+					session.flush();
+				} else {
+					session.merge(entityInstance);
+				}
 				session.flush();
 				transaction.commit();
 				successful = true;
@@ -229,7 +234,7 @@ public class DataWorkbookDatabaseHandler {
 	public void saveDataSources(List<AbstractDataSource> dataSources) {
 		if (dataSources==null || dataSources.size()==0) return;
 		for (AbstractDataSource ds : dataSources) {
-			this.dbSaveOrUpdateEntityInstance(ds);
+			this.dbSaveOrUpdateEntityInstance(ds, ds.getId()!=0);
 		}
 	}
 	

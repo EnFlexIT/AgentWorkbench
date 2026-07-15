@@ -166,6 +166,11 @@ public abstract class DataWorkbook implements Serializable {
 	public abstract boolean save();
 	
 	/**
+	 * Has to close the current DataWorkbook.
+	 */
+	public abstract void close();
+	
+	/**
 	 * Has to return the the data workbook file or <code>null</code>., if noc file are involved.
 	 * @return the data workbook file
 	 */

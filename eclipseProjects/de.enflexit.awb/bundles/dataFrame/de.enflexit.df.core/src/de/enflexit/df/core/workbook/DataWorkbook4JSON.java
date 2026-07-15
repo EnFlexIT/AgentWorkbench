@@ -208,5 +208,12 @@ public class DataWorkbook4JSON extends DataWorkbook {
 		dwbJSON.save();
 		return dwbJSON;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#close()
+	 */
+	@Override
+	public void close() {
+		// --- Nothing to do here -------------------------
+	}
 }

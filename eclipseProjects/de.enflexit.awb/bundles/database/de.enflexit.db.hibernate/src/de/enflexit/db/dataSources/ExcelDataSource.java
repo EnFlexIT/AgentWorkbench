@@ -29,12 +29,12 @@ public class ExcelDataSource extends AbstractDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;
 
-	@Column(name="csv_file_path", nullable=false)
+	@Column(name="csv_file_path", nullable=true)
 	private String csvFilePath;
 	
-	@Column(name="date_time_format", nullable=false)
+	@Column(name="date_time_format", nullable=true)
 	private String dateTimeFormat = "dd.MM.yyyy HH:mm";
-	@Column(name="column_separator", nullable=false)
+	@Column(name="column_separator", nullable=true)
 	private String columnSeparator = ";";
 	
 	private boolean headline;

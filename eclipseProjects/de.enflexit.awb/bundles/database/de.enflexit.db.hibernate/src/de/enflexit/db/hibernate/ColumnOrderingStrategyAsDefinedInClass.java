@@ -1,9 +1,11 @@
 package de.enflexit.db.hibernate;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard;
 import org.hibernate.mapping.BasicValue;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.RootClass;
 import org.hibernate.mapping.SimpleValue;
 import org.hibernate.mapping.Table;
 import org.hibernate.mapping.Value;
@@ -55,7 +58,7 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 		return super.orderTableColumns(table, metadata);
 	}
 	/**
-	 * Returns the entity attribute list in the natural order.
+	 * Returns the entity attribute list in the natural order of the classes.
 	 *
 	 * @param table the table
 	 * @param metadata the metadata
@@ -64,18 +67,26 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 	private List<String> getEntityAttributeList(Table table, Metadata metadata) {
 		
 		// --- Get PersistentClass of the table -----------
-		PersistentClass pc = this.getPersistentClassFromTable(table, metadata);
-		if (pc==null) return null;
+		List<PersistentClass> pcList = this.getPersistentClassListFromTable(table, metadata);
+		if (pcList==null || pcList.size()==0) return null;
 		
-		// --- Evaluate class -----------------------------
-		Class<?> clazz = pc.getMappedClass();
-		if (clazz==null) return null;
-		
-		// --- Evaluate field of class --------------------
+		// --- Define result list ------------------------- 
 		List<String> attributeList = new ArrayList<>();
-		Field[] attributes = clazz.getDeclaredFields();
-		for (Field field : attributes) {
-			attributeList.add(field.getName());
+		for (PersistentClass pc : pcList) {
+			// --- Evaluate class -------------------------
+			Class<?> clazz = pc.getMappedClass();
+			if (clazz==null) continue;
+			
+			// --- Evaluate field of class ----------------
+			Field[] attributes = clazz.getDeclaredFields();
+			for (Field field : attributes) {
+				// --- Check the field modifiers ----------
+				int fieldModifiers = field.getModifiers();
+				boolean isStaticFinal = Modifier.isStatic(fieldModifiers)==true && Modifier.isFinal(fieldModifiers);
+				if (isStaticFinal==false) {
+					attributeList.add(field.getName());
+				}
+			}
 		}
 		return attributeList;
 	}
@@ -86,18 +97,40 @@ public class ColumnOrderingStrategyAsDefinedInClass extends ColumnOrderingStrate
 	 * @param metadata the metadata
 	 * @return the persistent class from table
 	 */
-	private PersistentClass getPersistentClassFromTable(Table table, Metadata metadata) {
+	private List<PersistentClass> getPersistentClassListFromTable(Table table, Metadata metadata) {
 		
-		PersistentClass pcFound = null;
+		List<PersistentClass> pcListFound = new ArrayList<>();
 		Collection<PersistentClass> pcList = metadata.getEntityBindings();
 		for (PersistentClass pc : pcList) {
-			
 			Table tbCheck = pc.getTable();
 			if (tbCheck==table) {
-				pcFound=pc;
+				pcListFound.add(pc);
 			}
 		}
-		return pcFound;
+		
+		// --- Sort the list of PersistentClass elements? -----------
+		if (pcList.size()>1) {
+			// --- Most probably an inheritance structure -----------
+			Collections.sort(pcListFound, new Comparator<PersistentClass>() {
+				@Override
+				public int compare(PersistentClass pc1, PersistentClass pc2) {
+					
+					boolean isPC1RootClass = (pc1 instanceof RootClass);
+					boolean isPC2RootClass = (pc2 instanceof RootClass);
+					
+					if (isPC1RootClass==true && isPC2RootClass==true) {
+						// --- Most likely not possible ------------- 
+						return pc1.getMappedClass().getSimpleName().compareTo(pc2.getMappedClass().getSimpleName());
+					} else if (isPC1RootClass==true && isPC2RootClass==false) {
+						return -1;
+					} else if (isPC1RootClass==false && isPC2RootClass==true) {
+						return 1;
+					}
+					return pc1.getMappedClass().getSimpleName().compareTo(pc2.getMappedClass().getSimpleName());
+				}
+			});
+		}
+		return pcListFound;
 	}
 	
 	

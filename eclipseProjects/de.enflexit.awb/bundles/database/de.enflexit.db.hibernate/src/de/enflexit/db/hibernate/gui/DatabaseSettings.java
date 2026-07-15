@@ -209,7 +209,7 @@ public class DatabaseSettings implements Serializable {
 		if (dbDataSource.getPassword()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
 		
 		// --- Super class attributes -----------
-		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId()==null ? "" : dbDataSource.getId().toString());
+		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId() + "");
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE, dbDataSource.getRowsPerPage() + "");
