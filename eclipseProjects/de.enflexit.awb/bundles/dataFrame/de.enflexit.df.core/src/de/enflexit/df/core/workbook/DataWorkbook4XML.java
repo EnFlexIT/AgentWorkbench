@@ -216,4 +216,11 @@ public class DataWorkbook4XML extends DataWorkbook {
 		return dwbXML;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#close()
+	 */
+	@Override
+	public void close() {
+		// --- Nothing to do here -------------------------
+	}
 }

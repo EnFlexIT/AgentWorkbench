@@ -231,11 +231,19 @@ public class DataController {
 		if (dataWorkbook==null) return;
 
 		if (this.getDataWorkbooks().contains(dataWorkbook)==true) {
-			// --- Close the data sources ---------------------------
-			for (AbstractDataSource ds : dataWorkbook.getDataSources()) {
-				this.closeDataSource(dataWorkbook, ds);
+			try {
+				// --- Close the data sources -----------------------
+				for (AbstractDataSource ds : dataWorkbook.getDataSources()) {
+					this.closeDataSource(dataWorkbook, ds);
+				}
+				// --- Call to close the DataWorkbook ---------------
+				dataWorkbook.close();
+				// --- Inform listener ------------------------------
+				this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-			this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 		}
 	}
 	/**

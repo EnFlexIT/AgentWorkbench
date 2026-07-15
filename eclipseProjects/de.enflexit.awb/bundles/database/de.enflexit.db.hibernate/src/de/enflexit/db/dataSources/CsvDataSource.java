@@ -38,12 +38,12 @@ public class CsvDataSource extends AbstractDataSource {
 	public static final String[] COLUMN_SEPARATORS = {";",",",":","."};
 	
 	
-	@Column(name="csv_file_path", nullable=false)
+	@Column(name="csv_file_path", nullable=true)
 	private String csvFilePath;
 	
-	@Column(name="date_time_format", nullable=false)
+	@Column(name="date_time_format", nullable=true)
 	private String dateTimeFormat = "dd.MM.yyyy HH:mm";
-	@Column(name="column_separator", nullable=false)
+	@Column(name="column_separator", nullable=true)
 	private String columnSeparator = ";";
 	
 	private boolean headline;

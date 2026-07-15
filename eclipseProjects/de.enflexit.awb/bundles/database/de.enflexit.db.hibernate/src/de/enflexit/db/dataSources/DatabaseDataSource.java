@@ -38,19 +38,19 @@ public class DatabaseDataSource extends AbstractDataSource {
 	public final static String KEY_PASSWORD = "Password";
 	
 	
-	@Column(name="dbms_name", nullable=false)
+	@Column(name="dbms_name", nullable=true)
 	private String dbmsName; 
 	
-	@Column(name="connection_url", nullable=false)
+	@Column(name="connection_url", nullable=true)
 	private String connectionURL;
 	
-	@Column(name="db_name", nullable=false)
+	@Column(name="db_name", nullable=true)
 	private String dbName;
 	
-	@Column(name="user_name", nullable=false)
+	@Column(name="user_name", nullable=true)
 	private String userName;
 	
-	@Column(name="password", nullable=false)
+	@Column(name="password", nullable=true)
 	private String password;
 	
 	
@@ -160,7 +160,7 @@ public class DatabaseDataSource extends AbstractDataSource {
 		
 		String config = new String();
 		
-		config = DatabaseDataSource.addConfigValue(config, KEY_ID, (dbSource.getId()==null || dbSource.getId()==0) ? null : dbSource.getId().toString());
+		config = DatabaseDataSource.addConfigValue(config, KEY_ID, (dbSource.getId() + ""));
 		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, dbSource.getName());
 		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, dbSource.getDescription());
 		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, dbSource.getRowsPerPage() + "");

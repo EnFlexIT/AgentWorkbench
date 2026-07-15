@@ -92,10 +92,21 @@ public class DataWorkbook4DB extends DataWorkbook {
 		return sessionFactoryCreator;
 	}
 	/**
+	 * Sets the SessionFactoryCreator of the DataWorkbook.
+	 * @param sessionFactoryCreator the new session factory creator
+	 */
+	private void setSessionFactoryCreator(SessionFactoryCreator sessionFactoryCreator) {
+		if (this.sessionFactoryCreator!=null) {
+			this.sessionFactoryCreator.closeSessionFactory();
+		}
+		this.sessionFactoryCreator = sessionFactoryCreator;
+	}
+	
+	/**
 	 * Creates the DataWorkbookDatabaseHandler.
 	 * @return the data frame database handler
 	 */
-	public DataWorkbookDatabaseHandler createDataWorkbookDatabaseHandler() {
+	private DataWorkbookDatabaseHandler createDataWorkbookDatabaseHandler() {
 		if (this.getWorkbookDataSource()!=null) {
 			return this.getSessionFactoryCreator().createDataWorkbookDatabaseHandler(this.getWorkbookDataSource());
 		} else if (this.getFactoryID()!=null) {
@@ -113,6 +124,16 @@ public class DataWorkbook4DB extends DataWorkbook {
 		}
 		return dataWorkbookDatabaseHandler;
 	}
+	/**
+	 * Sets the data workbook database handler.
+	 * @param dataWorkbookDatabaseHandler the new data workbook database handler
+	 */
+	private void setDataWorkbookDatabaseHandler(DataWorkbookDatabaseHandler dataWorkbookDatabaseHandler) {
+		if (this.dataWorkbookDatabaseHandler!=null) {
+			this.dataWorkbookDatabaseHandler.dispose();
+		}
+		this.dataWorkbookDatabaseHandler = dataWorkbookDatabaseHandler;
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataSources()
@@ -124,6 +145,9 @@ public class DataWorkbook4DB extends DataWorkbook {
 			DataWorkbookDatabaseHandler dbHandler = this.getDataWorkbookDatabaseHandler();
 			if (dbHandler!=null) {
 				dataSources = dbHandler.loadDataSources();
+				if (dataSources==null) {
+					dataSources = super.getDataSources();
+				}
 			}
 		}
 		return dataSources;
@@ -206,7 +230,15 @@ public class DataWorkbook4DB extends DataWorkbook {
 		}
 		return false;
 	}
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#close()
+	 */
+	@Override
+	public void close() {
+		this.setDataWorkbookDatabaseHandler(null);
+		this.setSessionFactoryCreator(null);
+		this.setDataSources(null);
+	}
 	
 	/**
 	 * Creates a DB DataWorkbook by asking for a storage location.

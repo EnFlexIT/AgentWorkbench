@@ -135,6 +135,7 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 	 */
 	private void addColumnOrderingStrategy(Configuration configuration) {
 		configuration.setColumnOrderingStrategy(new ColumnOrderingStrategyAsDefinedInClass());
+		//configuration.setColumnOrderingStrategy(new ColumnOrderingStrategyStandard());
 	}
 	
 	/**

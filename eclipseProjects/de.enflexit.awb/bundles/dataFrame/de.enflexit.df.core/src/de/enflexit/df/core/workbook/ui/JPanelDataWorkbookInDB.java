@@ -517,7 +517,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 
 		switch (evt.getPropertyName()) {
 		case DataController.DC_OPENED_DATA_WORKBOOK:
-			System.out.println(this.getClass().getSimpleName() + ": DC_OPENED_DATA_WORKBOOK - Stop !!!");
+			System.out.println(this.getClass().getSimpleName() + ": DC_OPENED_DATA_WORKBOOK - ToDo !!!");
 			break;
 			
 		case DataController.DC_PREPARE_FOR_SAVING_DATA_WORKBOOK:

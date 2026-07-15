@@ -9,6 +9,7 @@ import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -51,22 +52,23 @@ public abstract class AbstractDataSource implements Serializable {
 	public static final String CHANGED_DESCRIPTION = "CHANGED_DESCRIPTION";
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_data_source", nullable=false)
-	private Integer id;
+	private int id;
 	
-	@Column(nullable=false)
+	@Column(nullable=true)
 	private String name;
+	@Column(nullable=true)
 	private String description;
 	
-	private int rowsPerPage;
+	private int rowsPerPage = 0;
 	
 	
 	/**
 	 * Returns the id.
 	 * @return the id
 	 */
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 	/**
