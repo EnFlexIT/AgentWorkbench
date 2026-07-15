@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
 import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
@@ -26,8 +27,8 @@ import de.enflexit.awb.ws.AwbWebServerService;
 import de.enflexit.awb.ws.BundleHelper;
 import de.enflexit.awb.ws.core.JettyAttribute;
 import de.enflexit.awb.ws.core.JettyConfiguration;
-import de.enflexit.awb.ws.core.JettyConstants;
 import de.enflexit.awb.ws.core.JettyConfiguration.StartOn;
+import de.enflexit.awb.ws.core.JettyConstants;
 import de.enflexit.awb.ws.core.JettyCustomizer;
 import de.enflexit.awb.ws.core.JettySecuritySettings;
 import de.enflexit.awb.ws.core.JettyWebApplicationSettings;
@@ -44,6 +45,8 @@ import de.enflexit.awb.ws.core.util.WebApplicationUpdate;
 import de.enflexit.awb.ws.core.util.WebApplicationUpdateProcess;
 import de.enflexit.awb.ws.core.util.WebApplicationVersion;
 import de.enflexit.awb.ws.core.websocket.LogWebSocket;
+import de.enflexit.awb.ws.core.websocket.WebSocketConsoleListener;
+import de.enflexit.logging.console.ConsoleScanner;
 
 /**
  * The Class for the default AWB Server.
@@ -154,12 +157,13 @@ public class AwbServer implements AwbWebServerService, JettyCustomizer {
     		}
         }
         
-		// --- Initialize the web socket ----------------------------------
+		// --- Initialize the web socket ----------------------------
 		JakartaWebSocketServletContainerInitializer.configure(servletContextHandler,(ctx, container) -> {
 			container.addEndpoint(LogWebSocket.class);
 			container.setDefaultMaxSessionIdleTimeout(0);
 		});
-
+		// --- Register a listener that forwards console messages to all WebSocket sessions ---------
+		ConsoleScanner.getInstance().addConsoleListener(WebSocketConsoleListener.getInstance());
         
 		// ----------------------------------------------------------
         // --- Define a ContextHandlerCollection --------------------

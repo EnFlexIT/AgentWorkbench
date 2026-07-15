@@ -71,9 +71,6 @@ public class FileConfigurationServiceJettyConfiguration implements FileConfigura
 	public FileProcessingResult processFile(UploadedFile file2Process) {
 		
 		jettyConfig = JettyConfiguration.load(file2Process.getInputStream());
-		if (jettyConfig == null) {
-			this.getFileProcessingResult().setMessage("Jetty configuration could not be loaded.");
-		}
 
 		this.validateProperties();
 		// --- Set results based on validation ------------------------------------------
