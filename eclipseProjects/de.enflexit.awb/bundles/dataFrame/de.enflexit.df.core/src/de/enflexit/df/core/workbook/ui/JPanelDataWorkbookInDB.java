@@ -43,7 +43,7 @@ import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.data.DatabaseHelper;
+import de.enflexit.df.core.db.DatabaseHelper;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -246,9 +246,13 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 			this.pauseDocumentListener = false;
 
 			if (this.dataWorkbook.getFactoryID() == null) {
+				this.getJToggleButtonSettingsManual().setSelected(true);
+				this.getJToggleButtonSettingsFactory().setSelected(false);
 				this.switchSourceOfDatabaseSettings(true);
 				this.getJPanelDbSettings().setDatabaseSettings(DatabaseSettings.fromDataSource(this.dataWorkbook.getWorkbookDataSource()));
 			} else {
+				this.getJToggleButtonSettingsManual().setSelected(false);
+				this.getJToggleButtonSettingsFactory().setSelected(true);
 				this.switchSourceOfDatabaseSettings(false);
 				this.getComboBoxModelFactoryID().setSelectedItem(this.dataWorkbook.getFactoryID());
 				this.getJPanelDbSettings().setDatabaseSettings(null);
@@ -376,8 +380,6 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 		}
 		return jLabelFactoryState;
 	}
-
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.gui.HibernateStateVisualizationService#setSessionFactoryState(java.lang.String, de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState)
 	 */
@@ -517,7 +519,10 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 
 		switch (evt.getPropertyName()) {
 		case DataController.DC_OPENED_DATA_WORKBOOK:
-			System.out.println(this.getClass().getSimpleName() + ": DC_OPENED_DATA_WORKBOOK - ToDo !!!");
+			DataWorkbook dwOpened = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
+			if (dwOpened == this.getDataWorkbook()) {
+				this.checkDatabaseSettings(false);
+			}
 			break;
 			
 		case DataController.DC_PREPARE_FOR_SAVING_DATA_WORKBOOK:

@@ -141,6 +141,13 @@ public abstract class DataWorkbook implements Serializable {
 	}
 
 	/**
+	 * Returns the list of data sources or null, if nothing was initialized yet.
+	 * @return the data sources allow null
+	 */
+	public List<AbstractDataSource> getDataSourcesAllowNull() {
+		return dataSources;
+	}
+	/**
 	 * Returns the data sources.
 	 * @return the data sources
 	 */
@@ -157,7 +164,28 @@ public abstract class DataWorkbook implements Serializable {
 	public void setDataSources(List<AbstractDataSource> dataSources) {
 		this.dataSources = dataSources;
 	}
-	
+
+	/**
+	 * Adds the specified DataSource to the list of data sources.
+	 *
+	 * @param dataSource the data source
+	 * @return true, if successful
+	 */
+	public boolean addDataSource(AbstractDataSource dataSource) {
+		if (dataSource==null || this.getDataSources().contains(dataSource)==true) return false; 
+		return this.getDataSources().add(dataSource);
+	}
+	/**
+	 * Removes the specified DataSource from the list of data sources.
+	 *
+	 * @param dataSource the data source
+	 * @return true, if successful
+	 */
+	public boolean removeDataSource(AbstractDataSource dataSource) {
+		if (dataSource==null) return false;
+		return this.getDataSources().remove(dataSource);
+	}
+
 	
 	/**
 	 * Has to save the current data workbook.
@@ -225,6 +253,5 @@ public abstract class DataWorkbook implements Serializable {
 		
 		return true;
 	}
-	
 	
 }

@@ -1,4 +1,4 @@
-package de.enflexit.df.core.data;
+package de.enflexit.df.core.db;
 
 import java.awt.Window;
 import java.util.Properties;

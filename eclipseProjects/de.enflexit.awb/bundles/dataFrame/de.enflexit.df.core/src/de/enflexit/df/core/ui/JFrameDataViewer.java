@@ -3,6 +3,8 @@ package de.enflexit.df.core.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -50,6 +52,13 @@ public class JFrameDataViewer extends JFrame {
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
 		this.getContentPane().add(this.getJPanelDataViewer(), BorderLayout.CENTER);
+		
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent evt) {
+				JFrameDataViewer.this.getJPanelDataViewer().getDataController().closeAllDataWorkbooks();
+			}
+		});
 		
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 		SwingUtilities.updateComponentTreeUI(this);

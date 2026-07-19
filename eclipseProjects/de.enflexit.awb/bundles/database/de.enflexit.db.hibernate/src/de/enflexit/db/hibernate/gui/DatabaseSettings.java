@@ -2,6 +2,7 @@ package de.enflexit.db.hibernate.gui;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -135,13 +136,25 @@ public class DatabaseSettings implements Serializable {
 			Properties propertiesCompare = compareSettings.getHibernateDatabaseSettings();
 			Properties propertiesLocal = this.getHibernateDatabaseSettings();
 			if ((propertiesCompare==null && propertiesLocal!=null) || (propertiesCompare!=null && propertiesLocal==null)) return false;
-			if (propertiesCompare==null && propertiesLocal==null) return true;		// If both are empty, they are equal
-			if (compareSettings.getHibernateDatabaseSettings().size()!=this.getHibernateDatabaseSettings().size()) return false;
+			if (propertiesCompare==null && propertiesLocal==null) return true;		// --- If both are empty, they are equal ----
+			
+			/* --- Removed, since the number of elements is not that important as the actual DB connection configured ----------- 
+			 * if (compareSettings.getHibernateDatabaseSettings().size()!=this.getHibernateDatabaseSettings().size()) return false; */
 
+			// --- Define property keys to compare --------------------------------------
+			HashSet<String> keySetToComp = new HashSet<>();
+			keySetToComp.add(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass);
+			keySetToComp.add(HibernateDatabaseService.HIBERNATE_PROPERTY_URL);
+			keySetToComp.add(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog);
+			keySetToComp.add(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName);
+			keySetToComp.add(HibernateDatabaseService.HIBERNATE_PROPERTY_Password);
+			
 			// --- Compare each property and value --------------------------------------
 			ArrayList<?> propKeys = new ArrayList<>(compareSettings.getHibernateDatabaseSettings().keySet());
 			for (int i = 0; i < propKeys.size(); i++) {
 				String comparePropKey = (String) propKeys.get(i);
+				if (keySetToComp.contains(comparePropKey)==false) continue;
+
 				String comparePropValue = compareSettings.getHibernateDatabaseSettings().getProperty(comparePropKey);
 				String localPropValue = this.getHibernateDatabaseSettings().getProperty(comparePropKey);
 				if (StringHelper.isEqualString(comparePropValue, localPropValue)==false) {
@@ -179,7 +192,8 @@ public class DatabaseSettings implements Serializable {
 		dbDS.setPassword(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password));
 
 		// --- Super class attributes -----------
-		dbDS.setId(NumberHelper.parseInteger(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ID)));
+		Integer id = NumberHelper.parseInteger(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ID));
+		dbDS.setId(id!=null ? id : 0);
 		dbDS.setName(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_NAME));
 		dbDS.setDescription(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_DESCRIPTION));
 		Integer rowsPerPage = NumberHelper.parseInteger(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE));

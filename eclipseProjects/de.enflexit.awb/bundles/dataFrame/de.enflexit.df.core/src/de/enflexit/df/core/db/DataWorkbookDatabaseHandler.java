@@ -237,5 +237,12 @@ public class DataWorkbookDatabaseHandler {
 			this.dbSaveOrUpdateEntityInstance(ds, ds.getId()!=0);
 		}
 	}
+	/**
+	 * Deletes the specified DataSource from the database.
+	 * @param dataSource the data source
+	 */
+	public boolean deleteDataSource(AbstractDataSource dataSource) {
+		return this.dbDeleteEntityInstance(dataSource);
+	}
 	
 }

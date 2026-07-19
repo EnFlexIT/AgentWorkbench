@@ -23,7 +23,6 @@ import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
-import de.enflexit.db.userManagement.UserManagementDataModelHelper;
 
 /**
  * The Class SessionFactoryCreator provides static help functions 
@@ -33,7 +32,7 @@ import de.enflexit.db.userManagement.UserManagementDataModelHelper;
  */
 public class SessionFactoryCreator implements HibernateDatabaseConnectionService {
 
-	public static final String SESSION_FACTORY_PREFIX = "de.enflexit.df.core";
+	public static final String SESSION_FACTORY_PREFIX = "de.enflexit.df.dbDataWorkbook";
 	
 	private static final String cfgFile = 				"/de/enflexit/df/core/db/hibernate.cfg.xml";
 	private static final String modelClassesPackage = 	"/de/enflexit/df/core/db/";
@@ -174,9 +173,6 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 		conf.addAnnotatedClass(CsvDataSource.class);
 		conf.addAnnotatedClass(ExcelDataSource.class);
 		conf.addAnnotatedClass(DatabaseDataSource.class);
-		
-		// --- Load user management data model classes from separate bundle ---
-		UserManagementDataModelHelper.addUserManagementDataModelClasses(conf);
 	}
 	/**
 	 * Checks if the excludeList contains the specified class name.
@@ -201,8 +197,14 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 	 * @return the data frame database handler
 	 */
 	public DataWorkbookDatabaseHandler createDataWorkbookDatabaseHandler(DatabaseDataSource dbDS) {
+
 		if (dbDS==null) return null;
-		return new DataWorkbookDatabaseHandler(this.getNewDatabaseSession(dbDS));
+		
+		Session session = this.getNewDatabaseSession(dbDS);
+		if (session!=null) {
+			return new DataWorkbookDatabaseHandler(session);
+		}
+		return null;
 	}
 	/**
 	 * Returns the new hibernate database session.
@@ -231,8 +233,14 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 	 * @return the data frame database handler
 	 */
 	public DataWorkbookDatabaseHandler createDataWorkbookDatabaseHandler(String factoryID) {
+		
 		if (factoryID==null || factoryID.isBlank()==true) return null;
-		return new DataWorkbookDatabaseHandler(this.getNewDatabaseSession(factoryID));
+		
+		Session session = this.getNewDatabaseSession(factoryID);
+		if (session!=null) {
+			return new DataWorkbookDatabaseHandler(session);
+		}
+		return null;
 	}
 	/**
 	 * Returns the new hibernate database session.

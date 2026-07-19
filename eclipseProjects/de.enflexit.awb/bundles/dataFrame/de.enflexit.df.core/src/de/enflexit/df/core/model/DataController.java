@@ -199,8 +199,11 @@ public class DataController {
 		}
 
 		// --- Open the data sources --------------------------------
-		for (AbstractDataSource ds : dataWorkbookWork.getDataSources()) {
-			this.openDataSource(dataWorkbookWork, ds);
+		List<AbstractDataSource> dsList = dataWorkbookWork.getDataSources();
+		if (dsList!=null) {
+			for (AbstractDataSource ds : dsList) {
+				this.openDataSource(dataWorkbookWork, ds);
+			}	
 		}
 		this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbookWork));
 	}
@@ -215,7 +218,14 @@ public class DataController {
 		this.getPropertyChangeSupport().firePropertyChange(DC_PREPARE_FOR_SAVING_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 		try {
 			// --- Call to save the workbook ------------------------
+			int noOfDsBefore = dataWorkbook.getDataSourcesAllowNull()!=null ? dataWorkbook.getDataSourcesAllowNull().size() : 0; 
 			dataWorkbook.save();
+			// --- Check if data sources were loaded ----------------
+			int noOfDsAfter  = dataWorkbook.getDataSourcesAllowNull()!=null ? dataWorkbook.getDataSourcesAllowNull().size() : 0;
+			if (noOfDsAfter!=noOfDsBefore) {
+				this.openDataWorkbook(dataWorkbook);
+			}
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -223,7 +233,7 @@ public class DataController {
 		this.getPropertyChangeSupport().firePropertyChange(DC_SAVED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 	}
 	/**
-	 * Close data workbook.
+	 * Will close the specified DataWorkbook.
 	 * @param dataWorkbook the data workbook
 	 */
 	public void closeDataWorkbook(DataWorkbook dataWorkbook) {
@@ -233,14 +243,28 @@ public class DataController {
 		if (this.getDataWorkbooks().contains(dataWorkbook)==true) {
 			try {
 				// --- Close the data sources -----------------------
-				for (AbstractDataSource ds : dataWorkbook.getDataSources()) {
-					this.closeDataSource(dataWorkbook, ds);
+				if (dataWorkbook.getDataSourcesAllowNull()!=null) {
+					for (AbstractDataSource ds : dataWorkbook.getDataSources()) {
+						this.closeDataSource(dataWorkbook, ds);
+					}
 				}
 				// --- Call to close the DataWorkbook ---------------
 				dataWorkbook.close();
 				// --- Inform listener ------------------------------
 				this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	/**
+	 * Closes all DataWorkbooks.
+	 */
+	public void closeAllDataWorkbooks() {
+		for (DataWorkbook dw : this.getDataWorkbooks()) {
+			try {
+				this.closeDataWorkbook(dw);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -274,7 +298,7 @@ public class DataController {
 	 */
 	public boolean addDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
 		if (dw!=null && dataSource!=null && dw.getDataSources()!=null && dw.getDataSources().contains(dataSource)==false) {
-			boolean success = dw.getDataSources().add(dataSource);
+			boolean success = dw.addDataSource(dataSource);
 			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
 			return success;
 		}
@@ -308,6 +332,8 @@ public class DataController {
 		
 		if (dw==null || dataSource==null || dw.getDataSources()==null) return false;
 		
+		//TODO Either call data source or data workbook to close the data source
+		
 		this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
 		return true;
 	}
@@ -320,7 +346,7 @@ public class DataController {
 	 */
 	public boolean removeDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
 		if (dw!=null && dataSource!=null && dw.getDataSources()!=null) {
-			boolean success = dw.getDataSources().remove(dataSource);
+			boolean success = this.closeDataSource(dw, dataSource) && dw.removeDataSource(dataSource);
 			// --- Inform property change listener ------------------
 			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
 			return success;
@@ -354,11 +380,15 @@ public class DataController {
 	 * @return the data source by search phrase
 	 */
 	public List<AbstractDataSource> getDataSourceBySearchPhrase(DataWorkbook dw, String searchPhrase) {
+		
 		String praseToUse = searchPhrase.toLowerCase();
 		List<AbstractDataSource> dsFound = new ArrayList<>();
-		for (AbstractDataSource ds : dw.getDataSources()) {
-			if (ds.getName().toLowerCase().contains(praseToUse)==true) {
-				dsFound.add(ds);
+		List<AbstractDataSource> dsAvailable = dw.getDataSources();
+		if (dsAvailable!=null) {
+			for (AbstractDataSource ds : dsAvailable) {
+				if (ds.getName().toLowerCase().contains(praseToUse)==true) {
+					dsFound.add(ds);
+				}
 			}
 		}
 		return dsFound;

@@ -208,6 +208,9 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 	 */
 	private void loadDataWorkbookLocationListToDataController(boolean openDataWorkbooks) {
 
+		// --- Build reminder for bad DataWorkbookLocation ----------
+		 List<DataWorkbookLocation> badDwLocationList = new ArrayList<>();
+		 
 		// --- Load the files to the data controller ----------------
 		for (DataWorkbookLocation dwLocation : this.getDataWorkbookLocationList()) {
 			DataWorkbook dw = null;
@@ -218,11 +221,22 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 			} else if (dwLocation.getDataWorkbookClassName().equals(DataWorkbook4DB.class.getName())) {
 				dw = DataWorkbook4DB.loadFromDataWorkBookLocation(dwLocation);
 			}
-			
-			this.getDataController().addDataWorkbook(dw);
-			if (openDataWorkbooks==true) {
-				this.getDataController().openDataWorkbook(dw);
+
+			// --- Could a DataWorkbook be created? ----------------- 
+			if (dw==null) {
+				badDwLocationList.add(dwLocation);
+			} else {
+				this.getDataController().addDataWorkbook(dw);
+				if (openDataWorkbooks==true) {
+					this.getDataController().openDataWorkbook(dw);
+				}
 			}
+		}
+		
+		// --- Delete bad DataWorkbookLocation from list ------------
+		if (badDwLocationList.size()>0) {
+			badDwLocationList.forEach(dwLocToDelete -> this.getDataWorkbookLocationList().remove(dwLocToDelete));
+			this.saveToSecuredStorage();
 		}
 	}
 

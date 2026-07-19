@@ -21,10 +21,15 @@ public class DataWorkbook4DB extends DataWorkbook {
 	private static final long serialVersionUID = 5010880029903092936L;
 	
 	public static final String CONNECTION_MASK_CONFIGURATION = "CONNECTION::[Configuration]";
-	public static final String CONNECTION_MASK_FACTORY = "FACTORY::[FactoryID]";
-	
 	public static final String TAG_CONFIGURATION = "[Configuration]";
-	public static final String TAG_FACTORY_ID = "[FactoryID]";
+
+	public static final String CONNECTION_MASK_FACTORY = "FACTORY::name[Name]|description[Description]|factoryID[FactoryID]";
+	public static final String KEY_NAME = "name";
+	public static final String TAG_NAME = "Name";
+	public static final String KEY_DESCRIPTION = "description";
+	public static final String TAG_DESCRIPTION = "Description";
+	public static final String KEY_FACTORY_ID = "factoryID";
+	public static final String TAG_FACTORY_ID = "FactoryID";
 	
 	private DatabaseDataSource workbookDataSource;
 	private String factoryID;
@@ -154,6 +159,46 @@ public class DataWorkbook4DB extends DataWorkbook {
 	}
 	
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#removeDataSource(de.enflexit.db.dataSources.AbstractDataSource)
+	 */
+	@Override
+	public boolean removeDataSource(AbstractDataSource dataSource) {
+		return super.removeDataSource(dataSource) && this.getDataWorkbookDatabaseHandler().deleteDataSource(dataSource);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#save()
+	 */
+	@Override
+	public boolean save() {
+
+		try {
+			if (this.dataWorkbookDatabaseHandler==null) {
+				// --- No DB connection yet - try loading data sources --------
+				this.getDataSources();
+			} else {
+				// --- If DB-handler is available, save the data sources ------
+				this.getDataWorkbookDatabaseHandler().saveDataSources(this.getDataSources());
+				return true;
+			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#close()
+	 */
+	@Override
+	public void close() {
+		this.setDataWorkbookDatabaseHandler(null);
+		this.setSessionFactoryCreator(null);
+		this.setDataSources(null);
+	}
+	
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataWorkbookLocation()
 	 */
 	@Override
@@ -161,7 +206,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		if (this.getWorkbookDataSource()==null && this.getFactoryID()==null) return null;
 		
-		String locationDescription = "";
+		String locationDescription = null;
 		if (this.getFactoryID()==null) {
 			// --- Manual connection Settings -----------------------
 			String configString = this.getWorkbookDataSource().toConfigurationString();
@@ -169,7 +214,9 @@ public class DataWorkbook4DB extends DataWorkbook {
 			
 		} else {
 			// --- Settings according to factory --------------------
-			locationDescription = CONNECTION_MASK_FACTORY.replace(TAG_FACTORY_ID, this.getFactoryID());
+			locationDescription = CONNECTION_MASK_FACTORY.replace(TAG_NAME,    (this.getName()==null ? "" : this.getName()));
+			locationDescription = locationDescription.replace(TAG_DESCRIPTION, (this.getDescription()==null ? "" : this.getDescription()));
+			locationDescription = locationDescription.replace(TAG_FACTORY_ID,  (this.getFactoryID()==null ? "" : this.getFactoryID()));
 			
 		}
 		return new DataWorkbookLocation(this.getID(), this.getClass(), locationDescription);
@@ -206,39 +253,40 @@ public class DataWorkbook4DB extends DataWorkbook {
 			
 		} else {
 			// --- Settings according to factory --------------------
+			String[] keyValuePairs = valueString.split("\\|");
+			for (String keyValuePair : keyValuePairs) {
+				
+				int idxTagOpen  = keyValuePair.indexOf("[");
+				int idxTagClose = keyValuePair.indexOf("]");
+				if (idxTagClose==-1 || idxTagClose==-1) continue;
+				
+				String key   = keyValuePair.substring(0, idxTagOpen);
+				String value = keyValuePair.substring(idxTagOpen + 1, idxTagClose);
+				if (value.isBlank()==true) continue;
+				
+				switch (key) {
+				case KEY_NAME:
+					dataWorkbook.setName(value);
+					break;
+				case KEY_DESCRIPTION:
+					dataWorkbook.setDescription(value);
+					break;
+				case KEY_FACTORY_ID:
+					dataWorkbook.setFactoryID(value);
+					break;
+				}
+			}
 			dataWorkbook.setWorkbookDataSource(null);
-			dataWorkbook.setFactoryID(valueString);
+			
+			// --- No factory ID, no valid return value -------------
+			if (dataWorkbook.getFactoryID()==null) {
+				return null;
+			}
+			
 		}
 		return dataWorkbook;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.workbook.DataWorkbook#save()
-	 */
-	@Override
-	public boolean save() {
-
-		try {
-			// --- If a database handler is available, save the data sources --
-			if (this.getDataWorkbookDatabaseHandler()!=null) {
-				this.getDataWorkbookDatabaseHandler().saveDataSources(this.getDataSources());
-				return true;
-			}
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return false;
-	}
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.workbook.DataWorkbook#close()
-	 */
-	@Override
-	public void close() {
-		this.setDataWorkbookDatabaseHandler(null);
-		this.setSessionFactoryCreator(null);
-		this.setDataSources(null);
-	}
 	
 	/**
 	 * Creates a DB DataWorkbook by asking for a storage location.
