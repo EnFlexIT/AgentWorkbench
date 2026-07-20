@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -531,42 +534,118 @@ public class P2OperationsHandler {
 	 * Checks if newer versions of installed bundles or features are available in the p2 repository.
 	 * @return true, if there is at least one newer version available
 	 */
-	public boolean checkForNewerBundles() {
+	public P2UpdateState checkForNewerBundles() {
 		
 		String uriString = GlobalConstants.AWB_P2_REPOSITORY_URI;
+		String rMessage = null;
 		
-		// --- Check if the default repository is configured, add if not
+		// --- Check if the default repository is configured, add if not ------
 		try {
 			URI defaultRepo = new URI(uriString);
 			if (this.isKnownRepository(defaultRepo)==false) {
 				this.addRepository(defaultRepo);
 			}
 		} catch (URISyntaxException e) {
-			LOGGER.error("[" + this.getClass().getSimpleName() + "] Invalid URI syntax: " + uriString);
+			rMessage = "Invalid URI syntax: " + uriString;
+			LOGGER.error("[" + this.getClass().getSimpleName() + "] " + rMessage);
 		}
 		
-		URI[] knownRepos = this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
-
-		for (int i=0; i<this.getInstalledBundles().size(); i++) {
-			Bundle bundle = this.getInstalledBundles().get(i);
-			
-			if (this.getUpdateRelevantBundleNames().contains(bundle.getSymbolicName())) {
-				for (int j=0; j<knownRepos.length; j++) {
-					IMetadataRepository repo = this.getMetadataRepository(knownRepos[j]);
-					if (repo!=null) {
-						boolean updateAvailable = this.queryRepoForNewerVersion(bundle, repo);
-						if (updateAvailable==true) {
-							LOGGER.info("[" + this.getClass().getSimpleName() + "] Update found for bundle " + bundle.getSymbolicName());
-							return true;
+		// --- Get the reachable repositories ---------------------------------
+		List<URI> reachableRepos = this.getReachableRepos();
+		if (reachableRepos.size()==0) {
+			rMessage = "Could not get access to any software repository - exit update check!";
+			LOGGER.warn("[" + this.getClass().getSimpleName() + "] " + rMessage);
+			return new P2UpdateState(false, rMessage);
+		}
+		
+		// --- Check the installed bundles for relevant ones ------------------
+		for (Bundle bundle : this.getInstalledBundles()) {
+			if (this.getUpdateRelevantBundleNames().contains(bundle.getSymbolicName())==true) {
+				// --- Check in available repositories for updates ------------
+				for (URI reachableRepo : reachableRepos) {
+					try {
+						IMetadataRepository repo = this.getMetadataRepository(reachableRepo);
+						if (repo!=null) {
+							boolean updateAvailable = this.queryRepoForNewerVersion(bundle, repo);
+							if (updateAvailable==true) {
+								rMessage = "Update found for bundle '" + bundle.getSymbolicName() + "'";
+								LOGGER.info("[" + this.getClass().getSimpleName() + "] " + rMessage);
+								return new P2UpdateState(true, rMessage);
+							}
 						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 				}
 			}
 		}
 		
-		// --- If not returned yet, no newer versions are available -------
-		LOGGER.info("[" + this.getClass().getSimpleName() + "] Your target platform is up to date!");
-		return false;
+		// --- If not returned yet, no newer versions are available -----------
+		rMessage = "Your target platform is up to date!";
+		LOGGER.info("[" + this.getClass().getSimpleName() + "] " + rMessage);
+		return new P2UpdateState(false, rMessage);
+	}
+	
+	/**
+	 * Returns the reachable software repositories out of the array of known repositories.
+	 * @return the reachable repositories
+	 */
+	private List<URI> getReachableRepos() {
+		
+		List<URI> rRepos = new ArrayList<>();
+		URI[] knownRepos = this.getMetadataRepositoryManager().getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
+		for (URI knownRepoURI : knownRepos) {
+			
+			// --- Check the URI scheme -----------------------------
+			String scheme = knownRepoURI.getScheme();
+			if ("file".equalsIgnoreCase(scheme)) {
+				// --- For local files ------------------------------
+			    Path path = Path.of(knownRepoURI);
+			    if (Files.exists(path)==true) {
+			    	rRepos.add(knownRepoURI);
+			    }
+			    
+			} else if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
+				// --- For Web URI's --------------------------------
+				if (this.isReachableWebURI(knownRepoURI)==true) {
+					rRepos.add(knownRepoURI);
+				}
+			    
+			} else {
+				LOGGER.info("[" + this.getClass().getSimpleName() + "] Unknown repository URI-scheme '" + scheme + "'!");
+			}
+		}
+		return rRepos;
+	}
+	/**
+	 * Checks if the specified URI is a reachable web URI.
+	 *
+	 * @param webURI the web URI to check
+	 * @return true, if is reachable web URI
+	 */
+	private boolean isReachableWebURI(URI webURI) {
+		
+		boolean isReachableURI = false;
+		HttpClient client = HttpClient.newHttpClient();
+		try {
+
+			// --- First trial using 'HEAD' ----------------------------------- 
+			HttpRequest request = HttpRequest.newBuilder(webURI).method("HEAD", HttpRequest.BodyPublishers.noBody()).build();
+			HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
+			isReachableURI = response.statusCode() > 0;
+			
+			if (isReachableURI==false) {
+				// --- Second trial using 'GET' -------------------------------
+				request = HttpRequest.newBuilder(webURI).GET().build();
+				response = client.send(request, HttpResponse.BodyHandlers.discarding());
+				isReachableURI = response.statusCode() > 0;
+			}
+			
+		} catch (IOException | InterruptedException e) {
+		} finally {
+			client.close();
+		}
+		return isReachableURI;
 	}
 	
 	/**
@@ -619,6 +698,7 @@ public class P2OperationsHandler {
 	 * @return true, if successful
 	 */
 	private boolean queryRepoForNewerVersion(Bundle bundle, IMetadataRepository repo) {
+		
 		org.osgi.framework.Version bv = bundle.getVersion();
 		Version bundleVersion = new OSGiVersion(bv.getMajor(), bv.getMinor(), bv.getMicro(), bv.getQualifier());
 		
@@ -631,7 +711,6 @@ public class P2OperationsHandler {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 	
@@ -753,6 +832,38 @@ public class P2OperationsHandler {
 		} catch (URISyntaxException use) {
 			LOGGER.error("Invalid repository URI: " + GlobalConstants.AWB_P2_REPOSITORY_URI);
 			return null;
+		}
+	}
+	
+	/**
+	 * The Class P2UpdateState.
+	 *
+	 * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+	 */
+	public class P2UpdateState {
+		
+		private boolean isUpdateAvailable;
+		private String message;
+		
+		public P2UpdateState() { }
+		
+		public P2UpdateState(boolean isUpdateAvailable, String message) {
+			this.setUpdateAvailable(isUpdateAvailable);
+			this.setMessage(message);
+		}
+		
+		public boolean isUpdateAvailable() {
+			return isUpdateAvailable;
+		}
+		public void setUpdateAvailable(boolean isUpdateAvailable) {
+			this.isUpdateAvailable = isUpdateAvailable;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+		public void setMessage(String message) {
+			this.message = message;
 		}
 	}
 	

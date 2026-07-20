@@ -12,6 +12,7 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.p2.P2OperationsHandler;
+import de.enflexit.common.p2.P2OperationsHandler.P2UpdateState;
 import de.enflexit.language.Language;
 
 /**
@@ -213,9 +214,9 @@ public class AWBUpdater extends Thread {
 	 */
 	private void checkForAvailableUpdates() {
 		
-		boolean updatesAvailable = P2OperationsHandler.getInstance().checkForNewerBundles();
+		P2UpdateState p2State = P2OperationsHandler.getInstance().checkForNewerBundles();
 		
-		if (updatesAvailable==true) {
+		if (p2State.isUpdateAvailable()==true) {
 			String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			this.setFinalMessage(infoString);
@@ -224,7 +225,7 @@ public class AWBUpdater extends Thread {
 			}
 			
 		} else {
-			String infoString = "Your target platform is up to date!";
+			String infoString = p2State.getMessage();
 			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			this.setFinalMessage(infoString);
 			if (Application.getGlobalInfo().getAWBProduct() != AWBProduct.WEB && this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {

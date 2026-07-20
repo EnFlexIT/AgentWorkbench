@@ -1,6 +1,5 @@
 package de.enflexit.awb.core.update;
 
-
 import de.enflexit.common.p2.P2OperationsHandler;
 
 /**
@@ -66,7 +65,7 @@ public class UpdateCheckCoordinatorBackend {
      * Checks for newer bundles.
      */
     private void runBackendCheck() {
-		boolean isUpdateAvailable = P2OperationsHandler.getInstance().checkForNewerBundles();
+		boolean isUpdateAvailable = P2OperationsHandler.getInstance().checkForNewerBundles().isUpdateAvailable();
 		this.getUpdateCheckStatusBackend().setAvailable(isUpdateAvailable);
 		this.getUpdateCheckStatusBackend().setLastCheck(System.currentTimeMillis());
 		this.getUpdateCheckStatusBackend().setPending(false);
