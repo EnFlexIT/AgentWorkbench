@@ -45,6 +45,7 @@ public class PropertyBusServiceUpdateCheckWebApp implements PropertyBusService {
 		
 		if (properties == null) properties = new Properties();
 		
+		
 		UpdateCheckCoordinatorWebApp.getInstance().triggerCheck();
 		UpdateCheckStatusWebApp status = UpdateCheckCoordinatorWebApp.getInstance().getUpdateCheckStatusWebApp();
 		if (status.isPending()) {
@@ -55,6 +56,8 @@ public class PropertyBusServiceUpdateCheckWebApp implements PropertyBusService {
 		properties.setStringValue(NEW_VERSION, status.getNewVersion());
 		properties.setStringValue(CURRENT_VERSION, status.getCurrentVersion());
 		properties.setStringValue(LASTCHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
+		// --- Reset status for next call -----------------------------------------------
+		UpdateCheckCoordinatorWebApp.getInstance().setUpdateCheckStatusWebApp(null);
 		
 		return properties;
 	}

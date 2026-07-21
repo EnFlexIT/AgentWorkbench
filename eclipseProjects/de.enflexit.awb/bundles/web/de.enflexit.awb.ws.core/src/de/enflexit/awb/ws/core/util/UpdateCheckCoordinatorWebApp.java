@@ -41,6 +41,10 @@ public class UpdateCheckCoordinatorWebApp {
         return status;
     }
     
+    public void setUpdateCheckStatusWebApp(UpdateCheckStatusWebApp status) {
+    	this.status = status;
+    }
+    
     /**
      * Starts a thread which checks for newer bundles.
      * @param forceNewCheck the force new check
