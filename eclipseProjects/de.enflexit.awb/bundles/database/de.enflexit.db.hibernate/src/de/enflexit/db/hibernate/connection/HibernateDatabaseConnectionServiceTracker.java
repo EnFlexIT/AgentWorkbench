@@ -21,8 +21,8 @@ public class HibernateDatabaseConnectionServiceTracker extends ServiceTracker<Hi
 	 * @param clazz the clazz
 	 * @param customizer the customizer
 	 */
-	public HibernateDatabaseConnectionServiceTracker(BundleContext context, Class<HibernateDatabaseConnectionService> clazz, ServiceTrackerCustomizer<HibernateDatabaseConnectionService, HibernateDatabaseConnectionService> customizer) {
-		super(context, clazz, customizer);
+	public HibernateDatabaseConnectionServiceTracker(BundleContext context, ServiceTrackerCustomizer<HibernateDatabaseConnectionService, HibernateDatabaseConnectionService> customizer) {
+		super(context, HibernateDatabaseConnectionService.class, customizer);
 	}
 	
 	/* (non-Javadoc)

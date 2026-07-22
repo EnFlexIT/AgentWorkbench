@@ -699,8 +699,8 @@ public class HibernateUtilities {
 		try {
 			Class.forName(driverClassName);
 			return true; 
-		} catch (ClassNotFoundException e) {
-			//e.printStackTrace();
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
 		}
 		return false;
 	}

@@ -70,7 +70,7 @@ public class DatabaseConnectionManager {
 			
 			// --- Get BundleContext for the ServiceTracker -------------------
 			BundleContext context = hibernateBundle.getBundleContext();
-			dbConnectionsTracker = new HibernateDatabaseConnectionServiceTracker(context, HibernateDatabaseConnectionService.class, null);
+			dbConnectionsTracker = new HibernateDatabaseConnectionServiceTracker(context, null);
 			dbConnectionsTracker.open();
 		}
 	}
@@ -101,11 +101,37 @@ public class DatabaseConnectionManager {
 		return this.getHibernateDatabaseConnectionServiceHashMap().get(factoryID);
 	}
 	
+	
 	/**
-	 * Starts all registered database connection services.
+	 * Tries to start all registered HibernateDatabaseConnectionService.
 	 */
 	private void startRegisteredDatabaseConnections() {
-		List<HibernateDatabaseConnectionService> dbConnectionsServiceList = new ArrayList<>(this.getHibernateDatabaseConnectionServiceHashMap().values());
+		this.startRegisteredDatabaseConnections(new ArrayList<>(this.getHibernateDatabaseConnectionServiceHashMap().values()));
+	}
+	/**
+	 * Tries to start all registered database connections that are using the specified driver class.
+	 *
+	 * @param driverClass the driver class
+	 * @return the hibernate database connection service by driver class
+	 */
+	public void startRegisteredDatabaseConnectionsByDriverClass(String driverClass) {
+		
+		List<HibernateDatabaseConnectionService> connectionServiceList = new ArrayList<>();
+		for (String factoryID : this.getHibernateDatabaseConnectionServiceHashMap().keySet()) {
+			IEclipsePreferences eclipsePreferences = this.getEclipsePreferences(factoryID);
+			String driverClassToUse = eclipsePreferences.get(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, null);
+			if (driverClassToUse.equals(driverClass)==true) {
+				connectionServiceList.add(this.getHibernateDatabaseConnectionServiceHashMap().get(factoryID));
+			}
+		}
+		this.startRegisteredDatabaseConnections(connectionServiceList);
+	}
+	/**
+	 * Tries to start the specified list of HibernateDatabaseConnectionService.
+	 * @param dbConnectionsServiceList the database connection service list to start
+	 */
+	private void startRegisteredDatabaseConnections(List<HibernateDatabaseConnectionService> dbConnectionsServiceList) {
+		if (dbConnectionsServiceList==null || dbConnectionsServiceList.size()==0) return;
 		for (int i = 0; i < dbConnectionsServiceList.size(); i++) {
 			this.addHibernateDataBaseConnectionService(dbConnectionsServiceList.get(i));
 		}
