@@ -555,7 +555,7 @@ public class P2OperationsHandler {
 		if (reachableRepos.size()==0) {
 			rMessage = "Could not get access to any software repository - exit update check!";
 			LOGGER.warn("[" + this.getClass().getSimpleName() + "] " + rMessage);
-			return new P2UpdateState(false, rMessage);
+			return new P2UpdateState(false, true, rMessage);
 		}
 		
 		// --- Check the installed bundles for relevant ones ------------------
@@ -570,7 +570,7 @@ public class P2OperationsHandler {
 							if (updateAvailable==true) {
 								rMessage = "Update found for bundle '" + bundle.getSymbolicName() + "'";
 								LOGGER.info("[" + this.getClass().getSimpleName() + "] " + rMessage);
-								return new P2UpdateState(true, rMessage);
+								return new P2UpdateState(true, false, rMessage);
 							}
 						}
 					} catch (Exception ex) {
@@ -583,7 +583,7 @@ public class P2OperationsHandler {
 		// --- If not returned yet, no newer versions are available -----------
 		rMessage = "Your target platform is up to date!";
 		LOGGER.info("[" + this.getClass().getSimpleName() + "] " + rMessage);
-		return new P2UpdateState(false, rMessage);
+		return new P2UpdateState(false, false, rMessage);
 	}
 	
 	/**
@@ -843,12 +843,14 @@ public class P2OperationsHandler {
 	public class P2UpdateState {
 		
 		private boolean isUpdateAvailable;
+		private boolean isError;
 		private String message;
 		
 		public P2UpdateState() { }
 		
-		public P2UpdateState(boolean isUpdateAvailable, String message) {
+		public P2UpdateState(boolean isUpdateAvailable, boolean isError, String message) {
 			this.setUpdateAvailable(isUpdateAvailable);
+			this.setError(isError);
 			this.setMessage(message);
 		}
 		
@@ -859,6 +861,13 @@ public class P2OperationsHandler {
 			this.isUpdateAvailable = isUpdateAvailable;
 		}
 
+		public boolean isError() {
+			return isError;
+		}
+		public void setError(boolean isError) {
+			this.isError = isError;
+		}
+		
 		public String getMessage() {
 			return message;
 		}

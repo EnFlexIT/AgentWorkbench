@@ -215,7 +215,6 @@ public class AWBUpdater extends Thread {
 	private void checkForAvailableUpdates() {
 		
 		P2UpdateState p2State = P2OperationsHandler.getInstance().checkForNewerBundles();
-		
 		if (p2State.isUpdateAvailable()==true) {
 			String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
@@ -226,10 +225,16 @@ public class AWBUpdater extends Thread {
 			
 		} else {
 			String infoString = p2State.getMessage();
-			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
+			int msgType = p2State.isError()==true ? AwbMessageDialog.ERROR_MESSAGE : AwbMessageDialog.INFORMATION_MESSAGE;
+			String sysMsg = "[" + this.getClass().getSimpleName() + "] " + infoString;
+			if (p2State.isError()==true) {
+				System.err.println(sysMsg);
+			} else {
+				System.out.println(sysMsg);
+			}
 			this.setFinalMessage(infoString);
 			if (Application.getGlobalInfo().getAWBProduct() != AWBProduct.WEB && this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
-				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbMessageDialog.INFORMATION_MESSAGE);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", msgType);
 			}
 			
 		}
