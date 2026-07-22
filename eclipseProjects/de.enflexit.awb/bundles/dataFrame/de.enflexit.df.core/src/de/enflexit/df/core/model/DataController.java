@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
 import de.enflexit.df.core.workbook.DataWorkbookReminder;
@@ -199,9 +199,9 @@ public class DataController {
 		}
 
 		// --- Open the data sources --------------------------------
-		List<AbstractDataSource> dsList = dataWorkbookWork.getDataSources();
+		List<DefaultDataSource> dsList = dataWorkbookWork.getDataSources();
 		if (dsList!=null) {
-			for (AbstractDataSource ds : dsList) {
+			for (DefaultDataSource ds : dsList) {
 				this.openDataSource(dataWorkbookWork, ds);
 			}	
 		}
@@ -244,7 +244,7 @@ public class DataController {
 			try {
 				// --- Close the data sources -----------------------
 				if (dataWorkbook.getDataSourcesAllowNull()!=null) {
-					for (AbstractDataSource ds : dataWorkbook.getDataSources()) {
+					for (DefaultDataSource ds : dataWorkbook.getDataSources()) {
 						this.closeDataSource(dataWorkbook, ds);
 					}
 				}
@@ -296,7 +296,7 @@ public class DataController {
 	 * @param dataSource the data source
 	 * @return true, if successfully added
 	 */
-	public boolean addDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+	public boolean addDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		if (dw!=null && dataSource!=null && dw.getDataSources()!=null && dw.getDataSources().contains(dataSource)==false) {
 			boolean success = dw.addDataSource(dataSource);
 			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
@@ -311,7 +311,7 @@ public class DataController {
 	 * @param dataSource the data source
 	 * @return true, if successfully opened
 	 */
-	public boolean openDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+	public boolean openDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		
 		if (dw==null || dataSource==null || dw.getDataSources()==null) return false;
 		
@@ -328,7 +328,7 @@ public class DataController {
 	 * @param dataSource the data source
 	 * @return true, if successfully opened
 	 */
-	public boolean closeDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+	public boolean closeDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		
 		if (dw==null || dataSource==null || dw.getDataSources()==null) return false;
 		
@@ -344,7 +344,7 @@ public class DataController {
 	 * @param dataSource the data source
 	 * @return true, if successfully removed
 	 */
-	public boolean removeDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+	public boolean removeDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		if (dw!=null && dataSource!=null && dw.getDataSources()!=null) {
 			boolean success = this.closeDataSource(dw, dataSource) && dw.removeDataSource(dataSource);
 			// --- Inform property change listener ------------------
@@ -363,7 +363,7 @@ public class DataController {
 	 * @param dataSourceCaption the data source caption
 	 * @return true, if successful
 	 */
-	public boolean removeDataSourceAskUser(Window owner, DataWorkbook dw, AbstractDataSource dSource, String dataSourceCaption) {
+	public boolean removeDataSourceAskUser(Window owner, DataWorkbook dw, DefaultDataSource dSource, String dataSourceCaption) {
 		
 		String message = "Would you like to delete the selected data source '" + dataSourceCaption + "'?";
 		int userAnswer = AwbMessageDialog.showConfirmDialog(owner, message, "Delete Data Source?", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -379,13 +379,13 @@ public class DataController {
 	 * @param searchPhrase the search phrase
 	 * @return the data source by search phrase
 	 */
-	public List<AbstractDataSource> getDataSourceBySearchPhrase(DataWorkbook dw, String searchPhrase) {
+	public List<DefaultDataSource> getDataSourceBySearchPhrase(DataWorkbook dw, String searchPhrase) {
 		
 		String praseToUse = searchPhrase.toLowerCase();
-		List<AbstractDataSource> dsFound = new ArrayList<>();
-		List<AbstractDataSource> dsAvailable = dw.getDataSources();
+		List<DefaultDataSource> dsFound = new ArrayList<>();
+		List<DefaultDataSource> dsAvailable = dw.getDataSources();
 		if (dsAvailable!=null) {
-			for (AbstractDataSource ds : dsAvailable) {
+			for (DefaultDataSource ds : dsAvailable) {
 				if (ds.getName().toLowerCase().contains(praseToUse)==true) {
 					dsFound.add(ds);
 				}

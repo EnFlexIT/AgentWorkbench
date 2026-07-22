@@ -6,7 +6,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DataSourceHelper;
+import de.enflexit.db.dataSources.DefaultDataSource;
 
 /**
  * The Class DataWorkbookDatabaseHandler.
@@ -224,25 +225,32 @@ public class DataWorkbookDatabaseHandler {
 	 * Load data sources.
 	 * @return the list
 	 */
-	public List<AbstractDataSource> loadDataSources() {
-		return dbLoadEntityInstanceList(AbstractDataSource.class);
+	public List<DefaultDataSource> loadDataSources() {
+		return dbLoadEntityInstanceList(DefaultDataSource.class);
 	}
 	/**
 	 * Saves the specified list of data sources to the database.
 	 * @param dataSources the data sources
 	 */
-	public void saveDataSources(List<AbstractDataSource> dataSources) {
+	public void saveDataSources(List<DefaultDataSource> dataSources) {
 		if (dataSources==null || dataSources.size()==0) return;
-		for (AbstractDataSource ds : dataSources) {
-			this.dbSaveOrUpdateEntityInstance(ds, ds.getId()!=0);
+		for (DefaultDataSource sDS : dataSources) {
+			
+			boolean hasDBPrimarKey = (sDS.getId()!=0);
+			// --- Create an DefaultDataSource to be saved in the DB --------- 
+			DefaultDataSource dDS = DataSourceHelper.toDefaultDataSource(sDS);
+			if (this.dbSaveOrUpdateEntityInstance(dDS, hasDBPrimarKey)==true && hasDBPrimarKey==false) {
+				sDS.setId(dDS.getId());
+			}
+			
 		}
 	}
 	/**
 	 * Deletes the specified DataSource from the database.
 	 * @param dataSource the data source
 	 */
-	public boolean deleteDataSource(AbstractDataSource dataSource) {
-		return this.dbDeleteEntityInstance(dataSource);
+	public boolean deleteDataSource(DefaultDataSource dataSource) {
+		return this.dbDeleteEntityInstance(DataSourceHelper.toDefaultDataSource(dataSource));
 	}
 	
 }

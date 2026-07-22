@@ -3,10 +3,14 @@ package de.enflexit.df.core.workbook;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
+import de.enflexit.db.dataSources.DataSource;
+import de.enflexit.db.dataSources.DataSourceHelper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
@@ -48,8 +52,8 @@ public abstract class DataWorkbook implements Serializable {
 	private String description;
 	
 	@XmlElementWrapper(name = "dataSources")
-	@XmlElementRef 
-	protected List<AbstractDataSource> dataSources;
+	@XmlElement(name = "dataSource") 
+	protected List<DefaultDataSource> dataSources;
 	
 	/**
 	 * Instantiates a new data workbook.
@@ -75,7 +79,7 @@ public abstract class DataWorkbook implements Serializable {
 	 * @param description the description
 	 * @param dataSources the data sources
 	 */
-	public DataWorkbook(Integer id, String name, String description, List<AbstractDataSource> dataSources) {
+	public DataWorkbook(Integer id, String name, String description, List<DefaultDataSource> dataSources) {
 		this.setID(id);
 		this.setName(name);
 		this.setDescription(description);
@@ -144,14 +148,14 @@ public abstract class DataWorkbook implements Serializable {
 	 * Returns the list of data sources or null, if nothing was initialized yet.
 	 * @return the data sources allow null
 	 */
-	public List<AbstractDataSource> getDataSourcesAllowNull() {
+	public List<DefaultDataSource> getDataSourcesAllowNull() {
 		return dataSources;
 	}
 	/**
 	 * Returns the data sources.
 	 * @return the data sources
 	 */
-	public List<AbstractDataSource> getDataSources() {
+	public List<DefaultDataSource> getDataSources() {
 		if (dataSources==null) {
 			dataSources = new ArrayList<>();
 		}
@@ -161,7 +165,7 @@ public abstract class DataWorkbook implements Serializable {
 	 * Sets the data sources.
 	 * @param dataSources the new data sources
 	 */
-	public void setDataSources(List<AbstractDataSource> dataSources) {
+	public void setDataSources(List<DefaultDataSource> dataSources) {
 		this.dataSources = dataSources;
 	}
 
@@ -171,7 +175,7 @@ public abstract class DataWorkbook implements Serializable {
 	 * @param dataSource the data source
 	 * @return true, if successful
 	 */
-	public boolean addDataSource(AbstractDataSource dataSource) {
+	public boolean addDataSource(DefaultDataSource dataSource) {
 		if (dataSource==null || this.getDataSources().contains(dataSource)==true) return false; 
 		return this.getDataSources().add(dataSource);
 	}
@@ -181,11 +185,54 @@ public abstract class DataWorkbook implements Serializable {
 	 * @param dataSource the data source
 	 * @return true, if successful
 	 */
-	public boolean removeDataSource(AbstractDataSource dataSource) {
+	public boolean removeDataSource(DefaultDataSource dataSource) {
 		if (dataSource==null) return false;
 		return this.getDataSources().remove(dataSource);
 	}
-
+	
+	/**
+	 * Sets the {@link DataSource}s to its storage configuration.
+	 */
+	public void setDataSourcesToStorageConfiguration() {
+ 
+		if (this.getDataSourcesAllowNull()!=null) {
+			this.getDataSources().forEach(ds -> {
+				try {
+					ds.updateStorageConfiguration();	
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			});
+		}
+	}
+	/**
+	 * Configures the {@link DataSource}s from the actual storage configurations.
+	 */
+	public void setDataSourcesFromStorageConfiguration() {
+		
+		List<DefaultDataSource> dsListToEdit = this.getDataSources();
+		List<DefaultDataSource> deleteCandidate = new ArrayList<>();
+		
+		if (this.getDataSourcesAllowNull()!=null) {
+			// --- Get the DataSource HashMap now, to avoid multiple access ---
+			HashMap<String, DataSource> dsHashMap = DataSourceHelper.getDataSourceServiceHashMap(); 
+			
+			// --- Convert each data source to the correct instance -----------
+			for (int i = 0; i < dsListToEdit.size(); i++) {
+				DefaultDataSource absDS = dsListToEdit.get(i);
+				DefaultDataSource actDS = DataSourceHelper.toSpecificDataSource(dsHashMap, absDS);
+				if (actDS==null) {
+					deleteCandidate.add(absDS);
+				} else {
+					dsListToEdit.set(i, actDS);
+				}
+			}
+		}
+		
+		// --- Remove the unconvertible DataSources from the list -------------
+		deleteCandidate.forEach(dsDelete -> dsListToEdit.remove(dsDelete));
+	}
+	
 	
 	/**
 	 * Has to save the current data workbook.

@@ -4,13 +4,14 @@ Bundle-Name: Data Frame - Core Bundel
 Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.df.core
 Automatic-Module-Name: de.enflexit.df.core
-Bundle-Version: 0.0.2.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.df.tablesaw,
  de.enflexit.db.hibernate
 Import-Package: com.google.gson,
+ com.google.gson.stream,
  de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,
  de.enflexit.awb.core,
@@ -28,7 +29,7 @@ Import-Package: com.google.gson,
  org.hibernate,
  org.hibernate.cfg,
  org.osgi.framework,
- org.osgi.framework.wiring;version="[1.2.0,2.0.0)",
+ org.osgi.framework.wiring,
  org.osgi.service.prefs,
  org.slf4j
 Service-Component: OSGI-INF/dataFramePerspectiveService.xml

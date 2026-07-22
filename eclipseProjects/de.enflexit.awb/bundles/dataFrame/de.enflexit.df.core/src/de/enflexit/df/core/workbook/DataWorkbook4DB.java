@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.List;
 
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.db.dataSources.DatabaseDataSource;
 import de.enflexit.df.core.db.DataWorkbookDatabaseHandler;
 import de.enflexit.df.core.db.SessionFactoryCreator;
@@ -144,7 +144,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 * @see de.enflexit.df.core.workbook.DataWorkbook#getDataSources()
 	 */
 	@Override
-	public List<AbstractDataSource> getDataSources() {
+	public List<DefaultDataSource> getDataSources() {
 		if (dataSources==null) {
 			// --- Load from database, if not already done ----------
 			DataWorkbookDatabaseHandler dbHandler = this.getDataWorkbookDatabaseHandler();
@@ -152,6 +152,8 @@ public class DataWorkbook4DB extends DataWorkbook {
 				dataSources = dbHandler.loadDataSources();
 				if (dataSources==null) {
 					dataSources = super.getDataSources();
+				} else {
+					this.setDataSourcesFromStorageConfiguration();
 				}
 			}
 		}
@@ -159,10 +161,10 @@ public class DataWorkbook4DB extends DataWorkbook {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.workbook.DataWorkbook#removeDataSource(de.enflexit.db.dataSources.AbstractDataSource)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#removeDataSource(de.enflexit.db.dataSources.DefaultDataSource)
 	 */
 	@Override
-	public boolean removeDataSource(AbstractDataSource dataSource) {
+	public boolean removeDataSource(DefaultDataSource dataSource) {
 		return super.removeDataSource(dataSource) && this.getDataWorkbookDatabaseHandler().deleteDataSource(dataSource);
 	}
 	
@@ -178,6 +180,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 				this.getDataSources();
 			} else {
 				// --- If DB-handler is available, save the data sources ------
+				this.setDataSourcesToStorageConfiguration();
 				this.getDataWorkbookDatabaseHandler().saveDataSources(this.getDataSources());
 				return true;
 			}
@@ -244,7 +247,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		if (connectionType.toLowerCase().equals("CONNECTION".toLowerCase())==true) {
 			// --- Manual connection Settings -----------------------
-			DatabaseDataSource ds = DatabaseDataSource.fromConfigurationString(valueString);
+			DatabaseDataSource ds = new DatabaseDataSource().fromConfigurationString(valueString);
 			dataWorkbook.setName(ds.getName());
 			dataWorkbook.setDescription(ds.getDescription());
 

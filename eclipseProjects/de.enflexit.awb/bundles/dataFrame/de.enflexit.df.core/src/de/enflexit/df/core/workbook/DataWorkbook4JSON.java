@@ -14,7 +14,7 @@ import com.google.gson.GsonBuilder;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.DataController;
 
@@ -97,8 +97,14 @@ public class DataWorkbook4JSON extends DataWorkbook {
 		
 		FileWriter fw = null;
 		try {
+			
+			// --- Update the workbooks storage configuration -------
+			dataWorkbook.setDataSourcesToStorageConfiguration();
+			
+			// --- Create file writer -------------------------------
 			fw = new FileWriter(fileToSaveTo);
 
+			// --- Write to JSON file -------------------------------
 			Gson gson = DataWorkbook4JSON.createGsonForDataWorkbook4JSON();
 			gson.toJson(dataWorkbook, fw);
 			return true;
@@ -120,7 +126,8 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 * @return the gson
 	 */
 	private static Gson createGsonForDataWorkbook4JSON() {
-		return new GsonBuilder().registerTypeAdapter(AbstractDataSource.class, new JsonAdapterForDataSource()).setPrettyPrinting().create();
+		//return new GsonBuilder().setPrettyPrinting().create();
+		return new GsonBuilder().registerTypeAdapter(DefaultDataSource.class, new JsonAdapterForDataSource()).setPrettyPrinting().create();
 	}
 	
 	/**
@@ -160,6 +167,9 @@ public class DataWorkbook4JSON extends DataWorkbook {
 			Gson gson = DataWorkbook4JSON.createGsonForDataWorkbook4JSON();
 			dwb = gson.fromJson(reader, DataWorkbook4JSON.class);
 			dwb.setDataWorkbookFile(fileToOpen);
+			
+			// --- Read from storage configuration -------
+			dwb.setDataSourcesFromStorageConfiguration();
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();

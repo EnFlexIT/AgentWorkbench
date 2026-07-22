@@ -1,6 +1,6 @@
 package de.enflexit.df.core.model.treeNode;
 
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
@@ -12,7 +12,7 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractDataTreeNodeDataSource<DS extends AbstractDataSource> extends DataTreeNodeObjectBase implements ConfigurationPanel {
+public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSource> extends DataTreeNodeObjectBase implements ConfigurationPanel {
 
 	private DataController dataController;
 	private DS dataSource;

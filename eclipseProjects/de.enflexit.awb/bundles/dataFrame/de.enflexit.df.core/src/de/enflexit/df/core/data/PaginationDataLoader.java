@@ -3,7 +3,7 @@ package de.enflexit.df.core.data;
 import java.io.Closeable;
 import java.io.IOException;
 
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.df.core.DataFramePreferences;
 import tech.tablesaw.api.Table;
 
@@ -12,7 +12,7 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class PaginationDataLoader<DS extends AbstractDataSource> implements Closeable {
+public abstract class PaginationDataLoader<DS extends DefaultDataSource> implements Closeable {
 
 	private DS dataSource;
 	

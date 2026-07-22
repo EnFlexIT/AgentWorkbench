@@ -32,7 +32,7 @@ public class DataWorkbook4XML extends DataWorkbook {
 	private static final long serialVersionUID = 5010880029903092936L;
 	
 	private transient File workbookXmlFile;
-	
+
 	
 	/**
 	 * Instantiates a new data workbook 4 XML.
@@ -103,6 +103,9 @@ public class DataWorkbook4XML extends DataWorkbook {
 		
 		Writer writer = null;
 		try {
+			// --- Update the workbooks storage configuration -------
+			dataWorkbook.setDataSourcesToStorageConfiguration();
+			
 			// --- Prepare Context and Marshaller -------------------
 			JAXBContext pc = JAXBContext.newInstance(DataWorkbook4XML.class);
 			Marshaller pm = pc.createMarshaller();
@@ -166,6 +169,9 @@ public class DataWorkbook4XML extends DataWorkbook {
 			Unmarshaller um = pc.createUnmarshaller();
 			dwb = (DataWorkbook4XML) um.unmarshal(fileReader);
 			dwb.setDataWorkbookFile(fileToOpen);
+			
+			// --- Read from storage configuration -------
+			dwb.setDataSourcesFromStorageConfiguration();
 			
 		} catch (FileNotFoundException | JAXBException ex) {
 			ex.printStackTrace();
