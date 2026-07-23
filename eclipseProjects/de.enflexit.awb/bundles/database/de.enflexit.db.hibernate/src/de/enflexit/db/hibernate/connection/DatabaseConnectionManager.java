@@ -120,8 +120,12 @@ public class DatabaseConnectionManager {
 		for (String factoryID : this.getHibernateDatabaseConnectionServiceHashMap().keySet()) {
 			IEclipsePreferences eclipsePreferences = this.getEclipsePreferences(factoryID);
 			String driverClassToUse = eclipsePreferences.get(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, null);
-			if (driverClassToUse.equals(driverClass)==true) {
-				connectionServiceList.add(this.getHibernateDatabaseConnectionServiceHashMap().get(factoryID));
+			if (driverClassToUse!=null) {
+				if (driverClassToUse.equals(driverClass)==true) {
+					connectionServiceList.add(this.getHibernateDatabaseConnectionServiceHashMap().get(factoryID));
+				}
+			} else {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Driver class to use not found for factory ID " + factoryID + ", driver class " + driverClass);
 			}
 		}
 		this.startRegisteredDatabaseConnections(connectionServiceList);
