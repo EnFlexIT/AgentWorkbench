@@ -11,6 +11,8 @@ import org.osgi.framework.BundleContext;
  */
 public class HibernateActivator implements BundleActivator {
 
+	private HibernateDatabaseServiceTracker dbServiceTracker;
+	
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
@@ -30,6 +32,10 @@ public class HibernateActivator implements BundleActivator {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		
+		// --- Start the  HibernateDatabaseServiceTracker -----------
+		dbServiceTracker = new HibernateDatabaseServiceTracker(context, null);
+		dbServiceTracker.open();
 		
 		// --- Start the database connections -----------------------
 		HibernateUtilities.start();
@@ -56,8 +62,14 @@ public class HibernateActivator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
+
 		// --- Stop / Destroy the database connections --------------
 		HibernateUtilities.stop();
+		
+		if (dbServiceTracker!=null) {
+			dbServiceTracker.close();
+			dbServiceTracker = null;
+		}
 	}
-
+	
 }

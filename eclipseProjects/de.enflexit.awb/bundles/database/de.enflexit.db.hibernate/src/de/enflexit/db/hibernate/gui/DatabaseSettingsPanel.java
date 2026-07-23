@@ -343,7 +343,9 @@ public class DatabaseSettingsPanel extends JPanel {
 			dbConfig = dbConfigDefault;
 		} else {
 			// --- Exchange the most important props ------ 
+			dbConfig.put(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, dbConfigDefault.get(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass));
 			dbConfig.put(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbConfigDefault.get(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
+			dbConfig.put(HibernateDatabaseService.HIBERNATE_PROPERTY_URL_MASK, dbConfigDefault.get(HibernateDatabaseService.HIBERNATE_PROPERTY_URL_MASK));
 		}
 		dbConfigPanel.setHibernateConfigurationProperties(dbConfig);
 		// --- Integrate the configuration panel ----------

@@ -1,13 +1,6 @@
 package de.enflexit.db.dataSources;
 
 import de.enflexit.common.NumberHelper;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The Class DatabaseDataSource.
@@ -15,19 +8,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @author Nils Loose - SOFTEC - ICB - University of Duisburg-EssenS
  */
-@Entity
-@DiscriminatorValue("dbms")
-
-@XmlRootElement(name = "DatabaseDataSource")
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {
-    "dbmsName",
-    "connectionURL",
-    "dbName",
-    "userName",
-    "password"
-})
-public class DatabaseDataSource extends AbstractDataSource {
+public class DatabaseDataSource extends DefaultDataSource {
 
 	private static final long serialVersionUID = 6704254616526361690L;
 
@@ -38,20 +19,20 @@ public class DatabaseDataSource extends AbstractDataSource {
 	public final static String KEY_PASSWORD = "Password";
 	
 	
-	@Column(name="dbms_name", nullable=true)
 	private String dbmsName; 
-	
-	@Column(name="connection_url", nullable=true)
 	private String connectionURL;
-	
-	@Column(name="db_name", nullable=true)
 	private String dbName;
-	
-	@Column(name="user_name", nullable=true)
 	private String userName;
-	
-	@Column(name="password", nullable=true)
 	private String password;
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.dataSources.DataSource#newInstance()
+	 */
+	@Override
+	public DatabaseDataSource newInstance() {
+		return new DatabaseDataSource();
+	}
 	
 	
 	/**
@@ -129,92 +110,43 @@ public class DatabaseDataSource extends AbstractDataSource {
 		this.password = databasePassword;
 	}
 	
-	/**
-	 * Convert the current DatabaseDataSource to a single configuration String.
-	 * @return the string
-	 */
-	public String toConfigurationString() {
-		return DatabaseDataSource.toConfigurationString(this);
-	}
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	 * @see de.enflexit.db.dataSources.DataSource#toConfigurationString()
 	 */
 	@Override
-	public String toString() {
-		return this.toConfigurationString();
-	}
-	
-	
-	// ------------------------------------------------------------------------
-	// --- From here static helper methods for the type DatabaseDataSource ----
-	// ------------------------------------------------------------------------	
-	/**
-	 * Method to Convert from a DatabaseDataSource to a single configuration String.
-	 *
-	 * @param dbSource the DatabaseDataSource to convert
-	 * @return the configuration string or <code>null</code>
-	 */
-	public static String toConfigurationString(DatabaseDataSource dbSource) {
-		
-		if (dbSource==null) return null;
+	public String toConfigurationString() {
 		
 		String config = new String();
 		
-		config = DatabaseDataSource.addConfigValue(config, KEY_ID, (dbSource.getId() + ""));
-		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, dbSource.getName());
-		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, dbSource.getDescription());
-		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, dbSource.getRowsPerPage() + "");
+		config = DatabaseDataSource.addConfigValue(config, KEY_ID, (this.getId() + ""));
+		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, this.getName());
+		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
+		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, this.getRowsPerPage() + "");
 		
-		config = DatabaseDataSource.addConfigValue(config, KEY_DBMS_NAME, dbSource.getDBMSName());
-		config = DatabaseDataSource.addConfigValue(config, KEY_CONNECTION_URL, dbSource.getConnectionURL());
-		config = DatabaseDataSource.addConfigValue(config, KEY_DB_NAME, dbSource.getDbName());
-		config = DatabaseDataSource.addConfigValue(config, KEY_USER_NAME, dbSource.getUserName());
-		config = DatabaseDataSource.addConfigValue(config, KEY_PASSWORD, dbSource.getPassword());
+		config = DatabaseDataSource.addConfigValue(config, KEY_DBMS_NAME, this.getDBMSName());
+		config = DatabaseDataSource.addConfigValue(config, KEY_CONNECTION_URL, this.getConnectionURL());
+		config = DatabaseDataSource.addConfigValue(config, KEY_DB_NAME, this.getDbName());
+		config = DatabaseDataSource.addConfigValue(config, KEY_USER_NAME, this.getUserName());
+		config = DatabaseDataSource.addConfigValue(config, KEY_PASSWORD, this.getPassword());
 		
 		if (config.isBlank()==true) {
 			config = null;
 		}
 		return config;
 	}
-	/**
-	 * Adds a configuration value to the specified configuration String.
-	 *
-	 * @param configString the current configuration string
-	 * @param key the value key
-	 * @param value the value
-	 */
-	private static String addConfigValue(String configString, String key, String value) {
-		
-		if (key==null || key.isBlank()==true) return configString;
-		if (value==null || value.isBlank()==true) return configString;
-		
-		if (configString==null) {
-			configString = "";
-		} else {
-			if (configString.isBlank()==false) {
-				configString += "|";	
-			}
-		}
-		configString += key + "[" + value + "]";
-		return configString;
-	}
 	
-	
-	/**
-	 * Method to Convert from a single configuration String to a DatabaseDataSource.
-	 *
-	 * @param config the configuration string to convert
-	 * @return the converted DatabaseDataSource or <code>null</code>
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.dataSources.DataSource#fromConfigurationString(java.lang.String)
 	 */
-	public static DatabaseDataSource fromConfigurationString(String config) {
+	@Override
+	public DatabaseDataSource fromConfigurationString(String config) {
 		
-		if (config==null || config.isBlank()==true) return null;
+		if (config==null || config.isBlank()==true) return this;
 		
 		String[] keyValuePairs = config.split("\\|");
-		if (keyValuePairs.length==0) return null;
+		if (keyValuePairs.length==0) return this;
 		
 		// --- Create new instance ----------------------------------
-		DatabaseDataSource dbSource = new DatabaseDataSource();
 		for (String keyValuePair : keyValuePairs) {
 			
 			int idxTagOpen  = keyValuePair.indexOf("[");
@@ -226,36 +158,37 @@ public class DatabaseDataSource extends AbstractDataSource {
 			
 			switch (key) {
 			case KEY_ID:
-				dbSource.setId(NumberHelper.parseInteger(value));
+				this.setId(NumberHelper.parseInteger(value));
 				break;
 			case KEY_NAME:
-				dbSource.setName(value);
+				this.setName(value);
 				break;
 			case KEY_DESCRIPTION:
-				dbSource.setDescription(value);
+				this.setDescription(value);
 				break;
 			case KEY_ROWS_PER_PAGE:
 				Integer rowsPerPage = NumberHelper.parseInteger(value);
-				if (rowsPerPage!=null) dbSource.setRowsPerPage(rowsPerPage);
+				if (rowsPerPage!=null) this.setRowsPerPage(rowsPerPage);
 				break;
 				
 			case KEY_DBMS_NAME:
-				dbSource.setDBMSName(value);
+				this.setDBMSName(value);
 				break;
 			case KEY_CONNECTION_URL:
-				dbSource.setConnectionURL(value);
+				this.setConnectionURL(value);
 				break;
 			case KEY_DB_NAME:
-				dbSource.setDbName(value);
+				this.setDbName(value);
 				break;
 			case KEY_USER_NAME:
-				dbSource.setUserName(value);
+				this.setUserName(value);
 				break;
 			case KEY_PASSWORD:
-				dbSource.setPassword(value);
+				this.setPassword(value);
 				break;
 			}
 		} // end for
-		return dbSource;
+		return this;
 	}
+	
 }

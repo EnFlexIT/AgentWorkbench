@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.db.dataSources.CsvDataSource;
 import de.enflexit.db.dataSources.DatabaseDataSource;
 import de.enflexit.db.dataSources.ExcelDataSource;
@@ -141,12 +141,12 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		};
 	}
 	/**
-	 * Returns a DataTreeModelSearchFilter for the specified {@link AbstractDataSource}.
+	 * Returns a DataTreeModelSearchFilter for the specified {@link DefaultDataSource}.
 	 *
 	 * @param dataSource the data source
 	 * @return the search filter 4 data source
 	 */
-	private DataTreeModelSearchFilter getSearchFilter4DataSource(final AbstractDataSource dataSource) {
+	private DataTreeModelSearchFilter getSearchFilter4DataSource(final DefaultDataSource dataSource) {
 		
 		return new DataTreeModelSearchFilter() {
 			@Override
@@ -255,7 +255,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 * @param dw the corresponding {@link DataWorkbook}
 	 * @param dataSource the data source
 	 */
-	private void addedDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+	private void addedDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 
 		// -- Check if the data source node is already there --------
 		List<DefaultMutableTreeNode> treeNodesFound = this.searchTreeNode(this.getSearchFilter4DataSource(dataSource));
@@ -292,7 +292,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 * @param dw the corresponding {@link DataWorkbook}
 	 * @param dataSource the data source
 	 */
-	private void removedDataSource(DataWorkbook dw, AbstractDataSource dataSource) {
+	private void removedDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		
 		// --- Define a search filter for the search traversal ----------------
 		DataTreeModelSearchFilter searchFilter = this.getSearchFilter4DataSource(dataSource);

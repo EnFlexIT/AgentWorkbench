@@ -1,6 +1,6 @@
 package de.enflexit.df.core.model;
 
-import de.enflexit.db.dataSources.AbstractDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -64,11 +64,11 @@ public class AffectedDataObjects {
 		return this.getInstance(DataWorkbook.class);
 	}
 	/**
-	 * Returns the affected AbstractDataSource, if available.
+	 * Returns the affected DefaultDataSource, if available.
 	 * @return the data source
 	 */
-	public AbstractDataSource getDataSource() {
-		return this.getInstance(AbstractDataSource.class);
+	public DefaultDataSource getDataSource() {
+		return this.getInstance(DefaultDataSource.class);
 	}
 	
 	/**

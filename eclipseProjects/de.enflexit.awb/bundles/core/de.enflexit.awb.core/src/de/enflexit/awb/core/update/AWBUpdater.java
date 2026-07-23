@@ -12,6 +12,7 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.awb.core.ui.AwbProgressMonitor;
 import de.enflexit.common.ExecutionEnvironment;
 import de.enflexit.common.p2.P2OperationsHandler;
+import de.enflexit.common.p2.P2OperationsHandler.P2UpdateState;
 import de.enflexit.language.Language;
 
 /**
@@ -213,9 +214,8 @@ public class AWBUpdater extends Thread {
 	 */
 	private void checkForAvailableUpdates() {
 		
-		boolean updatesAvailable = P2OperationsHandler.getInstance().checkForNewerBundles();
-		
-		if (updatesAvailable==true) {
+		P2UpdateState p2State = P2OperationsHandler.getInstance().checkForNewerBundles();
+		if (p2State.isUpdateAvailable()==true) {
 			String infoString = "Newer versions of local AWB components are available, please update your local AWB installation (if working against one) and the Target Platform!";
 			System.err.println("[" + this.getClass().getSimpleName() + "] " + infoString);
 			this.setFinalMessage(infoString);
@@ -224,11 +224,17 @@ public class AWBUpdater extends Thread {
 			}
 			
 		} else {
-			String infoString = "Your target platform is up to date!";
-			System.out.println("[" + this.getClass().getSimpleName() + "] " + infoString);
+			String infoString = p2State.getMessage();
+			int msgType = p2State.isError()==true ? AwbMessageDialog.ERROR_MESSAGE : AwbMessageDialog.INFORMATION_MESSAGE;
+			String sysMsg = "[" + this.getClass().getSimpleName() + "] " + infoString;
+			if (p2State.isError()==true) {
+				System.err.println(sysMsg);
+			} else {
+				System.out.println(sysMsg);
+			}
 			this.setFinalMessage(infoString);
 			if (Application.getGlobalInfo().getAWBProduct() != AWBProduct.WEB && this.manualyExecutedByUser==true && Application.isOperatingHeadless()==false) {
-				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", AwbMessageDialog.INFORMATION_MESSAGE);
+				AwbMessageDialog.showMessageDialog(Application.getMainWindow(), infoString, "No Updates found", msgType);
 			}
 			
 		}

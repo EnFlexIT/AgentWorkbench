@@ -13,10 +13,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
-import de.enflexit.db.dataSources.AbstractDataSource;
-import de.enflexit.db.dataSources.CsvDataSource;
+import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.db.dataSources.DatabaseDataSource;
-import de.enflexit.db.dataSources.ExcelDataSource;
 import de.enflexit.db.hibernate.ColumnOrderingStrategyAsDefinedInClass;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
@@ -169,10 +167,7 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 		}
 		
 		// --- Add classes of DataSources -------------------------------------
-		conf.addAnnotatedClass(AbstractDataSource.class);
-		conf.addAnnotatedClass(CsvDataSource.class);
-		conf.addAnnotatedClass(ExcelDataSource.class);
-		conf.addAnnotatedClass(DatabaseDataSource.class);
+		conf.addAnnotatedClass(DefaultDataSource.class);
 	}
 	/**
 	 * Checks if the excludeList contains the specified class name.
