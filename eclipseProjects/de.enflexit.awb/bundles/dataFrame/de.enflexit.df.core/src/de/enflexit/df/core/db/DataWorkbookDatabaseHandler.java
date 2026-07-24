@@ -235,14 +235,18 @@ public class DataWorkbookDatabaseHandler {
 	public void saveDataSources(List<DefaultDataSource> dataSources) {
 		if (dataSources==null || dataSources.size()==0) return;
 		for (DefaultDataSource sDS : dataSources) {
-			
+			// --- Check if data source was already be saved to the database ---------------------- 
 			boolean hasDBPrimarKey = (sDS.getId()!=0);
-			// --- Create an DefaultDataSource to be saved in the DB --------- 
-			DefaultDataSource dDS = DataSourceHelper.toDefaultDataSource(sDS);
-			if (this.dbSaveOrUpdateEntityInstance(dDS, hasDBPrimarKey)==true && hasDBPrimarKey==false) {
-				sDS.setId(dDS.getId());
+			// --- Create an DefaultDataSource to be saved in the DB ------------------------------ 
+			DefaultDataSource defaultDS = DataSourceHelper.toDefaultDataSource(sDS);
+			if (this.dbSaveOrUpdateEntityInstance(defaultDS, hasDBPrimarKey)==true && hasDBPrimarKey==false) {
+				// --- Set ID to DB-ID ------------------------------------------------------------ 
+				sDS.setId(defaultDS.getId());
+				// --- Update DB entry with corrected ID in the storage configuration attribute ---
+				sDS.updateStorageConfiguration();
+				defaultDS = DataSourceHelper.toDefaultDataSource(sDS);
+				this.dbSaveOrUpdateEntityInstance(defaultDS, true);
 			}
-			
 		}
 	}
 	/**

@@ -218,24 +218,12 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 	 * @return the new database session
 	 */
 	public Session getNewDatabaseSession(DatabaseDataSource dbDS, boolean isResetSessionFactory) {
-		DatabaseSettings dbSettings = DatabaseSettings.fromDataSource(dbDS);
-		return getNewDatabaseSession(dbSettings, isResetSessionFactory);
-	}
-	
-	/**
-	 * Creates a new DataWorkbookDatabaseHandler.
-	 * @param factoryID the factory ID to be used for the connection
-	 * @return the data frame database handler
-	 */
-	public DataWorkbookDatabaseHandler createDataWorkbookDatabaseHandler(String factoryID) {
-		
-		if (factoryID==null || factoryID.isBlank()==true) return null;
-		
-		Session session = this.getNewDatabaseSession(factoryID);
-		if (session!=null) {
-			return new DataWorkbookDatabaseHandler(session);
+		if (dbDS.getFactoryID()!=null) {
+			return this.getNewDatabaseSession(dbDS.getFactoryID(), isResetSessionFactory);
+		} else {
+			DatabaseSettings dbSettings = DatabaseSettings.fromDataSource(dbDS);
+			return getNewDatabaseSession(dbSettings, isResetSessionFactory);
 		}
-		return null;
 	}
 	/**
 	 * Returns the new hibernate database session.

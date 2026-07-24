@@ -245,7 +245,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 			this.getJTextAreaDescription().setText(this.dataWorkbook.getDescription());
 			this.pauseDocumentListener = false;
 
-			if (this.dataWorkbook.getFactoryID() == null) {
+			if (this.dataWorkbook.getWorkbookDataSource().getFactoryID() == null) {
 				this.getJToggleButtonSettingsManual().setSelected(true);
 				this.getJToggleButtonSettingsFactory().setSelected(false);
 				this.switchSourceOfDatabaseSettings(true);
@@ -254,7 +254,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 				this.getJToggleButtonSettingsManual().setSelected(false);
 				this.getJToggleButtonSettingsFactory().setSelected(true);
 				this.switchSourceOfDatabaseSettings(false);
-				this.getComboBoxModelFactoryID().setSelectedItem(this.dataWorkbook.getFactoryID());
+				this.getComboBoxModelFactoryID().setSelectedItem(this.dataWorkbook.getWorkbookDataSource().getFactoryID());
 				this.getJPanelDbSettings().setDatabaseSettings(null);
 			}
 		}
@@ -542,16 +542,18 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 		this.getDataWorkbook().setName(this.getJTextFieldName().getText());
 		this.getDataWorkbook().setDescription(this.getJTextAreaDescription().getText());
 
+		this.getDataWorkbook().getWorkbookDataSource().setName(this.getDataWorkbook().getName());
+		this.getDataWorkbook().getWorkbookDataSource().setDescription(this.getDataWorkbook().getDescription());
+		
 		if (this.getJToggleButtonSettingsFactory().isSelected() == true) {
 			// --- For factory settings -----------------------------------
 			String factoryID = (String) this.getJComboBoxFactoryID().getSelectedItem();
-			this.getDataWorkbook().setFactoryID(factoryID);
-			this.getDataWorkbook().setWorkbookDataSource(null);
+			this.getDataWorkbook().getWorkbookDataSource().setFactoryID(factoryID);
 		} else {
 			// --- For manual configured connections ----------------------
 			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
-			this.getDataWorkbook().setFactoryID(null);
 			this.getDataWorkbook().setWorkbookDataSource(dbSettings.toDataSource());
+			this.getDataWorkbook().getWorkbookDataSource().setFactoryID(null);
 		}
 	}
 	

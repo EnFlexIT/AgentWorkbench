@@ -204,22 +204,26 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			@Override
 			public void treeNodesRemoved(TreeModelEvent tme) {
 				
-				Object[] pathBase = tme.getPath();
-				
-				DefaultMutableTreeNode baseNode = (DefaultMutableTreeNode) pathBase[0]; 
-				if (baseNode.getChildCount()>0) {
+				TreePath parentTreePath = tme.getTreePath();
+				DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentTreePath.getLastPathComponent();
+				if (parentNode.getChildCount()>0) {
 
-					DefaultMutableTreeNode nextSelection = null;
+					// --- Check to have a child index not larger than number of children ---------
+					int childIndex = tme.getChildIndices()[0];
+					if (childIndex > parentNode.getChildCount()-1) {
+						childIndex = parentNode.getChildCount()-1;
+					}
+					// --- Get a childIndex to which an node exist --------------------------------
+					while (childIndex>=0 && parentNode.getChildAt(childIndex)==null) {
+						childIndex--;
+					}
+					// --- Set next selected child node -------------------------------------------
+					DefaultMutableTreeNode childNodeToSelect = (DefaultMutableTreeNode) parentNode.getChildAt(childIndex);
+					JTreeData.this.setSelectionPath(new TreePath(childNodeToSelect.getPath()));
 					
-					int childSearchIndex = tme.getChildIndices()[0];
-					if (childSearchIndex > baseNode.getChildCount()-1) {
-						childSearchIndex = baseNode.getChildCount()-1;
-					}
-					while (childSearchIndex>=0 && baseNode.getChildAt(childSearchIndex)==null) {
-						childSearchIndex--;
-					}
-					nextSelection = (DefaultMutableTreeNode) baseNode.getChildAt(childSearchIndex);
-					JTreeData.this.setSelectionPath(new TreePath(nextSelection.getPath()));
+				} else {
+					// --- Just select the parent node --------------------------------------------
+					JTreeData.this.setSelectionPath(parentTreePath);
 				}
 			}
 

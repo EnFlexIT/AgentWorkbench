@@ -23,16 +23,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	public static final String CONNECTION_MASK_CONFIGURATION = "CONNECTION::[Configuration]";
 	public static final String TAG_CONFIGURATION = "[Configuration]";
 
-	public static final String CONNECTION_MASK_FACTORY = "FACTORY::name[Name]|description[Description]|factoryID[FactoryID]";
-	public static final String KEY_NAME = "name";
-	public static final String TAG_NAME = "Name";
-	public static final String KEY_DESCRIPTION = "description";
-	public static final String TAG_DESCRIPTION = "Description";
-	public static final String KEY_FACTORY_ID = "factoryID";
-	public static final String TAG_FACTORY_ID = "FactoryID";
-	
 	private DatabaseDataSource workbookDataSource;
-	private String factoryID;
 	
 	private SessionFactoryCreator sessionFactoryCreator;
 	private DataWorkbookDatabaseHandler dataWorkbookDatabaseHandler;
@@ -53,6 +44,12 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 * @return the workbook data source
 	 */
 	public DatabaseDataSource getWorkbookDataSource() {
+		if (workbookDataSource==null) {
+			workbookDataSource = new DatabaseDataSource();
+			workbookDataSource.setId(this.getID());
+			workbookDataSource.setName(this.getName());
+			workbookDataSource.setDescription(this.getDescription());
+		}
 		return workbookDataSource;
 	}
 	/**
@@ -70,22 +67,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		}
 	}
 	
-	/**
-	 * Returns the factory ID to be used for database connections.
-	 * @return the factory ID
-	 */
-	public String getFactoryID() {
-		return factoryID;
-	}
-	/**
-	 * Sets the factory ID to be used for database connections.
-	 * @param factoryID the new factory ID
-	 */
-	public void setFactoryID(String factoryID) {
-		this.factoryID = factoryID;
-	}
 
-	
 	/**
 	 * Returns the session factory creator.
 	 * @return the session factory creator
@@ -114,8 +96,6 @@ public class DataWorkbook4DB extends DataWorkbook {
 	private DataWorkbookDatabaseHandler createDataWorkbookDatabaseHandler() {
 		if (this.getWorkbookDataSource()!=null) {
 			return this.getSessionFactoryCreator().createDataWorkbookDatabaseHandler(this.getWorkbookDataSource());
-		} else if (this.getFactoryID()!=null) {
-			return this.getSessionFactoryCreator().createDataWorkbookDatabaseHandler(this.getFactoryID());
 		}
 		return null;
 	}
@@ -207,21 +187,10 @@ public class DataWorkbook4DB extends DataWorkbook {
 	@Override
 	public DataWorkbookLocation getDataWorkbookLocation() {
 		
-		if (this.getWorkbookDataSource()==null && this.getFactoryID()==null) return null;
+		if (this.getWorkbookDataSource()==null) return null;
 		
-		String locationDescription = null;
-		if (this.getFactoryID()==null) {
-			// --- Manual connection Settings -----------------------
-			String configString = this.getWorkbookDataSource().toConfigurationString();
-			locationDescription = CONNECTION_MASK_CONFIGURATION.replace(TAG_CONFIGURATION, configString);
-			
-		} else {
-			// --- Settings according to factory --------------------
-			locationDescription = CONNECTION_MASK_FACTORY.replace(TAG_NAME,    (this.getName()==null ? "" : this.getName()));
-			locationDescription = locationDescription.replace(TAG_DESCRIPTION, (this.getDescription()==null ? "" : this.getDescription()));
-			locationDescription = locationDescription.replace(TAG_FACTORY_ID,  (this.getFactoryID()==null ? "" : this.getFactoryID()));
-			
-		}
+		String configString = this.getWorkbookDataSource().toConfigurationString();
+		String locationDescription = CONNECTION_MASK_CONFIGURATION.replace(TAG_CONFIGURATION, configString);
 		return new DataWorkbookLocation(this.getID(), this.getClass(), locationDescription);
 	}
 	/**
@@ -235,58 +204,21 @@ public class DataWorkbook4DB extends DataWorkbook {
 		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
 		String location = dwLocation.getDataWorkbookLocation();
-		String connectionType = location.substring(0, location.indexOf(":")); 
 		
 		int cutStart  = location.indexOf("::") + 2;
 		int cutStop = location.length();
 		
 		String valueString = location.substring(cutStart, cutStop);
 		
+		// --- Create DataSource instance ---------------------------
+		DatabaseDataSource ds = new DatabaseDataSource().fromConfigurationString(valueString);
+
+		// --- Create DataWorkbook4  instance -----------------------		
 		DataWorkbook4DB dataWorkbook = new DataWorkbook4DB();
 		dataWorkbook.setID(dwLocation.getID());
-		
-		if (connectionType.toLowerCase().equals("CONNECTION".toLowerCase())==true) {
-			// --- Manual connection Settings -----------------------
-			DatabaseDataSource ds = new DatabaseDataSource().fromConfigurationString(valueString);
-			dataWorkbook.setName(ds.getName());
-			dataWorkbook.setDescription(ds.getDescription());
-
-			dataWorkbook.setWorkbookDataSource(ds);
-			dataWorkbook.setFactoryID(null);
-			
-		} else {
-			// --- Settings according to factory --------------------
-			String[] keyValuePairs = valueString.split("\\|");
-			for (String keyValuePair : keyValuePairs) {
-				
-				int idxTagOpen  = keyValuePair.indexOf("[");
-				int idxTagClose = keyValuePair.indexOf("]");
-				if (idxTagClose==-1 || idxTagClose==-1) continue;
-				
-				String key   = keyValuePair.substring(0, idxTagOpen);
-				String value = keyValuePair.substring(idxTagOpen + 1, idxTagClose);
-				if (value.isBlank()==true) continue;
-				
-				switch (key) {
-				case KEY_NAME:
-					dataWorkbook.setName(value);
-					break;
-				case KEY_DESCRIPTION:
-					dataWorkbook.setDescription(value);
-					break;
-				case KEY_FACTORY_ID:
-					dataWorkbook.setFactoryID(value);
-					break;
-				}
-			}
-			dataWorkbook.setWorkbookDataSource(null);
-			
-			// --- No factory ID, no valid return value -------------
-			if (dataWorkbook.getFactoryID()==null) {
-				return null;
-			}
-			
-		}
+		dataWorkbook.setName(ds.getName());
+		dataWorkbook.setDescription(ds.getDescription());
+		dataWorkbook.setWorkbookDataSource(ds);
 		return dataWorkbook;
 	}
 	
@@ -311,11 +243,9 @@ public class DataWorkbook4DB extends DataWorkbook {
 	public static DataWorkbook4DB create(DataController dataController, Window owner) {
 		
 		DataWorkbook4DB dwbDB = new DataWorkbook4DB();
-		
 		dwbDB.getID();
 		dwbDB.setName("Database Data Workbook");
 		dwbDB.setDescription("Description of the DataWorkbook, stored in a database");
-		dwbDB.setWorkbookDataSource(new DatabaseDataSource());
 		return dwbDB;
 	}
 	
