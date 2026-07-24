@@ -12,12 +12,15 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	private static final long serialVersionUID = 6704254616526361690L;
 
+	public final static String KEY_FACTORY_ID = "FactoryID";
+	
 	public final static String KEY_DBMS_NAME = "DBMS-Name";
 	public final static String KEY_CONNECTION_URL = "connectionURL";
 	public final static String KEY_DB_NAME = "DB-Name";
 	public final static String KEY_USER_NAME = "UserName";
 	public final static String KEY_PASSWORD = "Password";
 	
+	private String factoryID;
 	
 	private String dbmsName; 
 	private String connectionURL;
@@ -33,6 +36,23 @@ public class DatabaseDataSource extends DefaultDataSource {
 	public DatabaseDataSource newInstance() {
 		return new DatabaseDataSource();
 	}
+	
+	
+	/**
+	 * Returns the factory ID to be used instead of a complete connection configuration.
+	 * @return the factory ID´or <code>null</code>
+	 */
+	public String getFactoryID() {
+		return factoryID;
+	}
+	/**
+	 * Sets the factory ID.
+	 * @param factoryID the new factory ID
+	 */
+	public void setFactoryID(String factoryID) {
+		this.factoryID = factoryID;
+	}
+
 	
 	
 	/**
@@ -122,12 +142,16 @@ public class DatabaseDataSource extends DefaultDataSource {
 		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, this.getName());
 		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
 		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, this.getRowsPerPage() + "");
-		
-		config = DatabaseDataSource.addConfigValue(config, KEY_DBMS_NAME, this.getDBMSName());
-		config = DatabaseDataSource.addConfigValue(config, KEY_CONNECTION_URL, this.getConnectionURL());
-		config = DatabaseDataSource.addConfigValue(config, KEY_DB_NAME, this.getDbName());
-		config = DatabaseDataSource.addConfigValue(config, KEY_USER_NAME, this.getUserName());
-		config = DatabaseDataSource.addConfigValue(config, KEY_PASSWORD, this.getPassword());
+
+		if (this.getFactoryID()!=null) {
+			config = DatabaseDataSource.addConfigValue(config, KEY_FACTORY_ID, this.getFactoryID());
+		} else {
+			config = DatabaseDataSource.addConfigValue(config, KEY_DBMS_NAME, this.getDBMSName());
+			config = DatabaseDataSource.addConfigValue(config, KEY_CONNECTION_URL, this.getConnectionURL());
+			config = DatabaseDataSource.addConfigValue(config, KEY_DB_NAME, this.getDbName());
+			config = DatabaseDataSource.addConfigValue(config, KEY_USER_NAME, this.getUserName());
+			config = DatabaseDataSource.addConfigValue(config, KEY_PASSWORD, this.getPassword());
+		}
 		
 		if (config.isBlank()==true) {
 			config = null;
@@ -158,7 +182,10 @@ public class DatabaseDataSource extends DefaultDataSource {
 			
 			switch (key) {
 			case KEY_ID:
-				this.setId(NumberHelper.parseInteger(value));
+				Integer configID = NumberHelper.parseInteger(value);
+				if (this.getId()==0 && configID!=null && configID!=0) {
+					this.setId(configID);
+				}
 				break;
 			case KEY_NAME:
 				this.setName(value);
@@ -169,6 +196,10 @@ public class DatabaseDataSource extends DefaultDataSource {
 			case KEY_ROWS_PER_PAGE:
 				Integer rowsPerPage = NumberHelper.parseInteger(value);
 				if (rowsPerPage!=null) this.setRowsPerPage(rowsPerPage);
+				break;
+			
+			case KEY_FACTORY_ID:
+				this.setFactoryID(value);
 				break;
 				
 			case KEY_DBMS_NAME:

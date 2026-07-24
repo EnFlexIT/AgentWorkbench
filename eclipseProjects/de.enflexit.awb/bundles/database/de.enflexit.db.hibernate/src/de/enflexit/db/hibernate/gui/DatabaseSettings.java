@@ -185,12 +185,15 @@ public class DatabaseSettings implements Serializable {
 		DatabaseDataSource dbDS = new DatabaseDataSource();
 		
 		dbDS.setDBMSName(dbSettings.getDatabaseSystemName());
+		
 		dbDS.setConnectionURL(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
 		dbDS.setDbName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
 		
 		dbDS.setUserName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName));
 		dbDS.setPassword(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password));
 
+		dbDS.setFactoryID(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_FACTORY_ID));
+		
 		// --- Super class attributes -----------
 		Integer id = NumberHelper.parseInteger(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ID));
 		dbDS.setId(id!=null ? id : 0);
@@ -222,10 +225,12 @@ public class DatabaseSettings implements Serializable {
 		if (dbDataSource.getUserName()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
 		if (dbDataSource.getPassword()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
 		
+		if (dbDataSource.getFactoryID()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_FACTORY_ID, dbDataSource.getFactoryID());
+		
 		// --- Super class attributes -----------
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId() + "");
-		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
-		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
+		if (dbDataSource.getName()!=null) 			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
+		if (dbDataSource.getDescription()!=null)	dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE, dbDataSource.getRowsPerPage() + "");
 		
 		if (dbSettings.isEmpty()==true) {
