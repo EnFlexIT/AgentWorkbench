@@ -1,4 +1,4 @@
-package de.enflexit.df.core.model.treeNode;
+package de.enflexit.df.impl.excel;
 
 import java.util.List;
 
@@ -7,10 +7,8 @@ import javax.swing.JComponent;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
-import de.enflexit.df.impl.excel.ExcelDataSource;
-import de.enflexit.df.impl.excel.JPanelDataSourceConfigurationExcel;
-import de.enflexit.df.impl.excel.PaginationDataLoader4Excel;
 
 /**
  * The Class DataTreeNodeDataSourceExcel.

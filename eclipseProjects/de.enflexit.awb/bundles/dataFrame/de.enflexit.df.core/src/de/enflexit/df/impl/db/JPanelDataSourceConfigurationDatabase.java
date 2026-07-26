@@ -46,7 +46,6 @@ import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.DatabaseHelper;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceDatabase;
 import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
 import de.enflexit.df.core.workbook.DataWorkbook;
 

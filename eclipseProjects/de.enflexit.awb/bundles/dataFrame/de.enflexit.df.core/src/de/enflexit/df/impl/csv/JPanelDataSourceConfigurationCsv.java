@@ -26,7 +26,6 @@ import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.FileSelection;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceCsv;
 import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
 
 /**
