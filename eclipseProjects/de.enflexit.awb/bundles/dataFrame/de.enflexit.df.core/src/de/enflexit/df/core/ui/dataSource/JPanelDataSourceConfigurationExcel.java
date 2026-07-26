@@ -1,6 +1,5 @@
 package de.enflexit.df.core.ui.dataSource;
 
-import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceExcel;
 
 /**
@@ -15,12 +14,10 @@ public class JPanelDataSourceConfigurationExcel  extends AbstractJPanelDataSourc
 
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationExcel.
-	 *
-	 * @param dataController the data controller
 	 * @param dsTreeNode the DataTreeNodeDataSourceExcel
 	 */
-	public JPanelDataSourceConfigurationExcel(DataController dataController, DataTreeNodeDataSourceExcel dsTreeNode) {
-		super(dataController, dsTreeNode);
+	public JPanelDataSourceConfigurationExcel(DataTreeNodeDataSourceExcel dsTreeNode) {
+		super(dsTreeNode);
 		this.initialize();
 	}
 	/**

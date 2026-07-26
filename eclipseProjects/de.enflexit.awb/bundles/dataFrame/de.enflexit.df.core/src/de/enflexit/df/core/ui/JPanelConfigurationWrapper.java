@@ -30,7 +30,7 @@ public class JPanelConfigurationWrapper extends JPanel {
 
 	private static final long serialVersionUID = 4889473189361960869L;
 	
-	private ConfigurationPanel configPanel;
+	private DataSourceConfigurationPanel configPanel;
 	private List<JComponent> configToolBarElements;
 	private JComponent configComponent;
 	
@@ -120,7 +120,7 @@ public class JPanelConfigurationWrapper extends JPanel {
 	 * Will set the specified configuration panel to this .
 	 * @param newConfigPanel the new configuration panel
 	 */
-	public void setConfigurationPanel(ConfigurationPanel newConfigPanel) {
+	public void setConfigurationPanel(DataSourceConfigurationPanel newConfigPanel) {
 
 		// --- Already visualized? ----------------------------------
 		if (newConfigPanel!=null && this.configPanel!=null && newConfigPanel==this.configPanel) return;

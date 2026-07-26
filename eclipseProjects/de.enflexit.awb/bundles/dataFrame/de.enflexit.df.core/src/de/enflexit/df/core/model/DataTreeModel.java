@@ -270,11 +270,11 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		// --- Create new node according to data source -------------
 		AbstractDataTreeNodeDataSource<?> ds = null;
 		if (dataSource instanceof CsvDataSource) {
-			ds = new DataTreeNodeDataSourceCsv(this.getDataController(), (CsvDataSource) dataSource);
+			ds = new DataTreeNodeDataSourceCsv(this.getDataController(), dw, (CsvDataSource) dataSource);
 		} else if (dataSource instanceof ExcelDataSource) {
-			ds = new DataTreeNodeDataSourceExcel(this.getDataController(), (ExcelDataSource) dataSource);
+			ds = new DataTreeNodeDataSourceExcel(this.getDataController(), dw, (ExcelDataSource) dataSource);
 		} else if (dataSource instanceof DatabaseDataSource) {
-			ds = new DataTreeNodeDataSourceDatabase(this.getDataController(), (DatabaseDataSource) dataSource);
+			ds = new DataTreeNodeDataSourceDatabase(this.getDataController(), dw, (DatabaseDataSource) dataSource);
 		}
 		
 		// --- Create new node and add to parent --------------------

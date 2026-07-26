@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.ConfigurationPanel;
+import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
@@ -21,7 +21,7 @@ import de.enflexit.df.core.workbook.ui.JPanelDataWorkbookInFile;
  * The Class DataTreeNodeDataWorkbook.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements ConfigurationPanel {
+public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements DataSourceConfigurationPanel {
 
 	private DataController dataController;
 	private DataWorkbook dataWorkbook;
@@ -129,7 +129,7 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetConfigurationPanel()
 	 */
 	@Override
 	public void resetConfigurationPanel() {
@@ -140,7 +140,7 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
 	public List<JComponent> getConfigurationToolbarComponents() {
@@ -151,7 +151,7 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationPanel()
 	 */
 	@Override
 	public JComponent getConfigurationPanel() {

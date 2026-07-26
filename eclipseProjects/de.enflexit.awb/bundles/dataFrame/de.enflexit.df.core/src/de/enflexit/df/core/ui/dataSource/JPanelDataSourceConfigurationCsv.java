@@ -27,7 +27,6 @@ import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.db.dataSources.CsvDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.FileSelection;
-import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceCsv;
 
 /**
@@ -61,12 +60,10 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 	
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationCsv.
-	 *
-	 * @param dataController the data controller
 	 * @param dsTreeNode the DataTreeNodeDataSourceCsv
 	 */
-	public JPanelDataSourceConfigurationCsv(DataController dataController, DataTreeNodeDataSourceCsv dsTreeNode) {
-		super(dataController, dsTreeNode);
+	public JPanelDataSourceConfigurationCsv(DataTreeNodeDataSourceCsv dsTreeNode) {
+		super(dsTreeNode);
 		this.initialize();
 		this.setCsvDataSourceToUI();
 	}

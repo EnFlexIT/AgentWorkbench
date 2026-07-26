@@ -6,7 +6,7 @@ import javax.swing.tree.TreePath;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
-import de.enflexit.df.core.ui.ConfigurationPanel;
+import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -154,10 +154,10 @@ public class DataControllerSelectionModel {
 	}
 	
 	/**
-	 * Returns the first instance of a ConfigurationPanel out of the current path selection.
+	 * Returns the first instance of a DataSourceConfigurationPanel out of the current path selection.
 	 * @return the selected data tree node data source
 	 */
-	public ConfigurationPanel getSelectedFirstConfigurationPanel() {
+	public DataSourceConfigurationPanel getSelectedFirstConfigurationPanel() {
 		
 		TreePath tpSelected = this.getSelectedTreePath();
 		if (tpSelected==null) return null;
@@ -166,8 +166,8 @@ public class DataControllerSelectionModel {
 		for (int i = pathNodes.length-1; i >=0 ; i--) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
 			Object userObject = treeNode.getUserObject();
-			if (userObject instanceof ConfigurationPanel) {
-				return (ConfigurationPanel) userObject;
+			if (userObject instanceof DataSourceConfigurationPanel) {
+				return (DataSourceConfigurationPanel) userObject;
 			}
 		}
 		return null;

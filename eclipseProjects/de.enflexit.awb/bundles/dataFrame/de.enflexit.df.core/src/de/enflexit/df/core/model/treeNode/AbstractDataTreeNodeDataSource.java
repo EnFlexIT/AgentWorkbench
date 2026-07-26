@@ -4,7 +4,8 @@ import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.ConfigurationPanel;
+import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
+import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 
 /**
@@ -12,9 +13,10 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSource> extends DataTreeNodeObjectBase implements ConfigurationPanel {
+public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSource> extends DataTreeNodeObjectBase implements DataSourceConfigurationPanel {
 
 	private DataController dataController;
+	private DataWorkbook dataWorkbook;
 	private DS dataSource;
 
 	private Table table;
@@ -25,10 +27,14 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSourc
 	
 	/**
 	 * Instantiates a new data tree node data source.
+	 *
+	 * @param dataController the current {@link DataController}
+	 * @param dataWorkbook the corresponding {@link DataWorkbook} to which the data source belongs
 	 * @param dataSource the data source
 	 */
-	public AbstractDataTreeNodeDataSource(DataController dataController, DS dataSource) {
+	public AbstractDataTreeNodeDataSource(DataController dataController, DataWorkbook dataWorkbook, DS dataSource) {
 		this.setDataController(dataController);
+		this.setDataWorkbook(dataWorkbook);
 		this.setDataSource(dataSource);
 	}
 	
@@ -45,6 +51,21 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSourc
 	 */
 	public void setDataController(DataController dataController) {
 		this.dataController = dataController;
+	}
+	
+	/**
+	 * Returns the corresponding {@link DataWorkbook}.
+	 * @return the data workbook
+	 */
+	public DataWorkbook getDataWorkbook() {
+		return dataWorkbook;
+	}
+	/**
+	 * Sets the corresponding {@link DataWorkbook}.
+	 * @param dataWorkbook the new data workbook
+	 */
+	public void setDataWorkbook(DataWorkbook dataWorkbook) {
+		this.dataWorkbook = dataWorkbook;
 	}
 	
 	/**

@@ -316,8 +316,8 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 		if (treeNode==null || treeNode==selTreeNode) return;
 		
 		Object userObject = treeNode.getUserObject();
-		if (userObject instanceof ConfigurationPanel) {
-			ConfigurationPanel dtnoDS = (ConfigurationPanel) userObject;
+		if (userObject instanceof DataSourceConfigurationPanel) {
+			DataSourceConfigurationPanel dtnoDS = (DataSourceConfigurationPanel) userObject;
 			dtnoDS.resetConfigurationPanel();
 		}
 		

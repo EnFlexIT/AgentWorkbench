@@ -5,10 +5,10 @@ import java.util.List;
 import javax.swing.JComponent;
 
 /**
- * The Interface ConfigurationPanel.
+ * The Interface DataSourceConfigurationPanel.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface ConfigurationPanel {
+public interface DataSourceConfigurationPanel {
 
 	/**
 	 * Has to return the configuration toolbar components.

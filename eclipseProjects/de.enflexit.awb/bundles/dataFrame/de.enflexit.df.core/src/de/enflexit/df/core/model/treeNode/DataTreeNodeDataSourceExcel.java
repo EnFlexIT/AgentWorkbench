@@ -10,6 +10,7 @@ import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.data.PaginationDataLoader4Excel;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationExcel;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class DataTreeNodeDataSourceExcel.
@@ -28,8 +29,8 @@ public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<
 	 * @param dataController the data controller
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceExcel(DataController dataController, ExcelDataSource dataSource) {
-		super(dataController, dataSource);
+	public DataTreeNodeDataSourceExcel(DataController dataController, DataWorkbook dataWorkbook, ExcelDataSource dataSource) {
+		super(dataController, dataWorkbook, dataSource);
 		if (dataSource.getName()==null) {
 			dataSource.setName("New Excel data source");
 		}
@@ -38,24 +39,24 @@ public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
 	public List<JComponent> getConfigurationToolbarComponents() {
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationPanel()
 	 */
 	@Override
 	public JComponent getConfigurationPanel() {
 		if (jPanelDataSourceConfigurationExcel==null) {
-			jPanelDataSourceConfigurationExcel = new JPanelDataSourceConfigurationExcel(this.getDataController(), this);
+			jPanelDataSourceConfigurationExcel = new JPanelDataSourceConfigurationExcel(this);
 		}
 		return jPanelDataSourceConfigurationExcel;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetConfigurationPanel()
 	 */
 	@Override
 	public void resetConfigurationPanel() {

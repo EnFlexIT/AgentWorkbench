@@ -10,6 +10,8 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +45,10 @@ import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.db.DatabaseHelper;
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceDatabase;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class JPanelDataSourceConfigurationDatabase.
@@ -52,7 +56,7 @@ import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceDatabase;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @param <DataTreeNodeDataSourceDatabase> the generic type
  */
-public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceDatabase> implements DocumentListener, HibernateStateVisualizationService, ActionListener {
+public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceDatabase> implements DocumentListener, HibernateStateVisualizationService, ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 
@@ -83,21 +87,13 @@ public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSo
 	
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationDatabase.
-	 *
-	 * @param dataController the DataController instance
 	 * @param dsTreeNode the JPanelDataSourceConfigurationDatabase
 	 */
-	public JPanelDataSourceConfigurationDatabase(DataController dataController, DataTreeNodeDataSourceDatabase dsTreeNode) {
-		super(dataController, dsTreeNode);
+	public JPanelDataSourceConfigurationDatabase(DataTreeNodeDataSourceDatabase dsTreeNode) {
+		super(dsTreeNode);
 		this.initialize();
-		
+		this.setDataSourceToUI();
 		SwingUtilities.invokeLater(() -> this.checkDatabaseSettings(false));
-	}
-	
-	private void setDataSourceToUI() {
-		
-		
-		
 	}
 	
 	/**
@@ -107,6 +103,59 @@ public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSo
 	private DatabaseDataSource getDataSource() {
 		return this.getDataTreeNodeDataSource().getDataSource();
 	}
+	
+	/**
+	 * Sets the current data source settings to the UI.
+	 */
+	private void setDataSourceToUI() {
+		
+		DatabaseDataSource dbSource = this.getDataSource();
+		if (dbSource == null) {
+			this.getJLabelID().setText("");
+			this.getJTextFieldName().setText("");
+			this.getJTextAreaDescription().setText("");
+		} else {
+			this.pauseDocumentListener = true;
+			this.getJLabelID().setText(dbSource.getId() + "");
+			this.getJTextFieldName().setText(dbSource.getName());
+			this.getJTextAreaDescription().setText(dbSource.getDescription());
+			this.pauseDocumentListener = false;
+
+			if (dbSource.getFactoryID() == null) {
+				this.getJToggleButtonSettingsManual().setSelected(true);
+				this.getJToggleButtonSettingsFactory().setSelected(false);
+				this.switchSourceOfDatabaseSettings(true);
+				this.getJPanelDbSettings().setDatabaseSettings(DatabaseSettings.fromDataSource(dbSource));
+			} else {
+				this.getJToggleButtonSettingsManual().setSelected(false);
+				this.getJToggleButtonSettingsFactory().setSelected(true);
+				this.switchSourceOfDatabaseSettings(false);
+				this.getComboBoxModelFactoryID().setSelectedItem(dbSource.getFactoryID());
+				this.getJPanelDbSettings().setDatabaseSettings(null);
+			}
+		}
+	}
+	
+	/**
+	 * Sets the current data source settings to the UI.
+	 */
+	private void setDataSourceFromUI() {
+		
+		this.getDataSource().setName(this.getJTextFieldName().getText());
+		this.getDataSource().setDescription(this.getJTextAreaDescription().getText());
+		
+		if (this.getJToggleButtonSettingsFactory().isSelected() == true) {
+			// --- For factory settings -----------------------------------
+			String factoryID = (String) this.getJComboBoxFactoryID().getSelectedItem();
+			this.getDataSource().setFactoryID(factoryID);
+		} else {
+			// --- For manual configured connections ----------------------
+			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
+			dbSettings.intoDataSource(this.getDataSource());
+			this.getDataSource().setFactoryID(null);
+		}
+	}
+	
 	
 	/**
 	 * Initialize.
@@ -469,16 +518,31 @@ public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSo
 		if (this.pauseDocumentListener == true) return;
 
 		if (de.getDocument() == this.getJTextFieldName().getDocument()) {
-			// TODO
+			this.getDataSource().setName(this.getJTextFieldName().getText());
 			this.informDataSourceSettingChanged(DatabaseDataSource.CHANGED_NAME);
-			
 		} else if (de.getDocument() == this.getJTextAreaDescription().getDocument()) {
-			// TODO
+			this.getDataSource().setDescription(this.getJTextAreaDescription().getText());
 			this.informDataSourceSettingChanged(DatabaseDataSource.CHANGED_DESCRIPTION);
-			
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		switch (evt.getPropertyName()) {
+		case DataController.DC_PREPARE_FOR_SAVING_DATA_WORKBOOK:
+			DataWorkbook dwtoSave = ((AffectedDataObjects) evt.getNewValue()).getDataWorkbook();
+			if (dwtoSave == this.getDataWorkbook()) {
+				// --- Check if the data source configuration changed ---------
+				this.setDataSourceFromUI();
+			}
+			break;
+		}	
+	}
+	
 
 	/**
 	 * Switch source of database settings.
@@ -504,6 +568,7 @@ public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSo
 			// --- Switch to manual DB connection -----------------------------
 			// ----------------------------------------------------------------
 			this.switchSourceOfDatabaseSettings(true);
+			
 		} else if (ae.getSource() == this.getJToggleButtonSettingsFactory()) {
 			// ----------------------------------------------------------------
 			// --- Switch to factory usage for DB connection ------------------
@@ -533,7 +598,7 @@ public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSo
 			// ----------------------------------------------------------------
 			// --- Apply and save settings ------------------------------------
 			// ----------------------------------------------------------------
-			// TODO
+			this.getDataController().saveDataWorkBook(this.getDataWorkbook());
 
 		}
 	}
@@ -555,5 +620,5 @@ public class JPanelDataSourceConfigurationDatabase  extends AbstractJPanelDataSo
 			this.getJButtonTestConnection().setIcon(BundleHelper.getImageIcon("MBcheckRed.png"));
 		}
 	}
-	
+
 }

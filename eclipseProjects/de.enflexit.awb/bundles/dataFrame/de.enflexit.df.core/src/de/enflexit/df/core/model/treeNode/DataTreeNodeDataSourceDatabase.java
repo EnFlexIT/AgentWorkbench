@@ -10,6 +10,7 @@ import de.enflexit.df.core.data.PaginationDataLoader;
 import de.enflexit.df.core.data.PaginationDataLoader4DB;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationDatabase;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class DataTreeNodeDataSourceDatabase.
@@ -25,8 +26,8 @@ public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSour
 	 * Instantiates a new data tree node data source database.
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceDatabase(DataController dataController, DatabaseDataSource dataSource) {
-		super(dataController, dataSource);
+	public DataTreeNodeDataSourceDatabase(DataController dataController, DataWorkbook dataWorkbook, DatabaseDataSource dataSource) {
+		super(dataController, dataWorkbook, dataSource);
 		if (dataSource.getName()==null) {
 			dataSource.setName("New Database Connection");
 		}
@@ -35,27 +36,29 @@ public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSour
 	}
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationToolbarComponents()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationToolbarComponents()
 	 */
 	@Override
 	public List<JComponent> getConfigurationToolbarComponents() {
-		return null;
+		return this.getConfigurationPanel().getConfigurationToolbarComponents();
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#getConfigurationPanel()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationPanel()
 	 */
 	@Override
-	public JComponent getConfigurationPanel() {
+	public JPanelDataSourceConfigurationDatabase getConfigurationPanel() {
 		if (jPanelDataSourceConfigurationDatabase==null) {
-			jPanelDataSourceConfigurationDatabase = new JPanelDataSourceConfigurationDatabase(this.getDataController(), this);
+			jPanelDataSourceConfigurationDatabase = new JPanelDataSourceConfigurationDatabase(this);
+			this.getDataController().addPropertyChangeListener(jPanelDataSourceConfigurationDatabase);
 		}
 		return jPanelDataSourceConfigurationDatabase;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.ConfigurationPanel#resetConfigurationPanel()
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetConfigurationPanel()
 	 */
 	@Override
 	public void resetConfigurationPanel() {
+		this.getDataController().removePropertyChangeListener(this.jPanelDataSourceConfigurationDatabase);
 		this.jPanelDataSourceConfigurationDatabase = null;
 	}
 	

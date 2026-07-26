@@ -235,7 +235,7 @@ public class JPanelNavigation extends JPanel implements ActionListener, Property
 	private void updateConfigurationView() {
 		
 		// --- React on newly selected tree path ----------------
-		ConfigurationPanel configPanel = this.getDataController().getSelectionModel().getSelectedFirstConfigurationPanel();
+		DataSourceConfigurationPanel configPanel = this.getDataController().getSelectionModel().getSelectedFirstConfigurationPanel();
 		this.getJPanelConfigurationWrapper().setConfigurationPanel(configPanel);
 	}
 	
