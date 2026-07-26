@@ -1,4 +1,4 @@
-package de.enflexit.db.dataSources;
+package de.enflexit.df.core.dataSources;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
@@ -50,7 +50,7 @@ public class DefaultDataSource implements DataSource {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#newInstance()
+	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
 	 */
 	@Override
 	public DefaultDataSource newInstance() {
@@ -59,7 +59,7 @@ public class DefaultDataSource implements DataSource {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#getDataSourceIdentifier()
+	 * @see de.enflexit.df.core.dataSources.DataSource#getDataSourceIdentifier()
 	 */
 	@Override
 	public String getDataSourceIdentifier() {
@@ -67,14 +67,14 @@ public class DefaultDataSource implements DataSource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#getId()
+	 * @see de.enflexit.df.core.dataSources.DataSource#getId()
 	 */
 	@Override
 	public int getId() {
 		return id;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#setId(int)
+	 * @see de.enflexit.df.core.dataSources.DataSource#setId(int)
 	 */
 	@Override
 	public void setId(int id) {
@@ -82,14 +82,14 @@ public class DefaultDataSource implements DataSource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#getName()
+	 * @see de.enflexit.df.core.dataSources.DataSource#getName()
 	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#setName(java.lang.String)
+	 * @see de.enflexit.df.core.dataSources.DataSource#setName(java.lang.String)
 	 */
 	@Override
 	public void setName(String name) {
@@ -97,14 +97,14 @@ public class DefaultDataSource implements DataSource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#getDescription()
+	 * @see de.enflexit.df.core.dataSources.DataSource#getDescription()
 	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#setDescription(java.lang.String)
+	 * @see de.enflexit.df.core.dataSources.DataSource#setDescription(java.lang.String)
 	 */
 	@Override
 	public void setDescription(String description) {
@@ -113,14 +113,14 @@ public class DefaultDataSource implements DataSource {
 
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#getRowsPerPage()
+	 * @see de.enflexit.df.core.dataSources.DataSource#getRowsPerPage()
 	 */
 	@Override
 	public int getRowsPerPage() {
 		return rowsPerPage;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#setRowsPerPage(int)
+	 * @see de.enflexit.df.core.dataSources.DataSource#setRowsPerPage(int)
 	 */
 	@Override
 	public void setRowsPerPage(int rowsPerPage) {
@@ -209,14 +209,14 @@ public class DefaultDataSource implements DataSource {
 
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#toConfigurationString()
+	 * @see de.enflexit.df.core.dataSources.DataSource#toConfigurationString()
 	 */
 	@Override
 	public String toConfigurationString() {
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#fromConfigurationString(java.lang.String)
+	 * @see de.enflexit.df.core.dataSources.DataSource#fromConfigurationString(java.lang.String)
 	 */
 	@Override
 	public DataSource fromConfigurationString(String configurationString) {

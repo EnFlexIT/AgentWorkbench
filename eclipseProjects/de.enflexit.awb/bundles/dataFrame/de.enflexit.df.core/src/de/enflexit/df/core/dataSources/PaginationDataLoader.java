@@ -1,9 +1,8 @@
-package de.enflexit.df.core.data;
+package de.enflexit.df.core.dataSources;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-import de.enflexit.db.dataSources.DefaultDataSource;
 import de.enflexit.df.core.DataFramePreferences;
 import tech.tablesaw.api.Table;
 

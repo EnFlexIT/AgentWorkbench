@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.enflexit.df.impl.db.DatabaseDataSource">
+   <implementation class="de.enflexit.df.impl.db.DatabaseDataSource"/>
+   <service>
+      <provide interface="de.enflexit.df.core.dataSources.DataSource"/>
+   </service>
+</scr:component>

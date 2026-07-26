@@ -1,6 +1,6 @@
 package de.enflexit.df.core.model;
 
-import de.enflexit.db.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 import de.enflexit.df.core.workbook.DataWorkbook;

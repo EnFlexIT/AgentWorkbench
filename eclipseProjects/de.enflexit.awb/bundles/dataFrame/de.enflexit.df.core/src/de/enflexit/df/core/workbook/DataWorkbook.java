@@ -8,9 +8,9 @@ import java.util.List;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
-import de.enflexit.db.dataSources.DefaultDataSource;
-import de.enflexit.db.dataSources.DataSource;
-import de.enflexit.db.dataSources.DataSourceHelper;
+import de.enflexit.df.core.dataSources.DataSource;
+import de.enflexit.df.core.dataSources.DataSourceHelper;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

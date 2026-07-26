@@ -1,16 +1,19 @@
-package de.enflexit.db.dataSources;
+package de.enflexit.df.impl.excel;
 
 import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.impl.csv.CsvDataSource;
+import de.enflexit.df.impl.db.DatabaseDataSource;
 
 /**
- * The Class CsvDataSource.
+ * The Class ExcelDataSource.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class CsvDataSource extends DefaultDataSource {
+public class ExcelDataSource extends DefaultDataSource {
 
 	private static final long serialVersionUID = 9196800931542107902L;
 
@@ -18,51 +21,43 @@ public class CsvDataSource extends DefaultDataSource {
 	public static final String KEY_DATE_TIME_FORMAT = "DATE_TIME_FORMAT";
 	public static final String KEY_COLUMN_SEPARATOR = "COLUMN_SEPARATOR";
 	public static final String KEY_HAS_HEADLINE = "HAS_HEADLINE";
-	
-	public static final String CHANGED_CSV_FILE = "CHANGED_CSV_FILE";
-	public static final String CHANGED_CSV_DATE_TIME_FORMAT = "CHANGED_CSV_DATE_TIME_FORMAT";
-	public static final String CHANGED_CSV_COLUMN_SEPARATOR = "CHANGED_CSV_COLUMN_SEPARATOR";
-	public static final String CHANGED_CSV_HAS_HEADLINE = "CHANGED_CSV_HAS_HEADLINE";
-	
-	public static final String[] COLUMN_SEPARATORS = {";",",",":","."};
-	
-	
-	private String csvFilePath;
+
+	private String filePath;
 	private String dateTimeFormat = GlobalConstants.DEFAULT_TIME_FORMAT;
 	private String columnSeparator = ";";
 	private boolean headline;
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#newInstance()
+	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
 	 */
 	@Override
-	public CsvDataSource newInstance() {
-		return new CsvDataSource();
+	public ExcelDataSource newInstance() {
+		return new ExcelDataSource();
 	}
-	
-	
+
+		
 	/**
-	 * Returns the csv file path.
-	 * @return the csv file path
+	 * Returns the file path.
+	 * @return the file path
 	 */
-	public String getCsvFilePath() {
+	public String getFilePath() {
 		// --- Replace windows path separators ------------
-		if (this.csvFilePath!=null && this.csvFilePath.contains("\\")) {
-			this.csvFilePath = this.csvFilePath.replace("\\", "/");
+		if (this.filePath!=null && this.filePath.contains("\\")) {
+			this.filePath = this.filePath.replace("\\", "/");
 		}
-		return csvFilePath;
+		return filePath;
 	}
 	/**
-	 * Sets the csv file path.
-	 * @param csvFilePath the new csv file path
+	 * Sets the file path.
+	 * @param filePath the new file path
 	 */
-	public void setCsvFilePath(String csvFilePath) {
+	public void setFilePath(String csvFilePath) {
 		// --- Replace windows path separators ------------
 		if (csvFilePath!=null && csvFilePath.contains("\\")) {
-			this.csvFilePath = csvFilePath.replace("\\", "/");
+			this.filePath = csvFilePath.replace("\\", "/");
 		} else {
-			this.csvFilePath = csvFilePath;
+			this.filePath = csvFilePath;
 		}
 	}
 
@@ -113,7 +108,7 @@ public class CsvDataSource extends DefaultDataSource {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#toConfigurationString()
+	 * @see de.enflexit.df.core.dataSources.DataSource#toConfigurationString()
 	 */
 	@Override
 	public String toConfigurationString() {
@@ -125,7 +120,7 @@ public class CsvDataSource extends DefaultDataSource {
 		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
 		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, this.getRowsPerPage() + "");
 		
-		config = DatabaseDataSource.addConfigValue(config, KEY_FILE_PATH, this.getCsvFilePath());
+		config = DatabaseDataSource.addConfigValue(config, KEY_FILE_PATH, this.getFilePath());
 		config = DatabaseDataSource.addConfigValue(config, KEY_COLUMN_SEPARATOR, this.getColumnSeparator());
 		config = DatabaseDataSource.addConfigValue(config, KEY_DATE_TIME_FORMAT, this.getDateTimeFormat());
 		config = DatabaseDataSource.addConfigValue(config, KEY_HAS_HEADLINE, Boolean.toString(this.isHeadline()));
@@ -137,10 +132,10 @@ public class CsvDataSource extends DefaultDataSource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DataSource#fromConfigurationString(java.lang.String)
+	 * @see de.enflexit.df.core.dataSources.DataSource#fromConfigurationString(java.lang.String)
 	 */
 	@Override
-	public CsvDataSource fromConfigurationString(String config) {
+	public ExcelDataSource fromConfigurationString(String config) {
 		
 		if (config==null || config.isBlank()==true) return this;
 		
@@ -173,7 +168,7 @@ public class CsvDataSource extends DefaultDataSource {
 				break;
 						
 			case KEY_FILE_PATH:
-				this.setCsvFilePath(value);
+				this.setFilePath(value);
 				break;
 			case KEY_COLUMN_SEPARATOR:
 				this.setColumnSeparator(value);
@@ -190,7 +185,7 @@ public class CsvDataSource extends DefaultDataSource {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.db.dataSources.DefaultDataSource#equals(java.lang.Object)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object compObj) {
@@ -200,7 +195,7 @@ public class CsvDataSource extends DefaultDataSource {
 		
 		CsvDataSource csvDsComp = (CsvDataSource) compObj;
 		
-		if (StringHelper.isEqualString(this.getCsvFilePath(), csvDsComp.getCsvFilePath())==false) return false;
+		if (StringHelper.isEqualString(this.getFilePath(), csvDsComp.getCsvFilePath())==false) return false;
 		if (StringHelper.isEqualString(this.getDateTimeFormat(), csvDsComp.getDateTimeFormat())==false) return false;
 		if (StringHelper.isEqualString(this.getColumnSeparator(), csvDsComp.getColumnSeparator())==false) return false;
 		if (this.isHeadline()!=csvDsComp.isHeadline()) return false;

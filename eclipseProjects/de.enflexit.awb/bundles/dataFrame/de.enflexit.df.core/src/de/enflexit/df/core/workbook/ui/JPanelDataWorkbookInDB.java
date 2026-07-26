@@ -43,11 +43,12 @@ import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.db.DatabaseHelper;
+import de.enflexit.df.core.DatabaseHelper;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
+import de.enflexit.df.impl.db.DatabaseDataSource;
 
 /**
  * The Class JPanelDataWorkbookInDB.
@@ -249,7 +250,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 				this.getJToggleButtonSettingsManual().setSelected(true);
 				this.getJToggleButtonSettingsFactory().setSelected(false);
 				this.switchSourceOfDatabaseSettings(true);
-				this.getJPanelDbSettings().setDatabaseSettings(DatabaseSettings.fromDataSource(this.dataWorkbook.getWorkbookDataSource()));
+				this.getJPanelDbSettings().setDatabaseSettings(this.dataWorkbook.getWorkbookDataSource().toDatabaseSettings());
 			} else {
 				this.getJToggleButtonSettingsManual().setSelected(false);
 				this.getJToggleButtonSettingsFactory().setSelected(true);
@@ -552,7 +553,7 @@ public class JPanelDataWorkbookInDB extends JPanel implements PropertyChangeList
 		} else {
 			// --- For manual configured connections ----------------------
 			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
-			this.getDataWorkbook().setWorkbookDataSource(dbSettings.toDataSource());
+			this.getDataWorkbook().setWorkbookDataSource(DatabaseDataSource.fromDatabaseSettings(dbSettings));
 			this.getDataWorkbook().getWorkbookDataSource().setFactoryID(null);
 		}
 	}

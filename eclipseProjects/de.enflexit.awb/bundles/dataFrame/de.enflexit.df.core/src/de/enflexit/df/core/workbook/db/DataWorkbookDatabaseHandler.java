@@ -1,4 +1,4 @@
-package de.enflexit.df.core.db;
+package de.enflexit.df.core.workbook.db;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import de.enflexit.db.dataSources.DataSourceHelper;
-import de.enflexit.db.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.DataSourceHelper;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 
 /**
  * The Class DataWorkbookDatabaseHandler.

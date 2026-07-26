@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import de.enflexit.db.dataSources.CsvDataSource;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.data.PaginationDataLoader;
-import de.enflexit.df.core.data.PaginationDataLoader4CSV;
+import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationCsv;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.impl.csv.CsvDataSource;
+import de.enflexit.df.impl.csv.JPanelDataSourceConfigurationCsv;
+import de.enflexit.df.impl.csv.PaginationDataLoader4CSV;
 
 /**
  * The Class DataTreeNodeDataSourceCsv.

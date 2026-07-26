@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.data.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.TablesawTableModel;

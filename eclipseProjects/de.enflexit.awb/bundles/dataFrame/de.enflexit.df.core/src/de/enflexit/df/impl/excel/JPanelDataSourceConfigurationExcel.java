@@ -1,6 +1,7 @@
-package de.enflexit.df.core.ui.dataSource;
+package de.enflexit.df.impl.excel;
 
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceExcel;
+import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
 
 /**
  * The Class JPanelDataSourceConfigurationExcel.

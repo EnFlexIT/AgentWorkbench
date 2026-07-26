@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
-import de.enflexit.db.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
 import de.enflexit.df.core.workbook.DataWorkbookReminder;

@@ -7,7 +7,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import de.enflexit.common.NumberHelper;
-import de.enflexit.db.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 
 /**
  * The Class JsonAdapterForDataSource.

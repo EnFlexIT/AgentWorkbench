@@ -8,9 +8,7 @@ import java.util.Vector;
 
 import org.hibernate.cfg.Configuration;
 
-import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
-import de.enflexit.db.dataSources.DatabaseDataSource;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 
@@ -164,108 +162,6 @@ public class DatabaseSettings implements Serializable {
 			return true;	
 		}
 		return false;
-	}
-	
-	
-	/**
-	 * Places the current DatabaseSettings into the specified data source.
-	 * @param dbDS the DatabaseDataSource to edit
-	 */
-	public void intoDataSource(DatabaseDataSource dbDS) {
-		intoDataSource(dbDS, this);
-	}
-	/**
-	 * Places the current DatabaseSettings into the specified data source.
-	 *
-	 * @param dbDS the DatabaseDataSource to edit
-	 * @param dbSettings the db settings
-	 */
-	public static void intoDataSource(DatabaseDataSource dbDS, DatabaseSettings dbSettings) {
-		
-		if (dbDS==null || dbSettings==null) return;
-		
-		dbDS.setDBMSName(dbSettings.getDatabaseSystemName());
-		
-		dbDS.setConnectionURL(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
-		dbDS.setDbName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
-		
-		dbDS.setUserName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName));
-		dbDS.setPassword(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password));
-
-		dbDS.setFactoryID(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_FACTORY_ID));
-		
-		// ----------------------------------------------------------
-		// --- Super class attributes -------------------------------
-		String idString = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ID);
-		if (idString!=null) {
-			Integer id = NumberHelper.parseInteger(idString);
-			if (id!=null) dbDS.setId(id);
-		}
-		String name = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_NAME);
-		if (name!=null) dbDS.setName(name);
-
-		String description = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_DESCRIPTION);
-		if (description!=null) dbDS.setDescription(description);
-		
-		String rowsPerPageString = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE);
-		if (rowsPerPageString!=null) {
-			Integer rowsPerPage = NumberHelper.parseInteger(rowsPerPageString);
-			if (rowsPerPage!=null) dbDS.setRowsPerPage(rowsPerPage);
-		}
-	}
-	
-	/**
-	 * Converts the current settings to a {@link DatabaseDataSource} .
-	 * @return the database data source
-	 */
-	public DatabaseDataSource toDataSource() {
-		return toDataSource(this);
-	}
-	/**
-	 * Converts the current settings to a {@link DatabaseDataSource} .
-	 * @return the database data source
-	 */
-	public static DatabaseDataSource toDataSource(DatabaseSettings dbSettings) {
-		
-		if (dbSettings==null) return null;
-		
-		DatabaseDataSource dbDS = new DatabaseDataSource();
-		DatabaseSettings.intoDataSource(dbDS, dbSettings);
-		return dbDS;
-	}
-	/**
-	 * Converts the specified {@link DatabaseDataSource} to {@link DatabaseSettings}.
-	 * 
-	 * @param dbDataSource the DatabaseDataSource to convert
-	 * @return the database settings
-	 */
-	public static DatabaseSettings fromDataSource(DatabaseDataSource dbDataSource) {
-		
-		if (dbDataSource==null) return null;
-		
-		DatabaseSettings dbSettings = new DatabaseSettings();
-		
-		dbSettings.setDatabaseSystemName(dbDataSource.getDBMSName());
-		dbSettings.setHibernateDatabaseSettings(new Properties());
-
-		if (dbDataSource.getConnectionURL()!=null) 	dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbDataSource.getConnectionURL());
-		if (dbDataSource.getDbName()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, dbDataSource.getDbName());
-		
-		if (dbDataSource.getUserName()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
-		if (dbDataSource.getPassword()!=null) 		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
-		
-		if (dbDataSource.getFactoryID()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_FACTORY_ID, dbDataSource.getFactoryID());
-		
-		// --- Super class attributes -----------
-		if (dbDataSource.getId()!=0) 				dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId() + "");
-		if (dbDataSource.getName()!=null) 			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
-		if (dbDataSource.getDescription()!=null)	dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
-		if (dbDataSource.getRowsPerPage()!=0) 		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE, dbDataSource.getRowsPerPage() + "");
-		
-		if (dbSettings.isEmpty()==true) {
-			return null;
-		}
-		return dbSettings;
 	}
 	
 }

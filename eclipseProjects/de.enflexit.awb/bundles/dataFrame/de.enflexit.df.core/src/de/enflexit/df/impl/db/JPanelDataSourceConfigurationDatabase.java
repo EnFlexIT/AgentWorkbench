@@ -1,4 +1,4 @@
-package de.enflexit.df.core.ui.dataSource;
+package de.enflexit.df.impl.db;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,7 +34,6 @@ import javax.swing.event.DocumentListener;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.db.dataSources.DatabaseDataSource;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
@@ -44,10 +43,11 @@ import de.enflexit.db.hibernate.gui.DatabaseSettingsPanel;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.db.DatabaseHelper;
+import de.enflexit.df.core.DatabaseHelper;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceDatabase;
+import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -125,7 +125,7 @@ public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSou
 				this.getJToggleButtonSettingsManual().setSelected(true);
 				this.getJToggleButtonSettingsFactory().setSelected(false);
 				this.switchSourceOfDatabaseSettings(true);
-				this.getJPanelDbSettings().setDatabaseSettings(DatabaseSettings.fromDataSource(dbSource));
+				this.getJPanelDbSettings().setDatabaseSettings(dbSource.toDatabaseSettings());
 			} else {
 				this.getJToggleButtonSettingsManual().setSelected(false);
 				this.getJToggleButtonSettingsFactory().setSelected(true);
@@ -151,7 +151,7 @@ public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSou
 		} else {
 			// --- For manual configured connections ----------------------
 			DatabaseSettings dbSettings = this.getJPanelDbSettings().getDatabaseSettings();
-			dbSettings.intoDataSource(this.getDataSource());
+			this.getDataSource().intoDataSource(dbSettings);
 			this.getDataSource().setFactoryID(null);
 		}
 	}

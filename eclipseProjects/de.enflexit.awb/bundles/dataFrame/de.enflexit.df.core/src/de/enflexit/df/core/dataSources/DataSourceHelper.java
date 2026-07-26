@@ -1,4 +1,4 @@
-package de.enflexit.db.dataSources;
+package de.enflexit.df.core.dataSources;
 
 import java.util.HashMap;
 import java.util.List;

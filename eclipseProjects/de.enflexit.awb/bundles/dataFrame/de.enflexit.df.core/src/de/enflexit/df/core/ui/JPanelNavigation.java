@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import de.enflexit.df.core.dataSources.DataSourceConfigurationPanel;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 

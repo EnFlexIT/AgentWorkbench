@@ -1,10 +1,10 @@
 package de.enflexit.df.core.model.treeNode;
 
-import de.enflexit.db.dataSources.DefaultDataSource;
-import de.enflexit.df.core.data.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.DataSourceConfigurationPanel;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 

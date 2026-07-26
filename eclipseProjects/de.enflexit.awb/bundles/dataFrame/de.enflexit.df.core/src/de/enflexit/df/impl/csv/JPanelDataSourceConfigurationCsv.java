@@ -1,4 +1,4 @@
-package de.enflexit.df.core.ui.dataSource;
+package de.enflexit.df.impl.csv;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,10 +24,10 @@ import javax.swing.event.DocumentListener;
 
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.TimeFormatSelection;
-import de.enflexit.db.dataSources.CsvDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceCsv;
+import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
 
 /**
  * The Class JPanelDataSourceConfigurationCsv.

@@ -1,4 +1,4 @@
-package de.enflexit.df.core.ui;
+package de.enflexit.df.core.dataSources;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 /**
  * The Interface DataSourceConfigurationPanel.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public interface DataSourceConfigurationPanel {

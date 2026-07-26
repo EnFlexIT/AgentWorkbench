@@ -1,28 +1,25 @@
-package de.enflexit.df.core.data;
+package de.enflexit.df.impl.db;
 
 import java.io.IOException;
 
-import de.enflexit.db.dataSources.ExcelDataSource;
+import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import tech.tablesaw.api.Table;
 
+
 /**
- * The Class PaginationDataLoader4Excel.
- *
+ * The Class PaginationDataLoader4DB.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class PaginationDataLoader4Excel extends PaginationDataLoader<ExcelDataSource> {
+public class PaginationDataLoader4DB extends PaginationDataLoader<DatabaseDataSource> {
 
 	/**
-	 * Instantiates a new pagination data loader 4 excel.
+	 * Instantiates a new pagination data loader 4 DB.
 	 * @param dataSource the data source
 	 */
-	public PaginationDataLoader4Excel(ExcelDataSource dataSource) {
+	public PaginationDataLoader4DB(DatabaseDataSource dataSource) {
 		super(dataSource);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.Closeable#close()
-	 */
 	@Override
 	public void close() throws IOException {
 		// TODO Auto-generated method stub
@@ -37,6 +34,5 @@ public class PaginationDataLoader4Excel extends PaginationDataLoader<ExcelDataSo
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
+	
 }

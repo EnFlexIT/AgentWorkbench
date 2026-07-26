@@ -1,4 +1,4 @@
-package de.enflexit.df.core.db;
+package de.enflexit.df.core.workbook.db;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,14 +13,14 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
-import de.enflexit.db.dataSources.DefaultDataSource;
-import de.enflexit.db.dataSources.DatabaseDataSource;
 import de.enflexit.db.hibernate.ColumnOrderingStrategyAsDefinedInClass;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.impl.db.DatabaseDataSource;
 
 /**
  * The Class SessionFactoryCreator provides static help functions 
@@ -32,8 +32,8 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 
 	public static final String SESSION_FACTORY_PREFIX = "de.enflexit.df.dbDataWorkbook";
 	
-	private static final String cfgFile = 				"/de/enflexit/df/core/db/hibernate.cfg.xml";
-	private static final String modelClassesPackage = 	"/de/enflexit/df/core/db/";
+	private static final String cfgFile = 				"/de/enflexit/df/core/workbook/db/hibernate.cfg.xml";
+	private static final String modelClassesPackage = 	"/de/enflexit/df/core/workbook/db/";
 	
 	private Bundle localBundle;
 	
@@ -94,6 +94,7 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 			URL url = this.getLocalBundle().getResource(cfgFile);
 			configuration = new Configuration().configure(url);
 			this.addMappingFileResources(configuration);
+			this.addAnnotatedClasses(configuration);
 			this.addColumnOrderingStrategy(configuration);
 			this.addInternalHibernateProperties(configuration);
 		}
@@ -150,6 +151,7 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 		// --- Just for a stepwise development and verification ---------------
 		List<String> excludeList = new ArrayList<>();
 		excludeList.add("SessionFactoryCreator");
+		excludeList.add("DataWorkbookDatabaseHandler");
 		
 		Vector<String> modelClasses = new Vector<>(bundleWiring.listResources(modelClassesPackage, "*.class", BundleWiring.LISTRESOURCES_LOCAL));
 		for (int i = 0; i < modelClasses.size(); i++) {
@@ -165,10 +167,25 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 				cnfEx.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Adds annotated classes to the hibernate configuration.
+	 * @param conf the Configuration
+	 */
+	private void addAnnotatedClasses(Configuration conf) {
 		
 		// --- Add classes of DataSources -------------------------------------
 		conf.addAnnotatedClass(DefaultDataSource.class);
+		
+		try {
+			// TODO : Ask services to extend the configuration 
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
+	
 	/**
 	 * Checks if the excludeList contains the specified class name.
 	 *
@@ -221,8 +238,7 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 		if (dbDS.getFactoryID()!=null) {
 			return this.getNewDatabaseSession(dbDS.getFactoryID(), isResetSessionFactory);
 		} else {
-			DatabaseSettings dbSettings = DatabaseSettings.fromDataSource(dbDS);
-			return getNewDatabaseSession(dbSettings, isResetSessionFactory);
+			return getNewDatabaseSession(dbDS.toDatabaseSettings(), isResetSessionFactory);
 		}
 	}
 	/**

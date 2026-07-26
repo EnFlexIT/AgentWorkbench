@@ -1,4 +1,4 @@
-package de.enflexit.df.core.data;
+package de.enflexit.df.impl.csv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import de.enflexit.db.dataSources.CsvDataSource;
+import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DateColumn;

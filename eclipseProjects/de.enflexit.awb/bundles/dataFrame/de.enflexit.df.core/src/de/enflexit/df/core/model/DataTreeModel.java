@@ -8,10 +8,7 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import de.enflexit.db.dataSources.DefaultDataSource;
-import de.enflexit.db.dataSources.CsvDataSource;
-import de.enflexit.db.dataSources.DatabaseDataSource;
-import de.enflexit.db.dataSources.ExcelDataSource;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceCsv;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceDatabase;
@@ -19,6 +16,9 @@ import de.enflexit.df.core.model.treeNode.DataTreeNodeDataSourceExcel;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.impl.csv.CsvDataSource;
+import de.enflexit.df.impl.db.DatabaseDataSource;
+import de.enflexit.df.impl.excel.ExcelDataSource;
 
 /**
  * The Class DataTreeModel.

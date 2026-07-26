@@ -22,9 +22,6 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.db.dataSources.CsvDataSource;
-import de.enflexit.db.dataSources.DatabaseDataSource;
-import de.enflexit.db.dataSources.ExcelDataSource;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
@@ -34,6 +31,9 @@ import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
 import de.enflexit.df.core.workbook.DataWorkbook4XML;
+import de.enflexit.df.impl.csv.CsvDataSource;
+import de.enflexit.df.impl.db.DatabaseDataSource;
+import de.enflexit.df.impl.excel.ExcelDataSource;
 
 /**
  * The Class JToolBarData.

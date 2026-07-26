@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import de.enflexit.db.dataSources.DatabaseDataSource;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.data.PaginationDataLoader;
-import de.enflexit.df.core.data.PaginationDataLoader4DB;
+import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.dataSource.JPanelDataSourceConfigurationDatabase;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.impl.db.DatabaseDataSource;
+import de.enflexit.df.impl.db.JPanelDataSourceConfigurationDatabase;
+import de.enflexit.df.impl.db.PaginationDataLoader4DB;
 
 /**
  * The Class DataTreeNodeDataSourceDatabase.

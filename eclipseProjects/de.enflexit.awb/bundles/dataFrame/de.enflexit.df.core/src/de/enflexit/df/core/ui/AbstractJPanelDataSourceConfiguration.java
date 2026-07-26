@@ -1,4 +1,4 @@
-package de.enflexit.df.core.ui.dataSource;
+package de.enflexit.df.core.ui;
 
 import javax.swing.JPanel;
 

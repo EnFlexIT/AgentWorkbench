@@ -6,11 +6,11 @@ import java.io.File;
 import java.util.List;
 
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.db.dataSources.DefaultDataSource;
-import de.enflexit.db.dataSources.DatabaseDataSource;
-import de.enflexit.df.core.db.DataWorkbookDatabaseHandler;
-import de.enflexit.df.core.db.SessionFactoryCreator;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.workbook.db.DataWorkbookDatabaseHandler;
+import de.enflexit.df.core.workbook.db.SessionFactoryCreator;
+import de.enflexit.df.impl.db.DatabaseDataSource;
 
 /**
  * The Class DataWorkbook4DB.
@@ -141,7 +141,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.workbook.DataWorkbook#removeDataSource(de.enflexit.db.dataSources.DefaultDataSource)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#removeDataSource(de.enflexit.df.core.dataSources.DefaultDataSource)
 	 */
 	@Override
 	public boolean removeDataSource(DefaultDataSource dataSource) {
