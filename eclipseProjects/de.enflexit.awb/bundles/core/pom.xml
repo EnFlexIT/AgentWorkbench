@@ -30,6 +30,7 @@
 		<module>de.enflexit.jaxb.impl.binding</module>
 		<module>de.enflexit.language</module>
 		<module>de.enflexit.logging</module>
+		<module>de.enflexit.logging.db</module>
 		<module>de.enflexit.oidc</module>
 		<module>de.enflexit.oidc.ui</module>
 		<module>de.enflexit.oshi</module>

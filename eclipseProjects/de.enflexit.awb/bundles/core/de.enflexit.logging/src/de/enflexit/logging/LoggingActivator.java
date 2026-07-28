@@ -1,16 +1,11 @@
 package de.enflexit.logging;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.Reporter;
 
 import ch.qos.logback.classic.spi.LogbackServiceProvider;
-import ch.qos.logback.core.joran.spi.JoranException;
-import de.enflexit.logging.PropertyContentProvider.FileToProvide;
 import de.enflexit.logging.console.ConsoleScanner;
 
 /**
@@ -28,7 +23,7 @@ public class LoggingActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		this.startConsoleScanner();
 		this.doLogbackInitialization();
-		this.doLogbackConfiguration();
+		AwbLogbackConfigurator.loadConfiguration();
 		this.doHibernateLoggerConfiguration();
 	}
 	
@@ -51,35 +46,7 @@ public class LoggingActivator implements BundleActivator {
 		System.setProperty(LoggerFactory.PROVIDER_PROPERTY_KEY, LogbackServiceProvider.class.getName());
 		// --- Initialize Logging -----------------------------------
 		LoggerFactory.getLogger(LoggingActivator.class);
-	}
-	
-	
-	/**
-	 * Configure logback in bundle.
-	 *
-	 * @param bundle the bundle
-	 * @throws JoranException the joran exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	private void doLogbackConfiguration() throws JoranException, IOException {
-		
-		// --- Check if configuration file is available now ---------   
-		Path logbackXmlFile = getExternalLogbackPath();
-		if (logbackXmlFile.toFile().exists()==false) {
-			// --- Extract internal configuration file ------------------
-			PropertyContentProvider pcp = new PropertyContentProvider(PathHandling.getPropertiesPath(true).toFile());
-			pcp.checkAndProvidePropertyContent(FileToProvide.LOGBACK_CONFIGURATION);
-		}
-		AwbLogbackConfigurator.loadConfiguration(logbackXmlFile);
-	}
-	/**
-	 * Returns the logback file location.
-	 * @return the logback file location
-	 */
-	private Path getExternalLogbackPath() {
-		Path pathProperties = PathHandling.getPropertiesPath(true);
-	    return pathProperties.resolve(FileToProvide.LOGBACK_CONFIGURATION.toString());
-	}
+	}	
 
 	/**
 	 * Do a manual logger configuration as well.

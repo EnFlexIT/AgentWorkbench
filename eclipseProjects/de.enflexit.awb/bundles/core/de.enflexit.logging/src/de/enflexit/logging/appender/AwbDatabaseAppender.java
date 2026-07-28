@@ -1,5 +1,7 @@
 package de.enflexit.logging.appender;
 
+import javax.sql.DataSource;
+
 import ch.qos.logback.classic.db.DBAppender;
 
 /**
@@ -9,8 +11,12 @@ import ch.qos.logback.classic.db.DBAppender;
  */
 public class AwbDatabaseAppender extends DBAppender {
 
+	public static final String NAME = "AWB_DB";
+	public static final String ASYNC_WRAPPER_NAME = "ASYNC_DB";
+	
 	private static AwbDatabaseAppender thisInstance;
-
+	private DataSource dataSource;
+	
 	/**
 	 * Returns the single instance of AwbDatabaseAppender if available.
 	 * @return single instance of AwbDatabaseAppender
@@ -25,7 +31,6 @@ public class AwbDatabaseAppender extends DBAppender {
 	 * Instantiates a new logging file writer.
 	 */
 	private AwbDatabaseAppender() { }
-
 	
 	/**
 	 * Checks if is write to logging storage.
@@ -44,6 +49,24 @@ public class AwbDatabaseAppender extends DBAppender {
 		} else {
 			if (this.isStarted()==true) this.stop();
 		}
+	}
+	
+	/**
+	 * Returns the data source.
+	 *
+	 * @return the db logging data source
+	 */
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	
+	/**
+	 * Sets the data source.
+	 *
+	 * @param dataSource the new db logging data source
+	 */
+	public void setDataSource(DataSource dbLoggingDataSource) {
+		this.dataSource = dbLoggingDataSource;
 	}
 	
 }

@@ -14,8 +14,7 @@ import de.enflexit.logging.console.PrintStreamListener;
  * The Class AwbConsoleAppender is mostly a ConsoleAppender. It
  * only appends messages without the SYSTEM_OUT_MARKER to avoid loops 
  * with @see ConsoleScanner.
- * The ThreadLocal APPENDER_OUTPUT is used to avoid duplicate log messages
- * in other Appenders.
+ * Also, 
  *
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
@@ -84,6 +83,13 @@ public class AwbConsoleAppender extends ConsoleAppender<ILoggingEvent> {
 	}
 	
     
+	/**
+	 * Same write method as logback's, except it calls 
+	 * our version of writeByteArrayToOutputStreamWithPossibleFlush
+	 *
+	 * @param byteArray the byte array
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void writeBytesOwn(byte[] byteArray) throws IOException {
 		if (byteArray == null || byteArray.length == 0)
 			return;
@@ -111,10 +117,10 @@ public class AwbConsoleAppender extends ConsoleAppender<ILoggingEvent> {
 	}
 	
 	/**
-	 * A simple method to write to an outputStream and flush the stream if
-	 * immediateFlush is set to true.
+	 * Same write method as logbacks's, except it passes the additional boolean parameter to
+	 * the printstreamlisteners write method to differentiate original sysOut/ sysErr messages
+	 * from AwbConsoleAppender output. 
 	 *
-	 * @since 1.3.9/1.4.9
 	 */
 	protected final void writeByteArrayToOutputStreamWithPossibleFlushOwn(byte[] byteArray) throws IOException {
 		
