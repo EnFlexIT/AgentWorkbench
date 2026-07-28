@@ -53,6 +53,9 @@ public class ConsoleScanner {
 	
 	public final static int DEFAULT_STACK_SIZE = 600;
 	
+	private PrintStreamListener psListenerOut;
+	private PrintStreamListener psListenerErr;
+	
 	private Integer stackSize;
 	private Vector<String> outputStack = new Vector<String>(); 
 	private List<ConsoleListener> consoleListener;
@@ -66,11 +69,11 @@ public class ConsoleScanner {
 		PrintStream orgStreamErr = System.err;
 		try {
 			// --- Build new PrintStream's ------ 
-			PrintStream listenStreamOut = new PrintStreamListener(orgStreamOut, this, PrintStreamListener.SystemOutput);
-			PrintStream listenStreamErr = new PrintStreamListener(orgStreamErr, this, PrintStreamListener.SystemError);
+			this.psListenerOut = new PrintStreamListener(orgStreamOut, this, PrintStreamListener.SystemOutput);
+			this.psListenerErr = new PrintStreamListener(orgStreamErr, this, PrintStreamListener.SystemError);
 
-			System.setOut(listenStreamOut);
-			System.setErr(listenStreamErr);
+			System.setOut(this.psListenerOut);
+			System.setErr(this.psListenerErr);
 			
 		} catch (Exception ex) {
 			// --- Restoring back to console ----
@@ -81,6 +84,21 @@ public class ConsoleScanner {
 			ex.printStackTrace();
 		}
 	}
+	/**
+	 * Returns the prints the stream listener system out.
+	 * @return the prints the stream listener system out
+	 */
+	public PrintStreamListener getPrintStreamListenerSystemOut() {
+		return psListenerOut;
+	}
+	/**
+	 * Returns the prints the stream listener system error.
+	 * @return the prints the stream listener system error
+	 */
+	public PrintStreamListener getPrintStreamListenerSystemError() {
+		return psListenerErr;
+	}
+
 	
 	/**
 	 * Returns all registered console listener.
@@ -128,7 +146,7 @@ public class ConsoleScanner {
 		}
 		return this.outputStack;
 	}
-	
+
 	/**
 	 * This method will be used in order to append an output line (System.out or System.err) 
 	 * to the local outputStack
@@ -136,6 +154,16 @@ public class ConsoleScanner {
 	 * @param lineOutput the line output to display
 	 */
 	public void append2Stack(String lineOutput) {
+		this.append2Stack(lineOutput, false);
+	}
+	/**
+	 * This method will be used in order to append an output line (System.out or System.err) 
+	 * to the local outputStack
+	 *
+	 * @param lineOutput the line output to display
+	 * @param isLoggingOutput the is logging output
+	 */
+	public void append2Stack(String lineOutput, boolean isLoggingOutput) {
 		
 		// --- Append to the current stack -------------------------- 
 		synchronized (this.getStack()) {
@@ -155,6 +183,9 @@ public class ConsoleScanner {
 			}
 		}
 
+		// --- If line comes from logging framework, exit -----------
+		if (isLoggingOutput==true) return;
+		
 		// --- Log the output with a marker to avoid recursion ------
 		Marker sysOutMarker = MarkerFactory.getMarker(AwbConsoleAppender.SYSTEM_OUT_MARKER);
 		String tempString;

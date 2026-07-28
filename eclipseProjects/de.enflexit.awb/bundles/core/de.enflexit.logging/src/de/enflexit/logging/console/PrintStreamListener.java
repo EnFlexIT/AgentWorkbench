@@ -36,6 +36,17 @@ public class PrintStreamListener extends PrintStream {
 	 */
 	@Override
 	public void write(byte[] buf, int off, int len) {
+		this.write(buf, off, len, false);
+	}
+	/**
+	 * Write.
+	 *
+	 * @param buf the buf
+	 * @param off the off
+	 * @param len the len
+	 * @param isLoggingOutput the is logging output
+	 */
+	public void write(byte[] buf, int off, int len, boolean isLoggingOutput) {
 		// --- Some Error handling ------------------------
 		if (buf == null) {
 		    throw new NullPointerException();
@@ -58,7 +69,7 @@ public class PrintStreamListener extends PrintStream {
 		// --- send to Main-Container ---------------------
 		if (sos!=null) {
 			synchronized (sos) {
-				this.sos.append2Stack(lineOutputFinal);
+				this.sos.append2Stack(lineOutputFinal, isLoggingOutput);
 			}
 		}
 
@@ -73,6 +84,15 @@ public class PrintStreamListener extends PrintStream {
 	@Override
 	public void write(byte[] b) {
 		this.write(b, 0, b.length);
+	}
+	/**
+	 * Write.
+	 *
+	 * @param b the b
+	 * @param isLoggingOutput the is logging output
+	 */
+	public void write(byte[] b, boolean isLoggingOutput) {
+		this.write(b, 0, b.length, isLoggingOutput);
 	}
 	
 	/* (non-Javadoc)

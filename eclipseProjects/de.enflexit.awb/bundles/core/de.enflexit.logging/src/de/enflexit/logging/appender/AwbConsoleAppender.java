@@ -1,11 +1,14 @@
 package de.enflexit.logging.appender;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Marker;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import de.enflexit.logging.console.ConsoleScanner;
+import de.enflexit.logging.console.PrintStreamListener;
 
 /**
  * The Class AwbConsoleAppender is mostly a ConsoleAppender. It
@@ -19,6 +22,9 @@ import ch.qos.logback.core.ConsoleAppender;
 public class AwbConsoleAppender extends ConsoleAppender<ILoggingEvent> {
 	
 	public static final String SYSTEM_OUT_MARKER = "SYSTEM_OUT";
+	
+	
+	private Boolean isAwbPrintStreamListener;
 	
 	
 	/* (non-Javadoc)
@@ -48,6 +54,75 @@ public class AwbConsoleAppender extends ConsoleAppender<ILoggingEvent> {
 		}
 		
 		return false;
+	}
+	
+	
+	// --------------------------------------------------------------
+	// --- Here starts the tricky part ------------------------------
+	// --------------------------------------------------------------
+	
+	/* (non-Javadoc)
+	 * @see ch.qos.logback.core.ConsoleAppender#start()
+	 */
+	@Override
+	public void start() {
+		super.start();
+		this.setOutputStream(ConsoleScanner.getInstance().getPrintStreamListenerSystemOut());
+	}
+	
+	/* (non-Javadoc)
+	 * @see ch.qos.logback.core.OutputStreamAppender#writeOut(java.lang.Object)
+	 */
+	@Override
+	protected void writeOut(ILoggingEvent event) throws IOException {
+		if (this.isAwbPrintStreamListener() == true) {
+			byte[] byteArray = this.encoder.encode(event);
+			this.writeBytesOwn(byteArray);
+		} else {
+			super.writeOut(event);
+		}
+	}
+	
+    
+	private void writeBytesOwn(byte[] byteArray) throws IOException {
+		if (byteArray == null || byteArray.length == 0)
+			return;
+
+		streamWriteLock.lock();
+
+		try {
+			// guard against appender having been stop() in parallel
+			// note that the encoding step is performed outside the protection of the
+			// streamWriteLock
+			if (isStarted()) {
+				writeByteArrayToOutputStreamWithPossibleFlushOwn(byteArray);
+				updateByteCount(byteArray);
+			}
+		} finally {
+			streamWriteLock.unlock();
+		}
+	}
+
+	private boolean isAwbPrintStreamListener() {
+		if (isAwbPrintStreamListener==null) {
+			isAwbPrintStreamListener = (this.getOutputStream() instanceof PrintStreamListener);
+		}
+		return isAwbPrintStreamListener;
+	}
+	
+	/**
+	 * A simple method to write to an outputStream and flush the stream if
+	 * immediateFlush is set to true.
+	 *
+	 * @since 1.3.9/1.4.9
+	 */
+	protected final void writeByteArrayToOutputStreamWithPossibleFlushOwn(byte[] byteArray) throws IOException {
+		
+		PrintStreamListener awbPrintStreamListener = (PrintStreamListener) this.getOutputStream();
+		awbPrintStreamListener.write(byteArray, true);
+		if (isImmediateFlush()) {
+			awbPrintStreamListener.flush();
+		}
 	}
 	
 }
