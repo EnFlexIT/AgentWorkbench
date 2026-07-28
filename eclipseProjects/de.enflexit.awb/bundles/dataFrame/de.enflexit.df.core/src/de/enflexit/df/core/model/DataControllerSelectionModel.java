@@ -3,10 +3,10 @@ package de.enflexit.df.core.model;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import de.enflexit.df.core.dataSources.DataSourceConfigurationPanel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
 import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**

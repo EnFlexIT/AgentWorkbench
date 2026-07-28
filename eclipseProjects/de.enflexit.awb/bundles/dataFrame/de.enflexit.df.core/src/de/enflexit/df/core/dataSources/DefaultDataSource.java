@@ -2,6 +2,7 @@ package de.enflexit.df.core.dataSources;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
+import de.enflexit.df.core.model.AbstractDataFrameIntegration;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -65,6 +66,16 @@ public class DefaultDataSource implements DataSource {
 	public String getDataSourceIdentifier() {
 		return this.getClass().getSimpleName();
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getDataFrameIntegration()
+	 */
+	@Override
+	public AbstractDataFrameIntegration getDataFrameIntegration() {
+		return null;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#getId()

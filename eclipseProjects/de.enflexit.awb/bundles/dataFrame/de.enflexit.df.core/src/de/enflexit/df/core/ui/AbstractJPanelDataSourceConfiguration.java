@@ -41,6 +41,7 @@ public abstract class AbstractJPanelDataSourceConfiguration<DSTreeNode extends A
 		return dsTreeNode;
 	}
 	
+	
 	// --- Derived from the DataTreeNode ----------------------------
 	/**
 	 * Gets the data controller.

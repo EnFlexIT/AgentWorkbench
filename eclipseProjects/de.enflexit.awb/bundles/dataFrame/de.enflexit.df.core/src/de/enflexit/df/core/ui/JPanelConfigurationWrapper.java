@@ -21,7 +21,6 @@ import javax.swing.JToolBar;
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.DataSourceConfigurationPanel;
 
 /**
  * The Class JPanelConfigurationWrapper.

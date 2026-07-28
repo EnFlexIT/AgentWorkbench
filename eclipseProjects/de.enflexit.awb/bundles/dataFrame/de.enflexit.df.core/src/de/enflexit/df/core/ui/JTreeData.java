@@ -20,7 +20,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.df.core.dataSources.DataSourceConfigurationPanel;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeModel;
 import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;

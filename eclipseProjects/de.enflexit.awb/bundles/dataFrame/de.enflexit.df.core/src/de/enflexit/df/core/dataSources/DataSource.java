@@ -2,6 +2,8 @@ package de.enflexit.df.core.dataSources;
 
 import java.io.Serializable;
 
+import de.enflexit.df.core.model.AbstractDataFrameIntegration;
+
 /**
  * The interface DataSource serves as the base interface for any kind of data source.
  *
@@ -31,6 +33,13 @@ public interface DataSource extends Serializable {
 	 * @return the abstract data source
 	 */
 	public DefaultDataSource newInstance();
+	
+	
+	/**
+	 * Has to return the class to integrate a data source into the data frame environment.
+	 * @return the data frame integration
+	 */
+	public AbstractDataFrameIntegration getDataFrameIntegration();
 	
 	
 	

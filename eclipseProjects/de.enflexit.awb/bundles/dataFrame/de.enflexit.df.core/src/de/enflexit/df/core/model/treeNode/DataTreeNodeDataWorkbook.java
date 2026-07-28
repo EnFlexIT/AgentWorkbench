@@ -8,8 +8,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.DataSourceConfigurationPanel;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
