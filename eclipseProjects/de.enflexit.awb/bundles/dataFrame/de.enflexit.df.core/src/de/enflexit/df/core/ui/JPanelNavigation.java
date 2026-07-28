@@ -21,7 +21,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
 
 /**
  * The Class JPanelNavigation.
@@ -281,7 +281,7 @@ public class JPanelNavigation extends JPanel implements ActionListener, Property
 			break;
 			
 		case DataController.DC_DATA_LOADED:
-			DataTreeNodeObjectBase dtno = this.getDataController().getSelectionModel().getSelectedDataTreeNodeObjectBase();
+			DTNO_Base dtno = this.getDataController().getSelectionModel().getSelectedDataTreeNodeObjectBase();
 			if (dtno!=null) {
 				this.getJPanelConfigurationWrapper().setError(dtno.getErrorMessage());
 			}

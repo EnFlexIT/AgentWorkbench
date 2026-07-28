@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.DateColumn;
@@ -36,7 +36,7 @@ import tech.tablesaw.io.csv.CsvReadOptions;
  * The Class PaginationDataLoader4CSV.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class PaginationDataLoader4CSV extends PaginationDataLoader<CsvDataSource> {
+public class PaginationDataLoader4CSV extends AbstractPaginationDataLoader<CsvDataSource> {
 
 	private BufferedReader butBufferedReader;
 	

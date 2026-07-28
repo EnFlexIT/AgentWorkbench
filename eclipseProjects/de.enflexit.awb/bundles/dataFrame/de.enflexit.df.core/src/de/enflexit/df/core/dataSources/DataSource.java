@@ -2,7 +2,8 @@ package de.enflexit.df.core.dataSources;
 
 import java.io.Serializable;
 
-import de.enflexit.df.core.model.AbstractDataFrameIntegration;
+import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The interface DataSource serves as the base interface for any kind of data source.
@@ -36,10 +37,11 @@ public interface DataSource extends Serializable {
 	
 	
 	/**
-	 * Has to return the class to integrate a data source into the data frame environment.
-	 * @return the data frame integration
+	 * Has to return a new instance of the actual {@link DataSourceIntegration} for the current DataSource
+	 * that is located in the specified DataWorkbook and controlled by the specified {@link DataController}.
+	 * @return the individual DataSourceIntegration 
 	 */
-	public AbstractDataFrameIntegration getDataFrameIntegration();
+	public DataSourceIntegration<?> getDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook);
 	
 	
 	

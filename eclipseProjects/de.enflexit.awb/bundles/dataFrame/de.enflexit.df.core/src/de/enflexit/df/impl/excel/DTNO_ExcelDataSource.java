@@ -5,17 +5,17 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
- * The Class DataTreeNodeDataSourceExcel.
+ * The Class DTNO_ExcelDataSource.
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<ExcelDataSource> {
+public class DTNO_ExcelDataSource extends AbstractDTNO_DataSource<ExcelDataSource> {
 
 	private JPanelDataSourceConfigurationExcel jPanelDataSourceConfigurationExcel;
 
@@ -27,7 +27,7 @@ public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<
 	 * @param dataController the data controller
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceExcel(DataController dataController, DataWorkbook dataWorkbook, ExcelDataSource dataSource) {
+	public DTNO_ExcelDataSource(DataController dataController, DataWorkbook dataWorkbook, ExcelDataSource dataSource) {
 		super(dataController, dataWorkbook, dataSource);
 		if (dataSource.getName()==null) {
 			dataSource.setName("New Excel data source");
@@ -62,10 +62,10 @@ public class DataTreeNodeDataSourceExcel extends AbstractDataTreeNodeDataSource<
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()
+	 * @see de.enflexit.df.core.model.treeNode.AbstractDTNO_DataSource#getPaginationDataLoader()
 	 */
 	@Override
-	public PaginationDataLoader<ExcelDataSource> getPaginationDataLoader() {
+	public AbstractPaginationDataLoader<ExcelDataSource> getPaginationDataLoader() {
 		if (paginationDataLoader4Excel==null) {
 			paginationDataLoader4Excel = new PaginationDataLoader4Excel(this.getDataSource());
 		}

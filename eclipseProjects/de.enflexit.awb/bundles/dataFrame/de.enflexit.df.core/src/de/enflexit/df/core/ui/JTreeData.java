@@ -20,11 +20,11 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeModel;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -147,7 +147,7 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 					// --- Delete currently selected data source --------------
 					DataController dc = JTreeData.this.getDataController();
 					DataWorkbook dw = dc.getSelectionModel().getSelectedDataWorkbook();
-					AbstractDataTreeNodeDataSource<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
+					AbstractDTNO_DataSource<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
 					if (dw!=null && dtnoDataSource!=null) {
 						// --- Ask the user to delete the data source ---------
 						dc.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(JTreeData.this), dw, dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
@@ -253,9 +253,9 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			
 				if (me.getClickCount()==2 && SwingUtilities.isLeftMouseButton(me)==true) {
 					
-					DataTreeNodeObjectBase dtno = getDataController().getSelectionModel().getSelectedDataTreeNodeObjectBase();
-					if (dtno instanceof DataTreeNodeDataWorkbook) {
-						DataTreeNodeDataWorkbook dtnoDW = (DataTreeNodeDataWorkbook) dtno;
+					DTNO_Base dtno = getDataController().getSelectionModel().getSelectedDataTreeNodeObjectBase();
+					if (dtno instanceof DTNO_DataWorkbook) {
+						DTNO_DataWorkbook dtnoDW = (DTNO_DataWorkbook) dtno;
 						if (dtnoDW.isDataSourcesLoaded()==false) {
 							// --- Load the data sources of the DataWorkbook ------------
 							JTreeData.this.getDataController().openDataWorkbook(dtnoDW.getDataWorkbook());

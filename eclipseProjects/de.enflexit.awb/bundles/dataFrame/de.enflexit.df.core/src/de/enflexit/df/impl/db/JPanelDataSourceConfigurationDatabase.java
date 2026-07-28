@@ -44,18 +44,18 @@ import de.enflexit.db.hibernate.gui.HibernateStateVisualizationService;
 import de.enflexit.db.hibernate.gui.HibernateStateVisualizer;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.DatabaseHelper;
+import de.enflexit.df.core.dataSources.integration.AbstractJPanelDataSourceConfiguration;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class JPanelDataSourceConfigurationDatabase.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
- * @param <DataTreeNodeDataSourceDatabase> the generic type
+ * @param <DTNO_DatabaseeDataSource> the generic type
  */
-public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceDatabase> implements DocumentListener, HibernateStateVisualizationService, ActionListener, PropertyChangeListener {
+public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSourceConfiguration<DTNO_DatabaseeDataSource> implements DocumentListener, HibernateStateVisualizationService, ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 
@@ -88,7 +88,7 @@ public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSou
 	 * Instantiates a new JPanelDataSourceConfigurationDatabase.
 	 * @param dsTreeNode the JPanelDataSourceConfigurationDatabase
 	 */
-	public JPanelDataSourceConfigurationDatabase(DataTreeNodeDataSourceDatabase dsTreeNode) {
+	public JPanelDataSourceConfigurationDatabase(DTNO_DatabaseeDataSource dsTreeNode) {
 		super(dsTreeNode);
 		this.initialize();
 		this.setDataSourceToUI();

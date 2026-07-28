@@ -5,14 +5,17 @@ import javax.swing.ImageIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.enflexit.df.core.model.DataTreeModel;
+import de.enflexit.df.core.ui.JTreeData;
+
 /**
- * The Class DataTreeNodeObjectBase.
+ * The class DTNO_Base, serves as base class for user objects in the nodes of the {@link DataTreeModel} of {@link JTreeData}.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeObjectBase {
+public class DTNO_Base {
 
-	static Logger LOGGER = LoggerFactory.getLogger(DataTreeNodeObjectBase.class);
+	static Logger LOGGER = LoggerFactory.getLogger(DTNO_Base.class);
 	
 	protected ImageIcon imageIcon;
 	protected String caption;
@@ -24,14 +27,14 @@ public class DataTreeNodeObjectBase {
 	/**
 	 * Instantiates a new data tree node object.
 	 */
-	public DataTreeNodeObjectBase() {
+	public DTNO_Base() {
 		this(null);
 	}
 	/**
 	 * Instantiates a new data tree node object.
 	 * @param caption the caption
 	 */
-	public DataTreeNodeObjectBase(String caption) {
+	public DTNO_Base(String caption) {
 		this(null, caption, null);
 	}
 	/**
@@ -41,7 +44,7 @@ public class DataTreeNodeObjectBase {
 	 * @param caption the caption
 	 * @param toolTipText the tool tip text
 	 */
-	public DataTreeNodeObjectBase(ImageIcon icon, String caption, String toolTipText) {
+	public DTNO_Base(ImageIcon icon, String caption, String toolTipText) {
 		this.setImageIcon(icon);
 		this.setCaption(caption);
 		this.setTooltipText(toolTipText);

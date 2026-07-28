@@ -3,9 +3,9 @@ package de.enflexit.df.core.model;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
@@ -79,13 +79,13 @@ public class DataControllerSelectionModel {
 		return null;
 	}
 	/**
-	 * Returns the currently selected DataTreeNodeObjectBase.
+	 * Returns the currently selected DTNO_Base.
 	 * @return the selected data tree node base
 	 */
-	public DataTreeNodeObjectBase getSelectedDataTreeNodeObjectBase() {
+	public DTNO_Base getSelectedDataTreeNodeObjectBase() {
 		DefaultMutableTreeNode treeNode = this.getSelectedDataTreeNode();
-		if (treeNode!=null && treeNode.getUserObject() instanceof DataTreeNodeObjectBase) {
-			return (DataTreeNodeObjectBase) treeNode.getUserObject();
+		if (treeNode!=null && treeNode.getUserObject() instanceof DTNO_Base) {
+			return (DTNO_Base) treeNode.getUserObject();
 		}
 		return null;
 	}
@@ -102,21 +102,21 @@ public class DataControllerSelectionModel {
 		Object[] pathNodes = tpSelected.getPath();
 		for (int i = pathNodes.length-1; i >=0 ; i--) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
-			if (treeNode.getUserObject() instanceof DataTreeNodeDataWorkbook) {
+			if (treeNode.getUserObject() instanceof DTNO_DataWorkbook) {
 				return treeNode;
 			}
 		}
 		return null;
 	}
 	/**
-	 * Returns the currently selected {@link DataTreeNodeDataWorkbook} if available.
+	 * Returns the currently selected {@link DTNO_DataWorkbook} if available.
 	 * @return the selected data tree node data source
 	 */
-	public DataTreeNodeDataWorkbook getSelectedDataTreeNodeDataWorkbook() {
+	public DTNO_DataWorkbook getSelectedDataTreeNodeDataWorkbook() {
 		
 		DefaultMutableTreeNode dwTreeNode = this.getSelectedDataWorkbookTreeNode();
 		if (dwTreeNode!=null) {
-			return (DataTreeNodeDataWorkbook)dwTreeNode.getUserObject();
+			return (DTNO_DataWorkbook)dwTreeNode.getUserObject();
 		}
 		return null;
 	}
@@ -126,7 +126,7 @@ public class DataControllerSelectionModel {
 	 */
 	public DataWorkbook getSelectedDataWorkbook() {
 		
-		DataTreeNodeDataWorkbook dtnoDW = this.getSelectedDataTreeNodeDataWorkbook();
+		DTNO_DataWorkbook dtnoDW = this.getSelectedDataTreeNodeDataWorkbook();
 		if (dtnoDW!=null) {
 			return dtnoDW.getDataWorkbook();
 		}
@@ -134,10 +134,10 @@ public class DataControllerSelectionModel {
 	}
 	
 	/**
-	 * Returns the currently selected {@link AbstractDataTreeNodeDataSource} if available.
+	 * Returns the currently selected {@link AbstractDTNO_DataSource} if available.
 	 * @return the selected data tree node data source
 	 */
-	public AbstractDataTreeNodeDataSource<?> getSelectedDataTreeNodeDataSource() {
+	public AbstractDTNO_DataSource<?> getSelectedDataTreeNodeDataSource() {
 		
 		TreePath tpSelected = this.getSelectedTreePath();
 		if (tpSelected==null) return null;
@@ -146,8 +146,8 @@ public class DataControllerSelectionModel {
 		for (int i = pathNodes.length-1; i >=0 ; i--) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
 			Object userObject = treeNode.getUserObject();
-			if (userObject instanceof AbstractDataTreeNodeDataSource<?>) {
-				return (AbstractDataTreeNodeDataSource<?>) userObject;
+			if (userObject instanceof AbstractDTNO_DataSource<?>) {
+				return (AbstractDTNO_DataSource<?>) userObject;
 			}
 		}
 		return null;

@@ -1,9 +1,8 @@
-package de.enflexit.df.core.ui;
+package de.enflexit.df.core.dataSources.integration;
 
 import javax.swing.JPanel;
 
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -11,7 +10,7 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractJPanelDataSourceConfiguration<DSTreeNode extends AbstractDataTreeNodeDataSource<?>> extends JPanel {
+public abstract class AbstractJPanelDataSourceConfiguration<DSTreeNode extends AbstractDTNO_DataSource<?>> extends JPanel {
 
 	private static final long serialVersionUID = 6426491391209948791L;
 
@@ -27,14 +26,14 @@ public abstract class AbstractJPanelDataSourceConfiguration<DSTreeNode extends A
 		this.setDataTreeNodeDataSource(dsTreeNode);
 	}
 	/**
-	 * Sets the actual {@link AbstractDataTreeNodeDataSource}.
+	 * Sets the actual {@link AbstractDTNO_DataSource}.
 	 * @param dsTreeNode the new data tree node data source
 	 */
 	public void setDataTreeNodeDataSource(DSTreeNode dsTreeNode) {
 		this.dsTreeNode = dsTreeNode;
 	}
 	/**
-	 * Returns the current {@link AbstractDataTreeNodeDataSource}.
+	 * Returns the current {@link AbstractDTNO_DataSource}.
 	 * @return the data tree node data source
 	 */
 	public DSTreeNode getDataTreeNodeDataSource() {

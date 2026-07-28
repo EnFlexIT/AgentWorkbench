@@ -1,17 +1,18 @@
-package de.enflexit.df.core.dataSources;
+package de.enflexit.df.core.dataSources.integration;
 
 import java.io.Closeable;
 import java.io.IOException;
 
 import de.enflexit.df.core.DataFramePreferences;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import tech.tablesaw.api.Table;
 
 /**
- * The Class PaginationDataLoader serves as base for specific DataSources.
+ * The Class AbstractPaginationDataLoader serves as base for specific DataSources.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class PaginationDataLoader<DS extends DefaultDataSource> implements Closeable {
+public abstract class AbstractPaginationDataLoader<DS extends DefaultDataSource> implements Closeable {
 
 	private DS dataSource;
 	
@@ -27,7 +28,7 @@ public abstract class PaginationDataLoader<DS extends DefaultDataSource> impleme
 	 * Instantiates a new pagination data loader.
 	 * @param dataSource the data source to be used
 	 */
-	public PaginationDataLoader(DS dataSource) {
+	public AbstractPaginationDataLoader(DS dataSource) {
 		this.setDataSource(dataSource);
 	}
 	

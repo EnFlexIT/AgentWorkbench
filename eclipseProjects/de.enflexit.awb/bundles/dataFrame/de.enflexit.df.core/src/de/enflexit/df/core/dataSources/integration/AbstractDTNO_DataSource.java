@@ -1,19 +1,19 @@
-package de.enflexit.df.core.model.treeNode;
+package de.enflexit.df.core.dataSources.integration;
 
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 
 /**
- * The Class AbstractDataTreeNodeDataSource.
+ * The Class AbstractDTNO_DataSource.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSource> extends DataTreeNodeObjectBase implements DataSourceConfigurationPanel {
+public abstract class AbstractDTNO_DataSource<DS extends DefaultDataSource> extends DTNO_Base implements DataSourceConfigurationPanel {
 
 	private DataController dataController;
 	private DataWorkbook dataWorkbook;
@@ -32,7 +32,7 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSourc
 	 * @param dataWorkbook the corresponding {@link DataWorkbook} to which the data source belongs
 	 * @param dataSource the data source
 	 */
-	public AbstractDataTreeNodeDataSource(DataController dataController, DataWorkbook dataWorkbook, DS dataSource) {
+	public AbstractDTNO_DataSource(DataController dataController, DataWorkbook dataWorkbook, DS dataSource) {
 		this.setDataController(dataController);
 		this.setDataWorkbook(dataWorkbook);
 		this.setDataSource(dataSource);
@@ -109,10 +109,10 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSourc
 	
 	
 	/**
-	 * Has to return the pagination loader for the specific .
+	 * Has to return the pagination loader for the specific data source.
 	 * @return the pagination loader
 	 */
-	public abstract PaginationDataLoader<DS> getPaginationDataLoader();
+	public abstract AbstractPaginationDataLoader<DS> getPaginationDataLoader();
 	
 
 	/**
@@ -156,11 +156,11 @@ public abstract class AbstractDataTreeNodeDataSource<DS extends DefaultDataSourc
 				@Override
 				public void run() {
 					try {
-						AbstractDataTreeNodeDataSource.this.loadNextPage();
+						AbstractDTNO_DataSource.this.loadNextPage();
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					} finally {
-						AbstractDataTreeNodeDataSource.this.isLoading=false;
+						AbstractDTNO_DataSource.this.isLoading=false;
 					}
 				}
 			}, "DataLoader-" + this.getClass().getSimpleName()).start();

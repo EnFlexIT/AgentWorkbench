@@ -26,15 +26,15 @@ import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.common.swing.TimeFormatSelection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.FileSelection;
-import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
+import de.enflexit.df.core.dataSources.integration.AbstractJPanelDataSourceConfiguration;
 
 /**
  * The Class JPanelDataSourceConfigurationCsv.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
- * @param <DataTreeNodeDataSourceCsv> the generic type
+ * @param <DTNO_CsvDataSource> the generic type
  */
-public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceCsv> implements ActionListener, DocumentListener {
+public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceConfiguration<DTNO_CsvDataSource> implements ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 	
@@ -59,9 +59,9 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 	
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationCsv.
-	 * @param dsTreeNode the DataTreeNodeDataSourceCsv
+	 * @param dsTreeNode the DTNO_CsvDataSource
 	 */
-	public JPanelDataSourceConfigurationCsv(DataTreeNodeDataSourceCsv dsTreeNode) {
+	public JPanelDataSourceConfigurationCsv(DTNO_CsvDataSource dsTreeNode) {
 		super(dsTreeNode);
 		this.initialize();
 		this.setCsvDataSourceToUI();

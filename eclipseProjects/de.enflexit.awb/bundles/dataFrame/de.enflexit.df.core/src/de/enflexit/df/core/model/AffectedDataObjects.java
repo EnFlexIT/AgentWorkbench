@@ -1,8 +1,8 @@
 package de.enflexit.df.core.model;
 
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 
@@ -72,11 +72,11 @@ public class AffectedDataObjects {
 	}
 	
 	/**
-	 * Returns the first DataTreeNodeObjectBase, if available.
+	 * Returns the first DTNO_Base, if available.
 	 * @return the data tree node object
 	 */
-	public DataTreeNodeObjectBase getDataTreeNodeObject() {
-		return this.getInstance(DataTreeNodeObjectBase.class);
+	public DTNO_Base getDataTreeNodeObject() {
+		return this.getInstance(DTNO_Base.class);
 	}
 	
 	
@@ -84,8 +84,8 @@ public class AffectedDataObjects {
 	 * Returns the first data source tree node object, if available.
 	 * @return the data tree node object
 	 */
-	public AbstractDataTreeNodeDataSource<?> getDataTreeNodeObjectDataSource() {
-		return this.getInstance(AbstractDataTreeNodeDataSource.class);
+	public AbstractDTNO_DataSource<?> getDataTreeNodeObjectDataSource() {
+		return this.getInstance(AbstractDTNO_DataSource.class);
 	}
 	/**
 	 * Returns the tablesaw table, if available.

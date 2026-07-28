@@ -2,7 +2,7 @@ package de.enflexit.df.impl.db;
 
 import java.io.IOException;
 
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import tech.tablesaw.api.Table;
 
 
@@ -10,7 +10,7 @@ import tech.tablesaw.api.Table;
  * The Class PaginationDataLoader4DB.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class PaginationDataLoader4DB extends PaginationDataLoader<DatabaseDataSource> {
+public class PaginationDataLoader4DB extends AbstractPaginationDataLoader<DatabaseDataSource> {
 
 	/**
 	 * Instantiates a new pagination data loader 4 DB.

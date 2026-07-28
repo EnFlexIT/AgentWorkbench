@@ -5,16 +5,16 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
- * The Class DataTreeNodeDataSourceDatabase.
+ * The Class DTNO_DatabaseeDataSource.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSource<DatabaseDataSource> {
+public class DTNO_DatabaseeDataSource extends AbstractDTNO_DataSource<DatabaseDataSource> {
 
 	private JPanelDataSourceConfigurationDatabase jPanelDataSourceConfigurationDatabase;
 	
@@ -24,7 +24,7 @@ public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSour
 	 * Instantiates a new data tree node data source database.
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceDatabase(DataController dataController, DataWorkbook dataWorkbook, DatabaseDataSource dataSource) {
+	public DTNO_DatabaseeDataSource(DataController dataController, DataWorkbook dataWorkbook, DatabaseDataSource dataSource) {
 		super(dataController, dataWorkbook, dataSource);
 		if (dataSource.getName()==null) {
 			dataSource.setName("New Database Connection");
@@ -62,10 +62,10 @@ public class DataTreeNodeDataSourceDatabase extends AbstractDataTreeNodeDataSour
 	
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()
+	 * @see de.enflexit.df.core.model.treeNode.AbstractDTNO_DataSource#getPaginationDataLoader()
 	 */
 	@Override
-	public PaginationDataLoader<DatabaseDataSource> getPaginationDataLoader() {
+	public AbstractPaginationDataLoader<DatabaseDataSource> getPaginationDataLoader() {
 		if (paginationDataLoader4DB==null) {
 			paginationDataLoader4DB = new PaginationDataLoader4DB(this.getDataSource());
 		}

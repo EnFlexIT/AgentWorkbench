@@ -11,8 +11,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbColor;
 import de.enflexit.common.swing.AwbThemeColor;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
 
 /**
  * The Class DataTreeCellRenderer.
@@ -32,9 +32,9 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
 		Component renderComp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus); 
 		JLabel renderLabel = renderComp instanceof JLabel ? (JLabel) renderComp : null;
 		if (value instanceof DefaultMutableTreeNode) {
-			// --- Get the DataTreeNodeObjectBase -------------------
+			// --- Get the DTNO_Base -------------------
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
-			DataTreeNodeObjectBase dtno = (DataTreeNodeObjectBase) treeNode.getUserObject();
+			DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
 			
 			// --- Set Icon and Label -------------------------------
 			renderLabel.setIcon(dtno.getImageIcon());
@@ -47,8 +47,8 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
 			}
 			
 			// --- Do we see a closed DataWorkbook here? ------------
-			if (dtno instanceof DataTreeNodeDataWorkbook) {
-				DataTreeNodeDataWorkbook dtnoDW = (DataTreeNodeDataWorkbook) dtno;
+			if (dtno instanceof DTNO_DataWorkbook) {
+				DTNO_DataWorkbook dtnoDW = (DTNO_DataWorkbook) dtno;
 				if (dtno.getErrorMessage()==null && dtnoDW.isDataSourcesLoaded()==false) {
 					renderLabel.setForeground(new AwbColor(Color.LIGHT_GRAY, Color.GRAY));
 					renderLabel.setIcon(new ImageIcon(ImageHelper.setTransparency(dtno.getImageIcon(), 0.5f)));

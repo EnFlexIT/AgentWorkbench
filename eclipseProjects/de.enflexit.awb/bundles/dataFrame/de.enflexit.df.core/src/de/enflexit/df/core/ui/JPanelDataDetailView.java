@@ -33,11 +33,11 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.TablesawTableModel;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import tech.tablesaw.api.Table;
 
 /**
@@ -131,15 +131,15 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 * Returns the currently selected data tree node data source.
 	 * @return the selected data tree node data source
 	 */
-	private AbstractDataTreeNodeDataSource<?> getSelectedDataTreeNodeDataSource() {
+	private AbstractDTNO_DataSource<?> getSelectedDataTreeNodeDataSource() {
 		return this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
 	}
 	/**
-	 * Returns the current PaginationDataLoader or <code>null</code>, if no data tree node can be found.
+	 * Returns the current AbstractPaginationDataLoader or <code>null</code>, if no data tree node can be found.
 	 * @return the pagination data loader
 	 */
-	private PaginationDataLoader<?> getPaginationDataLoader() {
-		AbstractDataTreeNodeDataSource<?> dtnoDS = getSelectedDataTreeNodeDataSource();
+	private AbstractPaginationDataLoader<?> getPaginationDataLoader() {
+		AbstractDTNO_DataSource<?> dtnoDS = getSelectedDataTreeNodeDataSource();
 		return (dtnoDS==null ? null : dtnoDS.getPaginationDataLoader());
 	}
 	
@@ -206,7 +206,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 */
 	private void setJToolDatasetNavigationEnabled() {
 		
-		AbstractDataTreeNodeDataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
+		AbstractDTNO_DataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
 		boolean isEnabledToolBar = (dtnoDS!=null);
 		
 		this.getJToggleButtonEnabledPagination().setSelected(isEnabledToolBar && this.getPaginationDataLoader().isPaginationActivated()==true);
@@ -349,7 +349,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
-		AbstractDataTreeNodeDataSource<?> dtnoDS = null;
+		AbstractDTNO_DataSource<?> dtnoDS = null;
 		
 		String propChanged = evt.getPropertyName();
 		
@@ -365,7 +365,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				
 			} else {
 				// --- Hand over to Swing Thread --------------------
-				final AbstractDataTreeNodeDataSource<?> dtnoDSFinal = dtnoDS; 
+				final AbstractDTNO_DataSource<?> dtnoDSFinal = dtnoDS; 
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
@@ -388,10 +388,10 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 * Sets the detail view.
 	 * @param dtnoDS the data source tree node to show
 	 */
-	private void setDetailView(AbstractDataTreeNodeDataSource<?> dtnoDS) {
+	private void setDetailView(AbstractDTNO_DataSource<?> dtnoDS) {
 
 		// --- Direct exit? -----------------------------------------
-		AbstractDataTreeNodeDataSource<?> dtnoDsSelected = this.getSelectedDataTreeNodeDataSource();
+		AbstractDTNO_DataSource<?> dtnoDsSelected = this.getSelectedDataTreeNodeDataSource();
 		boolean useDatalessView = (dtnoDS==null || dtnoDsSelected==null);
 		boolean isDifferentData = (dtnoDS!=null && dtnoDsSelected!=null && dtnoDS!=dtnoDsSelected);
 		if (isDifferentData==true) return;
@@ -484,7 +484,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 */
 	private void setDatasetSelection(Integer dataRowToSelect, int direction, boolean isSelectInTable) {
 		
-		AbstractDataTreeNodeDataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
+		AbstractDTNO_DataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
 		if (dtnoDS==null) return;
 		
 		// --- Adjust number of data row text field -----------------
