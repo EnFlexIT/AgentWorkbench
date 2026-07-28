@@ -9,7 +9,6 @@
 	  
 	<root level="WARN">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE_APPENDER" />
     </root>
     
     <logger name="de.enflexit.common.p2" level="error" />

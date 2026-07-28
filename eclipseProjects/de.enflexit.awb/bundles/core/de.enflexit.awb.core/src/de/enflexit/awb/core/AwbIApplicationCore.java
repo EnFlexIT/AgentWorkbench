@@ -179,8 +179,6 @@ public class AwbIApplicationCore implements AwbIApplicationInterface {
 		if (Application.stopAgentWorkbench()==false) return;
 		// --- Stop Eclipse workbench -------
 		AgentWorkbenchUiManager.getInstance().disposeEclipseWorkbench();
-		// --- Stop LogFileWriter -----------
-		Application.stopLoggingWriter();
 		// --- ShutdownExecuter -------------
 		Application.setShutdownThread(null);
 		// --- Indicate to stop the JVM -----

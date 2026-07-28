@@ -78,7 +78,7 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	private TreeMap<Integer, String[]> additionalNodes = new TreeMap<Integer, String[]>();
 	
 	private StartOptions startOptions;
-	private LogFileOptions logFileOptions;
+	private LoggingInformationTab logFileOptions;
 	private UpdateOptions updateOptions;
 	private ThemeOptions themeOptions;
 	private DirectoryOptions exeDirOption;
@@ -222,9 +222,9 @@ public class OptionDialog extends JDialog implements AwbOptionsDialog, ActionLis
 	 * Gets the log file options.
 	 * @return the log file options
 	 */
-	private LogFileOptions getLogFileOptions() {
+	private LoggingInformationTab getLogFileOptions() {
 		if (logFileOptions==null) {
-			logFileOptions = new LogFileOptions();
+			logFileOptions = new LoggingInformationTab();
 		}
 		return logFileOptions;
 	}

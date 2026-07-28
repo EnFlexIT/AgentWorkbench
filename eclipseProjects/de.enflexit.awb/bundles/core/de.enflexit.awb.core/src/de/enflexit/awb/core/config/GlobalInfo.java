@@ -122,9 +122,6 @@ public class GlobalInfo implements ZoneIdResolver {
 	
 	private boolean maximizeMainWindow = false;
 	
-	private boolean filePropLoggingEnabled;
-	private String filePropLoggingBasePath;
-	
 	private boolean filePropServerAutoRun = true;
 	private String filePropServerMasterURL;
 	private Integer filePropServerMasterPort = this.localeJadeLocalPort;
@@ -1403,59 +1400,25 @@ public class GlobalInfo implements ZoneIdResolver {
 	
 	// ---- Logging configuration -----------------------------------
 	/**
-	 * Sets the logging enabled (or not).
-	 * @param enableLogging the new logging enabled
-	 */
-	public void setLoggingEnabled(boolean enableLogging) {
-		this.filePropLoggingEnabled = enableLogging;
-	}
-	/**
-	 * Checks if the file logging is enabled.
-	 * @return true, if file logging is enabled
-	 */
-	public boolean isLoggingEnabled() {
-		return this.filePropLoggingEnabled;
-	}
-	
-	/**
-	 * Sets the logging base path.
-	 * @param newLoggingbasePath the new logging base path
-	 */
-	public void setLoggingBasePath(String newLoggingbasePath) {
-		this.filePropLoggingBasePath = newLoggingbasePath;
-	}
-	/**
-	 * Returns the relative logging base path. If not set differently, the method will return the default path.
-	 * @return the logging base path
-	 */
-	public String getLoggingBasePath() {
-		return this.getLoggingBasePath(false);
-	}
-	/**
 	 * Returns the relative logging base path. If not set differently, the method will return the default path.
 	 * @param forcePathCreation set true, if the directory should be created
 	 * @return the logging base path
 	 */
-	public String getLoggingBasePath(boolean forcePathCreation) {
-		if (filePropLoggingBasePath==null) {
-			filePropLoggingBasePath = PathHandling.getLoggingFilesBasePathDefault().toString();
-		}
-		if (forcePathCreation==true) {
-			this.createDirectoryIfRequired(filePropLoggingBasePath);
-		}
-		return filePropLoggingBasePath;
+	public String getLoggingBasePath() {
+		return de.enflexit.logging.PathHandling.getLoggingFilesBasePathDefault().toString();
 	}
 	
 	/**
 	 * Returns the logging directory by month.
+	 *
 	 * @param timeStamp the timestamp
-	 * @param forcePathCreation set true, if the directory should be created 
+	 * @param forcePathCreation the force path creation
 	 * @return the logging directory by month
 	 */
 	public String getLoggingPathByMonth(long timeStamp, boolean forcePathCreation){
 		Date date = new Date(timeStamp);
 		String monthDescriptor = new SimpleDateFormat("MM").format(date) + "_" + new SimpleDateFormat("MMM").format(date);
-		String logPathByMonth = this.getLoggingBasePath(forcePathCreation) + File.separator + monthDescriptor + File.separator; 
+		String logPathByMonth = this.getLoggingBasePath() + File.separator + monthDescriptor + File.separator; 
 		if (forcePathCreation==true) {
 			this.createDirectoryIfRequired(logPathByMonth);
 		}

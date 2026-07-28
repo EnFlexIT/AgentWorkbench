@@ -46,7 +46,6 @@ import de.enflexit.common.featureEvaluation.FeatureEvaluator;
 import de.enflexit.common.ontology.OntologyVisualisationConfiguration;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.language.Language;
-import de.enflexit.logging.appender.AwbDatabaseAppender;
 import de.enflexit.logging.console.ConsoleScanner;
 
 
@@ -214,30 +213,6 @@ public class Application {
 	
 	
 	/**
-	 * Starts the logging file writer.
-	 * @return the logging file writer
-	 */
-	public static void startLoggingWriter() {
-		AwbDatabaseAppender.getInstance().setWriteToLoggingStorage(true);
-	}
-	/**
-	 * Stops the logging file writer.
-	 * @return the logging file writer
-	 */
-	public static void stopLoggingWriter() {
-		AwbDatabaseAppender.getInstance().setWriteToLoggingStorage(false);
-	}
-	/**
-	 * Returns the current {@link AwbDatabaseAppender} of the application.
-	 * @return the LogFileWriter
-	 */
-	public static boolean isStartedLoggingWriter() {
-		return AwbDatabaseAppender.getInstance().isWriteToLoggingStorage();
-	}
-	
-	
-	
-	/**
 	 * Returns the application-wide information system.
 	 * @return the global info
 	 */
@@ -247,9 +222,6 @@ public class Application {
 			synchronized (globalInfoSynchronizerForInitialization) {
 				if (Application.globalInfo==null) {
 					Application.globalInfo = new GlobalInfo();
-					if (Application.globalInfo.isLoggingEnabled()==true) {
-						Application.startLoggingWriter();
-					}
 				}
 			}
 		}
@@ -387,9 +359,6 @@ public class Application {
 		// --- Read the start arguments and react on it?! -----------
 		String[] remainingArgs = proceedStartArguments(org.eclipse.core.runtime.Platform.getApplicationArgs());
 		
-		// --- Start log file writer, if needed ---------------------
-		if (isOperatingHeadless()==true) startLoggingWriter();
-		
 		// --- Case separation Agent.Workbench / JADE execution -----
 		if (Application.justStartJade==false) {
 			// ------------------------------------------------------
@@ -476,12 +445,6 @@ public class Application {
 					remainingArgsVector.removeElement(args[i]);
 					setOperatingHeadless(true);
 
-				} else if (args[i].equalsIgnoreCase("-log")) {
-					// --------------------------------------------------------
-					// --- Start log file writing -----------------------------
-					remainingArgsVector.removeElement(args[i]);
-					startLoggingWriter();
-
 				} else if (args[i].equalsIgnoreCase("-help")) {
 					// --------------------------------------------------------
 					// --- print out the help for the start arguments ---------	
@@ -542,8 +505,7 @@ public class Application {
 		System.out.println("1. '-project projectFolder': opens the project located in the configured Agent.Workbench directory for projects (e.g. 'myProject')");
 		System.out.println("2. '-headless'             : will set Agent.Workbench to operate headless (without any visualization)");
 		System.out.println("3. '-jade'                 : indicates that JADE has to be started. For the JADE start arguments, see JADE administrative guide.");
-		System.out.println("4. '-log'                  : starts the Agent.Workbench log file writer.");
-		System.out.println("5. '-help' or '-?'         : provides this information to the console");
+		System.out.println("4. '-help' or '-?'         : provides this information to the console");
 		System.out.println("");
 		System.out.println("");
 	}
@@ -781,13 +743,6 @@ public class Application {
 					break;
 					
 				case NONE:
-					// --- Start writing a LogFile, if not already executed -------------
-					if (Application.isStartedLoggingWriter()==false) {
-						Application.startLoggingWriter();
-						// --- Create some initial output for the log file --------------
-						Application.getGlobalInfo().getVersionInfo().printVersionInfo();
-						System.out.println(Language.translate("Programmstart") + " [" + getGlobalInfo().getExecutionModeDescription() + "] ..." );
-					}
 					// --- Start observing shutdown file --------------------------------
 					Application.startShutdownThread();
 					break;

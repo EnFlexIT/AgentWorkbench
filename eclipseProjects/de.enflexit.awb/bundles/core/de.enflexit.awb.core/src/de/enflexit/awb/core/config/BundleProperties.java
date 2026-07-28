@@ -41,9 +41,6 @@ public class BundleProperties {
 	
 	public static final String DEF_LOOK_AND_FEEL = "07_LOOK_AND_FEEL";
 	
-	public static final String DEF_LOGGING_ENABLED = "08_LOGGING_ENABLED";
-	public static final String DEF_LOGGING_BASE_PATH = "09_LOGGING_BASE_PATH";
-	
 	public static final String DEF_AUTOSTART = "10_AUTOSTART";
 	public static final String DEF_MASTER_URL = "11_MASTER_URL";
 	public static final String DEF_MASTER_PORT = "12_MASTER_PORT";
@@ -227,13 +224,6 @@ public class BundleProperties {
 			this.globalInfo.setAppLookAndFeelClassName(stringPrefValue);
 		}
 
-		// --- this.DEF_LOGGING_ENABLED --------------
-		booleanPrefValue = eclipsePreferences.getBoolean(DEF_LOGGING_ENABLED, false);
-		this.globalInfo.setLoggingEnabled(booleanPrefValue);
-		// --- this.DEF_LOGGING_BASE_PATH ------------
-		stringPrefValue = eclipsePreferences.get(DEF_LOGGING_BASE_PATH, null);
-		this.globalInfo.setLoggingBasePath(stringPrefValue);
-
 
 		// --- this.DEF_AUTOSTART --------------------
 		booleanPrefValue = eclipsePreferences.getBoolean(DEF_AUTOSTART, false);
@@ -363,14 +353,7 @@ public class BundleProperties {
 		// --- this.DEF_LOOK_AND_FEEL ----------------
 		eclipsePreferences.put(DEF_LOOK_AND_FEEL, this.globalInfo.getAppLookAndFeelClassName());
 		
-		// --- this.DEF_LOGGING_ENABLED --------------
-		eclipsePreferences.putBoolean(DEF_LOGGING_ENABLED, this.globalInfo.isLoggingEnabled());			
-		// --- this.DEF_LOGGING_BASE_PATH ------------
-		if (this.globalInfo.getLoggingBasePath()!=null) {
-			eclipsePreferences.put(DEF_LOGGING_BASE_PATH, this.globalInfo.getLoggingBasePath());
-		}
-		
-		
+	
 		// --- this.DEF_AUTOSTART --------------------
 		eclipsePreferences.putBoolean(DEF_AUTOSTART, this.globalInfo.isServerAutoRun());
 		// --- this.DEF_MASTER_URL -------------------

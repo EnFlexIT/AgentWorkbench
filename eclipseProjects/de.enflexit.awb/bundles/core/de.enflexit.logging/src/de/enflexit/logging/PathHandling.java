@@ -128,17 +128,21 @@ public class PathHandling {
 		if (loggingFilesBasePath==null) {
 			
 			Path basePathLog = PathHandling.getApplicationBasePath(null).resolve("log");
-			
+
 			if (PathHandling.isWindowsOperatingSystem()==true) {
-				// --- Nothing to do here yet -----------------
+				PathHandling.createDirectoryIfNotExists(basePathLog);
+				
 			} else if (PathHandling.isLinuxOperatingSystem()==true) {
 				Path linuxLoggingBasePath = Path.of("/var/log/awb");
+				PathHandling.createDirectoryIfNotExists(linuxLoggingBasePath);
 				// --- Check write permission -----------------
 				if (linuxLoggingBasePath.toFile().exists()==true && linuxLoggingBasePath.toFile().canWrite()==true) {
 					basePathLog = linuxLoggingBasePath;
 				}
+				
 			} else if (PathHandling.isMacOperatingSystem()==true) {
-				// --- Nothing to do here yet -----------------
+				PathHandling.createDirectoryIfNotExists(basePathLog);
+				
 			}
 			loggingFilesBasePath = basePathLog;
 		}
