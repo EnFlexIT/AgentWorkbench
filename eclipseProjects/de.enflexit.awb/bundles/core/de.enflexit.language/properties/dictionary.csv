@@ -13,9 +13,6 @@ de;'.csv'-Version des Wörterbuchs übernehmen ...;Import the '. csv'-version of
 de;'PredictiveStaticLoadBalancing ausgewählt!;'PredictiveStaticLoadBalancing selected!;;;
 de;(Falls bereits verwendet, wird versucht den nächst höheren Port zu nutzen);(If already used, it will be tried to use the next higher port);;;
 de;0 Sekunden;0 seconds;;;
-de;1. Benennen Sie die aktuelle logback.xml um.;1. Rename the current logback.xml file.;;;
-de;2. Benennen Sie fileLogging.xml in logback.xml um.;2. Rename fileLogging.xml to logback.xml.;;;
-de;3. Starten Sie die Anwendung neu.;3. Restart the application.;;;
 de;<br>Falls nicht, wird eine neue Setup-Datei erzeugt.;<br>If not, a new setup file will be created.;;;
 de;<br>Kann der Name aus der Liste der Setups entfernt werden?;<br>Can the name be removed from the list of setups?;;;
 de;AWB Projekt-PlugIns;AWB Project-PlugIns;;;
@@ -42,6 +39,7 @@ de;Agent.GUI umschalten ?;Switch Agent.GUI ?
 de;Agent.Workbench - Anwendungsvisualisierungen;Agent.Workbench - Application Visualization;;;
 de;Agent.Workbench - Tray Icon anzeigen;Display Agent.Workbench - Tray Icon			;;;
 de;Agent.Workbench Projekt-Datei;Agent.Workbench Project-File;;;
+de;Agent.Workbench unterstützt die Ausgabe von Logging-Meldungen in die AWB-Konsole, in Logging-Dateien und in eine Datenbank.;Agent.Workbench supports the output of log messages to the AWB console, to log files, and to a database.;;;
 de;Agent:;Agent:
 de;Agent;agent
 de;AgentGUI - Standardeinstellungen verwenden;Use Agent.GUI defaults
@@ -59,7 +57,8 @@ de;Agenten;Agents
 de;Agentenklasse;Agent class
 de;Agentenliste aktualisieren;Refresh agent list
 de;Agentenumgebung;Agent Environment;;;
-de;Aktivierung:;Activation:;;;
+de;Aktivierung des Datei-Loggings;Activation of File Logging;;;
+de;Aktivierung des Datenbank-Logging;Activation of Database Logging;;;
 de;Aktualisiere Agenten-Liste...;Refreshing agent list
 de;Aktualisierung;Update;;;
 de;Alias;Alias;;;
@@ -112,6 +111,7 @@ de;Basis-Info;Basic info
 de;Bearbeiten;Edit
 de;Beenden;Quit
 de;Beim nächsten mal direkt starten und nicht erneut nachfragen.;Directly start and do not ask again next time.;;;
+de;Beispiel auf GitHub öffnen;See Example on GitHub;;;
 de;Benutzername;User Name;;;
 de;Beschleunigung;Acceleration;;;
 de;Beschleunigungsfaktor;Acceleration Factor;;;
@@ -170,17 +170,16 @@ de;Das von Ihnen gewählte Projektverzeichnis wird bereits verwendet!<br><br>Bit
 de;Datei nicht gefunden!;File not found!;;;
 de;Datei oder Verzeichnis wurde nicht gefunden:;File or directory not found:;;;
 de;Datei überschreiben?;Overwrite file?;;;
-de;Datei-Logging;File-logging;;;
 de;Datei:;File:
 de;Dateien einbinden;Include Files
 de;Daten Importieren...;Import Data ...;;;
 de;Daten bearbeiten;Edit Data;;;
+de;Datenbank - Einstellungen;Database - Settings;;;
 de;Datenbank Verbindungen;Database Connections;;;
 de;Datenbank erfolgreich angelegt!;Database created successfully!
 de;Datenbank für den 'server.master';Database for the 'server.master';;;
 de;Datenbank für den Hauptserver (server.master);Database for the main server (server.master);;;
 de;Datenbank nicht vorhanden!;Database does not exist!
-de;Datenbank-Logging;Database-logging;;;
 de;Datenfeld;Data field
 de;Datum;Date;;;
 de;Datumsformat;Date Format;;;
@@ -199,7 +198,6 @@ de;Details zum Dateiexport;Details of file export;;;
 de;Deutsch;German
 de;Dialog schließen;Close Dialog;;;
 de;Dicke;Thickness;;;
-de;Die Agent.Workbench unterstützt die Speicherung von Logmeldungen in Logdateien und in Datenbanken. Die Aktivierung der einzelnen Logging-Varianten wird nachfolgend beschrieben.;The Agent.Workbench supports the storage of log messages in log files and databases. The activation of the available logging options is described below.;;;
 de;Die Breite des exportieren Bildes;The width of the image to be exported;;;
 de;Die Datei '@' wurde nicht gefunden!;File '@' was not found!
 de;Die Datei existiert bereits. Wollen Sie diese Datei überschreiben?;The file already exists. Do you want to overwrite this file?
@@ -213,6 +211,7 @@ de;Die Projekt-Repository darf nicht im Ordner für Projekte gespeichert werden.
 de;Die URL oder IP konnte nicht aufgelöst werden!;The URL or IP could not be resolved!;;;
 de;Die angeforderte Ressource steht nicht mehr unter der gewählten Update-Site zur Verfügung und wurde umgeleitet;The requested resource is no longer available at the selected update site and has been redirected;;;
 de;Die angegebene Update-Site enthält keine Repositorydatei;The specified update site does not contain a repository file;;;
+de;Die relevanten Änderungen umfassen den „FILE_APPENDER“, den „ASYNC_FILE_APPENDER“ und einen zusätzlichen Eintrag innerhalb des <root>-Tags.;The relevant changes include the "FILE_APPENDER", the "ASYNC_FILE_APPENDER", and an additional entry within the <root> tag.;;;
 de;Dienst / Embedded System Agent;Service / Embedded System Agent;;;
 de;Dienst: Bitte wählen Sie das Setup aus, das gestartet werden soll;Service: Please select the setup that you want to execute;;;
 de;Dienst;Service;;;
@@ -310,6 +309,7 @@ de;Format;Format;;;
 de;Formular;Form
 de;Französisch;French
 de;Für die aktuell ausgewählte Klasse zur statischen Lastverteilung kann diese Option nicht deaktiviert werden.<br>Möchten Sie stattdessen eine andere Klasse für die statische Lastverteilung auswählen?;This option cannot be deactivated for the currently selected class for the static load balancing.<br>Would you like to choose a different class for the static load balancing instead?;;;
+de;Für weitere Konfigurationsmöglichkeiten verweisen wir auf die Logback-Dokumentation:;For further configuration options, please refer to the Logback documentation:;;;
 de;Gegenwarts-Zeit.;Present Time;;;
 de;Geräte-Agent;Embedded System Agent;;;
 de;Gesamtes Projekt verteilen;Distribute entire project;;;
@@ -344,16 +344,14 @@ de;IP-Adresse verwenden;Use IP-Address;;;
 de;Ihre Umschaltung zwischen 'Anwendung' und 'Server' wurde rückgängig gemacht.;Switching between 'Application' and 'Server' has been reversed.
 de;Ihre Webseite:;Your Website:;;;
 de;Im Falle eines Updates, eigenes Wörterbuch beibehalten.;In case of an update, keep own dictionary.;;;
-de;Im Verzeichnis darf immer nur eine Datei mit dem Namen logback.xml vorhanden sein.;Only one file named logback.xml may exist in the directory at any time.;;;
-de;Im Verzeichnis properties befinden sich zwei Logback-Konfigurationen. Die Anwendung verwendet ausschließlich die Datei mit dem Namen logback.xml.;The properties directory contains two Logback configurations. The application exclusively uses the file named logback.xml.;;;
 de;Immer überspringen;Allways Skip;;;
+de;In der Beispielkonfiguration erstellt der FILE_APPENDER eine Logdatei pro Tag.;In the example configuration, the FILE_APPENDER creates one log file per day.;;;
 de;Info;Info
 de;Informationen Keystore;KeyStore Informations;;;
 de;Infos zum Google-API key und den Webseiten-Einstellungen ...;Information about the Google-API key and the website settings ...;;;
 de;Initialer Arbeitsspeicher >= Maximaler Arbeitsspeicher !;Initial Memory >= Maximum Memory !;;;
 de;Installationspaket einbeziehen;Include Installation Package;;;
 de;Installationspakete;Installation Package Directory;;;
-de;Installationsverzeichnis;;;;
 de;Installiere Updates;Installing updates;;;
 de;Installiere;Installing;;;
 de;Introspector-Agent starten;Start Introspector agent
@@ -421,7 +419,6 @@ de;Komponenten-Typen;Component-Types
 de;Komponententyp-Definition;Component-Type Definition;;;
 de;Komponentenverbindung trennen;Disconnect components;;;
 de;Konfiguration des;Configuration of
-de;Konfiguration über Datenbankverbindungen > Factory Settings > Factory-ID <b>de.enflexit.logging.db</b>.;Configuration via Database Connections > Factory Settings > Factory ID <b>de.enflexit.logging.db</b>.;;;
 de;Konfiguration;Configuration
 de;Konsole ein- oder ausblenden;Show / Hide Console;;;
 de;Konsole: kann ein- bzw. ausgeblendet werden;Console: Can be shown or hidden
@@ -445,13 +442,14 @@ de;Listen-Sortierung;Component List Sorting;;;
 de;Load Monitor öffnen;Open Load Monitor;;;
 de;Load Monitor;Load Monitor
 de;Log Datei;Log File;;;
-de;Log Verzeichnis;Log Directory;;;
 de;Log-Datei Einstellungen;Log-File - Configuration;;;
 de;Log-Datei Konfiguration;Log File Configuration;;;
 de;Log-Datei immer erstellen;Allways create log file;;;
 de;Log-Manager starten;Start Log Manager
-de;Logging in der Agent.Workbench;Logging within the Agent.Workbench;;;
-de;Logging;;;;
+de;Log-Verzeichnis;Log-Directory;;;
+de;Logdateien werden in das folgende Verzeichnis geschrieben:;Log files are written to the following directory:;;;
+de;Logging-Konfiguration;Logging Configuration;;;
+de;Logging;Logging;;;
 de;Lokal;Local;;;
 de;Lokale Projekt Repository;Local Project Repository;;;
 de;Lokale Projekt-Repository auswählen;Select local project repository;;;
@@ -497,7 +495,6 @@ de;Nach Update suchen ...;Search for Update ...;;;
 de;Nach Update suchen;Check for Update;;;
 de;Nach Updates suchen;Search for Updates;;;
 de;Nach X-Werten sortieren;Autosort by X-values;;;
-de;Nach erfolgreicher Erstellung der Verbindung wird das Datenbank-Logging automatisch aktiviert.;Database logging is activated automatically once the connection has been created successfully.;;;
 de;Nach oben verschieben;Move up;;;
 de;Nach unten verschieben;Move down;;;
 de;Name bereits vorhanden!;Name already exists!
@@ -557,8 +554,6 @@ de;Ontologie-Referenz auswählen!;Select an ontology reference!;;;
 de;Ontologie;Ontology
 de;Ontologieklasse;Ontology Class
 de;Ontologien;Ontologies
-de;Optional. Eine Logdatei pro Tag, automatische Rotation und Aufbewahrung für 30 Tage.;Optional. One log file per day, automatic rotation and retention for 30 days.;;;
-de;Optional. Logmeldungen können zusätzlich in einer Datenbank gespeichert werden.;Optional. Log messages can additionally be stored in a database.;;;
 de;Optionen;Options
 de;Organisation;Organization;;;
 de;Organisationseinheit;Organizational Unit;;;
@@ -604,7 +599,6 @@ de;Projekt;Project;;;
 de;Projektbaum ein- oder ausblenden;Show / Hide Project Tree;;;
 de;Projekte;Projects
 de;Projekttitel;Project title
-de;Properties Verzeichnis;Properties Directory;;;
 de;Quell-Sprache;Source language;;;
 de;RMA (Remote Monitoring Agent) öffnen;Open RMA (Remote Monitoring Agent)
 de;Raster verwenden;Use guide grid;;;
@@ -670,7 +664,6 @@ de;Sprachumstellung zu;Language switch to;;;
 de;Standard Log-Verzeichnis:;Default Log-Directory;;;
 de;Standard verwenden;Use Default;;;
 de;Standardkonfiguration verwenden;Use default configuration;;;
-de;Standardmäßig aktiv. Logmeldungen werden während der Laufzeit in der AWB-Konsole angezeigt.;Enabled by default. Log messages are displayed in the AWB console during runtime.;;;
 de;Start bei:;Start at:;;;
 de;Start bei;Start at;;;
 de;Start-Argumente für den ausgewählten Agenten;Start-arguments for the selected agent
@@ -820,6 +813,8 @@ de;Zyklisch !;Cyclic!
 de;Zähler Start:;Counter Start:;;;
 de;Zähler Stop:;Counter Stop:;;;
 de;Zähler;Counter;;;
+de;[Optional] Zur Aktivierung des Datei-Loggings muss die Datei ./properties/logback.xml editiert werden. Eine Vorlage hierfür finden sie auf GitHub.;[Optional] To enable file logging, the file ./properties/logback.xml must be edited. You can find a template for this on GitHub.;;;
+de;[Optional] Zur Aktivierung des Datenbank-Loggings muss lediglich die Datenbankverbindung mit der Factory-ID 'de.enflexit.logging.db' konfiguriert werden.;[Optional] To activate database logging, you simply need to configure the database connection with the factory ID 'de.enflexit.logging.db'.;;;
 de;auf;to;;;
 de;bereit;ready
 de;erfolgreich exportiert!;successfully exported!;;;
