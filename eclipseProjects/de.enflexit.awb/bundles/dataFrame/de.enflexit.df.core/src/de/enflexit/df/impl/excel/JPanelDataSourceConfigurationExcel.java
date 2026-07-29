@@ -1,22 +1,22 @@
 package de.enflexit.df.impl.excel;
 
-import de.enflexit.df.core.ui.AbstractJPanelDataSourceConfiguration;
+import de.enflexit.df.core.dataSources.integration.AbstractJPanelDataSourceConfiguration;
 
 /**
  * The Class JPanelDataSourceConfigurationExcel.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
- * @param <DataTreeNodeDataSourceCsv> the generic type
+ * @param <DTNO_CsvDataSource> the generic type
  */
-public class JPanelDataSourceConfigurationExcel  extends AbstractJPanelDataSourceConfiguration<DataTreeNodeDataSourceExcel> {
+public class JPanelDataSourceConfigurationExcel  extends AbstractJPanelDataSourceConfiguration<DTNO_ExcelDataSource> {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationExcel.
-	 * @param dsTreeNode the DataTreeNodeDataSourceExcel
+	 * @param dsTreeNode the DTNO_ExcelDataSource
 	 */
-	public JPanelDataSourceConfigurationExcel(DataTreeNodeDataSourceExcel dsTreeNode) {
+	public JPanelDataSourceConfigurationExcel(DTNO_ExcelDataSource dsTreeNode) {
 		super(dsTreeNode);
 		this.initialize();
 	}

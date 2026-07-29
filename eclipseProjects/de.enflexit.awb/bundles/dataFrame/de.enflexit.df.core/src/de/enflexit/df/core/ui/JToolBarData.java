@@ -23,10 +23,10 @@ import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
@@ -453,7 +453,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		DataControllerSelectionModel selModel = this.getDataController().getSelectionModel();
 
 		// --- DataWorkbook open / save / close buttons -------------
-		DataTreeNodeDataWorkbook dtnoDW = selModel.getSelectedDataTreeNodeDataWorkbook();
+		DTNO_DataWorkbook dtnoDW = selModel.getSelectedDataTreeNodeDataWorkbook();
 		if (dtnoDW==null) {
 			this.getJButtonSelectedDataWorkbookOpen().setEnabled(false);
 			this.getJButtonDataWorkbookSave().setEnabled(false);
@@ -559,7 +559,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		} else if (ae.getSource()==this.getJButtonDeleteDataSources()) {
 			// --- Delete currently selected data source ----------------------
 			DataWorkbook dw = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
-			AbstractDataTreeNodeDataSource<?> dtnoDataSource = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+			AbstractDTNO_DataSource<?> dtnoDataSource = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
 			if (dw!=null && dtnoDataSource!=null) {
 				// --- Ask the user to delete the data source -----------------
 				this.dataController.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(this), dw, dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());

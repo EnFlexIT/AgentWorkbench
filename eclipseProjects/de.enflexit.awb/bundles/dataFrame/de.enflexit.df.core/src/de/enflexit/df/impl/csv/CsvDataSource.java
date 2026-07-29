@@ -4,6 +4,8 @@ import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.impl.db.DatabaseDataSource;
 
 /**
@@ -28,12 +30,13 @@ public class CsvDataSource extends DefaultDataSource {
 	
 	public static final String[] COLUMN_SEPARATORS = {";",",",":","."};
 	
-	
 	private String csvFilePath;
 	private String dateTimeFormat = GlobalConstants.DEFAULT_TIME_FORMAT;
 	private String columnSeparator = ";";
 	private boolean headline;
 	
+	private CsvDataSourceIntegration csvDataSourceIntegration;	
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
@@ -41,6 +44,17 @@ public class CsvDataSource extends DefaultDataSource {
 	@Override
 	public CsvDataSource newInstance() {
 		return new CsvDataSource();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#getDataSourceIntegration(de.enflexit.df.core.model.DataController, de.enflexit.df.core.workbook.DataWorkbook, de.enflexit.df.core.dataSources.DefaultDataSource)
+	 */
+	@Override
+	public CsvDataSourceIntegration getDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook) {
+		if (csvDataSourceIntegration==null) {
+			csvDataSourceIntegration = new CsvDataSourceIntegration(dataController, dataWorkbook, this);
+		}
+		return csvDataSourceIntegration;
 	}
 	
 	

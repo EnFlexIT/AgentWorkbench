@@ -9,16 +9,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeDataWorkbook;
-import de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.workbook.DataWorkbook;
-import de.enflexit.df.impl.csv.CsvDataSource;
-import de.enflexit.df.impl.csv.DataTreeNodeDataSourceCsv;
-import de.enflexit.df.impl.db.DataTreeNodeDataSourceDatabase;
-import de.enflexit.df.impl.db.DatabaseDataSource;
-import de.enflexit.df.impl.excel.DataTreeNodeDataSourceExcel;
-import de.enflexit.df.impl.excel.ExcelDataSource;
 
 /**
  * The Class DataTreeModel.
@@ -43,7 +38,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 * @param root the root
 	 */
 	public DataTreeModel(DataController dataController) {
-		super(new DefaultMutableTreeNode(new DataTreeNodeObjectBase("RootNode")));
+		super(new DefaultMutableTreeNode(new DTNO_Base("RootNode")));
 		this.setDataController(dataController);
 	}
 	
@@ -129,9 +124,9 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		return new DataTreeModelSearchFilter() {
 			@Override
 			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
-				DataTreeNodeObjectBase dtno = (DataTreeNodeObjectBase) treeNode.getUserObject();
-				if (dtno instanceof DataTreeNodeDataWorkbook) {
-					DataTreeNodeDataWorkbook dtnoDW = (DataTreeNodeDataWorkbook) dtno;
+				DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
+				if (dtno instanceof DTNO_DataWorkbook) {
+					DTNO_DataWorkbook dtnoDW = (DTNO_DataWorkbook) dtno;
 					if (dtnoDW.getDataWorkbook() == dataWorkbook) {
 						return true;
 					}
@@ -151,9 +146,9 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		return new DataTreeModelSearchFilter() {
 			@Override
 			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
-				DataTreeNodeObjectBase dtno = (DataTreeNodeObjectBase) treeNode.getUserObject();
-				if (dtno instanceof AbstractDataTreeNodeDataSource<?>) {
-					AbstractDataTreeNodeDataSource<?> dtnoDataSource = (AbstractDataTreeNodeDataSource<?>) dtno;
+				DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
+				if (dtno instanceof AbstractDTNO_DataSource<?>) {
+					AbstractDTNO_DataSource<?> dtnoDataSource = (AbstractDTNO_DataSource<?>) dtno;
 					if (dtnoDataSource.getDataSource() == dataSource) {
 						return true;
 					}
@@ -196,7 +191,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 */
 	private void addedDataWorkbook(DataWorkbook dataWorkbook) {
 
-		DataTreeNodeDataWorkbook dtnoDW = new DataTreeNodeDataWorkbook(this.getDataController(), dataWorkbook);
+		DTNO_DataWorkbook dtnoDW = new DTNO_DataWorkbook(this.getDataController(), dataWorkbook);
 		
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dtnoDW);
 		this.getRootNode().add(newNode);
@@ -217,7 +212,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		if (treeNodesFound==null) return;
 		
 		DefaultMutableTreeNode treeNodeWB = treeNodesFound.get(0);
-		DataTreeNodeDataWorkbook dtnoWB =  (DataTreeNodeDataWorkbook) treeNodeWB.getUserObject();
+		DTNO_DataWorkbook dtnoWB =  (DTNO_DataWorkbook) treeNodeWB.getUserObject();
 		
 		dtnoWB.setDataSourcesLoaded(true);
 	}
@@ -231,7 +226,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		if (treeNodesFound==null) return;
 		
 		DefaultMutableTreeNode treeNodeWB = treeNodesFound.get(0);
-		DataTreeNodeDataWorkbook dtnoWB =  (DataTreeNodeDataWorkbook) treeNodeWB.getUserObject();
+		DTNO_DataWorkbook dtnoWB =  (DTNO_DataWorkbook) treeNodeWB.getUserObject();
 		
 		dtnoWB.setDataSourcesLoaded(false);
 	}
@@ -268,13 +263,12 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 
 		
 		// --- Create new node according to data source -------------
-		AbstractDataTreeNodeDataSource<?> ds = null;
-		if (dataSource instanceof CsvDataSource) {
-			ds = new DataTreeNodeDataSourceCsv(this.getDataController(), dw, (CsvDataSource) dataSource);
-		} else if (dataSource instanceof ExcelDataSource) {
-			ds = new DataTreeNodeDataSourceExcel(this.getDataController(), dw, (ExcelDataSource) dataSource);
-		} else if (dataSource instanceof DatabaseDataSource) {
-			ds = new DataTreeNodeDataSourceDatabase(this.getDataController(), dw, (DatabaseDataSource) dataSource);
+		AbstractDTNO_DataSource<?> ds = null;
+		AbstractDataSourceIntegration<?> dsIntegration = dataSource.getDataSourceIntegration(this.getDataController(), dw);
+		if (dsIntegration!=null) {
+			ds = dsIntegration.getDataTreeNodeObject();
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find DataSourceIntegration of class '" + dataSource.getClass().getSimpleName() + "'!");
 		}
 		
 		// --- Create new node and add to parent --------------------

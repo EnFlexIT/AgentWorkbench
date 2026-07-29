@@ -18,10 +18,11 @@ import de.enflexit.df.core.workbook.ui.JPanelDataWorkbookInDB;
 import de.enflexit.df.core.workbook.ui.JPanelDataWorkbookInFile;
 
 /**
- * The Class DataTreeNodeDataWorkbook.
+ * The Class DTNO_DataWorkbook serves as user object for tree nodes of {@link DataWorkbook}s.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements DataSourceConfigurationPanel {
+public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurationPanel {
 
 	private DataController dataController;
 	private DataWorkbook dataWorkbook;
@@ -36,7 +37,7 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 	 * @param dataController the data controller
 	 * @param dataWorkbook the data workbook
 	 */
-	public DataTreeNodeDataWorkbook(DataController dataController, DataWorkbook dataWorkbook) {
+	public DTNO_DataWorkbook(DataController dataController, DataWorkbook dataWorkbook) {
 		this.setDataController(dataController);
 		this.setDataWorkbook(dataWorkbook);
 	}
@@ -89,7 +90,7 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase#getCaption()
+	 * @see de.enflexit.df.core.model.treeNode.DTNO_Base#getCaption()
 	 */
 	@Override
 	public String getCaption() {
@@ -97,7 +98,7 @@ public class DataTreeNodeDataWorkbook extends DataTreeNodeObjectBase implements 
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.treeNode.DataTreeNodeObjectBase#getImageIcon()
+	 * @see de.enflexit.df.core.model.treeNode.DTNO_Base#getImageIcon()
 	 */
 	@Override
 	public ImageIcon getImageIcon() {

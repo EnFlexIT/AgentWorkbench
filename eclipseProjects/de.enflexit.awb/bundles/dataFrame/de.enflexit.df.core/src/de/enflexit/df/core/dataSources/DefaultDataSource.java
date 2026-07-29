@@ -2,7 +2,9 @@ package de.enflexit.df.core.dataSources;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
-import de.enflexit.df.core.model.AbstractDataFrameIntegration;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
+import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.workbook.DataWorkbook;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -51,15 +53,6 @@ public class DefaultDataSource implements DataSource {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
-	 */
-	@Override
-	public DefaultDataSource newInstance() {
-		return null;
-	}
-	
-	
-	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#getDataSourceIdentifier()
 	 */
 	@Override
@@ -69,10 +62,18 @@ public class DefaultDataSource implements DataSource {
 	
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.dataSources.DataSource#getDataFrameIntegration()
+	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
 	 */
 	@Override
-	public AbstractDataFrameIntegration getDataFrameIntegration() {
+	public DefaultDataSource newInstance() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getDataSourceIntegration(de.enflexit.df.core.model.DataController, de.enflexit.df.core.workbook.DataWorkbook)
+	 */
+	@Override
+	public AbstractDataSourceIntegration<?> getDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook) {
 		return null;
 	}
 

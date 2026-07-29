@@ -6,6 +6,9 @@ import de.enflexit.common.NumberHelper;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
+import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class DatabaseDataSource.
@@ -33,6 +36,8 @@ public class DatabaseDataSource extends DefaultDataSource {
 	private String userName;
 	private String password;
 	
+	private DatabaseDataSourceIntegration dbDataSourceIntegration;	
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
@@ -40,6 +45,17 @@ public class DatabaseDataSource extends DefaultDataSource {
 	@Override
 	public DatabaseDataSource newInstance() {
 		return new DatabaseDataSource();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#getDataSourceIntegration(de.enflexit.df.core.model.DataController, de.enflexit.df.core.workbook.DataWorkbook)
+	 */
+	@Override
+	public AbstractDataSourceIntegration<?> getDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook) {
+		if (dbDataSourceIntegration==null) {
+			dbDataSourceIntegration = new DatabaseDataSourceIntegration(dataController, dataWorkbook, this);
+		}
+		return dbDataSourceIntegration;
 	}
 	
 	

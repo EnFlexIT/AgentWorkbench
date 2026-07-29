@@ -5,17 +5,17 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
- * The Class DataTreeNodeDataSourceCsv.
+ * The Class DTNO_CsvDataSource.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<CsvDataSource> {
+public class DTNO_CsvDataSource extends AbstractDTNO_DataSource<CsvDataSource> {
 
 	private JPanelDataSourceConfigurationCsv jPanelDataSourceConfigurationCsv;
 
@@ -28,7 +28,7 @@ public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<Cs
 	 * @param dataWorkbook the data workbook
 	 * @param dataSource the data source
 	 */
-	public DataTreeNodeDataSourceCsv(DataController dataController, DataWorkbook dataWorkbook, CsvDataSource dataSource) {
+	public DTNO_CsvDataSource(DataController dataController, DataWorkbook dataWorkbook, CsvDataSource dataSource) {
 		super(dataController, dataWorkbook, dataSource);
 		if (dataSource.getName()==null) {
 			dataSource.setName("New CSV data source");
@@ -72,10 +72,10 @@ public class DataTreeNodeDataSourceCsv extends AbstractDataTreeNodeDataSource<Cs
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.model.treeNode.AbstractDataTreeNodeDataSource#getPaginationDataLoader()
+	 * @see de.enflexit.df.core.model.treeNode.AbstractDTNO_DataSource#getPaginationDataLoader()
 	 */
 	@Override
-	public PaginationDataLoader<CsvDataSource> getPaginationDataLoader() {
+	public AbstractPaginationDataLoader<CsvDataSource> getPaginationDataLoader() {
 		if (paginationDataLoader4CSV==null) {
 			paginationDataLoader4CSV = new PaginationDataLoader4CSV(this.getDataSource());
 		}

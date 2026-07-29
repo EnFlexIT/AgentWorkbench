@@ -2,7 +2,7 @@ package de.enflexit.df.impl.excel;
 
 import java.io.IOException;
 
-import de.enflexit.df.core.dataSources.PaginationDataLoader;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import tech.tablesaw.api.Table;
 
 /**
@@ -10,7 +10,7 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class PaginationDataLoader4Excel extends PaginationDataLoader<ExcelDataSource> {
+public class PaginationDataLoader4Excel extends AbstractPaginationDataLoader<ExcelDataSource> {
 
 	/**
 	 * Instantiates a new pagination data loader 4 excel.

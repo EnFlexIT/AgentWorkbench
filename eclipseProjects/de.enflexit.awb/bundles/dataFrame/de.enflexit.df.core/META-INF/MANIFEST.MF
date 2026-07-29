@@ -38,6 +38,7 @@ Service-Component: OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dataFramePerspectiveService.xml
 Export-Package: de.enflexit.df.core,
  de.enflexit.df.core.dataSources,
+ de.enflexit.df.core.dataSources.integration,
  de.enflexit.df.core.model,
  de.enflexit.df.core.model.treeNode,
  de.enflexit.df.core.ui,

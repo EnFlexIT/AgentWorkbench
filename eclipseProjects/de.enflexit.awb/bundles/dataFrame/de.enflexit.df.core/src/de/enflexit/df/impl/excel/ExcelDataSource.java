@@ -4,7 +4,9 @@ import de.enflexit.common.GlobalConstants;
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.impl.csv.CsvDataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
+import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.impl.db.DatabaseDataSource;
 
 /**
@@ -27,6 +29,8 @@ public class ExcelDataSource extends DefaultDataSource {
 	private String columnSeparator = ";";
 	private boolean headline;
 	
+	private ExcelDataSourceIntegration excelDataSourceIntegration;
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
@@ -36,7 +40,17 @@ public class ExcelDataSource extends DefaultDataSource {
 		return new ExcelDataSource();
 	}
 
-		
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#getDataSourceIntegration(de.enflexit.df.core.model.DataController, de.enflexit.df.core.workbook.DataWorkbook)
+	 */
+	@Override
+	public AbstractDataSourceIntegration<?> getDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook) {
+		if (excelDataSourceIntegration==null) {
+			excelDataSourceIntegration = new ExcelDataSourceIntegration(dataController, dataWorkbook, this);
+		}
+		return excelDataSourceIntegration;
+	}
+	
 	/**
 	 * Returns the file path.
 	 * @return the file path
@@ -191,11 +205,11 @@ public class ExcelDataSource extends DefaultDataSource {
 	public boolean equals(Object compObj) {
 		
 		if (super.equals(compObj)==false) return false;
-		if (compObj instanceof CsvDataSource == false) return false;
+		if (compObj instanceof ExcelDataSource == false) return false;
 		
-		CsvDataSource csvDsComp = (CsvDataSource) compObj;
+		ExcelDataSource csvDsComp = (ExcelDataSource) compObj;
 		
-		if (StringHelper.isEqualString(this.getFilePath(), csvDsComp.getCsvFilePath())==false) return false;
+		if (StringHelper.isEqualString(this.getFilePath(), csvDsComp.getFilePath())==false) return false;
 		if (StringHelper.isEqualString(this.getDateTimeFormat(), csvDsComp.getDateTimeFormat())==false) return false;
 		if (StringHelper.isEqualString(this.getColumnSeparator(), csvDsComp.getColumnSeparator())==false) return false;
 		if (this.isHeadline()!=csvDsComp.isHeadline()) return false;
