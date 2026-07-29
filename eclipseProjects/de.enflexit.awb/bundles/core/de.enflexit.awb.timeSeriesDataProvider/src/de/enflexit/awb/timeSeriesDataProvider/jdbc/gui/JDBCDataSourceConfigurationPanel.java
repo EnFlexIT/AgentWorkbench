@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -63,6 +64,8 @@ import javax.swing.JTable;
 public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigurationPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1221965879225470214L;
+	
+	private static final String[] DATE_TIME_COLUMN_DATA_TYPES = {"timestamp", "timestamptz", "datetime"};
 	
 	private static final String ICON_PATH_NOT_CONNECTED = "/icons/TrafficLightGrey.png";
 	private static final String ICON_PATH_CONNECTED = "/icons/TrafficLightGreen.png";
@@ -782,11 +785,15 @@ public class JDBCDataSourceConfigurationPanel extends AbstractDataSourceConfigur
 	private List<String> findTimeStampColumns(ResultSetMetaData resultSetMetaData) throws SQLException {
 		List<String> columnNames = new ArrayList<String>();
 		for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
-			if (resultSetMetaData.getColumnTypeName(i).equalsIgnoreCase("timestamp") || resultSetMetaData.getColumnTypeName(i).equalsIgnoreCase("timestamptz")) {
+			if (this.isDateTimeColumnType(resultSetMetaData.getColumnTypeName(i))==true) {
 				columnNames.add(resultSetMetaData.getColumnName(i));
 			}
 		}
 		return columnNames;
+	}
+	
+	private boolean isDateTimeColumnType(String columnType) {
+		return Arrays.asList(DATE_TIME_COLUMN_DATA_TYPES).contains(columnType);
 	}
 	
 	/**
