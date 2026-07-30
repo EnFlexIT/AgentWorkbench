@@ -13,19 +13,17 @@
    <configIni use="default">
    </configIni>
 
-   <launcherArgs>
-      <vmArgs>-Xms512M -Xmx4G
-      </vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
-      </vmArgsMac>
-   </launcherArgs>
+    <launcherArgs>
+       <vmArgs>-Xms512M -Xmx4G
+       </vmArgs>
+       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dsun.awt.disableim=true -Dapple.awt.inputmethod=none -Dapple.awt.swingMenuBar=false --add-opens java.desktop/java.awt=ALL-UNNAMED --add-opens java.desktop/sun.lwawt.macosx=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED
+       </vmArgsMac>
+       <argLine value="-nosplash"/>
+    </launcherArgs>
 
    <windowImages i16="icons/awb16.png" i32="icons/awb32.png" i48="icons/awb48.png" i64="icons/awb64.png" i128="icons/awb128.png" i256="icons/awb256.png"/>
 
-   <splash
-      location="de.enflexit.awb.core"
-      startupProgressRect="5,275,445,15" />
-   <launcher name="AgentWorkbench">
+    <launcher name="AgentWorkbench">
       <linux icon="/icons/awb.xpm"/>
       <macosx icon="/icons/awb.icns"/>
       <win useIco="true">

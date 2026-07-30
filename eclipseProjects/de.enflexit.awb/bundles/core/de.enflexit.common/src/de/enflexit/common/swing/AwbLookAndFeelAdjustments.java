@@ -20,6 +20,7 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.common.images.ImageHelper;
 
 /**
@@ -118,8 +119,14 @@ public class AwbLookAndFeelAdjustments {
 				AwbLookAndFeelAdjustments.isFlatLookAndFeel = null;
 			}
 			AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
-			for (Window window : Window.getWindows()) {
-				SwingUtilities.updateComponentTreeUI(window);
+			// --- On macOS, updateComponentTreeUI hangs due to ---
+			// --- InputContext.getNativeLocale() native bug in ---
+			// --- JDK 21. The LookAndFeel is still set via ---
+			// --- UIManager.setLookAndFeel() above. ------------
+			if (!SystemEnvironmentHelper.isMacOperatingSystem()) {
+				for (Window window : Window.getWindows()) {
+					SwingUtilities.updateComponentTreeUI(window);
+				}
 			}
 			
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException lnfEx) {
@@ -131,8 +138,10 @@ public class AwbLookAndFeelAdjustments {
 					AwbLookAndFeelAdjustments.isDarkLookAndFeel=null;
 					AwbLookAndFeelAdjustments.isFlatLookAndFeel = null;
 					AwbLookAndFeelAdjustments.doLookAndFeelAdjustments();
-					for (Window window : Window.getWindows()) {
-						SwingUtilities.updateComponentTreeUI(window);
+					if (!SystemEnvironmentHelper.isMacOperatingSystem()) {
+						for (Window window : Window.getWindows()) {
+							SwingUtilities.updateComponentTreeUI(window);
+						}
 					}
 					
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {

@@ -1,15 +1,13 @@
 package de.enflexit.awb.core;
 
-import java.awt.Toolkit;
-
-import javax.swing.SwingUtilities;
-
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
 import de.enflexit.common.SystemEnvironmentHelper;
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
+import de.enflexit.common.swing.MacInputContextMonkeyPatch;
 import de.enflexit.language.Language;
 
 /**
@@ -87,26 +85,31 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 
-		// --- Preparations for MAC environment -----------
-		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
-			// --- Ensure to start AWT --------------------
-		    Toolkit.getDefaultToolkit();
+		// --- Set FlatLaf BEFORE any Swing UI is created (macOS) ---
+		// --- Prevents macOS Aqua menu bar from being created ---
+		if (SystemEnvironmentHelper.isMacOperatingSystem()) {
+			AwbLookAndFeelAdjustments.setLookAndFeel(AwbLookAndFeelAdjustments.LIGHT_LOOK_AND_FEEL_CLASS);
 		}
-		
+
+		// --- Monkey-patch InputContext on macOS to prevent ---
+		// --- native hang in CInputMethod.getNativeLocale() ---
+		if (SystemEnvironmentHelper.isMacOperatingSystem()) {
+			MacInputContextMonkeyPatch.applyIfMac();
+		}
+
 		// --- Set the product indicator ------------------
 		GlobalInfo.catchProduct(this.getAwbProduct());
 		
 		// --- Remind application context -----------------
 		this.setIApplicationContext(context);
 
-		// --- OS-dependent system start ------------------
-		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
-			// --- Start for MacOS ------------------------
-			this.startApplicationInOwnThread();
-		} else {
-			// --- Regular start for Windows and Linux ----
-			this.startApplication();
-		}
+		// --- On macOS, AWT (Toolkit) initialization hangs in ---
+		// --- native code (LWCToolkit.initAppkit) regardless ---
+		// --- of which thread calls it. Since the application ---
+		// --- uses SWT on macOS, there's no need to initialize ---
+		// --- AWT. The Swing UI path (startMainWindow) sets the ---
+		// --- LookAndFeel only when the Swing UI is actually used.
+		this.startApplication();
 		
 		// --- Wait for termination of application --------
 		this.waitForApplicationTermination();
@@ -129,7 +132,10 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	
 	/**
 	 * Starts the application in a separate thread.
+	 * REMOVED: This method caused LWCToolkit.initAppkit() to hang on macOS JDK 21.
+	 * See start() method for the macOS-specific fix.
 	 */
+	/*
 	private void startApplicationInOwnThread() {
 		Thread awbStarter = new Thread(new Runnable() {
 			
@@ -140,11 +146,14 @@ public class AwbIApplication implements AwbIApplicationInterface {
 						
 						@Override
 						public void run() {
-							try {
-								AwbIApplication.this.startApplication();
-							} catch(Exception ex) {
-								ex.printStackTrace();
-							}
+					try {
+						if (SystemEnvironmentHelper.isMacOperatingSystem()) {
+							Toolkit.getDefaultToolkit();
+						}
+						AwbIApplication.this.startApplication();
+					} catch(Exception ex) {
+						ex.printStackTrace();
+					}
 						}
 					});
 				} catch(Exception ex) {
@@ -155,6 +164,7 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		awbStarter.setName("AWB-Starter");
 		awbStarter.start();
 	}
+	*/
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.AwbIApplicationInterface#stop(java.lang.Integer)
@@ -209,6 +219,10 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		
 		Integer appReturnValue = IApplication.EXIT_OK;
 		if (Application.isOperatingHeadless()==false) {
+			// --- Set the LookAndFeel on the Swing EDT ---
+			// --- (moved from GlobalInfo.initialize) -----
+			String lafClassName = Application.getGlobalInfo().getAppLookAndFeelClassName();
+			AwbLookAndFeelAdjustments.setLookAndFeelUsingSwingUtilities(lafClassName);
 			// --- Start UI -------------------------------
 			Application.getMainWindow();
 			Application.getProjectsLoaded().setProjectView();

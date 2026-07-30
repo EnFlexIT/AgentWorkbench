@@ -241,7 +241,6 @@ public class GlobalInfo implements ZoneIdResolver {
 			this.getVersionInfo();
 			this.getBundleProperties();
 			this.getSecuredProperties();
-			this.setApplicationsLookAndFeel();
 			
 			// --- Some debug stuff -----------------------
 			boolean debug = false;
