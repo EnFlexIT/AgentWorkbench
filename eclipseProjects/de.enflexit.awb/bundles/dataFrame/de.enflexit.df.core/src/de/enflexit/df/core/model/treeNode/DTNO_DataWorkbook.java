@@ -158,5 +158,20 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 	public JComponent getConfigurationPanel() {
 		return this.getJPanelConfiguration();
 	}
+
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getDetailViewPanel()
+	 */
+	@Override
+	public JComponent getDetailViewPanel() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetDetailViewPanel()
+	 */
+	@Override
+	public void resetDetailViewPanel() { }
+	
 	
 }

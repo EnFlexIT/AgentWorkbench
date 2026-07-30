@@ -1,5 +1,7 @@
 package de.enflexit.df.impl.db;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import de.enflexit.common.NumberHelper;
@@ -37,6 +39,8 @@ public class DatabaseDataSource extends DefaultDataSource {
 	private String password;
 	
 	private DatabaseDataSourceIntegration dbDataSourceIntegration;	
+	
+	private List<DatabaseQuery> databaseQueryList;
 	
 	
 	/* (non-Javadoc)
@@ -350,6 +354,40 @@ public class DatabaseDataSource extends DefaultDataSource {
 		if (rowsPerPageString!=null) {
 			Integer rowsPerPage = NumberHelper.parseInteger(rowsPerPageString);
 			if (rowsPerPage!=null) dbDS.setRowsPerPage(rowsPerPage);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#requiresSubConfiguration()
+	 */
+	@Override
+	public boolean requiresSubConfiguration() {
+		return true;
+	}
+
+	/**
+	 * Returns the database query list.
+	 * @return the database query list
+	 */
+	public List<DatabaseQuery> getDatabaseQueryList() {
+		if (databaseQueryList==null) {
+			databaseQueryList = new ArrayList<>();
+			for (int i = 0; i < this.getDataSourceSubConfigurations().size(); i++) {
+				String subConfiguration = this.getDataSourceSubConfigurations().get(i);
+				DatabaseQuery dbQuery = DatabaseQuery.fromConfigurationString(subConfiguration);
+				databaseQueryList.add(dbQuery);
+			}
+		}
+		return databaseQueryList;
+	}
+	/**
+	 * Saves the current list of DatabaseQuery's.
+	 */
+	public void saveDatabaseQueryList() {
+		this.getDataSourceSubConfigurations().clear();
+		for (int i = 0; i < this.getDatabaseQueryList().size(); i++) {
+			String subConfiguration = this.getDatabaseQueryList().get(i).toConfigurationString();
+			this.getDataSourceSubConfigurations().add(subConfiguration);
 		}
 	}
 	

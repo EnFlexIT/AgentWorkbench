@@ -1,6 +1,10 @@
 package de.enflexit.df.impl.db;
 
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import java.util.List;
+
+import javax.swing.JComponent;
+
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -11,12 +15,11 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  */
 public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration<DatabaseDataSource> {
 
-	/**
-	 * Instantiates a new database data source integration.
-	 */
-	public DatabaseDataSourceIntegration() {
-		super();
-	}
+	private DatabaseeDataSourceDTNO dtnoDBDataSource;
+	private JPanelDataSourceConfigurationDatabase jPanelDataSourceConfigurationDatabase;
+	private JPanelQueryConfiguration jPanelQueryConfiguration;
+	
+	
 	/**
 	 * Instantiates a new database data source integration.
 	 *
@@ -33,8 +36,58 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#getDataTreeNodeObject()
 	 */
 	@Override
-	public AbstractDTNO_DataSource<DatabaseDataSource> getDataTreeNodeObject() {
-		return new DTNO_DatabaseeDataSource(this.getDataController(), this.getDataWorkbook(), this.getDataSource());
+	public AbstractDataSourceDTNO<DatabaseDataSource> getDTNO() {
+		if (dtnoDBDataSource==null) {
+			dtnoDBDataSource = new DatabaseeDataSourceDTNO(this);
+		}
+		return dtnoDBDataSource;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationToolbarComponents()
+	 */
+	@Override
+	public List<JComponent> getConfigurationToolbarComponents() {
+		return this.getConfigurationPanel().getConfigurationToolbarComponents();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationPanel()
+	 */
+	@Override
+	public JPanelDataSourceConfigurationDatabase getConfigurationPanel() {
+		if (jPanelDataSourceConfigurationDatabase==null) {
+			jPanelDataSourceConfigurationDatabase = new JPanelDataSourceConfigurationDatabase(this);
+			this.getDataController().addPropertyChangeListener(jPanelDataSourceConfigurationDatabase);
+		}
+		return jPanelDataSourceConfigurationDatabase;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetConfigurationPanel()
+	 */
+	@Override
+	public void resetConfigurationPanel() {
+		this.getDataController().removePropertyChangeListener(this.jPanelDataSourceConfigurationDatabase);
+		this.jPanelDataSourceConfigurationDatabase = null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getDetailViewPanel()
+	 */
+	@Override
+	public JComponent getDetailViewPanel() {
+		if (jPanelQueryConfiguration==null) {
+			jPanelQueryConfiguration = new JPanelQueryConfiguration(this);
+		}
+		return jPanelQueryConfiguration;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetDetailViewPanel()
+	 */
+	@Override
+	public void resetDetailViewPanel() {
+		jPanelQueryConfiguration = null;
+	}
+
+	
 }

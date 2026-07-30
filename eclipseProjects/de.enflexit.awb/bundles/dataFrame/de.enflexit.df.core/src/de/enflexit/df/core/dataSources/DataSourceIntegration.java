@@ -1,7 +1,8 @@
 package de.enflexit.df.core.dataSources;
 
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -10,7 +11,7 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface DataSourceIntegration<DS extends DefaultDataSource> {
+public interface DataSourceIntegration<DS extends DefaultDataSource> extends DataSourceConfigurationPanel {
 
 	
 	/**
@@ -49,12 +50,10 @@ public interface DataSourceIntegration<DS extends DefaultDataSource> {
 	public DS getDataSource();
 	
 	
-	
 	/**
-	 * Has to return data tree node object that extends the AbstractDTNO_DataSource.
+	 * Has to return DTNO, the 'data tree node object' that extends the AbstractDataSourceDTNO.
 	 * @return the data tree node
 	 */
-	public AbstractDTNO_DataSource<DS> getDataTreeNodeObject();
-	
+	public AbstractDataSourceDTNO<DS> getDTNO();
 	
 }

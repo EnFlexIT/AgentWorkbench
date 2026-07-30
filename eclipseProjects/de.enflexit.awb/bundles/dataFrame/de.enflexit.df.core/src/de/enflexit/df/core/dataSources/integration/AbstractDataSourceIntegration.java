@@ -17,12 +17,7 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 	private DataWorkbook dataWorkbook;
 	private DS dataSource;
 
-	/**
-	 * Instantiates a new abstract data source integration.
-	 */
-	public AbstractDataSourceIntegration() {
-		this(null, null, null);
-	}
+	
 	/**
 	 * Instantiates a new abstract data source integration.
 	 *

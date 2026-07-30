@@ -4,7 +4,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -134,10 +134,10 @@ public class DataControllerSelectionModel {
 	}
 	
 	/**
-	 * Returns the currently selected {@link AbstractDTNO_DataSource} if available.
+	 * Returns the currently selected {@link AbstractDataSourceDTNO} if available.
 	 * @return the selected data tree node data source
 	 */
-	public AbstractDTNO_DataSource<?> getSelectedDataTreeNodeDataSource() {
+	public AbstractDataSourceDTNO<?> getSelectedDataTreeNodeDataSource() {
 		
 		TreePath tpSelected = this.getSelectedTreePath();
 		if (tpSelected==null) return null;
@@ -146,8 +146,8 @@ public class DataControllerSelectionModel {
 		for (int i = pathNodes.length-1; i >=0 ; i--) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
 			Object userObject = treeNode.getUserObject();
-			if (userObject instanceof AbstractDTNO_DataSource<?>) {
-				return (AbstractDTNO_DataSource<?>) userObject;
+			if (userObject instanceof AbstractDataSourceDTNO<?>) {
+				return (AbstractDataSourceDTNO<?>) userObject;
 			}
 		}
 		return null;
@@ -166,8 +166,10 @@ public class DataControllerSelectionModel {
 		for (int i = pathNodes.length-1; i >=0 ; i--) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) pathNodes[i];
 			Object userObject = treeNode.getUserObject();
-			if (userObject instanceof DataSourceConfigurationPanel) {
-				return (DataSourceConfigurationPanel) userObject;
+			if (userObject instanceof DataSourceConfigurationPanel dsConfigPanel) {
+				return dsConfigPanel;
+			} else if (userObject instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+				return dsDTNO.getDataSourceIntegration();
 			}
 		}
 		return null;

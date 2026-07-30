@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
@@ -147,8 +147,8 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 			@Override
 			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
 				DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
-				if (dtno instanceof AbstractDTNO_DataSource<?>) {
-					AbstractDTNO_DataSource<?> dtnoDataSource = (AbstractDTNO_DataSource<?>) dtno;
+				if (dtno instanceof AbstractDataSourceDTNO<?>) {
+					AbstractDataSourceDTNO<?> dtnoDataSource = (AbstractDataSourceDTNO<?>) dtno;
 					if (dtnoDataSource.getDataSource() == dataSource) {
 						return true;
 					}
@@ -263,10 +263,10 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 
 		
 		// --- Create new node according to data source -------------
-		AbstractDTNO_DataSource<?> ds = null;
+		AbstractDataSourceDTNO<?> ds = null;
 		AbstractDataSourceIntegration<?> dsIntegration = dataSource.getDataSourceIntegration(this.getDataController(), dw);
 		if (dsIntegration!=null) {
-			ds = dsIntegration.getDataTreeNodeObject();
+			ds = dsIntegration.getDTNO();
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find DataSourceIntegration of class '" + dataSource.getClass().getSimpleName() + "'!");
 		}

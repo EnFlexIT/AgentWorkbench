@@ -22,18 +22,25 @@ public class JsonAdapterForDataSource extends TypeAdapter<DefaultDataSource>{
 	public void write(JsonWriter out, DefaultDataSource absDS) throws IOException {
 		
 		if (absDS == null) {
-            out.nullValue();
-            return;
-        }
+			out.nullValue();
+			return;
+		}
 
 		out.beginObject();
 		out.name("id").value(absDS.getId());
 		out.name("name").value(absDS.getName());
 		out.name("description").value(absDS.getDescription());
-		
+
 		out.name("rowsPerPage").value(absDS.getRowsPerPage());
 		out.name("storageConfiguration").value(absDS.getStorageConfiguration());
-		
+
+		out.name("dataSourceSubConfigurations");
+		out.beginArray();
+		for (String subConfig : absDS.getDataSourceSubConfigurations()) {
+			out.value(subConfig);
+		}
+		out.endArray();
+
 		out.endObject();
 	}
 	
@@ -45,62 +52,39 @@ public class JsonAdapterForDataSource extends TypeAdapter<DefaultDataSource>{
 
 		DefaultDataSource absDS = new DefaultDataSource();
 		in.beginObject();
-		
+
 		while (in.hasNext()) {
-			
+
 			String name = in.nextName().toLowerCase();
 			String value = in.nextString();
-			
-			if (name.equalsIgnoreCase("id")==true) {
+
+			if (name.equalsIgnoreCase("id") == true) {
 				absDS.setId(NumberHelper.parseInteger(value));
-			} else if (name.equalsIgnoreCase("name")==true) {
+			} else if (name.equalsIgnoreCase("name") == true) {
 				absDS.setName(value);
-			} else if (name.equalsIgnoreCase("description")==true) {
+			} else if (name.equalsIgnoreCase("description") == true) {
 				absDS.setDescription(value);
-			} else if (name.equalsIgnoreCase("rowsPerPage")==true) {
+			} else if (name.equalsIgnoreCase("rowsPerPage") == true) {
 				absDS.setRowsPerPage(NumberHelper.parseInteger(value));
-			} else if (name.equalsIgnoreCase("storageConfiguration")==true) {
+			} else if (name.equalsIgnoreCase("storageConfiguration") == true) {
 				absDS.setStorageConfiguration(value);
+			} else if (name.equalsIgnoreCase("dataSourceSubConfigurations") == true) {
+				if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
+					in.nextNull();
+				} else {
+					in.beginArray();
+					while (in.hasNext()) {
+						absDS.getDataSourceSubConfigurations().add(in.nextString());
+					}
+					in.endArray();
+				}
 			} else {
 				in.skipValue();
 			}
 		}
-		
+
 		in.endObject();
 		return absDS;
 	}
-
-	
-//	private static final String TYPE_KEY = "type";
-//	
-//	/* (non-Javadoc)
-//	 * @see com.google.gson.JsonDeserializer#deserialize(com.google.gson.JsonElement, java.lang.reflect.Type, com.google.gson.JsonDeserializationContext)
-//	 */
-//	@Override
-//	public DefaultDataSource deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-//
-//		JsonObject jObject = json.getAsJsonObject();
-//		String type = jObject.get(TYPE_KEY).getAsString();
-//		
-//		DefaultDataSource ds = null;
-//		if (type.toLowerCase().equals(CsvDataSource.class.getSimpleName().toLowerCase())==true) {
-//			ds = context.deserialize(json, CsvDataSource.class);
-//		} else if (type.toLowerCase().equals(ExcelDataSource.class.getSimpleName().toLowerCase())==true) {
-//			ds = context.deserialize(json, ExcelDataSource.class);
-//		} else if (type.toLowerCase().equals(DatabaseDataSource.class.getSimpleName().toLowerCase())==true) {
-//			ds = context.deserialize(json, DatabaseDataSource.class);
-//		}
-//		return ds;
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see com.google.gson.JsonSerializer#serialize(java.lang.Object, java.lang.reflect.Type, com.google.gson.JsonSerializationContext)
-//	 */
-//	@Override
-//	public JsonElement serialize(DefaultDataSource src, Type typeOfSrc, JsonSerializationContext context) {
-//		JsonObject jObject = (JsonObject) context.serialize(src, src.getClass());
-//		jObject.addProperty(TYPE_KEY, src.getClass().getSimpleName());
-//		return jObject;
-//	}
 
 }

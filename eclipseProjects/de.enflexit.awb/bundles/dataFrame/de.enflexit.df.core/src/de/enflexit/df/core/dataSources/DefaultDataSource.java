@@ -1,5 +1,8 @@
 package de.enflexit.df.core.dataSources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
@@ -13,6 +16,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
@@ -30,7 +35,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "name",
     "description",
     "rowsPerPage",
-    "storageConfiguration"
+    "storageConfiguration",
+    "dataSourceSubConfigurations"
 })
 public class DefaultDataSource implements DataSource {
 
@@ -50,6 +56,10 @@ public class DefaultDataSource implements DataSource {
 	
 	@Column(name="storage_configuration", nullable=true, length = 10000)
 	private String storageConfiguration;
+	
+	@XmlElementWrapper(name = "dataSourceSubConfigurations")
+	@XmlElement(name = "subConfiguration")
+	private List<String> dataSourceSubConfigurations;
 	
 	
 	/* (non-Javadoc)
@@ -233,6 +243,26 @@ public class DefaultDataSource implements DataSource {
 	@Override
 	public DataSource fromConfigurationString(String configurationString) {
 		return null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#requiresSubConfiguration()
+	 */
+	@Override
+	public boolean requiresSubConfiguration() {
+		return false; // By default
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getDataSourceConfigurations()
+	 */
+	@Override
+	public List<String> getDataSourceSubConfigurations() {
+		if (dataSourceSubConfigurations==null) {
+			dataSourceSubConfigurations = new ArrayList<>();
+		}
+		return dataSourceSubConfigurations;
 	}
 	
 }

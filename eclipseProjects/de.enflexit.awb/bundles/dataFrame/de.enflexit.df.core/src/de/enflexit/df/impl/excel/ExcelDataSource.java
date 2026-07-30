@@ -217,4 +217,12 @@ public class ExcelDataSource extends DefaultDataSource {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#requiresSubConfiguration()
+	 */
+	@Override
+	public boolean requiresSubConfiguration() {
+		return true;
+	}
+	
 }

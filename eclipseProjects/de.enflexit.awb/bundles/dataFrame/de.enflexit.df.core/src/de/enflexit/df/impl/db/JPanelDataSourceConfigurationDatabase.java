@@ -53,9 +53,9 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  * The Class JPanelDataSourceConfigurationDatabase.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
- * @param <DTNO_DatabaseeDataSource> the generic type
+ * @param <DatabaseeDataSourceDTNO> the generic type
  */
-public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSourceConfiguration<DTNO_DatabaseeDataSource> implements DocumentListener, HibernateStateVisualizationService, ActionListener, PropertyChangeListener {
+public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSourceConfiguration<DatabaseDataSource, DatabaseDataSourceIntegration> implements DocumentListener, HibernateStateVisualizationService, ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 
@@ -88,19 +88,11 @@ public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSou
 	 * Instantiates a new JPanelDataSourceConfigurationDatabase.
 	 * @param dsTreeNode the JPanelDataSourceConfigurationDatabase
 	 */
-	public JPanelDataSourceConfigurationDatabase(DTNO_DatabaseeDataSource dsTreeNode) {
-		super(dsTreeNode);
+	public JPanelDataSourceConfigurationDatabase(DatabaseDataSourceIntegration dsIntegration) {
+		super(dsIntegration);
 		this.initialize();
 		this.setDataSourceToUI();
 		SwingUtilities.invokeLater(() -> this.checkDatabaseSettings(false));
-	}
-	
-	/**
-	 * Returns the data source.
-	 * @return the data source
-	 */
-	private DatabaseDataSource getDataSource() {
-		return this.getDataTreeNodeDataSource().getDataSource();
 	}
 	
 	/**

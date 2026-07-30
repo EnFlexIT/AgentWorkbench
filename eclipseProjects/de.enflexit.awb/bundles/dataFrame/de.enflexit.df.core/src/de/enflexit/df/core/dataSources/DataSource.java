@@ -1,6 +1,7 @@
 package de.enflexit.df.core.dataSources;
 
 import java.io.Serializable;
+import java.util.List;
 
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -112,5 +113,19 @@ public interface DataSource extends Serializable {
 	 */
 	public DataSource fromConfigurationString(String configurationString);
 
+	
+	
+	/**
+	 * Requires sub configuration.
+	 * @return true, if a sub configuration is required 
+	 */
+	public boolean requiresSubConfiguration();
+	
+	/**
+	 * Returns the list of sub configurations that are based on the current DataSource.
+	 * @return the list of sub configurations
+	 */
+	public List<String> getDataSourceSubConfigurations();
+	
 	
 }

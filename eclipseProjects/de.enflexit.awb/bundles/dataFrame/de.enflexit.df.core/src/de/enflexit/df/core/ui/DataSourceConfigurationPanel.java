@@ -28,4 +28,17 @@ public interface DataSourceConfigurationPanel {
 	 */
 	public void resetConfigurationPanel();
 	
+	
+	
+	/**
+	 * Has to return a panel that is to be displayed in the detail area.
+	 * @return the configuration panel for sub elements
+	 */
+	public JComponent getDetailViewPanel();
+	
+	/**
+	 * Has to reset the panel that is to be displayed in the detail area.
+	 */
+	public void resetDetailViewPanel();
+	
 }

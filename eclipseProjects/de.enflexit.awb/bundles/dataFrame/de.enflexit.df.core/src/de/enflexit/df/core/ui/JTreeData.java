@@ -20,7 +20,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataTreeModel;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
@@ -147,7 +147,7 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 					// --- Delete currently selected data source --------------
 					DataController dc = JTreeData.this.getDataController();
 					DataWorkbook dw = dc.getSelectionModel().getSelectedDataWorkbook();
-					AbstractDTNO_DataSource<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
+					AbstractDataSourceDTNO<?> dtnoDataSource = dc.getSelectionModel().getSelectedDataTreeNodeDataSource();
 					if (dw!=null && dtnoDataSource!=null) {
 						// --- Ask the user to delete the data source ---------
 						dc.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(JTreeData.this), dw, dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
@@ -316,9 +316,8 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 		if (treeNode==null || treeNode==selTreeNode) return;
 		
 		Object userObject = treeNode.getUserObject();
-		if (userObject instanceof DataSourceConfigurationPanel) {
-			DataSourceConfigurationPanel dtnoDS = (DataSourceConfigurationPanel) userObject;
-			dtnoDS.resetConfigurationPanel();
+		if (userObject instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+			dsDTNO.getDataSourceIntegration().resetConfigurationPanel();
 		}
 		
 		// --- Work on sub tree nodes
