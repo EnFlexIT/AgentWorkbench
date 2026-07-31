@@ -16,8 +16,6 @@
    <launcherArgs>
       <vmArgs>-Xms512M -Xmx4G
       </vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
-      </vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="icons/awb16.png" i32="icons/awb32.png" i48="icons/awb48.png" i64="icons/awb64.png" i128="icons/awb128.png" i256="icons/awb256.png"/>

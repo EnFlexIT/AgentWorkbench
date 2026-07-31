@@ -8,6 +8,7 @@ import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.oshi.SystemIDGeneration;
 import jnt.scimark2.Constants;
 import jnt.scimark2.Kernel;
+import jnt.scimark2.MonteCarlo;
 import jnt.scimark2.Random;
 
 /**
@@ -32,6 +33,13 @@ public class BenchmarkMeasurement extends Thread {
 	private boolean benchAllwaysSkip = Application.getGlobalInfo().isBenchAlwaysSkip();
 	private String benchExecOn = Application.getGlobalInfo().getBenchExecOn();
 	private String localSystemID;
+	
+	/**
+	 * The highest sample count that may be passed to {@link MonteCarlo#integrate(int)}, which takes an
+	 * int. 2^30 is the largest power of two that still is a positive int.
+	 * @see #measureMonteCarloSafe(double)
+	 */
+	private static final int MONTE_CARLO_MAX_SAMPLES = 1 << 30;
 	
 	private double min_time = Constants.RESOLUTION_DEFAULT;
 	private int FFT_size = Constants.FFT_SIZE;
@@ -96,7 +104,7 @@ public class BenchmarkMeasurement extends Thread {
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(3);
-			res[3] = Kernel.measureMonteCarlo(min_time, R);
+			res[3] = this.measureMonteCarloSafe(min_time);
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(4);
@@ -140,6 +148,63 @@ public class BenchmarkMeasurement extends Thread {
 		} finally {
 			Application.setBenchmarkRunning(false);	
 		}
+	}
+	
+	/**
+	 * Overflow-safe replacement for {@link Kernel#measureMonteCarlo(double, Random)}.<br><br>
+	 * 
+	 * The SciMark2 original calibrates by doubling an <b>int</b> sample counter until a single run
+	 * takes at least <code>minTime</code> seconds. On CPUs that execute 2^30 samples in less than 
+	 * <code>minTime</code>, that counter overflows to a negative value and then to 0. Since 
+	 * {@link MonteCarlo#integrate(int)} returns immediately for a non-positive sample count, the 
+	 * measured time stays 0 and the calibration loop spins endlessly at full CPU load - the 
+	 * benchmark never finishes and thus the AWB start-up blocks forever while waiting for it in 
+	 * <code>Application.waitForBenchmark()</code>.<br><br>
+	 * 
+	 * This variant calibrates with a long counter, caps the sample count per run at 
+	 * {@link #MONTE_CARLO_MAX_SAMPLES} and, if that cap is reached, repeats the run often enough to 
+	 * still fill the requested measuring interval. For systems on which the original already 
+	 * terminates, the result is unchanged.
+	 *
+	 * @param minTime the minimum measuring interval in seconds
+	 * @return the approximated performance in Mflops
+	 */
+	private double measureMonteCarloSafe(double minTime) {
+		
+		// --- Calibrate upwards, but never overflow the int argument ------------
+		long samples = 1;
+		while (samples < MONTE_CARLO_MAX_SAMPLES) {
+			double seconds = this.timeMonteCarlo((int) samples, 1);
+			if (seconds >= minTime) {
+				return MonteCarlo.num_flops((int) samples) / seconds * 1.0e-6;
+			}
+			samples *= 2;
+		}
+		
+		// --- Cap reached: this CPU is faster than one int-sized run ------------
+		double singleRun = this.timeMonteCarlo(MONTE_CARLO_MAX_SAMPLES, 1);
+		if (singleRun<=0) return 0;
+		
+		int runs = (int) Math.max(1, Math.ceil(minTime / singleRun));
+		double seconds = this.timeMonteCarlo(MONTE_CARLO_MAX_SAMPLES, runs);
+		if (seconds<=0) return 0;
+		
+		return MonteCarlo.num_flops(MONTE_CARLO_MAX_SAMPLES) * runs / seconds * 1.0e-6;
+	}
+	
+	/**
+	 * Executes the Monte Carlo integration the specified number of times and measures the duration.
+	 *
+	 * @param samples the number of samples to use for a single run
+	 * @param runs the number of runs to execute
+	 * @return the elapsed time in seconds
+	 */
+	private double timeMonteCarlo(int samples, int runs) {
+		long nanoStart = System.nanoTime();
+		for (int i = 0; i < runs; i++) {
+			MonteCarlo.integrate(samples);
+		}
+		return (System.nanoTime() - nanoStart) / 1.0e9;
 	}
 	
 	/**
