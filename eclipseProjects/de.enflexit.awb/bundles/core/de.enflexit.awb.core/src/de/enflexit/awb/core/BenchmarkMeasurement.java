@@ -8,7 +8,9 @@ import de.enflexit.awb.simulation.load.LoadMeasureThread;
 import de.enflexit.oshi.SystemIDGeneration;
 import jnt.scimark2.Constants;
 import jnt.scimark2.Kernel;
+import jnt.scimark2.MonteCarlo;
 import jnt.scimark2.Random;
+import jnt.scimark2.Stopwatch;
 
 /**
  * This thread is doing the actual benchmark measurements, which 
@@ -96,7 +98,7 @@ public class BenchmarkMeasurement extends Thread {
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(3);
-			res[3] = Kernel.measureMonteCarlo(min_time, R);
+			res[3] = this.measureMonteCarloSafe(min_time);
 			if (this.isSkipAction()) return;
 			
 			this.setBenchmarkProgress(4);
@@ -142,6 +144,37 @@ public class BenchmarkMeasurement extends Thread {
 		}
 	}
 	
+	/**
+	 * Measures the MonteCarlo performance in Mflops, replicating the adaptive
+	 * timing loop of {@link Kernel#measureMonteCarlo(double, Random)} but with
+	 * an integer-overflow guard.
+	 * <p>
+	 * The original SciMark2 library doubles an {@code int cycles} counter until
+	 * the measured time reaches {@code min_time}. On fast hardware (e.g. Apple
+	 * Silicon) the MonteCarlo kernel is light enough to complete {@code 2^30}
+	 * samples in under {@code min_time}, after which {@code cycles *= 2}
+	 * overflows to {@code Integer.MIN_VALUE} and then {@code 0}, producing an
+	 * infinite CPU spin that never terminates. This method caps {@code cycles}
+	 * at {@code 1 << 30} so the loop always terminates with a valid result.
+	 * </p>
+	 * @param min_time the minimum measurement time in seconds
+	 * @return the measured performance in Mflops
+	 */
+	private double measureMonteCarloSafe(double min_time) {
+		Stopwatch Q = new Stopwatch();
+		int cycles = 1;
+		while (true) {
+			Q.start();
+			MonteCarlo.integrate(cycles);
+			Q.stop();
+			if (Q.read() >= min_time) break;
+			if (cycles >= (1 << 30)) break; // overflow guard for fast hardware
+			cycles *= 2;
+		}
+		// approx Mflops
+		return MonteCarlo.num_flops(cycles) / Q.read() * 1.0e-6;
+	}
+
 	/**
 	 * Returns the visual BenchmarkMonitor (if the application is not running headless).
 	 * @return the benchmark monitor

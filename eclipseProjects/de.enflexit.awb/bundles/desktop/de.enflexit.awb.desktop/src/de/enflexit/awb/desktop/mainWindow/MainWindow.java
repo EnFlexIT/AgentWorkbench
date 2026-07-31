@@ -57,6 +57,7 @@ import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowMenu;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowMenuItem;
 import de.enflexit.awb.baseUI.mainWindow.MainWindowExtension.MainWindowToolbarComponent;
 import de.enflexit.awb.core.Application;
+import de.enflexit.awb.core.AwbIApplication;
 import de.enflexit.awb.core.ApplicationListener;
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.jade.Platform.JadeStatusColor;
@@ -88,6 +89,7 @@ import de.enflexit.common.swing.JFrameSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.common.swing.fileSelection.DirectoryDialog;
+import de.enflexit.common.SystemEnvironmentHelper;
 import de.enflexit.language.Language;
 
 /**
@@ -207,6 +209,26 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 		// --- Place MainWindow center on screen --------------------
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ScreenCenter);
 		this.toFront();
+		
+		// --- On macOS, re-request the foreground after the window ---
+		//     is realized. requestForeground() is asynchronous on the
+		//     AppKit thread, so deferring it to a later EDT event lets
+		//     the activation settle. No-op on Windows/Linux.
+		//     The splash is closed AFTER activation completes, so the
+		//     process is the foreground app before the splash disappears.
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				SystemEnvironmentHelper.requestForeground();
+				MainWindow.this.toFront();
+				// --- Close the splash after the process is activated ---
+				Application.getAwbIApplication().setApplicationIsRunning();
+				// --- Force-close the native splash on macOS if any ---
+				SystemEnvironmentHelper.closeSplashScreen();
+				// --- Close the Swing splash (macOS replacement) ---
+				AwbIApplication.closeSwingSplash();
+			}
+		});
 		
 		// --- Add the MainWindow as an Application Listener --------
 		Application.addApplicationListener(this);
@@ -1506,7 +1528,13 @@ public class MainWindow extends JFrame implements AwbMainWindow<JMenu, JMenuItem
 			jMenuMainHelp.add(new CWMenuItem("HelpAWBChanges", Language.translate("Letzte Änderungen")));
 			jMenuMainHelp.addSeparator();
 			//jMenuMainHelp.add(new CWMenuItem("EclipsePreferences", "Preferences", null));
-			jMenuMainHelp.add(new CWMenuItem("EclipseWindow", "Eclipse Window", "eclipse.png"));
+			// --- Eclipse Window (SWT) is unavailable on macOS due to a ---
+			//     fundamental SWT/Swing main-thread conflict: SWT/Cocoa
+			//     requires -XstartOnFirstThread, but AWT/Swing requires it
+			//     to be absent. Both cannot coexist in the same JVM on macOS.
+			if (SystemEnvironmentHelper.isMacOperatingSystem()==false) {
+				jMenuMainHelp.add(new CWMenuItem("EclipseWindow", "Eclipse Window", "eclipse.png"));
+			}
 		}
 		return jMenuMainHelp;
 	}

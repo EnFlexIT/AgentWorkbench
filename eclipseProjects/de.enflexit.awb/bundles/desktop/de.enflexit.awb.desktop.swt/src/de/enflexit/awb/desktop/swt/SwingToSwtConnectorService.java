@@ -43,13 +43,19 @@ public class SwingToSwtConnectorService implements de.enflexit.awb.core.ui.Swing
 				}
 			}, "Eclipse Workbench Thread").start();
 
-			// --- Wait for the end of the workbench start phase ----
-			while (PlatformUI.isWorkbenchRunning()==false) {
+			// --- Wait for the workbench to start (with timeout) ---
+			//     The 30s timeout prevents an indefinite EDT freeze if
+			//     SWT fails to start (e.g. on macOS without -XstartOnFirstThread).
+			long timeout = System.currentTimeMillis() + 30000;
+			while (PlatformUI.isWorkbenchRunning()==false && System.currentTimeMillis() < timeout) {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			}
+			if (PlatformUI.isWorkbenchRunning()==false) {
+				System.err.println("[AWB-SWT-DIAG] Eclipse workbench failed to start within 30s timeout");
 			}
 			
 		} else {

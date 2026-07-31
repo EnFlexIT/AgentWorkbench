@@ -16,7 +16,7 @@
    <launcherArgs>
       <vmArgs>-Xms512M -Xmx4G
       </vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      <vmArgsMac>--add-opens java.desktop/com.apple.eawt=ALL-UNNAMED -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
 

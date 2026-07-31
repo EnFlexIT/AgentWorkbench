@@ -1,11 +1,20 @@
 package de.enflexit.awb.core;
 
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
+import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+
 import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.awb.core.config.GlobalInfo.AWBProduct;
 import de.enflexit.awb.core.ui.AgentWorkbenchUiManager;
@@ -60,7 +69,18 @@ public class AwbIApplication implements AwbIApplicationInterface {
 	 */
 	@Override
 	public void setApplicationIsRunning() {
-		this.getIApplicationContext().applicationRunning();	
+		System.err.println("[AWB-MAC-DIAG] setApplicationIsRunning() called");
+		this.getIApplicationContext().applicationRunning();
+		// --- Fallback: close the AWT splash if Eclipse's applicationRunning() ---
+		//     failed to dismiss it (e.g. when called from a non-main thread on macOS).
+		try {
+			java.awt.SplashScreen splash = java.awt.SplashScreen.getSplashScreen();
+			if (splash != null) {
+				splash.close();
+				System.err.println("[AWB-MAC-DIAG] AWT SplashScreen closed as fallback");
+			}
+		} catch (Throwable ignore) {
+		}
 	}
 	
 	/**
@@ -72,7 +92,68 @@ public class AwbIApplication implements AwbIApplicationInterface {
 			Thread.sleep(250);
 		}
 	}
-	
+
+	/** The Swing splash window (macOS only, replaces the native Eclipse splash). */
+	private static JWindow swingSplash;
+
+	/**
+	 * Shows a Swing-based splash screen on macOS, loading the {@code splash.png}
+	 * from the {@code de.enflexit.awb.core} bundle. This replaces the native
+	 * Eclipse splash (disabled with {@code -nosplash}) which deadlocks the
+	 * launcher when used with {@code -XstartOnFirstThread} on macOS Tahoe 26.
+	 * <p>
+	 * Must be called on the main thread (after AWT is initialized).
+	 * </p>
+	 */
+	private static void showSwingSplash() {
+		try {
+			Bundle bundle = FrameworkUtil.getBundle(AwbIApplication.class);
+			if (bundle == null) {
+				System.err.println("[AWB-MAC-DIAG] showSwingSplash: bundle not found");
+				return;
+			}
+			URL splashUrl = bundle.getEntry("/splash.png");
+			if (splashUrl == null) {
+				System.err.println("[AWB-MAC-DIAG] showSwingSplash: splash.png not found in bundle");
+				return;
+			}
+			splashUrl = FileLocator.resolve(splashUrl);
+			BufferedImage image = ImageIO.read(splashUrl);
+			if (image == null) {
+				System.err.println("[AWB-MAC-DIAG] showSwingSplash: could not read splash image");
+				return;
+			}
+			swingSplash = new JWindow();
+			javax.swing.JLabel label = new javax.swing.JLabel(new javax.swing.ImageIcon(image));
+			swingSplash.getContentPane().add(label);
+			swingSplash.pack();
+			swingSplash.setLocationRelativeTo(null);
+			swingSplash.setVisible(true);
+			System.err.println("[AWB-MAC-DIAG] showSwingSplash: visible (" + image.getWidth() + "x" + image.getHeight() + ")");
+		} catch (Throwable ex) {
+			System.err.println("[AWB-MAC-DIAG] showSwingSplash FAILED: " + ex.getMessage());
+		}
+	}
+
+	/**
+	 * Closes and disposes the Swing splash screen if it is currently visible.
+	 * Called from {@code MainWindow}'s {@code invokeLater} after the main window
+	 * is activated.
+	 */
+	public static void closeSwingSplash() {
+		if (swingSplash != null) {
+			try {
+				swingSplash.setVisible(false);
+				swingSplash.dispose();
+				System.err.println("[AWB-MAC-DIAG] closeSwingSplash: disposed");
+			} catch (Throwable ex) {
+				System.err.println("[AWB-MAC-DIAG] closeSwingSplash FAILED: " + ex.getMessage());
+			} finally {
+				swingSplash = null;
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.awb.core.AwbIApplicationInterface#getAwbProduct()
 	 */
@@ -89,8 +170,22 @@ public class AwbIApplication implements AwbIApplicationInterface {
 
 		// --- Preparations for MAC environment -----------
 		if (SystemEnvironmentHelper.isMacOperatingSystem()==true) {
+			// --- Set the macOS application name before AWT loads ---
+			//     so the menu bar / dock show the right name.
+			System.setProperty("apple.awt.application.name", "Agent.Workbench");
 			// --- Ensure to start AWT --------------------
 		    Toolkit.getDefaultToolkit();
+			// --- Activate the process as the foreground ---
+			//     application before any window is created.
+			//     requestForeground() is asynchronous on the
+			//     AppKit thread, so doing it early gives the
+			//     activation a head start over window show.
+			SystemEnvironmentHelper.requestForeground();
+			// --- Show a Swing splash (the native Eclipse splash ---
+			//     is disabled with -nosplash on macOS to avoid a
+			//     deadlock in the launcher's _update_splash native
+			//     call when -XstartOnFirstThread is used).
+			showSwingSplash();
 		}
 		
 		// --- Set the product indicator ------------------
@@ -222,7 +317,12 @@ public class AwbIApplication implements AwbIApplicationInterface {
 		}
 
 		// --- Remove splash screen -----------------------
-		this.setApplicationIsRunning();
+		// For headless mode, close immediately. For non-headless, the splash
+		// is closed from MainWindow's invokeLater (after macOS activation),
+		// so the process is activated before the splash is dismissed.
+		if (Application.isOperatingHeadless()) {
+			this.setApplicationIsRunning();
+		}
 		
 		return appReturnValue;
 	}
