@@ -42,6 +42,10 @@ public class UpdateCheckCoordinatorBackend {
     	}
         return status;
     }
+    
+    public void setUpdateCheckStatusBackend(UpdateCheckStatusBackend status) {
+    	this.status = status;
+    }
 
     /**
      * Starts a thread which checks for newer bundles.

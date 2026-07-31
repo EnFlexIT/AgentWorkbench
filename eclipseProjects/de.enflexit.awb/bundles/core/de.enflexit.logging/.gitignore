@@ -1,2 +1,4 @@
 /target/
 /.polyglot.META-INF
+
+*.log
