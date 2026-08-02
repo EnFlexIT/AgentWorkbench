@@ -35,11 +35,15 @@ public class JsonAdapterForDataSource extends TypeAdapter<DefaultDataSource>{
 		out.name("storageConfiguration").value(absDS.getStorageConfiguration());
 
 		out.name("dataSourceSubConfigurations");
-		out.beginArray();
-		for (String subConfig : absDS.getDataSourceSubConfigurations()) {
-			out.value(subConfig);
-		}
-		out.endArray();
+		if (absDS.getDataSourceSubConfigurations() == null) {
+	        out.nullValue();
+	    } else {
+	        out.beginArray();
+	        for (String subConfig : absDS.getDataSourceSubConfigurations()) {
+	            out.value(subConfig);
+	        }
+	        out.endArray();
+	    }
 
 		out.endObject();
 	}
@@ -56,18 +60,17 @@ public class JsonAdapterForDataSource extends TypeAdapter<DefaultDataSource>{
 		while (in.hasNext()) {
 
 			String name = in.nextName().toLowerCase();
-			String value = in.nextString();
 
 			if (name.equalsIgnoreCase("id") == true) {
-				absDS.setId(NumberHelper.parseInteger(value));
+				absDS.setId(NumberHelper.parseInteger(in.nextString()));
 			} else if (name.equalsIgnoreCase("name") == true) {
-				absDS.setName(value);
+				absDS.setName(in.nextString());
 			} else if (name.equalsIgnoreCase("description") == true) {
-				absDS.setDescription(value);
+				absDS.setDescription(in.nextString());
 			} else if (name.equalsIgnoreCase("rowsPerPage") == true) {
-				absDS.setRowsPerPage(NumberHelper.parseInteger(value));
+				absDS.setRowsPerPage(NumberHelper.parseInteger(in.nextString()));
 			} else if (name.equalsIgnoreCase("storageConfiguration") == true) {
-				absDS.setStorageConfiguration(value);
+				absDS.setStorageConfiguration(in.nextString());
 			} else if (name.equalsIgnoreCase("dataSourceSubConfigurations") == true) {
 				if (in.peek() == com.google.gson.stream.JsonToken.NULL) {
 					in.nextNull();

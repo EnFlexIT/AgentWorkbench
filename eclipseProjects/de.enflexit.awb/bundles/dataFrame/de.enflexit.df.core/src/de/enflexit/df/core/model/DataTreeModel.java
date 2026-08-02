@@ -275,6 +275,10 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ds);
 		dwNode.add(newNode);
 		
+		// --- Set the node to the data source integration ----------
+		dsIntegration.setDataTreeNode(newNode);
+		dsIntegration.addDataTreeSubNodes();
+		
 		Object[] pathToParent = dwNode.getPath();
 		int[] newIndicies = {dwNode.getIndex(newNode)};
 		Object[] newChildren = {newNode}; 

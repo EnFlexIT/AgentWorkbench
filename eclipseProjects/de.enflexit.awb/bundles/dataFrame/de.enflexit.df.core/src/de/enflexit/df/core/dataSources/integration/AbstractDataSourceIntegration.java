@@ -1,5 +1,7 @@
 package de.enflexit.df.core.dataSources.integration;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import de.enflexit.df.core.dataSources.DataSourceIntegration;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.DataController;
@@ -17,6 +19,7 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 	private DataWorkbook dataWorkbook;
 	private DS dataSource;
 
+	private DefaultMutableTreeNode treeNode;
 	
 	/**
 	 * Instantiates a new abstract data source integration.
@@ -79,5 +82,28 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 		return dataSource;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#setDataTreeNode(javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public void setDataTreeNode(DefaultMutableTreeNode treeNode) {
+		this.treeNode = treeNode;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#getDataTreeNode()
+	 */
+	@Override
+	public DefaultMutableTreeNode getDataTreeNode() {
+		return this.treeNode;
+	}
 
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#addDataTreeSubNodes()
+	 */
+	public void addDataTreeSubNodes() { }
+	
+	
+	
 }

@@ -43,6 +43,11 @@ public class DataSourceHelper {
 		dDataSource.setDescription(ds.getDescription());
 		dDataSource.setRowsPerPage(ds.getRowsPerPage());
 		dDataSource.setStorageConfiguration(ds.getStorageConfiguration());
+		
+		// --- Transfer the sub configurations ------------
+		ds.updateSubConfigurations();
+		dDataSource.getDataSourceSubConfigurations().addAll(ds.getDataSourceSubConfigurations());
+		
 		return dDataSource;
 	}
 	
@@ -78,7 +83,12 @@ public class DataSourceHelper {
 		// --- Load the configuration to the actual DataSource ------
 		DefaultDataSource actDS = ds.newInstance();
 		try {
+			// --- Call the from configuration string method --------
 			actDS.fromConfigurationString(configurationString);
+			
+			// --- Add sub configuration to the actual instance ----- 
+			actDS.getDataSourceSubConfigurations().addAll(dDS.getDataSourceSubConfigurations());
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} 

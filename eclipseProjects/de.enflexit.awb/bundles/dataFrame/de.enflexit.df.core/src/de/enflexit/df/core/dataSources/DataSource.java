@@ -122,6 +122,12 @@ public interface DataSource extends Serializable {
 	public boolean requiresSubConfiguration();
 	
 	/**
+	 * Will be invoked to enforce an update of the sub configurations 
+	 * that are to be returned by {@link #getDataSourceSubConfigurations()}.
+	 */
+	public void updateSubConfigurations();
+	
+	/**
 	 * Returns the list of sub configurations that are based on the current DataSource.
 	 * @return the list of sub configurations
 	 */

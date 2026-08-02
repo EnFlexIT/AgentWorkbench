@@ -8,8 +8,13 @@ import de.enflexit.common.StringHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -57,6 +62,14 @@ public class DefaultDataSource implements DataSource {
 	@Column(name="storage_configuration", nullable=true, length = 10000)
 	private String storageConfiguration;
 	
+	
+	@ElementCollection
+	@CollectionTable(
+			name = "data_sources_sub_configurations", 
+			joinColumns = @JoinColumn(name = "id_data_source"),
+			 foreignKey = @ForeignKey(name = "fk_id_data_sources"))
+	@Column(name = "sub_configuration")
+	@OrderColumn(name = "number")
 	@XmlElementWrapper(name = "dataSourceSubConfigurations")
 	@XmlElement(name = "subConfiguration")
 	private List<String> dataSourceSubConfigurations;
@@ -255,6 +268,12 @@ public class DefaultDataSource implements DataSource {
 	}
 	
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#updateSubConfigurations()
+	 */
+	@Override
+	public void updateSubConfigurations() { }
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#getDataSourceConfigurations()
 	 */
 	@Override
@@ -264,5 +283,8 @@ public class DefaultDataSource implements DataSource {
 		}
 		return dataSourceSubConfigurations;
 	}
+
+
+	
 	
 }

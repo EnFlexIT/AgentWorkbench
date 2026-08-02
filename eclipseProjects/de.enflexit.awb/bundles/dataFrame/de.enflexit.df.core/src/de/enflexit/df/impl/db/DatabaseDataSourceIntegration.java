@@ -3,6 +3,7 @@ package de.enflexit.df.impl.db;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
@@ -15,7 +16,7 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  */
 public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration<DatabaseDataSource> {
 
-	private DatabaseeDataSourceDTNO dtnoDBDataSource;
+	private DatabaseDataSourceDTNO dtnoDBDataSource;
 	private JPanelDataSourceConfigurationDatabase jPanelDataSourceConfigurationDatabase;
 	private JPanelQueryConfiguration jPanelQueryConfiguration;
 	
@@ -38,7 +39,7 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 	@Override
 	public AbstractDataSourceDTNO<DatabaseDataSource> getDTNO() {
 		if (dtnoDBDataSource==null) {
-			dtnoDBDataSource = new DatabaseeDataSourceDTNO(this);
+			dtnoDBDataSource = new DatabaseDataSourceDTNO(this);
 		}
 		return dtnoDBDataSource;
 	}
@@ -89,5 +90,24 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 		jPanelQueryConfiguration = null;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration#addDataTreeSubNodes()
+	 */
+	@Override
+	public void addDataTreeSubNodes() {
+		
+		DefaultMutableTreeNode parentNode = this.getDataTreeNode();
+		for (DatabaseQuery dbQuery : this.getDataSource().getDatabaseQueryList()) {
+			
+			DatabaseDataSourceIntegration4SQL dbSqlIntegration = new DatabaseDataSourceIntegration4SQL(this.getDataController(), this.getDataWorkbook(), this.getDataSource());
+			dbSqlIntegration.setDatabaseQuery(dbQuery);
+			
+			DatabaseDataSourceDTNO4SQL dtnoSQL = new DatabaseDataSourceDTNO4SQL(dbSqlIntegration);
+			DefaultMutableTreeNode newChildNode = new DefaultMutableTreeNode(dtnoSQL);
+			parentNode.add(newChildNode);
+		}
+	}
+	
 	
 }

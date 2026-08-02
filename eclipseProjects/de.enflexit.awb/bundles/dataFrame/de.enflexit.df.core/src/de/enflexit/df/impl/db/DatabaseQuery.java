@@ -10,7 +10,7 @@ import de.enflexit.common.StringHelper;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DatabaseQuery implements Serializable {
+public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 
 	private static final long serialVersionUID = 6770803530373291509L;
 	
@@ -81,6 +81,14 @@ public class DatabaseQuery implements Serializable {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(DatabaseQuery dbQuery) {
+		return Integer.compare(this.getNumber(), dbQuery.getNumber());
+	}
+	
 	
 	/**
 	 * Converts the current instance into a configuration string.
@@ -142,5 +150,5 @@ public class DatabaseQuery implements Serializable {
 		} // end for
 		return dbQuery;
 	}
-	
+
 }

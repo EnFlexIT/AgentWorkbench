@@ -1,5 +1,7 @@
 package de.enflexit.df.core.dataSources;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
@@ -55,5 +57,24 @@ public interface DataSourceIntegration<DS extends DefaultDataSource> extends Dat
 	 * @return the data tree node
 	 */
 	public AbstractDataSourceDTNO<DS> getDTNO();
+
+	
+	/**
+	 * Will be invoked if the tree node of the DataSource was created.
+	 * @param treeNode the new data tree node
+	 */
+	public void setDataTreeNode(DefaultMutableTreeNode treeNode);
+	/**
+	 * Has to return the tree node of the data source that was given 
+	 * by the method {@link #setDataTreeNode(DefaultMutableTreeNode)}.
+	 * 
+	 * @return the data tree node
+	 */
+	public DefaultMutableTreeNode getDataTreeNode();
+	
+	/**
+	 * Has to add all data tree sub nodes.
+	 */
+	public void addDataTreeSubNodes();
 	
 }

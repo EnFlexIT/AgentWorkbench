@@ -5,10 +5,10 @@ import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 
 /**
- * The Class DatabaseeDataSourceDTNO.
+ * The Class DatabaseDataSourceDTNO.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DatabaseeDataSourceDTNO extends AbstractDataSourceDTNO<DatabaseDataSource> {
+public class DatabaseDataSourceDTNO extends AbstractDataSourceDTNO<DatabaseDataSource> {
 
 	private PaginationDataLoader4DB paginationDataLoader4DB;
 	
@@ -16,7 +16,7 @@ public class DatabaseeDataSourceDTNO extends AbstractDataSourceDTNO<DatabaseData
 	 * Instantiates a new data tree node data source database.
 	 * @param dsIntegration the ds integration
 	 */
-	public DatabaseeDataSourceDTNO(DatabaseDataSourceIntegration dsIntegration) {
+	public DatabaseDataSourceDTNO(DatabaseDataSourceIntegration dsIntegration) {
 		super(dsIntegration);
 		if (this.getDataSource().getName()==null) {
 			this.getDataSource().setName("New Database Connection");

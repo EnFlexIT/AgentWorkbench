@@ -53,7 +53,7 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  * The Class JPanelDataSourceConfigurationDatabase.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
- * @param <DatabaseeDataSourceDTNO> the generic type
+ * @param <DatabaseDataSourceDTNO> the generic type
  */
 public class JPanelDataSourceConfigurationDatabase extends AbstractJPanelDataSourceConfiguration<DatabaseDataSource, DatabaseDataSourceIntegration> implements DocumentListener, HibernateStateVisualizationService, ActionListener, PropertyChangeListener {
 

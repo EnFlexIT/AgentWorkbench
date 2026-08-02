@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -65,14 +66,15 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	private JScrollPane jScrollPaneSQLList;
 	private JTable jTableDatabaseQueries;
 	private DefaultTableModel tablModelDatabaseQuery;
-	private JButton jButtonQueryUp;
-	private JButton jButtonQueryDown;
+	
 	private JToolBar jToolBarDatabaseQuery;
 	private JButton jButtonQueryAdd;
-	private JButton jButtonQueryRemove;
 	private JButton jButtonQuerySave;
+	private JButton jButtonQueryRemove;
+	private JButton jButtonQueryUp;
+	private JButton jButtonQueryDown;
 	private JButton jButtonQueryCheck;
-	
+	private JButton jButtonShowTable;
 	
 	/**
 	 * Instantiates a new JPanel that enables to configure queries.
@@ -106,7 +108,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	 * Saves the current database query list.
 	 */
 	private void saveDatabaseQueryList() {
-		this.databaseDataSourceIntegration.getDataSource().saveDatabaseQueryList();
+		this.databaseDataSourceIntegration.getDataSource().updateSubConfigurations();
 	}
 	
 	/**
@@ -307,15 +309,29 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	
 	/**
 	 * Adds a DatabaseQuery to the table model.
+	 *
 	 * @param dbQuery the DatabaseQuery
 	 */
 	private void addDatabaseQueryToTable(DatabaseQuery dbQuery) {
+		this.addDatabaseQueryToTable(dbQuery, null);
+	}
+	/**
+	 * Adds a DatabaseQuery to the table model.
+	 *
+	 * @param dbQuery the DatabaseQuery
+	 * @param atRowIndex the at row index
+	 */
+	private void addDatabaseQueryToTable(DatabaseQuery dbQuery, Integer atRowIndex) {
 		Vector<Object> row = new Vector<>();
 		row.add(dbQuery);
 		row.add(dbQuery.getNumber());
 		row.add(dbQuery.getName());
 		row.add(dbQuery.getSqlStatement());
-		this.getTableModelDatabaseQuery().addRow(row);
+		if (atRowIndex==null) {
+			this.getTableModelDatabaseQuery().addRow(row);
+		} else {
+			this.getTableModelDatabaseQuery().insertRow(atRowIndex, row);
+		}
 	}
 	/**
 	 * Updates the table row of the specified DatabaseQuery.
@@ -383,10 +399,11 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			jToolBarDatabaseQuery.add(this.getJButtonQuerySave());
 			jToolBarDatabaseQuery.add(this.getJButtonQueryRemove());
 			jToolBarDatabaseQuery.addSeparator();
-			jToolBarDatabaseQuery.add(getJButtonQueryCheck());
-			jToolBarDatabaseQuery.addSeparator();
 			jToolBarDatabaseQuery.add(this.getJButtonQueryUp());
 			jToolBarDatabaseQuery.add(this.getJButtonQueryDown());
+			jToolBarDatabaseQuery.addSeparator();
+			jToolBarDatabaseQuery.add(getJButtonQueryCheck());
+			jToolBarDatabaseQuery.add(getJButtonShowTable());
 			jToolBarDatabaseQuery.addSeparator();
 		}
 		return jToolBarDatabaseQuery;
@@ -424,18 +441,6 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	}
 	
 	
-	private JButton getJButtonQueryCheck() {
-		if (jButtonQueryCheck == null) {
-			jButtonQueryCheck = new JButton();
-			jButtonQueryCheck.setIcon(BundleHelper.getImageIcon("MBcheckRed.png"));
-			jButtonQueryCheck.setToolTipText("Check current SQL statement");
-			jButtonQueryCheck.setPreferredSize(new Dimension(26, 26));
-			jButtonQueryCheck.addActionListener(this);
-		}
-		return jButtonQueryCheck;
-	}
-	
-	
 	private JButton getJButtonQueryUp() {
 		if (jButtonQueryUp == null) {
 			jButtonQueryUp = new JButton();
@@ -458,6 +463,26 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	}
 	
 	
+	private JButton getJButtonQueryCheck() {
+		if (jButtonQueryCheck == null) {
+			jButtonQueryCheck = new JButton();
+			jButtonQueryCheck.setIcon(BundleHelper.getImageIcon("MBcheckRed.png"));
+			jButtonQueryCheck.setToolTipText("Check current SQL statement");
+			jButtonQueryCheck.setPreferredSize(new Dimension(26, 26));
+			jButtonQueryCheck.addActionListener(this);
+		}
+		return jButtonQueryCheck;
+	}
+	private JButton getJButtonShowTable() {
+		if (jButtonShowTable == null) {
+			jButtonShowTable = new JButton();
+			jButtonShowTable.setIcon(BundleHelper.getImageIcon("MBtable.png"));
+			jButtonShowTable.setToolTipText("Show data table");
+			jButtonShowTable.setPreferredSize(new Dimension(26, 26));
+			jButtonShowTable.addActionListener(this);
+		}
+		return jButtonShowTable;
+	}
 	
 	private JLabel getJLabelNo() {
 		if (jLabelNo == null) {
@@ -588,36 +613,40 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.getJButtonQueryAdd().setEnabled(true);
 			this.getJButtonQuerySave().setEnabled(false);
 			this.getJButtonQueryRemove().setEnabled(false);
-			this.getJButtonQueryCheck().setEnabled(false);
 			this.getJButtonQueryUp().setEnabled(false);
 			this.getJButtonQueryDown().setEnabled(false);
+			this.getJButtonQueryCheck().setEnabled(false);
+			this.getJButtonShowTable().setEnabled(false);
 			break;
 			
 		case EditNewEntryUnsaved:
 			this.getJButtonQueryAdd().setEnabled(false);
 			this.getJButtonQuerySave().setEnabled(true);
 			this.getJButtonQueryRemove().setEnabled(true);
-			this.getJButtonQueryCheck().setEnabled(true);
 			this.getJButtonQueryUp().setEnabled(false);
 			this.getJButtonQueryDown().setEnabled(false);
+			this.getJButtonQueryCheck().setEnabled(true);
+			this.getJButtonShowTable().setEnabled(true);
 			break;
 			
 		case EditKnownEntry:
 			this.getJButtonQueryAdd().setEnabled(true);
 			this.getJButtonQuerySave().setEnabled(false);
 			this.getJButtonQueryRemove().setEnabled(true);
-			this.getJButtonQueryCheck().setEnabled(true);
 			this.getJButtonQueryUp().setEnabled(true);
 			this.getJButtonQueryDown().setEnabled(true);
+			this.getJButtonQueryCheck().setEnabled(true);
+			this.getJButtonShowTable().setEnabled(true);
 			break;
 			
 		case EditKnownEntryUnsaved:
 			this.getJButtonQueryAdd().setEnabled(true);
 			this.getJButtonQuerySave().setEnabled(true);
 			this.getJButtonQueryRemove().setEnabled(true);
-			this.getJButtonQueryCheck().setEnabled(true);
 			this.getJButtonQueryUp().setEnabled(true);
 			this.getJButtonQueryDown().setEnabled(true);
+			this.getJButtonQueryCheck().setEnabled(true);
+			this.getJButtonShowTable().setEnabled(true);
 			break;
 		}
 	}
@@ -678,7 +707,8 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	 * @param isChangeTableFocus the indicator to change the table focus or not
 	 */
 	private void saveDatabaseQuery(boolean isChangeTableFocus) {
-		// --- Save the current query settings ------------------
+		
+		// --- Save the current query settings ----------------------
 		DatabaseQuery dbQueryToSave = this.getDatabaseQuery();
 		switch (this.getEditState()) {
 		case EditNewEntryUnsaved:
@@ -695,9 +725,47 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.setEditState(EditState.EditKnownEntry);
 			break;
 		}
+		
+		// --- As next check or create tree node for the query ------  
+		
+		
 	}
 	
+	/**
+	 * Moves the currently selected DatabaseQuery in the specified direction.
+	 * @param direction the direction
+	 */
+	private void moveDatabaseQuery(int direction) {
+		
+		DatabaseQuery dbQueryToMove = this.getDatabaseQuery();
+		int prevNumber = dbQueryToMove.getNumber();
+		int newNumber = prevNumber + direction;
+		
+		if (newNumber<1 || newNumber>this.getDatabaseQueryList().size()) return;
+		
+		DatabaseQuery dbQueryToExchange = (DatabaseQuery) this.getTableModelDatabaseQuery().getValueAt(newNumber-1, 0);
+		
+		// --- Assign new numbers -----------------------------------
+		dbQueryToMove.setNumber(newNumber);
+		dbQueryToExchange.setNumber(prevNumber);
 
+		this.updateDatabaseQueryInTable(dbQueryToMove);
+		this.updateDatabaseQueryInTable(dbQueryToExchange);
+		
+		// --- Change position in table model -----------------------
+		this.getTableModelDatabaseQuery().removeRow(prevNumber-1);
+		this.addDatabaseQueryToTable(dbQueryToMove, newNumber-1);
+		
+		// --- Set new selected row ---------------------------------
+		int newSelection = this.getJTableDatabaseQueries().convertRowIndexToView(newNumber-1);
+		this.getJTableDatabaseQueries().getSelectionModel().setSelectionInterval(newSelection, newSelection);
+		
+		// --- Reorder the list of DatabaseQueries in the model -----
+		Collections.sort(this.getDatabaseQueryList());
+		this.databaseDataSourceIntegration.getDataSource().updateSubConfigurations();
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -733,17 +801,25 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 				this.getJTableDatabaseQueries().getSelectionModel().setSelectionInterval(newIdxSelectionTable, newIdxSelectionTable);
 			}
 			
+		} else if (ae.getSource()==this.getJButtonQueryUp()) {
+			// --- Move DatabaseQuery up ----------------------------
+			this.moveDatabaseQuery(-1);
+		} else if (ae.getSource()==this.getJButtonQueryDown()) {
+			// --- Move DatabaseQuery down --------------------------
+			this.moveDatabaseQuery(+1);
+			
 		} else if (ae.getSource()==this.getJButtonQueryCheck()) {
 			// --- Check if the SQL statement is valid --------------
 			
 			
-		} else if (ae.getSource()==this.getJButtonQueryUp()) {
-			
-			
-		} else if (ae.getSource()==this.getJButtonQueryDown()) {
+		} else if (ae.getSource()==this.getJButtonShowTable()) {
+			// --- Will set the focus to the selected table --------- 
 			
 			
 		}
 	}
+	
+	
+	
 	
 }
