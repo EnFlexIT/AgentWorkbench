@@ -142,6 +142,15 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		AbstractDataSourceDTNO<?> dtnoDS = getSelectedDataTreeNodeDataSource();
 		return (dtnoDS==null ? null : dtnoDS.getPaginationDataLoader());
 	}
+	/**
+	 * Sets the pagination data loader activated.
+	 * @param activate the new pagination data loader activated
+	 */
+	private void setPaginationDataLoaderActivated(boolean activate) {
+		if (this.getPaginationDataLoader()!=null) {
+			this.getPaginationDataLoader().setPaginationActivated(activate);
+		}
+	}
 	
 	
 	private JScrollPane getJScrollPaneData() {
@@ -207,9 +216,9 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	private void setJToolDatasetNavigationEnabled() {
 		
 		AbstractDataSourceDTNO<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
-		boolean isEnabledToolBar = (dtnoDS!=null);
+		boolean isEnabledToolBar = (dtnoDS!=null && this.getPaginationDataLoader()!=null);
 		
-		this.getJToggleButtonEnabledPagination().setSelected(isEnabledToolBar && this.getPaginationDataLoader().isPaginationActivated()==true);
+		this.getJToggleButtonEnabledPagination().setSelected(isEnabledToolBar && this.getPaginationDataLoader()!=null && this.getPaginationDataLoader().isPaginationActivated()==true);
 		this.setJToggleButtonEnabledPaginationIcon();
 		
 		this.getJButtonDatasetFirst().setEnabled(isEnabledToolBar);
@@ -474,8 +483,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		} else if (ae.getSource()==this.getJToggleButtonEnabledPagination()) {
 			// --- React on pagination toggle ----------------------- 
 			this.setJToggleButtonEnabledPaginationIcon();
-			this.getPaginationDataLoader().setPaginationActivated(this.getJToggleButtonEnabledPagination().isSelected());
-			this.getSelectedDataTreeNodeDataSource().reloadTableAsynchronous();
+			this.setPaginationDataLoaderActivated(this.getJToggleButtonEnabledPagination().isSelected());
+			this.getSelectedDataTreeNodeDataSource().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJTextFieldRowsPerPage()) {
 			// --- Change the number of rows per page ---------------
@@ -484,7 +493,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				newRowsPerPage = Integer.parseInt(this.getJTextFieldRowsPerPage().getText().trim());
 				if (newRowsPerPage != this.getPaginationDataLoader().getNumberOfRecordsPerPage()) {
 					this.getPaginationDataLoader().setNumberOfRecordsPerPage(newRowsPerPage);
-					this.getSelectedDataTreeNodeDataSource().reloadTableAsynchronous();
+					this.getSelectedDataTreeNodeDataSource().reloadDataTableAsynchronous();
 					this.getJButtonDatasetLast().requestFocus();
 				}
 				

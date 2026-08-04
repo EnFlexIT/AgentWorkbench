@@ -8,6 +8,12 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -27,11 +33,24 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.NumberHelper;
+import de.enflexit.common.swing.AwbThemeImageIcon;
+import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.db.hibernate.HibernateDatabaseService;
+import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
+import de.enflexit.df.core.model.DataController;
+import tech.tablesaw.api.Table;
+
+import javax.swing.JToggleButton;
 
 /**
  * The Class JPanelQueryConfiguration.
@@ -75,6 +94,11 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	private JButton jButtonQueryDown;
 	private JButton jButtonQueryCheck;
 	private JButton jButtonShowTable;
+	private JLabel jLabelRowsPerPage;
+	private JTextField jTextFieldRowsPerPage;
+	private JToggleButton jToggleButtonEnabledPagination;
+	private JLabel jLabelSQLCheck;
+	private JTextArea jTextAreaSqlCheckResult;
 	
 	/**
 	 * Instantiates a new JPanel that enables to configure queries.
@@ -88,6 +112,14 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * Returns the data controller.
+	 * @return the data controller
+	 */
+	public DataController getDataController() {
+		return this.databaseDataSourceIntegration.getDataController();
+	}
+	
+	/**
 	 * Returns the current list of DatabaseQuery that belong to the {@link DatabaseDataSource}.
 	 * @return the database query list
 	 */
@@ -95,9 +127,15 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		return this.databaseDataSourceIntegration.getDataSource().getDatabaseQueryList();
 	}
 	/**
+	 * Saves the current database query list.
+	 */
+	private void saveDatabaseQueryList() {
+		this.databaseDataSourceIntegration.getDataSource().updateSubConfigurations();
+	}
+	/**
 	 * Add the specified DatabaseQuery to the {@link DatabaseDataSource}.
 	 *
-	 * @param dbQueryToSave the db query to save
+	 * @param dbQueryToSave the DatabaseQuery to add
 	 * @return the database query to data source
 	 */
 	private void addDatabaseQueryToDataSource(DatabaseQuery dbQueryToSave) {
@@ -105,11 +143,64 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		this.saveDatabaseQueryList();
 	}
 	/**
-	 * Saves the current database query list.
+	 * Removes the database query to data source.
+	 * @param dbQueryToRemove the DatabaseQuery to remove
 	 */
-	private void saveDatabaseQueryList() {
-		this.databaseDataSourceIntegration.getDataSource().updateSubConfigurations();
+	private void removeDatabaseQueryFromDataSource(DatabaseQuery dbQueryToRemove) {
+		this.getDatabaseQueryList().remove(dbQueryToRemove);
+		this.saveDatabaseQueryList();
 	}
+	
+	
+	
+	/**
+	 * Adds the specified DatabaseQuery as sub node.
+	 * @param dbQueryToSave the DatabaseQuery to add
+	 */
+	private void addDatabaseQueryAsSubNode(DatabaseQuery dbQueryToSave) {
+		this.databaseDataSourceIntegration.addDataTreeSubNode(dbQueryToSave);
+	}
+	/**
+	 * Removes the specified DatabaseQuery as sub node.
+	 * @param dbQueryToSave the DatabaseQuery to remove
+	 */
+	private void removeDatabaseQueryAsSubNode(DatabaseQuery dbQueryToSave) {
+		this.databaseDataSourceIntegration.removeDataTreeSubNode(dbQueryToSave);
+	}
+	/**
+	 * Updates the appearance of the DatabaseQuery-sub node in model tree.
+	 * @param dbQueryToUpdate the DatabaseQuery to update
+	 */
+	private void updateDatabaseQuerySubNodeInModelTree(DatabaseQuery dbQueryToUpdate) {
+		DefaultMutableTreeNode treeNodeDbQuery = this.databaseDataSourceIntegration.getDataTreeSubNode(dbQueryToUpdate);
+		if (treeNodeDbQuery!=null) {
+			this.getDataController().getDataTreeModel().nodeChanged(treeNodeDbQuery);
+		}
+	}
+	
+	/**
+	 * Returns the currently selected data tree node data source.
+	 * @return the selected data tree node data source
+	 */
+	private DatabaseDataSourceDTNO4SQL getDatabaseDataSourceDTNO4SQL() {
+		return this.databaseDataSourceIntegration.getDataTreeSubNodeDTNO(this.getDatabaseQuery());
+	}
+	/**
+	 * Reload table asynchronous.
+	 */
+	private void reloadDataTableAsynchronous() {
+		DatabaseDataSourceDTNO4SQL dtno = this.getDatabaseDataSourceDTNO4SQL();
+		if (dtno!=null) dtno.reloadDataTableAsynchronous();
+	}
+	/**
+	 * Returns the current AbstractPaginationDataLoader or <code>null</code>, if no data tree node can be found.
+	 * @return the pagination data loader
+	 */
+	private AbstractPaginationDataLoader<?> getPaginationDataLoader() {
+		AbstractDataSourceDTNO<?> dtnoDS = getDatabaseDataSourceDTNO4SQL();
+		return (dtnoDS==null ? null : dtnoDS.getPaginationDataLoader());
+	}
+	
 	
 	/**
 	 * Initialize.
@@ -182,6 +273,20 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		gbc_textAreaSqlStatement.gridx = 1;
 		gbc_textAreaSqlStatement.gridy = 5;
 		this.add(this.getJTextAreaSqlStatement(), gbc_textAreaSqlStatement);
+		GridBagConstraints gbc_jLabelSQLCheck = new GridBagConstraints();
+		gbc_jLabelSQLCheck.anchor = GridBagConstraints.NORTH;
+		gbc_jLabelSQLCheck.insets = new Insets(12, 10, 0, 0);
+		gbc_jLabelSQLCheck.gridx = 0;
+		gbc_jLabelSQLCheck.gridy = 6;
+		add(getJLabelSQLCheck(), gbc_jLabelSQLCheck);
+		GridBagConstraints gbc_jTextAreaSqlCheckResult = new GridBagConstraints();
+		gbc_jTextAreaSqlCheckResult.insets = new Insets(10, 5, 0, 10);
+		gbc_jTextAreaSqlCheckResult.gridwidth = 3;
+		gbc_jTextAreaSqlCheckResult.fill = GridBagConstraints.BOTH;
+		gbc_jTextAreaSqlCheckResult.gridx = 1;
+		gbc_jTextAreaSqlCheckResult.gridy = 6;
+		add(getJTextAreaSqlCheckResult(), gbc_jTextAreaSqlCheckResult);
+		
 	}
 	
 	private JLabel getJLabelHeader() {
@@ -203,7 +308,6 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		if (jTableDatabaseQueries==null) {
 			jTableDatabaseQueries = new JTable(this.getTableModelDatabaseQuery());
 			jTableDatabaseQueries.setFillsViewportHeight(true);
-			//jTableDatabaseQueries.setShowGrid(false);
 			jTableDatabaseQueries.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jTableDatabaseQueries.getTableHeader().setReorderingAllowed(false);
 			jTableDatabaseQueries.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -405,6 +509,10 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			jToolBarDatabaseQuery.add(getJButtonQueryCheck());
 			jToolBarDatabaseQuery.add(getJButtonShowTable());
 			jToolBarDatabaseQuery.addSeparator();
+			jToolBarDatabaseQuery.add(this.getJToggleButtonEnabledPagination());
+			jToolBarDatabaseQuery.add(this.getJLabelRowsPerPage());
+			jToolBarDatabaseQuery.add(this.getJTextFieldRowsPerPage());
+			
 		}
 		return jToolBarDatabaseQuery;
 	}
@@ -473,6 +581,14 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		}
 		return jButtonQueryCheck;
 	}
+	private void setJButtonQueryCheck(boolean isValidSqlStatement) {
+		if (isValidSqlStatement==true) {
+			this.getJButtonQueryCheck().setIcon(BundleHelper.getImageIcon("MBcheckGreen.png"));
+		} else {
+			this.getJButtonQueryCheck().setIcon(BundleHelper.getImageIcon("MBcheckRed.png"));
+		}
+	}
+	
 	private JButton getJButtonShowTable() {
 		if (jButtonShowTable == null) {
 			jButtonShowTable = new JButton();
@@ -483,6 +599,82 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		}
 		return jButtonShowTable;
 	}
+	
+
+	private JToggleButton getJToggleButtonEnabledPagination() {
+		if (jToggleButtonEnabledPagination==null) {
+			jToggleButtonEnabledPagination = new JToggleButton();
+			jToggleButtonEnabledPagination.setToolTipText("Pagination On / Off");
+			jToggleButtonEnabledPagination.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonEnabledPagination.setMinimumSize(new Dimension(26, 26));
+			jToggleButtonEnabledPagination.addActionListener(this);
+			this.setJToggleButtonEnabledPaginationIcon();
+		}
+		return jToggleButtonEnabledPagination;
+	}
+	private void setJToggleButtonEnabledPaginationIcon() {
+		if (this.getJToggleButtonEnabledPagination().isSelected()==true) {
+			this.getJToggleButtonEnabledPagination().setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("Pagination-On.png")));
+			this.getJToggleButtonEnabledPagination().setToolTipText("Pagination enabled");
+			this.getJLabelRowsPerPage().setEnabled(true);
+			this.getJTextFieldRowsPerPage().setEnabled(true);
+			this.getJTextFieldRowsPerPage().setEditable(true);
+		} else {
+			this.getJToggleButtonEnabledPagination().setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("Pagination-Off.png")));
+			this.getJToggleButtonEnabledPagination().setToolTipText("Pagination disbaled");
+			this.getJLabelRowsPerPage().setEnabled(false);
+			this.getJTextFieldRowsPerPage().setEnabled(false);
+			this.getJTextFieldRowsPerPage().setEditable(false);
+		}
+	}
+	private JLabel getJLabelRowsPerPage() {
+		if (jLabelRowsPerPage == null) {
+			jLabelRowsPerPage = new JLabel("Rows / Page:  ");
+			jLabelRowsPerPage.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelRowsPerPage;
+	}
+	private JTextField getJTextFieldRowsPerPage() {
+		if (jTextFieldRowsPerPage == null) {
+			jTextFieldRowsPerPage = new JTextField();
+			jTextFieldRowsPerPage.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldRowsPerPage.setHorizontalAlignment(JTextField.CENTER);
+			jTextFieldRowsPerPage.setPreferredSize(new Dimension(60, 24));
+			jTextFieldRowsPerPage.addKeyListener(new KeyAdapter4Numbers(false));
+			jTextFieldRowsPerPage.getDocument().addDocumentListener(this.getDocumentListenerForEditState());
+		}
+		return jTextFieldRowsPerPage;
+	}
+	
+	/**
+	 * Sets the rows per page and (de-)activates the corresponding components.
+	 * @param noOfRows the new rows per page
+	 */
+	private void setRowsPerPage(int noOfRows) {
+		
+		boolean pagnationEnabled = (noOfRows>0); 
+		
+		this.getJToggleButtonEnabledPagination().setSelected(pagnationEnabled);
+		this.setJToggleButtonEnabledPaginationIcon();
+		this.getJTextFieldRowsPerPage().setText(Math.abs(noOfRows) + ""); 
+	}
+	/**
+	 * Gets the rows per page.
+	 * @return the rows per page
+	 */
+	private int getRowsPerPage() {
+		
+		Integer rowsPerPage = NumberHelper.parseInteger(this.getJTextFieldRowsPerPage().getText());
+		if (rowsPerPage==null) {
+			rowsPerPage = 1000;
+		}
+		
+		if (this.getJToggleButtonEnabledPagination().isSelected()==false) {
+			rowsPerPage = rowsPerPage * (-1);
+		}
+		return rowsPerPage;
+	}
+	
 	
 	private JLabel getJLabelNo() {
 		if (jLabelNo == null) {
@@ -532,6 +724,33 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		}
 		return jTextAreaSqlStatement;
 	}
+	private JLabel getJLabelSQLCheck() {
+		if (jLabelSQLCheck == null) {
+			jLabelSQLCheck = new JLabel("SQL Validity-Check:");
+			jLabelSQLCheck.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelSQLCheck;
+	}
+	private JTextArea getJTextAreaSqlCheckResult() {
+		if (jTextAreaSqlCheckResult == null) {
+			jTextAreaSqlCheckResult = new JTextArea();
+			jTextAreaSqlCheckResult.setEditable(false);
+			jTextAreaSqlCheckResult.setPreferredSize(new Dimension(200, 78));
+			jTextAreaSqlCheckResult.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		}
+		return jTextAreaSqlCheckResult;
+	}
+	
+	
+	/**
+	 * Sets the pagination data loader activated.
+	 * @param activate the new pagination data loader activated
+	 */
+	private void setPaginationDataLoaderActivated(boolean activate) {
+		if (this.getPaginationDataLoader()!=null) {
+			this.getPaginationDataLoader().setPaginationActivated(activate);
+		}
+	}
 	
 	/**
 	 * Returns a DocumentListener that reacts on changes by setting a new current EditState
@@ -574,10 +793,12 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.getJTextFieldNo().setText("");
 			this.getJTextFieldName().setText("");
 			this.getJTextAreaSqlStatement().setText("");
+			this.setRowsPerPage(1000);
 		} else {
 			this.getJTextFieldNo().setText(dbQuery.getNumber() + "");
 			this.getJTextFieldName().setText(dbQuery.getName());
 			this.getJTextAreaSqlStatement().setText(dbQuery.getSqlStatement());	
+			this.setRowsPerPage(dbQuery.getRowsPerPage());
 		}
 		this.isPauserEditStateDocumentListener = false;
 		
@@ -585,6 +806,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		this.getJTextAreaSqlStatement().setEditable(isEnabledEditing);
 		
 		this.databaseQueryEdit = dbQuery;
+		this.checkCurrentSqlStatement();
 	}
 	/**
 	 * Returns the DatabaseQuery currently edited.
@@ -595,6 +817,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.databaseQueryEdit.setNumber(NumberHelper.parseInteger(this.getJTextFieldNo().getText()));
 			this.databaseQueryEdit.setName(this.getJTextFieldName().getText());
 			this.databaseQueryEdit.setSqlStatement(this.getJTextAreaSqlStatement().getText());
+			this.databaseQueryEdit.setRowsPerPage(this.getRowsPerPage());
 		}
 		return databaseQueryEdit;
 	}
@@ -617,6 +840,9 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.getJButtonQueryDown().setEnabled(false);
 			this.getJButtonQueryCheck().setEnabled(false);
 			this.getJButtonShowTable().setEnabled(false);
+			this.getJToggleButtonEnabledPagination().setEnabled(false);
+			this.getJLabelRowsPerPage().setEnabled(false);
+			this.getJTextFieldRowsPerPage().setEnabled(false);
 			break;
 			
 		case EditNewEntryUnsaved:
@@ -627,6 +853,9 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.getJButtonQueryDown().setEnabled(false);
 			this.getJButtonQueryCheck().setEnabled(true);
 			this.getJButtonShowTable().setEnabled(true);
+			this.getJToggleButtonEnabledPagination().setEnabled(false);
+			this.getJLabelRowsPerPage().setEnabled(false);
+			this.getJTextFieldRowsPerPage().setEnabled(false);
 			break;
 			
 		case EditKnownEntry:
@@ -637,6 +866,9 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.getJButtonQueryDown().setEnabled(true);
 			this.getJButtonQueryCheck().setEnabled(true);
 			this.getJButtonShowTable().setEnabled(true);
+			this.getJToggleButtonEnabledPagination().setEnabled(true);
+			this.getJLabelRowsPerPage().setEnabled(true);
+			this.getJTextFieldRowsPerPage().setEnabled(true);
 			break;
 			
 		case EditKnownEntryUnsaved:
@@ -647,6 +879,9 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.getJButtonQueryDown().setEnabled(true);
 			this.getJButtonQueryCheck().setEnabled(true);
 			this.getJButtonShowTable().setEnabled(true);
+			this.getJToggleButtonEnabledPagination().setEnabled(true);
+			this.getJLabelRowsPerPage().setEnabled(true);
+			this.getJTextFieldRowsPerPage().setEnabled(true);
 			break;
 		}
 	}
@@ -698,7 +933,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		DatabaseQuery dbq = new DatabaseQuery();
 		dbq.setNumber(this.getTableModelDatabaseQuery().getRowCount() + 1);
 		dbq.setName("New database query");
-		dbq.setSqlStatement("SELECT * FROM 'MyTable' ORDER BY 'dataColum';");
+		dbq.setSqlStatement("SELECT * FROM MyTable ORDER BY date_time;");
 		return dbq;
 	}
 	
@@ -714,6 +949,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		case EditNewEntryUnsaved:
 			this.addDatabaseQueryToTable(dbQueryToSave);
 			this.addDatabaseQueryToDataSource(dbQueryToSave);
+			this.addDatabaseQueryAsSubNode(dbQueryToSave);
 			this.setEditState(EditState.EditKnownEntry);
 			if (isChangeTableFocus==true) {
 				this.selectDataBaseQueryInTable(dbQueryToSave);
@@ -723,13 +959,12 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			this.updateDatabaseQueryInTable(dbQueryToSave);
 			this.saveDatabaseQueryList();
 			this.setEditState(EditState.EditKnownEntry);
+			this.updateDatabaseQuerySubNodeInModelTree(dbQueryToSave);
 			break;
 		}
 		
-		// --- As next check or create tree node for the query ------  
-		
-		
 	}
+	
 	
 	/**
 	 * Moves the currently selected DatabaseQuery in the specified direction.
@@ -760,9 +995,12 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		int newSelection = this.getJTableDatabaseQueries().convertRowIndexToView(newNumber-1);
 		this.getJTableDatabaseQueries().getSelectionModel().setSelectionInterval(newSelection, newSelection);
 		
+		// --- Update position of tree node -------------------------
+		this.databaseDataSourceIntegration.moveDataTreeSubNode(dbQueryToMove, direction);
+		
 		// --- Reorder the list of DatabaseQueries in the model -----
 		Collections.sort(this.getDatabaseQueryList());
-		this.databaseDataSourceIntegration.getDataSource().updateSubConfigurations();
+		this.saveDatabaseQueryList();
 		
 	}
 	
@@ -781,6 +1019,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			
 		} else if (ae.getSource()==this.getJButtonQuerySave()) {
 			// --- Save the current query settings ------------------
+			this.checkCurrentSqlStatement();
 			this.saveDatabaseQuery(true);
 			
 		} else if (ae.getSource()==this.getJButtonQueryRemove()) {
@@ -791,11 +1030,16 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 				int answer = AwbMessageDialog.showConfirmDialog(owner, message, "Delete Query?", AwbMessageDialog.OK_CANCEL_OPTION);
 				if (answer==AwbMessageDialog.CANCEL_OPTION) return;
 			}
-			int newIdxSelection = this.removeDatabaseQueryFromTable(this.getDatabaseQuery()) - 1;
-			if (this.getTableModelDatabaseQuery().getRowCount()==0) {
-				this.setDatabaseQuery(null);
-				this.setEditState(EditState.NoEditing);
-			} else {
+			// --- Now, remove --------------------------------------
+			DatabaseQuery dbQueryToRemove = this.getDatabaseQuery();
+			int newIdxSelection = this.removeDatabaseQueryFromTable(dbQueryToRemove) - 1;
+			this.removeDatabaseQueryFromDataSource(dbQueryToRemove);
+			this.removeDatabaseQueryAsSubNode(dbQueryToRemove);
+			// --- Update view --------------------------------------
+			this.setDatabaseQuery(null);
+			this.setEditState(EditState.NoEditing);
+			if (this.getTableModelDatabaseQuery().getRowCount()>0) {
+				// --- Set focus on next dataset --------------------
 				newIdxSelection = newIdxSelection<0 ? newIdxSelection=0 : newIdxSelection;
 				int newIdxSelectionTable = this.getJTableDatabaseQueries().convertColumnIndexToView(newIdxSelection);
 				this.getJTableDatabaseQueries().getSelectionModel().setSelectionInterval(newIdxSelectionTable, newIdxSelectionTable);
@@ -808,18 +1052,153 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			// --- Move DatabaseQuery down --------------------------
 			this.moveDatabaseQuery(+1);
 			
+		} else if (ae.getSource()==this.getJToggleButtonEnabledPagination()) {
+			// --- React on pagination toggle ----------------------- 
+			this.setJToggleButtonEnabledPaginationIcon();
+			this.setPaginationDataLoaderActivated(this.getJToggleButtonEnabledPagination().isSelected());
+			this.reloadDataTableAsynchronous();
+			
 		} else if (ae.getSource()==this.getJButtonQueryCheck()) {
 			// --- Check if the SQL statement is valid --------------
-			
+			this.checkCurrentSqlStatement();
 			
 		} else if (ae.getSource()==this.getJButtonShowTable()) {
 			// --- Will set the focus to the selected table --------- 
-			
+			DefaultMutableTreeNode treeNode = this.databaseDataSourceIntegration.getDataTreeSubNode(this.getDatabaseQuery());
+			if (treeNode!=null) {
+				this.getDataController().getSelectionModel().setSelectedTreePath(new TreePath(treeNode.getPath()));
+			}
 			
 		}
 	}
+
+	// -------------------------------------------------------------------------
+	// --- From here some methods to handle SQL statements ---------------------
+	// -------------------------------------------------------------------------
+	
+	private DatabaseSettings dbSettings;
+	private HibernateDatabaseService dbService;
+	private Connection connection;
+	
+	/**
+	 * Checks the current SQL statement.
+	 */
+	private void checkCurrentSqlStatement() {
+	
+		boolean isValidSQL = false;
+		String checkMessage = null;
+		String sqlStatement = this.getJTextAreaSqlStatement().getText();
+		
+		PreparedStatement ps = null;
+		try {
+			
+			// --- Create a prepared statement as a first check ---------------
+			ps = this.getConnection().prepareStatement(sqlStatement);
+			
+			// --- Till here no error => execute with minimum of data ---------
+			String sqlStatementReduced = this.getDatabaseService().applyOffsetAndLimitToSqlStatement(sqlStatement, 0, 3);
+			this.readFromDatabase(sqlStatementReduced, 0, 0);
+			
+			checkMessage = "No SQL errors were found.";
+			isValidSQL = true;
+			
+		} catch (SQLException sqlEx) {
+			//sqlEx.printStackTrace();
+			checkMessage = sqlEx.getMessage();
+			
+		} finally {
+			try {
+				if (ps!=null && ps.isClosed()==false) {
+					ps.close();
+				}
+				this.closeConnection();
+				this.dbService = null;
+				this.dbSettings = null;
+				
+			} catch (SQLException sqlEx) {
+				sqlEx.printStackTrace();
+			}
+		}
+		
+		this.getJTextAreaSqlCheckResult().setText(checkMessage);
+		this.setJButtonQueryCheck(isValidSQL);
+	}
+	/**
+	 * Reads the specified SQL statement from the database by using the current {@link Connection} .
+	 *
+	 * @param sqlStatement the SQL statement
+	 * @param offset the offset
+	 * @param limit the limit
+	 * @return the table
+	 * @see #getConnection()
+	 */
+	private Table readFromDatabase(String sqlStatement, int offset, int limit) throws SQLException {
+		
+		// --- Apply offset and limit to SQL statement? ---------
+		if (offset >= 0 && limit > 0) {
+			sqlStatement = this.getDatabaseService().applyOffsetAndLimitToSqlStatement(sqlStatement, offset, limit);
+		}
+		
+		// --- Execute Query ------------------------------------
+		Statement statem = this.getConnection().createStatement();
+		ResultSet resSet = statem.executeQuery(sqlStatement);
+		return Table.read().db(resSet);
+	}
 	
 	
-	
+	/**
+	 * Returns the currently configured {@link DatabaseSettings}.
+	 * @return the database settings
+	 */
+	private DatabaseSettings getDatabaseSettings() {
+		if (dbSettings==null) {
+			dbSettings = this.databaseDataSourceIntegration.getDataSource().toDatabaseSettings();
+		}
+		return dbSettings;
+	}
+	/**
+	 * Returns the HibernateDatabaseService that is used to produce the {@link Connection}.
+	 * @return the database service
+	 */
+	private HibernateDatabaseService getDatabaseService() {
+		if (dbService==null) {
+			dbService = HibernateUtilities.getDatabaseService(this.getDatabaseSettings().getDatabaseSystemName());
+		}
+		return dbService;
+	}
+	/**
+	 * If established, returns the database connection.
+	 * @return the connection
+	 */
+	private Connection getConnection() {
+		if (connection!=null) {
+			try {
+				if (connection.isClosed()==true) {
+					connection = null;
+				}
+			} catch (SQLException sqlEx) {
+				sqlEx.printStackTrace();
+			}
+		}
+		
+		if (connection==null) {
+			connection = HibernateUtilities.getDatabaseConnection(this.getDatabaseSettings(), false);
+		}
+		return connection;
+	}
+	/**
+	 * Will close the current connection.
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public void closeConnection() {
+		if (connection!=null) {
+			try {
+				connection.close();
+				connection = null;
+			} catch (SQLException sqlEx) {
+				sqlEx.printStackTrace();
+			}
+		}
+	}
 	
 }

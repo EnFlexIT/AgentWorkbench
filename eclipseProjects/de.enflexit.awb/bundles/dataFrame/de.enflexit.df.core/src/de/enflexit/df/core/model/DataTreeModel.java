@@ -69,6 +69,34 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		if (this.dataController!=null) this.dataController.addPropertyChangeListener(this);
 	}
 	
+	
+	/**
+	 * Inform within the model that a tree node was added.
+	 *
+	 * @param parentNode the parent node
+	 * @param treeNodeAdded the tree node added
+	 */
+	public void informTreeNodeAdded(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode treeNodeAdded) {
+		Object[] pathToParent = parentNode.getPath();
+		int[] newIndicies = {parentNode.getIndex(treeNodeAdded)};
+		Object[] newChildren = {treeNodeAdded}; 
+		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+	}
+	/**
+	 * Inform within the model that a node was removed.
+	 *
+	 * @param parentNode the parent node
+	 * @param treeNodeRemoved the tree node to remove
+	 * @param indexOfRemovedNode the index of the removed node
+	 */
+	public void informTreeNodeRemoved(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode treeNodeRemoved, int indexOfRemovedNode) {
+		Object[] pathToParent = parentNode.getPath();
+		int[] removedIndicies = {indexOfRemovedNode};
+		Object[] removedChildren = {treeNodeRemoved}; 
+		this.fireTreeNodesRemoved(this, pathToParent, removedIndicies, removedChildren);
+	}
+	
+	
 	/**
 	 * Searches for tree nodes that matches the specified search filter.
 	 *
@@ -275,14 +303,14 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ds);
 		dwNode.add(newNode);
 		
-		// --- Set the node to the data source integration ----------
-		dsIntegration.setDataTreeNode(newNode);
-		dsIntegration.addDataTreeSubNodes();
-		
 		Object[] pathToParent = dwNode.getPath();
 		int[] newIndicies = {dwNode.getIndex(newNode)};
 		Object[] newChildren = {newNode}; 
 		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+		
+		// --- Set the node to the data source integration ----------
+		dsIntegration.setDataTreeNode(newNode);
+		dsIntegration.addDataTreeSubNodes();
 	}
 	/**
 	 * Removes the specified data source as tree node.

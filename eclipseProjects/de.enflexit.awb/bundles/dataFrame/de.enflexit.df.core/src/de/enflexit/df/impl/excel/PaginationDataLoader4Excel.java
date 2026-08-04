@@ -16,8 +16,8 @@ public class PaginationDataLoader4Excel extends AbstractPaginationDataLoader<Exc
 	 * Instantiates a new pagination data loader 4 excel.
 	 * @param dataSource the data source
 	 */
-	public PaginationDataLoader4Excel(ExcelDataSource dataSource) {
-		super(dataSource);
+	public PaginationDataLoader4Excel(ExcelDataSourceIntegration dsIntegratino) {
+		super(dsIntegratino);
 	}
 
 	/* (non-Javadoc)

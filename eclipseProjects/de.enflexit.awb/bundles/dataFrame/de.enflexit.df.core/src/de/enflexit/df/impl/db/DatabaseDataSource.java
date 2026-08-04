@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
+import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
@@ -42,27 +43,19 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	private List<DatabaseQuery> databaseQueryList;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.enflexit.df.core.dataSources.DataSource#newInstance()
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#newInstance()
 	 */
 	@Override
 	public DatabaseDataSource newInstance() {
 		return new DatabaseDataSource();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.enflexit.df.core.dataSources.DefaultDataSource#getDataSourceIntegration(de
-	 * .enflexit.df.core.model.DataController,
-	 * de.enflexit.df.core.workbook.DataWorkbook)
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#getDataSourceIntegration(de.enflexit.df.core.model.DataController, de.enflexit.df.core.workbook.DataWorkbook)
 	 */
 	@Override
-	public AbstractDataSourceIntegration<?> getDataSourceIntegration(DataController dataController,
-			DataWorkbook dataWorkbook) {
+	public AbstractDataSourceIntegration<?> getDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook) {
 		if (dbDataSourceIntegration == null) {
 			dbDataSourceIntegration = new DatabaseDataSourceIntegration(dataController, dataWorkbook, this);
 		}
@@ -70,18 +63,14 @@ public class DatabaseDataSource extends DefaultDataSource {
 	}
 
 	/**
-	 * Returns the factory ID to be used instead of a complete connection
-	 * configuration.
-	 * 
+	 * Returns the factory ID to be used instead of a complete connection onfiguration.
 	 * @return the factory ID´or <code>null</code>
 	 */
 	public String getFactoryID() {
 		return factoryID;
 	}
-
 	/**
 	 * Sets the factory ID.
-	 * 
 	 * @param factoryID the new factory ID
 	 */
 	public void setFactoryID(String factoryID) {
@@ -90,16 +79,13 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	/**
 	 * Returns the DBMS name (e.g. MariaDB or PostGres).
-	 * 
 	 * @return the DBMS name
 	 */
 	public String getDBMSName() {
 		return dbmsName;
 	}
-
 	/**
 	 * Sets the DBMS name.
-	 * 
 	 * @param dbmsName the new DBMS name
 	 */
 	public void setDBMSName(String dbmsName) {
@@ -108,16 +94,13 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	/**
 	 * Returns the host or IP.
-	 * 
 	 * @return the host or IP
 	 */
 	public String getConnectionURL() {
 		return connectionURL;
 	}
-
 	/**
 	 * Sets the connection URL.
-	 * 
 	 * @param connectionURL the new connection URL
 	 */
 	public void setConnectionURL(String connectionURL) {
@@ -126,16 +109,13 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	/**
 	 * Returns the database name.
-	 * 
 	 * @return the database name
 	 */
 	public String getDbName() {
 		return dbName;
 	}
-
 	/**
 	 * Sets the database name.
-	 * 
 	 * @param dbName the new database name
 	 */
 	public void setDbName(String dbName) {
@@ -144,16 +124,13 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	/**
 	 * Returns the database user name.
-	 * 
 	 * @return the database user name
 	 */
 	public String getUserName() {
 		return userName;
 	}
-
 	/**
 	 * Sets the database user name.
-	 * 
 	 * @param userName the new database user name
 	 */
 	public void setUserName(String userName) {
@@ -162,30 +139,26 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	/**
 	 * Returns the database password.
-	 * 
 	 * @return the database password
 	 */
 	public String getPassword() {
 		return password;
 	}
-
 	/**
 	 * Sets the database password.
-	 * 
 	 * @param databasePassword the new database password
 	 */
 	public void setPassword(String databasePassword) {
 		this.password = databasePassword;
 	}
 
+	
 	// ----------------------------------------------------------------------------------
-	// --- From here, single String configuration conversion methods
-	// --------------------
+	// --- From here, single String configuration conversion methods --------------------
 	// ----------------------------------------------------------------------------------
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.enflexit.df.core.dataSources.DataSource#toConfigurationString()
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#toConfigurationString()
 	 */
 	@Override
 	public String toConfigurationString() {
@@ -213,22 +186,17 @@ public class DatabaseDataSource extends DefaultDataSource {
 		return config;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.enflexit.df.core.dataSources.DataSource#fromConfigurationString(java.lang.
-	 * String)
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#fromConfigurationString(java.lang.String)
 	 */
 	@Override
 	public DatabaseDataSource fromConfigurationString(String config) {
 
-		if (config == null || config.isBlank() == true)
-			return this;
+		if (config == null || config.isBlank() == true) return this;
 
 		String[] keyValuePairs = config.split("\\|");
-		if (keyValuePairs.length == 0)
-			return this;
+		if (keyValuePairs.length == 0) return this;
 
 		// --- Create new instance ----------------------------------
 		for (String keyValuePair : keyValuePairs) {
@@ -238,8 +206,7 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 			String key = keyValuePair.substring(0, idxTagOpen);
 			String value = keyValuePair.substring(idxTagOpen + 1, idxTagClose);
-			if (value.isBlank() == true)
-				continue;
+			if (value.isBlank() == true) continue;
 
 			switch (key) {
 			case KEY_ID:
@@ -256,8 +223,7 @@ public class DatabaseDataSource extends DefaultDataSource {
 				break;
 			case KEY_ROWS_PER_PAGE:
 				Integer rowsPerPage = NumberHelper.parseInteger(value);
-				if (rowsPerPage != null)
-					this.setRowsPerPage(rowsPerPage);
+				if (rowsPerPage != null) this.setRowsPerPage(rowsPerPage);
 				break;
 
 			case KEY_FACTORY_ID:
@@ -285,8 +251,7 @@ public class DatabaseDataSource extends DefaultDataSource {
 	}
 
 	// ----------------------------------------------------------------------------------
-	// --- From here, DatabaseSettings conversion methods
-	// -------------------------------
+	// --- From here, DatabaseSettings conversion methods -------------------------------
 	// ----------------------------------------------------------------------------------
 	/**
 	 * Converts the current {@link DatabaseDataSource} into
@@ -307,43 +272,32 @@ public class DatabaseDataSource extends DefaultDataSource {
 	 */
 	public static DatabaseSettings toDatabaseSettings(DatabaseDataSource dbDataSource) {
 
-		if (dbDataSource == null)
-			return null;
-
+		if (dbDataSource == null) return null;
+		
+		// --- Get the driver class name to use ---------------------
+		HibernateDatabaseService dbService =  HibernateUtilities.getDatabaseService(dbDataSource.getDBMSName());
+		String driverClassName = dbService.getDriverClassName();
+		
 		DatabaseSettings dbSettings = new DatabaseSettings();
 
 		dbSettings.setDatabaseSystemName(dbDataSource.getDBMSName());
 		dbSettings.setHibernateDatabaseSettings(new Properties());
 
-		if (dbDataSource.getConnectionURL() != null)
-			dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL,
-					dbDataSource.getConnectionURL());
-		if (dbDataSource.getDbName() != null)
-			dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog,
-					dbDataSource.getDbName());
+		if (driverClassName!=null)					dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, driverClassName);
+		
+		if (dbDataSource.getConnectionURL()!=null)	dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbDataSource.getConnectionURL());
+		if (dbDataSource.getDbName()!=null)			dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, dbDataSource.getDbName());
 
-		if (dbDataSource.getUserName() != null)
-			dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName,
-					dbDataSource.getUserName());
-		if (dbDataSource.getPassword() != null)
-			dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password,
-					dbDataSource.getPassword());
+		if (dbDataSource.getUserName()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
+		if (dbDataSource.getPassword()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
 
-		if (dbDataSource.getFactoryID() != null)
-			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_FACTORY_ID,
-					dbDataSource.getFactoryID());
+		if (dbDataSource.getFactoryID()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_FACTORY_ID, dbDataSource.getFactoryID());
 
 		// --- Super class attributes -----------
-		if (dbDataSource.getId() != 0)
-			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId() + "");
-		if (dbDataSource.getName() != null)
-			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
-		if (dbDataSource.getDescription() != null)
-			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION,
-					dbDataSource.getDescription());
-		if (dbDataSource.getRowsPerPage() != 0)
-			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE,
-					dbDataSource.getRowsPerPage() + "");
+		if (dbDataSource.getId()!=0) 				dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId() + "");
+		if (dbDataSource.getName()!=null) 			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
+		if (dbDataSource.getDescription()!=null) 	dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
+		if (dbDataSource.getRowsPerPage()!=0)		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE, dbDataSource.getRowsPerPage() + "");
 
 		if (dbSettings.isEmpty() == true) {
 			return null;
@@ -360,8 +314,7 @@ public class DatabaseDataSource extends DefaultDataSource {
 	 */
 	public static DatabaseDataSource fromDatabaseSettings(DatabaseSettings dbSettings) {
 
-		if (dbSettings == null)
-			return null;
+		if (dbSettings == null) return null;
 
 		DatabaseDataSource dbDS = new DatabaseDataSource();
 		DatabaseDataSource.intoDataSource(dbSettings, dbDS);
@@ -391,15 +344,11 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 		dbDS.setDBMSName(dbSettings.getDatabaseSystemName());
 
-		dbDS.setConnectionURL(
-				dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
-		dbDS.setDbName(dbSettings.getHibernateDatabaseSettings()
-				.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
+		dbDS.setConnectionURL(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL));
+		dbDS.setDbName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog));
 
-		dbDS.setUserName(dbSettings.getHibernateDatabaseSettings()
-				.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName));
-		dbDS.setPassword(dbSettings.getHibernateDatabaseSettings()
-				.getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password));
+		dbDS.setUserName(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName));
+		dbDS.setPassword(dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password));
 
 		dbDS.setFactoryID(dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_FACTORY_ID));
 
@@ -408,31 +357,24 @@ public class DatabaseDataSource extends DefaultDataSource {
 		String idString = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ID);
 		if (idString != null) {
 			Integer id = NumberHelper.parseInteger(idString);
-			if (id != null)
-				dbDS.setId(id);
+			if (id != null) dbDS.setId(id);
 		}
 		String name = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_NAME);
-		if (name != null)
-			dbDS.setName(name);
+		if (name != null) dbDS.setName(name);
 
 		String description = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_DESCRIPTION);
-		if (description != null)
-			dbDS.setDescription(description);
+		if (description != null) dbDS.setDescription(description);
 
-		String rowsPerPageString = dbSettings.getHibernateDatabaseSettings()
-				.getProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE);
+		String rowsPerPageString = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE);
 		if (rowsPerPageString != null) {
 			Integer rowsPerPage = NumberHelper.parseInteger(rowsPerPageString);
-			if (rowsPerPage != null)
-				dbDS.setRowsPerPage(rowsPerPage);
+			if (rowsPerPage != null) dbDS.setRowsPerPage(rowsPerPage);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.enflexit.df.core.dataSources.DefaultDataSource#requiresSubConfiguration()
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#requiresSubConfiguration()
 	 */
 	@Override
 	public boolean requiresSubConfiguration() {
@@ -441,7 +383,6 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 	/**
 	 * Returns the database query list.
-	 * 
 	 * @return the database query list
 	 */
 	public List<DatabaseQuery> getDatabaseQueryList() {

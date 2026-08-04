@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -13,10 +12,9 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  * The Class CsvDataSourceIntegration.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegration<DatabaseDataSource> {
+public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegration<DatabaseDataSource4SQL> {
 
 	private DatabaseDataSourceDTNO4SQL dtnoDBDataSourceSQL;
-	private DatabaseQuery databaseQuery;
 	
 	/**
 	 * Instantiates a new database data source integration.
@@ -25,23 +23,16 @@ public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegra
 	 * @param dataWorkbook the data workbook
 	 * @param dataSource the data source
 	 */
-	public DatabaseDataSourceIntegration4SQL(DataController dataController, DataWorkbook dataWorkbook, DatabaseDataSource dataSource) {
+	public DatabaseDataSourceIntegration4SQL(DataController dataController, DataWorkbook dataWorkbook, DatabaseDataSource4SQL dataSource) {
 		super(dataController, dataWorkbook, dataSource);
 	}
 
-	/**
-	 * Sets the database query.
-	 * @param databaseQuery the new database query
-	 */
-	public void setDatabaseQuery(DatabaseQuery databaseQuery) {
-		this.databaseQuery = databaseQuery;
-	}
 	/**
 	 * Returns the database query.
 	 * @return the database query
 	 */
 	public DatabaseQuery getDatabaseQuery() {
-		return databaseQuery;
+		return this.getDataSource().getDatabaseQuery();
 	}
 	
 	
@@ -49,7 +40,7 @@ public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegra
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#getDataTreeNodeObject()
 	 */
 	@Override
-	public AbstractDataSourceDTNO<DatabaseDataSource> getDTNO() {
+	public DatabaseDataSourceDTNO4SQL getDTNO() {
 		if (dtnoDBDataSourceSQL==null) {
 			dtnoDBDataSourceSQL = new DatabaseDataSourceDTNO4SQL(this);
 		}
@@ -61,7 +52,7 @@ public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegra
 	 */
 	@Override
 	public List<JComponent> getConfigurationToolbarComponents() {
-		return this.getConfigurationPanel().getConfigurationToolbarComponents();
+		return null;
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationPanel()

@@ -17,10 +17,12 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 	public static final String KEY_NUMBER = "no";
 	public static final String KEY_NAME  = "name";
 	public static final String KEY_SQL_STATEMENT  = "sql-statement";
+	public static final String KEY_ROWS_PER_PAGE = "rows-per-page";
 	
 	private int number;
 	private String name;
 	private String sqlStatement;
+	private int rowsPerPage;
 	
 	
 	/**
@@ -62,6 +64,14 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 		this.sqlStatement = sqlStatement;
 	}
 
+	public int getRowsPerPage() {
+		return rowsPerPage;
+	}
+	public void setRowsPerPage(int rowsPerPage) {
+		this.rowsPerPage = rowsPerPage;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -76,6 +86,7 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 			if (this.getNumber()!=dbQueryComp.getNumber()) return false;
 			if (StringHelper.isEqualString(this.getName(), dbQueryComp.getName()) == false) return false;
 			if (StringHelper.isEqualString(this.getSqlStatement(), dbQueryComp.getSqlStatement()) == false) return false;
+			if (this.getRowsPerPage()!=dbQueryComp.getRowsPerPage()) return false;
 			return true;
 		}
 		return false;
@@ -110,6 +121,7 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 		config = DatabaseDataSource.addConfigValue(config, KEY_NUMBER, (dbQuery.getNumber() + ""));
 		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, dbQuery.getName());
 		config = DatabaseDataSource.addConfigValue(config, KEY_SQL_STATEMENT, dbQuery.getSqlStatement());
+		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, (dbQuery.getRowsPerPage() + ""));
 		
 		return config; 
 	}
@@ -145,6 +157,10 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 				break;
 			case KEY_SQL_STATEMENT:
 				dbQuery.setSqlStatement(value);
+				break;
+			case KEY_ROWS_PER_PAGE:
+				Integer rpp = NumberHelper.parseInteger(value);
+				dbQuery.setRowsPerPage(rpp);
 				break;
 			}
 		} // end for

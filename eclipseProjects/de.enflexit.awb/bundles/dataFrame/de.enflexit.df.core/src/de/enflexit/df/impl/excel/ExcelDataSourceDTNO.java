@@ -32,7 +32,7 @@ public class ExcelDataSourceDTNO extends AbstractDataSourceDTNO<ExcelDataSource>
 	@Override
 	public AbstractPaginationDataLoader<ExcelDataSource> getPaginationDataLoader() {
 		if (paginationDataLoader4Excel==null) {
-			paginationDataLoader4Excel = new PaginationDataLoader4Excel(this.getDataSource());
+			paginationDataLoader4Excel = new PaginationDataLoader4Excel((ExcelDataSourceIntegration) this.getDataSourceIntegration());
 		}
 		return paginationDataLoader4Excel;
 	}

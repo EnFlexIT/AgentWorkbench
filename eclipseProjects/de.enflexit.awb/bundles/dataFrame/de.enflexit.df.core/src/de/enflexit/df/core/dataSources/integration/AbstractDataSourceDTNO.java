@@ -104,7 +104,7 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 	/**
 	 * Asynchronously reloads the data table.
 	 */
-	public void reloadTableAsynchronous() {
+	public void reloadDataTableAsynchronous() {
 		try {
 			this.setTable(null);
 			if (this.getPaginationDataLoader()!=null) {

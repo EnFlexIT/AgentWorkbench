@@ -8,9 +8,9 @@ import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
  * The Class DatabaseDataSourceDTNO.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class DatabaseDataSourceDTNO4SQL extends AbstractDataSourceDTNO<DatabaseDataSource> {
+public class DatabaseDataSourceDTNO4SQL extends AbstractDataSourceDTNO<DatabaseDataSource4SQL> {
 
-	private PaginationDataLoader4DB paginationDataLoader4DB;
+	private PaginationDataLoader4SQL paginationDataLoader4SQL;
 	
 	/**
 	 * Instantiates a new database data source sql DTNO.
@@ -27,7 +27,7 @@ public class DatabaseDataSourceDTNO4SQL extends AbstractDataSourceDTNO<DatabaseD
 	 * Returns the current DatabaseDataSourceIntegration4SQL.
 	 * @return the database SQL integration
 	 */
-	private DatabaseDataSourceIntegration4SQL getDatabaseSqlIntegration() {
+	public DatabaseDataSourceIntegration4SQL getDatabaseSqlIntegration() {
 		return (DatabaseDataSourceIntegration4SQL) this.getDataSourceIntegration();
 	}
 
@@ -44,12 +44,11 @@ public class DatabaseDataSourceDTNO4SQL extends AbstractDataSourceDTNO<DatabaseD
 	 * @see de.enflexit.df.core.model.treeNode.AbstractDTNO_DataSource#getPaginationDataLoader()
 	 */
 	@Override
-	public AbstractPaginationDataLoader<DatabaseDataSource> getPaginationDataLoader() {
-		if (paginationDataLoader4DB==null) {
-			// TODO
-			paginationDataLoader4DB = new PaginationDataLoader4DB(this.getDataSource());
+	public AbstractPaginationDataLoader<DatabaseDataSource4SQL> getPaginationDataLoader() {
+		if (paginationDataLoader4SQL==null) {
+			paginationDataLoader4SQL = new PaginationDataLoader4SQL(this.getDatabaseSqlIntegration());
 		}
-		return paginationDataLoader4DB;
+		return paginationDataLoader4SQL;
 	}
 
 }

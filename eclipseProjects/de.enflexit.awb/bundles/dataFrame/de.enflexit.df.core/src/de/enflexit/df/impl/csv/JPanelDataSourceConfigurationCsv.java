@@ -360,22 +360,22 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 			this.getDataSource().setName(csvFileName);
 			this.getJTextFieldDataSourceName().setText(csvFileName);
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_FILE);
-			this.getDTNO().reloadTableAsynchronous();
+			this.getDTNO().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJComboBoxColumnSeparator()) {
 			this.getDataSource().setColumnSeparator((String)this.getJComboBoxColumnSeparator().getSelectedItem());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_COLUMN_SEPARATOR);
-			this.getDTNO().reloadTableAsynchronous();
+			this.getDTNO().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJCheckBoxHasHeadline()) {
 			this.getDataSource().setHeadline(this.getJCheckBoxHasHeadline().isSelected());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_HAS_HEADLINE);
-			this.getDTNO().reloadTableAsynchronous();
+			this.getDTNO().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJPanelTimeFormater()) {
 			this.getDataSource().setDateTimeFormat(this.getJPanelTimeFormater().getTimeFormat());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_DATE_TIME_FORMAT);
-			this.getDTNO().reloadTableAsynchronous();	
+			this.getDTNO().reloadDataTableAsynchronous();	
 		}
 	}
 	

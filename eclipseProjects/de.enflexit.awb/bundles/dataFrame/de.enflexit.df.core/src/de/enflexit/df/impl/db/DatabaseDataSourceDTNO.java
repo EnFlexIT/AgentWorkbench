@@ -9,9 +9,7 @@ import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class DatabaseDataSourceDTNO extends AbstractDataSourceDTNO<DatabaseDataSource> {
-
-	private PaginationDataLoader4DB paginationDataLoader4DB;
-	
+		
 	/**
 	 * Instantiates a new data tree node data source database.
 	 * @param dsIntegration the ds integration
@@ -25,18 +23,12 @@ public class DatabaseDataSourceDTNO extends AbstractDataSourceDTNO<DatabaseDataS
 		this.setTooltipText("Please, configure the database connection ...");
 	}
 
-	
-	
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.treeNode.AbstractDTNO_DataSource#getPaginationDataLoader()
 	 */
 	@Override
 	public AbstractPaginationDataLoader<DatabaseDataSource> getPaginationDataLoader() {
-		if (paginationDataLoader4DB==null) {
-			paginationDataLoader4DB = new PaginationDataLoader4DB(this.getDataSource());
-		}
-		return paginationDataLoader4DB;
+		return null;
 	}
 
 }

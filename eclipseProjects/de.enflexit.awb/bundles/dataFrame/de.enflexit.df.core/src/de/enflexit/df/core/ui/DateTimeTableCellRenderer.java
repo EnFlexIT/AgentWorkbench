@@ -1,10 +1,13 @@
 package de.enflexit.df.core.ui;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 
 import javax.swing.table.DefaultTableCellRenderer;
+
+import de.enflexit.awb.core.Application;
 
 /**
  * The Class DateTimeTableCellRenderer.
@@ -56,9 +59,18 @@ public class DateTimeTableCellRenderer extends DefaultTableCellRenderer {
 	protected void setValue(Object value) {
 		
 		if (value instanceof TemporalAccessor) {
-			LocalDateTime ldt = LocalDateTime.from((TemporalAccessor) value);
-			this.setText((value == null) ? "" : this.getDateTimeFormatter().format(ldt));
-			return;
+			
+			LocalDateTime ldt = null;
+			if (value instanceof Instant dtTimeStamp) {
+				ldt = LocalDateTime.ofInstant(dtTimeStamp, Application.getGlobalInfo().getZoneId());
+				this.setText((value == null) ? "" : this.getDateTimeFormatter().format(ldt));
+				return;
+				
+			} else if (value instanceof LocalDateTime) {
+				ldt = LocalDateTime.from((TemporalAccessor) value);
+				this.setText((value == null) ? "" : this.getDateTimeFormatter().format(ldt));
+				return;
+			}
 		}
 		super.setValue(value);
 	}

@@ -44,7 +44,7 @@ public class CsvDataSourceDTNO extends AbstractDataSourceDTNO<CsvDataSource> {
 	@Override
 	public AbstractPaginationDataLoader<CsvDataSource> getPaginationDataLoader() {
 		if (paginationDataLoader4CSV==null) {
-			paginationDataLoader4CSV = new PaginationDataLoader4CSV(this.getDataSource());
+			paginationDataLoader4CSV = new PaginationDataLoader4CSV((CsvDataSourceIntegration) this.getDataSourceIntegration());
 		}
 		return paginationDataLoader4CSV;
 	}
