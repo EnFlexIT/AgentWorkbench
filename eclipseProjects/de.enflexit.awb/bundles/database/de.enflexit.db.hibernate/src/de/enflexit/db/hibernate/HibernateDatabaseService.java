@@ -71,7 +71,6 @@ public interface HibernateDatabaseService {
 	 * @param hibernateProperties the hibernate properties
 	 * @param userMessageVector the vector in which messages to users can be stored
 	 * @param isPrintToConole set true, if information should be printed to console
-
 	 * @return the database connection
 	 */
 	public Connection getDatabaseConnection(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole);
@@ -132,9 +131,20 @@ public interface HibernateDatabaseService {
 	public boolean isDatabaseAccessible(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole);
 
 	/**
+	 * Has to apply offset and limit to the specified SQL statement.
+	 *
+	 * @param sqlStatement the SQL statement to work on
+	 * @param offset the offset to use 
+	 * @param limit the limit to use
+	 * @return the string
+	 */
+	public String applyOffsetAndLimitToSqlStatement(String sqlStatement, int offset, int limit);
+	
+	/**
 	 * Has to return the hibernate setting panel for the specific database system.
 	 * @return the hibernate setting panel
 	 */
 	public AbstractDatabaseSettingsPanel getHibernateSettingsPanel();
+
 
 }

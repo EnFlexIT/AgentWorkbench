@@ -23,6 +23,7 @@ import org.osgi.framework.ServiceReference;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
 import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
+import de.enflexit.db.hibernate.gui.DatabaseSettings;
 
 /**
  * The class HibernateUtilities provides static access to Hibernate SessionFactories
@@ -496,6 +497,44 @@ public class HibernateUtilities {
 				if (conn==null) {
 					errMessage = "The creation of a JDBC connection failed!";
 				}
+			}
+		}
+		
+		if (errMessage!=null && doSilentConnectionCheck==false) {
+			System.err.println(errMessage);
+		}
+		return conn;
+	}
+	
+	/**
+	 * Based on the specified configuration, tries to return a JDBC database connection.
+	 *
+	 * @param dbSettings the DatabaseSettings to establish a connection
+	 * @param doSilentConnectionCheck the do silent connection check
+	 * @return the database connection
+	 */
+	public static Connection getDatabaseConnection(DatabaseSettings dbSettings, boolean doSilentConnectionCheck) {
+		
+		if (dbSettings==null) return null;
+		
+		Connection conn = null;
+		String errMessage = null;
+		
+		HibernateDatabaseService dbService = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
+		if (dbService==null) {
+			// --- Write driver class error -------------------------
+			errMessage = "No database service was was specified with the DatabaseSettings";
+			
+		} else {
+			// --- Check if the driver class needs to be added ------ 
+			if (dbSettings.getHibernateDatabaseSettings().contains(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass)==false) {
+				dbSettings.getHibernateDatabaseSettings().put(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, dbService.getDriverClassName());
+			}
+			// --- Try getting a JDBC connection --------------------
+			Vector<String> userMessages = new Vector<>(); 
+			conn = dbService.getDatabaseConnection(dbSettings.getHibernateDatabaseSettings(), userMessages, !doSilentConnectionCheck);
+			if (conn==null) {
+				errMessage = "The creation of a JDBC connection failed!";
 			}
 		}
 		
