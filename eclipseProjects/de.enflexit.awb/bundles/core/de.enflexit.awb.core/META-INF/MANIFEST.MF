@@ -16,7 +16,8 @@ Service-Component: OSGI-INF/classLoadService.xml,
  OSGI-INF/PropertyBusServiceUpdateCheckBackend.xml,
  OSGI-INF/PropertyBusServiceExecuteBackendUpdate.xml,
  OSGI-INF/PropertyBusServiceFileConfigTypes.xml,
- OSGI-INF/FileConfigurationServiceAwbConfig.xml
+ OSGI-INF/FileConfigurationServiceAwbConfig.xml,
+ OSGI-INF/FileConfigurationServiceLogback.xml
 Import-Package: agentgui.core.charts.timeseriesChart,
  agentgui.core.charts.xyChart,
  com.sun.jna,

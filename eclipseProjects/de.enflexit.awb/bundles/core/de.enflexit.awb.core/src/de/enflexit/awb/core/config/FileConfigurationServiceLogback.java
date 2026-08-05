@@ -1,4 +1,4 @@
-package de.enflexit.common.fileConfiguration;
+package de.enflexit.awb.core.config;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -6,6 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import de.enflexit.common.PathHandling;
+import de.enflexit.common.fileConfiguration.FileConfigurationService;
+import de.enflexit.common.fileConfiguration.FileConfigurationServiceManager;
+import de.enflexit.common.fileConfiguration.FileDownload;
+import de.enflexit.common.fileConfiguration.FileProcessingResult;
+import de.enflexit.common.fileConfiguration.UploadedFile;
 import de.enflexit.logging.AwbLogbackConfigurator;
 import de.enflexit.logging.LoggingActivator;
 import de.enflexit.logging.PropertyContentProvider.FileToProvide;
