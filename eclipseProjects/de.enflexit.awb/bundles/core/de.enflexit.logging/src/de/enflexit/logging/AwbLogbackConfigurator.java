@@ -14,8 +14,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.AsyncAppender;
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -175,10 +175,6 @@ public class AwbLogbackConfigurator {
 		AwbDatabaseAppender.getInstance().setDataSource(dataSource);
 	}
 	
-	public static boolean setLoggingFilePath(Path newPath) {
-		return false;
-	}
-	
 	/**
 	 * Returns the logback file location.
 	 * @return the logback file location
@@ -187,6 +183,32 @@ public class AwbLogbackConfigurator {
 		Path pathProperties = PathHandling.getPropertiesPath(true);
 	    return pathProperties.resolve(FileToProvide.LOGBACK_CONFIGURATION.toString());
 	}	
+
+	/**
+	 * Checks if file logging is enabled.
+	 *
+	 * @return true, if FILE_APPENDER or ASYNC_FILE_APPENDER is started
+	 */
+	public static boolean isFileLoggingEnabled() {
+		
+		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+		Logger rootLogger = context.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+		Appender<?> fileAppender = rootLogger.getAppender("FILE_APPENDER");
+		if (fileAppender != null) {
+			return fileAppender.isStarted();
+		}
+		fileAppender = rootLogger.getAppender("ASYNC_FILE_APPENDER");
+		return fileAppender != null && fileAppender.isStarted() == true;
+	}
+	
+	/**
+	 * Checks if is db logging enabled.
+	 *
+	 * @return true, if AwbDatabaseAppender is started
+	 */
+	public static boolean isDbLoggingEnabled() {
+		return AwbDatabaseAppender.getInstance().isStarted();
+	}
 	
 	/**
 	 * Returns the local bundle.

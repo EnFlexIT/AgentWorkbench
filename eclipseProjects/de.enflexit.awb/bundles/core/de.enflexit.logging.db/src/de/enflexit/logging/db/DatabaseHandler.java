@@ -1,10 +1,20 @@
 package de.enflexit.logging.db;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.MutationQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+
+import de.enflexit.logging.db.dataModel.LoggingEvent;
+
 
 
 /**
@@ -15,7 +25,7 @@ import org.hibernate.query.Query;
 public class DatabaseHandler {
 	
 	private Session session;
-	
+
 	/**
 	 * Instantiates a new database handler.
 	 */
@@ -29,7 +39,8 @@ public class DatabaseHandler {
 	}
 	
 	/**
-	 * Returns the current session instance.
+	 * Returns the session.
+	 *
 	 * @return the session
 	 */
 	public Session getSession() {
@@ -79,112 +90,6 @@ public class DatabaseHandler {
 		}
 	}
 
-	// --------------------------------------------------------------
-	// --- From here, generically working on concrete data ----------
-	// --------------------------------------------------------------	
-	/**
-	 * Saves or updates the specified {@link entityInstance}.
-	 * @param entityInstance the JettySession instance to save or update
-	 */
-	public <EntityInstance> boolean dbSaveOrUpdateEntityInstance(EntityInstance entityInstance) {
-		
-		boolean successful= false;
-		Session session = this.getSession();
-		if (session!=null) {
-			
-			Transaction transaction = null;
-			try {
-				transaction = session.beginTransaction();
-				session.persist(entityInstance);
-				session.flush();
-				transaction.commit();
-				successful = true;
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				ex.printStackTrace();
-				successful = false;
-				
-			} finally {
-				session.clear();
-			}
-		}
-		return successful;
-	}
-	
-	/**
-	 * Loads an entity instance by its ID from the database.
-	 *
-	 * @param <EntityClass> the generic entity instance to load
-	 * @param entityClass the entity class
-	 * @param entityID the entity ID
-	 * @return the entity instance found in the database
-	 */
-	public <EntityInstance> EntityInstance dbLoadEntityInstance(Class<EntityInstance> entityClass, String entityID) {
-		
-		EntityInstance siteMenu =  null;
-		Session session = this.getSession();
-		if (session!=null) {
-		
-			Transaction transaction = null;
-			try {
-				transaction = session.beginTransaction();
-				siteMenu = session.get(entityClass, entityID);
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				ex.printStackTrace();
-			} finally {
-				session.clear();
-			}
-		}
-		return siteMenu;
-	}
-	
-	/**
-	 * Returns the list of all entity instance in the database table .
-	 *
-	 * @param <EntityInstance> the generic type
-	 * @param entityClass the entity class
-	 * @return the JettySession list
-	 */
-	public <EntityInstance> List<EntityInstance> dbLoadEntityInstanceList(Class<EntityInstance> entityClass) {
-		return this.dbLoadEntityInstanceList("from " + entityClass.getSimpleName(), entityClass);
-	}
-	/**
-	 * Returns the list of all entity instance in the database table.
-	 *
-	 * @param <EntityInstance> the generic type
-	 * @param queryString the query string
-	 * @param entityClass the entity class
-	 * @return the JettySession list
-	 */
-	public <EntityInstance> List<EntityInstance> dbLoadEntityInstanceList(String queryString, Class<EntityInstance> entityClass) {
-		
-		List<EntityInstance> entityInstanceList =  null;
-		Session session = this.getSession();
-		if (session!=null) {
-		
-			Transaction transaction = null;
-			try {
-				transaction = session.beginTransaction();
-				
-				Query<EntityInstance> query = session.createQuery(queryString, entityClass);
-				entityInstanceList = query.list();
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				ex.printStackTrace();
-			} finally {
-				session.clear();
-			}
-		}
-		return entityInstanceList;
-	}
-	
-	
 	/**
 	 * Deletes the specified entity instance.
 	 *
@@ -210,6 +115,209 @@ public class DatabaseHandler {
 				this.doTransactionRollBack(transaction);
 				ex.printStackTrace();
 				successful = false;
+			} finally {
+				session.clear();
+			}
+		}
+		return successful;
+	}
+
+	/**
+	 * Returns the logging events in between from and to
+	 *
+	 * @param from the starting time
+	 * @param to the ending time
+	 * @return the logging events in between
+	 */
+	public List<LoggingEvent> getLoggingEventsInBetween(long from, long to) {
+
+		Session session = this.getSession();
+		if (session != null) {
+			Transaction transaction = null;
+			
+			try {
+				transaction = session.beginTransaction();
+				Query<LoggingEvent> query = session.createQuery("from LoggingEvent e " + "where e.timestmp >= :from "
+						+ "and e.timestmp < :to " + "order by e.timestmp", LoggingEvent.class);
+
+				query.setParameter("from", from);
+				query.setParameter("to", to);
+
+				List<LoggingEvent> logs = query.list();
+				transaction.commit();
+				return logs;
+				
+			} catch (Exception ex) {
+				transaction.rollback();
+				ex.printStackTrace();
+				
+			} finally {
+				session.clear();
+			}
+		}
+		return null;
+	}
+
+	public boolean hasLogsInbetween(long from, long to) {
+
+		Session session = this.getSession();
+		if (session != null) {
+			Transaction transaction = null;
+			
+			try {
+				transaction = session.beginTransaction();
+				NativeQuery<?> query = session.createNativeQuery("""
+						SELECT 1
+						FROM logging_event
+						WHERE timestmp >= :from
+						  AND timestmp < :to
+						""");
+				
+				query.setParameter("from", from);
+				query.setParameter("to", to);
+				query.setMaxResults(1);
+				
+				List<?> result = query.getResultList();
+				transaction.commit();
+				return result.size() > 0;
+
+			} catch (Exception ex) {
+				transaction.rollback();
+				ex.printStackTrace();
+
+			} finally {
+				session.clear();
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the oldest log date.
+	 *
+	 * @return the oldest log date
+	 */
+	public LocalDate getOldestLogDate() {
+		Session session = this.getSession();
+		if (session != null) {
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				Query<Long> query = session.createQuery("SELECT MIN(e.timestmp) FROM LoggingEvent e", Long.class);
+				Long oldestTimestamp = query.getSingleResult();
+				transaction.commit();
+				return oldestTimestamp == null ? null : Instant.ofEpochMilli(oldestTimestamp).atZone(ZoneId.systemDefault()).toLocalDate();
+				
+			} catch (Exception ex) {
+				transaction.rollback();
+				ex.printStackTrace();
+				
+			} finally {
+				session.clear();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the latest log date.
+	 *
+	 * @return the latest log date
+	 */
+	public LocalDate getLatestLogDate() {
+		Session session = this.getSession();
+		if (session != null) {
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				Query<Long> query = session.createQuery("SELECT MAX(e.timestmp) FROM LoggingEvent e", Long.class);
+				Long latestTimestamp = query.getSingleResult();
+				transaction.commit();
+				if (latestTimestamp != null) {
+					return Instant.ofEpochMilli(latestTimestamp).atZone(ZoneId.systemDefault()).toLocalDate();
+				}
+				
+			} catch (Exception ex) {
+				transaction.rollback();
+				ex.printStackTrace();
+				
+			} finally {
+				session.clear();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the clean up limit id.
+	 *
+	 * @param dayLimit the max amount of days an entry should be kept
+	 * @return the clean up limit id
+	 */
+	public Long getCleanUpLimitId(int dayLimit) {
+
+		Session session = this.getSession();
+		if (session != null) {
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				long timeStampLimit = System.currentTimeMillis() - Duration.of(dayLimit, ChronoUnit.DAYS).toMillis();
+				Query<Long> query = session.createQuery("SELECT MAX(e.eventId) FROM LoggingEvent e WHERE e.timestmp < :timeStampLimit", Long.class);
+				query.setParameter("timeStampLimit", timeStampLimit);
+				Long limitIdByDays = query.getSingleResult();
+				transaction.commit();
+				return limitIdByDays;
+
+			} catch (Exception ex) {
+				transaction.rollback();
+				ex.printStackTrace();
+				
+			} finally {
+				session.clear();
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * Deletes all entries where event_id <= limitId
+	 *
+	 * @param limitId the limit id
+	 * @return true, if successful
+	 */
+	public boolean cleanUpByLimitId(Long limitId) {
+		
+		if (limitId == null || limitId == 0) return true;
+		
+		boolean successful = false;
+		Session session = this.getSession();
+		if (session != null) {
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				
+				// --- Delete from child tables first ---------------------------------------------
+				MutationQuery query = session.createMutationQuery("DELETE FROM loggingEventException WHERE  event_id <= :limitId");
+				query.setParameter("limitId", limitId);
+				query.executeUpdate();
+				
+				query = session.createMutationQuery("DELETE FROM properties WHERE  eventId <= :limitId");
+				query.setParameter("limitId", limitId);
+				query.executeUpdate();
+				
+				query = session.createMutationQuery("DELETE FROM LoggingEvent e WHERE e.eventId <= :limitId");
+				query.setParameter("limitId", limitId);
+				query.executeUpdate();
+				
+				transaction.commit();
+				successful = true;
+				
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				successful = false;
+				ex.printStackTrace();
+				
 			} finally {
 				session.clear();
 			}

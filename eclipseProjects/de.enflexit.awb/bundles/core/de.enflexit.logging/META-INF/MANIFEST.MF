@@ -90,12 +90,16 @@ Export-Package: ch.qos.logback.classic,
  de.enflexit.logging,
  de.enflexit.logging.appender,
  de.enflexit.logging.console,
+ de.enflexit.logging.provider,
  org.slf4j;version="2.0.17",
  org.slf4j.event;version="2.0.17",
  org.slf4j.helpers;version="2.0.17",
  org.slf4j.spi;version="2.0.17"
+Service-Component: OSGI-INF/FileLogProviderService.xml,
+ OSGI-INF/NoOpLogProviderService.xml
 Import-Package: org.eclipse.core.runtime.preferences,
  org.osgi.framework,
+ org.osgi.service.component,
  org.osgi.service.prefs
 Bundle-Vendor: EnFlex.IT
 Bundle-Activator: de.enflexit.logging.LoggingActivator

@@ -10,10 +10,13 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Export-Package: de.enflexit.logging.db,
  de.enflexit.logging.db.dataModel
-Service-Component: OSGI-INF/LoggingDatabaseConnectionService.xml
+Service-Component: OSGI-INF/LoggingDatabaseConnectionService.xml,
+ OSGI-INF/DatabaseLogProviderService.xml
 Require-Bundle: de.enflexit.db.hibernate,
  org.eclipse.osgi
-Import-Package: de.enflexit.logging,
+Import-Package: de.enflexit.awb.core.update,
+ de.enflexit.logging,
  de.enflexit.logging.appender,
  de.enflexit.logging.console,
+ de.enflexit.logging.provider,
  jakarta.persistence

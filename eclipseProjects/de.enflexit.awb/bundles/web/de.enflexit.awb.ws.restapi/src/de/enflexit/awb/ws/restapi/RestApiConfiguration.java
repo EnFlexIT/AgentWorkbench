@@ -8,6 +8,7 @@ import de.enflexit.awb.ws.restapi.gen.AppApi;
 import de.enflexit.awb.ws.restapi.gen.InfoApi;
 import de.enflexit.awb.ws.restapi.gen.JacksonJsonProvider;
 import de.enflexit.awb.ws.restapi.gen.LoadApi;
+import de.enflexit.awb.ws.restapi.gen.LogsApi;
 import de.enflexit.awb.ws.restapi.gen.UserApi;
 import de.enflexit.awb.ws.restapi.gen.VersionApi;
 import de.enflexit.awb.ws.restapi.gen.AliveApi;
@@ -53,6 +54,7 @@ public class RestApiConfiguration extends ResourceConfig {
 		this.register(LoadApi.class);
 		this.register(UserApi.class);
 		this.register(VersionApi.class);
+		this.register(LogsApi.class);
 	}
 	
 	

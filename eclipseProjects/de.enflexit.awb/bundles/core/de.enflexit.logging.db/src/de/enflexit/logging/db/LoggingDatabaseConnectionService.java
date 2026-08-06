@@ -1,6 +1,7 @@
 package de.enflexit.logging.db;
 
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.Vector;
 
 import org.hibernate.Session;
@@ -9,7 +10,8 @@ import org.hibernate.cfg.Configuration;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
-
+import de.enflexit.awb.core.update.MaintenanceScheduler;
+import de.enflexit.awb.core.update.MaintenanceTask;
 import de.enflexit.db.hibernate.ColumnOrderingStrategyAsDefinedInClass;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.SessionFactoryMonitor.SessionFactoryState;
@@ -39,6 +41,7 @@ public class LoggingDatabaseConnectionService implements HibernateDatabaseConnec
 	private Configuration configuration;
 	
 	private int hibernateBatchSize = 50;
+	private static final String MAINTENANCE_TASK_ID = "Database-Cleanup";
 	
 	
 	// ----------------------------------------------------
@@ -96,6 +99,7 @@ public class LoggingDatabaseConnectionService implements HibernateDatabaseConnec
 			switch(sessionFactoryState) {
 			case Created:
 				AwbLogbackConfigurator.startAwbDatabaseAppender(new LoggingDataSource());
+				this.registerDatabaseMaintenanceTask();
 				break;
 			case CheckDBConectionFailed:
 			case CheckDBConnection:
@@ -105,12 +109,49 @@ public class LoggingDatabaseConnectionService implements HibernateDatabaseConnec
 			case NotAvailableYet:
 			default:
 				AwbDatabaseAppender.getInstance().setWriteToLoggingStorage(false);
+				MaintenanceScheduler.getInstance().unregisterTask(MAINTENANCE_TASK_ID);
 			}
 		}
 	}
+
+	/**
+	 * Register database maintenance task.
+	 */
+	private void registerDatabaseMaintenanceTask() {
+		MaintenanceScheduler.getInstance().start();
+		MaintenanceScheduler.getInstance().registerTask(new MaintenanceTask() {
+			
+			@Override
+			public Runnable getTask() {
+				return new Runnable() {
+					
+					@Override
+					public void run() {
+						DatabaseHandler dbHandler = new DatabaseHandler();
+						dbHandler.cleanUpByLimitId(dbHandler.getCleanUpLimitId(30));
+					}
+				};
+			}
+			
+			@Override
+			public String getId() {
+				return MAINTENANCE_TASK_ID;
+			}
+			
+			@Override
+			public int getMinutesToRandomize() {
+				return 0;
+			}
+			
+			@Override
+			public LocalTime getStartTime() {
+				return LocalTime.of(0, 0);
+			}
+		});
+	}
 	
 	/**
-	 * Gets the local bundle.
+	 * Returns the local bundle.
 	 * @return the local bundle
 	 */
 	public Bundle getLocalBundle() {
@@ -180,7 +221,7 @@ public class LoggingDatabaseConnectionService implements HibernateDatabaseConnec
 	// --- Handling for DB session factory and its configuration --------------
 	// ------------------------------------------------------------------------
 	/**
-	 * Gets the new hibernate database session.
+	 * Returns the new hibernate database session.
 	 * @return the new database session
 	 */
 	public Session getNewDatabaseSession() {

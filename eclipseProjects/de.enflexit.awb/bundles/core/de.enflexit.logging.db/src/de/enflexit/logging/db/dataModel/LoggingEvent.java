@@ -13,6 +13,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -24,7 +25,12 @@ import jakarta.persistence.JoinColumn;
  * @author Daniel Bormann - EnFlex.IT GmbH
  */
 @Entity
-@Table(name = "logging_event")
+@Table(
+		name = "logging_event",
+		indexes = {
+				@Index(name ="idx_logging_event_timestmp", columnList = "timestmp")
+		})
+
 public class LoggingEvent {
 
 	@Column(name="timestmp", nullable=false)
