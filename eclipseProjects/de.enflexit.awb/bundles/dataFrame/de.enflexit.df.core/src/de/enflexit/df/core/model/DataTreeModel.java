@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
@@ -68,6 +68,34 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		this.dataController = dataController;
 		if (this.dataController!=null) this.dataController.addPropertyChangeListener(this);
 	}
+	
+	
+	/**
+	 * Inform within the model that a tree node was added.
+	 *
+	 * @param parentNode the parent node
+	 * @param treeNodeAdded the tree node added
+	 */
+	public void informTreeNodeAdded(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode treeNodeAdded) {
+		Object[] pathToParent = parentNode.getPath();
+		int[] newIndicies = {parentNode.getIndex(treeNodeAdded)};
+		Object[] newChildren = {treeNodeAdded}; 
+		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+	}
+	/**
+	 * Inform within the model that a node was removed.
+	 *
+	 * @param parentNode the parent node
+	 * @param treeNodeRemoved the tree node to remove
+	 * @param indexOfRemovedNode the index of the removed node
+	 */
+	public void informTreeNodeRemoved(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode treeNodeRemoved, int indexOfRemovedNode) {
+		Object[] pathToParent = parentNode.getPath();
+		int[] removedIndicies = {indexOfRemovedNode};
+		Object[] removedChildren = {treeNodeRemoved}; 
+		this.fireTreeNodesRemoved(this, pathToParent, removedIndicies, removedChildren);
+	}
+	
 	
 	/**
 	 * Searches for tree nodes that matches the specified search filter.
@@ -147,8 +175,8 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 			@Override
 			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
 				DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
-				if (dtno instanceof AbstractDTNO_DataSource<?>) {
-					AbstractDTNO_DataSource<?> dtnoDataSource = (AbstractDTNO_DataSource<?>) dtno;
+				if (dtno instanceof AbstractDataSourceDTNO<?>) {
+					AbstractDataSourceDTNO<?> dtnoDataSource = (AbstractDataSourceDTNO<?>) dtno;
 					if (dtnoDataSource.getDataSource() == dataSource) {
 						return true;
 					}
@@ -263,10 +291,10 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 
 		
 		// --- Create new node according to data source -------------
-		AbstractDTNO_DataSource<?> ds = null;
+		AbstractDataSourceDTNO<?> ds = null;
 		AbstractDataSourceIntegration<?> dsIntegration = dataSource.getDataSourceIntegration(this.getDataController(), dw);
 		if (dsIntegration!=null) {
-			ds = dsIntegration.getDataTreeNodeObject();
+			ds = dsIntegration.getDTNO();
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Could not find DataSourceIntegration of class '" + dataSource.getClass().getSimpleName() + "'!");
 		}
@@ -279,6 +307,10 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		int[] newIndicies = {dwNode.getIndex(newNode)};
 		Object[] newChildren = {newNode}; 
 		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+		
+		// --- Set the node to the data source integration ----------
+		dsIntegration.setDataTreeNode(newNode);
+		dsIntegration.addDataTreeSubNodes();
 	}
 	/**
 	 * Removes the specified data source as tree node.

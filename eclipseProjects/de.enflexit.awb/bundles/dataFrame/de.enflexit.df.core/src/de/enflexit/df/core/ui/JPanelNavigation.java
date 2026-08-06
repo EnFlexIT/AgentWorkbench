@@ -19,6 +19,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
@@ -275,6 +276,13 @@ public class JPanelNavigation extends JPanel implements ActionListener, Property
 
 			
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
+			// --- Ensure that the new TreePath was selected ------------------ 
+			TreePath tpSelected = this.getJTreeData().getSelectionPath();
+			TreePath tpSelectedNew = (TreePath)evt.getNewValue();
+			if (tpSelected.equals(tpSelectedNew)==false) {
+				this.getJTreeData().setSelectionPath(tpSelectedNew);
+			}
+			// --- Check for the correct configuration view -------------------
 			if (this.isConfigurationVisible()==true) {
 				this.updateConfigurationView();
 			}

@@ -16,6 +16,7 @@
 		<!--  <property name="hibernate.hbm2ddl.auto">create-drop</property> -->
 		
 		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.format_sql">false</property>
 		<property name="hibernate.generate_statistics">false</property>
 		<property name="hibernate.connection.autocommit">false</property> 
 

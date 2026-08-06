@@ -52,10 +52,10 @@ public class PaginationDataLoader4CSV extends AbstractPaginationDataLoader<CsvDa
 	
 	/**
 	 * Instantiates a new pagination data loader 4 CSV.
-	 * @param dataSource the data source
+	 * @param dsIntegration the CsvDataSourceIntegration
 	 */
-	public PaginationDataLoader4CSV(CsvDataSource dataSource) {
-		super(dataSource);
+	public PaginationDataLoader4CSV(CsvDataSourceIntegration dsIntegration) {
+		super(dsIntegration);
 	}
 
 	/**

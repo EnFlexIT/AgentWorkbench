@@ -127,7 +127,7 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 */
 	private static Gson createGsonForDataWorkbook4JSON() {
 		//return new GsonBuilder().setPrettyPrinting().create();
-		return new GsonBuilder().registerTypeAdapter(DefaultDataSource.class, new JsonAdapterForDataSource()).setPrettyPrinting().create();
+		return new GsonBuilder().registerTypeHierarchyAdapter(DefaultDataSource.class, new JsonAdapterForDataSource()).setPrettyPrinting().create();
 	}
 	
 	/**

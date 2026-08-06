@@ -92,7 +92,6 @@ public class DataWorkbookDatabaseHandler {
 				transaction = session.beginTransaction();
 				if (doUpdate==false) {
 					session.persist(entityInstance);
-					session.flush();
 				} else {
 					session.merge(entityInstance);
 				}

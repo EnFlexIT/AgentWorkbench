@@ -1,6 +1,11 @@
 package de.enflexit.df.impl.db;
 
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -11,12 +16,11 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  */
 public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration<DatabaseDataSource> {
 
-	/**
-	 * Instantiates a new database data source integration.
-	 */
-	public DatabaseDataSourceIntegration() {
-		super();
-	}
+	private DatabaseDataSourceDTNO dtnoDBDataSource;
+	private JPanelDataSourceConfigurationDatabase jPanelDataSourceConfigurationDatabase;
+	private JPanelQueryConfiguration jPanelQueryConfiguration;
+	
+	
 	/**
 	 * Instantiates a new database data source integration.
 	 *
@@ -33,8 +37,165 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#getDataTreeNodeObject()
 	 */
 	@Override
-	public AbstractDTNO_DataSource<DatabaseDataSource> getDataTreeNodeObject() {
-		return new DTNO_DatabaseeDataSource(this.getDataController(), this.getDataWorkbook(), this.getDataSource());
+	public AbstractDataSourceDTNO<DatabaseDataSource> getDTNO() {
+		if (dtnoDBDataSource==null) {
+			dtnoDBDataSource = new DatabaseDataSourceDTNO(this);
+		}
+		return dtnoDBDataSource;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationToolbarComponents()
+	 */
+	@Override
+	public List<JComponent> getConfigurationToolbarComponents() {
+		return this.getConfigurationPanel().getConfigurationToolbarComponents();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationPanel()
+	 */
+	@Override
+	public JPanelDataSourceConfigurationDatabase getConfigurationPanel() {
+		if (jPanelDataSourceConfigurationDatabase==null) {
+			jPanelDataSourceConfigurationDatabase = new JPanelDataSourceConfigurationDatabase(this);
+			this.getDataController().addPropertyChangeListener(jPanelDataSourceConfigurationDatabase);
+		}
+		return jPanelDataSourceConfigurationDatabase;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetConfigurationPanel()
+	 */
+	@Override
+	public void resetConfigurationPanel() {
+		this.getDataController().removePropertyChangeListener(this.jPanelDataSourceConfigurationDatabase);
+		this.jPanelDataSourceConfigurationDatabase = null;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getDetailViewPanel()
+	 */
+	@Override
+	public JComponent getDetailViewPanel() {
+		if (jPanelQueryConfiguration==null) {
+			jPanelQueryConfiguration = new JPanelQueryConfiguration(this);
+		}
+		return jPanelQueryConfiguration;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetDetailViewPanel()
+	 */
+	@Override
+	public void resetDetailViewPanel() {
+		jPanelQueryConfiguration = null;
+	}
+
+	
+	// ------------------------------------------------------------------------
+	// --- From here handling of sub nodes ------------------------------------
+	// ------------------------------------------------------------------------
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration#addDataTreeSubNodes()
+	 */
+	@Override
+	public void addDataTreeSubNodes() {
+		for (DatabaseQuery dbQuery : this.getDataSource().getDatabaseQueryList()) {
+			this.addDataTreeSubNode(dbQuery);
+		}
+	}
+	
+	/**
+	 * Adds a data tree sub node that corresponds to the specified {@link DatabaseQuery}.
+	 * @param dbQueryToAdd the DatabaseQuery to add
+	 */
+	public void addDataTreeSubNode(DatabaseQuery dbQueryToAdd) {
+		
+		DatabaseDataSource4SQL sqlDS = new DatabaseDataSource4SQL(this.getDataSource(), dbQueryToAdd);
+		DatabaseDataSourceIntegration4SQL dbSqlIntegration = new DatabaseDataSourceIntegration4SQL(this.getDataController(), this.getDataWorkbook(), sqlDS);
+		DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(dbSqlIntegration.getDTNO());
+		
+		this.getDataTreeNode().add(subNode);
+		this.getDataController().getDataTreeModel().informTreeNodeAdded(this.getDataTreeNode(), subNode);
+	}
+	/**
+	 * Removes the data tree sub node that corresponds to the specified {@link DatabaseQuery}.
+	 * @param dbQueryToRemove the DatabaseQuery to remove
+	 */
+	public void removeDataTreeSubNode(DatabaseQuery dbQueryToRemove) {
+		
+		DefaultMutableTreeNode subNodeToRemove = this.getDataTreeSubNode(dbQueryToRemove);
+		if (subNodeToRemove==null) return;
+		
+		int idxOfSubNodeToRemove = this.getDataTreeNode().getIndex(subNodeToRemove);
+		this.getDataTreeNode().remove(idxOfSubNodeToRemove);
+		this.getDataController().getDataTreeModel().informTreeNodeRemoved(this.getDataTreeNode(), subNodeToRemove, idxOfSubNodeToRemove);
+	}
+
+	/**
+	 * Move data tree sub node.
+	 *
+	 * @param dbQueryToMove the db query to move
+	 * @param direction the direction
+	 */
+	public void moveDataTreeSubNode(DatabaseQuery dbQueryToMove, int direction) {
+		
+		DefaultMutableTreeNode treeNodeToMove = this.getDataTreeSubNode(dbQueryToMove);
+		if (treeNodeToMove==null) return;
+		
+		int oldIndex = this.getDataTreeNode().getIndex(treeNodeToMove);
+		int newIndex = oldIndex + direction;
+
+		this.getDataTreeNode().remove(treeNodeToMove);
+		this.getDataTreeNode().insert(treeNodeToMove, newIndex);
+		
+		int[] changedIndex = new int[2];
+		changedIndex[0] = oldIndex;
+		changedIndex[1] = newIndex;
+		
+		this.getDataController().getDataTreeModel().nodesChanged(this.getDataTreeNode(), changedIndex);
+		for (int changed : changedIndex) {
+			this.getDataController().getDataTreeModel().nodeChanged(this.getDataTreeNode().getChildAt(changed));
+		}
+	}
+	
+	/**
+	 * Returns the data tree sub node.
+	 *
+	 * @param databaseQuery the database query
+	 * @return the data tree sub node
+	 */
+	public DefaultMutableTreeNode getDataTreeSubNode(DatabaseQuery databaseQuery) {
+		
+		DefaultMutableTreeNode parentNode = this.getDataTreeNode();
+		for (int i = 0; i < parentNode.getChildCount(); i++) {
+			DefaultMutableTreeNode subTreeNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
+			if (subTreeNode.getUserObject() instanceof DatabaseDataSourceDTNO4SQL dtnoSQL) {
+				if (dtnoSQL.getDatabaseSqlIntegration().getDatabaseQuery().equals(databaseQuery)==true) {
+					return subTreeNode;
+				}
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the data tree sub node.
+	 *
+	 * @param databaseQuery the database query
+	 * @return the data tree sub node
+	 */
+	public DatabaseDataSourceDTNO4SQL getDataTreeSubNodeDTNO(DatabaseQuery databaseQuery) {
+
+		DefaultMutableTreeNode parentNode = this.getDataTreeNode();
+		for (int i = 0; i < parentNode.getChildCount(); i++) {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) parentNode.getChildAt(i);
+			if (treeNode.getUserObject() instanceof DatabaseDataSourceDTNO4SQL dtnoSQL) {
+				if (dtnoSQL.getDatabaseSqlIntegration().getDatabaseQuery().equals(databaseQuery)==true) {
+					return dtnoSQL;
+				}
+			}
+		}
+		return null;
+	}
+	
 }

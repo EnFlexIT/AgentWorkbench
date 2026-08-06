@@ -58,18 +58,22 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getDatabaseConnection(java.util.Properties, java.util.Vector, boolean)
 	 */
-	@Override
 	public Connection getDatabaseConnection(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole) {
 		return this.getDatabaseConnection(hibernateProperties, userMessageVector, isPrintToConole, true);
 	}
-		
+	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getDatabaseConnection(java.util.Properties, java.util.Vector, boolean, boolean)
+	 */
+	@Override
 	public Connection getDatabaseConnection(Properties hibernateProperties, Vector<String> userMessageVector, boolean isPrintToConole, boolean removeDbFromUrl) {
 
 		String message = null;
 		if (hibernateProperties==null) {
 			message = "[" + this.getMessagePrefix() +"] No properties were specified for the connection!";
 			userMessageVector.addElement(message);
-			if (isPrintToConole) System.err.println(message);
+			if (isPrintToConole) {
+				System.err.println(message);
+			}
 			return null;
 		}
 		

@@ -23,7 +23,7 @@ import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
@@ -559,7 +559,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		} else if (ae.getSource()==this.getJButtonDeleteDataSources()) {
 			// --- Delete currently selected data source ----------------------
 			DataWorkbook dw = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
-			AbstractDTNO_DataSource<?> dtnoDataSource = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+			AbstractDataSourceDTNO<?> dtnoDataSource = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
 			if (dw!=null && dtnoDataSource!=null) {
 				// --- Ask the user to delete the data source -----------------
 				this.dataController.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(this), dw, dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());

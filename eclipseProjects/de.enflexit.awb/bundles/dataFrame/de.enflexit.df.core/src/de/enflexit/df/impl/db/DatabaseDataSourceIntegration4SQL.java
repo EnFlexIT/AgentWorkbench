@@ -1,10 +1,9 @@
-package de.enflexit.df.impl.csv;
+package de.enflexit.df.impl.db;
 
 import java.util.List;
 
 import javax.swing.JComponent;
 
-import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -13,35 +12,41 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  * The Class CsvDataSourceIntegration.
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class CsvDataSourceIntegration extends AbstractDataSourceIntegration<CsvDataSource> {
+public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegration<DatabaseDataSource4SQL> {
 
-	private CsvDataSourceDTNO dtnoCsvDataSource;
-	private JPanelDataSourceConfigurationCsv jPanelDataSourceConfigurationCsv;
-
+	private DatabaseDataSourceDTNO4SQL dtnoDBDataSourceSQL;
 	
 	/**
-	 * Instantiates a new csv data source integration.
+	 * Instantiates a new database data source integration.
 	 *
 	 * @param dataController the data controller
 	 * @param dataWorkbook the data workbook
 	 * @param dataSource the data source
 	 */
-	public CsvDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook, CsvDataSource dataSource) {
+	public DatabaseDataSourceIntegration4SQL(DataController dataController, DataWorkbook dataWorkbook, DatabaseDataSource4SQL dataSource) {
 		super(dataController, dataWorkbook, dataSource);
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#getDTNO()
+
+	/**
+	 * Returns the database query.
+	 * @return the database query
 	 */
-	@Override
-	public AbstractDataSourceDTNO<CsvDataSource> getDTNO() {
-		if (dtnoCsvDataSource==null) {
-			dtnoCsvDataSource =new CsvDataSourceDTNO(this); 
-		}
-		return dtnoCsvDataSource;
+	public DatabaseQuery getDatabaseQuery() {
+		return this.getDataSource().getDatabaseQuery();
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#getDataTreeNodeObject()
+	 */
+	@Override
+	public DatabaseDataSourceDTNO4SQL getDTNO() {
+		if (dtnoDBDataSourceSQL==null) {
+			dtnoDBDataSourceSQL = new DatabaseDataSourceDTNO4SQL(this);
+		}
+		return dtnoDBDataSourceSQL;
+	}
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationToolbarComponents()
 	 */
@@ -49,26 +54,23 @@ public class CsvDataSourceIntegration extends AbstractDataSourceIntegration<CsvD
 	public List<JComponent> getConfigurationToolbarComponents() {
 		return null;
 	}
-	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getConfigurationPanel()
 	 */
 	@Override
-	public JComponent getConfigurationPanel() {
-		if (jPanelDataSourceConfigurationCsv==null) {
-			jPanelDataSourceConfigurationCsv = new JPanelDataSourceConfigurationCsv(this);
-		}
-		return jPanelDataSourceConfigurationCsv;
+	public JPanelDataSourceConfigurationDatabase getConfigurationPanel() {
+		return null;
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetConfigurationPanel()
 	 */
 	@Override
 	public void resetConfigurationPanel() {
-		this.jPanelDataSourceConfigurationCsv = null;
+		
 	}
+		
 
-	
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getDetailViewPanel()
 	 */
@@ -80,6 +82,8 @@ public class CsvDataSourceIntegration extends AbstractDataSourceIntegration<CsvD
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetDetailViewPanel()
 	 */
 	@Override
-	public void resetDetailViewPanel() { }
-
+	public void resetDetailViewPanel() {
+		
+	}
+	
 }

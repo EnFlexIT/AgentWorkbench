@@ -32,9 +32,9 @@ import de.enflexit.df.core.dataSources.integration.AbstractJPanelDataSourceConfi
  * The Class JPanelDataSourceConfigurationCsv.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
- * @param <DTNO_CsvDataSource> the generic type
+ * @param <CsvDataSourceDTNO> the generic type
  */
-public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceConfiguration<DTNO_CsvDataSource> implements ActionListener, DocumentListener {
+public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceConfiguration<CsvDataSource, CsvDataSourceIntegration> implements ActionListener, DocumentListener {
 
 	private static final long serialVersionUID = 2214513797513629518L;
 	
@@ -59,10 +59,10 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 	
 	/**
 	 * Instantiates a new JPanelDataSourceConfigurationCsv.
-	 * @param dsTreeNode the DTNO_CsvDataSource
+	 * @param dsTreeNode the CsvDataSourceDTNO
 	 */
-	public JPanelDataSourceConfigurationCsv(DTNO_CsvDataSource dsTreeNode) {
-		super(dsTreeNode);
+	public JPanelDataSourceConfigurationCsv(CsvDataSourceIntegration dsIntegration) {
+		super(dsIntegration);
 		this.initialize();
 		this.setCsvDataSourceToUI();
 	}
@@ -307,20 +307,13 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 	}
 	
 	
-	/**
-	 * Returns the current instance of {@link CsvDataSource}.
-	 * @return the csv data source
-	 */
-	private CsvDataSource getCsvDataSource() {
-		return this.getDataTreeNodeDataSource().getDataSource();
-	}
 	
 	/**
 	 * Sets the csv data source to UI.
 	 */
 	private void setCsvDataSourceToUI() {
 		
-		CsvDataSource csvDS = this.getCsvDataSource();
+		CsvDataSource csvDS = this.getDataSource();
 		
 		this.getJTextFieldDataSourceName().setText(csvDS.getName());
 		this.getJTextAreaDescription().setText(csvDS.getDescription());
@@ -342,47 +335,47 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 	public void actionPerformed(ActionEvent ae) {
 		
 		if (ae.getSource()==this.getJTextFieldDataSourceName()) {
-			this.getCsvDataSource().setName(this.getJTextFieldDataSourceName().getText());
+			this.getDataSource().setName(this.getJTextFieldDataSourceName().getText());
 			this.getJTextAreaDescription().requestFocus();
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_NAME);
 			
 		} else if (ae.getSource()==this.getJTextAreaDescription()) {
-			this.getCsvDataSource().setDescription(this.getJTextAreaDescription().getText());
+			this.getDataSource().setDescription(this.getJTextAreaDescription().getText());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_DESCRIPTION);
 			
 		} else if (ae.getSource()==this.getJButtonSelectCsvFile()) {
 			// --- Ask user to select an csv file ------------------- 
-			String previousFilePath = this.getCsvDataSource().getCsvFilePath();
+			String previousFilePath = this.getDataSource().getCsvFilePath();
 			File previousFile = previousFilePath==null ? null : new File(previousFilePath);
 			
 			File csvFile = FileSelection.selectCsvFile(OwnerDetection.getOwnerWindowForComponent(this), JFileChooser.OPEN_DIALOG, null, null, previousFile, null);
 			if (csvFile==null) return;
 
 			String csvFilePath = csvFile.getAbsolutePath();
-			this.getCsvDataSource().setCsvFilePath(csvFilePath);
+			this.getDataSource().setCsvFilePath(csvFilePath);
 			this.getJTextFieldCsvFile().setText(csvFilePath);
 			this.getJTextFieldCsvFile().setToolTipText(csvFilePath);
 			
 			String csvFileName = csvFile.getName(); 
-			this.getCsvDataSource().setName(csvFileName);
+			this.getDataSource().setName(csvFileName);
 			this.getJTextFieldDataSourceName().setText(csvFileName);
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_FILE);
-			this.getDataTreeNodeDataSource().reloadTableAsynchronous();
+			this.getDTNO().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJComboBoxColumnSeparator()) {
-			this.getCsvDataSource().setColumnSeparator((String)this.getJComboBoxColumnSeparator().getSelectedItem());
+			this.getDataSource().setColumnSeparator((String)this.getJComboBoxColumnSeparator().getSelectedItem());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_COLUMN_SEPARATOR);
-			this.getDataTreeNodeDataSource().reloadTableAsynchronous();
+			this.getDTNO().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJCheckBoxHasHeadline()) {
-			this.getCsvDataSource().setHeadline(this.getJCheckBoxHasHeadline().isSelected());
+			this.getDataSource().setHeadline(this.getJCheckBoxHasHeadline().isSelected());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_HAS_HEADLINE);
-			this.getDataTreeNodeDataSource().reloadTableAsynchronous();
+			this.getDTNO().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJPanelTimeFormater()) {
-			this.getCsvDataSource().setDateTimeFormat(this.getJPanelTimeFormater().getTimeFormat());
+			this.getDataSource().setDateTimeFormat(this.getJPanelTimeFormater().getTimeFormat());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_CSV_DATE_TIME_FORMAT);
-			this.getDataTreeNodeDataSource().reloadTableAsynchronous();	
+			this.getDTNO().reloadDataTableAsynchronous();	
 		}
 	}
 	
@@ -415,12 +408,12 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 		
 		if (de.getDocument()==this.getJTextFieldDataSourceName().getDocument()) {
 			// --- Changed name ---------------------------
-			this.getCsvDataSource().setName(this.getJTextFieldDataSourceName().getText());
+			this.getDataSource().setName(this.getJTextFieldDataSourceName().getText());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_NAME);
 			
 		} else if (de.getDocument()==this.getJTextAreaDescription().getDocument()) {
 			// --- Changed description --------------------
-			this.getCsvDataSource().setDescription(this.getJTextAreaDescription().getText());
+			this.getDataSource().setDescription(this.getJTextAreaDescription().getText());
 			this.informDataSourceSettingChanged(CsvDataSource.CHANGED_DESCRIPTION);
 		}
 	}

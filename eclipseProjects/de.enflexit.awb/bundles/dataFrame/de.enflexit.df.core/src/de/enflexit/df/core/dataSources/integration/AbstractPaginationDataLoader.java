@@ -14,7 +14,7 @@ import tech.tablesaw.api.Table;
  */
 public abstract class AbstractPaginationDataLoader<DS extends DefaultDataSource> implements Closeable {
 
-	private DS dataSource;
+	private AbstractDataSourceIntegration<DS> dsIntegration;
 	
 	private Boolean paginationActivated;
 	private Integer numberOfRecordsPerPage;
@@ -23,30 +23,52 @@ public abstract class AbstractPaginationDataLoader<DS extends DefaultDataSource>
 	
 	protected String errorMessage;
 	
-	
 	/**
 	 * Instantiates a new pagination data loader.
-	 * @param dataSource the data source to be used
+	 * @param dsIntegration the data source integration to consider
 	 */
-	public AbstractPaginationDataLoader(DS dataSource) {
-		this.setDataSource(dataSource);
+	public AbstractPaginationDataLoader(AbstractDataSourceIntegration<DS> dsIntegration) {
+		this.setDataSourceIntegration(dsIntegration);
 	}
 	
 	/**
-	 * Sets the data source.
-	 * @param dataSource the new data source
+	 * Sets the data source integration.
+	 * @param dsIntegration the new data source integration
 	 */
-	public void setDataSource(DS dataSource) {
-		this.dataSource = dataSource;
+	public void setDataSourceIntegration(AbstractDataSourceIntegration<DS> dsIntegration) {
+		this.dsIntegration = dsIntegration; 
 	}
+	/**
+	 * Returns the data source integration.
+	 * @return the data source integration
+	 */
+	public AbstractDataSourceIntegration<DS> getDataSourceIntegration() {
+		return this.dsIntegration;
+	}
+	
 	/**
 	 * Returns the current data source to be used for the data loading.
 	 * @return the data source
 	 */
 	public DS getDataSource() {
-		return dataSource;
+		return this.getDataSourceIntegration().getDataSource();
 	}
 	
+	/**
+	 * Set the currently configured rows per page.
+	 * @param rowsPerPage the new rows per page
+	 */
+	public void setRowsPerPage(int rowsPerPage) {
+		this.getDataSource().setRowsPerPage(rowsPerPage);
+	}
+	
+	/**
+	 * Returns the currently configured rows per page.
+	 * @return the rows per page
+	 */
+	public int getRowsPerPage() {
+		return this.getDataSource().getRowsPerPage();
+	}
 	
 	/**
 	 * Checks if is pagination activated.
@@ -55,7 +77,7 @@ public abstract class AbstractPaginationDataLoader<DS extends DefaultDataSource>
 	public boolean isPaginationActivated() {
 		if (paginationActivated==null) {
 			if (this.getDataSource()!=null) {
-				paginationActivated = (this.getDataSource().getRowsPerPage()>0);
+				paginationActivated = (this.getRowsPerPage()>0);
 			} else {
 				paginationActivated = DataFramePreferences.getInstance().getBoolean(DataFramePreferences.DATA_FRAME_PAGINATION_ACTIVATED, true);
 			}
@@ -78,7 +100,7 @@ public abstract class AbstractPaginationDataLoader<DS extends DefaultDataSource>
 	public int getNumberOfRecordsPerPage() {
 		if (numberOfRecordsPerPage==null) {
 			if (this.getDataSource()!=null) {
-				numberOfRecordsPerPage = Math.abs(this.getDataSource().getRowsPerPage());
+				numberOfRecordsPerPage = Math.abs(this.getRowsPerPage());
 				if (numberOfRecordsPerPage==0) {
 					numberOfRecordsPerPage = DataFramePreferences.getInstance().getInt(DataFramePreferences.DATA_FRAME_NUMBER_OF_RECORDS_PER_PAGE, 1000);		
 				}
@@ -112,7 +134,7 @@ public abstract class AbstractPaginationDataLoader<DS extends DefaultDataSource>
 		} else {
 			rowsPerPage = -Math.abs(rowsPerPage);
 		}
-		this.getDataSource().setRowsPerPage(rowsPerPage);
+		this.setRowsPerPage(rowsPerPage);
 	}
 	
 	

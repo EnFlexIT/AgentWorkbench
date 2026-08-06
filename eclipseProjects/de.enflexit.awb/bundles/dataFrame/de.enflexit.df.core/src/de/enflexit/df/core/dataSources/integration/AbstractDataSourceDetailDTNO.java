@@ -4,84 +4,70 @@ import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
-import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 
 /**
- * The Class AbstractDTNO_DataSource.
+ * The Class AbstractDataSourceDTNO basically holds the TableSaw table that 
+ * is to be managed by a PagnationDataLoader. 
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public abstract class AbstractDTNO_DataSource<DS extends DefaultDataSource> extends DTNO_Base implements DataSourceConfigurationPanel {
+public abstract class AbstractDataSourceDetailDTNO<DS extends DefaultDataSource> extends DTNO_Base {
 
-	private DataController dataController;
-	private DataWorkbook dataWorkbook;
-	private DS dataSource;
+	private AbstractDataSourceIntegration<DS> dsIntegration; 
 
 	private Table table;
 	
 	private boolean isLoading;
 	
 	private int rowSelected = 1;
+
 	
 	/**
 	 * Instantiates a new data tree node data source.
-	 *
-	 * @param dataController the current {@link DataController}
-	 * @param dataWorkbook the corresponding {@link DataWorkbook} to which the data source belongs
-	 * @param dataSource the data source
+	 * @param dsIntegration the DataSourceIntegration
 	 */
-	public AbstractDTNO_DataSource(DataController dataController, DataWorkbook dataWorkbook, DS dataSource) {
-		this.setDataController(dataController);
-		this.setDataWorkbook(dataWorkbook);
-		this.setDataSource(dataSource);
+	public AbstractDataSourceDetailDTNO(AbstractDataSourceIntegration<DS> dsIntegration) {
+		this.setDataSourceIntegration(dsIntegration);
 	}
 	
 	/**
-	 * Gets the data controller.
+	 * Returns the current data source integration.
+	 * @return the data source integration
+	 */
+	public AbstractDataSourceIntegration<DS> getDataSourceIntegration() {
+		return dsIntegration;
+	}
+	/**
+	 * Sets the data source integration.
+	 * @param dsIntegration the new data source integration
+	 */
+	public void setDataSourceIntegration(AbstractDataSourceIntegration<DS>  dsIntegration) {
+		this.dsIntegration = dsIntegration;
+	}
+	/**
+	 * Returns the current DataController.
 	 * @return the data controller
 	 */
 	public DataController getDataController() {
-		return dataController;
+		return getDataSourceIntegration().getDataController();
 	}
 	/**
-	 * Sets the data controller.
-	 * @param dataController the new data controller
-	 */
-	public void setDataController(DataController dataController) {
-		this.dataController = dataController;
-	}
-	
-	/**
-	 * Returns the corresponding {@link DataWorkbook}.
+	 * Returns the current/corresponding {@link DataWorkbook}.
 	 * @return the data workbook
 	 */
 	public DataWorkbook getDataWorkbook() {
-		return dataWorkbook;
+		return getDataSourceIntegration().getDataWorkbook();
 	}
 	/**
-	 * Sets the corresponding {@link DataWorkbook}.
-	 * @param dataWorkbook the new data workbook
-	 */
-	public void setDataWorkbook(DataWorkbook dataWorkbook) {
-		this.dataWorkbook = dataWorkbook;
-	}
-	
-	/**
-	 * Returns the data source description.
+	 * Returns the current DataSource.
 	 * @return the data source
 	 */
 	public DS getDataSource() {
-		return dataSource;
+		return getDataSourceIntegration().getDataSource();
 	}
-	/**
-	 * Sets the data source.
-	 * @param dataSource the new data source
-	 */
-	public void setDataSource(DS dataSource) {
-		this.dataSource = dataSource;
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getCaption()
@@ -156,11 +142,11 @@ public abstract class AbstractDTNO_DataSource<DS extends DefaultDataSource> exte
 				@Override
 				public void run() {
 					try {
-						AbstractDTNO_DataSource.this.loadNextPage();
+						AbstractDataSourceDetailDTNO.this.loadNextPage();
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					} finally {
-						AbstractDTNO_DataSource.this.isLoading=false;
+						AbstractDataSourceDetailDTNO.this.isLoading=false;
 					}
 				}
 			}, "DataLoader-" + this.getClass().getSimpleName()).start();

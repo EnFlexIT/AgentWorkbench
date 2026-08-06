@@ -157,6 +157,23 @@ public class PGDatabaseService extends AbstractDatabaseService {
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#applyOffsetAndLimitToSqlStatement(java.lang.String, int, int)
+	 */
+	@Override
+	public String applyOffsetAndLimitToSqlStatement(String sqlStatement, int offset, int limit) {
+		
+		if (sqlStatement==null || sqlStatement.isBlank()==true) return sqlStatement;
+		
+		String sqlWork = sqlStatement;
+		if (sqlWork.endsWith(";")==true) {
+			sqlWork = sqlWork.replace(";", "").trim();
+		}
+		sqlWork += " OFFSET " + offset + " ROWS FETCH NEXT " + limit +  " ROWS ONLY;";
+		
+		return sqlWork;
+	}
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.db.hibernate.HibernateDatabaseService#getHibernateSettingPanel()
 	 */
 	@Override

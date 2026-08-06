@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.integration.AbstractDTNO_DataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
@@ -131,7 +131,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 * Returns the currently selected data tree node data source.
 	 * @return the selected data tree node data source
 	 */
-	private AbstractDTNO_DataSource<?> getSelectedDataTreeNodeDataSource() {
+	private AbstractDataSourceDTNO<?> getSelectedDataTreeNodeDataSource() {
 		return this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
 	}
 	/**
@@ -139,8 +139,17 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 * @return the pagination data loader
 	 */
 	private AbstractPaginationDataLoader<?> getPaginationDataLoader() {
-		AbstractDTNO_DataSource<?> dtnoDS = getSelectedDataTreeNodeDataSource();
+		AbstractDataSourceDTNO<?> dtnoDS = getSelectedDataTreeNodeDataSource();
 		return (dtnoDS==null ? null : dtnoDS.getPaginationDataLoader());
+	}
+	/**
+	 * Sets the pagination data loader activated.
+	 * @param activate the new pagination data loader activated
+	 */
+	private void setPaginationDataLoaderActivated(boolean activate) {
+		if (this.getPaginationDataLoader()!=null) {
+			this.getPaginationDataLoader().setPaginationActivated(activate);
+		}
 	}
 	
 	
@@ -206,10 +215,10 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 */
 	private void setJToolDatasetNavigationEnabled() {
 		
-		AbstractDTNO_DataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
-		boolean isEnabledToolBar = (dtnoDS!=null);
+		AbstractDataSourceDTNO<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
+		boolean isEnabledToolBar = (dtnoDS!=null && this.getPaginationDataLoader()!=null);
 		
-		this.getJToggleButtonEnabledPagination().setSelected(isEnabledToolBar && this.getPaginationDataLoader().isPaginationActivated()==true);
+		this.getJToggleButtonEnabledPagination().setSelected(isEnabledToolBar && this.getPaginationDataLoader()!=null && this.getPaginationDataLoader().isPaginationActivated()==true);
 		this.setJToggleButtonEnabledPaginationIcon();
 		
 		this.getJButtonDatasetFirst().setEnabled(isEnabledToolBar);
@@ -349,7 +358,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
-		AbstractDTNO_DataSource<?> dtnoDS = null;
+		AbstractDataSourceDTNO<?> dtnoDS = null;
 		
 		String propChanged = evt.getPropertyName();
 		
@@ -365,7 +374,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				
 			} else {
 				// --- Hand over to Swing Thread --------------------
-				final AbstractDTNO_DataSource<?> dtnoDSFinal = dtnoDS; 
+				final AbstractDataSourceDTNO<?> dtnoDSFinal = dtnoDS; 
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
@@ -388,36 +397,54 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 * Sets the detail view.
 	 * @param dtnoDS the data source tree node to show
 	 */
-	private void setDetailView(AbstractDTNO_DataSource<?> dtnoDS) {
+	private void setDetailView(AbstractDataSourceDTNO<?> dtnoDS) {
 
 		// --- Direct exit? -----------------------------------------
-		AbstractDTNO_DataSource<?> dtnoDsSelected = this.getSelectedDataTreeNodeDataSource();
-		boolean useDatalessView = (dtnoDS==null || dtnoDsSelected==null);
+		AbstractDataSourceDTNO<?> dtnoDsSelected = this.getSelectedDataTreeNodeDataSource();
+		boolean isMissingDTNO   = (dtnoDS==null || dtnoDsSelected==null);
 		boolean isDifferentData = (dtnoDS!=null && dtnoDsSelected!=null && dtnoDS!=dtnoDsSelected);
 		if (isDifferentData==true) return;
 		
 		JComponent uiDetail = this.getJPanelDataless();
-		if (useDatalessView==false) {
-			
-			Table tablesawDataTable = dtnoDS.getTable();
-			if (tablesawDataTable!=null) {
-				// --- Show table data ------------------------------
-				this.getJTableData().setModel(new TablesawTableModel(tablesawDataTable));
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						JPanelDataDetailView.this.setDatasetSelection(dtnoDS.getRowSelected(), 0, true);
-						JPanelDataDetailView.this.getJTextFieldRowsPerPage().setText(dtnoDS.getPaginationDataLoader().getNumberOfRecordsPerPage() + "");
-						JPanelDataDetailView.this.getJTextFieldPageLoaded().setText(dtnoDS.getPaginationDataLoader().getPageNumberLoaded() + "");
-					}
-				});
+		if (isMissingDTNO==false) {
+			// ------------------------------------------------------
+			// --- DataSource that requires sub configuration ? -----
+			// ------------------------------------------------------
+			if (dtnoDsSelected.getDataSource().requiresSubConfiguration()==false) {
+				// --------------------------------------------------
+				// --- Display the data table -----------------------
+				// --------------------------------------------------
+				Table tablesawDataTable = dtnoDS.getTable();
+				if (tablesawDataTable!=null) {
+					// --- Show table data --------------------------
+					this.getJTableData().setModel(new TablesawTableModel(tablesawDataTable));
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							JPanelDataDetailView.this.setDatasetSelection(dtnoDS.getRowSelected(), 0, true);
+							JPanelDataDetailView.this.getJTextFieldRowsPerPage().setText(dtnoDS.getPaginationDataLoader().getNumberOfRecordsPerPage() + "");
+							JPanelDataDetailView.this.getJTextFieldPageLoaded().setText(dtnoDS.getPaginationDataLoader().getPageNumberLoaded() + "");
+						}
+					});
+					
+				} else {
+					// --- Try loading? -----------------------------
+					dtnoDS.loadNextPageAsynchronous();
+					this.getJTableData().setModel(new DefaultTableModel());
+				}
+				uiDetail = this.getJTableData();
 				
 			} else {
-				// --- Try loading? ---------------------------------
-				dtnoDS.loadNextPageAsynchronous();
-				this.getJTableData().setModel(new DefaultTableModel());
+				// --------------------------------------------------
+				// --- Configuration Panel for sub configuration? ---
+				// --------------------------------------------------
+				JComponent detailViewPanel = dtnoDS.getDataSourceIntegration().getDetailViewPanel();
+				if (detailViewPanel!=null) {
+					uiDetail = detailViewPanel;
+				}
+				
 			}
-			uiDetail = this.getJTableData();
+			
 		}
 		this.setJToolDatasetNavigationEnabled();
 		
@@ -456,8 +483,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		} else if (ae.getSource()==this.getJToggleButtonEnabledPagination()) {
 			// --- React on pagination toggle ----------------------- 
 			this.setJToggleButtonEnabledPaginationIcon();
-			this.getPaginationDataLoader().setPaginationActivated(this.getJToggleButtonEnabledPagination().isSelected());
-			this.getSelectedDataTreeNodeDataSource().reloadTableAsynchronous();
+			this.setPaginationDataLoaderActivated(this.getJToggleButtonEnabledPagination().isSelected());
+			this.getSelectedDataTreeNodeDataSource().reloadDataTableAsynchronous();
 			
 		} else if (ae.getSource()==this.getJTextFieldRowsPerPage()) {
 			// --- Change the number of rows per page ---------------
@@ -466,7 +493,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				newRowsPerPage = Integer.parseInt(this.getJTextFieldRowsPerPage().getText().trim());
 				if (newRowsPerPage != this.getPaginationDataLoader().getNumberOfRecordsPerPage()) {
 					this.getPaginationDataLoader().setNumberOfRecordsPerPage(newRowsPerPage);
-					this.getSelectedDataTreeNodeDataSource().reloadTableAsynchronous();
+					this.getSelectedDataTreeNodeDataSource().reloadDataTableAsynchronous();
 					this.getJButtonDatasetLast().requestFocus();
 				}
 				
@@ -484,7 +511,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	 */
 	private void setDatasetSelection(Integer dataRowToSelect, int direction, boolean isSelectInTable) {
 		
-		AbstractDTNO_DataSource<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
+		AbstractDataSourceDTNO<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
 		if (dtnoDS==null) return;
 		
 		// --- Adjust number of data row text field -----------------
