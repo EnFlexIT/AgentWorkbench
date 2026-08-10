@@ -299,7 +299,9 @@ public class DataController {
 	public boolean addDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		if (dw!=null && dataSource!=null && dw.getDataSources()!=null && dw.getDataSources().contains(dataSource)==false) {
 			boolean success = dw.addDataSource(dataSource);
-			this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
+			if (success==true) {
+				this.getPropertyChangeSupport().firePropertyChange(DC_ADDED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
+			}
 			return success;
 		}
 		return false;
@@ -315,11 +317,24 @@ public class DataController {
 		
 		if (dw==null || dataSource==null || dw.getDataSources()==null) return false;
 		
+		// --- Check if already added to the list of data sources ---
+		boolean wasAdded = true;
 		if (dw.getDataSources().contains(dataSource)==false) {
-			return this.addDataSource(dw, dataSource);
-		} 
-		this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
-		return true;
+			wasAdded = this.addDataSource(dw, dataSource);
+		}
+		if (wasAdded==false) return false;
+
+		// --- Try to 'open' the data source ------------------------
+		try {
+			boolean successfulOpened = dataSource.open(); 
+			this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
+			return successfulOpened;
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	
+		return false;
 	}
 	/**
 	 * Closes the specified data source.
@@ -332,9 +347,13 @@ public class DataController {
 		
 		if (dw==null || dataSource==null || dw.getDataSources()==null) return false;
 		
-		//TODO Either call data source or data workbook to close the data source
-		
-		this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
+		try {
+			dataSource.close(); 
+			this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return true;
 	}
 	/**

@@ -219,7 +219,7 @@ public class DataWorkbookReminder implements PropertyChangeListener {
 			} else if (dwLocation.getDataWorkbookClassName().equals(DataWorkbook4JSON.class.getName())) {
 				dw = DataWorkbook4JSON.loadFromDataWorkBookLocation(dwLocation);
 			} else if (dwLocation.getDataWorkbookClassName().equals(DataWorkbook4DB.class.getName())) {
-				dw = DataWorkbook4DB.loadFromDataWorkBookLocation(dwLocation);
+				dw = DataWorkbook4DB.loadFromDataWorkbookLocation(dwLocation);
 			}
 
 			// --- Could a DataWorkbook be created? ----------------- 

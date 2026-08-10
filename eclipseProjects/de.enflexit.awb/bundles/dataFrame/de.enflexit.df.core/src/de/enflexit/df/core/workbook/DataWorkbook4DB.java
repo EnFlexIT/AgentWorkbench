@@ -199,7 +199,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 * @param dwLocation the DataWorkbookLocation
 	 * @return the data workbook
 	 */
-	public static DataWorkbook loadFromDataWorkBookLocation(DataWorkbookLocation dwLocation) {
+	public static DataWorkbook loadFromDataWorkbookLocation(DataWorkbookLocation dwLocation) {
 		
 		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
@@ -211,6 +211,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		String valueString = location.substring(cutStart, cutStop);
 		
 		// --- Create DataSource instance ---------------------------
+		@SuppressWarnings("resource")
 		DatabaseDataSource ds = new DatabaseDataSource().fromConfigurationString(valueString);
 
 		// --- Create DataWorkbook4  instance -----------------------		

@@ -12,7 +12,7 @@ public class DatabaseDataSourceDTNO extends AbstractDataSourceDTNO<DatabaseDataS
 		
 	/**
 	 * Instantiates a new data tree node data source database.
-	 * @param dsIntegration the ds integration
+	 * @param dsIntegration the current DatabaseDataSourceIntegration
 	 */
 	public DatabaseDataSourceDTNO(DatabaseDataSourceIntegration dsIntegration) {
 		super(dsIntegration);

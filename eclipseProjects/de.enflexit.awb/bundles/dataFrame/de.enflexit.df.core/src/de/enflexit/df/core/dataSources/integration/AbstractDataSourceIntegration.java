@@ -98,7 +98,6 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 		return this.treeNode;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#addDataTreeSubNodes()
 	 */

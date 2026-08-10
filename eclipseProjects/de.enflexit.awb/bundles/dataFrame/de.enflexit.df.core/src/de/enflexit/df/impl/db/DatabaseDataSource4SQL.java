@@ -1,5 +1,7 @@
 package de.enflexit.df.impl.db;
 
+import java.io.IOException;
+
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -87,54 +89,103 @@ public class DatabaseDataSource4SQL extends DatabaseDataSource {
 	}
 	
 	
-	/**
-	 * Returns the factory ID to be used instead of a complete connection onfiguration.
-	 * @return the factory ID´or <code>null</code>
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getId()
 	 */
+	@Override
+	public int getId() {
+		return this.getDatabaseDataSource().getId();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getName()
+	 */
+	@Override
+	public String getName() {
+		return this.getDatabaseDataSource().getName();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getDescription()
+	 */
+	@Override
+	public String getDescription() {
+		return this.getDatabaseDataSource().getDescription();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getRowsPerPage()
+	 */
+	@Override
+	public int getRowsPerPage() {
+		return this.getDatabaseDataSource().getRowsPerPage();
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.impl.db.DatabaseDataSource#getFactoryID()
+	 */
+	@Override
 	public String getFactoryID() {
 		return this.getDatabaseDataSource().getFactoryID();
 	}
-
-	/**
-	 * Returns the DBMS name (e.g. MariaDB or PostGres).
-	 * @return the DBMS name
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.impl.db.DatabaseDataSource#getDBMSName()
 	 */
+	@Override
 	public String getDBMSName() {
 		return this.getDatabaseDataSource().getDBMSName();
 	}
-
-	/**
-	 * Returns the host or IP.
-	 * @return the host or IP
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.impl.db.DatabaseDataSource#getConnectionURL()
 	 */
+	@Override
 	public String getConnectionURL() {
 		return this.getDatabaseDataSource().getConnectionURL();
 	}
-
-	/**
-	 * Returns the database name.
-	 * @return the database name
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.impl.db.DatabaseDataSource#getDbName()
 	 */
+	@Override
 	public String getDbName() {
 		return this.getDatabaseDataSource().getDbName();
 	}
-
-	/**
-	 * Returns the database user name.
-	 * @return the database user name
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.impl.db.DatabaseDataSource#getUserName()
 	 */
+	@Override
 	public String getUserName() {
 		return this.getDatabaseDataSource().getUserName();
 	}
-
-	/**
-	 * Returns the database password.
-	 * @return the database password
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.impl.db.DatabaseDataSource#getPassword()
 	 */
+	@Override
 	public String getPassword() {
 		return this.getDatabaseDataSource().getPassword();
 	}
 
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, clean-up for closing a data source --------------------------------
+	// ----------------------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#open()
+	 */
+	@Override
+	public boolean open() {
+		// TODO Auto-generated method stub
+		
+		return super.open();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#close()
+	 */
+	@Override
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+		
+		
+	}
+	
+	
 	// ----------------------------------------------------------------------------------
 	// --- From here, single String configuration conversion methods --------------------
 	// ----------------------------------------------------------------------------------

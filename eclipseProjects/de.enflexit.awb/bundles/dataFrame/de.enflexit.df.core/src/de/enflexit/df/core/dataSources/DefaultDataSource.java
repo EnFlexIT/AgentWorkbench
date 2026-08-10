@@ -1,5 +1,6 @@
 package de.enflexit.df.core.dataSources;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,7 +188,26 @@ public class DefaultDataSource implements DataSource {
 	public final void setStorageConfiguration(String storageConfiguration) {
 		this.storageConfiguration = storageConfiguration;
 	}
+
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#open()
+	 */
+	@Override
+	public boolean open() {
+		// --- Overwrite, if needed in the sub classes --------------
+		// --- => By default, this method return true
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.io.Closeable#close()
+	 */
+	@Override
+	public void close() throws IOException {
+		// --- Overwrite, if needed in the sub classes -------------- 
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

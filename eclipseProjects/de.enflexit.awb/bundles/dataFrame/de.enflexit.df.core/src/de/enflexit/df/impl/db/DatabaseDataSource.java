@@ -1,5 +1,6 @@
 package de.enflexit.df.impl.db;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -152,6 +153,31 @@ public class DatabaseDataSource extends DefaultDataSource {
 		this.password = databasePassword;
 	}
 
+	
+	// ----------------------------------------------------------------------------------
+	// --- From here, open and clean-up of data source ----------------------------------
+	// ----------------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#open()
+	 */
+	@Override
+	public boolean open() {
+		// TODO Auto-generated method stub
+		return super.open();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#close()
+	 */
+	@Override
+	public void close() throws IOException {
+		// --- Close and dispose integration ------------------------
+		if (dbDataSourceIntegration!=null) {
+			dbDataSourceIntegration.close();
+			dbDataSourceIntegration = null;
+		}
+	}
+	
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here, single String configuration conversion methods --------------------

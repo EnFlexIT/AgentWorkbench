@@ -15,11 +15,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -41,23 +43,37 @@ import de.enflexit.df.core.model.TablesawTableModel;
 import tech.tablesaw.api.Table;
 
 /**
- * The Class JPanelDataDetailView.
+ * The Class JPanelDataTableView.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelDataDetailView extends JPanel implements PropertyChangeListener, ActionListener {
+public class JPanelDataTableView extends JPanel implements PropertyChangeListener, ActionListener {
 
 	private static final long serialVersionUID = -2503356793902058897L;
 
+	public enum DataViewConfiguration {
+		No_ColumnDescription,
+		ColumnDescription_Top,
+		ColumnDescription_Right,
+		ColumnDescription_Left,
+		ColumnDescription_Bottom
+	}
+	
+	
 	private DataController dataController;
 	
 	private Font baseFont = new Font("Dialog", Font.PLAIN, 12);
 	private Dimension textFieldDimension = new Dimension(60, 24);
 	
 	
+	private GridBagConstraints gbc_dataViewConfiguration;
+	private JComponent jComponentDataViewConfiguration;
+	
 	private JScrollPane jScrollPaneData;
 	private JTable jTableData;
-
+	private JTableHeaderWithToolTips jTableHeaderWithToolTips;
+	private JPanel jPanelColumDescription;
+	
 	private JPanel jPanelDataless;
 	
 	private JToolBar jToolBarDatasetNavigation;
@@ -73,11 +89,20 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		private JLabel jLabelPageLoaded;
 		private JTextField jTextFieldPageLoaded;
 	
+		private JLabel jLabelColumnDescription;
+		private JToggleButton jToggleButtonOrientationBottom;
+		private JToggleButton jToggleButtonOrientationRight;
+		private JToggleButton jToggleButtonOrientationTop;
+		private JToggleButton jToggleButtonOrientationLeft;
+		
+		private JToggleButton jToggleButtonOrientationClose;
+		
+		
 	/**
-	 * Instantiates a new j panel data table.
+	 * Instantiates a new JPanelDataTableView.
 	 * @param dataController the data controller
 	 */
-	public JPanelDataDetailView(DataController dataController) {
+	public JPanelDataTableView(DataController dataController) {
 		this.setDataController(dataController);
 		this.initialize();
 	}
@@ -93,11 +118,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
-		GridBagConstraints gbc_jScrollPaneData = new GridBagConstraints();
-		gbc_jScrollPaneData.fill = GridBagConstraints.BOTH;
-		gbc_jScrollPaneData.gridx = 0;
-		gbc_jScrollPaneData.gridy = 0;
-		this.add(this.getJScrollPaneData(), gbc_jScrollPaneData);
+		this.setDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
+		this.getJToggleButtonOrientationClose().setSelected(true);
 		
 		GridBagConstraints gbc_jToolBarDatasetNavigation = new GridBagConstraints();
 		gbc_jToolBarDatasetNavigation.fill = GridBagConstraints.HORIZONTAL;
@@ -107,9 +129,8 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		this.add(this.getJToolBarDatasetNavigation(), gbc_jToolBarDatasetNavigation);
 		
 		this.setJToolDatasetNavigationEnabled();
-		
 	}
-
+	
 	/**
 	 * Returns the data controller.
 	 * @return the data controller
@@ -153,6 +174,96 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	}
 	
 	
+	/**
+	 * Sets the data view configuration.
+	 * @param dataViewConfig the new data view configuration
+	 */
+	public void setDataViewConfiguration(DataViewConfiguration dataViewConfig) {
+		
+		if (dataViewConfig==null) return;
+		
+		if (this.jComponentDataViewConfiguration!=null) {
+			this.remove(this.jComponentDataViewConfiguration);
+		}
+		
+		int dividerLocationAbs = 0;
+		double dividerLocation = 0.25;
+		double resizeWeight = 0.95;
+		
+		switch (dataViewConfig) {
+		case No_ColumnDescription:
+			this.jComponentDataViewConfiguration = this.getJScrollPaneData();
+			break;
+		case ColumnDescription_Top:
+			resizeWeight = (1-resizeWeight);
+			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescription(), this.getJScrollPaneData());
+			break;
+		case ColumnDescription_Bottom:
+			dividerLocation = (1 - dividerLocation);
+			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescription());
+			break;
+		case ColumnDescription_Left:
+			resizeWeight = (1-resizeWeight);
+			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescription(), this.getJScrollPaneData());
+			break;
+		case ColumnDescription_Right:
+			dividerLocation = (1 - dividerLocation);
+			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescription());
+			break;
+		}
+		
+		this.add(this.jComponentDataViewConfiguration, this.getGridBagConstraintsDataViewConfiguration());
+		this.validate();
+		this.repaint();
+		
+		if (this.jComponentDataViewConfiguration instanceof JSplitPane jspDV) {
+			jspDV.setDividerLocation(dividerLocationAbs);
+		}
+		
+	}
+	/**
+	 * Returns the grid bag constraints data view configuration.
+	 * @return the grid bag constraints data view configuration
+	 */
+	public GridBagConstraints getGridBagConstraintsDataViewConfiguration() {
+		if (gbc_dataViewConfiguration==null) {
+			gbc_dataViewConfiguration = new GridBagConstraints();
+			gbc_dataViewConfiguration.fill = GridBagConstraints.BOTH;
+			gbc_dataViewConfiguration.gridx = 0;
+			gbc_dataViewConfiguration.gridy = 0;
+		}
+		return gbc_dataViewConfiguration;
+	}
+	/**
+	 * Creates a JSplitPane for the data and the column description.
+	 *
+	 * @param orientation the orientation
+	 * @param dividerLocation the divider location
+	 * @param resizeWeight the resize weight
+	 * @param topLeftComponent the top left component
+	 * @param bottomRightComponent the bottom right component
+	 * @return the j split pane
+	 */
+	private JSplitPane createJSplitPaneData(int orientation, double dividerLocation, double resizeWeight, JComponent topLeftComponent, JComponent bottomRightComponent) {
+		JSplitPane jSplitPaneData = new JSplitPane();
+		jSplitPaneData.setDividerSize(5);
+		jSplitPaneData.setOrientation(orientation);
+		jSplitPaneData.setDividerLocation(dividerLocation);
+		jSplitPaneData.setResizeWeight(resizeWeight);
+		if (orientation==JSplitPane.HORIZONTAL_SPLIT) {
+			jSplitPaneData.setLeftComponent(topLeftComponent);
+			jSplitPaneData.setRightComponent(bottomRightComponent);
+		} else {
+			jSplitPaneData.setTopComponent(topLeftComponent);
+			jSplitPaneData.setBottomComponent(bottomRightComponent);
+		}
+		return jSplitPaneData;
+	}
+	
 	private JScrollPane getJScrollPaneData() {
 		if (jScrollPaneData == null) {
 			jScrollPaneData = new JScrollPane();
@@ -166,25 +277,46 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			jTableData.setFillsViewportHeight(true);
 			jTableData.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-			jTableData.getTableHeader().setReorderingAllowed(false);
 			jTableData.setDefaultRenderer(Object.class, new DateTimeTableCellRenderer("dd.MM.yyyy HH:mm:ss"));
 			jTableData.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent lse) {
 					if (lse.getValueIsAdjusting()==true) return;
-					JPanelDataDetailView.this.setDatasetSelection(lse.getFirstIndex(), lse.getLastIndex(), false);
+					JPanelDataTableView.this.setDatasetSelection(lse.getFirstIndex(), lse.getLastIndex(), false);
 				}
 			});
+			
+			jTableData.setTableHeader(this.getJTableHeaderWithTooltips());
+			jTableData.getTableHeader().setReorderingAllowed(false);
 		}
 		return jTableData;
 	}
-
+	/**
+	 * Returns the j table header with tool tips.
+	 * @return the j table header with tool tips
+	 */
+	private JTableHeaderWithToolTips  getJTableHeaderWithTooltips() {
+		if (jTableHeaderWithToolTips==null) {
+			jTableHeaderWithToolTips = new JTableHeaderWithToolTips(this.getJTableData().getColumnModel());
+		}
+		return jTableHeaderWithToolTips;
+	}
+	
 	private JPanel getJPanelDataless() {
 		if (jPanelDataless==null) {
 			jPanelDataless = new JPanel();
 		}
 		return jPanelDataless;
 	}
+	
+	private JPanel getJPanelColumnDescription() {
+		if (jPanelColumDescription==null) {
+			jPanelColumDescription = new JPanel();
+			
+		}
+		return jPanelColumDescription;
+	}
+	
 	
 	private JToolBar getJToolBarDatasetNavigation() {
 		if (jToolBarDatasetNavigation == null) {
@@ -206,6 +338,25 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			
 			jToolBarDatasetNavigation.add(this.getJLabelPagesLoaded());
 			jToolBarDatasetNavigation.add(this.getJTextFieldPageLoaded());
+			
+			jToolBarDatasetNavigation.addSeparator();
+			jToolBarDatasetNavigation.add(this.getJLabelColumnDescription());
+			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationBottom());
+			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationTop());
+			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationLeft());
+			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationRight());
+			jToolBarDatasetNavigation.addSeparator();
+			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationClose());
+			
+			jToolBarDatasetNavigation.addSeparator();
+
+			
+			ButtonGroup bgColumnDescription = new ButtonGroup();
+			bgColumnDescription.add(this.getJToggleButtonOrientationBottom());
+			bgColumnDescription.add(this.getJToggleButtonOrientationTop());
+			bgColumnDescription.add(this.getJToggleButtonOrientationLeft());
+			bgColumnDescription.add(this.getJToggleButtonOrientationRight());
+			bgColumnDescription.add(this.getJToggleButtonOrientationClose());
 			
 		}
 		return jToolBarDatasetNavigation;
@@ -233,6 +384,12 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 		
 		this.getJLabelPagesLoaded().setEnabled(isEnabledToolBar);
 		this.getJTextFieldPageLoaded().setEnabled(isEnabledToolBar);
+		
+		this.getJToggleButtonOrientationBottom().setEnabled(isEnabledToolBar);
+		this.getJToggleButtonOrientationTop().setEnabled(isEnabledToolBar);
+		this.getJToggleButtonOrientationLeft().setEnabled(isEnabledToolBar);
+		this.getJToggleButtonOrientationRight().setEnabled(isEnabledToolBar);
+		this.getJToggleButtonOrientationClose().setEnabled(isEnabledToolBar);
 	}
 
 	private JButton getJButtonDatasetFirst() {
@@ -336,7 +493,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 	private JLabel getJLabelPagesLoaded() {
 		if (jLabelPageLoaded==null) {
 			jLabelPageLoaded = new JLabel("  Pages-Loaded: ");
-			jLabelPageLoaded.setFont(baseFont.deriveFont(Font.BOLD));
+			jLabelPageLoaded.setFont(this.baseFont.deriveFont(Font.BOLD));
 		}
 		return jLabelPageLoaded;
 	}
@@ -345,11 +502,77 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 			jTextFieldPageLoaded = new JTextField();
 			jTextFieldPageLoaded.setPreferredSize(this.textFieldDimension);
 			jTextFieldPageLoaded.setMaximumSize(this.textFieldDimension);
-			jTextFieldPageLoaded.setFont(baseFont);
+			jTextFieldPageLoaded.setFont(this.baseFont);
 			jTextFieldPageLoaded.setHorizontalAlignment(JTextField.CENTER);
 			jTextFieldPageLoaded.setEditable(false);
 		}
 		return jTextFieldPageLoaded;
+	}
+	
+	
+	private JLabel getJLabelColumnDescription() {
+		if (jLabelColumnDescription==null) {
+			jLabelColumnDescription = new JLabel(" Column Description: ");
+			jLabelColumnDescription.setFont(this.baseFont.deriveFont(Font.BOLD));
+		}
+		return jLabelColumnDescription;
+	}
+	
+	private JToggleButton getJToggleButtonOrientationBottom() {
+		if (jToggleButtonOrientationBottom== null) {
+			jToggleButtonOrientationBottom = new JToggleButton();
+			jToggleButtonOrientationBottom.setIcon(BundleHelper.getImageIcon("OrientationBottom.png"));
+			jToggleButtonOrientationBottom.setToolTipText("Column Description: Bottom");
+			jToggleButtonOrientationBottom.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonOrientationBottom.setMargin(new Insets(0, 0, 0, 0));
+			jToggleButtonOrientationBottom.addActionListener(this);
+		}
+		return jToggleButtonOrientationBottom;
+	}
+	private JToggleButton getJToggleButtonOrientationTop() {
+		if (jToggleButtonOrientationTop== null) {
+			jToggleButtonOrientationTop = new JToggleButton();
+			jToggleButtonOrientationTop.setIcon(BundleHelper.getImageIcon("OrientationTop.png"));
+			jToggleButtonOrientationTop.setToolTipText("Column Description: Top");
+			jToggleButtonOrientationTop.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonOrientationTop.setMargin(new Insets(0, 0, 0, 0));
+			jToggleButtonOrientationTop.addActionListener(this);
+		}
+		return jToggleButtonOrientationTop;
+	}
+	private JToggleButton getJToggleButtonOrientationLeft() {
+		if (jToggleButtonOrientationLeft == null) {
+			jToggleButtonOrientationLeft = new JToggleButton();
+			jToggleButtonOrientationLeft.setIcon(BundleHelper.getImageIcon("OrientationLeft.png"));
+			jToggleButtonOrientationLeft.setToolTipText("Column Description: Left");
+			jToggleButtonOrientationLeft.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonOrientationLeft.setMargin(new Insets(0, 0, 0, 0));
+			jToggleButtonOrientationLeft.addActionListener(this);
+		}
+		return jToggleButtonOrientationLeft;
+	}
+	private JToggleButton getJToggleButtonOrientationRight() {
+		if (jToggleButtonOrientationRight == null) {
+			jToggleButtonOrientationRight = new JToggleButton();
+			jToggleButtonOrientationRight.setIcon(BundleHelper.getImageIcon("OrientationRight.png"));
+			jToggleButtonOrientationRight.setToolTipText("Column Description: Right");
+			jToggleButtonOrientationRight.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonOrientationRight.setMargin(new Insets(0, 0, 0, 0));
+			jToggleButtonOrientationRight.addActionListener(this);
+		}
+		return jToggleButtonOrientationRight;
+	}
+	
+	private JToggleButton getJToggleButtonOrientationClose() {
+		if (jToggleButtonOrientationClose== null) {
+			jToggleButtonOrientationClose = new JToggleButton();
+			jToggleButtonOrientationClose.setIcon(BundleHelper.getImageIcon("MBclose.png"));
+			jToggleButtonOrientationClose.setToolTipText("Close Column Description");
+			jToggleButtonOrientationClose.setPreferredSize(new Dimension(26, 26));
+			jToggleButtonOrientationClose.setMargin(new Insets(0, 0, 0, 0));
+			jToggleButtonOrientationClose.addActionListener(this);
+		}
+		return jToggleButtonOrientationClose;
 	}
 	
 	/* (non-Javadoc)
@@ -378,7 +601,7 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						JPanelDataDetailView.this.setDetailView(dtnoDSFinal);
+						JPanelDataTableView.this.setDetailView(dtnoDSFinal);
 					}
 				});
 			}
@@ -418,12 +641,19 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				if (tablesawDataTable!=null) {
 					// --- Show table data --------------------------
 					this.getJTableData().setModel(new TablesawTableModel(tablesawDataTable));
+					// --- Set the column descriptions to header --- 
+					if (dtnoDsSelected instanceof AbstractDataSourceDTNO<?>) {
+						this.getJTableHeaderWithTooltips().setColumnDescriptionList(dtnoDsSelected.getColumnDescriptionList());
+					} else {
+						this.getJTableHeaderWithTooltips().setColumnDescriptionList(null);
+					}
+
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							JPanelDataDetailView.this.setDatasetSelection(dtnoDS.getRowSelected(), 0, true);
-							JPanelDataDetailView.this.getJTextFieldRowsPerPage().setText(dtnoDS.getPaginationDataLoader().getNumberOfRecordsPerPage() + "");
-							JPanelDataDetailView.this.getJTextFieldPageLoaded().setText(dtnoDS.getPaginationDataLoader().getPageNumberLoaded() + "");
+							JPanelDataTableView.this.setDatasetSelection(dtnoDS.getRowSelected(), 0, true);
+							JPanelDataTableView.this.getJTextFieldRowsPerPage().setText(dtnoDS.getPaginationDataLoader().getNumberOfRecordsPerPage() + "");
+							JPanelDataTableView.this.getJTextFieldPageLoaded().setText(dtnoDS.getPaginationDataLoader().getPageNumberLoaded() + "");
 						}
 					});
 					
@@ -499,6 +729,16 @@ public class JPanelDataDetailView extends JPanel implements PropertyChangeListen
 				
 			} catch (Exception ex) { }
 			
+		} else if (ae.getSource()==this.getJToggleButtonOrientationBottom()) {
+			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Bottom);
+		} else if (ae.getSource()==this.getJToggleButtonOrientationTop()) {
+			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Top);
+		} else if (ae.getSource()==this.getJToggleButtonOrientationLeft()) {
+			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Left);
+		} else if (ae.getSource()==this.getJToggleButtonOrientationRight()) {
+			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Right);
+		} else if (ae.getSource()==this.getJToggleButtonOrientationClose()) {
+			this.setDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
 		}
 	}
 	

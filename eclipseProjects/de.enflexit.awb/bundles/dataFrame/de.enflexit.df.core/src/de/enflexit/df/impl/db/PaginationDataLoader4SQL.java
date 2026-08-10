@@ -8,7 +8,6 @@ import java.sql.Statement;
 
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
-import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.io.AddCellToColumnException;
@@ -21,9 +20,8 @@ import tech.tablesaw.io.ColumnIndexOutOfBoundsException;
  */
 public class PaginationDataLoader4SQL extends AbstractPaginationDataLoader<DatabaseDataSource4SQL> {
 
-	private DatabaseSettings dbSettings;
+	private DatabaseConnection databaseConnection;
 	private HibernateDatabaseService dbService;
-	private Connection connection;
 	
 	private int lastOffset = 0;
 	
@@ -35,10 +33,17 @@ public class PaginationDataLoader4SQL extends AbstractPaginationDataLoader<Datab
 		super(dsIntegration);
 	}
 	/**
+	 * Returns the DatabaseDataSourceIntegration (which is the parent integration).
+	 * @return the database data source integration
+	 */
+	private DatabaseDataSourceIntegration getDatabaseDataSourceIntegration() {
+		return (DatabaseDataSourceIntegration) this.getDatabaseDataSourceIntegration4SQL().getDataSource().getDatabaseDataSource().getDataSourceIntegration(getDatabaseDataSourceIntegration4SQL().getDataController(), getDatabaseDataSourceIntegration4SQL().getDataWorkbook());
+	}
+	/**
 	 * Returns the current DatabaseDataSourceIntegration4SQL.
 	 * @return the database SQL integration
 	 */
-	private DatabaseDataSourceIntegration4SQL getDatabaseSqlIntegration() {
+	private DatabaseDataSourceIntegration4SQL getDatabaseDataSourceIntegration4SQL() {
 		return (DatabaseDataSourceIntegration4SQL) this.getDataSourceIntegration();
 	}
 	
@@ -47,7 +52,7 @@ public class PaginationDataLoader4SQL extends AbstractPaginationDataLoader<Datab
 	 * @return the database query
 	 */
 	private DatabaseQuery getDatabaseQuery() {
-		return this.getDatabaseSqlIntegration().getDatabaseQuery();
+		return this.getDatabaseDataSourceIntegration4SQL().getDatabaseQuery();
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader#setRowsPerPage(int)
@@ -66,58 +71,31 @@ public class PaginationDataLoader4SQL extends AbstractPaginationDataLoader<Datab
 
 	
 	/**
-	 * Returns the currently configured {@link DatabaseSettings}.
-	 * @return the database settings
-	 */
-	private DatabaseSettings getDatabaseSettings() {
-		if (dbSettings==null) {
-			dbSettings = this.getDataSource().toDatabaseSettings();
-		}
-		return dbSettings;
-	}
-	/**
 	 * Returns the HibernateDatabaseService that is used to produce the {@link Connection}.
 	 * @return the database service
 	 */
 	private HibernateDatabaseService getDatabaseService() {
 		if (dbService==null) {
-			dbService = HibernateUtilities.getDatabaseService(this.getDatabaseSettings().getDatabaseSystemName());
+			dbService = HibernateUtilities.getDatabaseService(this.getDataSource().toDatabaseSettings().getDatabaseSystemName());
 		}
 		return dbService;
 	}
 	/**
-	 * If established, returns the database connection.
-	 * @return the connection
+	 * Returns the database connection.
+	 * @return the database connection
 	 */
-	private Connection getConnection() {
-		if (connection!=null) {
-			try {
-				if (connection.isClosed()==true) {
-					connection = null;
-				}
-			} catch (SQLException sqlEx) {
-				sqlEx.printStackTrace();
-			}
+	public DatabaseConnection getDatabaseConnection() {
+		if (databaseConnection==null) {
+			databaseConnection = new DatabaseConnection(this.getDataSource());
 		}
-		
-		if (connection==null) {
-			connection = HibernateUtilities.getDatabaseConnection(this.getDatabaseSettings(), false);
-		}
-		return connection;
+		return databaseConnection;
 	}
-	
 	/* (non-Javadoc)
 	 * @see java.io.Closeable#close()
 	 */
 	@Override
 	public void close() throws IOException {
-		if (connection!=null) {
-			try {
-				connection.close();
-			} catch (SQLException sqlEx) {
-				sqlEx.printStackTrace();
-			}
-		}
+		this.getDatabaseConnection().close();
 	}
 	
 	/**
@@ -135,14 +113,20 @@ public class PaginationDataLoader4SQL extends AbstractPaginationDataLoader<Datab
 		Statement statem;
 		try {
 
-			// --- Apply offset and limit to SQL statement? ---------
+			// --- Apply offset and limit to SQL statement? -------------------
+			String sqlToExecute = sqlStatement;
 			if (offset >= 0 && limit >= 0) {
-				sqlStatement = this.getDatabaseService().applyOffsetAndLimitToSqlStatement(sqlStatement, offset, limit);
+				sqlToExecute = this.getDatabaseService().applyOffsetAndLimitToSqlStatement(sqlToExecute, offset, limit);
 			}
 			
-			// --- Execute Query ------------------------------------
-			statem = this.getConnection().createStatement();
-			ResultSet resSet = statem.executeQuery(sqlStatement);
+			// --- Execute Query ----------------------------------------------
+			statem = this.getDatabaseConnection().getConnection().createStatement();
+			ResultSet resSet = statem.executeQuery(sqlToExecute);
+			
+			// --- Update the table dictionary according to the ResultSet ----- 
+			this.getDatabaseDataSourceIntegration().getDatabaseConnection().getTableDictionary().updateDictionary(sqlStatement, resSet);
+
+			// --- Translate into tablesaw table ------------------------------
 			table = Table.read().db(resSet);
 			this.setErrorMessage(null);
 			
@@ -152,6 +136,7 @@ public class PaginationDataLoader4SQL extends AbstractPaginationDataLoader<Datab
 		}
 		return table;
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.data.PaginationDataLoader#loadNextPage()

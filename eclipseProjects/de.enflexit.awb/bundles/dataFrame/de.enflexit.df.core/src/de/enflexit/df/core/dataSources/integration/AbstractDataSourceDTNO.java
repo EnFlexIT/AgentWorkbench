@@ -1,11 +1,18 @@
 package de.enflexit.df.core.dataSources.integration;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.extension.ColumnDescription;
+import de.enflexit.df.core.extension.ColumnDescriptionService;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.columns.Column;
 
 /**
  * The Class AbstractDataSourceDTNO basically holds the TableSaw table that 
@@ -18,6 +25,7 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 	private AbstractDataSourceIntegration<DS> dsIntegration; 
 
 	private Table table;
+	private List<ColumnDescription> columnDescriptionList;
 	
 	private boolean isLoading;
 	
@@ -93,6 +101,58 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 		this.table = table;
 	}
 	
+	/**
+	 * Returns the column description list.
+	 * @return the column description list
+	 */
+	public List<ColumnDescription> getColumnDescriptionList() {
+		if (columnDescriptionList==null) {
+			columnDescriptionList = new ArrayList<>();
+		}
+		return columnDescriptionList;
+	}
+	/**
+	 * Update column description list.
+	 */
+	public void updateColumnDescriptionList() {
+		
+		if (this.getTable()==null || this.getTable().columnCount()==0) return;
+		if (this.getTable().columnCount()==this.getColumnDescriptionList().size()) return;
+		this.getColumnDescriptionList().clear();
+		
+		List<ColumnDescriptionService> cdServiceList = ServiceFinder.findServices(ColumnDescriptionService.class);
+		
+		DataWorkbook dw = this.getDataWorkbook();
+		DefaultDataSource ds = this.getDataSource();
+		
+		Table tsTable = this.getTable();
+		for (Column<?> col : tsTable.columns()) {
+			// --- Prepare for a corresponding ColumnDescription ----
+			String columnName = col.name();
+			String columnType = col.type().getPrinterFriendlyName();
+			String tableName = null;
+			
+			// --- May not return null for sub classes -------------- 
+			try {
+				tableName = this.getTableName(columnName);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+
+			}
+			// --- Add description to list --------------------------
+			this.getColumnDescriptionList().add(new ColumnDescription(dw, ds, tableName, columnName, columnType));
+		}
+	}
+	/**
+	 * Has to return the table name for the specified column name.
+	 *
+	 * @param columnName the column name
+	 * @return the table name
+	 */
+	public String getTableName(String columnName) {
+		return null;
+	}
+	
 	
 	/**
 	 * Has to return the pagination loader for the specific data source.
@@ -159,14 +219,13 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 		
 		// --- Try loading the next page ---------------------------- 
 		Table newPage = this.getPaginationDataLoader().loadNextPage();
-		if (newPage==null) {
-			
-		} else {
+		if (newPage!=null) {
 			if (this.getTable()==null) {
 				this.setTable(newPage);
 			} else {	
 				this.getTable().append(newPage);
 			}
+			this.updateColumnDescriptionList();
 		}
 		
 		// --- Transfer error into node instance --------------------

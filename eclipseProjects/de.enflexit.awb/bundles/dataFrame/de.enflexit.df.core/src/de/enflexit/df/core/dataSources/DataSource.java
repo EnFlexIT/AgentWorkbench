@@ -1,5 +1,6 @@
 package de.enflexit.df.core.dataSources;
 
+import java.io.Closeable;
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface DataSource extends Serializable {
+public interface DataSource extends Serializable, Closeable {
 
 	public final static String KEY_ID = "ID";
 	public final static String KEY_NAME = "Name";
@@ -36,6 +37,11 @@ public interface DataSource extends Serializable {
 	 */
 	public DefaultDataSource newInstance();
 	
+	/**
+	 * Has to open the current data source.
+	 * @return true, if successful
+	 */
+	public boolean open();
 	
 	/**
 	 * Has to return a new instance of the actual {@link DataSourceIntegration} for the current DataSource

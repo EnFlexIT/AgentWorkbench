@@ -19,7 +19,16 @@ import de.enflexit.db.hibernate.gui.DatabaseSettings;
 public class DatabaseHelper {
 
 	/**
-	 * Valid database settings.
+	 * Checks for valid database settings.
+	 *
+	 * @param dbSettings the DatabaseSettings to check
+	 * @return true, if successful
+	 */
+	public static boolean providesValidDatabaseSettings(DatabaseSettings dbSettings) {
+		return DatabaseHelper.providesValidDatabaseSettings(dbSettings, false, (Window)null);
+	}
+	/**
+	 * Checks for valid database settings.
 	 *
 	 * @param dbSettings the DatabaseSettings to check
 	 * @param showUserInformation the show user information
@@ -31,7 +40,7 @@ public class DatabaseHelper {
 		return DatabaseHelper.providesValidDatabaseSettings(dbSettings, showUserInformation, owner);
 	}
 	/**
-	 * Valid database settings.
+	 * Checks for valid database settings.
 	 *
 	 * @param dbSettings the DatabaseSettings to check
 	 * @param showUserInformation the show user information

@@ -65,11 +65,8 @@ public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegra
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetConfigurationPanel()
 	 */
 	@Override
-	public void resetConfigurationPanel() {
+	public void resetConfigurationPanel() { }
 		
-	}
-		
-
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#getDetailViewPanel()
@@ -82,8 +79,6 @@ public class DatabaseDataSourceIntegration4SQL extends AbstractDataSourceIntegra
 	 * @see de.enflexit.df.core.ui.DataSourceConfigurationPanel#resetDetailViewPanel()
 	 */
 	@Override
-	public void resetDetailViewPanel() {
-		
-	}
+	public void resetDetailViewPanel() { }
 	
 }

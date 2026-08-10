@@ -20,6 +20,7 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 	private JPanelDataSourceConfigurationDatabase jPanelDataSourceConfigurationDatabase;
 	private JPanelQueryConfiguration jPanelQueryConfiguration;
 	
+	private DatabaseConnection databaseConnection;
 	
 	/**
 	 * Instantiates a new database data source integration.
@@ -31,7 +32,6 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 	public DatabaseDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook, DatabaseDataSource dataSource) {
 		super(dataController, dataWorkbook, dataSource);
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#getDataTreeNodeObject()
@@ -90,6 +90,38 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 		jPanelQueryConfiguration = null;
 	}
 
+	
+	/**
+	 * Returns the database connection.
+	 * @return the database connection
+	 */
+	public synchronized DatabaseConnection getDatabaseConnection() {
+		if (databaseConnection==null) {
+			DatabaseConnection dbConnectionTest = new DatabaseConnection(this.getDataSource());
+			if (dbConnectionTest.hasValidDatabaseSettings()==true) {
+				databaseConnection = dbConnectionTest;
+			}
+		}
+		return databaseConnection;
+	}
+	
+	/**
+	 * Close all connections and resources used.
+	 */
+	public void close() {
+		
+		try {
+			this.resetConfigurationPanel();
+			this.resetDetailViewPanel();
+			if (this.databaseConnection!=null) {
+				this.databaseConnection.close();
+			}
+			this.databaseConnection = null;
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	// ------------------------------------------------------------------------
 	// --- From here handling of sub nodes ------------------------------------

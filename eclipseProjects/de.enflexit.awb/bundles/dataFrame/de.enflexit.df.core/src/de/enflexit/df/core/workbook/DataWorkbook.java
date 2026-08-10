@@ -265,7 +265,7 @@ public abstract class DataWorkbook implements Serializable {
 	public boolean equals(Object compObj) {
 		
 		if (compObj==null) return false;
-		if (compObj instanceof DataWorkbook ==false) return false;
+		if (compObj instanceof DataWorkbook==false) return false;
 		
 		if (compObj==this) return true;
 
