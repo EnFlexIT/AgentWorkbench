@@ -47,7 +47,7 @@ public class DatabaseLogProviderService implements LogProviderService {
 			long from = day.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 			long to = day.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 			
-			if (this.getDatabaseHandler().hasLogsInbetween(from, to)) {
+			if (this.getDatabaseHandler().hasLogsInBetween(from, to)) {
 				availableDates.add(day.toString());
 			}
 		}
@@ -76,7 +76,7 @@ public class DatabaseLogProviderService implements LogProviderService {
 		// --- endTime is 00:00 on the day after toDate (since inclusive)------
 		long endTime = toDate.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
 		
-		// --- Get the requestet logging events -------------------------------
+		// --- Get the requested logging events -------------------------------
 		List<LoggingEvent> logsBetweenFromAndTo = this.getDatabaseHandler().getLoggingEventsInBetween(startTime, endTime);
 		List<LogFileInfo> logfiles = new ArrayList<>();
 

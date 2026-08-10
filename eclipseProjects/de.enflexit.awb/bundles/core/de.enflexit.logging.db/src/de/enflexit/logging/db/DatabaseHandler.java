@@ -137,8 +137,7 @@ public class DatabaseHandler {
 			
 			try {
 				transaction = session.beginTransaction();
-				Query<LoggingEvent> query = session.createQuery("from LoggingEvent e " + "where e.timestmp >= :from "
-						+ "and e.timestmp < :to " + "order by e.timestmp", LoggingEvent.class);
+				Query<LoggingEvent> query = session.createQuery("from LoggingEvent e " + "where e.timestmp >= :from and e.timestmp < :to " + "order by e.timestmp", LoggingEvent.class);
 
 				query.setParameter("from", from);
 				query.setParameter("to", to);
@@ -158,28 +157,42 @@ public class DatabaseHandler {
 		return null;
 	}
 
-	public boolean hasLogsInbetween(long from, long to) {
+	/**
+	 * Checks if there are for logs in between the specified times.
+	 *
+	 * @param from the time from
+	 * @param to the time to
+	 * @return true, if successful
+	 */
+	public boolean hasLogsInBetween(long from, long to) {
 
+		boolean hasLogsInBetween = false;
 		Session session = this.getSession();
 		if (session != null) {
 			Transaction transaction = null;
 			
 			try {
 				transaction = session.beginTransaction();
-				NativeQuery<?> query = session.createNativeQuery("""
-						SELECT 1
-						FROM logging_event
-						WHERE timestmp >= :from
-						  AND timestmp < :to
-						""");
 				
-				query.setParameter("from", from);
-				query.setParameter("to", to);
-				query.setMaxResults(1);
+				// --- Original approach of Daniel --------------------------------------
+//				String sql = "SELECT 1 FROM logging_event WHERE timestmp >= :from AND timestmp < :to";
+//				NativeQuery<?> query = session.createNativeQuery(sql);
+//				query.setParameter("from", from);
+//				query.setParameter("to", to);
+//				query.setMaxResults(1);
+//				
+//				List<?> result = query.getResultList();
+//				hasLogsInBetween = result.size() > 0;
 				
-				List<?> result = query.getResultList();
+				// --- As alternative solution: will always return one result set -------
+				String sql = "SELECT COUNT(*) FROM logging_event WHERE timestmp >= :from AND timestmp < :to";
+				NativeQuery<Long> countQuery = session.createNativeQuery(sql, Long.class);
+				countQuery.setParameter("from", from);
+				countQuery.setParameter("to", to);
+				Long nLogs = countQuery.getSingleResult();
+				hasLogsInBetween = nLogs>0; 
+				
 				transaction.commit();
-				return result.size() > 0;
 
 			} catch (Exception ex) {
 				transaction.rollback();
@@ -189,7 +202,7 @@ public class DatabaseHandler {
 				session.clear();
 			}
 		}
-		return false;
+		return hasLogsInBetween;
 	}
 	
 	/**
