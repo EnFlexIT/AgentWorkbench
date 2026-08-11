@@ -321,7 +321,7 @@ public class DatabaseDataSource extends DefaultDataSource {
 		
 		// --- Get the DBMS driver class ---------------------------- 
 		HibernateDatabaseService dbService = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
-		String driverClassName = dbService.getDriverClassName();
+		String driverClassName = dbService!=null ? dbService.getDriverClassName() : null;;
 		
 		// --- Fill the properties ----------------------------------
 		if (driverClassName!=null)						dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, driverClassName);
