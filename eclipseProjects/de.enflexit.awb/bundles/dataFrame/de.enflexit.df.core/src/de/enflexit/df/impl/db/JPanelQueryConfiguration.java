@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,11 +21,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -41,16 +43,11 @@ import de.enflexit.common.NumberHelper;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.common.swing.OwnerDetection;
-import de.enflexit.db.hibernate.HibernateDatabaseService;
-import de.enflexit.db.hibernate.HibernateUtilities;
-import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
 import tech.tablesaw.api.Table;
-
-import javax.swing.JToggleButton;
 
 /**
  * The Class JPanelQueryConfiguration.
@@ -100,6 +97,12 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	private JLabel jLabelSQLCheck;
 	private JTextArea jTextAreaSqlCheckResult;
 	
+	private JSeparator separator;
+	private JPanelTableDictionary jPanelTableDictionary;
+	
+	private DatabaseConnection databaseConnection;
+	
+	
 	/**
 	 * Instantiates a new JPanel that enables to configure queries.
 	 * @param databaseDataSourceIntegration the database data source integration
@@ -109,6 +112,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		this.initialize();
 		this.fillTableModel();
 		this.setEditState(EditState.NoEditing);
+		this.updateTableDictionary();
 	}
 	
 	/**
@@ -209,9 +213,9 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
@@ -286,6 +290,20 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		gbc_jTextAreaSqlCheckResult.gridx = 1;
 		gbc_jTextAreaSqlCheckResult.gridy = 6;
 		add(getJTextAreaSqlCheckResult(), gbc_jTextAreaSqlCheckResult);
+		GridBagConstraints gbc_separator = new GridBagConstraints();
+		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
+		gbc_separator.insets = new Insets(10, 10, 0, 10);
+		gbc_separator.gridwidth = 4;
+		gbc_separator.gridx = 0;
+		gbc_separator.gridy = 7;
+		add(getSeparator(), gbc_separator);
+		GridBagConstraints gbc_panelTableDictionary = new GridBagConstraints();
+		gbc_panelTableDictionary.insets = new Insets(10, 10, 10, 10);
+		gbc_panelTableDictionary.gridwidth = 4;
+		gbc_panelTableDictionary.fill = GridBagConstraints.BOTH;
+		gbc_panelTableDictionary.gridx = 0;
+		gbc_panelTableDictionary.gridy = 8;
+		add(getJPanelTableDictionary(), gbc_panelTableDictionary);
 		
 	}
 	
@@ -721,6 +739,8 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			jTextAreaSqlStatement.setPreferredSize(new Dimension(200, 78));
 			jTextAreaSqlStatement.setFont(new Font("Monospaced", Font.PLAIN, 12));
 			jTextAreaSqlStatement.getDocument().addDocumentListener(this.getDocumentListenerForEditState());
+			jTextAreaSqlStatement.setLineWrap(true);
+			jTextAreaSqlStatement.setWrapStyleWord(true);
 		}
 		return jTextAreaSqlStatement;
 	}
@@ -737,10 +757,12 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			jTextAreaSqlCheckResult.setEditable(false);
 			jTextAreaSqlCheckResult.setPreferredSize(new Dimension(200, 78));
 			jTextAreaSqlCheckResult.setFont(new Font("Monospaced", Font.PLAIN, 12));
+			jTextAreaSqlCheckResult.setLineWrap(true);
+			jTextAreaSqlCheckResult.setWrapStyleWord(true);
 		}
 		return jTextAreaSqlCheckResult;
 	}
-	
+
 	
 	/**
 	 * Sets the pagination data loader activated.
@@ -778,6 +800,24 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 				}
 			}
 		};
+	}
+	
+	private JSeparator getSeparator() {
+		if (separator == null) {
+			separator = new JSeparator();
+		}
+		return separator;
+	}
+	/**
+	 * Returns the panel table dictionary.
+	 * @return the panel table dictionary
+	 */
+	private JPanelTableDictionary getJPanelTableDictionary() {
+		if (jPanelTableDictionary == null) {
+			jPanelTableDictionary = new JPanelTableDictionary(null);
+			jPanelTableDictionary.setPreferredSize(new Dimension(200, 300));
+		}
+		return jPanelTableDictionary;
 	}
 	
 	/**
@@ -1004,6 +1044,31 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		
 	}
 	
+	/**
+	 * Updates the TableDictionary.
+	 */
+	private void updateTableDictionary() {
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				DatabaseConnection dbConnection = JPanelQueryConfiguration.this.databaseDataSourceIntegration.getDatabaseConnection();
+				if (dbConnection!=null) {
+					final TableDictionary tbDictionary = dbConnection.getTableDictionary();
+					
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							JPanelQueryConfiguration.this.getJPanelTableDictionary().setTableDictionary(tbDictionary);
+						}
+					}); 
+				}
+			}
+		}, "FillTableDictionary").start();;
+	}
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -1076,10 +1141,12 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	// --- From here some methods to handle SQL statements ---------------------
 	// -------------------------------------------------------------------------
 	
-	private DatabaseSettings dbSettings;
-	private HibernateDatabaseService dbService;
-	private Connection connection;
-	
+	private DatabaseConnection getDatabaseConnection() {
+		if (databaseConnection==null) {
+			databaseConnection = new DatabaseConnection(this.databaseDataSourceIntegration.getDataSource());
+		}
+		return databaseConnection;
+	}
 	/**
 	 * Checks the current SQL statement.
 	 */
@@ -1093,10 +1160,10 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		try {
 			
 			// --- Create a prepared statement as a first check ---------------
-			ps = this.getConnection().prepareStatement(sqlStatement);
+			ps = this.getDatabaseConnection().getConnection().prepareStatement(sqlStatement);
 			
 			// --- Till here no error => execute with minimum of data ---------
-			String sqlStatementReduced = this.getDatabaseService().applyOffsetAndLimitToSqlStatement(sqlStatement, 0, 3);
+			String sqlStatementReduced = this.getDatabaseConnection().applyOffsetAndLimitToSqlStatement(sqlStatement, 0, 3);
 			this.readFromDatabase(sqlStatementReduced, 0, 0);
 			
 			checkMessage = "No SQL errors were found.";
@@ -1111,9 +1178,8 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 				if (ps!=null && ps.isClosed()==false) {
 					ps.close();
 				}
-				this.closeConnection();
-				this.dbService = null;
-				this.dbSettings = null;
+				this.getDatabaseConnection().close();;
+				this.databaseConnection = null;
 				
 			} catch (SQLException sqlEx) {
 				sqlEx.printStackTrace();
@@ -1136,69 +1202,13 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		
 		// --- Apply offset and limit to SQL statement? ---------
 		if (offset >= 0 && limit > 0) {
-			sqlStatement = this.getDatabaseService().applyOffsetAndLimitToSqlStatement(sqlStatement, offset, limit);
+			sqlStatement = this.getDatabaseConnection().applyOffsetAndLimitToSqlStatement(sqlStatement, offset, limit);
 		}
 		
 		// --- Execute Query ------------------------------------
-		Statement statem = this.getConnection().createStatement();
+		Statement statem = this.getDatabaseConnection().getConnection().createStatement();
 		ResultSet resSet = statem.executeQuery(sqlStatement);
 		return Table.read().db(resSet);
-	}
-	
-	
-	/**
-	 * Returns the currently configured {@link DatabaseSettings}.
-	 * @return the database settings
-	 */
-	private DatabaseSettings getDatabaseSettings() {
-		if (dbSettings==null) {
-			dbSettings = this.databaseDataSourceIntegration.getDataSource().toDatabaseSettings();
-		}
-		return dbSettings;
-	}
-	/**
-	 * Returns the HibernateDatabaseService that is used to produce the {@link Connection}.
-	 * @return the database service
-	 */
-	private HibernateDatabaseService getDatabaseService() {
-		if (dbService==null) {
-			dbService = HibernateUtilities.getDatabaseService(this.getDatabaseSettings().getDatabaseSystemName());
-		}
-		return dbService;
-	}
-	/**
-	 * If established, returns the database connection.
-	 * @return the connection
-	 */
-	private Connection getConnection() {
-		if (connection!=null) {
-			try {
-				if (connection.isClosed()==true) {
-					connection = null;
-				}
-			} catch (SQLException sqlEx) {
-				sqlEx.printStackTrace();
-			}
-		}
-		
-		if (connection==null) {
-			connection = HibernateUtilities.getDatabaseConnection(this.getDatabaseSettings(), false);
-		}
-		return connection;
-	}
-	/**
-	 * Will close the current connection.
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	public void closeConnection() {
-		if (connection!=null) {
-			try {
-				connection.close();
-				connection = null;
-			} catch (SQLException sqlEx) {
-				sqlEx.printStackTrace();
-			}
-		}
 	}
 	
 }

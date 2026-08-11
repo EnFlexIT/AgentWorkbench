@@ -82,7 +82,7 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 		String db = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Catalog);
 		String user = hibernateProperties.getProperty(HIBERNATE_PROPERTY_UserName);
 		String pswd = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Password);
-
+		
 		int lastSlash = url.lastIndexOf("/") + 1;
 		if (driverClass.startsWith("org.apache.derby")==true) lastSlash=-1;
 		
@@ -102,6 +102,10 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 				conn = DriverManager.getConnection(url, user, pswd);
 			} else {
 				conn = DriverManager.getConnection(url);
+			}
+			// --- Try setting the catalog -------------------------- 
+			if (conn!=null && db!=null && db.isBlank()==false) {
+				conn.setCatalog(db);
 			}
 			return conn;
 			

@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Properties;
 
 import de.enflexit.common.NumberHelper;
+import de.enflexit.common.SerialClone;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
@@ -299,25 +301,46 @@ public class DatabaseDataSource extends DefaultDataSource {
 	public static DatabaseSettings toDatabaseSettings(DatabaseDataSource dbDataSource) {
 
 		if (dbDataSource == null) return null;
+
+		// --- Build the base for the further configuration --------- 
+		DatabaseSettings dbSettings = null;
+		boolean isFactoryConfiguration = (dbDataSource.getFactoryID()!=null); 
+		if (isFactoryConfiguration==false) {
+			// ------------------------------------------------------
+			// --- For NON-factory settings -------------------------
+			dbSettings = new DatabaseSettings();
+			dbSettings.setDatabaseSystemName(dbDataSource.getDBMSName());
+			dbSettings.setHibernateDatabaseSettings(new Properties());
+			
+		} else {
+			// ------------------------------------------------------
+			// --- For the usage of factory settings ----------------
+			DatabaseSettings factoryDbSettings = DatabaseConnectionManager.getInstance().getDatabaseSettings(dbDataSource.getFactoryID());
+			dbSettings = SerialClone.clone(factoryDbSettings);
+		}
 		
-		// --- Get the driver class name to use ---------------------
-		HibernateDatabaseService dbService =  HibernateUtilities.getDatabaseService(dbDataSource.getDBMSName());
+		// --- Get the DBMS driver class ---------------------------- 
+		HibernateDatabaseService dbService = HibernateUtilities.getDatabaseService(dbSettings.getDatabaseSystemName());
 		String driverClassName = dbService.getDriverClassName();
 		
-		DatabaseSettings dbSettings = new DatabaseSettings();
+		// --- Fill the properties ----------------------------------
+		if (driverClassName!=null)						dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, driverClassName);
 
-		dbSettings.setDatabaseSystemName(dbDataSource.getDBMSName());
-		dbSettings.setHibernateDatabaseSettings(new Properties());
-
-		if (driverClassName!=null)					dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_DriverClass, driverClassName);
-		
-		if (dbDataSource.getConnectionURL()!=null)	dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbDataSource.getConnectionURL());
-		if (dbDataSource.getDbName()!=null)			dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, dbDataSource.getDbName());
-
-		if (dbDataSource.getUserName()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
-		if (dbDataSource.getPassword()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
-
-		if (dbDataSource.getFactoryID()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_FACTORY_ID, dbDataSource.getFactoryID());
+		if (isFactoryConfiguration==false ) {
+			// ------------------------------------------------------
+			// --- For NON-factory settings -------------------------
+			if (dbDataSource.getConnectionURL()!=null)	dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_URL, dbDataSource.getConnectionURL());
+			if (dbDataSource.getDbName()!=null)			dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog, dbDataSource.getDbName());
+			
+			if (dbDataSource.getUserName()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_UserName, dbDataSource.getUserName());
+			if (dbDataSource.getPassword()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Password, dbDataSource.getPassword());
+			
+		} else {
+			// ------------------------------------------------------
+			// --- For the usage of factory settings ----------------
+			if (dbDataSource.getFactoryID()!=null)		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_FACTORY_ID, dbDataSource.getFactoryID());
+			
+		}
 
 		// --- Super class attributes -----------
 		if (dbDataSource.getId()!=0) 				dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId() + "");

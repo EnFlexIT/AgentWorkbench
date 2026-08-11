@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
+import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.DatabaseHelper;
 
 /**
@@ -20,6 +22,9 @@ import de.enflexit.df.core.DatabaseHelper;
 public class DatabaseConnection {
 
 	private DatabaseDataSource dataSource;
+	private String catalog;
+	
+	private HibernateDatabaseService dbService;
 	private Connection connection;
 	
 	private TableDictionary tableDictionary;
@@ -32,21 +37,50 @@ public class DatabaseConnection {
 	public DatabaseConnection(DatabaseDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-	
+	/**
+	 * Updates the local catalog attribute.
+	 * @param dbSettings the DatabaseSettings to consider
+	 */
+	private void updateCatalog(DatabaseSettings dbSettings) {
+		this.catalog = dbSettings.getHibernateDatabaseSettings().getProperty(HibernateDatabaseService.HIBERNATE_PROPERTY_Catalog);
+	}
+	/**
+	 * Returns the catalog.
+	 * @return the catalog
+	 */
+	private String getCatalog() {
+		return catalog;
+	}
 	/**
 	 * Checks for valid database settings.
 	 * @return true, if successful
 	 */
 	public boolean hasValidDatabaseSettings() {
-		return DatabaseHelper.providesValidDatabaseSettings(this.dataSource.toDatabaseSettings());
+		DatabaseSettings dbSettings = this.dataSource.toDatabaseSettings();
+		this.updateCatalog(dbSettings);
+		return DatabaseHelper.providesValidDatabaseSettings(dbSettings);
 	}
-	
+
 	/**
-	 * Returns the catalog that is currently used.
-	 * @return the catalog
+	 * Returns the database service that corresponds to the current {@link DatabaseDataSource}.
+	 * @return the database service
 	 */
-	public String getCatalog() {
-		return this.dataSource.getDbName();
+	private HibernateDatabaseService getDatabaseService() {
+		if (dbService==null) {
+			dbService = HibernateUtilities.getDatabaseService(this.dataSource.toDatabaseSettings().getDatabaseSystemName());
+		}
+		return dbService;
+	}
+	/**
+	 * Applies offset and limit to the specified SQL statement.
+	 *
+	 * @param sqlStatement the sql statement
+	 * @param offset the offset
+	 * @param limit the limit
+	 * @return the string
+	 */
+	public String applyOffsetAndLimitToSqlStatement(String sqlStatement, int offset, int limit) {
+		return this.getDatabaseService().applyOffsetAndLimitToSqlStatement(sqlStatement, offset, limit);
 	}
 	
 	/**
@@ -65,7 +99,9 @@ public class DatabaseConnection {
 		}
 		
 		if (connection==null) {
-			connection = HibernateUtilities.getDatabaseConnection(this.dataSource.toDatabaseSettings(), false);
+			DatabaseSettings dbSettings = this.dataSource.toDatabaseSettings();
+			this.updateCatalog(dbSettings);
+			connection = HibernateUtilities.getDatabaseConnection(dbSettings, false);
 		}
 		return connection;
 	}
@@ -76,7 +112,7 @@ public class DatabaseConnection {
 	 */
 	public synchronized TableDictionary getTableDictionary() {
 		if (tableDictionary==null && this.getConnection()!=null) {
-			tableDictionary = new TableDictionary(this, this.dataSource.getDbName());
+			tableDictionary = new TableDictionary(this, this.getCatalog());
 		}
 		return tableDictionary;
 	}

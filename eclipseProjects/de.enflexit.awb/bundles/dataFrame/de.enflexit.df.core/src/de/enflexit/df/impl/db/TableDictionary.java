@@ -51,17 +51,20 @@ public class TableDictionary extends HashMap<String, List<TableColumn>> {
 		try {
 			
 			DatabaseMetaData metaData = this.databaseConnection.getConnection().getMetaData();
-			
 			ResultSet tables = metaData.getTables(this.catalog, null, null, new String[]{"TABLE", "VIEW"});
+			
+			HashSet<String> excludedTableTypes = this.getExcludedTableTypes();
+			
 			while (tables.next()) {
 				// --- Check each table -----------------------------
 				String catalog = tables.getString("TABLE_CAT");
 				String schema = tables.getString("TABLE_SCHEM");
 				String tableName = tables.getString("TABLE_NAME");
-				String type = tables.getString("TABLE_TYPE");
+				String tableType = tables.getString("TABLE_TYPE");
 				if (this.isDebug==true) {
-					System.out.printf("%s - %s: %s.%s%n", catalog, type, schema, tableName);
+					System.out.printf("%s - %s: %s.%s%n", catalog, tableType, schema, tableName);
 				}
+				if (excludedTableTypes.contains(tableType)==true) continue;
 				
 				List<TableColumn> colList = this.getTableColumns(metaData, catalog, schema, tableName);
 				if (colList!=null) {
@@ -73,6 +76,19 @@ public class TableDictionary extends HashMap<String, List<TableColumn>> {
 			sqlEx.printStackTrace();
 		}
 	}
+	/**
+	 * Returns the excluded table types.
+	 * @return the excluded table types
+	 */
+	private HashSet<String> getExcludedTableTypes() {
+		
+		HashSet<String> excluded = new HashSet<>();
+		excluded.add("SYSTEM TABLE");
+		excluded.add("SYSTEM VIEW");
+		return excluded;
+	}
+	
+	
 	/**
 	 * Returns the table columns.
 	 *
@@ -148,6 +164,15 @@ public class TableDictionary extends HashMap<String, List<TableColumn>> {
 		List<String> tableList = new ArrayList<>(this.keySet());
 		Collections.sort(tableList);
 		return tableList;
+	}
+	/**
+	 * Returns the list of {@link TableColumn}s that belong to the specified table or <code>null</code>.
+	 *
+	 * @param tableName the table name
+	 * @return the known list of {@link TableColumn}s
+	 */
+	public List<TableColumn> getTableColumnList(String tableName) {
+		return this.get(tableName);
 	}
 	/**
 	 * Returns the or creates the list of {@link TableColumn}s that belong to the specified table.
