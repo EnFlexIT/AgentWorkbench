@@ -83,12 +83,13 @@ public abstract class AbstractDatabaseService implements HibernateDatabaseServic
 		String user = hibernateProperties.getProperty(HIBERNATE_PROPERTY_UserName);
 		String pswd = hibernateProperties.getProperty(HIBERNATE_PROPERTY_Password);
 		
-		int lastSlash = url.lastIndexOf("/") + 1;
-		if (driverClass.startsWith("org.apache.derby")==true) lastSlash=-1;
-		
-		if (removeDbFromUrl==true) {
-			url = lastSlash!=-1 ? url.substring(0, lastSlash) : url;
-		}
+		// Disabled removing the DB from the URL due to problems with postgres
+//		int lastSlash = url.lastIndexOf("/") + 1;
+//		if (driverClass.startsWith("org.apache.derby")==true) lastSlash=-1;
+//		
+//		if (removeDbFromUrl==true) {
+//			url = lastSlash!=-1 ? url.substring(0, lastSlash) : url;
+//		}
 		
 		try {
 			// --- Check for user name and password -----------------
