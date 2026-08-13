@@ -1,11 +1,13 @@
 package de.enflexit.df.core.model.treeNode;
 
+import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
@@ -16,6 +18,7 @@ import de.enflexit.df.core.workbook.DataWorkbook4JSON;
 import de.enflexit.df.core.workbook.DataWorkbook4XML;
 import de.enflexit.df.core.workbook.ui.JPanelDataWorkbookInDB;
 import de.enflexit.df.core.workbook.ui.JPanelDataWorkbookInFile;
+import de.enflexit.df.core.workbook.ui.JPanelExtensionSelection;
 
 /**
  * The Class DTNO_DataWorkbook serves as user object for tree nodes of {@link DataWorkbook}s.
@@ -27,7 +30,9 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 	private DataController dataController;
 	private DataWorkbook dataWorkbook;
 
+	private JTabbedPane jTabbedPaneConfiguration;
 	private JPanel jPanelConfiguration;
+	private JPanelExtensionSelection jPanelExtensionSelection;
 	
 	private boolean dataSourcesLoaded;
 	
@@ -114,11 +119,23 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 		return super.getImageIcon();
 	}
 	
+	private JTabbedPane getJTabbedPaneConfiguration() {
+		if (jTabbedPaneConfiguration==null) {
+			jTabbedPaneConfiguration = new JTabbedPane();
+			jTabbedPaneConfiguration.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTabbedPaneConfiguration.setTabPlacement(JTabbedPane.BOTTOM);
+			
+			jTabbedPaneConfiguration.addTab("Configuration", this.getJPanelConfiguration());
+			jTabbedPaneConfiguration.addTab("Extensions", this.getJPanelExtensionSelection());
+		}
+		return jTabbedPaneConfiguration;
+	}
+	
 	/**
 	 * Return the a configuration panel for the current DataWorkbook.
 	 * @return the JPanel for the configuration
 	 */
-	public JPanel getJPanelConfiguration() {
+	private JPanel getJPanelConfiguration() {
 		if (jPanelConfiguration==null) {
 			if (this.getDataWorkbook() instanceof DataWorkbook4XML || this.getDataWorkbook() instanceof DataWorkbook4JSON) {
 				jPanelConfiguration = new JPanelDataWorkbookInFile(this.getDataController(), this.getDataWorkbook());
@@ -127,6 +144,16 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 			}
 		}
 		return jPanelConfiguration;
+	}
+	/**
+	 * Returns the JPanelExtensionSelection.
+	 * @return the j panel extension selection
+	 */
+	private JPanelExtensionSelection getJPanelExtensionSelection() {
+		if (jPanelExtensionSelection==null) {
+			jPanelExtensionSelection = new JPanelExtensionSelection(this.getDataController(), this.getDataWorkbook());
+		}
+		return jPanelExtensionSelection;
 	}
 	
 	/* (non-Javadoc)
@@ -156,7 +183,7 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 	 */
 	@Override
 	public JComponent getConfigurationPanel() {
-		return this.getJPanelConfiguration();
+		return this.getJTabbedPaneConfiguration();
 	}
 
 	

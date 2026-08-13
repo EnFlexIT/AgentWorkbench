@@ -3,10 +3,8 @@ package de.enflexit.df.core.dataSources.integration;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.extension.ColumnDescription;
-import de.enflexit.df.core.extension.ColumnDescriptionService;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
@@ -120,8 +118,6 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 		if (this.getTable().columnCount()==this.getColumnDescriptionList().size()) return;
 		this.getColumnDescriptionList().clear();
 		
-		List<ColumnDescriptionService> cdServiceList = ServiceFinder.findServices(ColumnDescriptionService.class);
-		
 		DataWorkbook dw = this.getDataWorkbook();
 		DefaultDataSource ds = this.getDataSource();
 		
@@ -142,6 +138,10 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 			// --- Add description to list --------------------------
 			this.getColumnDescriptionList().add(new ColumnDescription(dw, ds, tableName, columnName, columnType));
 		}
+		
+		// --- Check for an update of the ColumnDescription ---------
+		dw.getExtensionCache().updateColumnDescriptionList(this.getColumnDescriptionList());
+		
 	}
 	/**
 	 * Has to return the table name for the specified column name.

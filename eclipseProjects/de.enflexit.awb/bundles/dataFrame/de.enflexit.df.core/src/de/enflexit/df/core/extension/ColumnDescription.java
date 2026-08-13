@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.enflexit.common.StringHelper;
+import de.enflexit.common.properties.Properties;
+import de.enflexit.common.properties.PropertyValue;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
@@ -19,6 +21,9 @@ public class ColumnDescription {
 	private String tableName;
 	private String columnName;
 	private String columnType;
+	
+	private Properties properties;
+	private ColumnDescriptionRenderer columnDescriptionRenderer;
 	
 	/**
 	 * Instantiates a new column description.
@@ -118,10 +123,36 @@ public class ColumnDescription {
 	}
 	
 	/**
+	 * Returns the properties that enables to store additional data as Key-Value structure.
+	 * @return the properties
+	 */
+	public Properties getProperties() {
+		if (properties==null) {
+			properties = new Properties();
+		}
+		return properties;
+	}
+	
+	/**
+	 * Sets the column description renderer.
+	 * @param columnDescriptionRenderer the new column description renderer
+	 */
+	public void setColumnDescriptionRenderer(ColumnDescriptionRenderer columnDescriptionRenderer) {
+		this.columnDescriptionRenderer = columnDescriptionRenderer;
+	}
+	/**
+	 * Returns the column description renderer.
+	 * @return the column description renderer
+	 */
+	public ColumnDescriptionRenderer getColumnDescriptionRenderer() {
+		return columnDescriptionRenderer;
+	}
+	
+	/**
 	 * Returns the default description.
 	 * @return the default description
 	 */
-	protected final String getDefaultDescription() {
+	public final String getDefaultDescription() {
 		
 		List<String> descriptionPartList = new ArrayList<>();
 		
@@ -133,14 +164,33 @@ public class ColumnDescription {
 		}
 		descriptionPartList.add("\nColumn: " + this.getColumnName() + " (" + this.getColumnType() + ")");
 		
+		if (this.getProperties().size()>0) {
+			descriptionPartList.add("\nProperites:");
+			for (String id : this.getProperties().getIdentifierList()) {
+				PropertyValue pValue = this.getProperties().getPropertyValue(id);
+				descriptionPartList.add("\n  " + id + ": " + (pValue!=null ? pValue.getStringValue() : "") + "");
+			}
+		}
 		return String.join(", ", descriptionPartList);
 	}
+	
 	/**
 	 * Returns the textual description of the current {@link ColumnDescription}. 
 	 * Maybe overwritten to provide individual or extended information  
 	 * @return the description
 	 */
 	public String getDescription() {
+		String customized = null;
+		if (this.getColumnDescriptionRenderer()!=null) {
+			try {
+				customized = this.getColumnDescriptionRenderer().getDescription(this);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		if (customized!=null) {
+			return customized;
+		}
 		return this.getDefaultDescription();
 	}
 	/**
@@ -148,6 +198,18 @@ public class ColumnDescription {
 	 * @return the tool tip
 	 */
 	public String getToolTip() {
+		String customized = null;
+		if (this.getColumnDescriptionRenderer()!=null) {
+			try {
+				customized = this.getColumnDescriptionRenderer().getToolTip(this);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		if (customized!=null) {
+			return customized;
+		}
 		return this.getDefaultDescription();
 	}
 	

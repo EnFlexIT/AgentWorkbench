@@ -37,7 +37,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "id",
     "name",
     "description",
-    "dataSources"
+    "dataSources",
+    "workbookExtensions"
 })
 public abstract class DataWorkbook implements Serializable {
 
@@ -54,6 +55,12 @@ public abstract class DataWorkbook implements Serializable {
 	@XmlElementWrapper(name = "dataSources")
 	@XmlElement(name = "dataSource") 
 	protected List<DefaultDataSource> dataSources;
+	
+	@XmlElementWrapper(name = "workbookExtensions")
+	@XmlElement(name = "workbookExtension")
+	protected List<String> workbookExtensions;
+	protected transient ExtensionCache extensionCache;
+
 	
 	/**
 	 * Instantiates a new data workbook.
@@ -231,6 +238,63 @@ public abstract class DataWorkbook implements Serializable {
 		
 		// --- Remove the unconvertible DataSources from the list -------------
 		deleteCandidate.forEach(dsDelete -> dsListToEdit.remove(dsDelete));
+	}
+	
+	
+	/**
+	 * Returns the workbook extensions allow null.
+	 * @return the workbook extensions allow null
+	 */
+	public List<String> getWorkbookExtensionsAllowNull() {
+		return workbookExtensions;
+	}
+	/**
+	 * Returns the workbook extensions.
+	 * @return the workbook extensions
+	 */
+	public List<String> getWorkbookExtensions() {
+		if (workbookExtensions==null) {
+			workbookExtensions = new ArrayList<>();
+		}
+		return workbookExtensions;
+	}
+	/**
+	 * Sets the workbook extensions.
+	 * @param workbookExtensions the new workbook extensions
+	 */
+	public void setWorkbookExtensions(List<String> workbookExtensions) {
+		this.workbookExtensions = workbookExtensions;
+	}
+	/**
+	 * Adds the specified workbook extensions.
+	 *
+	 * @param extension the extension
+	 * @return true, if successful
+	 */
+	public boolean addWorkbookExtensions(String extension) {
+		if (workbookExtensions==null || this.getWorkbookExtensions().contains(extension)==true) return false; 
+		return this.getWorkbookExtensions().add(extension);
+	}
+	/**
+	 * Removes the workbook extensions.
+	 *
+	 * @param extension the extension
+	 * @return true, if successful
+	 */
+	public boolean removeWorkbookExtensions(String extension) {
+		if (workbookExtensions==null) return false;
+		return this.getWorkbookExtensions().remove(extension);
+	}
+	
+	/**
+	 * Returns the ExtensionCache of the workbook.
+	 * @return the extension cache
+	 */
+	public ExtensionCache getExtensionCache() {
+		if (extensionCache==null) {
+			extensionCache = new ExtensionCache(this);
+		}
+		return extensionCache;
 	}
 	
 	

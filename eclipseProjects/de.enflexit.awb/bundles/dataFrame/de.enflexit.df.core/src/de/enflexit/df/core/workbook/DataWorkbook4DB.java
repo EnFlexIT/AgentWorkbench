@@ -3,6 +3,7 @@ package de.enflexit.df.core.workbook;
 import java.awt.Component;
 import java.awt.Window;
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import de.enflexit.common.swing.OwnerDetection;
@@ -20,9 +21,10 @@ public class DataWorkbook4DB extends DataWorkbook {
 
 	private static final long serialVersionUID = 5010880029903092936L;
 	
-	public static final String CONNECTION_MASK_CONFIGURATION = "CONNECTION::[Configuration]";
+	public static final String CONNECTION_MASK_CONFIGURATION = "CONNECTION::[Configuration]::[Extensions]";
 	public static final String TAG_CONFIGURATION = "[Configuration]";
-
+	public static final String TAG_EXTENSIONS = "[Extensions]";
+	
 	private DatabaseDataSource workbookDataSource;
 	
 	private SessionFactoryCreator sessionFactoryCreator;
@@ -189,8 +191,13 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		if (this.getWorkbookDataSource()==null) return null;
 		
-		String configString = this.getWorkbookDataSource().toConfigurationString();
-		String locationDescription = CONNECTION_MASK_CONFIGURATION.replace(TAG_CONFIGURATION, configString);
+		String dbConfigString   = this.getWorkbookDataSource().toConfigurationString();
+		String extensionsString = String.join(",", this.getWorkbookExtensions());  
+		
+		String locationDescription = CONNECTION_MASK_CONFIGURATION;
+		locationDescription = locationDescription.replace(TAG_CONFIGURATION, dbConfigString);
+		locationDescription = locationDescription.replace(TAG_EXTENSIONS, extensionsString);
+		
 		return new DataWorkbookLocation(this.getID(), this.getClass(), locationDescription);
 	}
 	/**
@@ -204,22 +211,27 @@ public class DataWorkbook4DB extends DataWorkbook {
 		if (dwLocation==null || dwLocation.getDataWorkbookLocation()==null || dwLocation.getDataWorkbookLocation().isEmpty()==true) return null;
 
 		String location = dwLocation.getDataWorkbookLocation();
+		String[] wbPart = location.split("::");
 		
-		int cutStart  = location.indexOf("::") + 2;
-		int cutStop = location.length();
-		
-		String valueString = location.substring(cutStart, cutStop);
+		String dbConfigString   = wbPart[1];
+		String extensionsString = wbPart.length>=3 ? wbPart[2] : null;
 		
 		// --- Create DataSource instance ---------------------------
 		@SuppressWarnings("resource")
-		DatabaseDataSource ds = new DatabaseDataSource().fromConfigurationString(valueString);
-
+		DatabaseDataSource ds = new DatabaseDataSource().fromConfigurationString(dbConfigString);
+		// --- Create list of extensions? ---------------------------
+		List<String> extensionList = null;
+		if (extensionsString!=null && extensionsString.isBlank()==false) {
+			extensionList = Arrays.asList(extensionsString.split(","));
+		}
+		
 		// --- Create DataWorkbook4  instance -----------------------		
 		DataWorkbook4DB dataWorkbook = new DataWorkbook4DB();
 		dataWorkbook.setID(dwLocation.getID());
 		dataWorkbook.setName(ds.getName());
 		dataWorkbook.setDescription(ds.getDescription());
 		dataWorkbook.setWorkbookDataSource(ds);
+		dataWorkbook.setWorkbookExtensions(extensionList);
 		return dataWorkbook;
 	}
 	

@@ -41,6 +41,9 @@ public class DataController {
 	public static final String DC_PREPARE_FOR_SAVING_DATA_WORKBOOK = "DC_PREPARE_FOR_SAVING_DATA_WORKBOOK";
 	public static final String DC_SAVED_DATA_WORKBOOK = "DC_SAVED_DATA_WORKBOOK";
 	
+	public static final String DC_DATA_WORKBOOK_EXTENSION_LOADED = "DC_DATA_WORKBOOK_EXTENSION_LOADED";
+	public static final String DC_DATA_WORKBOOK_EXTENSION_REMOVED = "DC_DATA_WORKBOOK_EXTENSION_REMOVED";
+	
 	public static final String DC_ADDED_DATA_SOURCE = "DC_ADDED_DATA_SOURCE";
 	public static final String DC_OPENED_DATA_SOURCE = "DC_OPENED_DATA_SOURCE";
 	public static final String DC_CLOSED_DATA_SOURCE = "DC_CLOSED_DATA_SOURCE";
@@ -198,6 +201,11 @@ public class DataController {
 			this.addDataWorkbook(dataWorkbookWork);
 		}
 
+		// --- Set this DataController to the ExtensionCache -------- 
+		dataWorkbookWork.getExtensionCache().setDataController(this);
+		// --- Load the workbook extensions -------------------------
+		dataWorkbookWork.getExtensionCache().loadExtensions();
+		
 		// --- Open the data sources --------------------------------
 		List<DefaultDataSource> dsList = dataWorkbookWork.getDataSources();
 		if (dsList!=null) {
@@ -225,6 +233,8 @@ public class DataController {
 			if (noOfDsAfter!=noOfDsBefore) {
 				this.openDataWorkbook(dataWorkbook);
 			}
+			// --- Updated the workbook extensions ------------------
+			dataWorkbook.getExtensionCache().updateLoadedExtensions();
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -248,6 +258,8 @@ public class DataController {
 						this.closeDataSource(dataWorkbook, ds);
 					}
 				}
+				// --- Remove the workbook extensions ---------------
+				dataWorkbook.getExtensionCache().removeExtensions();
 				// --- Call to close the DataWorkbook ---------------
 				dataWorkbook.close();
 				// --- Inform listener ------------------------------

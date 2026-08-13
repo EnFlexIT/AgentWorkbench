@@ -1163,8 +1163,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 			ps = this.getDatabaseConnection().getConnection().prepareStatement(sqlStatement);
 			
 			// --- Till here no error => execute with minimum of data ---------
-			String sqlStatementReduced = this.getDatabaseConnection().applyOffsetAndLimitToSqlStatement(sqlStatement, 0, 3);
-			this.readFromDatabase(sqlStatementReduced, 0, 0);
+			this.readFromDatabase(sqlStatement, 0, 3);
 			
 			checkMessage = "No SQL errors were found.";
 			isValidSQL = true;
@@ -1172,7 +1171,12 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		} catch (SQLException sqlEx) {
 			//sqlEx.printStackTrace();
 			checkMessage = sqlEx.getMessage();
-			
+		} catch (IllegalArgumentException iArgEx) {
+			//iArgEx.printStackTrace();
+			checkMessage = iArgEx.getMessage();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			checkMessage = ex.getMessage();
 		} finally {
 			try {
 				if (ps!=null && ps.isClosed()==false) {
@@ -1198,7 +1202,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 	 * @return the table
 	 * @see #getConnection()
 	 */
-	private Table readFromDatabase(String sqlStatement, int offset, int limit) throws SQLException {
+	private Table readFromDatabase(String sqlStatement, int offset, int limit) throws SQLException, IllegalArgumentException {
 		
 		// --- Apply offset and limit to SQL statement? ---------
 		if (offset >= 0 && limit > 0) {

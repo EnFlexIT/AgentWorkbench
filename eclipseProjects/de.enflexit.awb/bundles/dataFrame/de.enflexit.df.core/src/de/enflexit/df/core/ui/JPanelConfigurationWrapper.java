@@ -185,7 +185,7 @@ public class JPanelConfigurationWrapper extends JPanel {
 			gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 			gbc_lblNewLabel.gridx = 0;
 			gbc_lblNewLabel.gridy = 0;
-			jPanelSouth.add(getJLabelError(), gbc_lblNewLabel);
+			jPanelSouth.add(this.getJLabelError(), gbc_lblNewLabel);
 		}
 		return jPanelSouth;
 	}

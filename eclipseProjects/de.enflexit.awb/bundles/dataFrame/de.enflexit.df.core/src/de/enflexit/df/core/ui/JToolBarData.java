@@ -46,7 +46,10 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	private static final long serialVersionUID = 2584749340449450910L;
 
 	private DataController dataController;
+	private DataWorkbook currentDataWorkbook;
+	
 	private HashSet<String> propertyListForJButtonEnablement;
+	private HashSet<String> propertyListForExtensionRefreshment;
 	
 	private JButton jButtonDataWorkbookNew;
 		private JMenuItem jMenuItemNewDataWorkbookXML; 
@@ -95,6 +98,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		this.addSeparator();
 		this.add(this.getJButtonEditDataSources());
 		this.add(this.getJButtonDeleteDataSources());
+		this.addSeparator();
 		
 		this.enableJButtonEnabledToSelection(null);
 	}
@@ -415,6 +419,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	public void propertyChange(PropertyChangeEvent evt) {
 		
 		this.enableJButtonEnabledToSelection(evt.getPropertyName());
+		this.activateCurrentWorkbookExtensions(evt.getPropertyName());
 		
 		if (evt.getPropertyName().equals(DataController.DC_ADDED_DATA_SOURCE)==true) {
 			this.getJToggleButtonConfiguration().setSelected(true);
@@ -467,11 +472,71 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		// --- Edit or delete data sources --------------------------
 		this.getJButtonEditDataSources().setEnabled(dtnoDW!=null && dtnoDW.isDataSourcesLoaded());
 		this.getJButtonDeleteDataSources().setEnabled(dtnoDW!=null && dtnoDW.isDataSourcesLoaded());
-		
-		
-		
 	}
 
+	/**
+	 * Returns the list of properties to will activate the extension UI-update.
+	 * @return the property list button enablement
+	 */
+	private HashSet<String> getPropertyListForExtensionRefreshment() {
+		if (propertyListForExtensionRefreshment==null) {
+			propertyListForExtensionRefreshment = new HashSet<>();
+			propertyListForExtensionRefreshment.add(DataController.DC_NEW_TREE_PATH_SELECTED);
+			propertyListForExtensionRefreshment.add(DataController.DC_ADDED_DATA_WORKBOOK);
+			propertyListForExtensionRefreshment.add(DataController.DC_OPENED_DATA_WORKBOOK);
+			propertyListForExtensionRefreshment.add(DataController.DC_CLOSED_DATA_WORKBOOK);
+			propertyListForExtensionRefreshment.add(DataController.DC_REMOVED_DATA_WORKBOOK);
+			propertyListForExtensionRefreshment.add(DataController.DC_DATA_WORKBOOK_EXTENSION_LOADED);
+			propertyListForExtensionRefreshment.add(DataController.DC_DATA_WORKBOOK_EXTENSION_REMOVED);
+		}
+		return propertyListForExtensionRefreshment;
+	}
+	/**
+	 * Activate current workbook extensions.
+	 * @param propertyChanged the actual property that changed
+	 */
+	private void activateCurrentWorkbookExtensions(String propertyChanged) {
+		
+		if (propertyChanged!=null && this.getPropertyListForExtensionRefreshment().contains(propertyChanged)==false) return;
+		
+		DataWorkbook dwSelected = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
+		if (dwSelected==null) return;
+
+		if (this.currentDataWorkbook==null || this.currentDataWorkbook!=dwSelected) {
+			if (this.currentDataWorkbook!=null) {
+				// --- Remove old elements first --------------------
+				this.currentDataWorkbook.getExtensionCache().removeMainToolbarComponents(this);
+				this.currentDataWorkbook = null;
+			}
+			
+			if (dwSelected.getExtensionCache().hasLoadedExtensions()==true) {
+				// --- Activate new extensions elements ------------- 
+				this.currentDataWorkbook = dwSelected;
+				this.currentDataWorkbook.getExtensionCache().addMainToolbarComponents(this);
+			}
+		
+		} else {
+			// --- Was the current workbook closed? -----------------
+			if (this.currentDataWorkbook.getExtensionCache().hasLoadedExtensions()==false) {
+				this.currentDataWorkbook.getExtensionCache().removeMainToolbarComponents(this);
+				this.currentDataWorkbook = null;
+			} else {
+				// --- Update the extensions? -----------------------
+				switch (propertyChanged) {
+				case DataController.DC_DATA_WORKBOOK_EXTENSION_LOADED:
+				case DataController.DC_DATA_WORKBOOK_EXTENSION_REMOVED:
+					this.currentDataWorkbook.getExtensionCache().removeMainToolbarComponents(this);
+					this.currentDataWorkbook.getExtensionCache().addMainToolbarComponents(this);
+					break;
+				}
+			}
+		}
+		this.validate();
+		this.repaint();
+	}
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */

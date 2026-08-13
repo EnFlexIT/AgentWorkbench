@@ -66,7 +66,13 @@ public class Properties implements Serializable {
 		}
 		return propertyMap;
 	}
-	
+	/**
+	 * Returns the number of key-value mappings in the Properties.
+	 * @return the number of key-value mappings in the Properties
+	 */
+	public int size() {
+		return this.getPropertyMap().size();
+	}
 	/**
 	 * Clears (removes) all properties.
 	 */
