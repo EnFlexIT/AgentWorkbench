@@ -76,7 +76,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 	 */
 	private SessionFactoryCreator getSessionFactoryCreator() {
 		if (sessionFactoryCreator==null) {
-			sessionFactoryCreator = new SessionFactoryCreator(this.getID());
+			sessionFactoryCreator = new SessionFactoryCreator(this);
 		}
 		return sessionFactoryCreator;
 	}

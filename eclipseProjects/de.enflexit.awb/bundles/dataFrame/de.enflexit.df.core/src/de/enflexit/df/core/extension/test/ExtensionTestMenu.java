@@ -8,12 +8,15 @@ import java.util.List;
 
 import javax.swing.JButton;
 
+import org.hibernate.cfg.Configuration;
+
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.ui.JToolBarData;
 import de.enflexit.df.core.workbook.ExtensionCache;
+import de.enflexit.df.core.workbook.db.SessionFactoryCreator;
 
 /**
  * The Class ExtensionTestMenu.
@@ -21,6 +24,7 @@ import de.enflexit.df.core.workbook.ExtensionCache;
  */
 public class ExtensionTestMenu implements DataWorkbookExtension {
 
+	@SuppressWarnings("unused")
 	private ExtensionCache extensionCache;
 	
 	private JButton jButtonHello;
@@ -101,4 +105,11 @@ public class ExtensionTestMenu implements DataWorkbookExtension {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#addAnnotatedClassesToDataWorkbook4DB(de.enflexit.df.core.workbook.db.SessionFactoryCreator, org.hibernate.cfg.Configuration)
+	 */
+	@Override
+	public void addAnnotatedClassesToDataWorkbook4DB(SessionFactoryCreator sessionFactoryCreator, Configuration conf) {
+		
+	}
 }

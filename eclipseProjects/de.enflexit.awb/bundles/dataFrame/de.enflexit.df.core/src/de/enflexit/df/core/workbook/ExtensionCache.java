@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.cfg.Configuration;
+
 import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.extension.ExtensionManager;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.JToolBarData;
+import de.enflexit.df.core.workbook.db.SessionFactoryCreator;
 
 /**
  * The Class ExtensionCache holds the workbook specific extension instances.
@@ -251,6 +254,7 @@ public class ExtensionCache {
 		this.getMainToolbarComponents().addAll(componentListAdded);
 	}
 
+	
 	/**
 	 * Will try to get updates for the column description list.
 	 * @param columnDescriptionList the column description list
@@ -269,5 +273,28 @@ public class ExtensionCache {
 			}
 		}
 	}
+	
+
+	/**
+	 * Adds the annotated classes.
+	 *
+	 * @param sessionFactoryCreator the session factory creator
+	 * @param conf the Configuration to edit
+	 */
+	public void addAnnotatedClassesToDataWorkbook4DB(SessionFactoryCreator sessionFactoryCreator, Configuration configuration) {
+		
+		if (configuration==null) return;
+		
+		for (DataWorkbookExtension extension : this.getExtensionList()) {
+			try {
+				// --- Let the extension add further descriptions ------------- 
+				extension.addAnnotatedClassesToDataWorkbook4DB(sessionFactoryCreator, configuration);
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
 	
 }

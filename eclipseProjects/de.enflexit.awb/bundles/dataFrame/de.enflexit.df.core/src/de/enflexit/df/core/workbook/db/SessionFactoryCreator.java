@@ -20,6 +20,7 @@ import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.impl.db.DatabaseDataSource;
 
 /**
@@ -37,6 +38,7 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 	
 	private Bundle localBundle;
 	
+	private DataWorkbook4DB dataWorkbook;
 	private Integer workbookID;
 	private String factoryID;
 	private Configuration configuration;
@@ -46,10 +48,26 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 	
 	/**
 	 * Instantiates a new session factory creator.
-	 * @param workbookID the workbook ID
+	 * @param workbook the current DataWorkbook4DB
 	 */
-	public SessionFactoryCreator(Integer workbookID) {
-		this.setWorkbookID(workbookID);
+	public SessionFactoryCreator(DataWorkbook4DB workbook) {
+		this.setDataWorkbook(workbook);
+		this.setWorkbookID(workbook.getID());
+	}
+	
+	/**
+	 * Sets the data workbook.
+	 * @param dataWorkbook the new data workbook
+	 */
+	private void setDataWorkbook(DataWorkbook4DB dataWorkbook) {
+		this.dataWorkbook = dataWorkbook;
+	}
+	/**
+	 * Returns the data workbook.
+	 * @return the data workbook
+	 */
+	private DataWorkbook4DB getDataWorkbook() {
+		return dataWorkbook;
 	}
 	
 	/**
@@ -177,9 +195,8 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 		
 		// --- Add classes of DataSources -------------------------------------
 		conf.addAnnotatedClass(DefaultDataSource.class);
-		
 		try {
-			// TODO : Ask services to extend the configuration 
+			this.getDataWorkbook().getExtensionCache().addAnnotatedClassesToDataWorkbook4DB(this, conf);
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
