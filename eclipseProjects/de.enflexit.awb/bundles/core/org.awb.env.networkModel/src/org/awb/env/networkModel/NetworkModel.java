@@ -889,8 +889,11 @@ public class NetworkModel extends DisplaytEnvironmentModel {
 				if (netCompCopy==null) {
 					netCompCopy = netComp.getCopy();
 				}
+				
 				// --- Add to new component tree map ----------------------
-				destinTreeMap.put(netCompCopy.getId(), netCompCopy);
+				synchronized (destinTreeMap) {
+					destinTreeMap.put(netCompCopy.getId(), netCompCopy);
+				}
 			}
 			
 			// --- Set finalized to the coordinating wait thread ----------
