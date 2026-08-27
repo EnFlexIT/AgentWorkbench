@@ -16,9 +16,10 @@ import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.descriptionService.DescriptionsController;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -28,7 +29,11 @@ import java.awt.Insets;
  * and a sub-panel for actually editing the description of the selected column.  
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataColumnDescriptionEditorDetailsPanel extends JPanel implements ActionListener, ListSelectionListener {
+public class DescriptionEditorColumnSelectionPanel extends JPanel implements ActionListener, ListSelectionListener {
+	
+	private enum Decision {
+		APPLY, DISCARD, CANCEL
+	}
 
 	private static final long serialVersionUID = 5825850682049517170L;
 	
@@ -40,14 +45,18 @@ public class DataColumnDescriptionEditorDetailsPanel extends JPanel implements A
 	private Table table;
 	private List<ColumnDescription> descriptionsList;
 	
-	private DataColumnDescriptionEditorPanel jPanelColumnEditor;
+	private DescriptionEditorColumnDetailsPanel columnDetailsEditorPanel;
 	private JScrollPane jScrollPaneColumnsList;
 	private JList<String> jListColumnsList;
+	
+	private String currentSelection;
+	
+	private boolean pauseSelectionListener;
 	
 	/**
 	 * Instantiates a new data column description editor details panel.
 	 */
-	public DataColumnDescriptionEditorDetailsPanel(DescriptionsController descriptionController) {
+	public DescriptionEditorColumnSelectionPanel(DescriptionsController descriptionController) {
 		this.descriptionController = descriptionController;
 		this.initialize();
 	}
@@ -68,7 +77,7 @@ public class DataColumnDescriptionEditorDetailsPanel extends JPanel implements A
 		gbc_jPanelColumnEditor.fill = GridBagConstraints.BOTH;
 		gbc_jPanelColumnEditor.gridx = 1;
 		gbc_jPanelColumnEditor.gridy = 0;
-		add(getJPanelColumnEditor(), gbc_jPanelColumnEditor);
+		add(getColumnDetailsEditorPanel(), gbc_jPanelColumnEditor);
 		GridBagConstraints gbc_jScrollPaneColumnsList = new GridBagConstraints();
 		gbc_jScrollPaneColumnsList.weightx = 1.0;
 		gbc_jScrollPaneColumnsList.insets = new Insets(5, 5, 10, 5);
@@ -82,12 +91,12 @@ public class DataColumnDescriptionEditorDetailsPanel extends JPanel implements A
 	 * Gets the j panel column editor.
 	 * @return the j panel column editor
 	 */
-	private DataColumnDescriptionEditorPanel getJPanelColumnEditor() {
-		if (jPanelColumnEditor == null) {
-			jPanelColumnEditor = new DataColumnDescriptionEditorPanel();
-			jPanelColumnEditor.addChangeListener(this.descriptionController);
+	private DescriptionEditorColumnDetailsPanel getColumnDetailsEditorPanel() {
+		if (columnDetailsEditorPanel == null) {
+			columnDetailsEditorPanel = new DescriptionEditorColumnDetailsPanel();
+			columnDetailsEditorPanel.addChangeListener(this.descriptionController);
 		}
-		return jPanelColumnEditor;
+		return columnDetailsEditorPanel;
 	}
 
 	/**
@@ -183,7 +192,6 @@ public class DataColumnDescriptionEditorDetailsPanel extends JPanel implements A
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -192,33 +200,57 @@ public class DataColumnDescriptionEditorDetailsPanel extends JPanel implements A
 	@Override
 	public void valueChanged(ListSelectionEvent lse) {
 		if (lse.getSource()==this.getJListColumnsList() && lse.getValueIsAdjusting()==false) {
-			String selectedColumn = this.getJListColumnsList().getSelectedValue();
+
+			// --- Listener currently disabled
+			if (this.pauseSelectionListener==true) return;
+			
+			// --- Selection not changed
+			String newSelection = this.getJListColumnsList().getSelectedValue();
+			if (newSelection==this.currentSelection) return;
+			
+			// --- Check for unsaved changes, ask user if necessary
+			if (this.checkAllowLeaveSelection()==false) {
+				this.restoreSelection();
+				return;
+			}
 			
 			// --- Check if there is already a description for this column
-			DataColumnDescription columnDescription = this.descriptionController.getColumnDescriptions().get(selectedColumn);
+			DataColumnDescription columnDescription = this.descriptionController.getColumnDescriptions().get(newSelection);
 			
 			// --- If not, create one with some default values
 			if (columnDescription==null) {
-				
-				ColumnDescription colDesc = this.findMatchingColumnDescription(selectedColumn);
-				
-				columnDescription = new DataColumnDescription();
-				columnDescription.setColumnName(selectedColumn);
-				if (colDesc!=null && colDesc.getTableName()!=null) {
-					columnDescription.setTableName(colDesc.getColumnName());
-				}
-				if (colDesc!=null && colDesc.getColumnType()!=null) {
-//					columnDescription.setDataType(colDesc.getColumnType());
-				}
-				columnDescription.setName(selectedColumn);
-				
-				this.descriptionController.getColumnDescriptions().put(selectedColumn, columnDescription);
+				columnDescription = this.createNewColumnDescription(newSelection);
 			}
 			
-			this.getJPanelColumnEditor().setDataColumnDescription(columnDescription);
+			// --- Set the description object to the editor panel
+			this.getColumnDetailsEditorPanel().setDataColumnDescription(columnDescription);
+			
+			// --- Remember the current selection
+			this.currentSelection = newSelection;
 		}
 	}
 	
+	private DataColumnDescription createNewColumnDescription(String columnName) {
+		ColumnDescription colDesc = this.findMatchingColumnDescription(columnName);
+		DataColumnDescription columnDescription = new DataColumnDescription();
+		columnDescription.setColumnName(columnName);
+		if (colDesc!=null && colDesc.getTableName()!=null) {
+			columnDescription.setTableName(colDesc.getColumnName());
+		}
+		if (colDesc!=null && colDesc.getColumnType()!=null) {
+			//TODO find matching data type
+		}
+		columnDescription.setName(columnName);
+		
+		this.descriptionController.getColumnDescriptions().put(columnName, columnDescription);
+		return columnDescription;
+	}
+	
+	/**
+	 * Finds the column description for the provided name.
+	 * @param columnName the column name
+	 * @return the column description
+	 */
 	private ColumnDescription findMatchingColumnDescription(String columnName) {
 		for (ColumnDescription colDesc : this.getDescriptionsList()) {
 			if (colDesc.getColumnName().equals(columnName)) {
@@ -226,6 +258,53 @@ public class DataColumnDescriptionEditorDetailsPanel extends JPanel implements A
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Check allow selection change.
+	 * @return true, if successful
+	 */
+	public boolean checkAllowLeaveSelection() {
+		
+		// --- No pending changes -------------------------
+		if (this.getColumnDetailsEditorPanel().isDirty()==false) {
+			return true;
+		} else {
+			switch (this.askUserForConfirmaiton()) {
+			case APPLY:
+				// --- Apply the changes, then allow selection change
+				this.getColumnDetailsEditorPanel().applyChanges();
+				return true;
+			case DISCARD:
+				// --- Discard changes -> no need to apply, allow selection change 
+				this.getColumnDetailsEditorPanel().revertChanges();
+				return true;
+			case CANCEL:
+			default:
+				return false;
+			}
+		}
+		
+	}
+	
+	/**
+	 * Ask for user confirmation in case of unsaved changes.
+	 * @return the decision
+	 */
+	private Decision askUserForConfirmaiton() {
+		Object[] options = {"Apply", "Revert", "Cancel"};
+		int result = JOptionPane.showOptionDialog(this, "There are unsaved changes!", "Unsaved Changes", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+		return switch (result) {
+			case 0 -> Decision.APPLY;
+			case 1 -> Decision.DISCARD;
+			default -> Decision.CANCEL;
+		};
+	}
+	
+	private void restoreSelection() {
+		this.pauseSelectionListener = true;
+		this.getJListColumnsList().setSelectedValue(currentSelection, true);
+		this.pauseSelectionListener = false;
 	}
 	
 }

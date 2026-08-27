@@ -34,7 +34,7 @@ import javax.swing.tree.TreePath;
  * The main UI panel for the data column description editor.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataColumnDescriptionEditorMainPanel extends JPanel implements TreeSelectionListener{
+public class DescriptionEditorMainPanel extends JPanel implements TreeSelectionListener{
 
 	private static final long serialVersionUID = 1011843753073573266L;
 	
@@ -45,7 +45,7 @@ public class DataColumnDescriptionEditorMainPanel extends JPanel implements Tree
 	private JSplitPane jSplitPaneMain;
 	private JPanel jPanelDataSourceTree;
 	private JScrollPane jScrollPaneDataSourceTree;
-	private DataColumnDescriptionEditorDetailsPanel jPanelColumnDescriptionEditor;
+	private DescriptionEditorColumnSelectionPanel jPanelColumnDescriptionEditor;
 	private JTree jTreeDataSources;
 	
 	private DefaultTreeModel dataSourcesTreeModel;
@@ -55,7 +55,7 @@ public class DataColumnDescriptionEditorMainPanel extends JPanel implements Tree
 	/**
 	 * Instantiates a new data column description editor main panel.
 	 */
-	public DataColumnDescriptionEditorMainPanel() {
+	public DescriptionEditorMainPanel() {
 		initialize();
 	}
 	
@@ -63,7 +63,7 @@ public class DataColumnDescriptionEditorMainPanel extends JPanel implements Tree
 	 * Instantiates a new data column description editor main panel.
 	 * @param dataController the data controller
 	 */
-	public DataColumnDescriptionEditorMainPanel(DescriptionsController descriptionsController) {
+	public DescriptionEditorMainPanel(DescriptionsController descriptionsController) {
 		this.descriptionsController = descriptionsController;
 		this.dataWorkbook = descriptionsController.getDataController().getSelectionModel().getSelectedDataWorkbook();
 		
@@ -191,9 +191,9 @@ public class DataColumnDescriptionEditorMainPanel extends JPanel implements Tree
 	 * Gets the j panel col desc editor.
 	 * @return the j panel col desc editor
 	 */
-	private DataColumnDescriptionEditorDetailsPanel getJPanelColumnDescriptionEditor() {
+	private DescriptionEditorColumnSelectionPanel getJPanelColumnDescriptionEditor() {
 		if (jPanelColumnDescriptionEditor == null) {
-			jPanelColumnDescriptionEditor = new DataColumnDescriptionEditorDetailsPanel(this.descriptionsController);
+			jPanelColumnDescriptionEditor = new DescriptionEditorColumnSelectionPanel(this.descriptionsController);
 		}
 		return jPanelColumnDescriptionEditor;
 	}
@@ -275,6 +275,13 @@ public class DataColumnDescriptionEditorMainPanel extends JPanel implements Tree
 		this.dataColumnDescriptions = dataColumnDescriptions;
 	}
 	
-	
+	/**
+	 * Checks for unsaved changes before leaving the current selection.
+	 *  If there are any, the user will be asked how to proceed.
+	 * @return true, if successful
+	 */
+	public boolean allowLeaveSelection() {
+		return this.getJPanelColumnDescriptionEditor().checkAllowLeaveSelection();
+	}
 	
 }

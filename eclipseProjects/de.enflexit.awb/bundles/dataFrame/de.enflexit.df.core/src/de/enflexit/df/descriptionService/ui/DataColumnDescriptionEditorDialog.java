@@ -1,8 +1,8 @@
 package de.enflexit.df.descriptionService.ui;
 
 import java.awt.Window;
-import java.util.HashMap;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 
 import de.enflexit.awb.core.Application;
@@ -10,7 +10,6 @@ import de.enflexit.awb.core.config.GlobalInfo;
 import de.enflexit.common.swing.WindowSizeAndPostionController;
 import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.df.descriptionService.DescriptionsController;
-import de.enflexit.df.descriptionService.db.DataColumnDescription;
 
 /**
  * This dialog shows the UI components to edit data column descriptions.
@@ -20,7 +19,7 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 
 	private static final long serialVersionUID = 3831291234749481374L;
 	
-	private DataColumnDescriptionEditorMainPanel mainPanel;
+	private DescriptionEditorMainPanel editorMainPanel;
 	
 	private DescriptionsController descriptionsControler;
 	
@@ -31,28 +30,34 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 	}
 	
 	private void initialize() {
-		this.setContentPane(this.getMainPanel());
+		this.setContentPane(this.getEditorMainPanel());
 		this.setTitle(Application.getApplicationTitle() + " - Data Column Description Editor");
 		this.setSize(1024, 512);
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
-		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		
+		// --- Check for unsaved changes before closing the dialog
+		this.addWindowListener(new WindowAdapter() {
+			
+			/* (non-Javadoc)
+			 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+			 */
+			@Override
+			public void windowClosing(WindowEvent we) {
+				if (DataColumnDescriptionEditorDialog.this.getEditorMainPanel().allowLeaveSelection()==true) {
+					DataColumnDescriptionEditorDialog.this.dispose();
+				}
+			}
+		});
 		
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
-	public DataColumnDescriptionEditorMainPanel getMainPanel() {
-		if (mainPanel==null) {
-			mainPanel = new DataColumnDescriptionEditorMainPanel(this.descriptionsControler);
+	public DescriptionEditorMainPanel getEditorMainPanel() {
+		if (editorMainPanel==null) {
+			editorMainPanel = new DescriptionEditorMainPanel(this.descriptionsControler);
 		}
-		return mainPanel;
+		return editorMainPanel;
 	}
 	
-	public HashMap<String, DataColumnDescription> getDataColumnDescriptions() {
-		return this.getMainPanel().getDataColumnDescriptions();
-	}
-
-	public void setDataColumnDescriptions(HashMap<String, DataColumnDescription> dataColumnDescriptions) {
-		this.getMainPanel().setDataColumnDescriptions(dataColumnDescriptions);
-	}
-
 }

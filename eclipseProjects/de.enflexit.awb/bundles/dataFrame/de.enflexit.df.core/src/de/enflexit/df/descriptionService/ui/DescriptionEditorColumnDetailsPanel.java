@@ -13,10 +13,14 @@ import javax.swing.JList;
 
 import java.awt.GridBagConstraints;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
+import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.df.descriptionService.DescriptionsController;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
 import de.enflexit.df.descriptionService.db.DataType;
@@ -29,7 +33,7 @@ import javax.swing.JComboBox;
  * This panel implements the actual editor for the description of a single data column. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataColumnDescriptionEditorPanel extends JPanel implements ActionListener {
+public class DescriptionEditorColumnDetailsPanel extends JPanel implements ActionListener, DocumentListener {
 	
 	private static final long serialVersionUID = 261283042294893067L;
 	
@@ -55,11 +59,11 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 	private JButton jButtonApply;
 	private JButton jButtonRevert;
 	
-	
+	private boolean dirty;
 	
 	private ArrayList<PropertyChangeListener> changeListeners;
 	
-	public DataColumnDescriptionEditorPanel() {
+	public DescriptionEditorColumnDetailsPanel() {
 		initialize();
 	}
 	
@@ -188,6 +192,7 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 			jTextFieldColumnName = new JTextField();
 			jTextFieldColumnName.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldColumnName.setColumns(10);
+			jTextFieldColumnName.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldColumnName;
 	}
@@ -203,6 +208,7 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 			jTextFieldDescription = new JTextField();
 			jTextFieldDescription.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldDescription.setColumns(10);
+			jTextFieldDescription.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldDescription;
 	}
@@ -218,7 +224,9 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 		if (jComboBoxDataType == null) {
 			jComboBoxDataType = new JComboBox<>();
 			jComboBoxDataType.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxDataType.addActionListener(this);
 			
+			// --- Add the data types and null as possible selection values
 			jComboBoxDataType.addItem(null);
 			for (DataType dataType : DataType.values()) {
 				jComboBoxDataType.addItem(dataType);
@@ -309,7 +317,10 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 	private JButton getJButtonApply() {
 		if (jButtonApply == null) {
 			jButtonApply = new JButton("Apply");
+			jButtonApply = new JButton("OK");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
+			jButtonApply.setPreferredSize(new Dimension(85, 26));
 			jButtonApply.addActionListener(this);
 		}
 		return jButtonApply;
@@ -318,6 +329,8 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 		if (jButtonRevert == null) {
 			jButtonRevert = new JButton("Revert");
 			jButtonRevert.setFont(new Font("Dialog", Font.BOLD, 12));
+			jButtonRevert.setForeground(AwbThemeColor.ButtonTextRed.getColor());
+			jButtonRevert.setPreferredSize(new Dimension(85, 26));
 			jButtonRevert.addActionListener(this);
 		}
 		return jButtonRevert;
@@ -329,11 +342,37 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonApply()) {
-			this.setFormToModel();
-			this.notifyDescriptionChanged();
+			this.applyChanges();
 		} else if (ae.getSource()==this.getJButtonRevert()) {
-			this.setModelToForm();
+			this.revertChanges();
+		} else if (ae.getSource()==this.getJComboBoxDataType()) {
+			// --- Mark as changed
+			this.setDirty(true);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void insertUpdate(DocumentEvent de) {
+		this.setDirty(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void removeUpdate(DocumentEvent de) {
+		this.setDirty(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
+	 */
+	@Override
+	public void changedUpdate(DocumentEvent de) {
+		this.setDirty(true);
 	}
 
 	public DataColumnDescription getDataColumnDescription() {
@@ -367,13 +406,18 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 			String maxValText = this.dataColumnDescription.getMaxValue() != null ? String.valueOf(this.dataColumnDescription.getMaxValue()) : ""; 
 			this.getJTextFieldMaxValue().setText(maxValText);
 			
+			this.setDirty(false);
+			
 		} else {
 			this.getJLabelColumnNameValue().setText("");
 			this.getJTextFieldColumnName().setText("");
 			this.getJTextFieldDescription().setText("");
+			this.getJComboBoxDataType().setSelectedItem(null);
 			this.getJTextFieldUnit().setText("");
 			this.getJTextFieldMinValue().setText("");
 			this.getJTextFieldMaxValue().setText("");
+			
+			this.setDirty(false);
 		}
 	}
 
@@ -444,4 +488,37 @@ public class DataColumnDescriptionEditorPanel extends JPanel implements ActionLi
 			listener.propertyChange(pce);
 		}
 	}
+	
+	/**
+	 * Applies the changes to the model and stores to the DB.
+	 */
+	public void applyChanges() {
+		// --- Apply the changes to the original item and notify listeners
+		this.setFormToModel();
+		this.notifyDescriptionChanged();
+		this.setDirty(false);
+	}
+	
+	/**
+	 * Replaces the form content with the original model.
+	 */
+	public void revertChanges() {
+		// --- Replace form contents with the original item
+		this.setModelToForm();
+		this.setDirty(false);
+	}
+
+	/**
+	 * Checks if the editor has unsaved changes.
+	 * @return true, if is dirty
+	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	private void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	
 }
