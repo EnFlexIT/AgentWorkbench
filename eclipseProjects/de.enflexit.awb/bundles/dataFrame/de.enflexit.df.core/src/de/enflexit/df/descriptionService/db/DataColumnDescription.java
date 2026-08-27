@@ -2,6 +2,7 @@ package de.enflexit.df.descriptionService.db;
 
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-// TODO: Auto-generated Javadoc
 @Entity
 @Table(name="data_column_description")
 public class DataColumnDescription {
@@ -30,7 +30,7 @@ public class DataColumnDescription {
 	
 	private String name;
 	
-	@OneToMany(mappedBy="dataColumn")
+	@OneToMany(mappedBy="dataColumn", cascade=CascadeType.ALL)
 	private Set<DataColumnAlternativeID> alternativeIDs;
 	
 	private String description;
@@ -182,4 +182,27 @@ public class DataColumnDescription {
 		this.maxValue = maxValue;
 	}
 	
+	/**
+	 * Gets the alternative IDs.
+	 * @return the alternative IDs
+	 */
+	public Set<DataColumnAlternativeID> getAlternativeIDs() {
+		return alternativeIDs;
+	}
+	/**
+	 * Sets the alternative IDs.
+	 * @param alternativeIDs the new alternative IDs
+	 */
+	public void setAlternativeIDs(Set<DataColumnAlternativeID> alternativeIDs) {
+		this.alternativeIDs = alternativeIDs;
+	}
+	
+	/**
+	 * Adds an alternative identifier to this column description.
+	 * @param alternativeIdentifier the alternative identifier
+	 */
+	public void addAlternativeIdentifier(DataColumnAlternativeID alternativeIdentifier) {
+		alternativeIdentifier.setDataColumn(this);
+		this.getAlternativeIDs().add(alternativeIdentifier);
+	}
 }

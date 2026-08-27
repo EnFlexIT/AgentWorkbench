@@ -22,6 +22,7 @@ import javax.swing.event.DocumentListener;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.df.descriptionService.DescriptionsController;
+import de.enflexit.df.descriptionService.db.DataColumnAlternativeID;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
 import de.enflexit.df.descriptionService.db.DataType;
 
@@ -33,7 +34,7 @@ import javax.swing.JComboBox;
  * This panel implements the actual editor for the description of a single data column. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DescriptionEditorColumnDetailsPanel extends JPanel implements ActionListener, DocumentListener {
+public class DescriptionEditorColumnDetailsPanel extends JPanel implements ActionListener, DocumentListener, PropertyChangeListener {
 	
 	private static final long serialVersionUID = 261283042294893067L;
 	
@@ -62,6 +63,8 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	private boolean dirty;
 	
 	private ArrayList<PropertyChangeListener> changeListeners;
+	private JLabel jLabelAlternateIDs;
+	private AlternativeIDsEditorPanel alternativeIDsEditorPanel;
 	
 	public DescriptionEditorColumnDetailsPanel() {
 		initialize();
@@ -70,9 +73,9 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelColumnName = new GridBagConstraints();
 		gbc_jLabelColumnName.anchor = GridBagConstraints.WEST;
@@ -158,11 +161,23 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		gbc_jTextFieldMaxValue.gridx = 1;
 		gbc_jTextFieldMaxValue.gridy = 6;
 		add(getJTextFieldMaxValue(), gbc_jTextFieldMaxValue);
+		GridBagConstraints gbc_jLabelAlternateIDs = new GridBagConstraints();
+		gbc_jLabelAlternateIDs.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelAlternateIDs.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelAlternateIDs.gridx = 0;
+		gbc_jLabelAlternateIDs.gridy = 7;
+		add(getJLabelAlternateIDs(), gbc_jLabelAlternateIDs);
+		GridBagConstraints gbc_alternativeIDsEditorPanel = new GridBagConstraints();
+		gbc_alternativeIDsEditorPanel.insets = new Insets(5, 5, 5, 10);
+		gbc_alternativeIDsEditorPanel.fill = GridBagConstraints.BOTH;
+		gbc_alternativeIDsEditorPanel.gridx = 1;
+		gbc_alternativeIDsEditorPanel.gridy = 7;
+		add(getAlternativeIDsEditorPanel(), gbc_alternativeIDsEditorPanel);
 		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
 		gbc_jPanelButtons.gridwidth = 2;
 		gbc_jPanelButtons.fill = GridBagConstraints.BOTH;
 		gbc_jPanelButtons.gridx = 0;
-		gbc_jPanelButtons.gridy = 7;
+		gbc_jPanelButtons.gridy = 8;
 		add(getJPanelButtons(), gbc_jPanelButtons);
 	}
 
@@ -317,7 +332,6 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	private JButton getJButtonApply() {
 		if (jButtonApply == null) {
 			jButtonApply = new JButton("Apply");
-			jButtonApply = new JButton("OK");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonApply.setForeground(AwbThemeColor.ButtonTextGreen.getColor());
 			jButtonApply.setPreferredSize(new Dimension(85, 26));
@@ -406,6 +420,8 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			String maxValText = this.dataColumnDescription.getMaxValue() != null ? String.valueOf(this.dataColumnDescription.getMaxValue()) : ""; 
 			this.getJTextFieldMaxValue().setText(maxValText);
 			
+			this.getAlternativeIDsEditorPanel().setDataColumnDescription(this.dataColumnDescription);
+			
 			this.setDirty(false);
 			
 		} else {
@@ -436,6 +452,13 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		if (this.getJTextFieldMaxValue().getText()!=null && this.getJTextFieldMaxValue().getText().isBlank()==false) {
 			this.dataColumnDescription.setMaxValue(this.parseDoubleValue(this.getJTextFieldMaxValue().getText()));
 		}
+		
+		this.dataColumnDescription.getAlternativeIDs().clear();
+		
+		for (int i=0; i<this.getAlternativeIDsEditorPanel().getAlternativeIDsListModel().getSize(); i++) {
+			DataColumnAlternativeID altID = this.getAlternativeIDsEditorPanel().getAlternativeIDsListModel().get(i);
+			this.dataColumnDescription.getAlternativeIDs().add(altID);
+		}
 	}
 	
 	/**
@@ -452,6 +475,10 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		}
 	}
 	
+	/**
+	 * Gets the change listeners.
+	 * @return the change listeners
+	 */
 	private ArrayList<PropertyChangeListener> getChangeListeners() {
 		if (changeListeners==null) {
 			changeListeners = new ArrayList<PropertyChangeListener>();
@@ -521,4 +548,30 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	}
 
 	
+	private JLabel getJLabelAlternateIDs() {
+		if (jLabelAlternateIDs == null) {
+			jLabelAlternateIDs = new JLabel("Alternative IDs");
+			jLabelAlternateIDs.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelAlternateIDs;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		if (pce.getSource()==this.getAlternativeIDsEditorPanel()) {
+			// --- Changes to the alternative IDs
+			this.setDirty(true);
+		}
+	}
+	
+	private AlternativeIDsEditorPanel getAlternativeIDsEditorPanel() {
+		if (alternativeIDsEditorPanel == null) {
+			alternativeIDsEditorPanel = new AlternativeIDsEditorPanel();
+			alternativeIDsEditorPanel.addChangeListener(this);
+		}
+		return alternativeIDsEditorPanel;
+	}
 }

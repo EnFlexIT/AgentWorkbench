@@ -23,12 +23,20 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 	
 	private DescriptionsController descriptionsControler;
 	
+	/**
+	 * Instantiates a new data column description editor dialog.
+	 * @param owner the owner
+	 * @param descriptionsController the descriptions controller
+	 */
 	public DataColumnDescriptionEditorDialog(Window owner, DescriptionsController descriptionsController) {
 		super(owner);
 		this.descriptionsControler = descriptionsController;
 		this.initialize();
 	}
 	
+	/**
+	 * Initializes the UI elements.
+	 */
 	private void initialize() {
 		this.setContentPane(this.getEditorMainPanel());
 		this.setTitle(Application.getApplicationTitle() + " - Data Column Description Editor");
@@ -53,6 +61,10 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 		WindowSizeAndPostionController.setJDialogPositionOnScreen(this, JDialogPosition.ParentCenter);
 	}
 	
+	/**
+	 * Gets the editor main panel.
+	 * @return the editor main panel
+	 */
 	public DescriptionEditorMainPanel getEditorMainPanel() {
 		if (editorMainPanel==null) {
 			editorMainPanel = new DescriptionEditorMainPanel(this.descriptionsControler);
