@@ -90,39 +90,12 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	@Override
 	public void updateColumnDescriptionList(List<ColumnDescription> columnDescriptionList) {
 		for (ColumnDescription colDesc : columnDescriptionList) {
-			DataColumnDescription colDescFromDB = this.getDescriptionsController().getColumnDescriptions().get(colDesc.getColumnName());
-			if (colDescFromDB!=null) {
-				this.addPropertiesFromDB(colDesc, colDescFromDB);
-			}
+			
+			colDesc.setColumnDescriptionRenderer(new DescriptorServiceColumnDescriptionRenderer(this.getDescriptionsController()));
+			
 		}
 	}
 	
-	/**
-	 * Adds the properties from DB description.
-	 * @param colDesc the col desc
-	 * @param colDescFromDB the col desc from DB
-	 */
-	private void addPropertiesFromDB(ColumnDescription colDesc, DataColumnDescription colDescFromDB) {
-		if (colDescFromDB.getName()!=null && colDescFromDB.getName().isBlank()==false) {
-			colDesc.getProperties().setStringValue("Name", colDescFromDB.getName());
-		}
-		if (colDescFromDB.getDescription()!=null && colDescFromDB.getDescription().isBlank()==false) {
-			colDesc.getProperties().setStringValue("Description", colDescFromDB.getDescription());
-		}
-		if (colDescFromDB.getDataType()!=null) {
-			colDesc.getProperties().setStringValue("Data type", colDescFromDB.getDataType().toString());
-		}
-		if (colDescFromDB.getUnit()!=null && colDescFromDB.getUnit().isBlank()==false) {
-			colDesc.getProperties().setStringValue("Unit", colDescFromDB.getUnit());
-		}
-		if (colDescFromDB.getMinValue()!=null) {
-			colDesc.getProperties().setStringValue("Min. Value", String.valueOf(colDescFromDB.getMinValue()));
-		}
-		if (colDescFromDB.getMaxValue()!=null) {
-			colDesc.getProperties().setStringValue("Max. Value", String.valueOf(colDescFromDB.getMaxValue()));
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#addAnnotatedClassesToDataWorkbook4DB(de.enflexit.df.core.workbook.db.SessionFactoryCreator, org.hibernate.cfg.Configuration)
 	 */

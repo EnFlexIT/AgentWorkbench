@@ -453,7 +453,9 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			this.dataColumnDescription.setMaxValue(this.parseDoubleValue(this.getJTextFieldMaxValue().getText()));
 		}
 		
-		this.dataColumnDescription.getAlternativeIDs().clear();
+		if (this.dataColumnDescription.getAlternativeIDs()!=null) {
+			this.dataColumnDescription.getAlternativeIDs().clear();
+		}
 		
 		for (int i=0; i<this.getAlternativeIDsEditorPanel().getAlternativeIDsListModel().getSize(); i++) {
 			DataColumnAlternativeID altID = this.getAlternativeIDsEditorPanel().getAlternativeIDsListModel().get(i);

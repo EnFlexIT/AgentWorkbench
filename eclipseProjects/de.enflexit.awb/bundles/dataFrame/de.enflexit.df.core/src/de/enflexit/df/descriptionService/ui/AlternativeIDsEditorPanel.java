@@ -187,7 +187,7 @@ public class AlternativeIDsEditorPanel extends JPanel implements ActionListener{
 		if (alternativeIDsListModel==null) {
 			alternativeIDsListModel = new DefaultListModel<DataColumnAlternativeID>();
 			
-			if (this.dataColumnDescription!=null) {
+			if (this.dataColumnDescription!=null && this.dataColumnDescription.getAlternativeIDs()!=null) {
 				for (DataColumnAlternativeID altID : this.dataColumnDescription.getAlternativeIDs()) {
 					alternativeIDsListModel.addElement(altID);
 				}

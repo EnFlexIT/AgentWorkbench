@@ -1,7 +1,10 @@
 package de.enflexit.df.descriptionService.db;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import de.enflexit.df.core.dataSources.DataSourceHelper;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +13,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -21,8 +26,9 @@ public class DataColumnDescription {
 	@Column(name="id_data_column", nullable=false)
 	private Integer id;
 	
-	@Column(name="data_source_name")
-	private String dataSourceName;
+	@ManyToOne(optional=false)
+	@JoinColumn(name="id_data_source")
+	private DefaultDataSource dataSource;
 	@Column(name="table_name")
 	private String tableName;
 	@Column(name="column_name")
@@ -30,7 +36,7 @@ public class DataColumnDescription {
 	
 	private String name;
 	
-	@OneToMany(mappedBy="dataColumn", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="dataColumn", cascade=CascadeType.ALL, orphanRemoval=true)
 	private Set<DataColumnAlternativeID> alternativeIDs;
 	
 	private String description;
@@ -62,6 +68,20 @@ public class DataColumnDescription {
 		this.id = id;
 	}
 	
+	/**
+	 * Gets the data source.
+	 * @return the data source
+	 */
+	public DefaultDataSource getDataSource() {
+		return dataSource;
+	}
+	/**
+	 * Sets the data source.
+	 * @param dataSource the new data source
+	 */
+	public void setDataSource(DefaultDataSource dataSource) {
+		this.dataSource = DataSourceHelper.toDefaultDataSource(dataSource);
+	}
 	/**
 	 * Gets the table name.
 	 * @return the table name
@@ -187,6 +207,9 @@ public class DataColumnDescription {
 	 * @return the alternative IDs
 	 */
 	public Set<DataColumnAlternativeID> getAlternativeIDs() {
+		if (alternativeIDs==null) {
+			alternativeIDs = new HashSet<DataColumnAlternativeID>();
+		}
 		return alternativeIDs;
 	}
 	/**

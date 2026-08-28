@@ -234,8 +234,9 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		ColumnDescription colDesc = this.findMatchingColumnDescription(columnName);
 		DataColumnDescription columnDescription = new DataColumnDescription();
 		columnDescription.setColumnName(columnName);
+		columnDescription.setDataSource(this.dataSource);
 		if (colDesc!=null && colDesc.getTableName()!=null) {
-			columnDescription.setTableName(colDesc.getColumnName());
+			columnDescription.setTableName(colDesc.getTableName());
 		}
 		if (colDesc!=null && colDesc.getColumnType()!=null) {
 			//TODO find matching data type
