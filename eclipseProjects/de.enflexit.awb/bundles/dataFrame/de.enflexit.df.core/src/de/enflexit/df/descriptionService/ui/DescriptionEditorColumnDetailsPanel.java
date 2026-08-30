@@ -179,6 +179,8 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		gbc_jPanelButtons.gridx = 0;
 		gbc_jPanelButtons.gridy = 8;
 		add(getJPanelButtons(), gbc_jPanelButtons);
+		
+		this.setUiComponentsEnabled(false);
 	}
 
 	private JLabel getJLabelColumnName() {
@@ -272,6 +274,7 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			jTextFieldUnit = new JTextField();
 			jTextFieldUnit.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldUnit.setColumns(10);
+			jTextFieldUnit.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldUnit;
 	}
@@ -287,6 +290,7 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			jTextFieldMinValue = new JTextField();
 			jTextFieldMinValue.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldMinValue.setColumns(10);
+			jTextFieldMinValue.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldMinValue;
 	}
@@ -302,6 +306,7 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			jTextFieldMaxValue = new JTextField();
 			jTextFieldMaxValue.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldMaxValue.setColumns(10);
+			jTextFieldMaxValue.getDocument().addDocumentListener(this);
 		}
 		return jTextFieldMaxValue;
 	}
@@ -309,9 +314,9 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		if (jPanelButtons == null) {
 			jPanelButtons = new JPanel();
 			GridBagLayout gbl_jPanelButtons = new GridBagLayout();
-			gbl_jPanelButtons.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelButtons.columnWidths = new int[]{0, 0, 0, 0};
 			gbl_jPanelButtons.rowHeights = new int[]{0, 0};
-			gbl_jPanelButtons.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelButtons.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
 			gbl_jPanelButtons.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 			jPanelButtons.setLayout(gbl_jPanelButtons);
 			GridBagConstraints gbc_jButtonApply = new GridBagConstraints();
@@ -401,6 +406,7 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	public void setDataColumnDescription(DataColumnDescription dataColumnDescription) {
 		this.dataColumnDescription = dataColumnDescription;
 		this.setModelToForm();
+		this.setUiComponentsEnabled(dataColumnDescription!=null);
 	}
 
 	/**
@@ -547,6 +553,8 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 
 	private void setDirty(boolean dirty) {
 		this.dirty = dirty;
+		this.getJButtonApply().setEnabled(dirty);
+		this.getJButtonRevert().setEnabled(dirty);
 	}
 
 	
@@ -575,5 +583,21 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			alternativeIDsEditorPanel.addChangeListener(this);
 		}
 		return alternativeIDsEditorPanel;
+	}
+	
+	/**
+	 * Sets the ui components enabled.
+	 * @param enabled the new ui components enabled
+	 */
+	private void setUiComponentsEnabled(boolean enabled) {
+		this.getJTextFieldColumnName().setEnabled(enabled);
+		this.getJTextFieldDescription().setEnabled(enabled);
+		this.getJComboBoxDataType().setEnabled(enabled);
+		this.getJTextFieldUnit().setEnabled(enabled);
+		this.getJTextFieldMinValue().setEnabled(enabled);
+		this.getJTextFieldMaxValue().setEnabled(enabled);
+		this.getAlternativeIDsEditorPanel().setUiComponentsEnabled(enabled);
+		this.getJButtonApply().setEnabled(enabled==false ? enabled : this.isDirty());
+		this.getJButtonRevert().setEnabled(enabled==false ? enabled : this.isDirty());
 	}
 }

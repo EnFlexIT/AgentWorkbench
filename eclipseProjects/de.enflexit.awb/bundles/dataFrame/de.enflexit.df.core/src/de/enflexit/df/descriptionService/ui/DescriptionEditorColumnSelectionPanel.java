@@ -37,6 +37,8 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 
 	private static final long serialVersionUID = 5825850682049517170L;
 	
+	private static final String REGEX_REMOVE_ALSO_AVAILABLE = "\\s\\(also available in:\\s.+\\)";
+	
 	private DefaultListModel<String> columnsListModel;
 
 	private DescriptionsController descriptionController;
@@ -224,7 +226,7 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 			
 			// --- Set the description object to the editor panel
 			this.getColumnDetailsEditorPanel().setDataColumnDescription(columnDescription);
-			
+
 			// --- Remember the current selection
 			this.currentSelection = newSelection;
 		}
@@ -236,9 +238,11 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		columnDescription.setColumnName(columnName);
 		columnDescription.setDataSource(this.dataSource);
 		if (colDesc!=null && colDesc.getTableName()!=null) {
-			columnDescription.setTableName(colDesc.getTableName());
+			String tableNameOnly =colDesc.getTableName().replaceAll(REGEX_REMOVE_ALSO_AVAILABLE, ""); 
+			columnDescription.setTableName(tableNameOnly);
 		}
 		if (colDesc!=null && colDesc.getColumnType()!=null) {
+			colDesc.getColumnType();
 			//TODO find matching data type
 		}
 		columnDescription.setName(columnName);

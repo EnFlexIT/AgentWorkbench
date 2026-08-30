@@ -18,6 +18,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.descriptionService.db.DataColumnAlternativeID;
@@ -30,7 +32,7 @@ import javax.swing.JOptionPane;
  * A sub-panel for handling alternative identifiers.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class AlternativeIDsEditorPanel extends JPanel implements ActionListener{
+public class AlternativeIDsEditorPanel extends JPanel implements ActionListener, ListSelectionListener{
 	
 	public static final String PROPERTY_CHANGE_ALT_ID_ADDED = "AlternativeIdentifierAdded";
 	public static final String PROPERTY_CHANGE_ALT_ID_EDITED = "AlternativeIdentifierEdited";
@@ -155,6 +157,7 @@ public class AlternativeIDsEditorPanel extends JPanel implements ActionListener{
 		if (jScrollPaneAlternateIDs == null) {
 			jScrollPaneAlternateIDs = new JScrollPane();
 			jScrollPaneAlternateIDs.setViewportView(getJListAlternateIDs());
+			jScrollPaneAlternateIDs.setPreferredSize(new Dimension(200, 100));
 		}
 		return jScrollPaneAlternateIDs;
 	}
@@ -175,6 +178,7 @@ public class AlternativeIDsEditorPanel extends JPanel implements ActionListener{
 					return this;
 				}
 			});
+			jListAlternateIDs.addListSelectionListener(this);
 		}
 		return jListAlternateIDs;
 	}
@@ -231,7 +235,7 @@ public class AlternativeIDsEditorPanel extends JPanel implements ActionListener{
 		} else if (ae.getSource()==this.getJButtonRemove()) {
 			int selectedIndex = this.getJListAlternateIDs().getSelectedIndex();
 			DataColumnAlternativeID removedID = this.getAlternativeIDsListModel().remove(selectedIndex);
-			this.dataColumnDescription.getAlternativeIDs().remove(removedID);
+//			this.dataColumnDescription.getAlternativeIDs().remove(removedID);
 			this.notifyChanged(PROPERTY_CHANGE_ALT_ID_REMOVED, removedID);
 		}
 	}
@@ -302,6 +306,25 @@ public class AlternativeIDsEditorPanel extends JPanel implements ActionListener{
 		for (PropertyChangeListener listener : this.getChangeListeners()) {
 			listener.propertyChange(pce);
 		}
+	}
+	
+	public void setUiComponentsEnabled(boolean enabled) {
+		this.getJButtonAdd().setEnabled(enabled);
+		if (enabled==false) {
+			// --- Enabling depends on list selection state 
+			this.getJButtonRemove().setEnabled(enabled);
+			this.getJButtonEdit().setEnabled(enabled);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ListSelectionListener#valueChanged(javax.swing.event.ListSelectionEvent)
+	 */
+	@Override
+	public void valueChanged(ListSelectionEvent lse) {
+		DataColumnAlternativeID selectedItem = this.getJListAlternateIDs().getSelectedValue();
+		this.getJButtonRemove().setEnabled(selectedItem!=null);
+		this.getJButtonEdit().setEnabled(selectedItem!=null);
 	}
 	
 }
