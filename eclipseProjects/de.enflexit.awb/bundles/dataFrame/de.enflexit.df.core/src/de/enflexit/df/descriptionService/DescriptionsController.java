@@ -2,7 +2,6 @@ package de.enflexit.df.descriptionService;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.df.core.model.DataController;
@@ -18,7 +17,9 @@ public class DescriptionsController implements PropertyChangeListener{
 
 	private DescriptionServiceDatabaseHandler databaseHandler;
 	
-	private HashMap<String, DataColumnDescription> columnDescriptions;
+//	private HashMap<String, DataColumnDescription> columnDescriptions;
+	
+	private List<DataColumnDescription> columnDescriptionsList;
 
 	/**
 	 * Instantiates a new data column descriptions controller.
@@ -31,21 +32,30 @@ public class DescriptionsController implements PropertyChangeListener{
 		this.sessionFactoryCreator = sessionFactoryCreator;
 	}
 	
-	/**
-	 * Gets the data column descriptions.
-	 * @return the data column descriptions
-	 */
-	public HashMap<String, DataColumnDescription> getColumnDescriptions() {
-		
-		if (columnDescriptions==null) {
+	public List<DataColumnDescription> getColumnDescriptionsList() {
+		if (columnDescriptionsList==null) {
 			if (this.sessionFactoryCreator==null) {
 				System.err.println("[" + this.getClass().getSimpleName() + "] Unable to load column descriptions from the database, sessionFactoryCreator not available yet");
 			} else {
-				columnDescriptions = this.loadDataCOlumnDescriptionsFromDB();
+				columnDescriptionsList = this.loadDataCOlumnDescriptionsFromDB();
 			}
 		}
-		
-		return columnDescriptions;
+		return columnDescriptionsList;
+	}
+	
+	/**
+	 * Gets the column description with the specified column and table names.
+	 * @param columnName the column name
+	 * @param tableName the table name, optional
+	 * @return the column description
+	 */
+	public DataColumnDescription getColumnDescription(String columnName, String tableName) {
+		for (DataColumnDescription colDesc : this.getColumnDescriptionsList()) {
+			if (colDesc.getTableName().equals(DescriptionServiceHelper.removeAlsoAvailableFromTableName(tableName)) && colDesc.getColumnName().equals(columnName)) {
+				return colDesc;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -66,21 +76,15 @@ public class DescriptionsController implements PropertyChangeListener{
 	 * Loads the column descriptions from the database
 	 * @return the column descriptions
 	 */
-	private HashMap<String, DataColumnDescription> loadDataCOlumnDescriptionsFromDB() {
-		
-		HashMap<String, DataColumnDescription> colDescsMap = new HashMap<String, DataColumnDescription>(); 
-		List<DataColumnDescription> desriptionsFromDB = this.getDatabaseHandler().dbLoadEntityInstanceList(DataColumnDescription.class);
-		for (DataColumnDescription colDesc : desriptionsFromDB) {
-			colDescsMap.put(colDesc.getColumnName(), colDesc);
-		}
-		return colDescsMap;
+	private List<DataColumnDescription> loadDataCOlumnDescriptionsFromDB() {
+		return this.getDatabaseHandler().dbLoadEntityInstanceList(DataColumnDescription.class);
 	}
 	
 	/**
 	 * Stores the data column descriptions to the database.
 	 */
 	public void storeDataColumnDescriptionsToDB() {
-		for (DataColumnDescription colDesc : this.getColumnDescriptions().values()) {
+		for (DataColumnDescription colDesc : this.getColumnDescriptionsList()) {
 			this.getDatabaseHandler().dbSaveOrUpdateEntityInstance(colDesc, true);
 		}
 	}

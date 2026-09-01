@@ -253,9 +253,7 @@ public class DescriptionEditorMainPanel extends JPanel implements TreeSelectionL
 		DTNO_Base selectedDTNO = (DTNO_Base) selectedNode.getUserObject();
 		if (selectedDTNO instanceof AbstractDataSourceDTNO<?>) {
 			AbstractDataSourceDTNO<?> dsDTNO = (AbstractDataSourceDTNO<?>) selectedDTNO;
-			this.getJPanelColumnDescriptionEditor().setDataSource(dsDTNO.getDataSource());
-			this.getJPanelColumnDescriptionEditor().setDescriptionsList(dsDTNO.getColumnDescriptionList());
-			this.getJPanelColumnDescriptionEditor().setTable(dsDTNO.getTable());
+			this.getJPanelColumnDescriptionEditor().setDataSourceDTNO(dsDTNO);
 		}
 	}
 

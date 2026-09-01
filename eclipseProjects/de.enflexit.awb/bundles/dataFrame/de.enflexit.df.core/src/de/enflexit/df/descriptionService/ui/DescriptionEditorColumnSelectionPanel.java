@@ -2,20 +2,17 @@ package de.enflexit.df.descriptionService.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-
 import javax.swing.JPanel;
 
 import tech.tablesaw.api.ColumnType;
-import tech.tablesaw.api.Table;
-
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.extension.ColumnDescription;
+import de.enflexit.df.descriptionService.DescriptionServiceHelper;
 import de.enflexit.df.descriptionService.DescriptionsController;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
 import javax.swing.DefaultListModel;
@@ -39,15 +36,11 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 
 	private static final long serialVersionUID = 5825850682049517170L;
 	
-	private static final String REGEX_REMOVE_ALSO_AVAILABLE = "\\s\\(also available in:\\s.+\\)";
-	
 	private DefaultListModel<String> columnsListModel;
 
 	private DescriptionsController descriptionController;
-	
-	private DefaultDataSource dataSource;
-	private Table table;
-	private List<ColumnDescription> descriptionsList;
+
+	private AbstractDataSourceDTNO<?> dataSourceDTNO;
 	
 	private DescriptionEditorColumnDetailsPanel columnDetailsEditorPanel;
 	private JScrollPane jScrollPaneColumnsList;
@@ -135,8 +128,8 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 	private DefaultListModel<String> getColumnsListModel() {
 		if (columnsListModel==null) {
 			columnsListModel = new DefaultListModel<String>();
-			if (this.table!=null) {
-				for (String columnName : this.table.columnNames()) {
+			if (this.getDataSourceDTNO().getTable()!=null) {
+				for (String columnName : this.getDataSourceDTNO().getTable().columnNames()) {
 					columnsListModel.addElement(columnName);
 				}
 			} else {
@@ -154,41 +147,15 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		this.getJListColumnsList().setModel(this.getColumnsListModel());
 	}
 
-	/**
-	 * Gets the table.
-	 * @return the table
-	 */
-	public Table getTable() {
-		return table;
-	}
-	/**
-	 * Sets the table.
-	 * @param table the new table
-	 */
-	public void setTable(Table table) {
-		if (table!=this.table) {
-			this.table = table;
-			this.resetListModel();
-		}
+	public void setDataSourceDTNO(AbstractDataSourceDTNO<?> dataSourceDTNO) {
+		this.dataSourceDTNO = dataSourceDTNO;
+		this.resetListModel();
 	}
 	
+	private AbstractDataSourceDTNO<?> getDataSourceDTNO() {
+		return dataSourceDTNO;
+	}
 	
-	
-	public List<ColumnDescription> getDescriptionsList() {
-		return descriptionsList;
-	}
-
-	public void setDescriptionsList(List<ColumnDescription> descriptionsList) {
-		this.descriptionsList = descriptionsList;
-	}
-
-	public DefaultDataSource getDataSource() {
-		return dataSource;
-	}
-
-	public void setDataSource(DefaultDataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -219,7 +186,7 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 			}
 			
 			// --- Check if there is already a description for this column
-			DataColumnDescription columnDescription = this.descriptionController.getColumnDescriptions().get(newSelection);
+			DataColumnDescription columnDescription = this.descriptionController.getColumnDescription(newSelection, this.getDataSourceDTNO().getTableName(newSelection));
 			
 			// --- If not, create one with some default values
 			if (columnDescription==null) {
@@ -241,16 +208,16 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		ColumnDescription colDesc = this.findMatchingColumnDescription(columnName);
 		DataColumnDescription columnDescription = new DataColumnDescription();
 		columnDescription.setColumnName(columnName);
-		columnDescription.setDataSource(this.dataSource);
+		columnDescription.setDataSource(this.getDataSourceDTNO().getDataSource());
 		if (colDesc!=null && colDesc.getTableName()!=null) {
-			String tableNameOnly =colDesc.getTableName().replaceAll(REGEX_REMOVE_ALSO_AVAILABLE, ""); 
+			String tableNameOnly = DescriptionServiceHelper.removeAlsoAvailableFromTableName(colDesc.getTableName()); 
 			columnDescription.setTableName(tableNameOnly);
 		}
 		
 		ColumnType columnType = this.getColumnTypeForPrinterFriendlyName(colDesc.getColumnType());
 		columnDescription.setColumnType(columnType!=null ? columnType.name() : null);
 		
-		this.descriptionController.getColumnDescriptions().put(columnName, columnDescription);
+		this.descriptionController.getColumnDescriptionsList().add(columnDescription);
 		return columnDescription;
 	}
 	
@@ -269,7 +236,7 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 	 * @return the column description
 	 */
 	private ColumnDescription findMatchingColumnDescription(String columnName) {
-		for (ColumnDescription colDesc : this.getDescriptionsList()) {
+		for (ColumnDescription colDesc : this.getDataSourceDTNO().getColumnDescriptionList()) {
 			if (colDesc.getColumnName().equals(columnName)) {
 				return colDesc;
 			}
