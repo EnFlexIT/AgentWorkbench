@@ -24,7 +24,7 @@ import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.df.descriptionService.DescriptionsController;
 import de.enflexit.df.descriptionService.db.DataColumnAlternativeID;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
-import de.enflexit.df.descriptionService.db.DataType;
+import tech.tablesaw.api.ColumnType;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -42,14 +42,12 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	
 	private JLabel jLabelColumnName;
 	private JLabel jLabelColumnNameValue;
-	private JLabel jLabelColumnNameUser;
-	private JTextField jTextFieldColumnName;
 	private JLabel lblNewLabel;
 	private JTextField jTextFieldDescription;
 	
 	private DataColumnDescription dataColumnDescription;
 	private JLabel jLabelDataType;
-	private JComboBox<DataType> jComboBoxDataType;
+	private JComboBox<ColumnType> jComboBoxDataType;
 	private JLabel jLabelUnit;
 	private JTextField jTextFieldUnit;
 	private JLabel jLabelMinValue;
@@ -66,16 +64,22 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	private JLabel jLabelAlternateIDs;
 	private AlternativeIDsEditorPanel alternativeIDsEditorPanel;
 	
+	/**
+	 * Instantiates a new description editor column details panel.
+	 */
 	public DescriptionEditorColumnDetailsPanel() {
 		initialize();
 	}
 	
+	/**
+	 * Initializes the UI components.
+	 */
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelColumnName = new GridBagConstraints();
 		gbc_jLabelColumnName.anchor = GridBagConstraints.WEST;
@@ -89,95 +93,83 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		gbc_jLabelColumnNameValue.gridx = 1;
 		gbc_jLabelColumnNameValue.gridy = 0;
 		add(getJLabelColumnNameValue(), gbc_jLabelColumnNameValue);
-		GridBagConstraints gbc_jLabelColumnNameUser = new GridBagConstraints();
-		gbc_jLabelColumnNameUser.anchor = GridBagConstraints.WEST;
-		gbc_jLabelColumnNameUser.insets = new Insets(5, 5, 5, 5);
-		gbc_jLabelColumnNameUser.gridx = 0;
-		gbc_jLabelColumnNameUser.gridy = 1;
-		add(getJLabelColumnNameUser(), gbc_jLabelColumnNameUser);
-		GridBagConstraints gbc_jTextFieldColumnName = new GridBagConstraints();
-		gbc_jTextFieldColumnName.insets = new Insets(5, 5, 5, 10);
-		gbc_jTextFieldColumnName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldColumnName.gridx = 1;
-		gbc_jTextFieldColumnName.gridy = 1;
-		add(getJTextFieldColumnName(), gbc_jTextFieldColumnName);
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.insets = new Insets(5, 5, 5, 5);
 		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 2;
+		gbc_lblNewLabel.gridy = 1;
 		add(getLblNewLabel(), gbc_lblNewLabel);
 		GridBagConstraints gbc_jTextFieldDescription = new GridBagConstraints();
 		gbc_jTextFieldDescription.insets = new Insets(5, 5, 5, 10);
 		gbc_jTextFieldDescription.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldDescription.gridx = 1;
-		gbc_jTextFieldDescription.gridy = 2;
+		gbc_jTextFieldDescription.gridy = 1;
 		add(getJTextFieldDescription(), gbc_jTextFieldDescription);
 		GridBagConstraints gbc_jLabelDataType = new GridBagConstraints();
 		gbc_jLabelDataType.anchor = GridBagConstraints.WEST;
 		gbc_jLabelDataType.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelDataType.gridx = 0;
-		gbc_jLabelDataType.gridy = 3;
+		gbc_jLabelDataType.gridy = 2;
 		add(getJLabelDataType(), gbc_jLabelDataType);
 		GridBagConstraints gbc_jComboBoxDataType = new GridBagConstraints();
 		gbc_jComboBoxDataType.insets = new Insets(5, 5, 5, 10);
 		gbc_jComboBoxDataType.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jComboBoxDataType.gridx = 1;
-		gbc_jComboBoxDataType.gridy = 3;
+		gbc_jComboBoxDataType.gridy = 2;
 		add(getJComboBoxDataType(), gbc_jComboBoxDataType);
 		GridBagConstraints gbc_jLabelUnit = new GridBagConstraints();
 		gbc_jLabelUnit.anchor = GridBagConstraints.WEST;
 		gbc_jLabelUnit.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelUnit.gridx = 0;
-		gbc_jLabelUnit.gridy = 4;
+		gbc_jLabelUnit.gridy = 3;
 		add(getJLabelUnit(), gbc_jLabelUnit);
 		GridBagConstraints gbc_jTextFieldUnit = new GridBagConstraints();
 		gbc_jTextFieldUnit.insets = new Insets(5, 5, 5, 10);
 		gbc_jTextFieldUnit.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldUnit.gridx = 1;
-		gbc_jTextFieldUnit.gridy = 4;
+		gbc_jTextFieldUnit.gridy = 3;
 		add(getJTextFieldUnit(), gbc_jTextFieldUnit);
 		GridBagConstraints gbc_jLabelMinValue = new GridBagConstraints();
 		gbc_jLabelMinValue.anchor = GridBagConstraints.WEST;
 		gbc_jLabelMinValue.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelMinValue.gridx = 0;
-		gbc_jLabelMinValue.gridy = 5;
+		gbc_jLabelMinValue.gridy = 4;
 		add(getJLabelMinValue(), gbc_jLabelMinValue);
 		GridBagConstraints gbc_jTextFieldMinValue = new GridBagConstraints();
 		gbc_jTextFieldMinValue.insets = new Insets(5, 5, 5, 10);
 		gbc_jTextFieldMinValue.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldMinValue.gridx = 1;
-		gbc_jTextFieldMinValue.gridy = 5;
+		gbc_jTextFieldMinValue.gridy = 4;
 		add(getJTextFieldMinValue(), gbc_jTextFieldMinValue);
 		GridBagConstraints gbc_jLabelMaxValue = new GridBagConstraints();
 		gbc_jLabelMaxValue.anchor = GridBagConstraints.WEST;
 		gbc_jLabelMaxValue.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelMaxValue.gridx = 0;
-		gbc_jLabelMaxValue.gridy = 6;
+		gbc_jLabelMaxValue.gridy = 5;
 		add(getJLabelMaxValue(), gbc_jLabelMaxValue);
 		GridBagConstraints gbc_jTextFieldMaxValue = new GridBagConstraints();
 		gbc_jTextFieldMaxValue.insets = new Insets(5, 5, 5, 10);
 		gbc_jTextFieldMaxValue.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jTextFieldMaxValue.gridx = 1;
-		gbc_jTextFieldMaxValue.gridy = 6;
+		gbc_jTextFieldMaxValue.gridy = 5;
 		add(getJTextFieldMaxValue(), gbc_jTextFieldMaxValue);
 		GridBagConstraints gbc_jLabelAlternateIDs = new GridBagConstraints();
 		gbc_jLabelAlternateIDs.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jLabelAlternateIDs.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelAlternateIDs.gridx = 0;
-		gbc_jLabelAlternateIDs.gridy = 7;
+		gbc_jLabelAlternateIDs.gridy = 6;
 		add(getJLabelAlternateIDs(), gbc_jLabelAlternateIDs);
 		GridBagConstraints gbc_alternativeIDsEditorPanel = new GridBagConstraints();
 		gbc_alternativeIDsEditorPanel.insets = new Insets(5, 5, 5, 10);
 		gbc_alternativeIDsEditorPanel.fill = GridBagConstraints.BOTH;
 		gbc_alternativeIDsEditorPanel.gridx = 1;
-		gbc_alternativeIDsEditorPanel.gridy = 7;
+		gbc_alternativeIDsEditorPanel.gridy = 6;
 		add(getAlternativeIDsEditorPanel(), gbc_alternativeIDsEditorPanel);
 		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
 		gbc_jPanelButtons.gridwidth = 2;
 		gbc_jPanelButtons.fill = GridBagConstraints.BOTH;
 		gbc_jPanelButtons.gridx = 0;
-		gbc_jPanelButtons.gridy = 8;
+		gbc_jPanelButtons.gridy = 7;
 		add(getJPanelButtons(), gbc_jPanelButtons);
 		
 		this.setUiComponentsEnabled(false);
@@ -196,22 +188,6 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			jLabelColumnNameValue.setFont(new Font("Dialog", Font.PLAIN, 12));
 		}
 		return jLabelColumnNameValue;
-	}
-	private JLabel getJLabelColumnNameUser() {
-		if (jLabelColumnNameUser == null) {
-			jLabelColumnNameUser = new JLabel("Name");
-			jLabelColumnNameUser.setFont(new Font("Dialog", Font.PLAIN, 12));
-		}
-		return jLabelColumnNameUser;
-	}
-	private JTextField getJTextFieldColumnName() {
-		if (jTextFieldColumnName == null) {
-			jTextFieldColumnName = new JTextField();
-			jTextFieldColumnName.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldColumnName.setColumns(10);
-			jTextFieldColumnName.getDocument().addDocumentListener(this);
-		}
-		return jTextFieldColumnName;
 	}
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
@@ -237,7 +213,7 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		}
 		return jLabelDataType;
 	}
-	private JComboBox<DataType> getJComboBoxDataType() {
+	private JComboBox<ColumnType> getJComboBoxDataType() {
 		if (jComboBoxDataType == null) {
 			jComboBoxDataType = new JComboBox<>();
 			jComboBoxDataType.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -245,8 +221,8 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			
 			// --- Add the data types and null as possible selection values
 			jComboBoxDataType.addItem(null);
-			for (DataType dataType : DataType.values()) {
-				jComboBoxDataType.addItem(dataType);
+			for (ColumnType columnType : ColumnType.values()) {
+				jComboBoxDataType.addItem(columnType);
 			}
 	
 			// --- Define a custom renderer to include null with a placeholder String
@@ -254,7 +230,7 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 				@Override
 				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 					super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-					this.setText(value==null ? COMBO_BOX_ENTRY_NOT_SELECTED : value.toString());
+					this.setText(value==null ? COMBO_BOX_ENTRY_NOT_SELECTED : ((ColumnType)value).getPrinterFriendlyName());
 					return this;
 				}
 			});
@@ -415,9 +391,11 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	private void setModelToForm() {
 		if (this.dataColumnDescription!=null) {
 			this.getJLabelColumnNameValue().setText(this.dataColumnDescription.getColumnName());
-			this.getJTextFieldColumnName().setText(this.dataColumnDescription.getName());
 			this.getJTextFieldDescription().setText(this.dataColumnDescription.getDescription());
-			this.getJComboBoxDataType().setSelectedItem(this.dataColumnDescription.getDataType());
+			
+			String columnTypeString = this.dataColumnDescription.getColumnType();
+			ColumnType columnType = (columnTypeString!=null && columnTypeString.isBlank()==false ? ColumnType.valueOf(columnTypeString) : null);
+			this.getJComboBoxDataType().setSelectedItem(columnType);
 			this.getJTextFieldUnit().setText(this.dataColumnDescription.getUnit());
 			
 			String minValText = this.dataColumnDescription.getMinValue() != null ? String.valueOf(this.dataColumnDescription.getMinValue()) : "";
@@ -432,7 +410,6 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 			
 		} else {
 			this.getJLabelColumnNameValue().setText("");
-			this.getJTextFieldColumnName().setText("");
 			this.getJTextFieldDescription().setText("");
 			this.getJComboBoxDataType().setSelectedItem(null);
 			this.getJTextFieldUnit().setText("");
@@ -447,9 +424,10 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	 * Sets the entries of the column description according to the current editor field contents.
 	 */
 	private void setFormToModel() {
-		this.dataColumnDescription.setName(this.getJTextFieldColumnName().getText());
 		this.dataColumnDescription.setDescription(this.getJTextFieldDescription().getText());
-		this.dataColumnDescription.setDataType((DataType) this.getJComboBoxDataType().getSelectedItem());
+		
+		ColumnType colType = (ColumnType) this.getJComboBoxDataType().getSelectedItem();
+		this.dataColumnDescription.setColumnType(colType!=null ? colType.name() : null);
 		this.dataColumnDescription.setUnit(this.getJTextFieldUnit().getText());
 		
 		if (this.getJTextFieldMinValue().getText()!=null && this.getJTextFieldMinValue().getText().isBlank()==false) {
@@ -590,7 +568,6 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	 * @param enabled the new ui components enabled
 	 */
 	private void setUiComponentsEnabled(boolean enabled) {
-		this.getJTextFieldColumnName().setEnabled(enabled);
 		this.getJTextFieldDescription().setEnabled(enabled);
 		this.getJComboBoxDataType().setEnabled(enabled);
 		this.getJTextFieldUnit().setEnabled(enabled);

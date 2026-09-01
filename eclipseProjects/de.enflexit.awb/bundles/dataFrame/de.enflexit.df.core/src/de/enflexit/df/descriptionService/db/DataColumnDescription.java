@@ -8,8 +8,6 @@ import de.enflexit.df.core.dataSources.DefaultDataSource;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,16 +32,13 @@ public class DataColumnDescription {
 	@Column(name="column_name")
 	private String columnName;
 	
-	private String name;
-	
 	@OneToMany(mappedBy="dataColumn", cascade=CascadeType.ALL, orphanRemoval=true)
 	private Set<DataColumnAlternativeID> alternativeIDs;
 	
 	private String description;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name="data_type")
-	private DataType dataType;
+	@Column(name="column_type")
+	private String columnType;
 	
 	private String unit;
 	
@@ -113,21 +108,6 @@ public class DataColumnDescription {
 	}
 	
 	/**
-	 * Gets the name.
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * Sets the name.
-	 * @param name the new name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/**
 	 * Gets the description.
 	 * @return the description
 	 */
@@ -146,15 +126,15 @@ public class DataColumnDescription {
 	 * Gets the data type.
 	 * @return the data type
 	 */
-	public DataType getDataType() {
-		return dataType;
+	public String getColumnType() {
+		return columnType;
 	}
 	/**
 	 * Sets the data type.
-	 * @param dataType the new data type
+	 * @param columnType the new data type
 	 */
-	public void setDataType(DataType dataType) {
-		this.dataType = dataType;
+	public void setColumnType(String columnType) {
+		this.columnType = columnType;
 	}
 	
 	/**

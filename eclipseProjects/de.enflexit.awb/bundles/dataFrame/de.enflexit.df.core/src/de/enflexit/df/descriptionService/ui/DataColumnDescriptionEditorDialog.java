@@ -42,6 +42,7 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 		this.setTitle(Application.getApplicationTitle() + " - Data Column Description Editor");
 		this.setSize(1024, 512);
 		this.setIconImage(GlobalInfo.getInternalImageAwbIcon48());
+		this.setModal(true);
 		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		
 		// --- Check for unsaved changes before closing the dialog

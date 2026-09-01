@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JPanel;
+
+import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
 
 import javax.swing.JScrollPane;
@@ -233,6 +235,9 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 	}
 	
 	private DataColumnDescription createNewColumnDescription(String columnName) {
+		
+		if (columnName==null) return null;
+		
 		ColumnDescription colDesc = this.findMatchingColumnDescription(columnName);
 		DataColumnDescription columnDescription = new DataColumnDescription();
 		columnDescription.setColumnName(columnName);
@@ -241,14 +246,21 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 			String tableNameOnly =colDesc.getTableName().replaceAll(REGEX_REMOVE_ALSO_AVAILABLE, ""); 
 			columnDescription.setTableName(tableNameOnly);
 		}
-		if (colDesc!=null && colDesc.getColumnType()!=null) {
-			colDesc.getColumnType();
-			//TODO find matching data type
-		}
-		columnDescription.setName(columnName);
+		
+		ColumnType columnType = this.getColumnTypeForPrinterFriendlyName(colDesc.getColumnType());
+		columnDescription.setColumnType(columnType!=null ? columnType.name() : null);
 		
 		this.descriptionController.getColumnDescriptions().put(columnName, columnDescription);
 		return columnDescription;
+	}
+	
+	private ColumnType getColumnTypeForPrinterFriendlyName(String printerFriendlyName) {
+		for (ColumnType columnType : ColumnType.values()) {
+			if (columnType.getPrinterFriendlyName().equals(printerFriendlyName)) {
+				return columnType;
+			}
+		}
+		return null;
 	}
 	
 	/**

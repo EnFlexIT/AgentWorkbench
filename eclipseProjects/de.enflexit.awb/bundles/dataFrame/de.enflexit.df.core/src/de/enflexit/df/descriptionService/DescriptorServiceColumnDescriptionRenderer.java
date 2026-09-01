@@ -4,6 +4,7 @@ import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.extension.ColumnDescriptionRenderer;
 import de.enflexit.df.descriptionService.db.DataColumnAlternativeID;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
+import tech.tablesaw.api.ColumnType;
 
 /**
  * The Class DescriptorServiceColumnDescriptionRenderer.
@@ -13,6 +14,10 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	
 	private DescriptionsController descriptionController;
 	
+	/**
+	 * Instantiates a new descriptor service column description renderer.
+	 * @param descriptionController the description controller
+	 */
 	public DescriptorServiceColumnDescriptionRenderer(DescriptionsController descriptionController) {
 		this.descriptionController = descriptionController;
 	}
@@ -27,17 +32,15 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 		
 		if (colDescFromDB!=null) {
 			StringBuffer descriptionText = new StringBuffer();
-			descriptionText.append("Name:\t" + colDescFromDB.getName() + "\n");
 			
-			if (colDescFromDB.getColumnName()!=null && colDescFromDB.getColumnName().isBlank()==false) {
-				descriptionText.append("Col. Name in DB:\t" + colDescFromDB.getColumnName());
-			}
 			if(colDescFromDB.getTableName()!=null && colDescFromDB.getTableName().isBlank()==false) {
 				descriptionText.append("DB Table:\t" + colDescFromDB.getTableName() + "\n");
 			}
-			
+			if (colDescFromDB.getColumnName()!=null && colDescFromDB.getColumnName().isBlank()==false) {
+				descriptionText.append("Column:\t" + colDescFromDB.getColumnName() + "\n");
+			}
 			descriptionText.append("Description:\t" + (colDescFromDB.getDescription()!=null ? colDescFromDB.getDescription() : "Not specified") + "\n");
-			descriptionText.append("Data Type:\t" + (colDescFromDB.getDataType()!=null ? colDescFromDB.getDataType() : "Not specified") + "\n");
+			descriptionText.append("Data Type:\t" + (colDescFromDB.getColumnType()!=null ? ColumnType.valueOf(colDescFromDB.getColumnType()).getPrinterFriendlyName() : "Not specified") + "\n");
 			descriptionText.append("Unit:\t" + (colDescFromDB.getUnit()!=null&&colDescFromDB.getUnit().isBlank()==false ? colDescFromDB.getUnit() : "Not specified") + "\n");
 			descriptionText.append("Min. Value:\t" + (colDescFromDB.getMinValue()!=null ? colDescFromDB.getMinValue() : "Not specified") + "\n");
 			descriptionText.append("Max. Value:\t" + (colDescFromDB.getMaxValue()!=null ? colDescFromDB.getMaxValue() : "Not specified") + "\n");
@@ -52,7 +55,7 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 			return descriptionText.toString();
 			
 		} else {
-			return "No Column Details specified!\nUse the Description editor to change that!";
+			return "No Column details specified!\nUse the description editor to change that!";
 		}
 		
 	}
