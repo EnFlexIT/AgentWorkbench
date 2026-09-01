@@ -8,6 +8,10 @@ import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.db.SessionFactoryCreator;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
 
+/**
+ * This class handles some basic management operations for the database-based column descriptions.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class DescriptionsController implements PropertyChangeListener{
 	
 	public static final String DESCRIPTION_ADDED_OR_UPDATED = "decsriptionAddedOrUpdated";
@@ -16,8 +20,6 @@ public class DescriptionsController implements PropertyChangeListener{
 	private SessionFactoryCreator sessionFactoryCreator;
 
 	private DescriptionServiceDatabaseHandler databaseHandler;
-	
-//	private HashMap<String, DataColumnDescription> columnDescriptions;
 	
 	private List<DataColumnDescription> columnDescriptionsList;
 
@@ -32,6 +34,10 @@ public class DescriptionsController implements PropertyChangeListener{
 		this.sessionFactoryCreator = sessionFactoryCreator;
 	}
 	
+	/**
+	 * Gets the column descriptions list.
+	 * @return the column descriptions list
+	 */
 	public List<DataColumnDescription> getColumnDescriptionsList() {
 		if (columnDescriptionsList==null) {
 			if (this.sessionFactoryCreator==null) {

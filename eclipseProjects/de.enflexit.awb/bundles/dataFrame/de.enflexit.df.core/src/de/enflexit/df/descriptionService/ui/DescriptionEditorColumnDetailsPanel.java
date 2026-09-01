@@ -369,14 +369,28 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	public void changedUpdate(DocumentEvent de) {
 		this.setDirty(true);
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		if (pce.getSource()==this.getAlternativeIDsEditorPanel()) {
+			// --- Changes to the alternative IDs
+			this.setDirty(true);
+		}
+	}
 
+	/**
+	 * Gets the current data column description.
+	 * @return the data column description
+	 */
 	public DataColumnDescription getDataColumnDescription() {
 		return dataColumnDescription;
 	}
 
 	/**
 	 * Sets the data column description.
-	 *
 	 * @param dataColumnDescription the new data column description
 	 */
 	public void setDataColumnDescription(DataColumnDescription dataColumnDescription) {
@@ -529,6 +543,10 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		return dirty;
 	}
 
+	/**
+	 * Sets the dirty.
+	 * @param dirty the new dirty
+	 */
 	private void setDirty(boolean dirty) {
 		this.dirty = dirty;
 		this.getJButtonApply().setEnabled(dirty);
@@ -544,17 +562,11 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		return jLabelAlternateIDs;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	/**
+	 * Gets the alternative I ds editor panel.
+	 *
+	 * @return the alternative I ds editor panel
 	 */
-	@Override
-	public void propertyChange(PropertyChangeEvent pce) {
-		if (pce.getSource()==this.getAlternativeIDsEditorPanel()) {
-			// --- Changes to the alternative IDs
-			this.setDirty(true);
-		}
-	}
-	
 	private AlternativeIDsEditorPanel getAlternativeIDsEditorPanel() {
 		if (alternativeIDsEditorPanel == null) {
 			alternativeIDsEditorPanel = new AlternativeIDsEditorPanel();

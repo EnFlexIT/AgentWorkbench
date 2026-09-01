@@ -16,6 +16,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/**
+ * This class is used to store a column description to the database. 
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 @Entity
 @Table(name="data_column_description")
 public class DataColumnDescription {

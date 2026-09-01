@@ -5,11 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import org.hibernate.cfg.Configuration;
 
+import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.model.DataController;
@@ -32,6 +35,7 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	private SessionFactoryCreator sessionFactoryCreator;
 	
 	private JButton jButtonDescriptionEditor;
+	private AwbThemeImageIcon descriptionEditorIcon;
 	private DataColumnDescriptionEditorDialog descriptionEditorDialog;
 	
 	private DataController dataController;
@@ -70,6 +74,9 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 		// TODO Auto-generated method stub
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#dispose()
+	 */
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
@@ -112,12 +119,27 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	 */
 	private JButton getjButtonDescriptionEditor() {
 		if (jButtonDescriptionEditor==null) {
-			jButtonDescriptionEditor = new JButton("Description Editor");
+			jButtonDescriptionEditor = new JButton();
+			jButtonDescriptionEditor.setIcon(this.getDescriptionEditorIcon());
+			jButtonDescriptionEditor.setToolTipText("Open the data column description editor");
 			jButtonDescriptionEditor.addActionListener(this);
 		}
 		return jButtonDescriptionEditor;
 	}
 
+	/**
+	 * Gets the description editor icon.
+	 * @return the description editor icon
+	 */
+	private AwbThemeImageIcon getDescriptionEditorIcon() {
+		if (descriptionEditorIcon==null) {
+			ImageIcon iconLightMode = BundleHelper.getImageIcon("Pen_LightMode.png");
+			ImageIcon iconDarkMode = BundleHelper.getImageIcon("Pen_DarkMode.png");
+			descriptionEditorIcon = new AwbThemeImageIcon(iconLightMode, iconDarkMode);
+		}
+		return descriptionEditorIcon;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -140,11 +162,16 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 		return descriptionEditorDialog;
 	}
 	
+	/**
+	 * Gets the descriptions controller.
+	 * @return the descriptions controller
+	 */
 	private DescriptionsController getDescriptionsController() {
 		if (descriptionsController==null) {
 			descriptionsController = new DescriptionsController(this.dataController, this.sessionFactoryCreator);
 		}
 		return descriptionsController;
 	}
+	
 
 }

@@ -28,9 +28,8 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	@Override
 	public String getDescription(ColumnDescription columnDescription) {
 		
-//		DataColumnDescription colDescFromDB = this.findDataColumnDescription(columnDescription.getTableName(), columnDescription.getColumnName());
+		// --- If there is a description stored in the DB, build a customized description string based on the specified information. 
 		DataColumnDescription colDescFromDB = this.descriptionController.getColumnDescription(columnDescription.getColumnName(), columnDescription.getTableName());
-		
 		if (colDescFromDB!=null) {
 			StringBuffer descriptionText = new StringBuffer();
 			
@@ -68,15 +67,5 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	public String getToolTip(ColumnDescription columnDescription) {
 		return columnDescription.getDefaultDescription();
 	}
-	
-//	private DataColumnDescription findDataColumnDescription(String tabeName, String columnName) {
-//		
-//		for (DataColumnDescription colDescFromDB : this.descriptionController.getColumnDescriptions().values()) {
-//			if (colDescFromDB.getColumnName().equals(columnName)) {
-//				return colDescFromDB;
-//			}
-//		}
-//		return null;
-//	}
 
 }

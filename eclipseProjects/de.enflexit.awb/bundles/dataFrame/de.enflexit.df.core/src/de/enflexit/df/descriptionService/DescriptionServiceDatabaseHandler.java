@@ -6,6 +6,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+/**
+ * The Class DescriptionServiceDatabaseHandler. 
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class DescriptionServiceDatabaseHandler {
 	private Session session;
 

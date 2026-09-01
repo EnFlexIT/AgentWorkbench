@@ -201,6 +201,11 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		}
 	}
 	
+	/**
+	 * Creates a new column description.
+	 * @param columnName the column name
+	 * @return the data column description
+	 */
 	private DataColumnDescription createNewColumnDescription(String columnName) {
 		
 		if (columnName==null) return null;
@@ -221,6 +226,11 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		return columnDescription;
 	}
 	
+	/**
+	 * Gets the column type for printer friendly name.
+	 * @param printerFriendlyName the printer friendly name
+	 * @return the column type for printer friendly name
+	 */
 	private ColumnType getColumnTypeForPrinterFriendlyName(String printerFriendlyName) {
 		for (ColumnType columnType : ColumnType.values()) {
 			if (columnType.getPrinterFriendlyName().equals(printerFriendlyName)) {
@@ -285,6 +295,9 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		};
 	}
 	
+	/**
+	 * Restores the previous selection.
+	 */
 	private void restoreSelection() {
 		this.pauseSelectionListener = true;
 		this.getJListColumnsList().setSelectedValue(currentSelection, true);
