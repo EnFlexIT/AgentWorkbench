@@ -197,9 +197,9 @@ public class LoggingInformationTab extends AbstractOptionTab implements ActionLi
 			final String FILE_LOGGING_5 = " https://logback.qos.ch/documentation.html";
 			final String FILE_LOGGING_6 = Language.translate("Logdateien werden in das folgende Verzeichnis geschrieben:");
 			jTextAreaFileLogging.setText(
-					FILE_LOGGING_1 +"\n"
-					+ FILE_LOGGING_2 +"\n"
-					+ FILE_LOGGING_3 +"\n"
+					  FILE_LOGGING_1 + "\n"
+					+ FILE_LOGGING_2 + "\n"
+					+ FILE_LOGGING_3 + "\n"
 					+ FILE_LOGGING_4 
 					+ FILE_LOGGING_5 + "\n\n"
 					+ FILE_LOGGING_6
