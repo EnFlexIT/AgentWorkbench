@@ -8,6 +8,8 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -31,12 +33,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
+import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.TablesawTableModel;
@@ -72,7 +74,6 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	private JScrollPane jScrollPaneData;
 	private JTable jTableData;
 	private JTableHeaderWithToolTips jTableHeaderWithToolTips;
-	private JPanel jPanelColumDescription;
 	
 	private JPanel jPanelDataless;
 	
@@ -96,6 +97,8 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		private JToggleButton jToggleButtonOrientationLeft;
 		
 		private JToggleButton jToggleButtonOrientationClose;
+		
+	private ColumnDescriptionPanel columnDescriptionPanel;
 		
 		
 	/**
@@ -197,22 +200,22 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		case ColumnDescription_Top:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescription(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getColumnDescriptionPanel(), this.getJScrollPaneData());
 			break;
 		case ColumnDescription_Bottom:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescription());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getColumnDescriptionPanel());
 			break;
 		case ColumnDescription_Left:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescription(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getColumnDescriptionPanel(), this.getJScrollPaneData());
 			break;
 		case ColumnDescription_Right:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescription());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getColumnDescriptionPanel());
 			break;
 		}
 		
@@ -298,8 +301,35 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	private JTableHeaderWithToolTips  getJTableHeaderWithTooltips() {
 		if (jTableHeaderWithToolTips==null) {
 			jTableHeaderWithToolTips = new JTableHeaderWithToolTips(this.getJTableData().getColumnModel());
+			
+			// --- Show a column description on the side panel when clicking on the header.
+			jTableHeaderWithToolTips.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent me) {
+					int viewColumn = jTableHeaderWithToolTips.columnAtPoint(me.getPoint());
+
+			        if (viewColumn < 0) {
+			            return;
+			        }
+
+			        int columnIndex = JPanelDataTableView.this.getJTableData().convertColumnIndexToModel(viewColumn);
+			        String columnName = JPanelDataTableView.this.getJTableData().getColumnName(columnIndex);
+			        ColumnDescription colDesc = JPanelDataTableView.this.getColumnDescription(columnName);
+			        JPanelDataTableView.this.getColumnDescriptionPanel().setColumnDescription(colDesc);
+				}
+			});
 		}
 		return jTableHeaderWithToolTips;
+	}
+	
+	private ColumnDescription getColumnDescription(String columnName) {
+		AbstractDataSourceDTNO<?> dsDTNO = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource();
+        for (ColumnDescription colDesc : dsDTNO.getColumnDescriptionList()) {
+        	if(colDesc.getColumnName().equals(columnName)){
+        		return colDesc;
+        	}
+        }
+        return null;
 	}
 	
 	private JPanel getJPanelDataless() {
@@ -307,14 +337,6 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			jPanelDataless = new JPanel();
 		}
 		return jPanelDataless;
-	}
-	
-	private JPanel getJPanelColumnDescription() {
-		if (jPanelColumDescription==null) {
-			jPanelColumDescription = new JPanel();
-			
-		}
-		return jPanelColumDescription;
 	}
 	
 	
@@ -849,6 +871,14 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			return selectedIndicesList.stream().max(Comparator.comparingInt(Math::abs)).orElseThrow(NoSuchElementException::new);
 		}
 		return selectedIndicesList.stream().min(Comparator.comparingInt(Math::abs)).orElseThrow(NoSuchElementException::new);
+	}
+	
+	
+	public ColumnDescriptionPanel getColumnDescriptionPanel() {
+		if (columnDescriptionPanel==null) {
+			columnDescriptionPanel = new ColumnDescriptionPanel();
+		}
+		return columnDescriptionPanel;
 	}
 	
 }

@@ -37,6 +37,7 @@ Service-Component: OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dataSourceServiceDatabaseDataSource.xml,
  OSGI-INF/dataSourceServiceExcelDataSource.xml,
  OSGI-INF/dataFramePerspectiveService.xml,
+ OSGI-INF/dwExtensionDataColumnDescriptionService.xml,
  OSGI-INF/dwExtensionTestColumnDescription.xml,
  OSGI-INF/dwExtensionTestDatabaseWorkbook.xml,
  OSGI-INF/dwExtensionTestMenue.xml 
