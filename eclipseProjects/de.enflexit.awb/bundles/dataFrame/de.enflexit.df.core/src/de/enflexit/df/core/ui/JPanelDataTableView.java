@@ -98,7 +98,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		
 		private JToggleButton jToggleButtonOrientationClose;
 		
-	private ColumnDescriptionPanel columnDescriptionPanel;
+	private JPanelColumnDescription jPanelColumnDescription;
 		
 		
 	/**
@@ -228,6 +228,18 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		}
 		
 	}
+	
+	/**
+	 * Returns the column description panel.
+	 * @return the column description panel
+	 */
+	public JPanelColumnDescription getColumnDescriptionPanel() {
+		if (jPanelColumnDescription==null) {
+			jPanelColumnDescription = new JPanelColumnDescription();
+		}
+		return jPanelColumnDescription;
+	}
+	
 	/**
 	 * Returns the grid bag constraints data view configuration.
 	 * @return the grid bag constraints data view configuration
@@ -873,12 +885,5 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		return selectedIndicesList.stream().min(Comparator.comparingInt(Math::abs)).orElseThrow(NoSuchElementException::new);
 	}
 	
-	
-	public ColumnDescriptionPanel getColumnDescriptionPanel() {
-		if (columnDescriptionPanel==null) {
-			columnDescriptionPanel = new ColumnDescriptionPanel();
-		}
-		return columnDescriptionPanel;
-	}
 	
 }

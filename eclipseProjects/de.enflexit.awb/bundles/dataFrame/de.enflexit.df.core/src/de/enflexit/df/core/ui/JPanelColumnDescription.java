@@ -9,8 +9,14 @@ import java.awt.Insets;
 import javax.swing.JTextArea;
 
 import de.enflexit.df.core.extension.ColumnDescription;
+import de.enflexit.df.core.extension.ColumnDescriptionPanel;
 
-public class ColumnDescriptionPanel extends JPanel {
+/**
+ * The Class JPanelColumnDescription.
+ *
+ * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class JPanelColumnDescription extends JPanel implements ColumnDescriptionPanel {
 	
 	private static final long serialVersionUID = -9163040515488574190L;
 	
@@ -19,10 +25,17 @@ public class ColumnDescriptionPanel extends JPanel {
 	private JLabel jLabelHeader;
 	private JTextArea jTextAreaColumnDescription;
 	
-	public ColumnDescriptionPanel() {
-		initialize();
+	/**
+	 * Instantiates a new j panel column description.
+	 */
+	public JPanelColumnDescription() {
+		this.initialize();
 	}
+	/**
+	 * Initialize.
+	 */
 	private void initialize() {
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
@@ -43,6 +56,18 @@ public class ColumnDescriptionPanel extends JPanel {
 		add(getJTextAreaColumnDescription(), gbc_jTextAreaColumnDescription);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.ColumnDescriptionPanel#getActualColumnDescriptionPanel()
+	 */
+	@Override
+	public JPanel getActualColumnDescriptionPanel() {
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.ColumnDescriptionPanel#setColumnDescription(de.enflexit.df.core.extension.ColumnDescription)
+	 */
+	@Override
 	public void setColumnDescription(ColumnDescription columnDescription) {
 		if (columnDescription!=null) {
 			this.getJTextAreaColumnDescription().setText(columnDescription.getDescription());
@@ -51,6 +76,10 @@ public class ColumnDescriptionPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Returns the j label header.
+	 * @return the j label header
+	 */
 	private JLabel getJLabelHeader() {
 		if (jLabelHeader == null) {
 			jLabelHeader = new JLabel("Column Details");
@@ -58,6 +87,11 @@ public class ColumnDescriptionPanel extends JPanel {
 		}
 		return jLabelHeader;
 	}
+	
+	/**
+	 * Returns the j text area column description.
+	 * @return the j text area column description
+	 */
 	private JTextArea getJTextAreaColumnDescription() {
 		if (jTextAreaColumnDescription == null) {
 			jTextAreaColumnDescription = new JTextArea();
@@ -70,4 +104,5 @@ public class ColumnDescriptionPanel extends JPanel {
 		}
 		return jTextAreaColumnDescription;
 	}
+	
 }

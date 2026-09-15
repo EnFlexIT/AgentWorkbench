@@ -63,6 +63,12 @@ public interface DataWorkbookExtension {
 	public void updateColumnDescriptionList(List<ColumnDescription> columnDescriptionList);
 
 	/**
+	 * Can be used to return an individual ColumnDescriptionPanel.
+	 * @return the column description panel
+	 */
+	public ColumnDescriptionPanel getColumnDescriptionPanel();
+	
+	/**
 	 * Can be used to extend the data structure of a database workbook.
 	 *
 	 * @param sessionFactoryCreator the session factory creator that enables to get DB Session instance

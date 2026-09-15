@@ -13,6 +13,7 @@ import org.hibernate.cfg.Configuration;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.extension.ColumnDescription;
+import de.enflexit.df.core.extension.ColumnDescriptionPanel;
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.ui.JToolBarData;
 import de.enflexit.df.core.workbook.ExtensionCache;
@@ -104,7 +105,14 @@ public class ExtensionTestMenu implements DataWorkbookExtension {
 	public void updateColumnDescriptionList(List<ColumnDescription> columnDescriptionList) {
 		
 	}
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#getColumnDescriptionPanel()
+	 */
+	@Override
+	public ColumnDescriptionPanel getColumnDescriptionPanel() {
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#addAnnotatedClassesToDataWorkbook4DB(de.enflexit.df.core.workbook.db.SessionFactoryCreator, org.hibernate.cfg.Configuration)
 	 */
