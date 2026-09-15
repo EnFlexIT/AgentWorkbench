@@ -122,7 +122,7 @@ public class ExtensionTestColumnDescriptions implements DataWorkbookExtension {
 				public String getDescription(ColumnDescription columnDescription) {
 					String colDesc = columnDescription.getDefaultDescription();
 					colDesc = colDesc.replaceAll("\\n", "<br>");
-					colDesc = "<html>" + colDesc + "</html>";
+					colDesc = "<html><b>" + colDesc + "</html>";
 					return colDesc;
 				}
 				@Override
