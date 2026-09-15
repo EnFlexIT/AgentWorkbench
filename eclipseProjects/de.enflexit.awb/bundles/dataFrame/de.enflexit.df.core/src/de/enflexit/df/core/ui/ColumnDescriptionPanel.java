@@ -43,6 +43,10 @@ public class ColumnDescriptionPanel extends JPanel {
 		add(getJTextAreaColumnDescription(), gbc_jTextAreaColumnDescription);
 	}
 
+	/**
+	 * Sets the column description.
+	 * @param columnDescription the new column description
+	 */
 	public void setColumnDescription(ColumnDescription columnDescription) {
 		if (columnDescription!=null) {
 			this.getJTextAreaColumnDescription().setText(columnDescription.getDescription());
