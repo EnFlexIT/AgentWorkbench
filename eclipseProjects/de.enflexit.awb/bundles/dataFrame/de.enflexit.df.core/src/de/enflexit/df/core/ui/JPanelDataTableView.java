@@ -1,5 +1,6 @@
 package de.enflexit.df.core.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -36,12 +37,15 @@ import javax.swing.table.DefaultTableModel;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.extension.ColumnDescription;
+import de.enflexit.df.core.extension.ColumnDescriptionPanel;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.TablesawTableModel;
+import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 
 /**
@@ -63,6 +67,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	
 	
 	private DataController dataController;
+	private DataSource lastDataSource;
 	
 	private Font baseFont = new Font("Dialog", Font.PLAIN, 12);
 	private Dimension textFieldDimension = new Dimension(60, 24);
@@ -98,8 +103,9 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		
 		private JToggleButton jToggleButtonOrientationClose;
 		
-	private JPanelColumnDescription jPanelColumnDescription;
-		
+	private ColumnDescriptionPanel columnDescriptionPanel;
+	private JPanel jPanelColumnDescriptionContainer;
+	
 		
 	/**
 	 * Instantiates a new JPanelDataTableView.
@@ -200,22 +206,22 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		case ColumnDescription_Top:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getColumnDescriptionPanel(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescriptionContainer(), this.getJScrollPaneData());
 			break;
 		case ColumnDescription_Bottom:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getColumnDescriptionPanel());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescriptionContainer());
 			break;
 		case ColumnDescription_Left:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getColumnDescriptionPanel(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescriptionContainer(), this.getJScrollPaneData());
 			break;
 		case ColumnDescription_Right:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getColumnDescriptionPanel());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescriptionContainer());
 			break;
 		}
 		
@@ -230,15 +236,74 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	}
 	
 	/**
+	 * Returns the container JPanel for the column description .
+	 * @return the j panel column description container
+	 */
+	private JPanel getJPanelColumnDescriptionContainer() {
+		if (jPanelColumnDescriptionContainer==null) {
+			jPanelColumnDescriptionContainer = new JPanel();
+			jPanelColumnDescriptionContainer.setLayout(new BorderLayout());
+			jPanelColumnDescriptionContainer.add(this.getJPanelColumnDescription(), BorderLayout.CENTER);
+		}
+		return jPanelColumnDescriptionContainer;
+	}
+	/**
 	 * Returns the column description panel.
 	 * @return the column description panel
 	 */
-	public JPanelColumnDescription getColumnDescriptionPanel() {
-		if (jPanelColumnDescription==null) {
-			jPanelColumnDescription = new JPanelColumnDescription();
+	public ColumnDescriptionPanel getColumnDescriptionPanel() {
+		// --- Default Case -----------------------------------------
+		if (columnDescriptionPanel==null) {
+			columnDescriptionPanel = new JPanelColumnDescription();
 		}
-		return jPanelColumnDescription;
+		// --- Has the workbook selection changed? ------------------
+		DataWorkbook selDW = this.getDataController().getSelectionModel().getSelectedDataWorkbook();
+		ColumnDescriptionPanel cdPanel = selDW!=null ? selDW.getExtensionCache().getColumnDescriptionPanel() : null;
+		if (cdPanel!=null) {
+			return cdPanel;
+		}
+		return columnDescriptionPanel;
 	}
+	/**
+	 * Returns the column description panel.
+	 * @return the column description panel
+	 */
+	private JPanel getJPanelColumnDescription() {
+		return this.getColumnDescriptionPanel().getActualColumnDescriptionPanel();
+	}
+	/**
+	 * Depending on the extension configured, sets the column description panel.
+	 */
+	private void setColumnDescriptionPanel(AbstractDataSourceDTNO<?> dtnoDS) {
+		
+		JPanel currPanelColDesc = (JPanel) this.getJPanelColumnDescriptionContainer().getComponent(0);
+		
+		ColumnDescriptionPanel colDescPanel = this.getColumnDescriptionPanel();
+		JPanel newPanelColDesc  = colDescPanel.getActualColumnDescriptionPanel();
+		if (newPanelColDesc != currPanelColDesc) {
+			// --- Exchange ColumnDescriptionPanel ----------------------------
+			colDescPanel.setColumnDescription(null);
+			this.getJPanelColumnDescriptionContainer().remove(currPanelColDesc);
+			this.getJPanelColumnDescriptionContainer().add(newPanelColDesc, BorderLayout.CENTER);
+			this.getJPanelColumnDescriptionContainer().validate();
+			this.getJPanelColumnDescriptionContainer().repaint();
+		
+		} else {
+			// --- Data source selected? --------------------------------------
+			if (dtnoDS==null) {
+				colDescPanel.setColumnDescription(null);
+			} else {
+				// --- Changed data source? -----------------------------------
+				DataSource currDataSource = dtnoDS.getDataSource();
+				if (currDataSource!=this.lastDataSource) {
+					colDescPanel.setColumnDescription(null);
+				}
+				this.lastDataSource = currDataSource;
+			}
+			
+		}
+	}
+	
 	
 	/**
 	 * Returns the grid bag constraints data view configuration.
@@ -644,6 +709,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			dtnoDS = this.getSelectedDataTreeNodeDataSource();
 			this.setDetailView(dtnoDS);
+			this.setColumnDescriptionPanel(dtnoDS);
 			break;
 			
 		}
@@ -706,7 +772,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 				if (detailViewPanel!=null) {
 					uiDetail = detailViewPanel;
 				}
-				
+				this.getColumnDescriptionPanel().setColumnDescription(null);
 			}
 			
 		}

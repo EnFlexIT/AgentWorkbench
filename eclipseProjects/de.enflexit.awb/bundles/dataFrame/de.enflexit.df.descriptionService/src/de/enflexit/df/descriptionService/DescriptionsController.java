@@ -56,6 +56,7 @@ public class DescriptionsController implements PropertyChangeListener{
 	 * @return the column description
 	 */
 	public DataColumnDescription getColumnDescription(String columnName, String tableName) {
+		if (this.getColumnDescriptionsList()==null) return null;
 		for (DataColumnDescription colDesc : this.getColumnDescriptionsList()) {
 			if (colDesc.getTableName().equals(DescriptionServiceHelper.removeAlsoAvailableFromTableName(tableName)) && colDesc.getColumnName().equals(columnName)) {
 				return colDesc;
@@ -90,8 +91,10 @@ public class DescriptionsController implements PropertyChangeListener{
 	 * Stores the data column descriptions to the database.
 	 */
 	public void storeDataColumnDescriptionsToDB() {
-		for (DataColumnDescription colDesc : this.getColumnDescriptionsList()) {
-			this.getDatabaseHandler().dbSaveOrUpdateEntityInstance(colDesc, true);
+		if (this.getColumnDescriptionsList()!=null) {
+			for (DataColumnDescription colDesc : this.getColumnDescriptionsList()) {
+				this.getDatabaseHandler().dbSaveOrUpdateEntityInstance(colDesc, true);
+			}
 		}
 	}
 	

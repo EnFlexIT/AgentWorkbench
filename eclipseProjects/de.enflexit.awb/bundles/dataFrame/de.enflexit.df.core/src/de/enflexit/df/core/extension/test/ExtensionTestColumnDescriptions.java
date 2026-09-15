@@ -1,12 +1,17 @@
 package de.enflexit.df.core.extension.test;
 
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.hibernate.cfg.Configuration;
 
@@ -29,6 +34,9 @@ public class ExtensionTestColumnDescriptions implements DataWorkbookExtension {
 	@SuppressWarnings("unused")
 	private ExtensionCache extensionCache;
 	private ColumnDescriptionRenderer cdRenderer;
+	
+	private ColumnDescriptionPanel columnDescriptionPanel;
+	private JPanel jPanelColumnDescriptionTest;
 	
 	private JButton jButtonHello;
 	
@@ -165,7 +173,42 @@ public class ExtensionTestColumnDescriptions implements DataWorkbookExtension {
 	 */
 	@Override
 	public ColumnDescriptionPanel getColumnDescriptionPanel() {
-		return null;
+		if (columnDescriptionPanel==null) {
+			columnDescriptionPanel = new ColumnDescriptionPanel() {
+				@Override
+				public void setColumnDescription(ColumnDescription columnDescription) {
+					// --- Nothing to do here ---- 
+				}
+				@Override
+				public JPanel getActualColumnDescriptionPanel() {
+					return ExtensionTestColumnDescriptions.this.getJPanelColumnDescriptionTest();
+				}
+			};
+		}
+		return columnDescriptionPanel;
+	}
+	/**
+	 * Returns the j panel column description test.
+	 * @return the j panel column description test
+	 */
+	private JPanel getJPanelColumnDescriptionTest() {
+		if (jPanelColumnDescriptionTest==null) {
+			jPanelColumnDescriptionTest = new JPanel();
+			
+			GridBagLayout gridBagLayout = new GridBagLayout();
+			gridBagLayout.columnWidths = new int[]{0, 0};
+			gridBagLayout.rowHeights = new int[]{0, 0, 0};
+			gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+			gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+			jPanelColumnDescriptionTest.setLayout(gridBagLayout);
+			GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
+			gbc_jLabelHeader.anchor = GridBagConstraints.WEST;
+			gbc_jLabelHeader.insets = new Insets(5, 5, 0, 0);
+			gbc_jLabelHeader.gridx = 0;
+			gbc_jLabelHeader.gridy = 0;
+			jPanelColumnDescriptionTest.add(new JLabel("Hello World"), gbc_jLabelHeader);
+		}
+		return jPanelColumnDescriptionTest;
 	}
 	
 	/* (non-Javadoc)

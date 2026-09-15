@@ -14,6 +14,7 @@ import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.extension.ColumnDescription;
+import de.enflexit.df.core.extension.ColumnDescriptionPanel;
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.JToolBarData;
@@ -97,10 +98,17 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	@Override
 	public void updateColumnDescriptionList(List<ColumnDescription> columnDescriptionList) {
 		for (ColumnDescription colDesc : columnDescriptionList) {
-			
 			colDesc.setColumnDescriptionRenderer(new DescriptorServiceColumnDescriptionRenderer(this.getDescriptionsController()));
-			
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#getColumnDescriptionPanel()
+	 */
+	@Override
+	public ColumnDescriptionPanel getColumnDescriptionPanel() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -172,6 +180,5 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 		}
 		return descriptionsController;
 	}
-	
 
 }

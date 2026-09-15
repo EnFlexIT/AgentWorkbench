@@ -12,7 +12,7 @@ import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.extension.ColumnDescriptionPanel;
 
 /**
- * The Class JPanelColumnDescription.
+ * The default implementation of the ColumnDescriptionPanel.
  *
  * @author Nils Loose - SOFTEC - ICB - University of Duisburg-Essen
  */

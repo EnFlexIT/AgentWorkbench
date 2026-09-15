@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.cfg.Configuration;
 
 import de.enflexit.df.core.extension.ColumnDescription;
+import de.enflexit.df.core.extension.ColumnDescriptionPanel;
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.extension.ExtensionManager;
 import de.enflexit.df.core.model.AffectedDataObjects;
@@ -275,6 +276,29 @@ public class ExtensionCache {
 	}
 	
 
+	/**
+	 * Will try to returns a column description panel.
+	 * @return the column description panel
+	 */
+	public ColumnDescriptionPanel getColumnDescriptionPanel() {
+		
+		for (DataWorkbookExtension extension : this.getExtensionList()) {
+			
+			try {
+				// --- Check for an implementation ------------------ 
+				ColumnDescriptionPanel cdp = extension.getColumnDescriptionPanel();
+				if (cdp!=null) {
+					return cdp;
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	
 	/**
 	 * Adds the annotated classes.
 	 *
