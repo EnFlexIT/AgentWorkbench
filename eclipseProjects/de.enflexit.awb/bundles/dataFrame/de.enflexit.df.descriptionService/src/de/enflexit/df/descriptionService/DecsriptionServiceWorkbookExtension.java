@@ -10,7 +10,6 @@ import javax.swing.JButton;
 
 import org.hibernate.cfg.Configuration;
 
-import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.extension.ColumnDescription;
@@ -23,6 +22,7 @@ import de.enflexit.df.core.workbook.db.SessionFactoryCreator;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
 import de.enflexit.df.descriptionService.db.DataColumnAlternativeID;
 import de.enflexit.df.descriptionService.ui.DataColumnDescriptionEditorDialog;
+import de.enflexit.df.descriptionService.ui.DescriptionServiceColumnDescriptionPanel;
 
 /**
  * This {@link DataWorkbookExtension} allows to attach describing information to columns of a data workbook.
@@ -30,18 +30,20 @@ import de.enflexit.df.descriptionService.ui.DataColumnDescriptionEditorDialog;
  */
 public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtension, ActionListener {
 	
-	private static final String EXTENSION_NAME = "Data Workbook Column Description Service";
+	private static final String EXTENSION_NAME = "Column Description Service";
 	private static final String EXTENSION_DESCRIPTION = "This extension allows to attach describing information to columns of the extended data workbook";
 	
 	private SessionFactoryCreator sessionFactoryCreator;
 	
 	private JButton jButtonDescriptionEditor;
-	private AwbThemeImageIcon descriptionEditorIcon;
+	private ImageIcon descriptionEditorIcon;
 	private DataColumnDescriptionEditorDialog descriptionEditorDialog;
 	
 	private DataController dataController;
 	
 	private DescriptionsController descriptionsController;
+	
+	private DescriptionServiceColumnDescriptionPanel columnDescriptionPanel;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#getExtensionName()
@@ -107,8 +109,10 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	 */
 	@Override
 	public ColumnDescriptionPanel getColumnDescriptionPanel() {
-		// TODO Auto-generated method stub
-		return null;
+		if (columnDescriptionPanel==null) {
+			columnDescriptionPanel = new DescriptionServiceColumnDescriptionPanel();
+		}
+		return columnDescriptionPanel;
 	}
 	
 	/* (non-Javadoc)
@@ -139,11 +143,9 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	 * Gets the description editor icon.
 	 * @return the description editor icon
 	 */
-	private AwbThemeImageIcon getDescriptionEditorIcon() {
+	private ImageIcon getDescriptionEditorIcon() {
 		if (descriptionEditorIcon==null) {
-			ImageIcon iconLightMode = BundleHelper.getImageIcon("Pen_LightMode.png");
-			ImageIcon iconDarkMode = BundleHelper.getImageIcon("Pen_DarkMode.png");
-			descriptionEditorIcon = new AwbThemeImageIcon(iconLightMode, iconDarkMode);
+			descriptionEditorIcon = BundleHelper.getImageIcon("Edit.png");
 		}
 		return descriptionEditorIcon;
 	}

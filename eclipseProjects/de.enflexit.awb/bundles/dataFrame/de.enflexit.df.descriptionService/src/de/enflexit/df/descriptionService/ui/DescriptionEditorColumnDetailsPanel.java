@@ -160,7 +160,6 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 		gbc_jLabelAlternateIDs.gridy = 6;
 		add(getJLabelAlternateIDs(), gbc_jLabelAlternateIDs);
 		GridBagConstraints gbc_alternativeIDsEditorPanel = new GridBagConstraints();
-		gbc_alternativeIDsEditorPanel.insets = new Insets(5, 5, 5, 10);
 		gbc_alternativeIDsEditorPanel.fill = GridBagConstraints.BOTH;
 		gbc_alternativeIDsEditorPanel.gridx = 1;
 		gbc_alternativeIDsEditorPanel.gridy = 6;

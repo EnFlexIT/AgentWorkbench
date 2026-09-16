@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Font;
 
 /**
  * This panel shows a list of available data columns in a selected data source,
@@ -66,7 +67,7 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jPanelColumnEditor = new GridBagConstraints();
 		gbc_jPanelColumnEditor.insets = new Insets(5, 10, 5, 5);
@@ -115,6 +116,7 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 	private JList<String> getJListColumnsList() {
 		if (jListColumnsList == null) {
 			jListColumnsList = new JList<>();
+			jListColumnsList.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListColumnsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jListColumnsList.addListSelectionListener(this);
 		}
