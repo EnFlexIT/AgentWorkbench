@@ -58,7 +58,7 @@ public class DescriptionsController implements PropertyChangeListener{
 	public DataColumnDescription getColumnDescription(String columnName, String tableName) {
 		if (this.getColumnDescriptionsList()==null) return null;
 		for (DataColumnDescription colDesc : this.getColumnDescriptionsList()) {
-			if (colDesc.getTableName().equals(DescriptionServiceHelper.removeAlsoAvailableFromTableName(tableName)) && colDesc.getColumnName().equals(columnName)) {
+			if (colDesc.getColumnName().equals(columnName) && (colDesc.getTableName()==null || colDesc.getTableName().equals(DescriptionServiceHelper.removeAlsoAvailableFromTableName(tableName)))) {
 				return colDesc;
 			}
 		}

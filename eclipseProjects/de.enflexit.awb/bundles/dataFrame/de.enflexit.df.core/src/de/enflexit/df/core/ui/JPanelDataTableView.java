@@ -106,6 +106,8 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	private ColumnDescriptionPanel columnDescriptionPanel;
 	private JPanel jPanelColumnDescriptionContainer;
 	
+	private DataViewConfiguration currentDataViewConfiguration;
+	
 		
 	/**
 	 * Instantiates a new JPanelDataTableView.
@@ -127,7 +129,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
-		this.setDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
+		this.setCurrentDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
 		this.getJToggleButtonOrientationClose().setSelected(true);
 		
 		GridBagConstraints gbc_jToolBarDatasetNavigation = new GridBagConstraints();
@@ -182,12 +184,20 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		}
 	}
 	
+	/**
+	 * Sets the current data view configuration.
+	 * @param currentDataViewConfiguration the new current data view configuration
+	 */
+	public void setCurrentDataViewConfiguration(DataViewConfiguration currentDataViewConfiguration) {
+		this.currentDataViewConfiguration = currentDataViewConfiguration;
+		this.setDataViewConfiguration(currentDataViewConfiguration);
+	}
 	
 	/**
 	 * Sets the data view configuration.
 	 * @param dataViewConfig the new data view configuration
 	 */
-	public void setDataViewConfiguration(DataViewConfiguration dataViewConfig) {
+	private void setDataViewConfiguration(DataViewConfiguration dataViewConfig) {
 		
 		if (dataViewConfig==null) return;
 		
@@ -707,7 +717,20 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			break;
 			
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
+			
 			dtnoDS = this.getSelectedDataTreeNodeDataSource();
+
+			// --- Current selection has no table -------------------
+			if (dtnoDS==null || dtnoDS.getTable()==null) {
+				// --- Hide description panel if currently visible --
+				if (this.isDescriptionPanelVisible()==true) {
+					this.setDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
+				}
+			} else if (this.currentDataViewConfiguration!=DataViewConfiguration.No_ColumnDescription && this.isDescriptionPanelVisible()==false) {
+				// --- Description panel should be visible but is not -> restore
+				this.setDataViewConfiguration(this.currentDataViewConfiguration);
+			}
+			
 			this.setDetailView(dtnoDS);
 			this.setColumnDescriptionPanel(dtnoDS);
 			break;
@@ -830,15 +853,15 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			} catch (Exception ex) { }
 			
 		} else if (ae.getSource()==this.getJToggleButtonOrientationBottom()) {
-			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Bottom);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Bottom);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationTop()) {
-			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Top);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Top);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationLeft()) {
-			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Left);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Left);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationRight()) {
-			this.setDataViewConfiguration(DataViewConfiguration.ColumnDescription_Right);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Right);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationClose()) {
-			this.setDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
 		}
 	}
 	
@@ -951,5 +974,12 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		return selectedIndicesList.stream().min(Comparator.comparingInt(Math::abs)).orElseThrow(NoSuchElementException::new);
 	}
 	
+	/**
+	 * Checks if the description panel is visible.
+	 * @return true, if is description panel visible
+	 */
+	private boolean isDescriptionPanelVisible() {
+		return this.jComponentDataViewConfiguration instanceof JSplitPane;
+	}
 	
 }

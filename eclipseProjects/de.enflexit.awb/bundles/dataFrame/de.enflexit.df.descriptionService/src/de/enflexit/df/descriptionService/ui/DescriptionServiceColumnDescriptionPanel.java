@@ -7,6 +7,8 @@ import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.extension.ColumnDescriptionPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
@@ -140,7 +142,7 @@ public class DescriptionServiceColumnDescriptionPanel extends JPanel implements 
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonDetailsEditor()) {
 			//TODO open column description editor with the current column selected
-			System.out.println("Opening description editor for " + this.columnDescription.getColumnName());
+			JOptionPane.showMessageDialog(this, "Under construction");
 		}
 	}
 	
