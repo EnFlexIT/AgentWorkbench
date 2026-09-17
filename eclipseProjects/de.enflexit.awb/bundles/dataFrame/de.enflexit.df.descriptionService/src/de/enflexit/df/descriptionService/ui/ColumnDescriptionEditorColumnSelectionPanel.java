@@ -29,7 +29,7 @@ import java.awt.Font;
  * and a sub-panel for actually editing the description of the selected column.  
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DescriptionEditorColumnSelectionPanel extends JPanel implements ActionListener, ListSelectionListener {
+public class ColumnDescriptionEditorColumnSelectionPanel extends JPanel implements ActionListener, ListSelectionListener {
 	
 	private enum Decision {
 		APPLY, DISCARD, CANCEL
@@ -43,7 +43,7 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 
 	private AbstractDataSourceDTNO<?> dataSourceDTNO;
 	
-	private DescriptionEditorColumnDetailsPanel columnDetailsEditorPanel;
+	private ColumnDescriptionEditorDetailsPanel columnDetailsEditorPanel;
 	private JScrollPane jScrollPaneColumnsList;
 	private JList<String> jListColumnsList;
 	
@@ -54,7 +54,7 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 	/**
 	 * Instantiates a new data column description editor details panel.
 	 */
-	public DescriptionEditorColumnSelectionPanel(DescriptionsController descriptionController) {
+	public ColumnDescriptionEditorColumnSelectionPanel(DescriptionsController descriptionController) {
 		this.descriptionController = descriptionController;
 		this.initialize();
 	}
@@ -89,9 +89,9 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 	 * Gets the j panel column editor.
 	 * @return the j panel column editor
 	 */
-	private DescriptionEditorColumnDetailsPanel getColumnDetailsEditorPanel() {
+	private ColumnDescriptionEditorDetailsPanel getColumnDetailsEditorPanel() {
 		if (columnDetailsEditorPanel == null) {
-			columnDetailsEditorPanel = new DescriptionEditorColumnDetailsPanel();
+			columnDetailsEditorPanel = new ColumnDescriptionEditorDetailsPanel();
 			columnDetailsEditorPanel.addChangeListener(this.descriptionController);
 		}
 		return columnDetailsEditorPanel;
@@ -149,6 +149,10 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		this.getJListColumnsList().setModel(this.getColumnsListModel());
 	}
 
+	/**
+	 * Sets the data source DTNO.
+	 * @param dataSourceDTNO the new data source DTNO
+	 */
 	public void setDataSourceDTNO(AbstractDataSourceDTNO<?> dataSourceDTNO) {
 		this.dataSourceDTNO = dataSourceDTNO;
 		this.resetListModel();
@@ -304,6 +308,14 @@ public class DescriptionEditorColumnSelectionPanel extends JPanel implements Act
 		this.pauseSelectionListener = true;
 		this.getJListColumnsList().setSelectedValue(currentSelection, true);
 		this.pauseSelectionListener = false;
+	}
+	
+	/**
+	 * Sets the column to edit.
+	 * @param columnName the name of the column to edit
+	 */
+	public void setColumnToEdit(String columnName) {
+		this.getJListColumnsList().setSelectedValue(columnName, true);
 	}
 	
 }

@@ -15,11 +15,11 @@ import de.enflexit.df.descriptionService.DescriptionsController;
  * This dialog shows the UI components to edit data column descriptions.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataColumnDescriptionEditorDialog extends JDialog {
+public class ColumnDescriptionEditorDialog extends JDialog {
 
 	private static final long serialVersionUID = 3831291234749481374L;
 	
-	private DescriptionEditorMainPanel editorMainPanel;
+	private ColumnDescriptionEditorMainPanel editorMainPanel;
 	
 	private DescriptionsController descriptionsControler;
 	
@@ -28,7 +28,7 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 	 * @param owner the owner
 	 * @param descriptionsController the descriptions controller
 	 */
-	public DataColumnDescriptionEditorDialog(Window owner, DescriptionsController descriptionsController) {
+	public ColumnDescriptionEditorDialog(Window owner, DescriptionsController descriptionsController) {
 		super(owner);
 		this.descriptionsControler = descriptionsController;
 		this.initialize();
@@ -53,8 +53,8 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 			 */
 			@Override
 			public void windowClosing(WindowEvent we) {
-				if (DataColumnDescriptionEditorDialog.this.getEditorMainPanel().allowLeaveSelection()==true) {
-					DataColumnDescriptionEditorDialog.this.dispose();
+				if (ColumnDescriptionEditorDialog.this.getEditorMainPanel().allowLeaveSelection()==true) {
+					ColumnDescriptionEditorDialog.this.dispose();
 				}
 			}
 		});
@@ -66,11 +66,19 @@ public class DataColumnDescriptionEditorDialog extends JDialog {
 	 * Gets the editor main panel.
 	 * @return the editor main panel
 	 */
-	public DescriptionEditorMainPanel getEditorMainPanel() {
+	public ColumnDescriptionEditorMainPanel getEditorMainPanel() {
 		if (editorMainPanel==null) {
-			editorMainPanel = new DescriptionEditorMainPanel(this.descriptionsControler);
+			editorMainPanel = new ColumnDescriptionEditorMainPanel(this.descriptionsControler);
 		}
 		return editorMainPanel;
+	}
+	
+	/**
+	 * Sets the column to edit.
+	 * @param columnName the name of the column to edit
+	 */
+	public void setColumnToEdit(String columnName) {
+		this.getEditorMainPanel().setColumnToEdit(columnName);
 	}
 	
 }

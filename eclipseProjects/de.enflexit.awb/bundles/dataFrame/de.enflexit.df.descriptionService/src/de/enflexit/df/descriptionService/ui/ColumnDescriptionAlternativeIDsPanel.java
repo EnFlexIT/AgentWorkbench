@@ -32,7 +32,7 @@ import javax.swing.JOptionPane;
  * A sub-panel for handling alternative identifiers.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class AlternativeIDsEditorPanel extends JPanel implements ActionListener, ListSelectionListener{
+public class ColumnDescriptionAlternativeIDsPanel extends JPanel implements ActionListener, ListSelectionListener{
 	
 	public static final String PROPERTY_CHANGE_ALT_ID_ADDED = "AlternativeIdentifierAdded";
 	public static final String PROPERTY_CHANGE_ALT_ID_EDITED = "AlternativeIdentifierEdited";
@@ -56,7 +56,7 @@ public class AlternativeIDsEditorPanel extends JPanel implements ActionListener,
 	/**
 	 * Instantiates a new alternative IDs editor panel.
 	 */
-	public AlternativeIDsEditorPanel() {
+	public ColumnDescriptionAlternativeIDsPanel() {
 		initialize();
 	}
 	

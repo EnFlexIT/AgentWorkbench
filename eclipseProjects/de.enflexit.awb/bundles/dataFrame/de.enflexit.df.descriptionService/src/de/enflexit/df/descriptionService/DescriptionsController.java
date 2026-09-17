@@ -2,6 +2,7 @@ package de.enflexit.df.descriptionService;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.enflexit.df.core.model.DataController;
@@ -22,6 +23,8 @@ public class DescriptionsController implements PropertyChangeListener{
 	private DescriptionServiceDatabaseHandler databaseHandler;
 	
 	private List<DataColumnDescription> columnDescriptionsList;
+	
+	private ArrayList<PropertyChangeListener> changeListeners;
 
 	/**
 	 * Instantiates a new data column descriptions controller.
@@ -43,7 +46,7 @@ public class DescriptionsController implements PropertyChangeListener{
 			if (this.sessionFactoryCreator==null) {
 				System.err.println("[" + this.getClass().getSimpleName() + "] Unable to load column descriptions from the database, sessionFactoryCreator not available yet");
 			} else {
-				columnDescriptionsList = this.loadDataCOlumnDescriptionsFromDB();
+				columnDescriptionsList = this.loadDataColumnDescriptionsFromDB();
 			}
 		}
 		return columnDescriptionsList;
@@ -83,7 +86,7 @@ public class DescriptionsController implements PropertyChangeListener{
 	 * Loads the column descriptions from the database
 	 * @return the column descriptions
 	 */
-	private List<DataColumnDescription> loadDataCOlumnDescriptionsFromDB() {
+	private List<DataColumnDescription> loadDataColumnDescriptionsFromDB() {
 		return this.getDatabaseHandler().dbLoadEntityInstanceList(DataColumnDescription.class);
 	}
 	
@@ -118,10 +121,51 @@ public class DescriptionsController implements PropertyChangeListener{
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(DESCRIPTION_ADDED_OR_UPDATED)) {
-			DataColumnDescription newDecsription = (DataColumnDescription) evt.getNewValue();
-			this.storeDataColumnDescriptionToDB(newDecsription);
+	public void propertyChange(PropertyChangeEvent pce) {
+		if (pce.getPropertyName().equals(DESCRIPTION_ADDED_OR_UPDATED)) {
+			// --- Store or update in the DB ------------------------
+			DataColumnDescription newDescription = (DataColumnDescription) pce.getNewValue();
+			this.storeDataColumnDescriptionToDB(newDescription);
+			
+			// --- Pass on to subsequent change listeners ----------- 
+			this.notifyChangeListeners(pce);
+		}
+	}
+	
+	/**
+	 * Gets the change listeners.
+	 * @return the change listeners
+	 */
+	private ArrayList<PropertyChangeListener> getChangeListeners() {
+		if (changeListeners==null) {
+			changeListeners = new ArrayList<PropertyChangeListener>();
+		}
+		return changeListeners;
+	}
+	
+	/**
+	 * Adds a change listener.
+	 * @param changeListener the change listener
+	 */
+	public void addChangeListener(PropertyChangeListener changeListener) {
+		if (this.getChangeListeners().contains(changeListener)==false) {
+			this.getChangeListeners().add(changeListener);
+		}
+	}
+	
+	/**
+	 * Removes a change listener.
+	 * @param changeListener the change listener
+	 */
+	public void removeChangeListener(PropertyChangeListener changeListener) {
+		if (this.getChangeListeners().contains(changeListener)==true) {
+			this.getChangeListeners().remove(changeListener);
+		}
+	}
+	
+	private void notifyChangeListeners(PropertyChangeEvent pce) {
+		for (PropertyChangeListener changeListener : this.getChangeListeners()) {
+			changeListener.propertyChange(pce);
 		}
 	}
 

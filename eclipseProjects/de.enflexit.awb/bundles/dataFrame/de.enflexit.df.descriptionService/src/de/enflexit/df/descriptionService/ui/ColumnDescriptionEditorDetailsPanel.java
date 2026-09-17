@@ -34,7 +34,7 @@ import javax.swing.JComboBox;
  * This panel implements the actual editor for the description of a single data column. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DescriptionEditorColumnDetailsPanel extends JPanel implements ActionListener, DocumentListener, PropertyChangeListener {
+public class ColumnDescriptionEditorDetailsPanel extends JPanel implements ActionListener, DocumentListener, PropertyChangeListener {
 	
 	private static final long serialVersionUID = 261283042294893067L;
 	
@@ -62,12 +62,12 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	
 	private ArrayList<PropertyChangeListener> changeListeners;
 	private JLabel jLabelAlternateIDs;
-	private AlternativeIDsEditorPanel alternativeIDsEditorPanel;
+	private ColumnDescriptionAlternativeIDsPanel alternativeIDsEditorPanel;
 	
 	/**
 	 * Instantiates a new description editor column details panel.
 	 */
-	public DescriptionEditorColumnDetailsPanel() {
+	public ColumnDescriptionEditorDetailsPanel() {
 		initialize();
 	}
 	
@@ -566,9 +566,9 @@ public class DescriptionEditorColumnDetailsPanel extends JPanel implements Actio
 	 *
 	 * @return the alternative I ds editor panel
 	 */
-	private AlternativeIDsEditorPanel getAlternativeIDsEditorPanel() {
+	private ColumnDescriptionAlternativeIDsPanel getAlternativeIDsEditorPanel() {
 		if (alternativeIDsEditorPanel == null) {
-			alternativeIDsEditorPanel = new AlternativeIDsEditorPanel();
+			alternativeIDsEditorPanel = new ColumnDescriptionAlternativeIDsPanel();
 			alternativeIDsEditorPanel.addChangeListener(this);
 		}
 		return alternativeIDsEditorPanel;

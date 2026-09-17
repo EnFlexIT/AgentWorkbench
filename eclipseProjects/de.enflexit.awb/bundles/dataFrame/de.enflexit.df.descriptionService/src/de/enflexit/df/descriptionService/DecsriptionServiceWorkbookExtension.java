@@ -21,7 +21,7 @@ import de.enflexit.df.core.workbook.ExtensionCache;
 import de.enflexit.df.core.workbook.db.SessionFactoryCreator;
 import de.enflexit.df.descriptionService.db.DataColumnDescription;
 import de.enflexit.df.descriptionService.db.DataColumnAlternativeID;
-import de.enflexit.df.descriptionService.ui.DataColumnDescriptionEditorDialog;
+import de.enflexit.df.descriptionService.ui.ColumnDescriptionEditorDialog;
 import de.enflexit.df.descriptionService.ui.DescriptionServiceColumnDescriptionPanel;
 
 /**
@@ -37,7 +37,7 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	
 	private JButton jButtonDescriptionEditor;
 	private ImageIcon descriptionEditorIcon;
-	private DataColumnDescriptionEditorDialog descriptionEditorDialog;
+	private ColumnDescriptionEditorDialog descriptionEditorDialog;
 	
 	private DataController dataController;
 	
@@ -110,7 +110,7 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	@Override
 	public ColumnDescriptionPanel getColumnDescriptionPanel() {
 		if (columnDescriptionPanel==null) {
-			columnDescriptionPanel = new DescriptionServiceColumnDescriptionPanel();
+			columnDescriptionPanel = new DescriptionServiceColumnDescriptionPanel(this.getDescriptionsController());
 		}
 		return columnDescriptionPanel;
 	}
@@ -164,10 +164,10 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	 * Gets the description editor dialog.
 	 * @return the description editor dialog
 	 */
-	private DataColumnDescriptionEditorDialog getDescriptionEditorDialog() {
+	private ColumnDescriptionEditorDialog getDescriptionEditorDialog() {
 		if (descriptionEditorDialog==null) {
 			Window owner = OwnerDetection.getOwnerWindowForComponent(this.getjButtonDescriptionEditor());
-			descriptionEditorDialog = new DataColumnDescriptionEditorDialog(owner, this.getDescriptionsController());
+			descriptionEditorDialog = new ColumnDescriptionEditorDialog(owner, this.getDescriptionsController());
 		}
 		return descriptionEditorDialog;
 	}

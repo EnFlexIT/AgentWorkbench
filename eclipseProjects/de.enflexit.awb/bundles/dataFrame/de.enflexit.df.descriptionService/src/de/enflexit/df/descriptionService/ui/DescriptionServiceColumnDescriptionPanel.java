@@ -2,18 +2,24 @@ package de.enflexit.df.descriptionService.ui;
 
 import javax.swing.JPanel;
 
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.extension.ColumnDescriptionPanel;
+import de.enflexit.df.descriptionService.DescriptionsController;
+import de.enflexit.df.descriptionService.db.DataColumnDescription;
+
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JTextPane;
@@ -22,7 +28,7 @@ import javax.swing.JTextPane;
  * Custom column details panel for the Description Service. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DescriptionServiceColumnDescriptionPanel extends JPanel implements ColumnDescriptionPanel, ActionListener {
+public class DescriptionServiceColumnDescriptionPanel extends JPanel implements ColumnDescriptionPanel, ActionListener, PropertyChangeListener {
 	
 	private static final long serialVersionUID = 4996550705735411624L;
 	
@@ -33,11 +39,16 @@ public class DescriptionServiceColumnDescriptionPanel extends JPanel implements 
 	private JTextPane jTextPaneColumnDetails;
 	
 	private ColumnDescription columnDescription;
+	private DescriptionsController descriptionController;
+	
+	private ColumnDescriptionEditorDialog descriptionEditorDialog;
 	
 	/**
 	 * Instantiates a new description service column details panel.
 	 */
-	public DescriptionServiceColumnDescriptionPanel() {
+	public DescriptionServiceColumnDescriptionPanel(DescriptionsController descriptionsController) {
+		this.descriptionController = descriptionsController;
+		this.descriptionController.addChangeListener(this);
 		initialize();
 	}
 	
@@ -141,8 +152,34 @@ public class DescriptionServiceColumnDescriptionPanel extends JPanel implements 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonDetailsEditor()) {
-			//TODO open column description editor with the current column selected
-			JOptionPane.showMessageDialog(this, "Under construction");
+			this.getDescriptionEditorDialog().setColumnToEdit(this.columnDescription.getColumnName());
+			this.getDescriptionEditorDialog().setVisible(true);
+		}
+	}
+	
+	/**
+	 * Gets the description editor dialog.
+	 * @return the description editor dialog
+	 */
+	private ColumnDescriptionEditorDialog getDescriptionEditorDialog() {
+		if (descriptionEditorDialog==null) {
+			Window owner = OwnerDetection.getOwnerWindowForComponent(this);
+			descriptionEditorDialog = new ColumnDescriptionEditorDialog(owner, this.descriptionController);
+		}
+		return descriptionEditorDialog;
+	}
+
+	/**
+	 * Property change.
+	 * @param pce the {@link PropertyChangeEvent}
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		if (pce.getPropertyName().equals(DescriptionsController.DESCRIPTION_ADDED_OR_UPDATED)) {
+			DataColumnDescription newDescription = (DataColumnDescription) pce.getNewValue();
+			if (newDescription.getColumnName().equals(this.columnDescription.getColumnName())) {
+				this.setColumnDescription(this.columnDescription);
+			}
 		}
 	}
 	
