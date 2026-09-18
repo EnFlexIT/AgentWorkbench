@@ -74,7 +74,7 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	 */
 	@Override
 	public void initialize(ExtensionCache extensionCache) {
-		// TODO Auto-generated method stub
+		// Not required
 	}
 
 	/* (non-Javadoc)
@@ -82,7 +82,7 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	 */
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// Not required
 	}
 
 	/* (non-Javadoc)

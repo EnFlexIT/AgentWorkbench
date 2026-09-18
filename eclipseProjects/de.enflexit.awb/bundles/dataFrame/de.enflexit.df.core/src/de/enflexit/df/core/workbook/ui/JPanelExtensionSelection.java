@@ -16,10 +16,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.extension.ExtensionManager;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -216,10 +219,25 @@ public class JPanelExtensionSelection extends JPanel implements PropertyChangeLi
 		List<String> extChanged = this.hasChangedSelectedExtensions();
 		if (extChanged!=null) {
 			this.dataWorkbook.setWorkbookExtensions(extChanged);
-			this.dataWorkbook.getExtensionCache().updateLoadedExtensions();
+			// --- Close and reopen to fully activate the extension
+			this.reopenDataWorkbook();
 		}
 	}
 	
+	/**
+	 * Closes and reopens the current data workbook to apply configuration changes.
+	 */
+	private void reopenDataWorkbook() {
+		DefaultMutableTreeNode wbNode = this.dataController.getSelectionModel().getSelectedDataWorkbookTreeNode();
+		if (wbNode!=null) {
+			DTNO_DataWorkbook dtno = (DTNO_DataWorkbook) wbNode.getUserObject();
+			if (dtno.isDataSourcesLoaded()) {
+				this.dataController.closeDataWorkbook(this.dataWorkbook);
+				this.dataController.openDataWorkbook(this.dataWorkbook);
+				this.dataController.getSelectionModel().setSelectedTreePath(new TreePath(wbNode.getPath()));
+			}
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
