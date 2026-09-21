@@ -20,30 +20,41 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * AbstractValuePair
+ * AbstractValueRow
  */
 @JsonPropertyOrder({
-  AbstractValuePair.JSON_PROPERTY_VALUE
+  AbstractValueRow.JSON_PROPERTY_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = ValuePairCategory.class, name = "Category"),
-  @JsonSubTypes.Type(value = ValuePairDateTime.class, name = "DateTime"),
-  @JsonSubTypes.Type(value = ValuePairNumeric.class, name = "Numeric"),
+  @JsonSubTypes.Type(value = de.enflexit.charts.model.ValueRowCategory.class, name = "Category"),
+  @JsonSubTypes.Type(value = de.enflexit.charts.model.ValueRowDateTime.class, name = "DateTime"),
+  @JsonSubTypes.Type(value = de.enflexit.charts.model.ValueRowNumeric.class, name = "Numeric"),
 })
 
-public class AbstractValuePair   {
+public class AbstractValueRow   {
   public static final String JSON_PROPERTY_VALUE = "value";
   @JsonProperty(JSON_PROPERTY_VALUE)
-  private Double value;
+  private List<Double> value = new ArrayList<>();
 
-  public AbstractValuePair value(Double value) {
+  public AbstractValueRow value(List<Double> value) {
     this.value = value;
+    return this;
+  }
+
+  public AbstractValueRow addValueItem(Double valueItem) {
+    if (this.value == null) {
+      this.value = new ArrayList<>();
+    }
+    this.value.add(valueItem);
     return this;
   }
 
@@ -54,11 +65,11 @@ public class AbstractValuePair   {
   @JsonProperty(value = "value")
   @Schema(required = true, description = "")
   @NotNull 
-  public Double getValue() {
+  public List<Double> getValue() {
     return value;
   }
 
-  public void setValue(Double value) {
+  public void setValue(List<Double> value) {
     this.value = value;
   }
 
@@ -71,8 +82,8 @@ public class AbstractValuePair   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AbstractValuePair abstractValuePair = (AbstractValuePair) o;
-    return Objects.equals(this.value, abstractValuePair.value);
+    AbstractValueRow abstractValueRow = (AbstractValueRow) o;
+    return Objects.equals(this.value, abstractValueRow.value);
   }
 
   @Override
@@ -83,7 +94,7 @@ public class AbstractValuePair   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AbstractValuePair {\n");
+    sb.append("class AbstractValueRow {\n");
     
     sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("}");

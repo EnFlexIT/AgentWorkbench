@@ -37,5 +37,38 @@ public class MenuApiServiceImpl extends MenuApiService {
 		menuList.setMenuList(menuItemList);
 		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(menuItemList).build();
 	}
+
+	@Override
+	public Response menuMenuIDContentElementElementIDPut(Integer menuID, Integer elementID,
+			SecurityContext securityContext) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response menuMenuIDDelete(Integer menuID, SecurityContext securityContext) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response menuMenuIDPermissionsPut(Integer menuID, String body, SecurityContext securityContext)
+			throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response menuMenuIDPut(Integer menuID, MenuItem menuItem, SecurityContext securityContext)
+			throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response menuPost(MenuItem menuItem, SecurityContext securityContext) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 		
 }

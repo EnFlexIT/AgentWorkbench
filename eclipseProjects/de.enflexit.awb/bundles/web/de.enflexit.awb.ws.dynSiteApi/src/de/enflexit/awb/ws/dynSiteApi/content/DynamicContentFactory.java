@@ -6,22 +6,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentBarChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentLineChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentPieChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentScatterPlot;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTimeSeriesChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.ValuePairCategory;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.ValuePairDateTime;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.ValuePairNumeric;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
+import de.enflexit.charts.model.AbstractChart;
+import de.enflexit.charts.model.AbstractValueRow;
+import de.enflexit.charts.model.BarChart;
+import de.enflexit.charts.model.DataSeries;
+import de.enflexit.charts.model.DataSeriesWithValues;
+import de.enflexit.charts.model.LineChart;
+import de.enflexit.charts.model.PieChart;
+import de.enflexit.charts.model.ScatterPlot;
+import de.enflexit.charts.model.TimeSeriesChart;
+import de.enflexit.charts.model.ValueRowCategory;
+import de.enflexit.charts.model.ValueRowDateTime;
+import de.enflexit.charts.model.ValueRowNumeric;
 
 /**
  * A factory for creating DynamicContentExample objects.
@@ -134,8 +135,8 @@ public class DynamicContentFactory {
 	 * @param secondaryYAxisLabel the secondary Y axis label
 	 * @return the site content line chart
 	 */
-	public static SiteContentLineChart createSiteContentLineChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel) {
-		SiteContentLineChart lineChart = new SiteContentLineChart();
+	public static LineChart createSiteContentLineChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel) {
+		LineChart lineChart = new LineChart();
 		fillCommonChartFields(lineChart, uniqueContentID, updatePeriodInSeconds, isEditable, dataSeries, title, showLegend, xAxisLabel, yAxisLabel);
 		lineChart.setSecondaryYAxisLabel(secondaryYAxisLabel);
 		
@@ -156,8 +157,8 @@ public class DynamicContentFactory {
 	 * @param timeFormat the time format
 	 * @return the site content time series chart
 	 */
-	public static SiteContentTimeSeriesChart createSiteContentTimeSeriesChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title,boolean showLegend,  String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel, String timeFormat) {
-		SiteContentTimeSeriesChart timeSeriesChart = new SiteContentTimeSeriesChart();
+	public static TimeSeriesChart createSiteContentTimeSeriesChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title,boolean showLegend,  String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel, String timeFormat) {
+		TimeSeriesChart timeSeriesChart = new TimeSeriesChart();
 		fillCommonChartFields(timeSeriesChart, uniqueContentID, updatePeriodInSeconds, isEditable, dataSeries, title, showLegend, xAxisLabel, yAxisLabel);
 		timeSeriesChart.setSecondaryYAxisLabel(secondaryYAxisLabel);
 		timeSeriesChart.setTimeFormat(timeFormat);
@@ -178,8 +179,8 @@ public class DynamicContentFactory {
 	 * @param secondaryYAxisLabel the secondary Y axis label
 	 * @return the site content bar chart
 	 */
-	public static SiteContentBarChart createSiteContentBarChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel) {
-		SiteContentBarChart barChart = new SiteContentBarChart();
+	public static BarChart createSiteContentBarChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel) {
+		BarChart barChart = new BarChart();
 		fillCommonChartFields(barChart, uniqueContentID, updatePeriodInSeconds, isEditable, dataSeries, title, showLegend, xAxisLabel, yAxisLabel);
 		return barChart;
 	}
@@ -194,8 +195,8 @@ public class DynamicContentFactory {
 	 * @param showLegend the show legend
 	 * @return the site content pie chart
 	 */
-	public static SiteContentPieChart createSiteContentPieChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend) {
-		SiteContentPieChart pieChart = new SiteContentPieChart();
+	public static PieChart createSiteContentPieChart(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend) {
+		PieChart pieChart = new PieChart();
 		fillCommonChartFields(pieChart, uniqueContentID, updatePeriodInSeconds, isEditable, dataSeries, title, showLegend, null, null);
 		return pieChart;		
 	}
@@ -213,8 +214,8 @@ public class DynamicContentFactory {
 	 * @param secondaryYAxisLabel the secondary Y axis label
 	 * @return the site content scatter plot
 	 */
-	public static SiteContentScatterPlot createSiteContentScatterPlot(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel) {
-		SiteContentScatterPlot scatterPlot = new SiteContentScatterPlot();
+	public static ScatterPlot createSiteContentScatterPlot(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel, String secondaryYAxisLabel) {
+		ScatterPlot scatterPlot = new ScatterPlot();
 		fillCommonChartFields(scatterPlot, uniqueContentID, updatePeriodInSeconds, isEditable, dataSeries, title, showLegend, xAxisLabel, secondaryYAxisLabel);
 		return scatterPlot;
 	}
@@ -229,10 +230,11 @@ public class DynamicContentFactory {
 	 * @param title the title
 	 * @param showLegend the show legend
 	 */
-	private static void fillCommonChartFields(AbstractSiteContentChart chart, int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel) {
-		chart.setUniqueContentID(uniqueContentID);
-		chart.setUpdatePeriodInSeconds(updatePeriodInSeconds);
-		chart.setEditable(isEditable);
+	private static void fillCommonChartFields(AbstractChart chart, int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<DataSeries> dataSeries, String title, boolean showLegend, String xAxisLabel, String yAxisLabel) {
+		//TODO the following methods no longer exist. How to handle?
+//		chart.setUniqueContentID(uniqueContentID); 
+//		chart.setUpdatePeriodInSeconds(updatePeriodInSeconds);
+//		chart.setEditable(isEditable);
 		chart.setDataSeries(dataSeries);
 		chart.setTitle(title);
 		chart.setShowLegend(showLegend);
@@ -243,77 +245,77 @@ public class DynamicContentFactory {
 	/**
 	 * Creates a new data series instance.
 	 * @param label the label
-	 * @param valuePairs the value pairs
+	 * @param valueRows the value rows
 	 * @return the data series
 	 */
-	public static DataSeries createDataSeries(String label, List<AbstractValuePair> valuePairs) {
-		return createDataSeries(label, valuePairs, false);
+	public static DataSeries createDataSeries(String label, List<AbstractValueRow> valueRows) {
+		return createDataSeries(label, valueRows, false);
 	}
 	
 	/**
 	 * Creates a new data series instance.
 	 * @param label the label
-	 * @param valuePairs the value pairs
+	 * @param valueRows the value rows
 	 * @param secondaryAxis specifies if the series should use the secondary y axis
 	 * @return the data series
 	 */
-	public static DataSeries createDataSeries(String label, List<AbstractValuePair> valuePairs, boolean secondaryAxis) {
-		DataSeries dataSeries = new DataSeries();
+	public static DataSeries createDataSeries(String label, List<AbstractValueRow> valueRows, boolean secondaryAxis) {
+		DataSeriesWithValues dataSeries = new DataSeriesWithValues();
 		dataSeries.setLabel(label);
-		dataSeries.setEntries(valuePairs);
+		dataSeries.setEntries(valueRows);
 		dataSeries.setSecondaryYAxis(secondaryAxis);
 		return dataSeries;
 	}
 	
 	/**
-	 * Creates a list of data series, containing a single data series with the provided value pairs.
+	 * Creates a list of data series, containing a single data series with the provided value rows.
 	 * @param label the label
-	 * @param valuePairs the value pairs
+	 * @param valueRows the value rows
 	 * @return the list< data series>
 	 */
-	public static List<DataSeries> createDataSeriesList (String label, List<AbstractValuePair> valuePairs){
-		return createDataSeriesList(label, valuePairs, false);
+	public static List<DataSeries> createDataSeriesList (String label, List<AbstractValueRow> valueRows){
+		return createDataSeriesList(label, valueRows, false);
 	}
 	
 	/**
-	 * Creates a list of data series, containing a single data series with the provided value pairs.
+	 * Creates a list of data series, containing a single data series with the provided value rows.
 	 * @param label the label
-	 * @param valuePairs the value pairs
+	 * @param valueRows the value rows
 	 * @param secondaryAxis the secondary axis
 	 * @return the list< data series>
 	 */
-	public static List<DataSeries> createDataSeriesList (String label, List<AbstractValuePair> valuePairs, boolean secondaryAxis){
-		DataSeries dataSeries = createDataSeries(label, valuePairs, secondaryAxis);
+	public static List<DataSeries> createDataSeriesList (String label, List<AbstractValueRow> valueRows, boolean secondaryAxis){
+		DataSeries dataSeries = createDataSeries(label, valueRows, secondaryAxis);
 		List<DataSeries> seriesList = new ArrayList<DataSeries>();
 		seriesList.add(dataSeries);
 		return seriesList;
 	}
 	
 	/**
-	 * Creates a new numeric value pair instance.
+	 * Creates a new numeric value row instance.
 	 * @param xValue the x value
 	 * @param yValue the y value
-	 * @return the value pair numeric
+	 * @return the value row numeric
 	 */
-	public static ValuePairNumeric createValuePairNumeric(double xValue, double yValue) {
-		ValuePairNumeric valuePair = new ValuePairNumeric();
-		valuePair.setxValue(xValue);
-		valuePair.setValue(yValue);
-		return valuePair;
+	public static ValueRowNumeric createValueRowNumeric(double xValue, double yValue) {
+		ValueRowNumeric valueRow = new ValueRowNumeric();
+		valueRow.setxValue(xValue);
+		valueRow.addValueItem(yValue);
+		return valueRow;
 	}
 	
 	/**
-	 * Creates a date time value pair instance, getting the date from a java timestamp.
+	 * Creates a date time value row instance, getting the date from a java timestamp.
 	 * @param timestamp the timestamp
 	 * @param value the value
-	 * @return the value pair date time
+	 * @return the value row date time
 	 */
-	public static ValuePairDateTime createValuePairDateTime(long timestamp, double value) {
-		ValuePairDateTime valuePair = new ValuePairDateTime();
+	public static ValueRowDateTime createValueRowDateTime(long timestamp, double value) {
+		ValueRowDateTime valueRow = new ValueRowDateTime();
 		String isoDateTimeString = getIsoDateTimeFormatter().format(Instant.ofEpochMilli(timestamp));
-		valuePair.setIsoDateTime(isoDateTimeString);
-		valuePair.setValue(value);
-		return valuePair;
+		valueRow.setIsoDateTime(isoDateTimeString);
+		valueRow.addValueItem(value);
+		return valueRow;
 	}
 	
 	/**
@@ -321,26 +323,26 @@ public class DynamicContentFactory {
 	 * @param dateTime the date time
 	 * @param dateFormat the date format
 	 * @param value the value
-	 * @return the value pair date time
+	 * @return the value row date time
 	 */
-	public static ValuePairDateTime createValuePairDateTime(String dateTime, String dateFormat, double value) {
-		ValuePairDateTime valuePair = new ValuePairDateTime();
-		valuePair.setIsoDateTime(translateToIsoDateTime(dateTime, dateFormat));
-		valuePair.setValue(value);
-		return valuePair;
+	public static ValueRowDateTime createValueRowDateTime(String dateTime, String dateFormat, double value) {
+		ValueRowDateTime valueRow = new ValueRowDateTime();
+		valueRow.setIsoDateTime(translateToIsoDateTime(dateTime, dateFormat));
+		valueRow.addValueItem(value);
+		return valueRow;
 	}
 	
 	/**
-	 * Creates a new category value pair instance.
+	 * Creates a new category value row instance.
 	 * @param category the category
 	 * @param value the value
-	 * @return the value pair category
+	 * @return the value row category
 	 */
-	public static ValuePairCategory createValuePairCategory(String category, double value) {
-		ValuePairCategory valuePair = new ValuePairCategory();
-		valuePair.setCategory(category);
-		valuePair.setValue(value);
-		return valuePair;
+	public static ValueRowCategory createValueRowCategory(String category, double value) {
+		ValueRowCategory valueRow = new ValueRowCategory();
+		valueRow.setCategory(category);
+		valueRow.addValueItem(value);
+		return valueRow;
 	}
 	
 	/**

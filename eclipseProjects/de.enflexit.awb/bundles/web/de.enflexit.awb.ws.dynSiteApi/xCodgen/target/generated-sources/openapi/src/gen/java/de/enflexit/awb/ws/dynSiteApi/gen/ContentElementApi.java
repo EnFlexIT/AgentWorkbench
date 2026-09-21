@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.ContentElementPost201Response;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateContentRequest;
 
 import java.util.Map;
 import java.util.List;
@@ -34,7 +36,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the contentElement API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class ContentElementApi  {
 
    private final ContentElementApiService delegate;
@@ -60,26 +62,82 @@ public class ContentElementApi  {
    }
 
 
+    @jakarta.ws.rs.DELETE
+    @Path("/{elementID}")
+    @Operation(summary = "Deletes the specified content element", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "The content element was deleted", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            }, tags={  }) 
+    public Response contentElementElementIDDelete(@Schema(description= "The unique ID of the content element to delete", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.contentElementElementIDDelete(elementID, securityContext);
+    }
+
     @jakarta.ws.rs.GET
     @Path("/{elementID}")
     @Produces({ "application/json" })
-    @Operation(summary = "Will return the content element with the specified ID", description = "", responses = {
-            @ApiResponse(responseCode = "202", description = "A single content element", content = 
+    @Operation(summary = "Returns the content element for the specified ID", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "A single content element", content = 
                 @Content(schema = @Schema(implementation = AbstractSiteContent.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response contentElementElementIDGet(@Schema(description= "numeric ID of the content element", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    public Response contentElementElementIDGet(@Schema(description= "unique ID of the content element", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.contentElementElementIDGet(elementID, securityContext);
     }
 
     @jakarta.ws.rs.PUT
+    @Path("/{elementID}")
     @Consumes({ "application/json" })
     @Operation(summary = "Enables to update content elements", description = "", responses = {
-            @ApiResponse(responseCode = "201", description = "The content element was updated!", content = 
+            @ApiResponse(responseCode = "200", description = "The element was updated!", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response contentElementPut(@Schema(description = "") @Valid  AbstractSiteContent abstractSiteContent,@Context SecurityContext securityContext)
+    public Response contentElementElementIDPut(@Schema(description= "The unique ID of the content element to update", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Schema(description = "") @Valid  AbstractSiteContent abstractSiteContent,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.contentElementPut(abstractSiteContent, securityContext);
+        return delegate.contentElementElementIDPut(elementID, abstractSiteContent, securityContext);
+    }
+
+    @jakarta.ws.rs.POST
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    @Operation(summary = "Create new content", description = "", responses = {
+            @ApiResponse(responseCode = "201", description = "Content created", content = 
+                @Content(schema = @Schema(implementation = ContentElementPost201Response.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            }, tags={  }) 
+    public Response contentElementPost(@Schema(description = "", required = true) @NotNull @Valid  CreateContentRequest createContentRequest,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.contentElementPost(createContentRequest, securityContext);
     }
 }

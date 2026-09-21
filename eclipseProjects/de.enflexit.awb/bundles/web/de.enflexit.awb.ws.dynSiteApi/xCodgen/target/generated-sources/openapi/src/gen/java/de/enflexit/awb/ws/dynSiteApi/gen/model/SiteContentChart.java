@@ -16,46 +16,42 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentLineChart;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentTimeSeriesChart
+ * SiteContentChart
  */
 @JsonPropertyOrder({
-  SiteContentTimeSeriesChart.JSON_PROPERTY_TIME_FORMAT
+  SiteContentChart.JSON_PROPERTY_CHART
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentTimeSeriesChart extends SiteContentLineChart  {
-  public static final String JSON_PROPERTY_TIME_FORMAT = "timeFormat";
-  @JsonProperty(JSON_PROPERTY_TIME_FORMAT)
-  private String timeFormat;
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class SiteContentChart extends AbstractSiteContent  {
+  public static final String JSON_PROPERTY_CHART = "chart";
+  @JsonProperty(JSON_PROPERTY_CHART)
+  private de.enflexit.charts.model.AbstractChart chart;
 
-  public SiteContentTimeSeriesChart timeFormat(String timeFormat) {
-    this.timeFormat = timeFormat;
+  public SiteContentChart chart(de.enflexit.charts.model.AbstractChart chart) {
+    this.chart = chart;
     return this;
   }
 
   /**
-   * Get timeFormat
-   * @return timeFormat
+   * Get chart
+   * @return chart
    **/
-  @JsonProperty(value = "timeFormat")
+  @JsonProperty(value = "chart")
   @Schema(description = "")
-  
-  public String getTimeFormat() {
-    return timeFormat;
+  @Valid 
+  public de.enflexit.charts.model.AbstractChart getChart() {
+    return chart;
   }
 
-  public void setTimeFormat(String timeFormat) {
-    this.timeFormat = timeFormat;
+  public void setChart(de.enflexit.charts.model.AbstractChart chart) {
+    this.chart = chart;
   }
 
 
@@ -67,21 +63,21 @@ public class SiteContentTimeSeriesChart extends SiteContentLineChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentTimeSeriesChart siteContentTimeSeriesChart = (SiteContentTimeSeriesChart) o;
-    return super.equals(o) && Objects.equals(this.timeFormat, siteContentTimeSeriesChart.timeFormat);
+    SiteContentChart siteContentChart = (SiteContentChart) o;
+    return super.equals(o) && Objects.equals(this.chart, siteContentChart.chart);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), timeFormat);
+    return Objects.hash(super.hashCode(), chart);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentTimeSeriesChart {\n");
+    sb.append("class SiteContentChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    timeFormat: ").append(toIndentedString(timeFormat)).append("\n");
+    sb.append("    chart: ").append(toIndentedString(chart)).append("\n");
     sb.append("}");
     return sb.toString();
   }
