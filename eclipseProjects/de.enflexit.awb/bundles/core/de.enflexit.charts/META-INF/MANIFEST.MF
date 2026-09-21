@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Charts
+Bundle-SymbolicName: de.enflexit.charts
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.enflexit.charts,
+ de.enflexit.charts.model
+Automatic-Module-Name: de.enflexit.charts
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: com.fasterxml.jackson.annotation,
+ jakarta.annotation,
+ jakarta.validation,
+ jakarta.validation.constraints,
+ org.osgi.framework,
+ org.osgi.framework.wiring
+Require-Bundle: de.enflexit.db.hibernate,
+ de.enflexit.awb.ws.swagger2x
