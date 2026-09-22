@@ -11,7 +11,7 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,47 +19,58 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentMedia
+ * AbstractValueRow
  */
 @JsonPropertyOrder({
-  SiteContentMedia.JSON_PROPERTY_MIME_TYPE
+  AbstractValueRow.JSON_PROPERTY_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = SiteContentImage.class, name = "SiteContentImage"),
-  @JsonSubTypes.Type(value = SiteContentText.class, name = "SiteContentText"),
+  @JsonSubTypes.Type(value = ValueRowCategory.class, name = "Category"),
+  @JsonSubTypes.Type(value = ValueRowDateTime.class, name = "DateTime"),
+  @JsonSubTypes.Type(value = ValueRowNumeric.class, name = "Numeric"),
 })
 
-public class SiteContentMedia extends AbstractSiteContent  {
-  public static final String JSON_PROPERTY_MIME_TYPE = "mimeType";
-  @JsonProperty(JSON_PROPERTY_MIME_TYPE)
-  private String mimeType;
+public class AbstractValueRow   {
+  public static final String JSON_PROPERTY_VALUE = "value";
+  @JsonProperty(JSON_PROPERTY_VALUE)
+  private List<Double> value = new ArrayList<>();
 
-  public SiteContentMedia mimeType(String mimeType) {
-    this.mimeType = mimeType;
+  public AbstractValueRow value(List<Double> value) {
+    this.value = value;
+    return this;
+  }
+
+  public AbstractValueRow addValueItem(Double valueItem) {
+    if (this.value == null) {
+      this.value = new ArrayList<>();
+    }
+    this.value.add(valueItem);
     return this;
   }
 
   /**
-   * Get mimeType
-   * @return mimeType
+   * Get value
+   * @return value
    **/
-  @JsonProperty(value = "mimeType")
+  @JsonProperty(value = "value")
   @Schema(required = true, description = "")
   @NotNull 
-  public String getMimeType() {
-    return mimeType;
+  public List<Double> getValue() {
+    return value;
   }
 
-  public void setMimeType(String mimeType) {
-    this.mimeType = mimeType;
+  public void setValue(List<Double> value) {
+    this.value = value;
   }
 
 
@@ -71,21 +82,21 @@ public class SiteContentMedia extends AbstractSiteContent  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentMedia siteContentMedia = (SiteContentMedia) o;
-    return super.equals(o) && Objects.equals(this.mimeType, siteContentMedia.mimeType);
+    AbstractValueRow abstractValueRow = (AbstractValueRow) o;
+    return Objects.equals(this.value, abstractValueRow.value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), mimeType);
+    return Objects.hash(value);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentMedia {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    mimeType: ").append(toIndentedString(mimeType)).append("\n");
+    sb.append("class AbstractValueRow {\n");
+    
+    sb.append("    value: ").append(toIndentedString(value)).append("\n");
     sb.append("}");
     return sb.toString();
   }

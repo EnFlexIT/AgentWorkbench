@@ -4,6 +4,7 @@ import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
 import de.enflexit.awb.ws.dynSiteApi.gen.ContentElementApiService;
 import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateContentRequest;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 
@@ -28,9 +29,25 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     /* (non-Javadoc)
      * @see de.enflexit.awb.ws.dynSiteApi.gen.ContentElementApiService#contentElementPut(de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent, jakarta.ws.rs.core.SecurityContext)
      */
-    @Override
-    public Response contentElementPut(AbstractSiteContent abstractSiteContent, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-    }
+
+	@Override
+	public Response contentElementElementIDDelete(Integer elementID, SecurityContext securityContext)
+			throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response contentElementElementIDPut(Integer elementID, AbstractSiteContent abstractSiteContent,
+			SecurityContext securityContext) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response contentElementPost(CreateContentRequest createContentRequest, SecurityContext securityContext)
+			throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

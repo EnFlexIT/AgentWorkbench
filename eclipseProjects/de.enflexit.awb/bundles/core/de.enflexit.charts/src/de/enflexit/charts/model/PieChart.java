@@ -11,28 +11,17 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
 
 /**
- * SiteContentBarChart
+ * PieChart
  */
 @JsonPropertyOrder({
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentBarChart extends AbstractSiteContentChart  {
+public class PieChart extends AbstractChart  {
 
   @Override
   public boolean equals(Object o) {
@@ -42,7 +31,7 @@ public class SiteContentBarChart extends AbstractSiteContentChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentBarChart siteContentBarChart = (SiteContentBarChart) o;return super.equals(o);
+    PieChart siteContentPieChart = (PieChart) o;return super.equals(o);
   }
 
   @Override
@@ -53,7 +42,7 @@ public class SiteContentBarChart extends AbstractSiteContentChart  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentBarChart {\n");
+    sb.append("class PieChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("}");
     return sb.toString();

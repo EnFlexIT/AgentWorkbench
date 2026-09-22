@@ -16,53 +16,42 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * MenuList
+ * SiteContentChart
  */
 @JsonPropertyOrder({
-  MenuList.JSON_PROPERTY_MENU_LIST
+  SiteContentChart.JSON_PROPERTY_CHART
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class MenuList   {
-  public static final String JSON_PROPERTY_MENU_LIST = "menuList";
-  @JsonProperty(JSON_PROPERTY_MENU_LIST)
-  private List<@Valid MenuItem> menuList = new ArrayList<>();
+public class SiteContentChart extends AbstractSiteContent  {
+  public static final String JSON_PROPERTY_CHART = "chart";
+  @JsonProperty(JSON_PROPERTY_CHART)
+  private de.enflexit.charts.model.AbstractChart chart;
 
-  public MenuList menuList(List<@Valid MenuItem> menuList) {
-    this.menuList = menuList;
-    return this;
-  }
-
-  public MenuList addMenuListItem(MenuItem menuListItem) {
-    if (this.menuList == null) {
-      this.menuList = new ArrayList<>();
-    }
-    this.menuList.add(menuListItem);
+  public SiteContentChart chart(de.enflexit.charts.model.AbstractChart chart) {
+    this.chart = chart;
     return this;
   }
 
   /**
-   * Get menuList
-   * @return menuList
+   * Get chart
+   * @return chart
    **/
-  @JsonProperty(value = "menuList")
+  @JsonProperty(value = "chart")
   @Schema(description = "")
   @Valid 
-  public List<@Valid MenuItem> getMenuList() {
-    return menuList;
+  public de.enflexit.charts.model.AbstractChart getChart() {
+    return chart;
   }
 
-  public void setMenuList(List<@Valid MenuItem> menuList) {
-    this.menuList = menuList;
+  public void setChart(de.enflexit.charts.model.AbstractChart chart) {
+    this.chart = chart;
   }
 
 
@@ -74,21 +63,21 @@ public class MenuList   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    MenuList menuList = (MenuList) o;
-    return Objects.equals(this.menuList, menuList.menuList);
+    SiteContentChart siteContentChart = (SiteContentChart) o;
+    return super.equals(o) && Objects.equals(this.chart, siteContentChart.chart);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(menuList);
+    return Objects.hash(super.hashCode(), chart);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class MenuList {\n");
-    
-    sb.append("    menuList: ").append(toIndentedString(menuList)).append("\n");
+    sb.append("class SiteContentChart {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    chart: ").append(toIndentedString(chart)).append("\n");
     sb.append("}");
     return sb.toString();
   }

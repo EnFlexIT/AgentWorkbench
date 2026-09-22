@@ -11,44 +11,41 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 /**
- * AbstractSiteContentChart
+ * AbstractChart
  */
 @JsonPropertyOrder({
-  AbstractSiteContentChart.JSON_PROPERTY_TITLE,
-  AbstractSiteContentChart.JSON_PROPERTY_SHOW_LEGEND,
-  AbstractSiteContentChart.JSON_PROPERTY_X_AXIS_LABEL,
-  AbstractSiteContentChart.JSON_PROPERTY_Y_AXIS_LABEL,
-  AbstractSiteContentChart.JSON_PROPERTY_DATA_SERIES
+  AbstractChart.JSON_PROPERTY_TITLE,
+  AbstractChart.JSON_PROPERTY_SHOW_LEGEND,
+  AbstractChart.JSON_PROPERTY_X_AXIS_LABEL,
+  AbstractChart.JSON_PROPERTY_Y_AXIS_LABEL,
+  AbstractChart.JSON_PROPERTY_DATA_SERIES
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = SiteContentBarChart.class, name = "SiteContentBarChart"),
-  @JsonSubTypes.Type(value = SiteContentLineChart.class, name = "SiteContentLineChart"),
-  @JsonSubTypes.Type(value = SiteContentPieChart.class, name = "SiteContentPieChart"),
-  @JsonSubTypes.Type(value = SiteContentScatterPlot.class, name = "SiteContentScatterPlot"),
-  @JsonSubTypes.Type(value = SiteContentTimeSeriesChart.class, name = "SiteContentTimeSeriesChart"),
+  @JsonSubTypes.Type(value = BarChart.class, name = "BarChart"),
+  @JsonSubTypes.Type(value = LineChart.class, name = "LineChart"),
+  @JsonSubTypes.Type(value = PieChart.class, name = "PieChart"),
+  @JsonSubTypes.Type(value = ScatterPlot.class, name = "ScatterPlot"),
+  @JsonSubTypes.Type(value = TimeSeriesChart.class, name = "TimeSeriesChart"),
 })
 
-public class AbstractSiteContentChart extends AbstractSiteContent  {
+public class AbstractChart  {
   public static final String JSON_PROPERTY_TITLE = "title";
   @JsonProperty(JSON_PROPERTY_TITLE)
   private String title;
@@ -69,7 +66,7 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
   @JsonProperty(JSON_PROPERTY_DATA_SERIES)
   private List<@Valid DataSeries> dataSeries = new ArrayList<>();
 
-  public AbstractSiteContentChart title(String title) {
+  public AbstractChart title(String title) {
     this.title = title;
     return this;
   }
@@ -89,7 +86,7 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     this.title = title;
   }
 
-  public AbstractSiteContentChart showLegend(Boolean showLegend) {
+  public AbstractChart showLegend(Boolean showLegend) {
     this.showLegend = showLegend;
     return this;
   }
@@ -109,7 +106,7 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     this.showLegend = showLegend;
   }
 
-  public AbstractSiteContentChart xAxisLabel(String xAxisLabel) {
+  public AbstractChart xAxisLabel(String xAxisLabel) {
     this.xAxisLabel = xAxisLabel;
     return this;
   }
@@ -129,7 +126,7 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     this.xAxisLabel = xAxisLabel;
   }
 
-  public AbstractSiteContentChart yAxisLabel(String yAxisLabel) {
+  public AbstractChart yAxisLabel(String yAxisLabel) {
     this.yAxisLabel = yAxisLabel;
     return this;
   }
@@ -149,12 +146,12 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     this.yAxisLabel = yAxisLabel;
   }
 
-  public AbstractSiteContentChart dataSeries(List<@Valid DataSeries> dataSeries) {
+  public AbstractChart dataSeries(List<@Valid DataSeries> dataSeries) {
     this.dataSeries = dataSeries;
     return this;
   }
 
-  public AbstractSiteContentChart addDataSeriesItem(DataSeries dataSeriesItem) {
+  public AbstractChart addDataSeriesItem(DataSeries dataSeriesItem) {
     if (this.dataSeries == null) {
       this.dataSeries = new ArrayList<>();
     }
@@ -186,7 +183,7 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AbstractSiteContentChart abstractSiteContentChart = (AbstractSiteContentChart) o;
+    AbstractChart abstractSiteContentChart = (AbstractChart) o;
     return super.equals(o) && Objects.equals(this.title, abstractSiteContentChart.title) &&
         Objects.equals(this.showLegend, abstractSiteContentChart.showLegend) &&
         Objects.equals(this.xAxisLabel, abstractSiteContentChart.xAxisLabel) &&
@@ -202,7 +199,7 @@ public class AbstractSiteContentChart extends AbstractSiteContent  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class AbstractSiteContentChart {\n");
+    sb.append("class AbstractChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    showLegend: ").append(toIndentedString(showLegend)).append("\n");

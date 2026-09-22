@@ -16,23 +16,44 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentPieChart
+ * MenuPost201Response
  */
 @JsonPropertyOrder({
+  MenuPost201Response.JSON_PROPERTY_MENU_I_D
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentPieChart extends AbstractSiteContentChart  {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class MenuPost201Response   {
+  public static final String JSON_PROPERTY_MENU_I_D = "menuID";
+  @JsonProperty(JSON_PROPERTY_MENU_I_D)
+  private Integer menuID;
+
+  public MenuPost201Response menuID(Integer menuID) {
+    this.menuID = menuID;
+    return this;
+  }
+
+  /**
+   * Get menuID
+   * @return menuID
+   **/
+  @JsonProperty(value = "menuID")
+  @Schema(description = "")
+  
+  public Integer getMenuID() {
+    return menuID;
+  }
+
+  public void setMenuID(Integer menuID) {
+    this.menuID = menuID;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -42,19 +63,21 @@ public class SiteContentPieChart extends AbstractSiteContentChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentPieChart siteContentPieChart = (SiteContentPieChart) o;return super.equals(o);
+    MenuPost201Response menuPost201Response = (MenuPost201Response) o;
+    return Objects.equals(this.menuID, menuPost201Response.menuID);
   }
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return Objects.hash(menuID);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentPieChart {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("class MenuPost201Response {\n");
+    
+    sb.append("    menuID: ").append(toIndentedString(menuID)).append("\n");
     sb.append("}");
     return sb.toString();
   }

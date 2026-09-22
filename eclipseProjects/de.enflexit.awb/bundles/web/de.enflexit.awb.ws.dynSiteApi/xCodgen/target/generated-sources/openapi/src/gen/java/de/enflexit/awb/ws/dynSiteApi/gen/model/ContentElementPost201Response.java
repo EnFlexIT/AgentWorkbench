@@ -16,42 +16,42 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * ValuePairCategory
+ * ContentElementPost201Response
  */
 @JsonPropertyOrder({
-  ValuePairCategory.JSON_PROPERTY_CATEGORY
+  ContentElementPost201Response.JSON_PROPERTY_ELEMENT_I_D
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class ValuePairCategory extends AbstractValuePair  {
-  public static final String JSON_PROPERTY_CATEGORY = "category";
-  @JsonProperty(JSON_PROPERTY_CATEGORY)
-  private String category;
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class ContentElementPost201Response   {
+  public static final String JSON_PROPERTY_ELEMENT_I_D = "elementID";
+  @JsonProperty(JSON_PROPERTY_ELEMENT_I_D)
+  private Integer elementID;
 
-  public ValuePairCategory category(String category) {
-    this.category = category;
+  public ContentElementPost201Response elementID(Integer elementID) {
+    this.elementID = elementID;
     return this;
   }
 
   /**
-   * Get category
-   * @return category
+   * Get elementID
+   * @return elementID
    **/
-  @JsonProperty(value = "category")
+  @JsonProperty(value = "elementID")
   @Schema(description = "")
   
-  public String getCategory() {
-    return category;
+  public Integer getElementID() {
+    return elementID;
   }
 
-  public void setCategory(String category) {
-    this.category = category;
+  public void setElementID(Integer elementID) {
+    this.elementID = elementID;
   }
 
 
@@ -63,21 +63,21 @@ public class ValuePairCategory extends AbstractValuePair  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValuePairCategory valuePairCategory = (ValuePairCategory) o;
-    return super.equals(o) && Objects.equals(this.category, valuePairCategory.category);
+    ContentElementPost201Response contentElementPost201Response = (ContentElementPost201Response) o;
+    return Objects.equals(this.elementID, contentElementPost201Response.elementID);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), category);
+    return Objects.hash(elementID);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValuePairCategory {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    category: ").append(toIndentedString(category)).append("\n");
+    sb.append("class ContentElementPost201Response {\n");
+    
+    sb.append("    elementID: ").append(toIndentedString(elementID)).append("\n");
     sb.append("}");
     return sb.toString();
   }

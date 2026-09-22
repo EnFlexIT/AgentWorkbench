@@ -11,30 +11,29 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 /**
- * ValuePairDateTime
+ * ValueRowDateTime
  */
 @JsonPropertyOrder({
-  ValuePairDateTime.JSON_PROPERTY_ISO_DATE_TIME
+  ValueRowDateTime.JSON_PROPERTY_ISO_DATE_TIME
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class ValuePairDateTime extends AbstractValuePair  {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class ValueRowDateTime extends AbstractValueRow  {
   public static final String JSON_PROPERTY_ISO_DATE_TIME = "isoDateTime";
   @JsonProperty(JSON_PROPERTY_ISO_DATE_TIME)
   private String isoDateTime;
 
-  public ValuePairDateTime isoDateTime(String isoDateTime) {
+  public ValueRowDateTime isoDateTime(String isoDateTime) {
     this.isoDateTime = isoDateTime;
     return this;
   }
@@ -63,8 +62,8 @@ public class ValuePairDateTime extends AbstractValuePair  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValuePairDateTime valuePairDateTime = (ValuePairDateTime) o;
-    return super.equals(o) && Objects.equals(this.isoDateTime, valuePairDateTime.isoDateTime);
+    ValueRowDateTime valueRowDateTime = (ValueRowDateTime) o;
+    return super.equals(o) && Objects.equals(this.isoDateTime, valueRowDateTime.isoDateTime);
   }
 
   @Override
@@ -75,7 +74,7 @@ public class ValuePairDateTime extends AbstractValuePair  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValuePairDateTime {\n");
+    sb.append("class ValueRowDateTime {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    isoDateTime: ").append(toIndentedString(isoDateTime)).append("\n");
     sb.append("}");

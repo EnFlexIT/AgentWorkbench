@@ -11,29 +11,31 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * DataSeries
  */
 @JsonPropertyOrder({
   DataSeries.JSON_PROPERTY_LABEL,
-  DataSeries.JSON_PROPERTY_SECONDARY_Y_AXIS,
-  DataSeries.JSON_PROPERTY_ENTRIES
+  DataSeries.JSON_PROPERTY_SECONDARY_Y_AXIS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = DataSeriesWithReference.class, name = "DataSeriesWithReference"),
+  @JsonSubTypes.Type(value = DataSeriesWithValues.class, name = "DataSeriesWithValues"),
+})
+
 public class DataSeries   {
   public static final String JSON_PROPERTY_LABEL = "label";
   @JsonProperty(JSON_PROPERTY_LABEL)
@@ -42,10 +44,6 @@ public class DataSeries   {
   public static final String JSON_PROPERTY_SECONDARY_Y_AXIS = "secondaryYAxis";
   @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS)
   private Boolean secondaryYAxis = false;
-
-  public static final String JSON_PROPERTY_ENTRIES = "entries";
-  @JsonProperty(JSON_PROPERTY_ENTRIES)
-  private List<@Valid AbstractValuePair> entries = new ArrayList<>();
 
   public DataSeries label(String label) {
     this.label = label;
@@ -87,34 +85,6 @@ public class DataSeries   {
     this.secondaryYAxis = secondaryYAxis;
   }
 
-  public DataSeries entries(List<@Valid AbstractValuePair> entries) {
-    this.entries = entries;
-    return this;
-  }
-
-  public DataSeries addEntriesItem(AbstractValuePair entriesItem) {
-    if (this.entries == null) {
-      this.entries = new ArrayList<>();
-    }
-    this.entries.add(entriesItem);
-    return this;
-  }
-
-  /**
-   * Get entries
-   * @return entries
-   **/
-  @JsonProperty(value = "entries")
-  @Schema(required = true, description = "")
-  @NotNull @Valid 
-  public List<@Valid AbstractValuePair> getEntries() {
-    return entries;
-  }
-
-  public void setEntries(List<@Valid AbstractValuePair> entries) {
-    this.entries = entries;
-  }
-
 
   @Override
   public boolean equals(Object o) {
@@ -126,13 +96,12 @@ public class DataSeries   {
     }
     DataSeries dataSeries = (DataSeries) o;
     return Objects.equals(this.label, dataSeries.label) &&
-        Objects.equals(this.secondaryYAxis, dataSeries.secondaryYAxis) &&
-        Objects.equals(this.entries, dataSeries.entries);
+        Objects.equals(this.secondaryYAxis, dataSeries.secondaryYAxis);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(label, secondaryYAxis, entries);
+    return Objects.hash(label, secondaryYAxis);
   }
 
   @Override
@@ -142,7 +111,6 @@ public class DataSeries   {
     
     sb.append("    label: ").append(toIndentedString(label)).append("\n");
     sb.append("    secondaryYAxis: ").append(toIndentedString(secondaryYAxis)).append("\n");
-    sb.append("    entries: ").append(toIndentedString(entries)).append("\n");
     sb.append("}");
     return sb.toString();
   }

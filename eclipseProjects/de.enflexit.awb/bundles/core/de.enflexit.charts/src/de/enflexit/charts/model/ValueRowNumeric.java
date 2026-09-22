@@ -11,28 +11,48 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 /**
- * SiteContentScatterPlot
+ * ValueRowNumeric
  */
 @JsonPropertyOrder({
+  ValueRowNumeric.JSON_PROPERTY_X_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentScatterPlot extends AbstractSiteContentChart  {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class ValueRowNumeric extends AbstractValueRow  {
+  public static final String JSON_PROPERTY_X_VALUE = "xValue";
+  @JsonProperty(JSON_PROPERTY_X_VALUE)
+  private Double xValue;
+
+  public ValueRowNumeric xValue(Double xValue) {
+    this.xValue = xValue;
+    return this;
+  }
+
+  /**
+   * Get xValue
+   * @return xValue
+   **/
+  @JsonProperty(value = "xValue")
+  @Schema(required = true, description = "")
+  @NotNull 
+  public Double getxValue() {
+    return xValue;
+  }
+
+  public void setxValue(Double xValue) {
+    this.xValue = xValue;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -42,19 +62,21 @@ public class SiteContentScatterPlot extends AbstractSiteContentChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentScatterPlot siteContentScatterPlot = (SiteContentScatterPlot) o;return super.equals(o);
+    ValueRowNumeric valueRowNumeric = (ValueRowNumeric) o;
+    return super.equals(o) && Objects.equals(this.xValue, valueRowNumeric.xValue);
   }
 
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return Objects.hash(super.hashCode(), xValue);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentScatterPlot {\n");
+    sb.append("class ValueRowNumeric {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    xValue: ").append(toIndentedString(xValue)).append("\n");
     sb.append("}");
     return sb.toString();
   }

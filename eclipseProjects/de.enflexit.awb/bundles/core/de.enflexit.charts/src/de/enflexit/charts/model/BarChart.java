@@ -11,34 +11,28 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContentChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * SiteContentLineChart
+ * BarChart
  */
 @JsonPropertyOrder({
-  SiteContentLineChart.JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL
+  BarChart.JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentLineChart extends AbstractSiteContentChart  {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T14:09:07.883977600+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class BarChart extends AbstractChart  {
   public static final String JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL = "secondaryYAxisLabel";
   @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL)
   private String secondaryYAxisLabel;
 
-  public SiteContentLineChart secondaryYAxisLabel(String secondaryYAxisLabel) {
+  public BarChart secondaryYAxisLabel(String secondaryYAxisLabel) {
     this.secondaryYAxisLabel = secondaryYAxisLabel;
     return this;
   }
@@ -67,8 +61,8 @@ public class SiteContentLineChart extends AbstractSiteContentChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentLineChart siteContentLineChart = (SiteContentLineChart) o;
-    return super.equals(o) && Objects.equals(this.secondaryYAxisLabel, siteContentLineChart.secondaryYAxisLabel);
+    BarChart barChart = (BarChart) o;
+    return super.equals(o) && Objects.equals(this.secondaryYAxisLabel, barChart.secondaryYAxisLabel);
   }
 
   @Override
@@ -79,7 +73,7 @@ public class SiteContentLineChart extends AbstractSiteContentChart  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentLineChart {\n");
+    sb.append("class BarChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    secondaryYAxisLabel: ").append(toIndentedString(secondaryYAxisLabel)).append("\n");
     sb.append("}");

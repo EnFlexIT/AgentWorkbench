@@ -11,51 +11,45 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.DataSeries;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentLineChart;
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * SiteContentTimeSeriesChart
+ * LineChart
  */
 @JsonPropertyOrder({
-  SiteContentTimeSeriesChart.JSON_PROPERTY_TIME_FORMAT
+  LineChart.JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class SiteContentTimeSeriesChart extends SiteContentLineChart  {
-  public static final String JSON_PROPERTY_TIME_FORMAT = "timeFormat";
-  @JsonProperty(JSON_PROPERTY_TIME_FORMAT)
-  private String timeFormat;
+public class LineChart extends AbstractChart  {
+  public static final String JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL = "secondaryYAxisLabel";
+  @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL)
+  private String secondaryYAxisLabel;
 
-  public SiteContentTimeSeriesChart timeFormat(String timeFormat) {
-    this.timeFormat = timeFormat;
+  public LineChart secondaryYAxisLabel(String secondaryYAxisLabel) {
+    this.secondaryYAxisLabel = secondaryYAxisLabel;
     return this;
   }
 
   /**
-   * Get timeFormat
-   * @return timeFormat
+   * Get secondaryYAxisLabel
+   * @return secondaryYAxisLabel
    **/
-  @JsonProperty(value = "timeFormat")
+  @JsonProperty(value = "secondaryYAxisLabel")
   @Schema(description = "")
   
-  public String getTimeFormat() {
-    return timeFormat;
+  public String getSecondaryYAxisLabel() {
+    return secondaryYAxisLabel;
   }
 
-  public void setTimeFormat(String timeFormat) {
-    this.timeFormat = timeFormat;
+  public void setSecondaryYAxisLabel(String secondaryYAxisLabel) {
+    this.secondaryYAxisLabel = secondaryYAxisLabel;
   }
 
 
@@ -67,21 +61,21 @@ public class SiteContentTimeSeriesChart extends SiteContentLineChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentTimeSeriesChart siteContentTimeSeriesChart = (SiteContentTimeSeriesChart) o;
-    return super.equals(o) && Objects.equals(this.timeFormat, siteContentTimeSeriesChart.timeFormat);
+    LineChart siteContentLineChart = (LineChart) o;
+    return super.equals(o) && Objects.equals(this.secondaryYAxisLabel, siteContentLineChart.secondaryYAxisLabel);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), timeFormat);
+    return Objects.hash(super.hashCode(), secondaryYAxisLabel);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentTimeSeriesChart {\n");
+    sb.append("class LineChart {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    timeFormat: ").append(toIndentedString(timeFormat)).append("\n");
+    sb.append("    secondaryYAxisLabel: ").append(toIndentedString(secondaryYAxisLabel)).append("\n");
     sb.append("}");
     return sb.toString();
   }

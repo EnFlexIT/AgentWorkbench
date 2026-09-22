@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentListUpdate;
 
 import java.util.Map;
 import java.util.List;
@@ -31,11 +30,11 @@ import jakarta.ws.rs.*;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
-@Path("/content")
+@Path("/content/{menuID}")
 
 
 @Tag(description = "the content API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
 public class ContentApi  {
 
    private final ContentApiService delegate;
@@ -62,25 +61,19 @@ public class ContentApi  {
 
 
     @jakarta.ws.rs.GET
-    @Path("/{menuID}")
     @Produces({ "application/json" })
     @Operation(summary = "Returns the content for the specified ID", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "List of content elements", content = 
                 @Content(schema = @Schema(implementation = SiteContentList.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
     public Response contentMenuIDGet(@Schema(description= "numeric ID of the content", required = true) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.contentMenuIDGet(menuID, securityContext);
-    }
-
-    @jakarta.ws.rs.PUT
-    @Consumes({ "application/json" })
-    @Operation(summary = "Enables to update content", description = "", responses = {
-            @ApiResponse(responseCode = "201", description = "Content was updated!", content = 
-                @Content(schema = @Schema(implementation = Void.class))),
-            }, tags={  }) 
-    public Response contentPut(@Schema(description = "") @Valid  SiteContentListUpdate siteContentListUpdate,@Context SecurityContext securityContext)
-    throws NotFoundException {
-        return delegate.contentPut(siteContentListUpdate, securityContext);
     }
 }

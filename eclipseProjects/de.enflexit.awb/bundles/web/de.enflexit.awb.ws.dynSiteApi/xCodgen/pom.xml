@@ -42,6 +42,42 @@
 								<interfaceOnly>false</interfaceOnly>
 								<dateLibrary>java8</dateLibrary>
 							</configOptions>
+
+                            <!-- Mapping to AWB chart classes -->
+                            <importMappings>
+                                <importMapping>DataSeries=de.enflexit.charts.model.DataSeries</importMapping>
+                                <importMapping>DataSeriesWithValues=de.enflexit.charts.model.DataSeriesWithValues</importMapping>
+                                <importMapping>DataSeriesWithReference=de.enflexit.charts.model.DataSeriesWithReference</importMapping>
+                                <importMapping>AbstractValuePair=de.enflexit.charts.model.AbstractValuePair</importMapping>
+                                <importMapping>AbstractChart=de.enflexit.charts.model.AbstractChart</importMapping>
+                                <importMapping>BarChart=de.enflexit.charts.model.BarChart</importMapping>
+                                <importMapping>LineChart=de.enflexit.charts.model.LineChart</importMapping>
+                                <importMapping>PieChart=de.enflexit.charts.model.PieChart</importMapping>
+                                <importMapping>ScatterPlot=de.enflexit.charts.model.ScatterPlot</importMapping>
+                                <importMapping>TimeSeriesChart=de.enflexit.charts.model.TimeSeriesChart</importMapping>
+                                <importMapping>ValueRowCategory=de.enflexit.charts.model.ValueRowCategory</importMapping>
+                                <importMapping>ValueRowDateTime=de.enflexit.charts.model.ValueRowDateTime</importMapping>
+                                <importMapping>ValueRowNumeric=de.enflexit.charts.model.ValueRowNumeric</importMapping>
+                                
+                            </importMappings>
+                            <!-- ggf. auch nötig, damit der Typ nicht als "generiert" markiert wird-->
+                            <schemaMappings>
+                                <schemaMapping>DataSeries=de.enflexit.charts.model.DataSeries</schemaMapping>
+                                <schemaMapping>DataSeriesWithValues=de.enflexit.charts.model.DataSeriesWithValues</schemaMapping>
+                                <schemaMapping>DataSeriesWithReference=de.enflexit.charts.model.DataSeriesWithReference</schemaMapping>
+                                <schemaMapping>AbstractValuePair=de.enflexit.charts.model.AbstractValuePair</schemaMapping>
+                                <schemaMapping>AbstractChart=de.enflexit.charts.model.AbstractChart</schemaMapping>
+                                <schemaMapping>BarChart=de.enflexit.charts.model.BarChart</schemaMapping>
+                                <schemaMapping>LineChart=de.enflexit.charts.model.LineChart</schemaMapping>
+                                <schemaMapping>PieChart=de.enflexit.charts.model.PieChart</schemaMapping>
+                                <schemaMapping>ScatterPlot=de.enflexit.charts.model.ScatterPlot</schemaMapping>
+                                <schemaMapping>TimeSeriesChart=de.enflexit.charts.model.TimeSeriesChart</schemaMapping>
+                                <schemaMapping>ValueRowCategory=de.enflexit.charts.model.ValueRowCategory</schemaMapping>
+                                <schemaMapping>ValueRowDateTime=de.enflexit.charts.model.ValueRowDateTime</schemaMapping>
+                                <schemaMapping>ValueRowNumeric=de.enflexit.charts.model.ValueRowNumeric</schemaMapping>
+                            </schemaMappings>
+                            
+                            
 						</configuration>
 					</execution>
 				</executions>

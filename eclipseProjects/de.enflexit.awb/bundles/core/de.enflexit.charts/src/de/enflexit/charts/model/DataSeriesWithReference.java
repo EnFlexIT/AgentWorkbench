@@ -11,47 +11,46 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.charts.model;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractValuePair;
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 /**
- * ValuePairNumeric
+ * DataSeriesWithReference
  */
 @JsonPropertyOrder({
-  ValuePairNumeric.JSON_PROPERTY_X_VALUE
+  DataSeriesWithReference.JSON_PROPERTY_REFERENCE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
-public class ValuePairNumeric extends AbstractValuePair  {
-  public static final String JSON_PROPERTY_X_VALUE = "xValue";
-  @JsonProperty(JSON_PROPERTY_X_VALUE)
-  private Double xValue;
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+public class DataSeriesWithReference extends DataSeries  {
+  public static final String JSON_PROPERTY_REFERENCE = "reference";
+  @JsonProperty(JSON_PROPERTY_REFERENCE)
+  private String reference;
 
-  public ValuePairNumeric xValue(Double xValue) {
-    this.xValue = xValue;
+  public DataSeriesWithReference reference(String reference) {
+    this.reference = reference;
     return this;
   }
 
   /**
-   * Get xValue
-   * @return xValue
+   * Get reference
+   * @return reference
    **/
-  @JsonProperty(value = "xValue")
+  @JsonProperty(value = "reference")
   @Schema(required = true, description = "")
   @NotNull 
-  public Double getxValue() {
-    return xValue;
+  public String getReference() {
+    return reference;
   }
 
-  public void setxValue(Double xValue) {
-    this.xValue = xValue;
+  public void setReference(String reference) {
+    this.reference = reference;
   }
 
 
@@ -63,21 +62,21 @@ public class ValuePairNumeric extends AbstractValuePair  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ValuePairNumeric valuePairNumeric = (ValuePairNumeric) o;
-    return super.equals(o) && Objects.equals(this.xValue, valuePairNumeric.xValue);
+    DataSeriesWithReference dataSeriesWithReference = (DataSeriesWithReference) o;
+    return super.equals(o) && Objects.equals(this.reference, dataSeriesWithReference.reference);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), xValue);
+    return Objects.hash(super.hashCode(), reference);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ValuePairNumeric {\n");
+    sb.append("class DataSeriesWithReference {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    xValue: ").append(toIndentedString(xValue)).append("\n");
+    sb.append("    reference: ").append(toIndentedString(reference)).append("\n");
     sb.append("}");
     return sb.toString();
   }
