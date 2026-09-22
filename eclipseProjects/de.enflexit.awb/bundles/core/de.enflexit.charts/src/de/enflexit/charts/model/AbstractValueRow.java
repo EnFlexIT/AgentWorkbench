@@ -23,6 +23,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -38,9 +46,17 @@ import jakarta.validation.constraints.NotNull;
   @JsonSubTypes.Type(value = ValueRowNumeric.class, name = "Numeric"),
 })
 
+@Entity
+@Table(name = "dia_value_row")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class AbstractValueRow   {
+  @Id
+  @GeneratedValue
+  @Column(name = "id_value_row")
+  private Integer id;	
   public static final String JSON_PROPERTY_VALUE = "value";
   @JsonProperty(JSON_PROPERTY_VALUE)
+  @ElementCollection
   private List<Double> value = new ArrayList<>();
 
   public AbstractValueRow value(List<Double> value) {

@@ -21,6 +21,13 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -35,14 +42,23 @@ import jakarta.validation.constraints.NotNull;
   @JsonSubTypes.Type(value = DataSeriesWithReference.class, name = "DataSeriesWithReference"),
   @JsonSubTypes.Type(value = DataSeriesWithValues.class, name = "DataSeriesWithValues"),
 })
-
+@Entity
+@Table(name = "dia_data_series")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DataSeries   {
+  @Id
+  @GeneratedValue
+  @Column(name = "id_data_series")
+  private Integer id;	
+
   public static final String JSON_PROPERTY_LABEL = "label";
   @JsonProperty(JSON_PROPERTY_LABEL)
+  @Column(name = "label")
   private String label;
 
   public static final String JSON_PROPERTY_SECONDARY_Y_AXIS = "secondaryYAxis";
   @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS)
+  @Column(name = "secondary_y_axis")
   private Boolean secondaryYAxis = false;
 
   public DataSeries label(String label) {

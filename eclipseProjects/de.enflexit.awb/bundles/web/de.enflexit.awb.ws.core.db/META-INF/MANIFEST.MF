@@ -13,5 +13,6 @@ Export-Package: de.enflexit.awb.ws.core.db,
 Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
 Require-Bundle: de.enflexit.db.hibernate,
  org.eclipse.osgi
-Import-Package: de.enflexit.db.userManagement,
+Import-Package: de.enflexit.charts,
+ de.enflexit.db.userManagement,
  jakarta.persistence
