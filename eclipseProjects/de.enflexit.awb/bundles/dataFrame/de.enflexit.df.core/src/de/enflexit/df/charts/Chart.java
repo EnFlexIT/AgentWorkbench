@@ -1,7 +1,18 @@
-package de.enflexit.df.core.charts;
+package de.enflexit.df.charts;
 
 public interface Chart {
 
+	/**
+	 * Has to return the id.
+	 * @return the id
+	 */
+	public int getId();
+	/**
+	 * Sets the id.
+	 * @param id the id to set
+	 */
+	public void setId(int id);
+	
 	
 	/**
 	 * Has to return the id of the data source.
@@ -13,18 +24,6 @@ public interface Chart {
 	 * @param id the id of the data source
 	 */
 	public void setDataSource(int idDataSource);
-
-	
-	/**
-	 * Has to return the id.
-	 * @return the id
-	 */
-	public int getId();
-	/**
-	 * Sets the id.
-	 * @param id the id to set
-	 */
-	public void setId(int id);
 	
 	
 	/**
@@ -50,6 +49,26 @@ public interface Chart {
 	 */
 	public void setDescription(String description);
 	
+	
+	public String getTitle();
+	
+	public void setTitle(String title);
+
+	
+
+	public String getXAxisLabel();
+
+	public void setXAxisLabel(String xAxisLabel);
+
+	
+	public String getYAxisLabel();
+
+	public void setYAxisLabel(String yAxisLabel);
+
+	
+	public boolean isShowLegend();
+
+	public void setShowLegend(boolean showLegend);
 	
 	
 }
