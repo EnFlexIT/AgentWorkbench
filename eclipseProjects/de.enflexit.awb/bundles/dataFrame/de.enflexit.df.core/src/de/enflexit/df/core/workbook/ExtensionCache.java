@@ -123,6 +123,8 @@ public class ExtensionCache {
 			if (wbExtName==null || this.getDataWorkbookExtensionByExtensionName(wbExtName)!=null) return;
 			
 			DataWorkbookExtension wbExtensionOrg = ExtensionManager.getDataWorkbookExtension(wbExtName);
+			if (wbExtensionOrg==null) return;
+			
 			DataWorkbookExtension wbExtensionNew = wbExtensionOrg.newInstance(); 
 			wbExtensionNew.initialize(this);
 			this.getExtensionList().add(wbExtensionNew);
