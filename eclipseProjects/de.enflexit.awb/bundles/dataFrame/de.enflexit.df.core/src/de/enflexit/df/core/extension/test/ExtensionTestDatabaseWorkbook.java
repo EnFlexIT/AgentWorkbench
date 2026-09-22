@@ -71,6 +71,15 @@ public class ExtensionTestDatabaseWorkbook implements DataWorkbookExtension {
 		this.extensionCache = null;
 		System.out.println("=> Disposed " + this.getClass().getSimpleName());
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#requiresWorkbookReload()
+	 */
+	@Override
+	public boolean requiresWorkbookReload() {
+		return false;
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#addMainToolbarComponents(de.enflexit.df.core.ui.JToolBarData)

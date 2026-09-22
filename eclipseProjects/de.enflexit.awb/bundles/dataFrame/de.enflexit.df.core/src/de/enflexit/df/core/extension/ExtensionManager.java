@@ -15,7 +15,7 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  */
 public class ExtensionManager {
 
-	private static boolean includeTestExtensions = true;
+	private static boolean includeTestExtensions = false;
 	
 	/**
 	 * Returns the list of OSGI-registered {@link DataWorkbookExtension} instances.

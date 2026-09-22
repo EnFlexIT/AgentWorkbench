@@ -4,9 +4,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -19,6 +21,8 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.extension.DataWorkbookExtension;
 import de.enflexit.df.core.extension.ExtensionManager;
 import de.enflexit.df.core.model.DataController;
@@ -212,15 +216,66 @@ public class JPanelExtensionSelection extends JPanel implements PropertyChangeLi
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the changed extensions.
+	 * @return the changed extensions
+	 */
+	private List<String> getChangedExtensions() {
+		
+		List<String> extWorkbook = this.dataWorkbook.getWorkbookExtensions();
+		List<String> extSelected = this.getSelectedExtensions();
+		
+		List<String> untouched = new ArrayList<>(extWorkbook);
+		untouched.retainAll(extSelected);
+		
+		HashSet<String> extHashSet = new HashSet<>();
+		extHashSet.addAll(extWorkbook);
+		extHashSet.addAll(extSelected);
+		extHashSet.removeAll(untouched);
+		
+		return List.copyOf(extHashSet);
+	}
+	
+	/**
+	 * Changes require workbook reload.
+	 * @return true, if successful
+	 */
+	private boolean changesRequireWorkbookReload() {
+		
+		for (String wbExtName : this.getChangedExtensions()) {
+			DataWorkbookExtension wbExtensionOrg = ExtensionManager.getDataWorkbookExtension(wbExtName);
+			if (wbExtensionOrg!=null && wbExtensionOrg.requiresWorkbookReload()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Updates activated extensions of a workbook.
 	 */
 	private void updateExtensionsOfWorkbook() {
+		
 		List<String> extChanged = this.hasChangedSelectedExtensions();
 		if (extChanged!=null) {
+			boolean requiresWorkbookRload = this.changesRequireWorkbookReload();
 			this.dataWorkbook.setWorkbookExtensions(extChanged);
-			// --- Close and reopen to fully activate the extension
-			this.reopenDataWorkbook();
+			
+			if (requiresWorkbookRload==true) {
+				// --- Close and reopen to fully activate the extension
+				Window owner = OwnerDetection.getOwnerWindowForComponent(this); 
+				String msg = "The changes of extension selection require to reload the Data Workbook.\nProceed to reopen the workbook?";
+				int answer = AwbMessageDialog.showConfirmDialog(owner, msg, "Relaod Workbook?", AwbMessageDialog.YES_NO_OPTION, AwbMessageDialog.QUESTION_MESSAGE);
+				if (answer==AwbMessageDialog.YES_OPTION) {
+					this.reopenDataWorkbook();
+				} else {
+					this.dataWorkbook.getExtensionCache().updateLoadedExtensions();
+				}
+				
+			} else {
+				this.dataWorkbook.getExtensionCache().updateLoadedExtensions();
+			}
 		}
 	}
 	

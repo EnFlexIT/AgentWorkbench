@@ -48,7 +48,13 @@ public interface DataWorkbookExtension {
 	 */
 	public void dispose();
 	
-
+	/**
+	 * Has to return, if the activation or de-activation of this extensions requires to reload the data workbook.
+	 * @return true, if successful
+	 */
+	public boolean requiresWorkbookReload();
+	
+	
 	
 	/**
 	 * Can be used to add own components to the main toolbar.
@@ -78,6 +84,6 @@ public interface DataWorkbookExtension {
 	 * @see SessionFactoryCreator#getNewDatabaseSession(String)
 	 */
 	public void addAnnotatedClassesToDataWorkbook4DB(SessionFactoryCreator sessionFactoryCreator, Configuration conf);
-	
+
 	
 }

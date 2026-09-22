@@ -86,6 +86,15 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#requiresWorkbookReload()
+	 */
+	@Override
+	public boolean requiresWorkbookReload() {
+		return true;
+	}
+
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#addMainToolbarComponents(de.enflexit.df.core.ui.JToolBarData)
 	 */
 	@Override
