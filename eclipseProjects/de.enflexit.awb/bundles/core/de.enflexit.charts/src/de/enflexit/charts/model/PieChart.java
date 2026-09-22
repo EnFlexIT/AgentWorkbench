@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonPropertyOrder({
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class PieChart extends AbstractChart  {
 
   @Override
@@ -31,7 +31,7 @@ public class PieChart extends AbstractChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    PieChart siteContentPieChart = (PieChart) o;return super.equals(o);
+    return super.equals(o);
   }
 
   @Override
@@ -53,10 +53,7 @@ public class PieChart extends AbstractChart  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

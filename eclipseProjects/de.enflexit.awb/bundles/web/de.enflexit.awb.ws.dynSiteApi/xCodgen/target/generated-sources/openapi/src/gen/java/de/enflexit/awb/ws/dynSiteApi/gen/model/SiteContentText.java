@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentText.JSON_PROPERTY_TEXT
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentText extends SiteContentMedia  {
   public static final String JSON_PROPERTY_TEXT = "text";
   @JsonProperty(JSON_PROPERTY_TEXT)
@@ -44,7 +44,7 @@ public class SiteContentText extends SiteContentMedia  {
    * @return text
    **/
   @JsonProperty(value = "text")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getText() {
     return text;
@@ -87,10 +87,7 @@ public class SiteContentText extends SiteContentMedia  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

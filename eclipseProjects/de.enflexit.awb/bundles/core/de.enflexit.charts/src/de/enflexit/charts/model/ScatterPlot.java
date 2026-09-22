@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonPropertyOrder({
   ScatterPlot.JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T14:09:07.883977600+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ScatterPlot extends AbstractChart  {
   public static final String JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL = "secondaryYAxisLabel";
   @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL)
@@ -85,10 +85,7 @@ public class ScatterPlot extends AbstractChart  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

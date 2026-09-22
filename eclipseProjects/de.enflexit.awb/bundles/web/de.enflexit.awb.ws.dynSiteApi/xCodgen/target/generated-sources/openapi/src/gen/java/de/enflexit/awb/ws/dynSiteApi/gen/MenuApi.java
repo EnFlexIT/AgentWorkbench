@@ -36,7 +36,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the menu API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApi  {
 
    private final MenuApiService delegate;
@@ -91,7 +91,7 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response menuMenuIDContentElementElementIDPut(@Schema(description= "The unique ID of the menu", required = true) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description= "The unique ID of the content element", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    public Response menuMenuIDContentElementElementIDPut(@Schema(description= "The unique ID of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description= "The unique ID of the content element", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.menuMenuIDContentElementElementIDPut(menuID, elementID, securityContext);
     }
@@ -110,7 +110,7 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response menuMenuIDDelete(@Schema(description= "The unique ID of the menu to be deleted", required = true) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)
+    public Response menuMenuIDDelete(@Schema(description= "The unique ID of the menu to be deleted", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.menuMenuIDDelete(menuID, securityContext);
     }
@@ -130,7 +130,7 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response menuMenuIDPermissionsPut(@Schema(description= "The unique ID of the menu", required = true) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description = "", required = true) @NotNull  String body,@Context SecurityContext securityContext)
+    public Response menuMenuIDPermissionsPut(@Schema(description= "The unique ID of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull  String body,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.menuMenuIDPermissionsPut(menuID, body, securityContext);
     }
@@ -150,7 +150,7 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response menuMenuIDPut(@Schema(description= "The unique ID of the menu to be updated", required = true) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description = "", required = true) @NotNull @Valid  MenuItem menuItem,@Context SecurityContext securityContext)
+    public Response menuMenuIDPut(@Schema(description= "The unique ID of the menu to be updated", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  MenuItem menuItem,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.menuMenuIDPut(menuID, menuItem, securityContext);
     }
@@ -170,7 +170,7 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response menuPost(@Schema(description = "", required = true) @NotNull @Valid  MenuItem menuItem,@Context SecurityContext securityContext)
+    public Response menuPost(@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  MenuItem menuItem,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.menuPost(menuItem, securityContext);
     }

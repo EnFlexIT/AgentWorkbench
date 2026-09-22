@@ -36,7 +36,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the contentElement API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentElementApi  {
 
    private final ContentElementApiService delegate;
@@ -76,7 +76,7 @@ public class ContentElementApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response contentElementElementIDDelete(@Schema(description= "The unique ID of the content element to delete", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    public Response contentElementElementIDDelete(@Schema(description= "The unique ID of the content element to delete", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.contentElementElementIDDelete(elementID, securityContext);
     }
@@ -96,7 +96,7 @@ public class ContentElementApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response contentElementElementIDGet(@Schema(description= "unique ID of the content element", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    public Response contentElementElementIDGet(@Schema(description= "unique ID of the content element", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.contentElementElementIDGet(elementID, securityContext);
     }
@@ -116,7 +116,7 @@ public class ContentElementApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response contentElementElementIDPut(@Schema(description= "The unique ID of the content element to update", required = true) @PathParam("elementID") @NotNull  Integer elementID,@Schema(description = "") @Valid  AbstractSiteContent abstractSiteContent,@Context SecurityContext securityContext)
+    public Response contentElementElementIDPut(@Schema(description= "The unique ID of the content element to update", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Schema(description = "") @Valid  AbstractSiteContent abstractSiteContent,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.contentElementElementIDPut(elementID, abstractSiteContent, securityContext);
     }
@@ -136,7 +136,7 @@ public class ContentElementApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response contentElementPost(@Schema(description = "", required = true) @NotNull @Valid  CreateContentRequest createContentRequest,@Context SecurityContext securityContext)
+    public Response contentElementPost(@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  CreateContentRequest createContentRequest,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.contentElementPost(createContentRequest, securityContext);
     }

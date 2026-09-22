@@ -36,7 +36,7 @@ import jakarta.validation.constraints.NotNull;
   AbstractChart.JSON_PROPERTY_Y_AXIS_LABEL,
   AbstractChart.JSON_PROPERTY_DATA_SERIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "ChartType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = BarChart.class, name = "BarChart"),
   @JsonSubTypes.Type(value = LineChart.class, name = "LineChart"),
@@ -45,7 +45,7 @@ import jakarta.validation.constraints.NotNull;
   @JsonSubTypes.Type(value = TimeSeriesChart.class, name = "TimeSeriesChart"),
 })
 
-public class AbstractChart  {
+public class AbstractChart   {
   public static final String JSON_PROPERTY_TITLE = "title";
   @JsonProperty(JSON_PROPERTY_TITLE)
   private String title;
@@ -76,7 +76,7 @@ public class AbstractChart  {
    * @return title
    **/
   @JsonProperty(value = "title")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getTitle() {
     return title;
@@ -164,7 +164,7 @@ public class AbstractChart  {
    * @return dataSeries
    **/
   @JsonProperty(value = "dataSeries")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull @Valid 
   public List<@Valid DataSeries> getDataSeries() {
     return dataSeries;
@@ -183,24 +183,24 @@ public class AbstractChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    AbstractChart abstractSiteContentChart = (AbstractChart) o;
-    return super.equals(o) && Objects.equals(this.title, abstractSiteContentChart.title) &&
-        Objects.equals(this.showLegend, abstractSiteContentChart.showLegend) &&
-        Objects.equals(this.xAxisLabel, abstractSiteContentChart.xAxisLabel) &&
-        Objects.equals(this.yAxisLabel, abstractSiteContentChart.yAxisLabel) &&
-        Objects.equals(this.dataSeries, abstractSiteContentChart.dataSeries);
+    AbstractChart abstractChart = (AbstractChart) o;
+    return Objects.equals(this.title, abstractChart.title) &&
+        Objects.equals(this.showLegend, abstractChart.showLegend) &&
+        Objects.equals(this.xAxisLabel, abstractChart.xAxisLabel) &&
+        Objects.equals(this.yAxisLabel, abstractChart.yAxisLabel) &&
+        Objects.equals(this.dataSeries, abstractChart.dataSeries);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), title, super.hashCode(), showLegend, super.hashCode(), xAxisLabel, super.hashCode(), yAxisLabel, super.hashCode(), dataSeries);
+    return Objects.hash(title, showLegend, xAxisLabel, yAxisLabel, dataSeries);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AbstractChart {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    showLegend: ").append(toIndentedString(showLegend)).append("\n");
     sb.append("    xAxisLabel: ").append(toIndentedString(xAxisLabel)).append("\n");
@@ -215,10 +215,7 @@ public class AbstractChart  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

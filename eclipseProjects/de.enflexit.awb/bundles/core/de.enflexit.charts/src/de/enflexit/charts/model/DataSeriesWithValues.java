@@ -30,7 +30,7 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
   DataSeriesWithValues.JSON_PROPERTY_ENTRIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class DataSeriesWithValues extends DataSeries  {
   public static final String JSON_PROPERTY_ENTRIES = "entries";
   @JsonProperty(JSON_PROPERTY_ENTRIES)
@@ -54,7 +54,7 @@ public class DataSeriesWithValues extends DataSeries  {
    * @return entries
    **/
   @JsonProperty(value = "entries")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull @Valid 
   public List<@Valid AbstractValueRow> getEntries() {
     return entries;
@@ -97,10 +97,7 @@ public class DataSeriesWithValues extends DataSeries  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

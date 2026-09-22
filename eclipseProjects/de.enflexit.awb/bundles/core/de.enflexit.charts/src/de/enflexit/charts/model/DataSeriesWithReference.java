@@ -27,7 +27,7 @@ import jakarta.validation.constraints.NotNull;
 @JsonPropertyOrder({
   DataSeriesWithReference.JSON_PROPERTY_REFERENCE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class DataSeriesWithReference extends DataSeries  {
   public static final String JSON_PROPERTY_REFERENCE = "reference";
   @JsonProperty(JSON_PROPERTY_REFERENCE)
@@ -43,7 +43,7 @@ public class DataSeriesWithReference extends DataSeries  {
    * @return reference
    **/
   @JsonProperty(value = "reference")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getReference() {
     return reference;
@@ -86,10 +86,7 @@ public class DataSeriesWithReference extends DataSeries  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

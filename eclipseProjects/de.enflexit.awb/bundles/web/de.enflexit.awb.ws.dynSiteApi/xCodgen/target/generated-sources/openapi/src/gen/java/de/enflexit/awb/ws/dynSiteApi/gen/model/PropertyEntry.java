@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
   PropertyEntry.JSON_PROPERTY_VALUE,
   PropertyEntry.JSON_PROPERTY_VALUE_TYPE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class PropertyEntry   {
   public static final String JSON_PROPERTY_KEY = "key";
   @JsonProperty(JSON_PROPERTY_KEY)
@@ -55,7 +55,7 @@ public class PropertyEntry   {
    * @return key
    **/
   @JsonProperty(value = "key")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getKey() {
     return key;
@@ -75,7 +75,7 @@ public class PropertyEntry   {
    * @return value
    **/
   @JsonProperty(value = "value")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getValue() {
     return value;
@@ -95,7 +95,7 @@ public class PropertyEntry   {
    * @return valueType
    **/
   @JsonProperty(value = "valueType")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public ValueType getValueType() {
     return valueType;
@@ -142,10 +142,7 @@ public class PropertyEntry   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

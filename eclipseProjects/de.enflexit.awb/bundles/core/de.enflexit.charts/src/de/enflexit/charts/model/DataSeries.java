@@ -30,7 +30,7 @@ import jakarta.validation.constraints.NotNull;
   DataSeries.JSON_PROPERTY_LABEL,
   DataSeries.JSON_PROPERTY_SECONDARY_Y_AXIS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T16:44:10.415936900+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = DataSeriesWithReference.class, name = "DataSeriesWithReference"),
   @JsonSubTypes.Type(value = DataSeriesWithValues.class, name = "DataSeriesWithValues"),
@@ -55,7 +55,7 @@ public class DataSeries   {
    * @return label
    **/
   @JsonProperty(value = "label")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getLabel() {
     return label;
@@ -120,10 +120,7 @@ public class DataSeries   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

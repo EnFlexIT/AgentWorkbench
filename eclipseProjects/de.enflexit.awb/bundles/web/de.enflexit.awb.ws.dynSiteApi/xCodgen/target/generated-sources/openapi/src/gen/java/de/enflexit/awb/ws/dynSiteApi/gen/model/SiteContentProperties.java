@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentProperties.JSON_PROPERTY_PROPERTY_ENTRIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentProperties extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_PROPERTY_ENTRIES = "propertyEntries";
   @JsonProperty(JSON_PROPERTY_PROPERTY_ENTRIES)
@@ -56,7 +56,7 @@ public class SiteContentProperties extends AbstractSiteContent  {
    * @return propertyEntries
    **/
   @JsonProperty(value = "propertyEntries")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull @Valid 
   public List<@Valid PropertyEntry> getPropertyEntries() {
     return propertyEntries;
@@ -99,10 +99,7 @@ public class SiteContentProperties extends AbstractSiteContent  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

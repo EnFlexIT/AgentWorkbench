@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the content API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentApi  {
 
    private final ContentApiService delegate;
@@ -72,7 +72,7 @@ public class ContentApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response contentMenuIDGet(@Schema(description= "numeric ID of the content", required = true) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)
+    public Response contentMenuIDGet(@Schema(description= "numeric ID of the content", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.contentMenuIDGet(menuID, securityContext);
     }

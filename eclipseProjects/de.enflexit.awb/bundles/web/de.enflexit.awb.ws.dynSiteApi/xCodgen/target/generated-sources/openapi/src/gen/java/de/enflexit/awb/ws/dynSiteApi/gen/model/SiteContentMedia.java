@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentMedia.JSON_PROPERTY_MIME_TYPE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = SiteContentImage.class, name = "SiteContentImage"),
   @JsonSubTypes.Type(value = SiteContentText.class, name = "SiteContentText"),
@@ -52,7 +52,7 @@ public class SiteContentMedia extends AbstractSiteContent  {
    * @return mimeType
    **/
   @JsonProperty(value = "mimeType")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getMimeType() {
     return mimeType;
@@ -95,10 +95,7 @@ public class SiteContentMedia extends AbstractSiteContent  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

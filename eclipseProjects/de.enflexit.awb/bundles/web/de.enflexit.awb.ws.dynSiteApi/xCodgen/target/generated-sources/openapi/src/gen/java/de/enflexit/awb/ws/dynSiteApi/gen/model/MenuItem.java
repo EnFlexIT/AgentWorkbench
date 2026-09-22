@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
   MenuItem.JSON_PROPERTY_PATH_CAPTION,
   MenuItem.JSON_PROPERTY_PATH_POSITION
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuItem   {
   public static final String JSON_PROPERTY_MENU_I_D = "menuID";
   @JsonProperty(JSON_PROPERTY_MENU_I_D)
@@ -118,7 +118,7 @@ public class MenuItem   {
    * @return isHeadMenu
    **/
   @JsonProperty(value = "isHeadMenu")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public Boolean getIsHeadMenu() {
     return isHeadMenu;
@@ -138,7 +138,7 @@ public class MenuItem   {
    * @return position
    **/
   @JsonProperty(value = "position")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public Integer getPosition() {
     return position;
@@ -158,7 +158,7 @@ public class MenuItem   {
    * @return caption
    **/
   @JsonProperty(value = "caption")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public String getCaption() {
     return caption;
@@ -275,10 +275,7 @@ public class MenuItem   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

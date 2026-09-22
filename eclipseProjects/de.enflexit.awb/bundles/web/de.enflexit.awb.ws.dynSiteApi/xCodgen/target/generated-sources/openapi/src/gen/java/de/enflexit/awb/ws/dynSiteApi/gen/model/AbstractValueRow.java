@@ -33,7 +33,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   AbstractValueRow.JSON_PROPERTY_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = de.enflexit.charts.model.ValueRowCategory.class, name = "Category"),
   @JsonSubTypes.Type(value = de.enflexit.charts.model.ValueRowDateTime.class, name = "DateTime"),
@@ -63,7 +63,7 @@ public class AbstractValueRow   {
    * @return value
    **/
   @JsonProperty(value = "value")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public List<Double> getValue() {
     return value;
@@ -106,10 +106,7 @@ public class AbstractValueRow   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

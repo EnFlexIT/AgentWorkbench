@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
   AbstractSiteContent.JSON_PROPERTY_EDITABLE,
   AbstractSiteContent.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-21T17:30:55.433568700+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = de.enflexit.charts.model.AbstractChart.class, name = "AbstractChart"),
   @JsonSubTypes.Type(value = SiteContentMedia.class, name = "SiteContentMedia"),
@@ -63,7 +63,7 @@ public class AbstractSiteContent   {
    * @return uniqueContentID
    **/
   @JsonProperty(value = "uniqueContentID")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public Integer getUniqueContentID() {
     return uniqueContentID;
@@ -83,7 +83,7 @@ public class AbstractSiteContent   {
    * @return editable
    **/
   @JsonProperty(value = "editable")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public Boolean getEditable() {
     return editable;
@@ -103,7 +103,7 @@ public class AbstractSiteContent   {
    * @return updatePeriodInSeconds
    **/
   @JsonProperty(value = "updatePeriodInSeconds")
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
   public Integer getUpdatePeriodInSeconds() {
     return updatePeriodInSeconds;
@@ -150,10 +150,7 @@ public class AbstractSiteContent   {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

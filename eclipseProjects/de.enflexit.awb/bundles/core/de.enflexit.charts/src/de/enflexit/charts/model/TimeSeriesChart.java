@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonPropertyOrder({
   TimeSeriesChart.JSON_PROPERTY_TIME_FORMAT
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-07-23T11:55:38.634832400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class TimeSeriesChart extends LineChart  {
   public static final String JSON_PROPERTY_TIME_FORMAT = "timeFormat";
   @JsonProperty(JSON_PROPERTY_TIME_FORMAT)
@@ -61,8 +61,8 @@ public class TimeSeriesChart extends LineChart  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TimeSeriesChart siteContentTimeSeriesChart = (TimeSeriesChart) o;
-    return super.equals(o) && Objects.equals(this.timeFormat, siteContentTimeSeriesChart.timeFormat);
+    TimeSeriesChart timeSeriesChart = (TimeSeriesChart) o;
+    return super.equals(o) && Objects.equals(this.timeFormat, timeSeriesChart.timeFormat);
   }
 
   @Override
@@ -85,10 +85,7 @@ public class TimeSeriesChart extends LineChart  {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 
