@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.enflexit.dataFrame.feature"
+      label="AWB Data Frame - Feature"
+      version="0.2.0.qualifier"
+      provider-name="EnFlex.IT"
+      os="linux,macosx,win32"
+      arch="x86_64,aarch64">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="Enflex.IT Update Site" url="https://p2.enflex.it/awb/latest/"/>
+   </url>
+
+   <requires>
+      <import feature="de.enflexit.common.feature" version="2.4.0.qualifier"/>
+      <import feature="de.enflexit.db.feature" version="6.6.11.qualifier"/>
+   </requires>
+
+   <plugin
+         id="de.enflexit.df.core"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.df.descriptionService"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.df.tablesaw"
+         version="0.0.0"/>
+
+</feature>

@@ -20,6 +20,7 @@
 		<module>de.enflexit.awb.remoteControl</module>
 		<module>de.enflexit.awb.timeSeriesDataProvider</module>
 		
+		<module>de.enflexit.charts</module>
 		<module>de.enflexit.common</module>
 		<module>de.enflexit.common.flatlaf</module>
 		

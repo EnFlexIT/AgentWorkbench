@@ -12,6 +12,8 @@
 	</parent>
 
 	<modules>
+		<module>de.enflexit.df.core</module>
+		<module>de.enflexit.df.descriptionService</module>
 		<module>de.enflexit.df.tablesaw</module>
 	</modules>
 </project>
