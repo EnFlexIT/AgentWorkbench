@@ -1,9 +1,15 @@
 package de.enflexit.df.core.dataSources;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.df.impl.csv.CsvDataSource;
+import de.enflexit.df.impl.db.DatabaseDataSource;
+import de.enflexit.df.impl.excel.ExcelDataSource;
 
 /**
  * The Class DataSourceHelper.
@@ -28,6 +34,38 @@ public class DataSourceHelper {
 		DataSourceHelper.getDataSourceServices().forEach(ds -> dsHashMap.put(ds.getDataSourceIdentifier(), ds));
 		return dsHashMap;
 	}
+	
+	/**
+	 * Returns external data source services only, which means every {@link DataSource} that 
+	 * is NOT located in the local bundle 'de.enflexit.df.core'.
+	 * 
+	 * @return the external data source services
+	 */
+	public static List<DataSource> getExternalDataSourceServices() {
+		
+		// --- Remove local DataSources from DataSourceServiceHashMap ---------
+		HashMap<String, DataSource> dsHashMap = DataSourceHelper.getDataSourceServiceHashMap();
+		dsHashMap.remove(CsvDataSource.class.getSimpleName());
+		dsHashMap.remove(ExcelDataSource.class.getSimpleName());
+		dsHashMap.remove(DatabaseDataSource.class.getSimpleName());
+		
+		List<DataSource> extDataSourceList = new ArrayList<>(); 
+		extDataSourceList.addAll(dsHashMap.values());
+		
+		if (extDataSourceList.size()>0) {
+			Collections.sort(extDataSourceList, new Comparator<DataSource>() {
+				@Override
+				public int compare(DataSource ds1, DataSource ds2) {
+					return ds1.getDataSourceIdentifier().compareTo(ds2.getDataSourceIdentifier());
+				}
+			});
+		}
+		
+		return extDataSourceList;
+	}
+	
+	
+	
 	
 	
 	
