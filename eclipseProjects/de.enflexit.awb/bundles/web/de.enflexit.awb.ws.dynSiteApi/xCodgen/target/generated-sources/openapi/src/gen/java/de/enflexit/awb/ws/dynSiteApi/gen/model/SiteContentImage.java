@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentImage.JSON_PROPERTY_DATA_IN_B64
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentImage extends SiteContentMedia  {
   public static final String JSON_PROPERTY_DATA_IN_B64 = "dataInB64";
   @JsonProperty(JSON_PROPERTY_DATA_IN_B64)

@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -28,9 +30,11 @@ import jakarta.validation.constraints.NotNull;
   DataSeriesWithReference.JSON_PROPERTY_REFERENCE
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@Entity
 public class DataSeriesWithReference extends DataSeries  {
   public static final String JSON_PROPERTY_REFERENCE = "reference";
   @JsonProperty(JSON_PROPERTY_REFERENCE)
+  @Column(name = "reference")
   private String reference;
 
   public DataSeriesWithReference reference(String reference) {

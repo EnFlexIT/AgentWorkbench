@@ -9,9 +9,12 @@ Automatic-Module-Name: de.enflexit.charts
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: com.fasterxml.jackson.annotation,
  jakarta.annotation,
+ jakarta.persistence,
  jakarta.validation,
  jakarta.validation.constraints,
  org.osgi.framework,
  org.osgi.framework.wiring
 Require-Bundle: de.enflexit.db.hibernate,
  de.enflexit.awb.ws.swagger2x
+Bundle-Vendor: EnFlex.IT
+Eclipse-RegisterBuddy: de.enflexit.db.hibernate

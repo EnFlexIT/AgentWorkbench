@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 /**
  * TimeSeriesChart
@@ -27,9 +29,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
   TimeSeriesChart.JSON_PROPERTY_TIME_FORMAT
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@Entity
 public class TimeSeriesChart extends LineChart  {
   public static final String JSON_PROPERTY_TIME_FORMAT = "timeFormat";
   @JsonProperty(JSON_PROPERTY_TIME_FORMAT)
+  @Column(name = "time_format")
   private String timeFormat;
 
   public TimeSeriesChart timeFormat(String timeFormat) {

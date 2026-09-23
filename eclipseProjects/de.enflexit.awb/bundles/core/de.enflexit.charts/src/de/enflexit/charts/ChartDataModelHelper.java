@@ -57,10 +57,10 @@ public class ChartDataModelHelper {
 	 * Adds the user management data model classes to the provided hibernate configuration.
 	 * @param hibernateConfiguration the hibernate configuration
 	 */
-	public static void addUserManagementDataModelClasses(Configuration hibernateConfiguration) {
-		Vector<Class<?>> userManagementModelClasses = ChartDataModelHelper.getDataModelClassesList();
-		for (Class<?> umModelClass : userManagementModelClasses) {
-			hibernateConfiguration.addAnnotatedClass(umModelClass);
+	public static void addChartDataModelClasses(Configuration hibernateConfiguration) {
+		Vector<Class<?>> chartModelClasses = ChartDataModelHelper.getDataModelClassesList();
+		for (Class<?> chartModelclass : chartModelClasses) {
+			hibernateConfiguration.addAnnotatedClass(chartModelclass);
 		}
 	}
 }

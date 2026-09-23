@@ -21,6 +21,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -31,9 +35,12 @@ import jakarta.validation.constraints.NotNull;
   DataSeriesWithValues.JSON_PROPERTY_ENTRIES
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@Entity
 public class DataSeriesWithValues extends DataSeries  {
   public static final String JSON_PROPERTY_ENTRIES = "entries";
   @JsonProperty(JSON_PROPERTY_ENTRIES)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "id_data_series")
   private List<@Valid AbstractValueRow> entries = new ArrayList<>();
 
   public DataSeriesWithValues entries(List<@Valid AbstractValueRow> entries) {

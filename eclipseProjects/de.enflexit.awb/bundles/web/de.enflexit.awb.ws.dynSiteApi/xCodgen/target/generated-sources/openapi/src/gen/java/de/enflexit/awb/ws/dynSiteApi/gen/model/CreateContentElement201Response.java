@@ -23,18 +23,18 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * ContentElementPost201Response
+ * CreateContentElement201Response
  */
 @JsonPropertyOrder({
-  ContentElementPost201Response.JSON_PROPERTY_ELEMENT_I_D
+  CreateContentElement201Response.JSON_PROPERTY_ELEMENT_I_D
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:53:42.299228200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
-public class ContentElementPost201Response   {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+public class CreateContentElement201Response   {
   public static final String JSON_PROPERTY_ELEMENT_I_D = "elementID";
   @JsonProperty(JSON_PROPERTY_ELEMENT_I_D)
   private Integer elementID;
 
-  public ContentElementPost201Response elementID(Integer elementID) {
+  public CreateContentElement201Response elementID(Integer elementID) {
     this.elementID = elementID;
     return this;
   }
@@ -63,8 +63,8 @@ public class ContentElementPost201Response   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ContentElementPost201Response contentElementPost201Response = (ContentElementPost201Response) o;
-    return Objects.equals(this.elementID, contentElementPost201Response.elementID);
+    CreateContentElement201Response createContentElement201Response = (CreateContentElement201Response) o;
+    return Objects.equals(this.elementID, createContentElement201Response.elementID);
   }
 
   @Override
@@ -75,7 +75,7 @@ public class ContentElementPost201Response   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ContentElementPost201Response {\n");
+    sb.append("class CreateContentElement201Response {\n");
     
     sb.append("    elementID: ").append(toIndentedString(elementID)).append("\n");
     sb.append("}");

@@ -23,6 +23,17 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -30,13 +41,14 @@ import jakarta.validation.constraints.NotNull;
  * AbstractChart
  */
 @JsonPropertyOrder({
+  AbstractChart.JSON_PROPERTY_CHART_ID,
   AbstractChart.JSON_PROPERTY_TITLE,
   AbstractChart.JSON_PROPERTY_SHOW_LEGEND,
   AbstractChart.JSON_PROPERTY_X_AXIS_LABEL,
   AbstractChart.JSON_PROPERTY_Y_AXIS_LABEL,
   AbstractChart.JSON_PROPERTY_DATA_SERIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "ChartType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T13:18:19.321033100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "ChartType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = BarChart.class, name = "BarChart"),
   @JsonSubTypes.Type(value = LineChart.class, name = "LineChart"),
@@ -45,26 +57,63 @@ import jakarta.validation.constraints.NotNull;
   @JsonSubTypes.Type(value = TimeSeriesChart.class, name = "TimeSeriesChart"),
 })
 
+@Entity
+@Table(name = "dia_chart")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "chart_type")
 public class AbstractChart   {
+  public static final String JSON_PROPERTY_CHART_ID = "chartId";
+  @JsonProperty(JSON_PROPERTY_CHART_ID)
+  @Id
+  @GeneratedValue
+  @Column(name = "chart_id")
+  private Integer chartId;
+
   public static final String JSON_PROPERTY_TITLE = "title";
   @JsonProperty(JSON_PROPERTY_TITLE)
+  @Column(name = "title")
   private String title;
 
   public static final String JSON_PROPERTY_SHOW_LEGEND = "showLegend";
   @JsonProperty(JSON_PROPERTY_SHOW_LEGEND)
+  @Column(name = "show_legend")
   private Boolean showLegend;
 
   public static final String JSON_PROPERTY_X_AXIS_LABEL = "xAxisLabel";
   @JsonProperty(JSON_PROPERTY_X_AXIS_LABEL)
+  @Column(name = "x_Axis_label")
   private String xAxisLabel;
 
   public static final String JSON_PROPERTY_Y_AXIS_LABEL = "yAxisLabel";
   @JsonProperty(JSON_PROPERTY_Y_AXIS_LABEL)
+  @Column(name = "yAxisLabel")
   private String yAxisLabel;
 
   public static final String JSON_PROPERTY_DATA_SERIES = "dataSeries";
   @JsonProperty(JSON_PROPERTY_DATA_SERIES)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "chart_id")
   private List<@Valid DataSeries> dataSeries = new ArrayList<>();
+
+  public AbstractChart chartId(Integer chartId) {
+    this.chartId = chartId;
+    return this;
+  }
+
+  /**
+   * Get chartId
+   * @return chartId
+   **/
+  @JsonProperty(value = "chartId")
+  @Schema(description = "")
+  
+  public Integer getChartId() {
+    return chartId;
+  }
+
+  public void setChartId(Integer chartId) {
+    this.chartId = chartId;
+  }
 
   public AbstractChart title(String title) {
     this.title = title;
@@ -184,7 +233,8 @@ public class AbstractChart   {
       return false;
     }
     AbstractChart abstractChart = (AbstractChart) o;
-    return Objects.equals(this.title, abstractChart.title) &&
+    return Objects.equals(this.chartId, abstractChart.chartId) &&
+        Objects.equals(this.title, abstractChart.title) &&
         Objects.equals(this.showLegend, abstractChart.showLegend) &&
         Objects.equals(this.xAxisLabel, abstractChart.xAxisLabel) &&
         Objects.equals(this.yAxisLabel, abstractChart.yAxisLabel) &&
@@ -193,7 +243,7 @@ public class AbstractChart   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, showLegend, xAxisLabel, yAxisLabel, dataSeries);
+    return Objects.hash(chartId, title, showLegend, xAxisLabel, yAxisLabel, dataSeries);
   }
 
   @Override
@@ -201,6 +251,7 @@ public class AbstractChart   {
     StringBuilder sb = new StringBuilder();
     sb.append("class AbstractChart {\n");
     
+    sb.append("    chartId: ").append(toIndentedString(chartId)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    showLegend: ").append(toIndentedString(showLegend)).append("\n");
     sb.append("    xAxisLabel: ").append(toIndentedString(xAxisLabel)).append("\n");

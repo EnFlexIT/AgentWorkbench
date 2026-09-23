@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 /**
  * ValueRowCategory
@@ -27,9 +29,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
   ValueRowCategory.JSON_PROPERTY_CATEGORY
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@Entity
 public class ValueRowCategory extends AbstractValueRow  {
   public static final String JSON_PROPERTY_CATEGORY = "category";
   @JsonProperty(JSON_PROPERTY_CATEGORY)
+  @Column(name = "category")
   private String category;
 
   public ValueRowCategory category(String category) {

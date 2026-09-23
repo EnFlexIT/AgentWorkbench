@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 /**
  * BarChart
@@ -27,9 +29,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
   BarChart.JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@Entity
 public class BarChart extends AbstractChart  {
   public static final String JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL = "secondaryYAxisLabel";
   @JsonProperty(JSON_PROPERTY_SECONDARY_Y_AXIS_LABEL)
+  @Column(name = "secondary_y_axis_label")
   private String secondaryYAxisLabel;
 
   public BarChart secondaryYAxisLabel(String secondaryYAxisLabel) {
