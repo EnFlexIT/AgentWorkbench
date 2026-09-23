@@ -36,10 +36,11 @@ Import-Package: com.google.gson,
 Service-Component: OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dataSourceServiceDatabaseDataSource.xml,
  OSGI-INF/dataSourceServiceExcelDataSource.xml,
+ OSGI-INF/dataSourceServiceProcessingDataSource.xml,
  OSGI-INF/dataFramePerspectiveService.xml,
  OSGI-INF/dwExtensionTestColumnDescription.xml,
  OSGI-INF/dwExtensionTestDatabaseWorkbook.xml,
- OSGI-INF/dwExtensionTestMenue.xml 
+ OSGI-INF/dwExtensionTestMenue.xml
 Export-Package: de.enflexit.df.core,
  de.enflexit.df.core.dataSources,
  de.enflexit.df.core.dataSources.integration,
