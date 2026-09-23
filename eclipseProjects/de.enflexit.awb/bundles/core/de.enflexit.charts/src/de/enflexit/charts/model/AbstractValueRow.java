@@ -23,13 +23,16 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -49,14 +52,19 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "dia_value_row")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "value_row_type")
 public class AbstractValueRow   {
+	
   @Id
   @GeneratedValue
   @Column(name = "id_value_row")
   private Integer id;	
+  
   public static final String JSON_PROPERTY_VALUE = "value";
   @JsonProperty(JSON_PROPERTY_VALUE)
   @ElementCollection
+  @CollectionTable( name = "dia_value_row_value", joinColumns = @JoinColumn(name = "id_value_row"))
+  @Column(name = "value")
   private List<Double> value = new ArrayList<>();
 
   public AbstractValueRow value(List<Double> value) {
@@ -86,7 +94,6 @@ public class AbstractValueRow   {
   public void setValue(List<Double> value) {
     this.value = value;
   }
-
 
   @Override
   public boolean equals(Object o) {
@@ -123,4 +130,3 @@ public class AbstractValueRow   {
     return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
-
