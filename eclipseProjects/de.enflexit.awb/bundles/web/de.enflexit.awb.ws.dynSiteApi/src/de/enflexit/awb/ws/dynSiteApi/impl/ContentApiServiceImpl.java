@@ -1,14 +1,9 @@
 package de.enflexit.awb.ws.dynSiteApi.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.enflexit.awb.ws.dynSiteApi.RestApiConfiguration;
 import de.enflexit.awb.ws.dynSiteApi.content.DynamicContentFactory;
 import de.enflexit.awb.ws.dynSiteApi.content.ImageHelper;
-import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
-import de.enflexit.awb.ws.dynSiteApi.gen.ContentApiService;
-import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
+import de.enflexit.awb.ws.dynSiteApi.gen.*;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
@@ -19,42 +14,33 @@ import de.enflexit.charts.model.DataSeries;
 import de.enflexit.charts.model.LineChart;
 import de.enflexit.charts.model.PieChart;
 import de.enflexit.charts.model.TimeSeriesChart;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.io.InputStream;
+
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
-
-/**
- * The Class ContentApiServiceImpl.
- *
- * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
- */
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2025-04-02T11:34:41.198040400+02:00[Europe/Berlin]", comments = "Generator version: 7.6.0")
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentApiServiceImpl extends ContentApiService {
-
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.awb.ws.dynSiteApi.gen.ContentApiService#contentMenuIDGet(java.lang.Integer, jakarta.ws.rs.core.SecurityContext)
-	 */
-	@Override
-    public Response contentMenuIDGet(Integer menueID, SecurityContext securityContext) throws NotFoundException {
-        
-    	if (menueID==null) {
+    @Override
+    public Response getMenuContent(Integer menuID, SecurityContext securityContext) throws NotFoundException {
+    	if (menuID==null) {
             return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Missing menueID!")).build();
     	}
 		
     	// --- Create the content according to the menueID -------------------
-		SiteContentList scList = this.getSiteContentList(menueID);
+		SiteContentList scList = this.getSiteContentList(menuID);
 		if (scList!=null) {
 			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(scList).build();
 		}
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Unknown menueID!")).build();
     }
-	
-	/**
-	 * Returns the site content list.
-	 *
-	 * @param menuID the menu ID
-	 * @return the site content list
-	 */
+    
 	private SiteContentList getSiteContentList(Integer menuID) {
 		
 		SiteContentList scList = new SiteContentList();
@@ -298,5 +284,4 @@ public class ContentApiServiceImpl extends ContentApiService {
 		chartContent.setChart(lineChart);
 		return chartContent;
 	}
-	
 }

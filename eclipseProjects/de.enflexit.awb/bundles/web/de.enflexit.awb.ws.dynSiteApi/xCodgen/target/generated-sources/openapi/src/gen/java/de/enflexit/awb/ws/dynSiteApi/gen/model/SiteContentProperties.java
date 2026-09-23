@@ -32,7 +32,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentProperties.JSON_PROPERTY_PROPERTY_ENTRIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T13:48:54.857749600+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentProperties extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_PROPERTY_ENTRIES = "propertyEntries";
   @JsonProperty(JSON_PROPERTY_PROPERTY_ENTRIES)

@@ -23,18 +23,18 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * MenuPost201Response
+ * CreateMenu201Response
  */
 @JsonPropertyOrder({
-  MenuPost201Response.JSON_PROPERTY_MENU_I_D
+  CreateMenu201Response.JSON_PROPERTY_MENU_I_D
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T13:48:54.857749600+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
-public class MenuPost201Response   {
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+public class CreateMenu201Response   {
   public static final String JSON_PROPERTY_MENU_I_D = "menuID";
   @JsonProperty(JSON_PROPERTY_MENU_I_D)
   private Integer menuID;
 
-  public MenuPost201Response menuID(Integer menuID) {
+  public CreateMenu201Response menuID(Integer menuID) {
     this.menuID = menuID;
     return this;
   }
@@ -63,8 +63,8 @@ public class MenuPost201Response   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    MenuPost201Response menuPost201Response = (MenuPost201Response) o;
-    return Objects.equals(this.menuID, menuPost201Response.menuID);
+    CreateMenu201Response createMenu201Response = (CreateMenu201Response) o;
+    return Objects.equals(this.menuID, createMenu201Response.menuID);
   }
 
   @Override
@@ -75,7 +75,7 @@ public class MenuPost201Response   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class MenuPost201Response {\n");
+    sb.append("class CreateMenu201Response {\n");
     
     sb.append("    menuID: ").append(toIndentedString(menuID)).append("\n");
     sb.append("}");
