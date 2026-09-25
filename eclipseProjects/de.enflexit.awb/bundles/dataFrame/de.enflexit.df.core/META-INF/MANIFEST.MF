@@ -9,8 +9,10 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.df.tablesaw,
- de.enflexit.db.hibernate
-Import-Package: com.google.gson,
+ de.enflexit.db.hibernate,
+ org.agentgui.lib.jung
+Import-Package: com.google.common.base,
+ com.google.gson,
  com.google.gson.stream,
  de.enflexit.awb.baseUI,
  de.enflexit.awb.baseUI.mainWindow,

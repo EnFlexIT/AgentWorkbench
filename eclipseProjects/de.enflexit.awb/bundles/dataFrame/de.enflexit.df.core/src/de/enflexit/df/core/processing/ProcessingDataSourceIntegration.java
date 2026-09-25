@@ -76,7 +76,7 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	@Override
 	public JComponent getDetailViewPanel() {
 		if (detailsViewPanel==null) {
-			detailsViewPanel = new JPanelDataProcessingDetailsView();
+			detailsViewPanel = new JPanelDataProcessingDetailsView(this.getDataController());
 		}
 		return detailsViewPanel;
 	}
