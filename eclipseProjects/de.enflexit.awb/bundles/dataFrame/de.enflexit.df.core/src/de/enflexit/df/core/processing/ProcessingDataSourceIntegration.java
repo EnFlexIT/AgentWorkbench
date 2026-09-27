@@ -7,7 +7,7 @@ import javax.swing.JComponent;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.processing.ui.JPanelDataProcessingDetailsView;
+import de.enflexit.df.core.processing.ui.JPanelTransformationGraphEditor;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -18,7 +18,7 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	
 	private ProcessingDataSourceDTNO dtno;
 	private JPanelDataSourceConfigurationProcessing configPanel;
-	private JPanelDataProcessingDetailsView detailsViewPanel;
+	private JPanelTransformationGraphEditor detailsViewPanel;
 
 	/**
 	 * Instantiates a new processing data source integration.
@@ -76,7 +76,7 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	@Override
 	public JComponent getDetailViewPanel() {
 		if (detailsViewPanel==null) {
-			detailsViewPanel = new JPanelDataProcessingDetailsView(this.getDataController());
+			detailsViewPanel = new JPanelTransformationGraphEditor(getDataController());
 		}
 		return detailsViewPanel;
 	}

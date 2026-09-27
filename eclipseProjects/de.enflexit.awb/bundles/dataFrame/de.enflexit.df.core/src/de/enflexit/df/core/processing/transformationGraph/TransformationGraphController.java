@@ -1,7 +1,10 @@
 package de.enflexit.df.core.processing.transformationGraph;
 
 
+import java.awt.geom.Point2D;
+
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.ObservableGraph;
 import edu.uci.ics.jung.graph.SparseGraph;
@@ -13,6 +16,7 @@ import edu.uci.ics.jung.graph.SparseGraph;
 public class TransformationGraphController {
 
 	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
+	private StaticLayout<DataTableNode, DataTransformationEdge> graphLayout;
 	
 	/**
 	 * Gets the transformation graph.
@@ -21,23 +25,19 @@ public class TransformationGraphController {
 	public Graph<DataTableNode, DataTransformationEdge> getTransformationGraph() {
 		if (transformationGraph==null) {
 			transformationGraph = new ObservableGraph<DataTableNode, DataTransformationEdge>(new SparseGraph<DataTableNode, DataTransformationEdge>());
-			
-			// --- Dummy nodes and edges for first tests, remove later!
-			DataTableNode testNode1 = new DataTableNode();
-			DataTableNode testNode2 = new DataTableNode();
-			DataTableNode testNode3 = new DataTableNode();
-			
-			DataTransformationEdge testEdge1 = new DataTransformationEdge();
-			DataTransformationEdge testEdge2 = new DataTransformationEdge();
-			
-			transformationGraph.addVertex(testNode1);
-			transformationGraph.addVertex(testNode2);
-			transformationGraph.addVertex(testNode3);
-			
-			transformationGraph.addEdge(testEdge1, testNode1, testNode3);
-			transformationGraph.addEdge(testEdge2, testNode2, testNode3);
 		}
 		return transformationGraph;
+	}
+	
+	/**
+	 * Gets the graph layout.
+	 * @return the graph layout
+	 */
+	public StaticLayout<DataTableNode, DataTransformationEdge> getGraphLayout() {
+		if (graphLayout==null) {
+			graphLayout = new StaticLayout<DataTableNode, DataTransformationEdge>(this.getTransformationGraph());
+		}
+		return graphLayout;
 	}
 	
 	/**
@@ -51,19 +51,22 @@ public class TransformationGraphController {
 	/**
 	 * Creates a {@link DataTableNode} for the provided {@link AbstractDataSourceDTNO} and adds it to the graph.
 	 * @param dataSourceDTNO the data source DTNO
+	 * @param position the position
 	 */
-	public void addDataTableNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
-		DataTableNode dtNode = new DataTableNode();
+	public void addDataTableNode(AbstractDataSourceDTNO<?> dataSourceDTNO, Point2D position) {
+		DataTableNodeDataSource dtNode = new DataTableNodeDataSource();
 		dtNode.setDataSourceDTNO(dataSourceDTNO);
-		this.addDataTableNode(dtNode);
+		this.addDataTableNode(dtNode, position);
 	}
 	
 	/**
 	 * Adds the provided {@link DataTableNode} to the graph.
 	 * @param dataTableNode the node
+	 * @param position the position
 	 */
-	public void addDataTableNode(DataTableNode dataTableNode) {
+	public void addDataTableNode(DataTableNode dataTableNode, Point2D position) {
 		this.getTransformationGraph().addVertex(dataTableNode);
+		this.getGraphLayout().setLocation(dataTableNode, position.getX(), position.getY());
 	}
 	
 	/**
@@ -93,7 +96,7 @@ public class TransformationGraphController {
 	 */
 	public DataTableNode findNodeForDataSource(AbstractDataSourceDTNO<?> dataSourceDTNO) {
 		for (DataTableNode node : this.getTransformationGraph().getVertices()) {
-			if (node.getDataSourceDTNO()==dataSourceDTNO) {
+			if (node instanceof DataTableNodeDataSource && ((DataTableNodeDataSource)node).getDataSourceDTNO()==dataSourceDTNO) {
 				return node;
 			}
 		}
