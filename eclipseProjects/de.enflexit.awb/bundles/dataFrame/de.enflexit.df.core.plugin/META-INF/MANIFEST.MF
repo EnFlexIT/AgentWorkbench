@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Data Frame - Project-PlugIn
+Bundle-Vendor: EnFlex.IT
+Bundle-SymbolicName: de.enflexit.df.core.plugin
+Automatic-Module-Name: de.enflexit.df.core.plugin
+Bundle-Version: 1.0.0.qualifier
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Import-Package: de.enflexit.awb.core.classLoadService,
+ de.enflexit.awb.core.project,
+ de.enflexit.awb.core.project.plugins,
+ de.enflexit.awb.core.ui,
+ de.enflexit.awb.desktop.project,
+ de.enflexit.awb.simulation.balancing,
+ de.enflexit.awb.simulation.environment.time,
+ jade.content.onto,
+ jade.core
+Require-Bundle: de.enflexit.df.core
+Service-Component: OSGI-INF/awbClassLoadService.xml
