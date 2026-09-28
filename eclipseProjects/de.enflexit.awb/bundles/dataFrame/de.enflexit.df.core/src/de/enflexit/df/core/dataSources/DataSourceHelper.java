@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.df.core.processing.ProcessingDataSource;
 import de.enflexit.df.impl.csv.CsvDataSource;
 import de.enflexit.df.impl.db.DatabaseDataSource;
 import de.enflexit.df.impl.excel.ExcelDataSource;
@@ -48,6 +49,7 @@ public class DataSourceHelper {
 		dsHashMap.remove(CsvDataSource.class.getSimpleName());
 		dsHashMap.remove(ExcelDataSource.class.getSimpleName());
 		dsHashMap.remove(DatabaseDataSource.class.getSimpleName());
+		dsHashMap.remove(ProcessingDataSource.class.getSimpleName());
 		
 		List<DataSource> extDataSourceList = new ArrayList<>(); 
 		extDataSourceList.addAll(dsHashMap.values());

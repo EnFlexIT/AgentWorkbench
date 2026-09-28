@@ -30,6 +30,7 @@ import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.df.core.processing.ProcessingDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
@@ -76,6 +77,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		private JMenuItem jMenuItemCsvData; 
 		private JMenuItem jMenuItemExcelFile;
 		private JMenuItem jMenuItemDatabaseData;
+		private JMenuItem jMenuItemDataProcessing;
 	
 	private JButton jButtonDeleteDataSources;
 	
@@ -369,6 +371,8 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		jPopupMenuOpen.add(this.getJMenuItemCsvData());
 		jPopupMenuOpen.add(this.getJMenuItemExcelFile());
 		jPopupMenuOpen.add(this.getJMenuItemDatabaseData());
+		jPopupMenuOpen.addSeparator();
+		jPopupMenuOpen.add(this.getjMenuItemDataProcessing());
 		// --- Add all remaining services -----------------
 		this.addExternalDataSourceServices(jPopupMenuOpen);
 		// --- Add a data processing ---------------------- 
@@ -400,6 +404,15 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 			jMenuItemDatabaseData.addActionListener(this);
 		}
 		return jMenuItemDatabaseData;
+	}
+	public JMenuItem getjMenuItemDataProcessing() {
+		if (jMenuItemDataProcessing==null) {
+			jMenuItemDataProcessing = new JMenuItem("Data Processing");
+			jMenuItemDataProcessing.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemDataProcessing.setIcon(BundleHelper.getThemedIcon("DataProcessingBlack.png", "DataProcessingGrey.png"));
+			jMenuItemDataProcessing.addActionListener(this);
+		}
+		return jMenuItemDataProcessing;
 	}
 	
 	/**
@@ -642,6 +655,10 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		} else if (ae.getSource()==this.getJMenuItemDatabaseData()) {
 			// --- Add DatabaseDataSource -------------------------------------
 			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new DatabaseDataSource());
+			
+		} else if (ae.getSource()==this.getjMenuItemDataProcessing()) {
+			// --- Add processing data source ---------------------------------
+			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new ProcessingDataSource());
 		
 		} else if (ae.getSource() instanceof JMenuItem && ae.getActionCommand()!=null) {
 			// --- Add the individual data source ---
