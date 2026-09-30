@@ -33,8 +33,11 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	 */
 	@Override
 	public Table getDataTable() {
-		// TODO Auto-generated method stub
-		return null;
+		if (this.dataTransformation==null) {
+			return null;
+		} else {
+			return this.getDataTransformation().performTransformation();
+		}
 	}
 
 	/* (non-Javadoc)

@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 
@@ -21,18 +20,18 @@ import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import tech.tablesaw.api.Table;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 
 /**
  * This panel provides a UI to configure data transformations.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JPanelDataTransformationConfiguration extends JPanel implements ActionListener {
+public class JPanelDataTransformationConfiguration extends JPanel implements ActionListener, CheckBoxListSelectionListener<DataTableNode>, RadioButtonListSelectionListener<DataTableNode> {
 	
 	private static final long serialVersionUID = -2310318384700465180L;
 	
@@ -42,14 +41,13 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 	private JLabel jLabelInputTables;
 	private JLabel jLabelParameters;
 	private JScrollPane jScrollPaneTablesList;
-	private JScrollPane jScrollPaneParametersTable;
-	private JTable jTableParameters;
-	
 	private JList<DataTableNode> tableNodesList;
 	
 	private CheckBoxList<DataTableNode> tableNodesCheckBoxList;
 	private RadioButtonList<DataTableNode> tableNodesRadioButtonList;
 	private DefaultListModel<DataTableNode> tableNodesListModel;
+	
+	private JPanelTableColumnSelection columnSelectionPanel;
 	
 	private JPanelTransformationGraphEditor parentEditorPanel;
 	
@@ -114,7 +112,7 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 		gbc_jScrollPaneParametersTable.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneParametersTable.gridx = 1;
 		gbc_jScrollPaneParametersTable.gridy = 2;
-		add(getJScrollPaneParametersTable(), gbc_jScrollPaneParametersTable);
+		add(getColumnSelectionPanel(), gbc_jScrollPaneParametersTable);
 	}
 
 	private JLabel getJLabelSelectTransformation() {
@@ -124,7 +122,7 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 		}
 		return jLabelSelectTransformation;
 	}
-	private JComboBox<DataTransformationService> getJComboBoxSelectTransformation() {
+	protected JComboBox<DataTransformationService> getJComboBoxSelectTransformation() {
 		if (jComboBoxSelectTransformation == null) {
 			jComboBoxSelectTransformation = new JComboBox<DataTransformationService>();
 			jComboBoxSelectTransformation.setModel(this.getDataTransformationComboBoxModel());
@@ -180,19 +178,22 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 				tableNodesList = this.getTableNodesRadioButtonList();
 			}
 		}
-		tableNodesList.setEnabled(this.isTransformationSelected());
 		return tableNodesList;
 	}
 	
 	private CheckBoxList<DataTableNode> getTableNodesCheckBoxList() {
 		if (tableNodesCheckBoxList==null) {
 			tableNodesCheckBoxList = new CheckBoxList<DataTableNode>(this.getTableNodesListModel());
+			tableNodesCheckBoxList.setEnabled(false);
+			tableNodesCheckBoxList.addCheckBoxListSelectionListener(this);
 		}
 		return tableNodesCheckBoxList;
 	}
 	private RadioButtonList<DataTableNode> getTableNodesRadioButtonList() {
 		if (tableNodesRadioButtonList==null) {
 			tableNodesRadioButtonList = new RadioButtonList<DataTableNode>(this.getTableNodesListModel());
+			tableNodesRadioButtonList.setEnabled(false);
+			tableNodesRadioButtonList.addSelectionListener(this);
 		}
 		return tableNodesRadioButtonList;
 	}
@@ -213,18 +214,11 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 		return tableNodesListModel;
 	}
 	
-	private JScrollPane getJScrollPaneParametersTable() {
-		if (jScrollPaneParametersTable == null) {
-			jScrollPaneParametersTable = new JScrollPane();
-			jScrollPaneParametersTable.setViewportView(getJTableParameters());
+	private JPanelTableColumnSelection getColumnSelectionPanel() {
+		if (columnSelectionPanel==null) {
+			columnSelectionPanel = new JPanelTableColumnSelection();
 		}
-		return jScrollPaneParametersTable;
-	}
-	private JTable getJTableParameters() {
-		if (jTableParameters == null) {
-			jTableParameters = new JTable();
-		}
-		return jTableParameters;
+		return columnSelectionPanel;
 	}
 
 	/* (non-Javadoc)
@@ -242,6 +236,8 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 				}
 			// --- Re-initialize the table nodes list if it is the wrong type for the current transformation
 			}
+			
+			this.getTableNodesList().setEnabled(this.isTransformationSelected());
 		}
 	}
 	
@@ -299,4 +295,28 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 		
 		return selectedNodes;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.ui.RadioButtonListSelectionListener#selectionChanged(de.enflexit.df.core.processing.ui.RadioButtonListSelectionEvent)
+	 */
+	@Override
+	public void selectionChanged(RadioButtonListSelectionEvent<DataTableNode> selectionEvent) {
+		Table affectedTable = selectionEvent.getItem().getDataTable();
+		this.getColumnSelectionPanel().clearTableColumnsList();
+		this.getColumnSelectionPanel().addTable(affectedTable);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.ui.CheckBoxListSelectionListener#selectionChanged(de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent)
+	 */
+	@Override
+	public void selectionChanged(CheckBoxListSelectionEvent<DataTableNode> checkboxListSelectionEvent) {
+		Table affectedTable = checkboxListSelectionEvent.getItem().getDataTable();
+		if (checkboxListSelectionEvent.isSelected()==true) {
+			this.getColumnSelectionPanel().addTable(affectedTable);
+		} else {
+			this.getColumnSelectionPanel().removeTable(affectedTable);
+		}
+	}
+
 }

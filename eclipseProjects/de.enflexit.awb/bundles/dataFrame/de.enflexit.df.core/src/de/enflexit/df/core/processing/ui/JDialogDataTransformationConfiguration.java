@@ -60,6 +60,7 @@ public class JDialogDataTransformationConfiguration extends JDialog implements A
 	private JPanelDataTransformationConfiguration getJPanelDataTransformationConfiguration() {
 		if (jPanelDataTransformationConfiguration == null) {
 			jPanelDataTransformationConfiguration = new JPanelDataTransformationConfiguration(this.parentEditorPanel);
+			jPanelDataTransformationConfiguration.getJComboBoxSelectTransformation().addActionListener(this);
 		}
 		return jPanelDataTransformationConfiguration;
 	}
@@ -103,6 +104,7 @@ public class JDialogDataTransformationConfiguration extends JDialog implements A
 			jButtonApply = new JButton("Apply");
 			jButtonApply.setFont(new Font("Dialog", Font.BOLD, 12));
 			jButtonApply.addActionListener(this);
+			jButtonApply.setEnabled(false);
 		}
 		return jButtonApply;
 	}
@@ -140,6 +142,10 @@ public class JDialogDataTransformationConfiguration extends JDialog implements A
 
 			this.setVisible(false);
 			this.dispose();
+		} else if (ae.getSource()==this.getJPanelDataTransformationConfiguration().getJComboBoxSelectTransformation()) {
+			// --- Apply is only possible if a transformation is selected ----- 
+			boolean transformationSelected = (this.getJPanelDataTransformationConfiguration().getJComboBoxSelectTransformation().getSelectedItem()!=null);
+			this.getJButtonApply().setEnabled(transformationSelected);
 		}
 	}
 }
