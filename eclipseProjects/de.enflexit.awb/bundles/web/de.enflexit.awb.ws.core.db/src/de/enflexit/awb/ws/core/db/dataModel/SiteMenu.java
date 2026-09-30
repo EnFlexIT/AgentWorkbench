@@ -54,7 +54,7 @@ public class SiteMenu {
 	private HashMap<String, String> translationHashMap;
 	
 	@OneToMany(mappedBy = "siteMenu")
-	private Set<SiteMenuContent> siteContentMenu;
+	private Set<SiteMenuContent> siteMenuContent;
 	
 	
 	/**
@@ -207,15 +207,15 @@ public class SiteMenu {
 	 * Return the site content menu.
 	 * @return the site content menu
 	 */
-	public Set<SiteMenuContent> getSiteContentMenu() {
-		return siteContentMenu;
+	public Set<SiteMenuContent> getSiteMenuContent() {
+		return siteMenuContent;
 	}
 	/**
 	 * Sets the site content menu.
-	 * @param siteContentMenu the new site content menu
+	 * @param siteMenuContent the new site content menu
 	 */
-	public void setSiteContentMenu(Set<SiteMenuContent> siteContentMenu) {
-		this.siteContentMenu = siteContentMenu;
+	public void setSiteMenuContent(Set<SiteMenuContent> siteContentMenu) {
+		this.siteMenuContent = siteContentMenu;
 	}
 	
 }

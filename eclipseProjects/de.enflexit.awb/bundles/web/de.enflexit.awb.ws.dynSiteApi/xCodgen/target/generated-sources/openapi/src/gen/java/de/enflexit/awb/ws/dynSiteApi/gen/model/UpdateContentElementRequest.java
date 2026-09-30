@@ -23,35 +23,35 @@ import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentChart
+ * UpdateContentElementRequest
  */
 @JsonPropertyOrder({
-  SiteContentChart.JSON_PROPERTY_CHART
+  UpdateContentElementRequest.JSON_PROPERTY_CONTENT
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
-public class SiteContentChart extends AbstractSiteContent  {
-  public static final String JSON_PROPERTY_CHART = "chart";
-  @JsonProperty(JSON_PROPERTY_CHART)
-  private de.enflexit.charts.model.AbstractChart chart;
+public class UpdateContentElementRequest   {
+  public static final String JSON_PROPERTY_CONTENT = "content";
+  @JsonProperty(JSON_PROPERTY_CONTENT)
+  private AbstractSiteContent content;
 
-  public SiteContentChart chart(de.enflexit.charts.model.AbstractChart chart) {
-    this.chart = chart;
+  public UpdateContentElementRequest content(AbstractSiteContent content) {
+    this.content = content;
     return this;
   }
 
   /**
-   * Get chart
-   * @return chart
+   * Get content
+   * @return content
    **/
-  @JsonProperty(value = "chart")
+  @JsonProperty(value = "content")
   @Schema(description = "")
   @Valid 
-  public de.enflexit.charts.model.AbstractChart getChart() {
-    return chart;
+  public AbstractSiteContent getContent() {
+    return content;
   }
 
-  public void setChart(de.enflexit.charts.model.AbstractChart chart) {
-    this.chart = chart;
+  public void setContent(AbstractSiteContent content) {
+    this.content = content;
   }
 
 
@@ -63,21 +63,21 @@ public class SiteContentChart extends AbstractSiteContent  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentChart siteContentChart = (SiteContentChart) o;
-    return super.equals(o) && Objects.equals(this.chart, siteContentChart.chart);
+    UpdateContentElementRequest updateContentElementRequest = (UpdateContentElementRequest) o;
+    return Objects.equals(this.content, updateContentElementRequest.content);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), chart);
+    return Objects.hash(content);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentChart {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    chart: ").append(toIndentedString(chart)).append("\n");
+    sb.append("class UpdateContentElementRequest {\n");
+    
+    sb.append("    content: ").append(toIndentedString(content)).append("\n");
     sb.append("}");
     return sb.toString();
   }

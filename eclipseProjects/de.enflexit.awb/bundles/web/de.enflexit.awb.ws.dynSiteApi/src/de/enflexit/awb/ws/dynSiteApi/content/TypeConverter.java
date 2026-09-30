@@ -7,8 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentImage;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentMedia;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentPropertyEntry;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentPropertyEntry.PropertyValueType;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentTable;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentText;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
 
 /**
  * The Class TypeConverter.
@@ -26,7 +36,7 @@ public class TypeConverter {
 	 * @param dbSiteMenuList the database site menu list
 	 * @return the menu item
 	 */
-	public static List<MenuItem> getMenuItemList(List<SiteMenu> dbSiteMenuList, String language) {
+	public static List<MenuItem> toRestMenuItemList(List<SiteMenu> dbSiteMenuList, String language) {
 		
 		// --- Fast exit ? --------------------------------
 		if (dbSiteMenuList==null) return null;
@@ -133,15 +143,15 @@ public class TypeConverter {
 	private static MenuItem getMenuItem(SiteMenu siteMenu, String language, String path, String pathCaption, String pathPosition) {
 		
 		MenuItem menuItem = new MenuItem();
-		menuItem.setMenuID(siteMenu.getId());
+		menuItem.setMenuId(siteMenu.getId());
 		if (siteMenu.getParentMenu()!=null) {
-			menuItem.setParentID(siteMenu.getParentMenu().getId());
+			menuItem.setParentId(siteMenu.getParentMenu().getId());
 		}
 		
 		menuItem.setPosition(siteMenu.getPosition());
 		menuItem.setIsHeadMenu(siteMenu.isHeadMenu());
 		menuItem.setCaption(siteMenu.getCaption(language));
-		menuItem.setPathID(path);
+		menuItem.setPathId(path);
 		menuItem.setPathCaption(pathCaption);
 		menuItem.setPathPosition(pathPosition);
 		return menuItem;
@@ -153,10 +163,20 @@ public class TypeConverter {
 	 * @param menuItem the menu item
 	 * @return the site menu
 	 */
-	public static SiteMenu getDBSiteMenu(MenuItem menuItem) {
+	public static SiteMenu toDBSiteMenu(MenuItem menuItem) {
 		
 		SiteMenu siteMenu = new SiteMenu();
+		siteMenu.setCaption(menuItem.getCaption());
+		siteMenu.setPosition(menuItem.getPosition());
+		siteMenu.setHeadMenu(menuItem.getIsHeadMenu());
 		
+		// TODO find and set the values which are actually needed.
+//		siteMenu.setAccessRightLevel(...); 
+
+
+		SiteMenu parentMenu = new SiteMenu();
+		parentMenu.setId(menuItem.getParentId());
+		siteMenu.setParentMenu(parentMenu);
 		
 		return siteMenu;
 	}
@@ -171,42 +191,196 @@ public class TypeConverter {
 	 * @param siteContentList the site content list
 	 * @return the DB site content list
 	 */
-	public static List<SiteContent> getDBSiteContentList(List<de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent> siteContentList) {
+	public static List<SiteContent> toDBSiteContentList(List<de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent> siteContentList) {
 		
 		if (siteContentList==null || siteContentList.size()==0) return null;
 		
 		List<SiteContent> dbSiteContentList =  new ArrayList<>();
 		siteContentList.forEach(asc -> {
-			SiteContent dbSiteContent = TypeConverter.getDBSiteContent(asc);
+			SiteContent dbSiteContent = TypeConverter.toDBSiteContent(asc);
 			if (dbSiteContent!=null) {
 				dbSiteContentList.add(dbSiteContent);	
 			}
 		});
 		return dbSiteContentList;
 	}
-	
+
 	/**
-	 * Returns the specified list to a database site content list.
+	 * To rest content.
 	 *
 	 * @param siteContent the site content
-	 * @return the DB site content list
+	 * @return the abstract site content
 	 */
-	public static SiteContent getDBSiteContent(de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent siteContent) {
+	public static AbstractSiteContent toRestContent(de.enflexit.awb.ws.core.db.dataModel.SiteContent siteContent) {
+		
+		AbstractSiteContent restContent = new AbstractSiteContent();
+		
+		if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentText dbText) {
+			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText restText = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText();
+			restText.setText(dbText.getTextData());
+			restContent = restText;
+		
+		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentImage dbImage) {
+			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage restImage = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage();
+			restImage.setDataInB64(dbImage.getTextData());
+			restContent = restImage;
+			
+		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbProperties) {
+			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProps = TypeConverter.dbToRestPorperties(dbProperties);
+			restContent = restProps;
+			
+		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentTable dbTable) {
+			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable restTable = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable();
+			// TODO extend the dataModel.SiteContentTable with required fields and set them here
+			restContent = restTable;
+		}
+		// TODO Charts are missing
+		
+		if (restContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia scm && siteContent instanceof SiteContentMedia dbScm) {
+			scm.setMimeType(dbScm.getMimeType());
+			scm.setSiteContentMediaType(restContent.getClass().getSimpleName());
+		}
+		
+		restContent.setAbstractSiteContentType(restContent.getClass().getSuperclass().getSimpleName());
+		restContent.setUniqueContentId(siteContent.getId());
+		restContent.setEditable(siteContent.isEditable());
+		restContent.setUpdatePeriodInSeconds(siteContent.getUpdatePeriodInSeconds());
+		
+		return restContent;
+		
+	}
+
+	/**
+	 * Converts the passed rest content to de.enflexit.awb.ws.core.db.dataModel.SiteContent (db SiteContent)
+	 *
+	 * @param siteContent the site content
+	 * @return the site content
+	 */
+	public static SiteContent toDBSiteContent(de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent siteContent) {
+		
+		if (siteContent == null) {
+			return null;
+		}
 		
 		SiteContent dbSiteContent = null;
 		
 		if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText scText) {
-			dbSiteContent = new de.enflexit.awb.ws.core.db.dataModel.SiteContentText();
-			
+			SiteContentText dbText = new de.enflexit.awb.ws.core.db.dataModel.SiteContentText();
+			dbText.setTextData(scText.getText());
+			dbSiteContent = dbText;
+		
 		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage scImage) {
-
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties scProperties) {
-
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable scTable) {
+			SiteContentImage dbImage = new de.enflexit.awb.ws.core.db.dataModel.SiteContentImage();
+			dbImage.setTextData(scImage.getDataInB64());
+			dbSiteContent = dbImage;
 			
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties scProperties) {
+			SiteContentProperties dbProps = TypeConverter.restToDbProperties(scProperties);
+			dbSiteContent = dbProps;
+			
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable scTable) {
+			SiteContentTable dbTable = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTable();
+			// TODO extend the dataModel.SiteContentTable with required fields and set them here
+			dbSiteContent = dbTable;
+		
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart scChart) {
+			//TODO find the chart type and instantiate it
 		}
 		
+		
+		if (dbSiteContent instanceof SiteContentMedia scm && siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia restScm ) {
+			scm.setMimeType(restScm.getMimeType());
+		}
+		
+		// --- Set common fields ------------------------------------------------------------------
+		dbSiteContent.setId(siteContent.getUniqueContentId());
+		dbSiteContent.setEditable(siteContent.getEditable());
+		dbSiteContent.setUpdatePeriodInSeconds(siteContent.getUpdatePeriodInSeconds());
+		
 		return dbSiteContent;
+	}
+	
+	/**
+	 * Converts de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties to de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties (db props to rest props)
+	 *
+	 * @param dbproperties the dbproperties
+	 * @return the de.enflexit.awb.ws.dyn site api.gen.model. site content properties
+	 */
+	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties dbToRestPorperties(de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbproperties){
+		
+		de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProps = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties();
+		if (dbproperties == null) return restProps;
+		
+		for (SiteContentPropertyEntry dbEntry : dbproperties.getPropertyEntries()) {
+			
+			PropertyEntry restEntry = new PropertyEntry();
+			restEntry.setKey(dbEntry.getPropertyKey());
+			restEntry.setValue(dbEntry.getPropertyValue());
+			
+			switch (dbEntry.getValueType()) {
+			
+			case BOOLEAN:
+				restEntry.setValueType(ValueType.BOOLEAN);
+				break;
+			case DOUBLE:
+				restEntry.setValueType(ValueType.DOUBLE);
+				break;
+			case INTEGER:
+				restEntry.setValueType(ValueType.INTEGER);
+				break;
+			case LONG:
+				restEntry.setValueType(ValueType.LONG);
+				break;
+			case STRING:
+				restEntry.setValueType(ValueType.STRING);
+				break;
+			default:
+				break;
+			}
+			restProps.addPropertyEntriesItem(restEntry);
+		}
+		return restProps;
+	}
+	
+	/**
+	 * Converts de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties to de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties.
+	 *
+	 * @param restProperties the rest properties
+	 * @return the de.enflexit.awb.ws.core.db.data model. site content properties
+	 */
+	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties restToDbProperties(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProperties){
+		
+		de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbProps = new SiteContentProperties();
+		if (restProperties == null) return dbProps;
+		
+		for (PropertyEntry restEntry : restProperties.getPropertyEntries()) {
+			
+			SiteContentPropertyEntry dbEntry = new SiteContentPropertyEntry();
+			dbEntry.setPropertyKey(restEntry.getKey());
+			dbEntry.setPropertyValue(restEntry.getValue());
+			switch (restEntry.getValueType()) {
+			case BOOLEAN:
+				dbEntry.setValueType(PropertyValueType.BOOLEAN);
+				break;
+			case DOUBLE:
+				dbEntry.setValueType(PropertyValueType.DOUBLE);
+				break;
+			case INTEGER:
+				dbEntry.setValueType(PropertyValueType.INTEGER);
+				break;
+			case LONG:
+				dbEntry.setValueType(PropertyValueType.LONG);
+				break;
+			case STRING:
+				dbEntry.setValueType(PropertyValueType.STRING);
+				break;
+			default:
+				break;
+			
+			}
+			dbProps.getPropertyEntries().add(dbEntry);
+		}
+		return dbProps;
 	}
 	
 }

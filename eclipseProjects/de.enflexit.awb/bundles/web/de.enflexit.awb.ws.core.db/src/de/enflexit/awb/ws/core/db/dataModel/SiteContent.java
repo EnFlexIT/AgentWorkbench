@@ -2,6 +2,7 @@ package de.enflexit.awb.ws.core.db.dataModel;
 
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,8 +33,8 @@ public abstract class SiteContent {
 	@Column(name = "update_period_in_seconds")
 	private int updatePeriodInSeconds;
 	
-	@OneToMany(mappedBy = "siteContent")
-	private Set<SiteMenuContent> siteContentMenu;
+	@OneToMany(mappedBy = "siteContent", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<SiteMenuContent> siteMenuContent;
 
 
 	/**
@@ -83,17 +84,17 @@ public abstract class SiteContent {
 
 	/**
 	 * Returns the site content menu.
-	 * @return the siteContentMenu
+	 * @return the siteMenuContent
 	 */
-	public Set<SiteMenuContent> getSiteContentMenu() {
-		return siteContentMenu;
+	public Set<SiteMenuContent> getSiteMenuContent() {
+		return siteMenuContent;
 	}
 	/**
 	 * Sets the site content menu.
-	 * @param siteContentMenu the siteContentMenu to set
+	 * @param siteMenuContent the siteMenuContent to set
 	 */
-	public void setSiteContentMenu(Set<SiteMenuContent> siteContentMenu) {
-		this.siteContentMenu = siteContentMenu;
+	public void setSiteMenuContent(Set<SiteMenuContent> siteContentMenu) {
+		this.siteMenuContent = siteContentMenu;
 	}
 	
 }

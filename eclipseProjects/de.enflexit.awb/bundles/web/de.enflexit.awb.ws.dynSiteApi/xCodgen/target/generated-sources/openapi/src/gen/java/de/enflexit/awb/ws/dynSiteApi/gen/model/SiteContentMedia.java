@@ -29,18 +29,43 @@ import jakarta.validation.Valid;
  * SiteContentMedia
  */
 @JsonPropertyOrder({
+  SiteContentMedia.JSON_PROPERTY_SITE_CONTENT_MEDIA_TYPE,
   SiteContentMedia.JSON_PROPERTY_MIME_TYPE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "SiteContentMediaType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = SiteContentImage.class, name = "SiteContentImage"),
   @JsonSubTypes.Type(value = SiteContentText.class, name = "SiteContentText"),
 })
 
 public class SiteContentMedia extends AbstractSiteContent  {
+  public static final String JSON_PROPERTY_SITE_CONTENT_MEDIA_TYPE = "SiteContentMediaType";
+  @JsonProperty(JSON_PROPERTY_SITE_CONTENT_MEDIA_TYPE)
+  private String siteContentMediaType;
+
   public static final String JSON_PROPERTY_MIME_TYPE = "mimeType";
   @JsonProperty(JSON_PROPERTY_MIME_TYPE)
   private String mimeType;
+
+  public SiteContentMedia siteContentMediaType(String siteContentMediaType) {
+    this.siteContentMediaType = siteContentMediaType;
+    return this;
+  }
+
+  /**
+   * Get siteContentMediaType
+   * @return siteContentMediaType
+   **/
+  @JsonProperty(value = "SiteContentMediaType")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @NotNull 
+  public String getSiteContentMediaType() {
+    return siteContentMediaType;
+  }
+
+  public void setSiteContentMediaType(String siteContentMediaType) {
+    this.siteContentMediaType = siteContentMediaType;
+  }
 
   public SiteContentMedia mimeType(String mimeType) {
     this.mimeType = mimeType;
@@ -72,12 +97,13 @@ public class SiteContentMedia extends AbstractSiteContent  {
       return false;
     }
     SiteContentMedia siteContentMedia = (SiteContentMedia) o;
-    return super.equals(o) && Objects.equals(this.mimeType, siteContentMedia.mimeType);
+    return super.equals(o) && Objects.equals(this.siteContentMediaType, siteContentMedia.siteContentMediaType) &&
+        Objects.equals(this.mimeType, siteContentMedia.mimeType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), mimeType);
+    return Objects.hash(super.hashCode(), siteContentMediaType, super.hashCode(), mimeType);
   }
 
   @Override
@@ -85,6 +111,7 @@ public class SiteContentMedia extends AbstractSiteContent  {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentMedia {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    siteContentMediaType: ").append(toIndentedString(siteContentMediaType)).append("\n");
     sb.append("    mimeType: ").append(toIndentedString(mimeType)).append("\n");
     sb.append("}");
     return sb.toString();

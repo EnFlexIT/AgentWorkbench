@@ -25,24 +25,24 @@ import jakarta.validation.Valid;
  * MenuItem
  */
 @JsonPropertyOrder({
-  MenuItem.JSON_PROPERTY_MENU_I_D,
-  MenuItem.JSON_PROPERTY_PARENT_I_D,
+  MenuItem.JSON_PROPERTY_MENU_ID,
+  MenuItem.JSON_PROPERTY_PARENT_ID,
   MenuItem.JSON_PROPERTY_IS_HEAD_MENU,
   MenuItem.JSON_PROPERTY_POSITION,
   MenuItem.JSON_PROPERTY_CAPTION,
-  MenuItem.JSON_PROPERTY_PATH_I_D,
+  MenuItem.JSON_PROPERTY_PATH_ID,
   MenuItem.JSON_PROPERTY_PATH_CAPTION,
   MenuItem.JSON_PROPERTY_PATH_POSITION
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuItem   {
-  public static final String JSON_PROPERTY_MENU_I_D = "menuID";
-  @JsonProperty(JSON_PROPERTY_MENU_I_D)
-  private Integer menuID;
+  public static final String JSON_PROPERTY_MENU_ID = "menuId";
+  @JsonProperty(JSON_PROPERTY_MENU_ID)
+  private Integer menuId;
 
-  public static final String JSON_PROPERTY_PARENT_I_D = "parentID";
-  @JsonProperty(JSON_PROPERTY_PARENT_I_D)
-  private Integer parentID;
+  public static final String JSON_PROPERTY_PARENT_ID = "parentId";
+  @JsonProperty(JSON_PROPERTY_PARENT_ID)
+  private Integer parentId;
 
   public static final String JSON_PROPERTY_IS_HEAD_MENU = "isHeadMenu";
   @JsonProperty(JSON_PROPERTY_IS_HEAD_MENU)
@@ -56,9 +56,9 @@ public class MenuItem   {
   @JsonProperty(JSON_PROPERTY_CAPTION)
   private String caption;
 
-  public static final String JSON_PROPERTY_PATH_I_D = "pathID";
-  @JsonProperty(JSON_PROPERTY_PATH_I_D)
-  private String pathID;
+  public static final String JSON_PROPERTY_PATH_ID = "pathId";
+  @JsonProperty(JSON_PROPERTY_PATH_ID)
+  private String pathId;
 
   public static final String JSON_PROPERTY_PATH_CAPTION = "pathCaption";
   @JsonProperty(JSON_PROPERTY_PATH_CAPTION)
@@ -68,44 +68,44 @@ public class MenuItem   {
   @JsonProperty(JSON_PROPERTY_PATH_POSITION)
   private String pathPosition;
 
-  public MenuItem menuID(Integer menuID) {
-    this.menuID = menuID;
+  public MenuItem menuId(Integer menuId) {
+    this.menuId = menuId;
     return this;
   }
 
   /**
-   * Get menuID
-   * @return menuID
+   * Get menuId
+   * @return menuId
    **/
-  @JsonProperty(value = "menuID")
-  @Schema(description = "")
-  
-  public Integer getMenuID() {
-    return menuID;
+  @JsonProperty(value = "menuId")
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @NotNull 
+  public Integer getMenuId() {
+    return menuId;
   }
 
-  public void setMenuID(Integer menuID) {
-    this.menuID = menuID;
+  public void setMenuId(Integer menuId) {
+    this.menuId = menuId;
   }
 
-  public MenuItem parentID(Integer parentID) {
-    this.parentID = parentID;
+  public MenuItem parentId(Integer parentId) {
+    this.parentId = parentId;
     return this;
   }
 
   /**
-   * Get parentID
-   * @return parentID
+   * Get parentId
+   * @return parentId
    **/
-  @JsonProperty(value = "parentID")
+  @JsonProperty(value = "parentId")
   @Schema(description = "")
   
-  public Integer getParentID() {
-    return parentID;
+  public Integer getParentId() {
+    return parentId;
   }
 
-  public void setParentID(Integer parentID) {
-    this.parentID = parentID;
+  public void setParentId(Integer parentId) {
+    this.parentId = parentId;
   }
 
   public MenuItem isHeadMenu(Boolean isHeadMenu) {
@@ -168,24 +168,24 @@ public class MenuItem   {
     this.caption = caption;
   }
 
-  public MenuItem pathID(String pathID) {
-    this.pathID = pathID;
+  public MenuItem pathId(String pathId) {
+    this.pathId = pathId;
     return this;
   }
 
   /**
-   * Get pathID
-   * @return pathID
+   * Get pathId
+   * @return pathId
    **/
-  @JsonProperty(value = "pathID")
+  @JsonProperty(value = "pathId")
   @Schema(description = "")
   
-  public String getPathID() {
-    return pathID;
+  public String getPathId() {
+    return pathId;
   }
 
-  public void setPathID(String pathID) {
-    this.pathID = pathID;
+  public void setPathId(String pathId) {
+    this.pathId = pathId;
   }
 
   public MenuItem pathCaption(String pathCaption) {
@@ -238,19 +238,19 @@ public class MenuItem   {
       return false;
     }
     MenuItem menuItem = (MenuItem) o;
-    return Objects.equals(this.menuID, menuItem.menuID) &&
-        Objects.equals(this.parentID, menuItem.parentID) &&
+    return Objects.equals(this.menuId, menuItem.menuId) &&
+        Objects.equals(this.parentId, menuItem.parentId) &&
         Objects.equals(this.isHeadMenu, menuItem.isHeadMenu) &&
         Objects.equals(this.position, menuItem.position) &&
         Objects.equals(this.caption, menuItem.caption) &&
-        Objects.equals(this.pathID, menuItem.pathID) &&
+        Objects.equals(this.pathId, menuItem.pathId) &&
         Objects.equals(this.pathCaption, menuItem.pathCaption) &&
         Objects.equals(this.pathPosition, menuItem.pathPosition);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(menuID, parentID, isHeadMenu, position, caption, pathID, pathCaption, pathPosition);
+    return Objects.hash(menuId, parentId, isHeadMenu, position, caption, pathId, pathCaption, pathPosition);
   }
 
   @Override
@@ -258,12 +258,12 @@ public class MenuItem   {
     StringBuilder sb = new StringBuilder();
     sb.append("class MenuItem {\n");
     
-    sb.append("    menuID: ").append(toIndentedString(menuID)).append("\n");
-    sb.append("    parentID: ").append(toIndentedString(parentID)).append("\n");
+    sb.append("    menuId: ").append(toIndentedString(menuId)).append("\n");
+    sb.append("    parentId: ").append(toIndentedString(parentId)).append("\n");
     sb.append("    isHeadMenu: ").append(toIndentedString(isHeadMenu)).append("\n");
     sb.append("    position: ").append(toIndentedString(position)).append("\n");
     sb.append("    caption: ").append(toIndentedString(caption)).append("\n");
-    sb.append("    pathID: ").append(toIndentedString(pathID)).append("\n");
+    sb.append("    pathId: ").append(toIndentedString(pathId)).append("\n");
     sb.append("    pathCaption: ").append(toIndentedString(pathCaption)).append("\n");
     sb.append("    pathPosition: ").append(toIndentedString(pathPosition)).append("\n");
     sb.append("}");

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateContentElement201Response;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateContentRequest;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.UpdateContentElementRequest;
 
 import java.util.Map;
 import java.util.List;
@@ -36,7 +37,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the contentElement API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentElementApi  {
 
    private final ContentElementApiService delegate;
@@ -83,7 +84,7 @@ public class ContentElementApi  {
     }
 
     @jakarta.ws.rs.DELETE
-    @Path("/{elementID}")
+    @Path("/{elementId}")
     @Operation(summary = "Deletes the specified content element", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The content element was deleted", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
@@ -96,15 +97,15 @@ public class ContentElementApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response deleteContentElement(@Schema(description= "The unique ID of the content element to delete", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    public Response deleteContentElement(@Schema(description= "The unique Id of the content element to delete", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementId") @NotNull  Integer elementId,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.deleteContentElement(elementID, securityContext);
+        return delegate.deleteContentElement(elementId, securityContext);
     }
 
     @jakarta.ws.rs.GET
-    @Path("/{elementID}")
+    @Path("/{elementId}")
     @Produces({ "application/json" })
-    @Operation(summary = "Returns the content element for the specified ID", description = "", responses = {
+    @Operation(summary = "Returns the content element for the specified Id", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "A single content element", content = 
                 @Content(schema = @Schema(implementation = AbstractSiteContent.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -116,13 +117,13 @@ public class ContentElementApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response getContentElement(@Schema(description= "unique ID of the content element", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    public Response getContentElement(@Schema(description= "unique Id of the content element", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementId") @NotNull  Integer elementId,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getContentElement(elementID, securityContext);
+        return delegate.getContentElement(elementId, securityContext);
     }
 
     @jakarta.ws.rs.PUT
-    @Path("/{elementID}")
+    @Path("/{elementId}")
     @Consumes({ "application/json" })
     @Operation(summary = "Enables to update content elements", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The element was updated!", content = 
@@ -136,8 +137,8 @@ public class ContentElementApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response updateContentElement(@Schema(description= "The unique ID of the content element to update", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Schema(description = "") @Valid  AbstractSiteContent abstractSiteContent,@Context SecurityContext securityContext)
+    public Response updateContentElement(@Schema(description= "The unique Id of the content element to update", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementId") @NotNull  Integer elementId,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  UpdateContentElementRequest updateContentElementRequest,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.updateContentElement(elementID, abstractSiteContent, securityContext);
+        return delegate.updateContentElement(elementId, updateContentElementRequest, securityContext);
     }
 }

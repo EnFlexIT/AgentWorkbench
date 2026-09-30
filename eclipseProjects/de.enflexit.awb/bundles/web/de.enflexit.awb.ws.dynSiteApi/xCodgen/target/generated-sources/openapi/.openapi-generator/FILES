@@ -18,11 +18,12 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/RFC3339DateFormat.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/StringUtil.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractSiteContent.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AbstractValueRow.java
-src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ContentElementPost201Response.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AssignContentToMenuRequest.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/CreateContentElement201Response.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/CreateContentRequest.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/CreateMenu201Response.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/MenuItem.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/MenuList.java
-src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/MenuPost201Response.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/PropertyEntry.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentChart.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentImage.java
@@ -31,6 +32,8 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentMedia.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentProperties.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentTable.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentText.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/UpdateContentAssignmentRequest.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/UpdateContentElementRequest.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValueType.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/Bootstrap.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/factories/ContentApiServiceFactory.java

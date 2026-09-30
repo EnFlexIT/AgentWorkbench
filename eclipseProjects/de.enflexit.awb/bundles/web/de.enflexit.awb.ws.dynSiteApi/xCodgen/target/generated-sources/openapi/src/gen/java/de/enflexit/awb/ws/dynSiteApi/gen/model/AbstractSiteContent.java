@@ -28,22 +28,27 @@ import jakarta.validation.Valid;
  * AbstractSiteContent
  */
 @JsonPropertyOrder({
-  AbstractSiteContent.JSON_PROPERTY_UNIQUE_CONTENT_I_D,
+  AbstractSiteContent.JSON_PROPERTY_UNIQUE_CONTENT_ID,
+  AbstractSiteContent.JSON_PROPERTY_ABSTRACT_SITE_CONTENT_TYPE,
   AbstractSiteContent.JSON_PROPERTY_EDITABLE,
   AbstractSiteContent.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = de.enflexit.charts.model.AbstractChart.class, name = "AbstractChart"),
+  @JsonSubTypes.Type(value = SiteContentChart.class, name = "SiteContentChart"),
   @JsonSubTypes.Type(value = SiteContentMedia.class, name = "SiteContentMedia"),
   @JsonSubTypes.Type(value = SiteContentProperties.class, name = "SiteContentProperties"),
   @JsonSubTypes.Type(value = SiteContentTable.class, name = "SiteContentTable"),
 })
 
 public class AbstractSiteContent   {
-  public static final String JSON_PROPERTY_UNIQUE_CONTENT_I_D = "uniqueContentID";
-  @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_I_D)
-  private Integer uniqueContentID;
+  public static final String JSON_PROPERTY_UNIQUE_CONTENT_ID = "uniqueContentId";
+  @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_ID)
+  private Integer uniqueContentId;
+
+  public static final String JSON_PROPERTY_ABSTRACT_SITE_CONTENT_TYPE = "AbstractSiteContentType";
+  @JsonProperty(JSON_PROPERTY_ABSTRACT_SITE_CONTENT_TYPE)
+  private String abstractSiteContentType;
 
   public static final String JSON_PROPERTY_EDITABLE = "editable";
   @JsonProperty(JSON_PROPERTY_EDITABLE)
@@ -53,24 +58,44 @@ public class AbstractSiteContent   {
   @JsonProperty(JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS)
   private Integer updatePeriodInSeconds;
 
-  public AbstractSiteContent uniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
+  public AbstractSiteContent uniqueContentId(Integer uniqueContentId) {
+    this.uniqueContentId = uniqueContentId;
     return this;
   }
 
   /**
-   * Get uniqueContentID
-   * @return uniqueContentID
+   * Get uniqueContentId
+   * @return uniqueContentId
    **/
-  @JsonProperty(value = "uniqueContentID")
+  @JsonProperty(value = "uniqueContentId")
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
-  public Integer getUniqueContentID() {
-    return uniqueContentID;
+  public Integer getUniqueContentId() {
+    return uniqueContentId;
   }
 
-  public void setUniqueContentID(Integer uniqueContentID) {
-    this.uniqueContentID = uniqueContentID;
+  public void setUniqueContentId(Integer uniqueContentId) {
+    this.uniqueContentId = uniqueContentId;
+  }
+
+  public AbstractSiteContent abstractSiteContentType(String abstractSiteContentType) {
+    this.abstractSiteContentType = abstractSiteContentType;
+    return this;
+  }
+
+  /**
+   * Get abstractSiteContentType
+   * @return abstractSiteContentType
+   **/
+  @JsonProperty(value = "AbstractSiteContentType")
+  @Schema(description = "")
+  
+  public String getAbstractSiteContentType() {
+    return abstractSiteContentType;
+  }
+
+  public void setAbstractSiteContentType(String abstractSiteContentType) {
+    this.abstractSiteContentType = abstractSiteContentType;
   }
 
   public AbstractSiteContent editable(Boolean editable) {
@@ -123,14 +148,15 @@ public class AbstractSiteContent   {
       return false;
     }
     AbstractSiteContent abstractSiteContent = (AbstractSiteContent) o;
-    return Objects.equals(this.uniqueContentID, abstractSiteContent.uniqueContentID) &&
+    return Objects.equals(this.uniqueContentId, abstractSiteContent.uniqueContentId) &&
+        Objects.equals(this.abstractSiteContentType, abstractSiteContent.abstractSiteContentType) &&
         Objects.equals(this.editable, abstractSiteContent.editable) &&
         Objects.equals(this.updatePeriodInSeconds, abstractSiteContent.updatePeriodInSeconds);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uniqueContentID, editable, updatePeriodInSeconds);
+    return Objects.hash(uniqueContentId, abstractSiteContentType, editable, updatePeriodInSeconds);
   }
 
   @Override
@@ -138,7 +164,8 @@ public class AbstractSiteContent   {
     StringBuilder sb = new StringBuilder();
     sb.append("class AbstractSiteContent {\n");
     
-    sb.append("    uniqueContentID: ").append(toIndentedString(uniqueContentID)).append("\n");
+    sb.append("    uniqueContentId: ").append(toIndentedString(uniqueContentId)).append("\n");
+    sb.append("    abstractSiteContentType: ").append(toIndentedString(abstractSiteContentType)).append("\n");
     sb.append("    editable: ").append(toIndentedString(editable)).append("\n");
     sb.append("    updatePeriodInSeconds: ").append(toIndentedString(updatePeriodInSeconds)).append("\n");
     sb.append("}");

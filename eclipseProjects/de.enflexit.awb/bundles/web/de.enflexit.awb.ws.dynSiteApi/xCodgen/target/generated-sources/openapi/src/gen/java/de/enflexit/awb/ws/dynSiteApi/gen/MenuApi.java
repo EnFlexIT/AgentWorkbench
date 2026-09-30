@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AssignContentToMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenu201Response;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuList;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.UpdateContentAssignmentRequest;
 
 import java.util.Map;
 import java.util.List;
@@ -36,7 +38,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the menu API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApi  {
 
    private final MenuApiService delegate;
@@ -63,8 +65,9 @@ public class MenuApi  {
 
 
     @jakarta.ws.rs.PUT
-    @Path("/{menuID}/contentElement/{elementID}")
-    @Operation(summary = "Add the specified content element to the specified menu", description = "", responses = {
+    @Path("/{menuId}/contentElement/{elementId}")
+    @Consumes({ "application/json" })
+    @Operation(summary = "Add the content element to the specified menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "Content element was added to the menu", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -76,9 +79,9 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response assignContentToMenu(@Schema(description= "The unique ID of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description= "The unique ID of the content element", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementID") @NotNull  Integer elementID,@Context SecurityContext securityContext)
+    public Response assignContentToMenu(@Schema(description= "The unique Id of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description= "The unique Id of the content element", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementId") @NotNull  Integer elementId,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  AssignContentToMenuRequest assignContentToMenuRequest,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.assignContentToMenu(menuID, elementID, securityContext);
+        return delegate.assignContentToMenu(menuId, elementId, assignContentToMenuRequest, securityContext);
     }
 
     @jakarta.ws.rs.POST
@@ -102,7 +105,7 @@ public class MenuApi  {
     }
 
     @jakarta.ws.rs.DELETE
-    @Path("/{menuID}")
+    @Path("/{menuId}")
     @Operation(summary = "Deletes the specified menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The menu was deleted", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
@@ -115,9 +118,9 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response deleteMenu(@Schema(description= "The unique ID of the menu to be deleted", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)
+    public Response deleteMenu(@Schema(description= "The unique Id of the menu to be deleted", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.deleteMenu(menuID, securityContext);
+        return delegate.deleteMenu(menuId, securityContext);
     }
 
     @jakarta.ws.rs.GET
@@ -135,8 +138,47 @@ public class MenuApi  {
         return delegate.getMenus(lang, securityContext);
     }
 
+    @jakarta.ws.rs.DELETE
+    @Path("/{menuId}/contentElement/{elementId}")
+    @Operation(summary = "Remove a content element from a menu", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "The assignment was removed", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            }, tags={  }) 
+    public Response removeAssignment(@Schema(description= "The unique Id of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description= "The unique Id of the content element", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("elementId") @NotNull  Integer elementId,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.removeAssignment(menuId, elementId, securityContext);
+    }
+
     @jakarta.ws.rs.PUT
-    @Path("/{menuID}")
+    @Path("/contentElement/assignment")
+    @Consumes({ "application/json" })
+    @Operation(summary = "Update menu assignment and content position", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "Assignment and position updated successfully", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            }, tags={  }) 
+    public Response updateAssignmentAndPosition(@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  UpdateContentAssignmentRequest updateContentAssignmentRequest,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.updateAssignmentAndPosition(updateContentAssignmentRequest, securityContext);
+    }
+
+    @jakarta.ws.rs.PUT
+    @Path("/{menuId}")
     @Consumes({ "application/json" })
     @Operation(summary = "Enables to update a menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The menu was updated!", content = 
@@ -150,13 +192,13 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response updateMenu(@Schema(description= "The unique ID of the menu to be updated", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  MenuItem menuItem,@Context SecurityContext securityContext)
+    public Response updateMenu(@Schema(description= "The unique Id of the menu to be updated", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  MenuItem menuItem,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.updateMenu(menuID, menuItem, securityContext);
+        return delegate.updateMenu(menuId, menuItem, securityContext);
     }
 
     @jakarta.ws.rs.PUT
-    @Path("/{menuID}/permissions")
+    @Path("/{menuId}/permissions")
     @Consumes({ "application/json" })
     @Operation(summary = "Enables to set the required rights to access the specified menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The right was set", content = 
@@ -170,8 +212,8 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response updateMenuPermissions(@Schema(description= "The unique ID of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull  String body,@Context SecurityContext securityContext)
+    public Response updateMenuPermissions(@Schema(description= "The unique Id of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull  String body,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.updateMenuPermissions(menuID, body, securityContext);
+        return delegate.updateMenuPermissions(menuId, body, securityContext);
     }
 }

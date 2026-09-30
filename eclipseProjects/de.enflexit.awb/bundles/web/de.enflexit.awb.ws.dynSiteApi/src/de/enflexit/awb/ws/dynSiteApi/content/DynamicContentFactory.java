@@ -44,7 +44,7 @@ public class DynamicContentFactory {
 	public static SiteContentText createSiteContentText(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, String mimeType, String text) {
 		
 		SiteContentText scText = new SiteContentText();
-		scText.setUniqueContentID(uniqueContentID);
+		scText.setUniqueContentId(uniqueContentID);
 		scText.setUpdatePeriodInSeconds(updatePeriodInSeconds);
 		scText.setEditable(isEditable);
 
@@ -72,7 +72,7 @@ public class DynamicContentFactory {
 	public static SiteContentImage createSiteContentImage(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, String mimeType, String dataInBase64, Integer width, Integer height) {
 		
 		SiteContentImage scImage = new SiteContentImage();
-		scImage.setUniqueContentID(uniqueContentID);
+		scImage.setUniqueContentId(uniqueContentID);
 		scImage.setUpdatePeriodInSeconds(updatePeriodInSeconds);
 		scImage.setEditable(isEditable);
 		
@@ -94,7 +94,7 @@ public class DynamicContentFactory {
 	public static SiteContentProperties createSiteContentProperties(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, List<PropertyEntry> peList) {
 		
 		SiteContentProperties scProps = new SiteContentProperties();
-		scProps.setUniqueContentID(uniqueContentID);
+		scProps.setUniqueContentId(uniqueContentID);
 		scProps.setUpdatePeriodInSeconds(updatePeriodInSeconds);
 		scProps.setEditable(isEditable);
 		

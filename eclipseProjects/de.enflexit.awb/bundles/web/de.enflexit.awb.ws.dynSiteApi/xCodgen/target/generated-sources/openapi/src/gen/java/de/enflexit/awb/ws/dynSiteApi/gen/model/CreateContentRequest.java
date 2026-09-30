@@ -26,15 +26,15 @@ import jakarta.validation.Valid;
  * CreateContentRequest
  */
 @JsonPropertyOrder({
-  CreateContentRequest.JSON_PROPERTY_MENU_I_D,
+  CreateContentRequest.JSON_PROPERTY_MENU_ID,
   CreateContentRequest.JSON_PROPERTY_POSITION,
   CreateContentRequest.JSON_PROPERTY_CONTENT
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class CreateContentRequest   {
-  public static final String JSON_PROPERTY_MENU_I_D = "menuID";
-  @JsonProperty(JSON_PROPERTY_MENU_I_D)
-  private Integer menuID;
+  public static final String JSON_PROPERTY_MENU_ID = "menuId";
+  @JsonProperty(JSON_PROPERTY_MENU_ID)
+  private Integer menuId;
 
   public static final String JSON_PROPERTY_POSITION = "position";
   @JsonProperty(JSON_PROPERTY_POSITION)
@@ -44,24 +44,24 @@ public class CreateContentRequest   {
   @JsonProperty(JSON_PROPERTY_CONTENT)
   private AbstractSiteContent content;
 
-  public CreateContentRequest menuID(Integer menuID) {
-    this.menuID = menuID;
+  public CreateContentRequest menuId(Integer menuId) {
+    this.menuId = menuId;
     return this;
   }
 
   /**
-   * Get menuID
-   * @return menuID
+   * Get menuId
+   * @return menuId
    **/
-  @JsonProperty(value = "menuID")
+  @JsonProperty(value = "menuId")
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull 
-  public Integer getMenuID() {
-    return menuID;
+  public Integer getMenuId() {
+    return menuId;
   }
 
-  public void setMenuID(Integer menuID) {
-    this.menuID = menuID;
+  public void setMenuId(Integer menuId) {
+    this.menuId = menuId;
   }
 
   public CreateContentRequest position(Integer position) {
@@ -114,14 +114,14 @@ public class CreateContentRequest   {
       return false;
     }
     CreateContentRequest createContentRequest = (CreateContentRequest) o;
-    return Objects.equals(this.menuID, createContentRequest.menuID) &&
+    return Objects.equals(this.menuId, createContentRequest.menuId) &&
         Objects.equals(this.position, createContentRequest.position) &&
         Objects.equals(this.content, createContentRequest.content);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(menuID, position, content);
+    return Objects.hash(menuId, position, content);
   }
 
   @Override
@@ -129,7 +129,7 @@ public class CreateContentRequest   {
     StringBuilder sb = new StringBuilder();
     sb.append("class CreateContentRequest {\n");
     
-    sb.append("    menuID: ").append(toIndentedString(menuID)).append("\n");
+    sb.append("    menuId: ").append(toIndentedString(menuId)).append("\n");
     sb.append("    position: ").append(toIndentedString(position)).append("\n");
     sb.append("    content: ").append(toIndentedString(content)).append("\n");
     sb.append("}");
