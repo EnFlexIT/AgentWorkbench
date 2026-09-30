@@ -1,9 +1,15 @@
 package de.enflexit.oidc;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
-// TODO: Auto-generated Javadoc
+/**
+ * This class manages the configuration settings for OIDC authorization.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class OIDCSettings {
 	
 	public static final String PREFERENCES_KEY_ISSUER_URL = "issuerURL";
@@ -20,7 +26,7 @@ public class OIDCSettings {
 	
 	private static final String DEFAULT_CLIENT_SECRET = "PeQ5NZeH4aGpr58knm2MviLA5IJ5uvY3";
 	
-	private static final String PREFERENCES_NODE = "de.enflexit.oidc.prefs";
+	private IEclipsePreferences eclipsePreferences;
 	
 	private String issuerURL;
 	private String realmID;
@@ -121,37 +127,54 @@ public class OIDCSettings {
 		this.authenticationEndpoint = authenticationEndpoint;
 	}
 	
-	
-	public static OIDCSettings loadFromPreferences() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PREFERENCES_NODE);
-		String issuerURL = preferences.get(PREFERENCES_KEY_ISSUER_URL, DEFAULT_ISSUER_URL);
-		String realmID = preferences.get(PREFERENCES_KEY_KEYCLOAK_REALM, DEFAULT_REALM_NAME);
-		String clientID = preferences.get(PREFERENCES_KEY_CLIENT_NAME, DEFAULT_CLIENT_NAME);
-		String clientSecret = DEFAULT_CLIENT_SECRET;
-		int localHttpPort = preferences.getInt(PREFERENCES_KEY_LOCAL_CALLBACK_PORT, DEFAULT_LOCAL_PORT);
-		String localAuthenticationEndpoint = preferences.get(PREFERENCES_KEY_AUTHENTICATION_CALLBACK_ENDPOINT, DEFAULT_AUTHENTICATION_ENDPOINT);
-		
-		OIDCSettings settings = new OIDCSettings();
-		settings.setIssuerURL(issuerURL);
-		settings.setRealmID(realmID);
-		settings.setClientID(clientID);
-		settings.setClientSecret(clientSecret);
-		settings.setLocalHTTPPort(localHttpPort);
-		settings.setAuthenticationEndpoint(localAuthenticationEndpoint);
-		
-		return settings;
+	/**
+	 * Returns the eclipse preferences.
+	 * @return the eclipse preferences
+	 */
+	public IEclipsePreferences getEclipsePreferences() {
+		if (eclipsePreferences==null) {
+			Bundle bundle = FrameworkUtil.getBundle(this.getClass());
+			IScopeContext iScopeContext = ConfigurationScope.INSTANCE;
+			eclipsePreferences = iScopeContext.getNode(bundle.getSymbolicName());
+//			eclipsePreferences.addPreferenceChangeListener(this.getChangeListener());
+		}
+		return eclipsePreferences;
 	}
 	
+	/**
+	 * Loads the OIDC settings from the preferences.
+	 * @return the OIDC settings
+	 */
+	public OIDCSettings loadFromPreferences() {
+		String issuerURL = this.getEclipsePreferences().get(PREFERENCES_KEY_ISSUER_URL, DEFAULT_ISSUER_URL);
+		String realmID = this.getEclipsePreferences().get(PREFERENCES_KEY_KEYCLOAK_REALM, DEFAULT_REALM_NAME);
+		String clientID = this.getEclipsePreferences().get(PREFERENCES_KEY_CLIENT_NAME, DEFAULT_CLIENT_NAME);
+		String clientSecret = DEFAULT_CLIENT_SECRET;
+		int localHttpPort = this.getEclipsePreferences().getInt(PREFERENCES_KEY_LOCAL_CALLBACK_PORT, DEFAULT_LOCAL_PORT);
+		String localAuthenticationEndpoint = this.getEclipsePreferences().get(PREFERENCES_KEY_AUTHENTICATION_CALLBACK_ENDPOINT, DEFAULT_AUTHENTICATION_ENDPOINT);
+		
+		this.setIssuerURL(issuerURL);
+		this.setRealmID(realmID);
+		this.setClientID(clientID);
+		this.setClientSecret(clientSecret);
+		this.setLocalHTTPPort(localHttpPort);
+		this.setAuthenticationEndpoint(localAuthenticationEndpoint);
+		
+		return this;
+	}
+	
+	/**
+	 * Stores the OIDC settings to the preferences.
+	 */
 	public void storeToPreferences() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PREFERENCES_NODE);
-		preferences.put(PREFERENCES_KEY_ISSUER_URL, this.issuerURL);
-		preferences.put(PREFERENCES_KEY_KEYCLOAK_REALM, this.getRealmID());
-		preferences.put(PREFERENCES_KEY_CLIENT_NAME, this.getClientID());
-		preferences.putInt(PREFERENCES_KEY_LOCAL_CALLBACK_PORT, this.getLocalHTTPPort());
-		preferences.put(PREFERENCES_KEY_AUTHENTICATION_CALLBACK_ENDPOINT, this.getAuthenticationEndpoint());
+		this.getEclipsePreferences().put(PREFERENCES_KEY_ISSUER_URL, this.issuerURL);
+		this.getEclipsePreferences().put(PREFERENCES_KEY_KEYCLOAK_REALM, this.getRealmID());
+		this.getEclipsePreferences().put(PREFERENCES_KEY_CLIENT_NAME, this.getClientID());
+		this.getEclipsePreferences().putInt(PREFERENCES_KEY_LOCAL_CALLBACK_PORT, this.getLocalHTTPPort());
+		this.getEclipsePreferences().put(PREFERENCES_KEY_AUTHENTICATION_CALLBACK_ENDPOINT, this.getAuthenticationEndpoint());
 		
 		try {
-			preferences.flush();
+			this.getEclipsePreferences().flush();
 		} catch (org.osgi.service.prefs.BackingStoreException e) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Error storing settings to the preferences");
 			e.printStackTrace();
