@@ -51,7 +51,7 @@ public class PropertyBusServiceUpdateCheckBackend implements PropertyBusService{
 			return properties;
 		}
 		properties.setBooleanValue(IS_UPDATE_AVAILABLE, status.isUpdateAvailable());
-		properties.setStringValue(LAST_CHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
+		properties.setLongValue(LAST_CHECK, status.getLastCheck());
 		UpdateCheckCoordinatorBackend.getInstance().setUpdateCheckStatusBackend(null);
 				
 		return properties;
