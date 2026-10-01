@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,10 +24,13 @@ import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.dataSources.DataSource;
+import de.enflexit.df.core.dataSources.DataSourceHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.df.core.processing.ProcessingDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbook4JSON;
@@ -73,6 +77,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		private JMenuItem jMenuItemCsvData; 
 		private JMenuItem jMenuItemExcelFile;
 		private JMenuItem jMenuItemDatabaseData;
+		private JMenuItem jMenuItemDataProcessing;
 	
 	private JButton jButtonDeleteDataSources;
 	
@@ -366,6 +371,11 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		jPopupMenuOpen.add(this.getJMenuItemCsvData());
 		jPopupMenuOpen.add(this.getJMenuItemExcelFile());
 		jPopupMenuOpen.add(this.getJMenuItemDatabaseData());
+		jPopupMenuOpen.addSeparator();
+		jPopupMenuOpen.add(this.getjMenuItemDataProcessing());
+		// --- Add all remaining services -----------------
+		this.addExternalDataSourceServices(jPopupMenuOpen);
+		// --- Add a data processing ---------------------- 
 		return jPopupMenuOpen;
 	}
 	private JMenuItem getJMenuItemCsvData() {
@@ -395,6 +405,36 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		}
 		return jMenuItemDatabaseData;
 	}
+	public JMenuItem getjMenuItemDataProcessing() {
+		if (jMenuItemDataProcessing==null) {
+			jMenuItemDataProcessing = new JMenuItem("Data Processing");
+			jMenuItemDataProcessing.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemDataProcessing.setIcon(BundleHelper.getThemedIcon("DataProcessingBlack.png", "DataProcessingGrey.png"));
+			jMenuItemDataProcessing.addActionListener(this);
+		}
+		return jMenuItemDataProcessing;
+	}
+	
+	/**
+	 * Adds the data source services.
+	 * @param jPopupMenuOpen the j popup menu open
+	 */
+	private void addExternalDataSourceServices(JPopupMenu jPopupMenuOpen) {
+		
+		List<DataSource> extDataSourceList = DataSourceHelper.getExternalDataSourceServices();
+		if (extDataSourceList.size()==0) return;
+		jPopupMenuOpen.addSeparator();
+		
+		for (DataSource ds : extDataSourceList) {
+			JMenuItem jMenuItemDS = new JMenuItem("Add " + ds.getDataSourceIdentifier());
+			jMenuItemDS.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemDS.setIcon(BundleHelper.getThemedIcon("NewDatabaseBlack.png", "NewDatabaseGrey.png"));
+			jMenuItemDS.setActionCommand(ds.getDataSourceIdentifier());
+			jMenuItemDS.addActionListener(this);
+			jPopupMenuOpen.add(jMenuItemDS);
+		}
+	}
+	
 	
 	/**
 	 * Returns the JButton edit data sources.
@@ -615,7 +655,18 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		} else if (ae.getSource()==this.getJMenuItemDatabaseData()) {
 			// --- Add DatabaseDataSource -------------------------------------
 			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new DatabaseDataSource());
+			
+		} else if (ae.getSource()==this.getjMenuItemDataProcessing()) {
+			// --- Add processing data source ---------------------------------
+			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new ProcessingDataSource());
 		
+		} else if (ae.getSource() instanceof JMenuItem && ae.getActionCommand()!=null) {
+			// --- Add the individual data source ---
+			DataSource dsService = DataSourceHelper.getDataSourceServiceHashMap().get(ae.getActionCommand());
+			if (dsService!=null) {
+				this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), dsService.newInstance());
+			}
+			
 		} else if (ae.getSource()==this.getJToggleButtonConfiguration()) {
 			// --- Show data source configuration -----------------------------
 			boolean isSelected = this.getJToggleButtonConfiguration().isSelected();

@@ -22,6 +22,7 @@
 		<module>de.enflexit.awb.ws.jjwt.feature</module>
 		<module>de.enflexit.awb.ws.swagger.feature</module>
 		<module>de.enflexit.common.feature</module>
+		<module>de.enflexit.dataFrame.feature</module>
 		<module>de.enflexit.db.feature</module>
 	</modules>
 
