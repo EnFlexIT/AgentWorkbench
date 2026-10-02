@@ -26,32 +26,32 @@ import jakarta.validation.Valid;
  * CreateContentElement201Response
  */
 @JsonPropertyOrder({
-  CreateContentElement201Response.JSON_PROPERTY_ELEMENT_I_D
+  CreateContentElement201Response.JSON_PROPERTY_ELEMENT_ID
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class CreateContentElement201Response   {
-  public static final String JSON_PROPERTY_ELEMENT_I_D = "elementID";
-  @JsonProperty(JSON_PROPERTY_ELEMENT_I_D)
-  private Integer elementID;
+  public static final String JSON_PROPERTY_ELEMENT_ID = "elementId";
+  @JsonProperty(JSON_PROPERTY_ELEMENT_ID)
+  private Integer elementId;
 
-  public CreateContentElement201Response elementID(Integer elementID) {
-    this.elementID = elementID;
+  public CreateContentElement201Response elementId(Integer elementId) {
+    this.elementId = elementId;
     return this;
   }
 
   /**
-   * Get elementID
-   * @return elementID
+   * Get elementId
+   * @return elementId
    **/
-  @JsonProperty(value = "elementID")
+  @JsonProperty(value = "elementId")
   @Schema(description = "")
   
-  public Integer getElementID() {
-    return elementID;
+  public Integer getElementId() {
+    return elementId;
   }
 
-  public void setElementID(Integer elementID) {
-    this.elementID = elementID;
+  public void setElementId(Integer elementId) {
+    this.elementId = elementId;
   }
 
 
@@ -64,12 +64,12 @@ public class CreateContentElement201Response   {
       return false;
     }
     CreateContentElement201Response createContentElement201Response = (CreateContentElement201Response) o;
-    return Objects.equals(this.elementID, createContentElement201Response.elementID);
+    return Objects.equals(this.elementId, createContentElement201Response.elementId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(elementID);
+    return Objects.hash(elementId);
   }
 
   @Override
@@ -77,7 +77,7 @@ public class CreateContentElement201Response   {
     StringBuilder sb = new StringBuilder();
     sb.append("class CreateContentElement201Response {\n");
     
-    sb.append("    elementID: ").append(toIndentedString(elementID)).append("\n");
+    sb.append("    elementId: ").append(toIndentedString(elementId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

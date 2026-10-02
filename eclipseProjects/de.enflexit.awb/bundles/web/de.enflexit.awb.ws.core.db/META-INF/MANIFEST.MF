@@ -9,10 +9,12 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Export-Package: de.enflexit.awb.ws.core.db,
- de.enflexit.awb.ws.core.db.dataModel
+ de.enflexit.awb.ws.core.db.dataModel,
+ de.enflexit.awb.ws.core.exceptions
 Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
 Require-Bundle: de.enflexit.db.hibernate,
  org.eclipse.osgi
 Import-Package: de.enflexit.charts,
  de.enflexit.db.userManagement,
- jakarta.persistence
+ jakarta.persistence,
+ org.slf4j

@@ -18,7 +18,7 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 
 	private static final long serialVersionUID = -653322247106918023L;
 	
-	private JPanelSourceTableSelection jPanelSelectionList;
+	private JPanelDataSourceSelection jPanelSelectionList;
 	
 	private JPanelTransformationGraphEditor parentEditorPanel;
 	
@@ -47,9 +47,9 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
-	private JPanelSourceTableSelection getJPanelSelectionList() {
+	private JPanelDataSourceSelection getJPanelSelectionList() {
 		if (jPanelSelectionList == null) {
-			jPanelSelectionList = new JPanelSourceTableSelection(dataControler);
+			jPanelSelectionList = new JPanelDataSourceSelection(dataControler);
 			jPanelSelectionList.addCheckBoxListSelectionListener(this);
 		}
 		return jPanelSelectionList;

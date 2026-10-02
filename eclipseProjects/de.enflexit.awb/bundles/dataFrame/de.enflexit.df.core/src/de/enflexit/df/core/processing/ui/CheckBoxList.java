@@ -3,7 +3,9 @@ package de.enflexit.df.core.processing.ui;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.function.Function;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -24,22 +26,37 @@ public class CheckBoxList<E> extends JList<E> {
 	
 	
 	/**
-	 * Instantiates a new check box list.
+	 * Instantiates a new check box list with an empty list model.
 	 */
 	public CheckBoxList() {
-		super();
-		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
-        this.setCellRenderer(new CheckBoxListCellRenderer());
+		this(new DefaultListModel<E>(), null);
+	}
+	
+	/**
+	 * Instantiates a new check box list with an empty list model, using a custom function to generate the list entries from the items.
+	 * @param listEntryStringFunction the list entry string function
+	 */
+	public CheckBoxList(Function<E, String> listEntryStringFunction) {
+		this(new DefaultListModel<E>(), listEntryStringFunction);
 	}
 
 	/**
-	 * Instantiates a new check box list.
-	 * @param model the model
+	 * Instantiates a new check box list with the provided list model.
+	 * @param listModel the model
 	 */
-	public CheckBoxList(ListModel<E> model) {
-        super(model);
+	public CheckBoxList(ListModel<E> listModel) {
+		this(listModel, null);
+    }
+	
+	/**
+	 * Instantiates a new check box list with the provided list model, using a custom function to generate the list entries from the items.
+	 * @param listModel the list model
+	 * @param listEntryStringFunction the list entry string function
+	 */
+	public CheckBoxList(ListModel<E> listModel, Function<E, String> listEntryStringFunction) {
+        super(listModel);
         this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
-        this.setCellRenderer(new CheckBoxListCellRenderer());
+        this.setCellRenderer(new CheckBoxListCellRenderer(listEntryStringFunction));
     }
 	
 	/* (non-Javadoc)
@@ -74,34 +91,6 @@ public class CheckBoxList<E> extends JList<E> {
     }
 	
 	/**
-	 * The Class CheckBoxListCellRenderer.
-	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
-	 */
-	private class CheckBoxListCellRenderer extends JCheckBox implements ListCellRenderer<E> {
-	
-		private static final long serialVersionUID = 1L;
-		
-		/* (non-Javadoc)
-		 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
-		 */
-		@Override
-		public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
-		
-		    this.setText(String.valueOf(value));
-		    this.setSelected(isSelected);
-		
-		    this.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
-		
-		    setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
-		
-		    setFont(list.getFont());
-		    setOpaque(true);
-		
-		    return this;
-		}
-	}
-	
-	/**
 	 * Gets the selection listeners.
 	 * @return the selection listeners
 	 */
@@ -111,7 +100,7 @@ public class CheckBoxList<E> extends JList<E> {
 		}
 		return selectionListeners;
 	}
-	
+
 	/**
 	 * Adds a check box list selection listener.
 	 * @param selectionListener the selection listener
@@ -119,7 +108,7 @@ public class CheckBoxList<E> extends JList<E> {
 	public void addCheckBoxListSelectionListener(CheckBoxListSelectionListener<E> selectionListener) {
 		this.getSelectionListeners().add(selectionListener);
 	}
-	
+
 	/**
 	 * Removes a check box list selection listener.
 	 * @param selectionListener the selection listener
@@ -127,7 +116,7 @@ public class CheckBoxList<E> extends JList<E> {
 	public void removeCheckBoxListSelectionListener(CheckBoxListSelectionListener<E> selectionListener) {
 		this.getSelectionListeners().remove(selectionListener);
 	}
-	
+
 	/**
 	 * Notifies all listeners about a selection change.
 	 * @param index the index
@@ -138,6 +127,48 @@ public class CheckBoxList<E> extends JList<E> {
 		CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected);
 		for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
 			listener.selectionChanged(cblse);;
+		}
+	}
+
+	/**
+	 * The Class CheckBoxListCellRenderer.
+	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+	 */
+	private class CheckBoxListCellRenderer extends JCheckBox implements ListCellRenderer<E> {
+	
+		private static final long serialVersionUID = 1L;
+		
+		private final Function<E, String> listEntryStringFunction;
+		
+		/**
+		 * Instantiates a new check box list cell renderer, using a custom string representation defined by textFunction.
+		 * @param listEntryStringFunction the text function
+		 */
+		public CheckBoxListCellRenderer(Function<E, String> listEntryStringFunction) {
+			super();
+			this.listEntryStringFunction = listEntryStringFunction!=null ? listEntryStringFunction : String::valueOf;
+		}
+
+
+		/* (non-Javadoc)
+		 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
+		 */
+		@Override
+		public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
+		
+		    this.setText(this.listEntryStringFunction.apply(value));
+		    this.setSelected(isSelected);
+		
+		    this.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
+		
+		    setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+		
+		    setFont(list.getFont());
+		    setOpaque(true);
+		    
+		    this.setEnabled(list.isEnabled());
+		
+		    return this;
 		}
 	}
 	

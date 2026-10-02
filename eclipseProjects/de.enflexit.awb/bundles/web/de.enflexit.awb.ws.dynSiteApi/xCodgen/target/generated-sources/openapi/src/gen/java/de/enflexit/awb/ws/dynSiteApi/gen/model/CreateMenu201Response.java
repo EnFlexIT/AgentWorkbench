@@ -26,32 +26,32 @@ import jakarta.validation.Valid;
  * CreateMenu201Response
  */
 @JsonPropertyOrder({
-  CreateMenu201Response.JSON_PROPERTY_MENU_I_D
+  CreateMenu201Response.JSON_PROPERTY_MENU_ID
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class CreateMenu201Response   {
-  public static final String JSON_PROPERTY_MENU_I_D = "menuID";
-  @JsonProperty(JSON_PROPERTY_MENU_I_D)
-  private Integer menuID;
+  public static final String JSON_PROPERTY_MENU_ID = "menuId";
+  @JsonProperty(JSON_PROPERTY_MENU_ID)
+  private Integer menuId;
 
-  public CreateMenu201Response menuID(Integer menuID) {
-    this.menuID = menuID;
+  public CreateMenu201Response menuId(Integer menuId) {
+    this.menuId = menuId;
     return this;
   }
 
   /**
-   * Get menuID
-   * @return menuID
+   * Get menuId
+   * @return menuId
    **/
-  @JsonProperty(value = "menuID")
+  @JsonProperty(value = "menuId")
   @Schema(description = "")
   
-  public Integer getMenuID() {
-    return menuID;
+  public Integer getMenuId() {
+    return menuId;
   }
 
-  public void setMenuID(Integer menuID) {
-    this.menuID = menuID;
+  public void setMenuId(Integer menuId) {
+    this.menuId = menuId;
   }
 
 
@@ -64,12 +64,12 @@ public class CreateMenu201Response   {
       return false;
     }
     CreateMenu201Response createMenu201Response = (CreateMenu201Response) o;
-    return Objects.equals(this.menuID, createMenu201Response.menuID);
+    return Objects.equals(this.menuId, createMenu201Response.menuId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(menuID);
+    return Objects.hash(menuId);
   }
 
   @Override
@@ -77,7 +77,7 @@ public class CreateMenu201Response   {
     StringBuilder sb = new StringBuilder();
     sb.append("class CreateMenu201Response {\n");
     
-    sb.append("    menuID: ").append(toIndentedString(menuID)).append("\n");
+    sb.append("    menuId: ").append(toIndentedString(menuId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

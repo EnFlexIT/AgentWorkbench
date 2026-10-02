@@ -30,11 +30,11 @@ import jakarta.ws.rs.*;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
-@Path("/content/{menuID}")
+@Path("/content/{menuId}")
 
 
 @Tag(description = "the content API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentApi  {
 
    private final ContentApiService delegate;
@@ -62,7 +62,7 @@ public class ContentApi  {
 
     @jakarta.ws.rs.GET
     @Produces({ "application/json" })
-    @Operation(summary = "Returns the content for the specified ID", description = "", responses = {
+    @Operation(summary = "Returns the content for the specified Id", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "List of content elements", content = 
                 @Content(schema = @Schema(implementation = SiteContentList.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -72,8 +72,8 @@ public class ContentApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response getMenuContent(@Schema(description= "numeric ID of the content", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuID") @NotNull  Integer menuID,@Context SecurityContext securityContext)
+    public Response getMenuContent(@Schema(description= "numeric Id of the content", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getMenuContent(menuID, securityContext);
+        return delegate.getMenuContent(menuId, securityContext);
     }
 }

@@ -5,6 +5,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -26,7 +28,9 @@ import edu.uci.ics.jung.graph.event.GraphEvent;
 import edu.uci.ics.jung.graph.event.GraphEventListener;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import java.awt.Font;
 import java.awt.Point;
@@ -152,6 +156,11 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 			visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape<DataTableNode, DataTransformationEdge>(this.getGraphController().getTransformationGraph()).new Line());
 			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> node.getLabelText());
 			visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
+			
+			// --- Configure mouse interactions -----------
+			visualizationViewer.setPickSupport(new ShapePickSupport<DataTableNode, DataTransformationEdge>(visualizationViewer));
+			visualizationViewer.setGraphMouse(new DefaultModalGraphMouse<DataTableNode, DataTransformationEdge>());
+			visualizationViewer.addMouseListener(new TransformationGraphMouseAdapter());
 			
 			ObservableGraph<DataTableNode, DataTransformationEdge> graph = (ObservableGraph<DataTableNode, DataTransformationEdge>) this.getGraphController().getTransformationGraph();
 			graph.addGraphEventListener(this);
@@ -289,21 +298,51 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	 */
 	private Point2D determineOutputNodePosition(AbstractDataTransformation dataTransformation) {
 		
+		// --- Distance from the calculated reference coordinate ----
 		double defaultDistanceX = 0;
 		double defaultDistanceY = 150;
 		
 		double meanX = 0;
-		double meanY = 0;
+		double maxY = 0;
 
-		// --- Determine the average coordinates for all involved input nodes
+		// --- Calculate reference coordinate: Mean of X values, max of Y values
 		for (DataTableNode inputNode : dataTransformation.getInputNodes()) {
 			meanX += this.getGraphController().getGraphLayout().getX(inputNode);
-			meanY += this.getGraphController().getGraphLayout().getY(inputNode);
+			
+			double nodeY = this.getGraphController().getGraphLayout().getY(inputNode);
+			maxY = (maxY<nodeY ? nodeY : maxY);
 		}
 		meanX /= dataTransformation.getInputNodes().size();
-		meanY /= dataTransformation.getInputNodes().size();
 		
-		return new Point2D.Double(meanX+defaultDistanceX, meanY+defaultDistanceY);
+		return new Point2D.Double(meanX+defaultDistanceX, maxY+defaultDistanceY);
 	}
 
+	/**
+	 * The Class TransformationGraphMouseAdapter.
+	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+	 */
+	private class TransformationGraphMouseAdapter extends MouseAdapter {
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			
+			// --- Just a shorthand for shorter calls.
+			VisualizationViewer<DataTableNode, DataTransformationEdge> visViewer = JPanelTransformationGraphEditor.this.getVisualizationViewer();
+			
+			DataTableNode nodeClicked = visViewer.getPickSupport().getVertex(visViewer.getGraphLayout(), e.getX(), e.getY());
+			
+			if (nodeClicked!=null) {
+				System.out.println("Clicked on node " + nodeClicked.getLabelText());
+				return;
+			}
+			
+			DataTransformationEdge edgeClicked = visViewer.getPickSupport().getEdge(visViewer.getGraphLayout(), e.getX(), e.getY());
+			if (edgeClicked!=null) {
+				System.out.println("Clicked on edge " + edgeClicked.getDataTransformation().getTransformationName());
+				return;
+			}
+			
+			System.out.println("No graph element clicked");
+		}
+	}
 }

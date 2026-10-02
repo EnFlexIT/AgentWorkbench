@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import tech.tablesaw.api.Table;
 
 /**
  * Abstract superclass for all data transformations.
@@ -69,6 +70,7 @@ public abstract class AbstractDataTransformation {
 	
 	/**
 	 * Performs the actual transformation.
+	 * @return the result table
 	 */
-	public abstract void performTransformation();
+	public abstract Table performTransformation();
 }

@@ -16,42 +16,41 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * SiteContentChart
+ * AssignContentToMenuRequest
  */
 @JsonPropertyOrder({
-  SiteContentChart.JSON_PROPERTY_CHART
+  AssignContentToMenuRequest.JSON_PROPERTY_POSITION
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
-public class SiteContentChart extends AbstractSiteContent  {
-  public static final String JSON_PROPERTY_CHART = "chart";
-  @JsonProperty(JSON_PROPERTY_CHART)
-  private de.enflexit.charts.model.AbstractChart chart;
+public class AssignContentToMenuRequest   {
+  public static final String JSON_PROPERTY_POSITION = "position";
+  @JsonProperty(JSON_PROPERTY_POSITION)
+  private Integer position;
 
-  public SiteContentChart chart(de.enflexit.charts.model.AbstractChart chart) {
-    this.chart = chart;
+  public AssignContentToMenuRequest position(Integer position) {
+    this.position = position;
     return this;
   }
 
   /**
-   * Get chart
-   * @return chart
+   * Target position of the element within the menu
+   * @return position
    **/
-  @JsonProperty(value = "chart")
-  @Schema(description = "")
-  @Valid 
-  public de.enflexit.charts.model.AbstractChart getChart() {
-    return chart;
+  @JsonProperty(value = "position")
+  @Schema(description = "Target position of the element within the menu")
+  
+  public Integer getPosition() {
+    return position;
   }
 
-  public void setChart(de.enflexit.charts.model.AbstractChart chart) {
-    this.chart = chart;
+  public void setPosition(Integer position) {
+    this.position = position;
   }
 
 
@@ -63,21 +62,21 @@ public class SiteContentChart extends AbstractSiteContent  {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SiteContentChart siteContentChart = (SiteContentChart) o;
-    return super.equals(o) && Objects.equals(this.chart, siteContentChart.chart);
+    AssignContentToMenuRequest assignContentToMenuRequest = (AssignContentToMenuRequest) o;
+    return Objects.equals(this.position, assignContentToMenuRequest.position);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), chart);
+    return Objects.hash(position);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SiteContentChart {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    chart: ").append(toIndentedString(chart)).append("\n");
+    sb.append("class AssignContentToMenuRequest {\n");
+    
+    sb.append("    position: ").append(toIndentedString(position)).append("\n");
     sb.append("}");
     return sb.toString();
   }

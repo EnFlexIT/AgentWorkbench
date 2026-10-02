@@ -11,7 +11,7 @@ import org.hibernate.cfg.Configuration;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
-
+import de.enflexit.charts.ChartDataModelHelper;
 import de.enflexit.db.hibernate.ColumnOrderingStrategyAsDefinedInClass;
 import de.enflexit.db.hibernate.HibernateUtilities;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
@@ -160,6 +160,7 @@ public class WebAppDatabaseConnectionService implements HibernateDatabaseConnect
 		
 		// --- Load user management data model classes from separate bundle ---
 		UserManagementDataModelHelper.addUserManagementDataModelClasses(conf);
+		ChartDataModelHelper.addChartDataModelClasses(conf);
 	}
 	/**
 	 * Checks if the excludeList contains the specified class name.

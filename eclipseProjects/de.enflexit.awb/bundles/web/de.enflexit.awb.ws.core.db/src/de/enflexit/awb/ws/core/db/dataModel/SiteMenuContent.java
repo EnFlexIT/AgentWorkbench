@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * The Class SiteMenu.
+ * The Class SiteMenuContent.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */

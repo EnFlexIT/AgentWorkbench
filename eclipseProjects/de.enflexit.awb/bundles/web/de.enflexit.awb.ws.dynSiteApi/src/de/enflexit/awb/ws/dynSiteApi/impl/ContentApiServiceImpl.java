@@ -1,9 +1,20 @@
 package de.enflexit.awb.ws.dynSiteApi.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.enflexit.awb.ws.core.db.WebAppDatabaseHandler;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
+import de.enflexit.awb.ws.core.exceptions.DatabaseException;
 import de.enflexit.awb.ws.dynSiteApi.RestApiConfiguration;
 import de.enflexit.awb.ws.dynSiteApi.content.DynamicContentFactory;
 import de.enflexit.awb.ws.dynSiteApi.content.ImageHelper;
-import de.enflexit.awb.ws.dynSiteApi.gen.*;
+import de.enflexit.awb.ws.dynSiteApi.content.TypeConverter;
+import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
+import de.enflexit.awb.ws.dynSiteApi.gen.ContentApiService;
+import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
@@ -14,31 +25,40 @@ import de.enflexit.charts.model.DataSeries;
 import de.enflexit.charts.model.LineChart;
 import de.enflexit.charts.model.PieChart;
 import de.enflexit.charts.model.TimeSeriesChart;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.io.InputStream;
-
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.SecurityContext;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentApiServiceImpl extends ContentApiService {
-    @Override
+  
+	private WebAppDatabaseHandler webAppDatabaseHandler;
+	
+	@Override
     public Response getMenuContent(Integer menuID, SecurityContext securityContext) throws NotFoundException {
     	if (menuID==null) {
-            return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Missing menueID!")).build();
+            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Missing menuID!")).build();
     	}
 		
-    	// --- Create the content according to the menueID -------------------
-		SiteContentList scList = this.getSiteContentList(menuID);
-		if (scList!=null) {
-			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(scList).build();
+    	try {
+			List<SiteContent> contentList = this.getDatabaseHandler().getContentListOfMenuId(menuID);
+			List<AbstractSiteContent> restContentList = new ArrayList<>();
+			
+			for (SiteContent dbContent : contentList) {
+				AbstractSiteContent restContent = TypeConverter.toRestContent(dbContent);
+				if (restContent != null) {
+					restContentList.add(restContent);
+				}
+			}
+			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(restContentList).build();
+			
+		} catch (IllegalArgumentException iae) {
+			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
+
+		} catch (IOException | DatabaseException e) {
+			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Unknown menueID!")).build();
+    	
     }
     
 	private SiteContentList getSiteContentList(Integer menuID) {
@@ -284,4 +304,16 @@ public class ContentApiServiceImpl extends ContentApiService {
 		chartContent.setChart(lineChart);
 		return chartContent;
 	}
+	
+    /**
+     * Returns the database handler.
+     *
+     * @return the database handler
+     */
+    private WebAppDatabaseHandler getDatabaseHandler() {
+    	if (webAppDatabaseHandler == null) {
+    		webAppDatabaseHandler = new WebAppDatabaseHandler();
+    	}
+    	return webAppDatabaseHandler;
+    }	
 }

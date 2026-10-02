@@ -3,7 +3,9 @@ package de.enflexit.df.core.processing.ui;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.function.Function;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JRadioButton;
 import javax.swing.ListCellRenderer;
@@ -22,10 +24,38 @@ public class RadioButtonList<E> extends JList<E> {
 	
 	private ArrayList<RadioButtonListSelectionListener<E>> selectionListeners;
 	
-	public RadioButtonList(ListModel<E> dataModel) {
-		super(dataModel);
+	/**
+	 * Instantiates a new radio button list with an empty list model.
+	 */
+	public RadioButtonList() {
+		this(new DefaultListModel<E>(), null);
+	}
+	
+	/**
+	 * Instantiates a new radio button list with an empty list model, using a custom function to generate the list entries from the items.
+	 * @param listEntryStringFunction the list entry string function
+	 */
+	public RadioButtonList(Function<E, String> listEntryStringFunction) {
+		this(new DefaultListModel<E>(), listEntryStringFunction);
+	}
+	
+	/**
+	 * Instantiates a new radio button list with the provided list model.
+	 * @param listModel the data model
+	 */
+	public RadioButtonList(ListModel<E> listModel) {
+		this(listModel, null);
+	}
+	
+	/**
+	 * Instantiates a new radio button list with the provided list model, using a custom function to generate the list entries from the items.
+	 * @param listModel the data model
+	 * @param listEntryStringFunction the list entry string function
+	 */
+	public RadioButtonList(ListModel<E> listModel, Function<E, String> listEntryStringFunction) {
+		super(listModel);
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		this.setCellRenderer(new RadioButtonListCellRenderer());
+		this.setCellRenderer(new RadioButtonListCellRenderer(listEntryStringFunction));
 	}
 
 	/**
@@ -99,13 +129,24 @@ public class RadioButtonList<E> extends JList<E> {
 	private class RadioButtonListCellRenderer extends JRadioButton implements ListCellRenderer<E> {
 
 		private static final long serialVersionUID = -4057418406162655654L;
+		
+		private final Function<E, String> listEntryStringFunction;
+
+		/**
+		 * Instantiates a new radio button list cell renderer, using a custom function to generate the list entries from the items (defaults to String.valueOf() if null is passed).
+		 * @param labelStringFunction the label string function
+		 */
+		public RadioButtonListCellRenderer(Function<E, String> labelStringFunction) {
+			super();
+			this.listEntryStringFunction = labelStringFunction!=null ? labelStringFunction : String::valueOf;
+		}
 
 		/* (non-Javadoc)
 		 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 		 */
 		@Override
 		public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
-			this.setText(String.valueOf(value));
+			this.setText(this.listEntryStringFunction.apply(value));
 			this.setSelected(isSelected);
 
 			this.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
@@ -113,6 +154,8 @@ public class RadioButtonList<E> extends JList<E> {
 
 			this.setFont(list.getFont());
 			this.setOpaque(true);
+			
+			this.setEnabled(list.isEnabled());
 
             return this;
 		}

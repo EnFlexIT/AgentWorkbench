@@ -1,8 +1,5 @@
 package de.enflexit.awb.ws.core.propertyBusServices;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import de.enflexit.awb.ws.core.util.UpdateCheckCoordinatorWebApp;
 import de.enflexit.awb.ws.core.util.UpdateCheckStatusWebApp;
 import de.enflexit.common.properties.Properties;
@@ -55,7 +52,7 @@ public class PropertyBusServiceUpdateCheckWebApp implements PropertyBusService {
 		properties.setBooleanValue(ISUPDATEAVAILABLE, status.isUpdateAvailable());
 		properties.setStringValue(NEW_VERSION, status.getNewVersion());
 		properties.setStringValue(CURRENT_VERSION, status.getCurrentVersion());
-		properties.setStringValue(LASTCHECK, new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(status.getLastCheck())));
+		properties.setLongValue(LASTCHECK, status.getLastCheck());
 		// --- Reset status for next call -----------------------------------------------
 		UpdateCheckCoordinatorWebApp.getInstance().setUpdateCheckStatusWebApp(null);
 		
