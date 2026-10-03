@@ -371,11 +371,14 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		jPopupMenuOpen.add(this.getJMenuItemCsvData());
 		jPopupMenuOpen.add(this.getJMenuItemExcelFile());
 		jPopupMenuOpen.add(this.getJMenuItemDatabaseData());
-		jPopupMenuOpen.addSeparator();
-		jPopupMenuOpen.add(this.getjMenuItemDataProcessing());
+		
 		// --- Add all remaining services -----------------
 		this.addExternalDataSourceServices(jPopupMenuOpen);
+		
 		// --- Add a data processing ---------------------- 
+		jPopupMenuOpen.addSeparator();
+		jPopupMenuOpen.add(this.getJMenuItemDataProcessing());
+		
 		return jPopupMenuOpen;
 	}
 	private JMenuItem getJMenuItemCsvData() {
@@ -405,19 +408,10 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		}
 		return jMenuItemDatabaseData;
 	}
-	public JMenuItem getjMenuItemDataProcessing() {
-		if (jMenuItemDataProcessing==null) {
-			jMenuItemDataProcessing = new JMenuItem("Data Processing");
-			jMenuItemDataProcessing.setForeground(AwbThemeColor.RegularText.getColor());
-			jMenuItemDataProcessing.setIcon(BundleHelper.getThemedIcon("DataProcessingBlack.png", "DataProcessingGrey.png"));
-			jMenuItemDataProcessing.addActionListener(this);
-		}
-		return jMenuItemDataProcessing;
-	}
 	
 	/**
 	 * Adds the data source services.
-	 * @param jPopupMenuOpen the j popup menu open
+	 * @param jPopupMenuOpen the current JPopupMenu to open DataSources
 	 */
 	private void addExternalDataSourceServices(JPopupMenu jPopupMenuOpen) {
 		
@@ -435,6 +429,15 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		}
 	}
 	
+	public JMenuItem getJMenuItemDataProcessing() {
+		if (jMenuItemDataProcessing==null) {
+			jMenuItemDataProcessing = new JMenuItem("Data Processing");
+			jMenuItemDataProcessing.setForeground(AwbThemeColor.RegularText.getColor());
+			jMenuItemDataProcessing.setIcon(BundleHelper.getThemedIcon("DataProcessingBlack.png", "DataProcessingGrey.png"));
+			jMenuItemDataProcessing.addActionListener(this);
+		}
+		return jMenuItemDataProcessing;
+	}
 	
 	/**
 	 * Returns the JButton edit data sources.
@@ -656,7 +659,7 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 			// --- Add DatabaseDataSource -------------------------------------
 			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new DatabaseDataSource());
 			
-		} else if (ae.getSource()==this.getjMenuItemDataProcessing()) {
+		} else if (ae.getSource()==this.getJMenuItemDataProcessing()) {
 			// --- Add processing data source ---------------------------------
 			this.dataController.addDataSource(this.getDataController().getSelectionModel().getSelectedDataWorkbook(), new ProcessingDataSource());
 		
