@@ -372,16 +372,22 @@ public class AppApiServiceImpl extends AppApiService {
     	// --- Check who is the user ----------------------------------------------------
     	Principal principal = securityContext.getUserPrincipal();
     	if (principal==null) {
-    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
+    		return Response.status(Status.FORBIDDEN).build();
     	}
     	Message message = new Message();
+    	message.setDateTime(System.currentTimeMillis()+"");
     	
     	// --- Check if there is a performative -----------------------------------------
     	if (xPerformative == null || xPerformative.isBlank()) {
-    		message.setDateTime(System.currentTimeMillis()+"");
-    		message.setMessage("Performative is missing");
+    		message.setMessage("Performative is missing!");
     		message.setMessageType(MessageType.ERROR);
         	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
+    	}
+    	
+    	if (_fileBodypart == null) {
+    		message.setMessage("File is missing!");
+    		message.setMessageType(MessageType.ERROR);
+    		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     	}
     	
     	// --- Prepare the file for processing ------------------------------------------
@@ -409,7 +415,6 @@ public class AppApiServiceImpl extends AppApiService {
     		message.setMessage(result.getMessage());
     	}
     	
-    	message.setDateTime(System.currentTimeMillis()+"");
     	return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(message).build();
     }
 
@@ -419,7 +424,7 @@ public class AppApiServiceImpl extends AppApiService {
 		// --- Check who is the user ----------------------------------------------------
 		Principal principal = securityContext.getUserPrincipal();
 		if (principal == null) {
-			return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Permission denied!!")).build();
+			return Response.status(Status.FORBIDDEN).variant(RestApiConfiguration.getResponseVariant()).build();
 		}
 		
     	Message message = new Message();
