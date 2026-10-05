@@ -16,7 +16,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-08-06T09:07:31.407970700+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-05T09:18:49.152285200+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public abstract class LogsApiService {
     public abstract Response downloadLogArchive( @NotNull String from, @NotNull String to,SecurityContext securityContext) throws NotFoundException;
     public abstract Response getLogFiles(SecurityContext securityContext) throws NotFoundException;
