@@ -213,6 +213,9 @@ public class AgentClassLoadMetricsTable implements Serializable {
 
 				private static final long serialVersionUID = 1L;
 				
+				/* (non-Javadoc)
+				 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+				 */
 				@Override
 				public boolean isCellEditable(int row, int column) {
 					if(column == 1){
@@ -220,16 +223,14 @@ public class AgentClassLoadMetricsTable implements Serializable {
 					}
 					return false;
 				}
-
 				/* (non-Javadoc)
 				 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
 				 */
-				public Class<?> getColumnClass(int column){
-					if (column >= 0 && column <= getColumnCount()) {
+				public Class<?> getColumnClass(int column) {
+					if (this.getRowCount()>0 && this.getColumnCount()>0) {
 						return getValueAt(0, column).getClass();
-					} else {
-						return Object.class;
 					}
+					return super.getColumnClass(column);
 				}
 			};
 			

@@ -40,4 +40,8 @@
          id="de.enflexit.df.tablesaw"
          version="0.0.0"/>
 
+   <plugin
+         id="de.enflexit.df.core.plugin"
+         version="0.0.0"/>
+
 </feature>

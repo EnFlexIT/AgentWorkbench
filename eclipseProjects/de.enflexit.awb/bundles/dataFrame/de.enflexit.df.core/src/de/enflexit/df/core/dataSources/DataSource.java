@@ -23,7 +23,7 @@ public interface DataSource extends Serializable, Closeable {
 	public static final String CHANGED_ID = "CHANGED_ID";
 	public static final String CHANGED_NAME = "CHANGED_NAME";
 	public static final String CHANGED_DESCRIPTION = "CHANGED_DESCRIPTION";
-	
+
 	
 	/**
 	 * Has to return a data source identifier.

@@ -191,6 +191,7 @@ public class JPanelDataSourceConfigurationCsv extends AbstractJPanelDataSourceCo
 	private JTextField getJTextFieldDataSourceName() {
 		if (jTextFieldDataSourceName == null) {
 			jTextFieldDataSourceName = new JTextField();
+			jTextFieldDataSourceName.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldDataSourceName.setPreferredSize(new Dimension(120, 26));
 			jTextFieldDataSourceName.getDocument().addDocumentListener(this);
 			jTextFieldDataSourceName.addActionListener(this);
