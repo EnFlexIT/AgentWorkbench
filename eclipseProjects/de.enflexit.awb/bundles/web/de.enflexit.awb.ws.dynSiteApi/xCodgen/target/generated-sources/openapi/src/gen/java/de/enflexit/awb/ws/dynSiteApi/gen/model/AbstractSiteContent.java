@@ -29,26 +29,24 @@ import jakarta.validation.Valid;
  */
 @JsonPropertyOrder({
   AbstractSiteContent.JSON_PROPERTY_UNIQUE_CONTENT_ID,
-  AbstractSiteContent.JSON_PROPERTY_ABSTRACT_SITE_CONTENT_TYPE,
   AbstractSiteContent.JSON_PROPERTY_EDITABLE,
   AbstractSiteContent.JSON_PROPERTY_UPDATE_PERIOD_IN_SECONDS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "AbstractSiteContentType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "abstractSiteContentType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = SiteContentChart.class, name = "SiteContentChart"),
-  @JsonSubTypes.Type(value = SiteContentMedia.class, name = "SiteContentMedia"),
+  @JsonSubTypes.Type(value = SiteContentImage.class, name = "SiteContentImage"),
   @JsonSubTypes.Type(value = SiteContentProperties.class, name = "SiteContentProperties"),
-  @JsonSubTypes.Type(value = SiteContentTable.class, name = "SiteContentTable"),
+  @JsonSubTypes.Type(value = SiteContentTableWithReference.class, name = "SiteContentTableWithReference"),
+  @JsonSubTypes.Type(value = SiteContentTableWithValues.class, name = "SiteContentTableWithValues"),
+  @JsonSubTypes.Type(value = SiteContentText.class, name = "SiteContentText"),
 })
 
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true, value = {"abstractSiteContentType"})
 public class AbstractSiteContent   {
   public static final String JSON_PROPERTY_UNIQUE_CONTENT_ID = "uniqueContentId";
   @JsonProperty(JSON_PROPERTY_UNIQUE_CONTENT_ID)
   private Integer uniqueContentId;
-
-  public static final String JSON_PROPERTY_ABSTRACT_SITE_CONTENT_TYPE = "AbstractSiteContentType";
-  @JsonProperty(JSON_PROPERTY_ABSTRACT_SITE_CONTENT_TYPE)
-  private String abstractSiteContentType;
 
   public static final String JSON_PROPERTY_EDITABLE = "editable";
   @JsonProperty(JSON_PROPERTY_EDITABLE)
@@ -76,26 +74,6 @@ public class AbstractSiteContent   {
 
   public void setUniqueContentId(Integer uniqueContentId) {
     this.uniqueContentId = uniqueContentId;
-  }
-
-  public AbstractSiteContent abstractSiteContentType(String abstractSiteContentType) {
-    this.abstractSiteContentType = abstractSiteContentType;
-    return this;
-  }
-
-  /**
-   * Get abstractSiteContentType
-   * @return abstractSiteContentType
-   **/
-  @JsonProperty(value = "AbstractSiteContentType")
-  @Schema(description = "")
-  
-  public String getAbstractSiteContentType() {
-    return abstractSiteContentType;
-  }
-
-  public void setAbstractSiteContentType(String abstractSiteContentType) {
-    this.abstractSiteContentType = abstractSiteContentType;
   }
 
   public AbstractSiteContent editable(Boolean editable) {
@@ -149,14 +127,13 @@ public class AbstractSiteContent   {
     }
     AbstractSiteContent abstractSiteContent = (AbstractSiteContent) o;
     return Objects.equals(this.uniqueContentId, abstractSiteContent.uniqueContentId) &&
-        Objects.equals(this.abstractSiteContentType, abstractSiteContent.abstractSiteContentType) &&
         Objects.equals(this.editable, abstractSiteContent.editable) &&
         Objects.equals(this.updatePeriodInSeconds, abstractSiteContent.updatePeriodInSeconds);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uniqueContentId, abstractSiteContentType, editable, updatePeriodInSeconds);
+    return Objects.hash(uniqueContentId, editable, updatePeriodInSeconds);
   }
 
   @Override
@@ -165,7 +142,6 @@ public class AbstractSiteContent   {
     sb.append("class AbstractSiteContent {\n");
     
     sb.append("    uniqueContentId: ").append(toIndentedString(uniqueContentId)).append("\n");
-    sb.append("    abstractSiteContentType: ").append(toIndentedString(abstractSiteContentType)).append("\n");
     sb.append("    editable: ").append(toIndentedString(editable)).append("\n");
     sb.append("    updatePeriodInSeconds: ").append(toIndentedString(updatePeriodInSeconds)).append("\n");
     sb.append("}");

@@ -31,10 +31,9 @@ import jakarta.validation.Valid;
  */
 @JsonPropertyOrder({
   SiteContentTable.JSON_PROPERTY_HEADER,
-  SiteContentTable.JSON_PROPERTY_DATA_TYPE,
-  SiteContentTable.JSON_PROPERTY_DATA
+  SiteContentTable.JSON_PROPERTY_DATA_TYPE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentTable extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_HEADER = "header";
   @JsonProperty(JSON_PROPERTY_HEADER)
@@ -43,10 +42,6 @@ public class SiteContentTable extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_DATA_TYPE = "dataType";
   @JsonProperty(JSON_PROPERTY_DATA_TYPE)
   private List<ValueType> dataType = new ArrayList<>();
-
-  public static final String JSON_PROPERTY_DATA = "data";
-  @JsonProperty(JSON_PROPERTY_DATA)
-  private List<List<String>> data = new ArrayList<>();
 
   public SiteContentTable header(List<String> header) {
     this.header = header;
@@ -66,8 +61,8 @@ public class SiteContentTable extends AbstractSiteContent  {
    * @return header
    **/
   @JsonProperty(value = "header")
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
-  @NotNull 
+  @Schema(description = "")
+  
   public List<String> getHeader() {
     return header;
   }
@@ -94,42 +89,14 @@ public class SiteContentTable extends AbstractSiteContent  {
    * @return dataType
    **/
   @JsonProperty(value = "dataType")
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
-  @NotNull 
+  @Schema(description = "")
+  
   public List<ValueType> getDataType() {
     return dataType;
   }
 
   public void setDataType(List<ValueType> dataType) {
     this.dataType = dataType;
-  }
-
-  public SiteContentTable data(List<List<String>> data) {
-    this.data = data;
-    return this;
-  }
-
-  public SiteContentTable addDataItem(List<String> dataItem) {
-    if (this.data == null) {
-      this.data = new ArrayList<>();
-    }
-    this.data.add(dataItem);
-    return this;
-  }
-
-  /**
-   * Get data
-   * @return data
-   **/
-  @JsonProperty(value = "data")
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
-  @NotNull 
-  public List<List<String>> getData() {
-    return data;
-  }
-
-  public void setData(List<List<String>> data) {
-    this.data = data;
   }
 
 
@@ -143,13 +110,12 @@ public class SiteContentTable extends AbstractSiteContent  {
     }
     SiteContentTable siteContentTable = (SiteContentTable) o;
     return super.equals(o) && Objects.equals(this.header, siteContentTable.header) &&
-        Objects.equals(this.dataType, siteContentTable.dataType) &&
-        Objects.equals(this.data, siteContentTable.data);
+        Objects.equals(this.dataType, siteContentTable.dataType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), header, super.hashCode(), dataType, super.hashCode(), data);
+    return Objects.hash(super.hashCode(), header, super.hashCode(), dataType);
   }
 
   @Override
@@ -159,7 +125,6 @@ public class SiteContentTable extends AbstractSiteContent  {
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    header: ").append(toIndentedString(header)).append("\n");
     sb.append("    dataType: ").append(toIndentedString(dataType)).append("\n");
-    sb.append("    data: ").append(toIndentedString(data)).append("\n");
     sb.append("}");
     return sb.toString();
   }

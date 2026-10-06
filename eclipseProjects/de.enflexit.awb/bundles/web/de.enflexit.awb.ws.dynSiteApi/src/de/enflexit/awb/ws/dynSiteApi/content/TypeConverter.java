@@ -6,13 +6,17 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentChart;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentImage;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentMedia;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentPropertyEntry;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentPropertyEntry.PropertyValueType;
-import de.enflexit.awb.ws.core.db.dataModel.SiteContentTable;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentText;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
@@ -27,6 +31,8 @@ import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
  */
 public class TypeConverter {
 
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	
 	// --------------------------------------------------------------------------------------------
 	// --- From here, static help method to handle menu items and lists ---------------------------
 	// --------------------------------------------------------------------------------------------	
@@ -216,32 +222,57 @@ public class TypeConverter {
 		AbstractSiteContent restContent = new AbstractSiteContent();
 		
 		if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentText dbText) {
+			
 			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText restText = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText();
 			restText.setText(dbText.getTextData());
 			restContent = restText;
 		
 		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentImage dbImage) {
+		
 			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage restImage = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage();
 			restImage.setDataInB64(dbImage.getTextData());
 			restContent = restImage;
 			
 		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbProperties) {
+			
 			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProps = TypeConverter.dbToRestPorperties(dbProperties);
 			restContent = restProps;
 			
-		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentTable dbTable) {
-			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable restTable = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable();
-			// TODO extend the dataModel.SiteContentTable with required fields and set them here
-			restContent = restTable;
+		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues dbTableWithValues) {
+			
+			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues restTableWithValues = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues();
+			TypeConverter.mapCommonTableFieldsDbToRest(dbTableWithValues, restTableWithValues);
+			
+			if (dbTableWithValues.getTableDataJson() != null && dbTableWithValues.getTableDataJson().isBlank() == false) {
+				try {
+					List<List<String>> data = OBJECT_MAPPER.readValue(dbTableWithValues.getTableDataJson(),
+							new TypeReference<List<List<String>>>() {
+							});
+					restTableWithValues.setData(data);
+				} catch (JsonProcessingException jpe) {
+					jpe.printStackTrace();
+				}
+			}
+			restContent = restTableWithValues;
+			
+		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference dbTableWithReference) {
+		
+			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference restTableWithReference = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference();
+			TypeConverter.mapCommonTableFieldsDbToRest(dbTableWithReference, restTableWithReference);
+			restTableWithReference.setReference(dbTableWithReference.getReference());
+			restContent = restTableWithReference;
+			
+		} else if(siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentChart dbChart) {
+		
+			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart restChart = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart();
+			restChart.setChart(dbChart.getChart());
+			restContent = restChart;
 		}
-		// TODO Charts are missing
 		
 		if (restContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia scm && siteContent instanceof SiteContentMedia dbScm) {
 			scm.setMimeType(dbScm.getMimeType());
-			scm.setSiteContentMediaType(restContent.getClass().getSimpleName());
 		}
 		
-		restContent.setAbstractSiteContentType(restContent.getClass().getSuperclass().getSimpleName());
 		restContent.setUniqueContentId(siteContent.getId());
 		restContent.setEditable(siteContent.isEditable());
 		restContent.setUpdatePeriodInSeconds(siteContent.getUpdatePeriodInSeconds());
@@ -278,13 +309,34 @@ public class TypeConverter {
 			SiteContentProperties dbProps = TypeConverter.restToDbProperties(scProperties);
 			dbSiteContent = dbProps;
 			
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable scTable) {
-			SiteContentTable dbTable = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTable();
-			// TODO extend the dataModel.SiteContentTable with required fields and set them here
-			dbSiteContent = dbTable;
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues scTableWithValues) {
+
+			de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues dbTableWithValues = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues();
+			TypeConverter.mapCommonTableFieldsRestToDb(scTableWithValues, dbTableWithValues);
+			
+			if (scTableWithValues.getData() != null) {
+				try {
+					String tableDataJson = OBJECT_MAPPER.writeValueAsString(scTableWithValues.getData());
+					dbTableWithValues.setTableDataJson(tableDataJson);
+				} catch (JsonProcessingException jpe) {
+					jpe.printStackTrace();
+				}
+			}
+			
+			dbSiteContent = dbTableWithValues;
+				
+		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference scTableWithReference) {
 		
+			de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference dbTableWithReference = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference();	
+			
+			TypeConverter.mapCommonTableFieldsRestToDb(scTableWithReference, dbTableWithReference);
+			dbTableWithReference.setReference(scTableWithReference.getReference());
+			dbSiteContent = dbTableWithReference;
+			
 		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart scChart) {
-			//TODO find the chart type and instantiate it
+			de.enflexit.awb.ws.core.db.dataModel.SiteContentChart dbChart = new SiteContentChart();
+			dbChart.setChart(scChart.getChart());
+			dbSiteContent = dbChart;
 		}
 		
 		
@@ -298,6 +350,29 @@ public class TypeConverter {
 		dbSiteContent.setUpdatePeriodInSeconds(siteContent.getUpdatePeriodInSeconds());
 		
 		return dbSiteContent;
+	}
+
+	private static void mapCommonTableFieldsRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable restTable, de.enflexit.awb.ws.core.db.dataModel.SiteContentTable dbTable) {
+		
+		dbTable.setHeader(restTable.getHeader());
+		
+		if (restTable.getDataType() != null) {
+			List<String> dataTypes = new ArrayList<String>();
+			restTable.getDataType().forEach(dtype -> dataTypes.add(dtype.getValue()));
+			dbTable.setDataType(dataTypes);
+		}
+		
+	}
+
+	private static void mapCommonTableFieldsDbToRest(de.enflexit.awb.ws.core.db.dataModel.SiteContentTable dbTable, de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable restTable) {
+	
+		restTable.setHeader(dbTable.getHeader());
+		
+		if (dbTable.getDataType() != null) {
+			List<ValueType> dataTypes = new ArrayList<ValueType>();
+			dbTable.getDataType().forEach(dType -> dataTypes.add(ValueType.fromValue(dType)));
+			restTable.setDataType(dataTypes);
+		}		
 	}
 	
 	/**

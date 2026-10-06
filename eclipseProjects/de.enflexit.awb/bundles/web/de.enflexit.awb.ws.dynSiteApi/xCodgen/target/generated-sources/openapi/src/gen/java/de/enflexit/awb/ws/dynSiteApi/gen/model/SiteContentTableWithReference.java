@@ -16,42 +16,46 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * UpdateContentElementRequest
+ * SiteContentTableWithReference
  */
 @JsonPropertyOrder({
-  UpdateContentElementRequest.JSON_PROPERTY_CONTENT
+  SiteContentTableWithReference.JSON_PROPERTY_REFERENCE
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
-public class UpdateContentElementRequest   {
-  public static final String JSON_PROPERTY_CONTENT = "content";
-  @JsonProperty(JSON_PROPERTY_CONTENT)
-  private AbstractSiteContent content;
+public class SiteContentTableWithReference extends SiteContentTable  {
+  public static final String JSON_PROPERTY_REFERENCE = "reference";
+  @JsonProperty(JSON_PROPERTY_REFERENCE)
+  private String reference;
 
-  public UpdateContentElementRequest content(AbstractSiteContent content) {
-    this.content = content;
+  public SiteContentTableWithReference reference(String reference) {
+    this.reference = reference;
     return this;
   }
 
   /**
-   * Get content
-   * @return content
+   * Get reference
+   * @return reference
    **/
-  @JsonProperty(value = "content")
+  @JsonProperty(value = "reference")
   @Schema(description = "")
-  @Valid 
-  public AbstractSiteContent getContent() {
-    return content;
+  
+  public String getReference() {
+    return reference;
   }
 
-  public void setContent(AbstractSiteContent content) {
-    this.content = content;
+  public void setReference(String reference) {
+    this.reference = reference;
   }
 
 
@@ -63,21 +67,21 @@ public class UpdateContentElementRequest   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UpdateContentElementRequest updateContentElementRequest = (UpdateContentElementRequest) o;
-    return Objects.equals(this.content, updateContentElementRequest.content);
+    SiteContentTableWithReference siteContentTableWithReference = (SiteContentTableWithReference) o;
+    return super.equals(o) && Objects.equals(this.reference, siteContentTableWithReference.reference);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(content);
+    return Objects.hash(super.hashCode(), reference);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UpdateContentElementRequest {\n");
-    
-    sb.append("    content: ").append(toIndentedString(content)).append("\n");
+    sb.append("class SiteContentTableWithReference {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    reference: ").append(toIndentedString(reference)).append("\n");
     sb.append("}");
     return sb.toString();
   }

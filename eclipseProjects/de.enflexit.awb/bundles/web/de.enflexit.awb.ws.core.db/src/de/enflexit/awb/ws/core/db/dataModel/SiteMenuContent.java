@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -15,7 +17,9 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "site_menu_content")
-public class SiteMenuContent {
+public class SiteMenuContent implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@ManyToOne

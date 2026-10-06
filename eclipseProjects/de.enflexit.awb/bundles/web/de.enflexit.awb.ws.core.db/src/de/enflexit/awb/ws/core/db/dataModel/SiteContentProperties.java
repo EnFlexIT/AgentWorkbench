@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -10,8 +11,10 @@ import jakarta.persistence.OneToMany;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-public class SiteContentProperties extends SiteContent {
+public class SiteContentProperties extends SiteContent implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@OneToMany(mappedBy = "siteContentProperties")
 	private List<SiteContentPropertyEntry> propertyEntries;
 	

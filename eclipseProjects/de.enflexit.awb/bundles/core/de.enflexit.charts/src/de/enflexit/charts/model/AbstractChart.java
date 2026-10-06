@@ -48,7 +48,7 @@ import jakarta.validation.constraints.NotNull;
   AbstractChart.JSON_PROPERTY_Y_AXIS_LABEL,
   AbstractChart.JSON_PROPERTY_DATA_SERIES
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T13:18:19.321033100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "ChartType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T13:18:19.321033100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "chartType", visible = false)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = BarChart.class, name = "BarChart"),
   @JsonSubTypes.Type(value = LineChart.class, name = "LineChart"),

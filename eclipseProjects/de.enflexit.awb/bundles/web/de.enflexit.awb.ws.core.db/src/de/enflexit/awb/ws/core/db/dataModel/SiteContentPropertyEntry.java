@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,8 +18,10 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "site_content_property_entry")
-public class SiteContentPropertyEntry {
+public class SiteContentPropertyEntry implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	public enum PropertyValueType {
 		BOOLEAN,
 		STRING,

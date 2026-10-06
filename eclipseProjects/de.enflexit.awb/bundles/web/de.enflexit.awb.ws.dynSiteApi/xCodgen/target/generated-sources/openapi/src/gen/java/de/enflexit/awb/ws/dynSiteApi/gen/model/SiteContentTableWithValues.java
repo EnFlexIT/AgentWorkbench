@@ -16,42 +16,54 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
 
 /**
- * UpdateContentElementRequest
+ * SiteContentTableWithValues
  */
 @JsonPropertyOrder({
-  UpdateContentElementRequest.JSON_PROPERTY_CONTENT
+  SiteContentTableWithValues.JSON_PROPERTY_DATA
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
-public class UpdateContentElementRequest   {
-  public static final String JSON_PROPERTY_CONTENT = "content";
-  @JsonProperty(JSON_PROPERTY_CONTENT)
-  private AbstractSiteContent content;
+public class SiteContentTableWithValues extends SiteContentTable  {
+  public static final String JSON_PROPERTY_DATA = "data";
+  @JsonProperty(JSON_PROPERTY_DATA)
+  private List<List<String>> data = new ArrayList<>();
 
-  public UpdateContentElementRequest content(AbstractSiteContent content) {
-    this.content = content;
+  public SiteContentTableWithValues data(List<List<String>> data) {
+    this.data = data;
+    return this;
+  }
+
+  public SiteContentTableWithValues addDataItem(List<String> dataItem) {
+    if (this.data == null) {
+      this.data = new ArrayList<>();
+    }
+    this.data.add(dataItem);
     return this;
   }
 
   /**
-   * Get content
-   * @return content
+   * Get data
+   * @return data
    **/
-  @JsonProperty(value = "content")
+  @JsonProperty(value = "data")
   @Schema(description = "")
-  @Valid 
-  public AbstractSiteContent getContent() {
-    return content;
+  
+  public List<List<String>> getData() {
+    return data;
   }
 
-  public void setContent(AbstractSiteContent content) {
-    this.content = content;
+  public void setData(List<List<String>> data) {
+    this.data = data;
   }
 
 
@@ -63,21 +75,21 @@ public class UpdateContentElementRequest   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UpdateContentElementRequest updateContentElementRequest = (UpdateContentElementRequest) o;
-    return Objects.equals(this.content, updateContentElementRequest.content);
+    SiteContentTableWithValues siteContentTableWithValues = (SiteContentTableWithValues) o;
+    return super.equals(o) && Objects.equals(this.data, siteContentTableWithValues.data);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(content);
+    return Objects.hash(super.hashCode(), data);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UpdateContentElementRequest {\n");
-    
-    sb.append("    content: ").append(toIndentedString(content)).append("\n");
+    sb.append("class SiteContentTableWithValues {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    data: ").append(toIndentedString(data)).append("\n");
     sb.append("}");
     return sb.toString();
   }

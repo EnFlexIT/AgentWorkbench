@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -15,8 +17,10 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "site_menu_translation")
-public class SiteMenuTranslation {
+public class SiteMenuTranslation implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "id_site_menu", referencedColumnName = "id_site_menu", foreignKey = @ForeignKey(foreignKeyDefinition = "FOREIGN KEY (ID_SITE_MENU) REFERENCES SITE_MENU(ID_SITE_MENU) ON DELETE CASCADE"))

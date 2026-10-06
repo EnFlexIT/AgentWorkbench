@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
   UpdateContentAssignmentRequest.JSON_PROPERTY_TARGET_MENU_ID,
   UpdateContentAssignmentRequest.JSON_PROPERTY_POSITION
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class UpdateContentAssignmentRequest   {
   public static final String JSON_PROPERTY_ELEMENT_ID = "elementId";
   @JsonProperty(JSON_PROPERTY_ELEMENT_ID)

@@ -11,29 +11,28 @@
  */
 
 
-package de.enflexit.awb.ws.dynSiteApi.gen.model;
+package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
-import io.swagger.v3.oas.annotations.media.Schema;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-import jakarta.validation.Valid;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 
 /**
  * SiteContentChart
  */
-@JsonPropertyOrder({
-  SiteContentChart.JSON_PROPERTY_CHART
-})
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
-public class SiteContentChart extends AbstractSiteContent  {
-  public static final String JSON_PROPERTY_CHART = "chart";
-  @JsonProperty(JSON_PROPERTY_CHART)
-  private de.enflexit.charts.model.AbstractChart chart;
-
+@Entity
+public class SiteContentChart extends SiteContent implements Serializable  {
+ 
+	private static final long serialVersionUID = 1L;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "chart_id", referencedColumnName = "chart_id")
+	private de.enflexit.charts.model.AbstractChart chart;
   public SiteContentChart chart(de.enflexit.charts.model.AbstractChart chart) {
     this.chart = chart;
     return this;
@@ -43,9 +42,6 @@ public class SiteContentChart extends AbstractSiteContent  {
    * Get chart
    * @return chart
    **/
-  @JsonProperty(value = "chart")
-  @Schema(description = "")
-  @Valid 
   public de.enflexit.charts.model.AbstractChart getChart() {
     return chart;
   }
@@ -90,4 +86,3 @@ public class SiteContentChart extends AbstractSiteContent  {
     return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
-

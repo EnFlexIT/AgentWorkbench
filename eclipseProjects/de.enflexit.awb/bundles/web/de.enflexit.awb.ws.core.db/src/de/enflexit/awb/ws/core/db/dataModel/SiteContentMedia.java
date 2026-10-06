@@ -1,5 +1,7 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
@@ -10,8 +12,10 @@ import jakarta.persistence.Lob;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-public abstract class SiteContentMedia extends SiteContent {
+public abstract class SiteContentMedia extends SiteContent implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Column(name = "mime_type")
 	private String mimeType;
 	

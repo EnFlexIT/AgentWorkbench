@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -20,8 +21,10 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "site_content")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class SiteContent {
+public abstract class SiteContent implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "id_site_content")
