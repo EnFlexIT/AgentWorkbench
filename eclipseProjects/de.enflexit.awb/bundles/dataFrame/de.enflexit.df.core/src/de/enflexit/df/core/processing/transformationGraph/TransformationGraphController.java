@@ -2,12 +2,13 @@ package de.enflexit.df.core.processing.transformationGraph;
 
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.ObservableGraph;
-import edu.uci.ics.jung.graph.SparseGraph;
 
 /**
  * This class manages the transformation graph.
@@ -24,7 +25,7 @@ public class TransformationGraphController {
 	 */
 	public Graph<DataTableNode, DataTransformationEdge> getTransformationGraph() {
 		if (transformationGraph==null) {
-			transformationGraph = new ObservableGraph<DataTableNode, DataTransformationEdge>(new SparseGraph<DataTableNode, DataTransformationEdge>());
+			transformationGraph = new ObservableGraph<DataTableNode, DataTransformationEdge>(new DirectedSparseGraph<DataTableNode, DataTransformationEdge>());
 		}
 		return transformationGraph;
 	}
@@ -70,6 +71,22 @@ public class TransformationGraphController {
 	}
 	
 	/**
+	 * Removes the provided data table node from the graph. Might fail if the node
+	 * is part of a transformation, then the transformation must be removed first.
+	 * @param nodeToRemove the node to remove
+	 * @return true, if successful
+	 */
+	public boolean removeDataTableNode(DataTableNode nodeToRemove) {
+		if (this.getTransformationGraph().getOutEdges(nodeToRemove).size()>0) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The node is part of existing transformations, can't be removed!");
+			return false;
+		} else {
+			this.getTransformationGraph().removeVertex(nodeToRemove);
+			return true;
+		}
+	}
+	
+	/**
 	 * Removes the node for the provided data source from the graph. Might fail if the
 	 * node is part of a transformation, then the transformation must be removed first. 
 	 * @param dataSourceDTNO the data source DTNO
@@ -78,15 +95,36 @@ public class TransformationGraphController {
 	public boolean removeDataTableNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
 		DataTableNode nodeToRemove = this.findNodeForDataSource(dataSourceDTNO);
 		if (nodeToRemove!=null) {
-			if (this.getTransformationGraph().getOutEdges(nodeToRemove).size()>0) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] The node is part of existing transformations, can't be removed!");
-				return false;
-			} else {
-				this.getTransformationGraph().removeVertex(nodeToRemove);
-				return true;
-			}
+			return this.removeDataTableNode(nodeToRemove);
 		}
 		return false;
+	}
+	
+	/**
+	 * Removes the data transformation with the provided output node.
+	 * @param resultNode the result node
+	 * @return true, if successful
+	 */
+	public boolean removeDataTransformation(DataTableNodeTransformationResult resultNode) {
+		if (this.getTransformationGraph().getOutEdges(resultNode).size()>0) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] The transformation is an input for subsequent transformations, can't be removed!");
+			return false;
+		} else {
+			
+			// --- Collect all involved edges first (can't remove directly -> CuncurrentModificationException)
+			ArrayList<DataTransformationEdge> edgesToRemove = new ArrayList<DataTransformationEdge>();
+			for (DataTransformationEdge edge : this.getTransformationGraph().getInEdges(resultNode)) {
+				edgesToRemove.add(edge);
+			}
+			
+			// --- Remove all involved elements from the graph
+			for (DataTransformationEdge edge : edgesToRemove) {
+				this.getTransformationGraph().removeEdge(edge);
+			}
+			this.getTransformationGraph().removeVertex(resultNode);
+			
+			return true;
+		}
 	}
 	
 	/**

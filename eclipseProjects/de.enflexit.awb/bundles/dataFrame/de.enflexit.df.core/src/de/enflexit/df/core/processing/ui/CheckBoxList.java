@@ -25,6 +25,8 @@ public class CheckBoxList<E> extends JList<E> {
 	
 	private ArrayList<CheckBoxListSelectionListener<E>> selectionListeners;
 	
+	private boolean pauseChangeListeners;
+	
 	
 	/**
 	 * Instantiates a new check box list with an empty list model.
@@ -119,15 +121,33 @@ public class CheckBoxList<E> extends JList<E> {
 	}
 
 	/**
+	 * Checks if is pause change listeners.
+	 * @return true, if is pause change listeners
+	 */
+	public boolean isPauseChangeListeners() {
+		return pauseChangeListeners;
+	}
+
+	/**
+	 * Sets the pause change listeners.
+	 * @param pauseChangeListeners the new pause change listeners
+	 */
+	public void setPauseChangeListeners(boolean pauseChangeListeners) {
+		this.pauseChangeListeners = pauseChangeListeners;
+	}
+
+	/**
 	 * Notifies all listeners about a selection change.
 	 * @param index the index
 	 * @param item the item
 	 * @param selected the selected
 	 */
 	private void fireSelectionChangeEvent(int index, E item, boolean selected) {
-		CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected);
-		for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
-			listener.selectionChanged(cblse);;
+		if (this.isPauseChangeListeners()==false) {
+			CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected);
+			for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
+				listener.selectionChanged(cblse);;
+			}
 		}
 	}
 	

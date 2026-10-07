@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
 import tech.tablesaw.api.Table;
 
 /**
@@ -18,7 +19,7 @@ public abstract class AbstractDataTransformation {
 	}
 	
 	private ArrayList<DataTableNode> inputNodes;
-	private DataTableNode outputNode;
+	private DataTableNodeTransformationResult outputNode;
 	
 	private Map<String, Object> transformationParameters;
 	
@@ -42,14 +43,14 @@ public abstract class AbstractDataTransformation {
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#getOutputNode()
 	 */
-	public DataTableNode getOutputNode() {
+	public DataTableNodeTransformationResult getOutputNode() {
 		return outputNode;
 	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#setOutputNode(de.enflexit.df.core.processing.transformationGraph.DataTableNode)
 	 */
-	public void setOutputNode(DataTableNode outputNode) {
+	public void setOutputNode(DataTableNodeTransformationResult outputNode) {
 		this.outputNode = outputNode;
 	}
 	
