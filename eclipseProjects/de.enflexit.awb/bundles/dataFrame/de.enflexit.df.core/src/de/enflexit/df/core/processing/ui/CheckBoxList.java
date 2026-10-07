@@ -3,6 +3,7 @@ package de.enflexit.df.core.processing.ui;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.swing.DefaultListModel;
@@ -129,6 +130,21 @@ public class CheckBoxList<E> extends JList<E> {
 			listener.selectionChanged(cblse);;
 		}
 	}
+	
+	/**
+	 * Sets the selected items.
+	 * @param items the items to select
+	 */
+	public void setSelectedItems(List<E> items) {
+		this.getSelectionModel().clearSelection();
+		
+		for (int i=0; i<this.getModel().getSize(); i++) {
+			if (items.contains(this.getModel().getElementAt(i))) {
+				this.getSelectionModel().addSelectionInterval(i, i);
+			}
+		}
+	}
+	
 
 	/**
 	 * The Class CheckBoxListCellRenderer.
