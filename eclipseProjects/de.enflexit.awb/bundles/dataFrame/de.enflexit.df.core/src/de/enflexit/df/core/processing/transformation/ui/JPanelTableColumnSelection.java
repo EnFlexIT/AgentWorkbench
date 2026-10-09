@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.swing.JScrollPane;
 
-import de.enflexit.df.core.processing.transformation.DataTransformationSelect;
+import de.enflexit.df.core.processing.transformation.DataTransformationSelectColumns;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.ui.CheckBoxList;
@@ -155,7 +155,7 @@ public class JPanelTableColumnSelection extends AbstractTransformationParameterC
 	@Override
 	public void setConfiguredParameters(Map<String, Object> parameters) {
 		if (parameters!=null) {
-			Object selectColumnsObject = parameters.get(DataTransformationSelect.TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
+			Object selectColumnsObject = parameters.get(DataTransformationSelectColumns.TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
 			if (selectColumnsObject!=null && selectColumnsObject instanceof List<?> list && list.stream().allMatch(Column.class::isInstance)) {
 				@SuppressWarnings("unchecked")
 				List<Column<?>> selectedColumnsList = (List<Column<?>>) selectColumnsObject;

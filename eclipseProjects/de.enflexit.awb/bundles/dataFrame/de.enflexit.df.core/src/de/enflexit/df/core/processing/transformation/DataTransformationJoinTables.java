@@ -11,7 +11,7 @@ import tech.tablesaw.columns.Column;
  * This {@link AbstractDataTransformation} merges two or more input tables to a single table.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataTransformationJoin extends AbstractDataTransformation {
+public class DataTransformationJoinTables extends AbstractDataTransformation {
 	
 	public static final String PARAM_NAME_JOIN_COLUMNS = "joinColumns";
 	
@@ -87,6 +87,6 @@ public class DataTransformationJoin extends AbstractDataTransformation {
 	 */
 	@Override
 	public String getTransformationName() {
-		return DataTransformationServiceJoinImpl.TRANSFORMATION_NAME;
+		return DataTransformationServiceJoinTables.TRANSFORMATION_NAME;
 	}
 }

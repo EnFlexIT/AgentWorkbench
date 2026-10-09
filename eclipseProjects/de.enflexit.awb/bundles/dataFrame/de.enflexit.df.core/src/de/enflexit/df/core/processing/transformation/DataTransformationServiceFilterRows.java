@@ -6,14 +6,14 @@ import java.util.List;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 
 /**
- * {@link DataTransformationService} implementation for table joins / merges.
+ * {@link DataTransformationService} implementation for table row filters.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataTransformationServiceJoinImpl implements DataTransformationService {
+public class DataTransformationServiceFilterRows implements DataTransformationService {
 	
-	public static final String TRANSFORMATION_NAME = "Merge Tables";
+	public static final String TRANSFORMATION_NAME = "Filter Rows";
 	
-	private static final String TRANSFORMATION_DESCRIPTION = "This data transformation merges two or more tables into a single table.";
+	private static final String TRANSFORMATION_DESCRIPTION = "This data transformation filters the rows of a table based on the values of one or more columns.";
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getName()
@@ -28,6 +28,7 @@ public class DataTransformationServiceJoinImpl implements DataTransformationServ
 	 */
 	@Override
 	public String getDescription() {
+		// TODO Auto-generated method stub
 		return TRANSFORMATION_DESCRIPTION;
 	}
 
@@ -36,7 +37,7 @@ public class DataTransformationServiceJoinImpl implements DataTransformationServ
 	 */
 	@Override
 	public InputType getInputType() {
-		return InputType.MULTI_TABLE;
+		return InputType.SINGLE_TABLE;
 	}
 
 	/* (non-Javadoc)
@@ -44,9 +45,7 @@ public class DataTransformationServiceJoinImpl implements DataTransformationServ
 	 */
 	@Override
 	public List<String> getRequiredParameters() {
-		ArrayList<String> requiredParameters = new ArrayList<String>();
-		requiredParameters.add("join_columns (String list, one column for each table)");
-		return requiredParameters;
+		return new ArrayList<String>();
 	}
 
 	/* (non-Javadoc)
@@ -54,7 +53,7 @@ public class DataTransformationServiceJoinImpl implements DataTransformationServ
 	 */
 	@Override
 	public AbstractDataTransformation getNewInstance() {
-		return new DataTransformationJoin();
+		return new DataTransformationFilterRows();
 	}
 
 }

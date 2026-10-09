@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.enflexit.df.core.processing.transformation.DataTransformationJoin;
+import de.enflexit.df.core.processing.transformation.DataTransformationJoinTables;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.ui.JPanelTransformationGraphEditor;
@@ -160,7 +160,7 @@ public class JPanelJoinColumnsSelection extends AbstractTransformationParameterC
 
 		// --- Wrap in a String Object HashMap to match the generic interface
 		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(DataTransformationJoin.PARAM_NAME_JOIN_COLUMNS, joinColumnsMap);
+		parameters.put(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS, joinColumnsMap);
 		return parameters;
 	}
 	
@@ -170,9 +170,9 @@ public class JPanelJoinColumnsSelection extends AbstractTransformationParameterC
 	@Override
 	public void setConfiguredParameters(Map<String, Object> parameters) {
 		if (parameters!=null) {
-			Object joinConfigObject = parameters.get(DataTransformationJoin.PARAM_NAME_JOIN_COLUMNS);
+			Object joinConfigObject = parameters.get(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS);
 			
-			if (DataTransformationJoin.checkConfigurationParameterParamType(joinConfigObject)==true) {
+			if (DataTransformationJoinTables.checkConfigurationParameterParamType(joinConfigObject)==true) {
 				
 				@SuppressWarnings("unchecked")
 				HashMap<Table, Column<?>> joinConfigMap = (HashMap<Table, Column<?>>) joinConfigObject;
@@ -190,7 +190,7 @@ public class JPanelJoinColumnsSelection extends AbstractTransformationParameterC
 				}
 				
 			} else {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Invalid parameter provided for " + DataTransformationJoin.PARAM_NAME_JOIN_COLUMNS + ", must be a HashMap<Table, Column<?>>");
+				System.err.println("[" + this.getClass().getSimpleName() + "] Invalid parameter provided for " + DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS + ", must be a HashMap<Table, Column<?>>");
 			}
 		}
 	}

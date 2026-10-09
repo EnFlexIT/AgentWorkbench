@@ -9,7 +9,7 @@ import tech.tablesaw.columns.Column;
  * This {@link AbstractDataTransformation} selects a set of columns from the input table.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataTransformationSelect extends AbstractDataTransformation {
+public class DataTransformationSelectColumns extends AbstractDataTransformation {
 	
 	public static final String TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT = "columnsToSelect";
 	private static final String COLUMN_NAME_SEPARATOR = ",";
@@ -58,7 +58,7 @@ public class DataTransformationSelect extends AbstractDataTransformation {
 	 */
 	@Override
 	public String getTransformationName() {
-		return DataTransformationServiceSelectImpl.TRANSFORMATION_NAME;
+		return DataTransformationServiceSelectColumns.TRANSFORMATION_NAME;
 	}
 
 }

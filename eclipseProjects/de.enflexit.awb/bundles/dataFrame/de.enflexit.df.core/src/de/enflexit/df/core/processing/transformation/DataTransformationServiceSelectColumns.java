@@ -9,7 +9,7 @@ import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.
  * {@link DataTransformationService} implementation for select transformations.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataTransformationServiceSelectImpl implements DataTransformationService {
+public class DataTransformationServiceSelectColumns implements DataTransformationService {
 	
 	public static final String TRANSFORMATION_NAME = "Select Columns";
 	
@@ -45,7 +45,7 @@ public class DataTransformationServiceSelectImpl implements DataTransformationSe
 	@Override
 	public List<String> getRequiredParameters() {
 		ArrayList<String> requiredParameters = new ArrayList<String>();
-		requiredParameters.add(DataTransformationSelect.TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
+		requiredParameters.add(DataTransformationSelectColumns.TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
 		return requiredParameters;
 	}
 
@@ -54,7 +54,7 @@ public class DataTransformationServiceSelectImpl implements DataTransformationSe
 	 */
 	@Override
 	public AbstractDataTransformation getNewInstance() {
-		return new DataTransformationSelect();
+		return new DataTransformationSelectColumns();
 	}
 
 }

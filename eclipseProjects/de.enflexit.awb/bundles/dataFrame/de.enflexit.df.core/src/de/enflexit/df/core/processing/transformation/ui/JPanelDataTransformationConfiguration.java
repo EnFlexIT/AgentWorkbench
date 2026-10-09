@@ -23,8 +23,8 @@ import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformation.DataTransformationServiceJoinImpl;
-import de.enflexit.df.core.processing.transformation.DataTransformationServiceSelectImpl;
+import de.enflexit.df.core.processing.transformation.DataTransformationServiceJoinTables;
+import de.enflexit.df.core.processing.transformation.DataTransformationServiceSelectColumns;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.ui.CheckBoxList;
 import de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent;
@@ -346,9 +346,9 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 	 * @return the parameter configuration panel
 	 */
 	private AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel(DataTransformationService transformaitonService) {
-		if (transformaitonService instanceof DataTransformationServiceSelectImpl) {
+		if (transformaitonService instanceof DataTransformationServiceSelectColumns) {
 			return new JPanelTableColumnSelection(transformaitonService);
-		} else if (transformaitonService instanceof  DataTransformationServiceJoinImpl){
+		} else if (transformaitonService instanceof  DataTransformationServiceJoinTables){
 			return new JPanelJoinColumnsSelection(transformaitonService, this.parentEditorPanel);
 		} else {
 			return new DefaultTransformationParameterConfigurationPanel(transformaitonService);
