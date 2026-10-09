@@ -189,12 +189,11 @@ public class DefaultDataSource implements DataSource {
 		this.storageConfiguration = storageConfiguration;
 	}
 
-	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.dataSources.DataSource#open()
+	 * @see de.enflexit.df.core.dataSources.DataSource#open(de.enflexit.df.core.model.DataController, de.enflexit.df.core.workbook.DataWorkbook)
 	 */
 	@Override
-	public boolean open() {
+	public boolean open(DataController dataController, DataWorkbook dataWorkbook) {
 		// --- Overwrite, if needed in the sub classes --------------
 		// --- => By default, this method return true
 		return true;

@@ -1,6 +1,7 @@
 package de.enflexit.df.core.model;
 
 import java.awt.Window;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
@@ -82,6 +84,7 @@ public class DataController {
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		this.getPropertyChangeSupport().removePropertyChangeListener(listener);
 	}
+	
 	/**
 	 * Fires a property change event.
 	 *
@@ -92,6 +95,19 @@ public class DataController {
 	public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		this.getPropertyChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
 	}
+	/**
+	 * Fires a property change event based on the specified attributes.
+	 *
+	 * @param source the source instance of the event (e.g. the {@link DataSource} to consider
+	 * @param propertyName the property name
+	 * @param oldValue the old value
+	 * @param newValue the new value
+	 */
+	public void firePropertyChange(Object source, String propertyName, Object oldValue, Object newValue) {
+		PropertyChangeEvent pce = new PropertyChangeEvent(source, propertyName, oldValue, newValue);
+		this.getPropertyChangeSupport().firePropertyChange(pce);
+	}
+
 
 	// ------------------------------------------------------------------------
 	// --- From here, workbook reminder ---------------------------------------
@@ -338,14 +354,13 @@ public class DataController {
 
 		// --- Try to 'open' the data source ------------------------
 		try {
-			boolean successfulOpened = dataSource.open(); 
+ 			boolean successfulOpened = dataSource.open(this, dw); 
 			this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_SOURCE, null, AffectedDataObjects.create(dw, dataSource));
 			return successfulOpened;
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	
 		return false;
 	}
 	/**

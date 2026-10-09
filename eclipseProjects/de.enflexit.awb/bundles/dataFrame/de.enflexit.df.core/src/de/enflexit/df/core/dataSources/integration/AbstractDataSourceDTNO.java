@@ -217,6 +217,8 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 	 */
 	public void loadNextPage() {
 		
+		if (this.getPaginationDataLoader()==null) return;
+		
 		// --- Try loading the next page ---------------------------- 
 		Table newPage = this.getPaginationDataLoader().loadNextPage();
 		if (newPage!=null) {

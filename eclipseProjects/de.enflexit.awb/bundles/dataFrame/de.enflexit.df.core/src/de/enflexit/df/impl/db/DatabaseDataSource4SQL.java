@@ -166,32 +166,18 @@ public class DatabaseDataSource4SQL extends DatabaseDataSource {
 	// ----------------------------------------------------------------------------------
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#open()
-	 */
-	@Override
-	public boolean open() {
-		// TODO Auto-generated method stub
-		
-		return super.open();
-	}
-	
-	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#close()
 	 */
 	@Override
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
 		
 	}
-	
 	
 	// ----------------------------------------------------------------------------------
 	// --- From here, single String configuration conversion methods --------------------
 	// ----------------------------------------------------------------------------------
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see de.enflexit.df.core.dataSources.DataSource#toConfigurationString()
 	 */
 	@Override
