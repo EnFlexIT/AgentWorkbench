@@ -583,6 +583,9 @@ public class WebAppDatabaseHandler {
 			try {
 				transaction = session.beginTransaction();
 				requestedContentElement = session.get(SiteContent.class, elementID);
+				if (requestedContentElement == null) {
+					throw new IllegalArgumentException("The specified content element could not be found.");
+				}
 				transaction.commit();
 				return requestedContentElement;
 				

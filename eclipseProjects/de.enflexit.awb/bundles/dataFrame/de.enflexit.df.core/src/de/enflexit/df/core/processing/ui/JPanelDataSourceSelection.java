@@ -33,12 +33,14 @@ public class JPanelDataSourceSelection extends JPanel {
 	private DefaultListModel<AbstractDataSourceDTNO<?>> dataSourcesListModel;
 	
 	private DataController dataController;
+	private JPanelTransformationGraphEditor parentEditor;
 	
 	/**
 	 * Instantiates a new j panel source table selection.
 	 */
-	public JPanelDataSourceSelection(DataController dataController) {
+	public JPanelDataSourceSelection(DataController dataController, JPanelTransformationGraphEditor parentEditor) {
 		this.dataController = dataController;
+		this.parentEditor = parentEditor;
 		initialize();
 	}
 	
@@ -82,8 +84,28 @@ public class JPanelDataSourceSelection extends JPanel {
 	private CheckBoxList<AbstractDataSourceDTNO<?>> getJListSourceTables() {
 		if (jListSourceTables == null) {
 			jListSourceTables = new CheckBoxList<AbstractDataSourceDTNO<?>>(this.getDataSourcesListModel());
+			this.setInitialSelection();
 		}
 		return jListSourceTables;
+	}
+	
+	/**
+	 * Sets the initial selection according to the current graph state.
+	 */
+	private void setInitialSelection() {
+		this.getJListSourceTables().setPauseChangeListeners(true);
+		
+		// --- Check if there is already a graph node for the data sources
+		for (int i=0; i<this.getDataSourcesListModel().size(); i++) {
+			AbstractDataSourceDTNO<?> dtno = this.getDataSourcesListModel().getElementAt(i);
+			
+			// --- If so, set the corresponding entry to be initially selected
+			if (this.parentEditor.findCorrespondingTableNode(dtno.getTable())!=null) {
+				this.getJListSourceTables().getSelectionModel().addSelectionInterval(i, i);
+			}
+		}
+		
+		this.getJListSourceTables().setPauseChangeListeners(false);
 	}
 	
 	/**

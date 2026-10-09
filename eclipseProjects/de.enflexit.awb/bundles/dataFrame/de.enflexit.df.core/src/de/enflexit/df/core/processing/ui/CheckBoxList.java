@@ -3,6 +3,7 @@ package de.enflexit.df.core.processing.ui;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.swing.DefaultListModel;
@@ -23,6 +24,8 @@ public class CheckBoxList<E> extends JList<E> {
 	private static final long serialVersionUID = 1465821191630421936L;
 	
 	private ArrayList<CheckBoxListSelectionListener<E>> selectionListeners;
+	
+	private boolean pauseChangeListeners;
 	
 	
 	/**
@@ -118,17 +121,50 @@ public class CheckBoxList<E> extends JList<E> {
 	}
 
 	/**
+	 * Checks if is pause change listeners.
+	 * @return true, if is pause change listeners
+	 */
+	public boolean isPauseChangeListeners() {
+		return pauseChangeListeners;
+	}
+
+	/**
+	 * Sets the pause change listeners.
+	 * @param pauseChangeListeners the new pause change listeners
+	 */
+	public void setPauseChangeListeners(boolean pauseChangeListeners) {
+		this.pauseChangeListeners = pauseChangeListeners;
+	}
+
+	/**
 	 * Notifies all listeners about a selection change.
 	 * @param index the index
 	 * @param item the item
 	 * @param selected the selected
 	 */
 	private void fireSelectionChangeEvent(int index, E item, boolean selected) {
-		CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected);
-		for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
-			listener.selectionChanged(cblse);;
+		if (this.isPauseChangeListeners()==false) {
+			CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected);
+			for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
+				listener.selectionChanged(cblse);;
+			}
 		}
 	}
+	
+	/**
+	 * Sets the selected items.
+	 * @param items the items to select
+	 */
+	public void setSelectedItems(List<E> items) {
+		this.getSelectionModel().clearSelection();
+		
+		for (int i=0; i<this.getModel().getSize(); i++) {
+			if (items.contains(this.getModel().getElementAt(i))) {
+				this.getSelectionModel().addSelectionInterval(i, i);
+			}
+		}
+	}
+	
 
 	/**
 	 * The Class CheckBoxListCellRenderer.

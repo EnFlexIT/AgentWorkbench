@@ -10,6 +10,8 @@ import tech.tablesaw.api.Table;
 public class DataTableNodeTransformationResult extends DataTableNode {
 	
 	private AbstractDataTransformation dataTransformation;
+	
+	private Table dataTable;
 
 	/**
 	 * Gets the data transformation.
@@ -33,11 +35,12 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	 */
 	@Override
 	public Table getDataTable() {
-		if (this.dataTransformation==null) {
-			return null;
-		} else {
-			return this.getDataTransformation().performTransformation();
+		if (this.dataTransformation!=null) {
+			if (this.dataTable==null) {
+				this.dataTable = this.getDataTransformation().performTransformation();
+			}
 		}
+		return dataTable;
 	}
 
 	/* (non-Javadoc)

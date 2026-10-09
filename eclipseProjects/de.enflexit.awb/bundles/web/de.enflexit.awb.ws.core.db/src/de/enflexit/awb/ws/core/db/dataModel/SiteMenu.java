@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -23,8 +24,10 @@ import jakarta.persistence.Transient;
  */
 @Entity
 @Table(name = "site_menu")
-public class SiteMenu {
+public class SiteMenu implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "id_site_menu")

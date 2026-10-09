@@ -35,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the logs API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-08-06T09:07:31.407970700+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-05T09:18:49.152285200+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class LogsApi  {
 
    private final LogsApiService delegate;
@@ -67,6 +67,10 @@ public class LogsApi  {
     @Operation(summary = "Download multiple log files as ZIP archive", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "ZIP archive download successful", content = 
                 @Content(schema = @Schema(implementation = File.class))),
+            @ApiResponse(responseCode = "401", description = "Authentication required", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "500", description = "Failed to create log archive", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             },security = {
@@ -82,6 +86,10 @@ public class LogsApi  {
     @Operation(summary = "Returns all available log files", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "List of available log files", content = 
                 @Content(schema = @Schema(implementation = LocalDate.class))),
+            @ApiResponse(responseCode = "401", description = "Authentication required", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
             },security = {
             @SecurityRequirement(name = "bearerAuth")
         }, tags={ "admins", }) 

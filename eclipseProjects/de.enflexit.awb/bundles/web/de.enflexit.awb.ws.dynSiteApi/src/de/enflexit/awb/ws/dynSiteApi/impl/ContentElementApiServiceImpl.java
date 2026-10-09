@@ -88,6 +88,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	
     	try {
     		AbstractSiteContent requestedContent = TypeConverter.toRestContent(this.getDatabaseHandler().getContentElementById(elementID));
+
     		return Response.ok().entity(requestedContent).build();
     		
     	} catch (IllegalArgumentException iae) {

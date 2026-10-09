@@ -49,7 +49,7 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 
 	private JPanelDataSourceSelection getJPanelSelectionList() {
 		if (jPanelSelectionList == null) {
-			jPanelSelectionList = new JPanelDataSourceSelection(dataControler);
+			jPanelSelectionList = new JPanelDataSourceSelection(dataControler, parentEditorPanel);
 			jPanelSelectionList.addCheckBoxListSelectionListener(this);
 		}
 		return jPanelSelectionList;

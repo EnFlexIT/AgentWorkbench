@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * ValueRowCategory
@@ -46,8 +47,8 @@ public class ValueRowCategory extends AbstractValueRow  {
    * @return category
    **/
   @JsonProperty(value = "category")
-  @Schema(description = "")
-  
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @NotNull  
   public String getCategory() {
     return category;
   }

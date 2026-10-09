@@ -15,6 +15,7 @@ Service-Component: OSGI-INF/HibernateDatabaseConnectionService.xml
 Require-Bundle: de.enflexit.db.hibernate,
  org.eclipse.osgi
 Import-Package: de.enflexit.charts,
+ de.enflexit.charts.model,
  de.enflexit.db.userManagement,
  jakarta.persistence,
  org.slf4j

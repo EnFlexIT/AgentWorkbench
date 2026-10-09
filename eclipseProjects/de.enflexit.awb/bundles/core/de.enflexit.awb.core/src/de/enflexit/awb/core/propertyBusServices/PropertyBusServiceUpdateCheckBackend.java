@@ -1,9 +1,6 @@
 package de.enflexit.awb.core.propertyBusServices;
 
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import de.enflexit.awb.core.update.UpdateCheckCoordinatorBackend;
 import de.enflexit.awb.core.update.UpdateCheckStatusBackend;
 import de.enflexit.common.properties.Properties;

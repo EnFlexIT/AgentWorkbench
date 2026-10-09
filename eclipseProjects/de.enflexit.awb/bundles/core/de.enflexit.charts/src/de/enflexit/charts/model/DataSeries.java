@@ -38,7 +38,7 @@ import jakarta.validation.constraints.NotNull;
   DataSeries.JSON_PROPERTY_LABEL,
   DataSeries.JSON_PROPERTY_SECONDARY_Y_AXIS
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "seriesType", visible = false)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = DataSeriesWithReference.class, name = "DataSeriesWithReference"),
   @JsonSubTypes.Type(value = DataSeriesWithValues.class, name = "DataSeriesWithValues"),

@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   UpdateContentElementRequest.JSON_PROPERTY_CONTENT
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-01T10:08:21.991650800+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class UpdateContentElementRequest   {
   public static final String JSON_PROPERTY_CONTENT = "content";
   @JsonProperty(JSON_PROPERTY_CONTENT)
