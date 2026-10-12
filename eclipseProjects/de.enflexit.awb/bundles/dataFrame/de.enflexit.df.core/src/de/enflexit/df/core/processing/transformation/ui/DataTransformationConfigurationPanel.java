@@ -23,13 +23,16 @@ import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformation.DataTransformationServiceJoinTables;
 import de.enflexit.df.core.processing.transformation.DataTransformationServiceSelectColumns;
+import de.enflexit.df.core.processing.transformation.filter.DataTransformationServiceFilterRows;
+import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilterConfigurationPanel;
+import de.enflexit.df.core.processing.transformation.join.DataTransformationServiceJoinTables;
+import de.enflexit.df.core.processing.transformation.join.ui.JoinTablesConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.ui.CheckBoxList;
 import de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent;
 import de.enflexit.df.core.processing.ui.CheckBoxListSelectionListener;
-import de.enflexit.df.core.processing.ui.JPanelTransformationGraphEditor;
+import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
 import de.enflexit.df.core.processing.ui.RadioButtonList;
 import de.enflexit.df.core.processing.ui.RadioButtonListSelectionEvent;
 import de.enflexit.df.core.processing.ui.RadioButtonListSelectionListener;
@@ -44,7 +47,7 @@ import javax.swing.JButton;
  * This panel provides a UI to configure data transformations.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JPanelDataTransformationConfiguration extends JPanel implements ActionListener, CheckBoxListSelectionListener<DataTableNode>, RadioButtonListSelectionListener<DataTableNode> {
+public class DataTransformationConfigurationPanel extends JPanel implements ActionListener, CheckBoxListSelectionListener<DataTableNode>, RadioButtonListSelectionListener<DataTableNode> {
 	
 	private static final long serialVersionUID = -2310318384700465180L;
 	
@@ -66,7 +69,7 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 	
 	private JPanel parametersConfigurationPanel;
 	
-	private JPanelTransformationGraphEditor parentEditorPanel;
+	private TransformationGraphEditorPanel parentEditorPanel;
 	
 	private PropertyChangeSupport propertyChangeSupport;
 	private JPanel jPanelButtons;
@@ -76,7 +79,7 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 	/**
 	 * Instantiates a new j panel configure data transformation.
 	 */
-	public JPanelDataTransformationConfiguration() {
+	public DataTransformationConfigurationPanel() {
 		super();
 		this.initialize();
 	}
@@ -85,7 +88,7 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 	 * Instantiates a new j panel configure data transformation.
 	 * @param parentEditorPanel the editor panel
 	 */
-	public JPanelDataTransformationConfiguration(JPanelTransformationGraphEditor parentEditorPanel) {
+	public DataTransformationConfigurationPanel(TransformationGraphEditorPanel parentEditorPanel) {
 		this.parentEditorPanel = parentEditorPanel;
 		this.initialize();
 	}
@@ -347,9 +350,11 @@ public class JPanelDataTransformationConfiguration extends JPanel implements Act
 	 */
 	private AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel(DataTransformationService transformaitonService) {
 		if (transformaitonService instanceof DataTransformationServiceSelectColumns) {
-			return new JPanelTableColumnSelection(transformaitonService);
+			return new TableColumnSelectionPanel(transformaitonService);
 		} else if (transformaitonService instanceof  DataTransformationServiceJoinTables){
-			return new JPanelJoinColumnsSelection(transformaitonService, this.parentEditorPanel);
+			return new JoinTablesConfigurationPanel(transformaitonService, this.parentEditorPanel);
+		} else if (transformaitonService instanceof DataTransformationServiceFilterRows) {
+			return new TableSawRowFilterConfigurationPanel(transformaitonService);
 		} else {
 			return new DefaultTransformationParameterConfigurationPanel(transformaitonService);
 		}

@@ -1,14 +1,16 @@
-package de.enflexit.df.core.processing.transformation.ui;
+package de.enflexit.df.core.processing.transformation.join.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.enflexit.df.core.processing.transformation.DataTransformationJoinTables;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
+import de.enflexit.df.core.processing.transformation.join.DataTransformationJoinTables;
+import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
+import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.ui.JPanelTransformationGraphEditor;
+import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
@@ -39,7 +41,7 @@ import javax.swing.JComboBox;
  * This panel allows to select one column from each involved table.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JPanelJoinColumnsSelection extends AbstractTransformationParameterConfigurationPanel {
+public class JoinTablesConfigurationPanel extends AbstractTransformationParameterConfigurationPanel {
 
 	private static final long serialVersionUID = 9163445036477367442L;
 	
@@ -50,13 +52,13 @@ public class JPanelJoinColumnsSelection extends AbstractTransformationParameterC
 	private JTable jTableSelectColumns;
 	private JoinConfigurationTableModel tableSelectionModel;
 	
-	private JPanelTransformationGraphEditor parentEditorPanel;
+	private TransformationGraphEditorPanel parentEditorPanel;
 
 	/**
 	 * Instantiates a new j panel join columns selection.
 	 * @param transformation the transformation
 	 */
-	public JPanelJoinColumnsSelection(DataTransformationService transformation, JPanelTransformationGraphEditor parentEditorPanel) {
+	public JoinTablesConfigurationPanel(DataTransformationService transformation, TransformationGraphEditorPanel parentEditorPanel) {
 		super(transformation);
 		this.parentEditorPanel = parentEditorPanel;
 		initialize();
@@ -137,9 +139,9 @@ public class JPanelJoinColumnsSelection extends AbstractTransformationParameterC
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
-		if (pce.getPropertyName().equals(JPanelDataTransformationConfiguration.EVENT_ID_TABLE_ADDED)) {
+		if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TABLE_ADDED)) {
 			this.getTableSelectionModel().addTable((DataTableNode) pce.getNewValue());
-		} else if (pce.getPropertyName().equals(JPanelDataTransformationConfiguration.EVENT_ID_TABLE_REMOVED)) {
+		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TABLE_REMOVED)) {
 			this.getTableSelectionModel().removeTable((DataTableNode) pce.getOldValue());
 		}
 	}
@@ -234,7 +236,7 @@ public class JPanelJoinColumnsSelection extends AbstractTransformationParameterC
 		
 		private ArrayList<JoinConfigurationTableEntry> getSelections() {
 			if (selections==null) {
-				selections = new ArrayList<JPanelJoinColumnsSelection.JoinConfigurationTableEntry>();
+				selections = new ArrayList<JoinTablesConfigurationPanel.JoinConfigurationTableEntry>();
 			}
 			return selections;
 		}

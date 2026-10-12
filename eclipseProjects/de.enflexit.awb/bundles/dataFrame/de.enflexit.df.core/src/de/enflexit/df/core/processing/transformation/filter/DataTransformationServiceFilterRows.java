@@ -1,8 +1,10 @@
-package de.enflexit.df.core.processing.transformation;
+package de.enflexit.df.core.processing.transformation.filter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 
 /**
@@ -14,6 +16,8 @@ public class DataTransformationServiceFilterRows implements DataTransformationSe
 	public static final String TRANSFORMATION_NAME = "Filter Rows";
 	
 	private static final String TRANSFORMATION_DESCRIPTION = "This data transformation filters the rows of a table based on the values of one or more columns.";
+	
+	public static final String REQUIRED_PARAMETER = "filtersList";
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getName()
@@ -45,7 +49,9 @@ public class DataTransformationServiceFilterRows implements DataTransformationSe
 	 */
 	@Override
 	public List<String> getRequiredParameters() {
-		return new ArrayList<String>();
+		ArrayList<String> requiredParams = new ArrayList<String>();
+		requiredParams.add(REQUIRED_PARAMETER);
+		return requiredParams;
 	}
 
 	/* (non-Javadoc)
