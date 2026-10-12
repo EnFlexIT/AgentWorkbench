@@ -39,14 +39,20 @@ public interface DataSource extends Serializable, Closeable {
 	
 	/**
 	 * Has to open the current data source.
+	 *
+	 * @param dataController the current {@link DataController} instance
+	 * @param dataWorkbook the {@link DataWorkbook} to which the {@link DataSource} belongs
 	 * @return true, if successful
 	 */
-	public boolean open();
+	public boolean open(DataController dataController, DataWorkbook dataWorkbook);
 	
 	/**
 	 * Has to return a new instance of the actual {@link DataSourceIntegration} for the current DataSource
 	 * that is located in the specified DataWorkbook and controlled by the specified {@link DataController}.
-	 * @return the individual DataSourceIntegration 
+	 *
+	 * @param dataController the current {@link DataController} instance
+	 * @param dataWorkbook the {@link DataWorkbook} to which the {@link DataSource} belongs
+	 * @return the individual DataSourceIntegration
 	 */
 	public DataSourceIntegration<?> getDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook);
 	

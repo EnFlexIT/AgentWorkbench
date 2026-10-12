@@ -11,15 +11,20 @@ import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.JButton;
-import javax.swing.SwingConstants;
+import javax.swing.JOptionPane;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.ui.JDialogDataTransformationConfiguration;
+import de.enflexit.df.core.processing.transformation.ui.JPanelDataTransformationConfiguration;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformationGraph.DataTableNodeDataSource;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
 import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
 import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
@@ -32,9 +37,11 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
-import java.awt.Font;
+import tech.tablesaw.api.Table;
+
 import java.awt.Point;
 import java.awt.Window;
+import javax.swing.JSplitPane;
 
 /**
  * The Class JPanelTransformationGraphEditor.
@@ -48,6 +55,13 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	private static final double NODE_RECTANGLE_HEIGHT = 50;
 	private static final double NODE_RECTANGLE_ARC = 15;
 	
+	private static final String ICON_TABLE_LIGHT_MODE = "table_black.png";
+	private static final String ICON_TABLE_DARK_MODE = "table_grey.png";
+	private static final String ICON_TRANSFORMATION_LIGHT_MODE = "hierarchy_black.png";
+	private static final String ICON_TRANSFORMATION_DARK_MODE = "hierarchy_grey.png";
+	private static final String ICON_VERIFY = "MBcheckGreen.png";
+	private static final String ICON_DELETE = "Delete.png";
+	
 	private JToolBar jToolBarMain;
 	private JButton jButtonAddDataSource;
 	private JButton jButtonAddDataTransformation;
@@ -57,8 +71,14 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	private DataController dataController;
 	private TransformationGraphController graphController;
 	
+	private DataTransformationTableViewPanel tableViewPanel;
+	private JPanelDataTransformationConfiguration transformationPanel;
+	
 	private GraphZoomScrollPane graphZoomScrollPane;
 	private VisualizationViewer<DataTableNode, DataTransformationEdge> visualizationViewer;
+	private JSplitPane jSplitPaneMainView;
+	
+	private Object currentlySelectedGraphElement;
 	
 	/**
 	 * Instantiates a new j panel transformation graph editor.
@@ -74,14 +94,21 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	 */
 	private void initialize() {
 		this.setLayout(new BorderLayout(0, 0));
-		this.add(this.getJToolBarMain(), BorderLayout.WEST);
-		this.add(this.getJPanelGraph(), BorderLayout.CENTER);
+		this.add(this.getJToolBarMain(), BorderLayout.NORTH);
+		this.add(getJSplitPaneMainView(), BorderLayout.CENTER);
+		
+		// --- Hide the right component intitially --------
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
+			}
+		});
 	}
 
 	private JToolBar getJToolBarMain() {
 		if (jToolBarMain == null) {
 			jToolBarMain = new JToolBar();
-			jToolBarMain.setOrientation(SwingConstants.VERTICAL);
 			jToolBarMain.add(getJButtonAddDataSource());
 			jToolBarMain.add(this.getjButtonAddDataTransformation());
 			jToolBarMain.add(getJButtonRemove());
@@ -91,41 +118,63 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	}
 	private JButton getJButtonAddDataSource() {
 		if (jButtonAddDataSource == null) {
-			jButtonAddDataSource = new JButton("Add data source");
-			jButtonAddDataSource.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonAddDataSource = new JButton(BundleHelper.getThemedIcon(ICON_TABLE_LIGHT_MODE, ICON_TABLE_DARK_MODE));
+			jButtonAddDataSource.setToolTipText("Select data sources");
 			jButtonAddDataSource.addActionListener(this);
 		}
 		return jButtonAddDataSource;
 	}
 	private JButton getjButtonAddDataTransformation() {
 		if (jButtonAddDataTransformation==null) {
-			jButtonAddDataTransformation = new JButton("Add transformation");
-			jButtonAddDataTransformation.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonAddDataTransformation = new JButton(BundleHelper.getThemedIcon(ICON_TRANSFORMATION_LIGHT_MODE, ICON_TRANSFORMATION_DARK_MODE));
+			jButtonAddDataTransformation.setToolTipText("Add a data transformation");
 			jButtonAddDataTransformation.addActionListener(this);
 		}
 		return jButtonAddDataTransformation;
 	}
 	private JButton getJButtonRemove() {
 		if (jButtonRemove == null) {
-			jButtonRemove = new JButton("Remove selected");
-			jButtonRemove.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonRemove = new JButton(BundleHelper.getImageIcon(ICON_DELETE));
+			jButtonRemove.setToolTipText("Remove the selected item");
 			jButtonRemove.addActionListener(this);
+			jButtonRemove.setEnabled(false);
 		}
 		return jButtonRemove;
 	}
 	private JButton getJButtonVerify() {
 		if (jButtonVerify == null) {
-			jButtonVerify = new JButton("Verify graph");
-			jButtonVerify.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonVerify = new JButton(BundleHelper.getImageIcon(ICON_VERIFY));
+			jButtonVerify.setToolTipText("Verify the transformation graph");
 			jButtonVerify.addActionListener(this);
 		}
 		return jButtonVerify;
+	}
+	private JSplitPane getJSplitPaneMainView() {
+		if (jSplitPaneMainView == null) {
+			jSplitPaneMainView = new JSplitPane();
+			jSplitPaneMainView.setLeftComponent(this.getJPanelGraph());
+			jSplitPaneMainView.setRightComponent(new JPanel());
+		}
+		return jSplitPaneMainView;
 	}
 	private GraphZoomScrollPane getJPanelGraph() {
 		if (graphZoomScrollPane == null) {
 			graphZoomScrollPane = new GraphZoomScrollPane(this.getVisualizationViewer());
 		}
 		return graphZoomScrollPane;
+	}
+	
+	private DataTransformationTableViewPanel getTableViewPanel() {
+		if (tableViewPanel==null) {
+			tableViewPanel = new DataTransformationTableViewPanel();
+		}
+		return tableViewPanel;
+	}
+	private JPanelDataTransformationConfiguration getTransformationPanel() {
+		if (transformationPanel==null) {
+			transformationPanel = new JPanelDataTransformationConfiguration(this);
+		}
+		return transformationPanel;
 	}
 	
 	/**
@@ -203,6 +252,10 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 			this.showDataSourceSelectionDialog();
 		} else if (ae.getSource()==this.getjButtonAddDataTransformation()) {
 			this.showDataTransformationConfigurationDialog();
+		} else if (ae.getSource()==this.getJButtonRemove()) {
+			this.removeSelectedElement();
+		} else if (ae.getSource()==this.getJButtonVerify()) {
+			JOptionPane.showMessageDialog(this, "Not implemented yet");
 		}
 	}
 	
@@ -236,6 +289,60 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 		transformationDialog.setLocation(dialogPositionX.intValue(), dialogPositionY.intValue());
 		transformationDialog.setVisible(true);
 		transformationDialog.requestFocus();
+	}
+	
+	/**
+	 * Removes the currently selected element from the transformation graph.
+	 */
+	private void removeSelectedElement() {
+		if (this.currentlySelectedGraphElement!=null) {
+			if (this.currentlySelectedGraphElement instanceof DataTableNodeDataSource) {
+				this.removeDataSourceNode((DataTableNodeDataSource) this.currentlySelectedGraphElement);
+			} else if (this.currentlySelectedGraphElement instanceof DataTableNodeTransformationResult) {
+				this.removeDataTransformation((DataTableNodeTransformationResult) this.currentlySelectedGraphElement);
+			} else if (this.currentlySelectedGraphElement instanceof DataTransformationEdge) {
+				this.removeDataTransformation((DataTransformationEdge) this.currentlySelectedGraphElement);
+			}
+		} 
+	}
+	
+	/**
+	 * Tries to remove the provided data source table node.
+	 * @param dataSourceTableNode the data source table node
+	 */
+	private void removeDataSourceNode(DataTableNodeDataSource dataSourceTableNode) {
+		int outEdges = this.getGraphController().getTransformationGraph().getOutEdges(dataSourceTableNode).size();
+		if (outEdges>0) {
+			JOptionPane.showMessageDialog(this, "The selected node is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the transformation first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
+		} else {
+			this.getGraphController().removeDataTableNode(dataSourceTableNode);
+			this.currentlySelectedGraphElement = null;
+			this.getJSplitPaneMainView().setDividerLocation(1.0);
+		}
+	}
+	
+	/**
+	 * Tries to remove the data transformation represented by the currently selected edge.
+	 * @param transformationEdge the transformation edge
+	 */
+	private void removeDataTransformation(DataTransformationEdge transformationEdge) {
+		AbstractDataTransformation dataTransformation = transformationEdge.getDataTransformation();
+		this.removeDataTransformation(dataTransformation.getOutputNode());
+	}
+	
+	/**
+	 * Tries to remove the data transformation represented by the currently result node.
+	 * @param resultNode the result node
+	 */
+	private void removeDataTransformation(DataTableNodeTransformationResult resultNode) {
+		int outEdges = this.getGraphController().getTransformationGraph().getOutEdges(resultNode).size();
+		if (outEdges>0) {
+			JOptionPane.showMessageDialog(this, "The result of the selected transformation is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the subsequent transformation(s) first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
+		} else {
+			this.getGraphController().removeDataTransformation(resultNode);
+			this.currentlySelectedGraphElement = null;
+			this.getJSplitPaneMainView().setDividerLocation(1.0);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -278,6 +385,7 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	 */
 	public void addNewDataTransformation(AbstractDataTransformation newTransformation) {
 		DataTableNodeTransformationResult outputNode = new DataTableNodeTransformationResult();
+		newTransformation.setOutputNode(outputNode);
 		outputNode.setDataTransformation(newTransformation);
 		outputNode.setPosition(this.determineOutputNodePosition(newTransformation));
 		
@@ -323,6 +431,9 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	 */
 	private class TransformationGraphMouseAdapter extends MouseAdapter {
 		
+		/* (non-Javadoc)
+		 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+		 */
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			
@@ -331,18 +442,62 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 			
 			DataTableNode nodeClicked = visViewer.getPickSupport().getVertex(visViewer.getGraphLayout(), e.getX(), e.getY());
 			
+			// --- Clicked on a node, show the corresponding table ------------
 			if (nodeClicked!=null) {
-				System.out.println("Clicked on node " + nodeClicked.getLabelText());
+				JPanelTransformationGraphEditor.this.currentlySelectedGraphElement = nodeClicked;
+				Table tableToShow = nodeClicked.getDataTable();
+				if (tableToShow!=null) {
+					JPanelTransformationGraphEditor.this.getTableViewPanel().setDataTable(nodeClicked);
+					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setRightComponent(JPanelTransformationGraphEditor.this.getTableViewPanel());
+					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(0.67);
+				} else {
+					System.err.println("[" + this.getClass().getSimpleName() + "] No table to visualize!");
+					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
+				}
+				
+				JPanelTransformationGraphEditor.this.getJButtonRemove().setEnabled(true);
+				
 				return;
 			}
 			
+			// --- Clicked on an edge, show the corresponding transformation --
 			DataTransformationEdge edgeClicked = visViewer.getPickSupport().getEdge(visViewer.getGraphLayout(), e.getX(), e.getY());
+			JPanelTransformationGraphEditor.this.currentlySelectedGraphElement = edgeClicked;
 			if (edgeClicked!=null) {
-				System.out.println("Clicked on edge " + edgeClicked.getDataTransformation().getTransformationName());
+				AbstractDataTransformation transformationToShow = edgeClicked.getDataTransformation();
+				if (transformationToShow!=null) {
+					JPanelTransformationGraphEditor.this.getTransformationPanel().setDataTransformation(transformationToShow);
+					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setRightComponent(JPanelTransformationGraphEditor.this.getTransformationPanel());
+					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(0.67);
+				} else {
+					System.err.println("[" + this.getClass().getSimpleName() + "] No transformation defined!");
+					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
+				}
+				
+				JPanelTransformationGraphEditor.this.getJButtonRemove().setEnabled(true);
+				
 				return;
 			}
 			
-			System.out.println("No graph element clicked");
+			// --- Clicked on an empty area, hide the panel 
+			JPanelTransformationGraphEditor.this.currentlySelectedGraphElement = null;
+			JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
+			JPanelTransformationGraphEditor.this.getJButtonRemove().setEnabled(false);
 		}
 	}
+	
+	/**
+	 * Finds the corresponding table node for the provided table..
+	 * @param dataTable the data table
+	 * @return the data table node, null if not found
+	 */
+	public DataTableNode findCorrespondingTableNode(Table dataTable) {
+		for (DataTableNode tableNode : this.getGraphController().getTransformationGraph().getVertices()) {
+			if (tableNode.getDataTable() == dataTable) {
+				return tableNode;
+			}
+		}
+		return null;
+	}
+	
 }

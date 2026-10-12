@@ -6,14 +6,14 @@ import java.util.List;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 
 /**
- * {@link DataTransformationService} implementation for table joins / merges.
+ * {@link DataTransformationService} implementation for select transformations.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataTransformationServiceJoinImpl implements DataTransformationService {
+public class DataTransformationServiceSelectColumns implements DataTransformationService {
 	
-	public static final String TRANSFORMATION_NAME = "Merge Tables";
+	public static final String TRANSFORMATION_NAME = "Select Columns";
 	
-	private static final String TRANSFORMATION_DESCRIPTION = "This data transformation merges two or more tables into a single table.";
+	private static final String TRANSFORMATION_DESCRIPTION = "This data transformation selects a subset of columns from the input table.";
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getName()
@@ -36,7 +36,7 @@ public class DataTransformationServiceJoinImpl implements DataTransformationServ
 	 */
 	@Override
 	public InputType getInputType() {
-		return InputType.MULTI_TABLE;
+		return InputType.SINGLE_TABLE;
 	}
 
 	/* (non-Javadoc)
@@ -45,7 +45,7 @@ public class DataTransformationServiceJoinImpl implements DataTransformationServ
 	@Override
 	public List<String> getRequiredParameters() {
 		ArrayList<String> requiredParameters = new ArrayList<String>();
-		requiredParameters.add("join_columns (String list, one column for each table)");
+		requiredParameters.add(DataTransformationSelectColumns.TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
 		return requiredParameters;
 	}
 
@@ -54,7 +54,7 @@ public class DataTransformationServiceJoinImpl implements DataTransformationServ
 	 */
 	@Override
 	public AbstractDataTransformation getNewInstance() {
-		return new DataTransformationJoin();
+		return new DataTransformationSelectColumns();
 	}
 
 }

@@ -43,8 +43,9 @@ Service-Component: OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dwExtensionTestColumnDescription.xml,
  OSGI-INF/dwExtensionTestDatabaseWorkbook.xml,
  OSGI-INF/dwExtensionTestMenue.xml,
- OSGI-INF/dataTransformationServiceJoin.xml,
- OSGI-INF/dataTransformationServiceSelect.xml
+ OSGI-INF/dataTransformationServiceFilterRows.xml,
+ OSGI-INF/dataTransformationServiceJoinTables.xml,
+ OSGI-INF/dataTransformationServiceSelectColumns.xml
 Export-Package: de.enflexit.df.core,
  de.enflexit.df.core.dataSources,
  de.enflexit.df.core.dataSources.integration,

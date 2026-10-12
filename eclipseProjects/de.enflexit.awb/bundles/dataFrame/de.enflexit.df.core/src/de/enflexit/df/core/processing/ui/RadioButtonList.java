@@ -123,6 +123,31 @@ public class RadioButtonList<E> extends JList<E> {
 	}
 	
 	/**
+	 * Sets the selected item.
+	 * @param item the item to select
+	 */
+	public void setSelectedItem(E item) {
+		
+		if (item==null) {
+			this.clearSelection();
+			return;
+		}
+		
+		// --- Look for the provided item -----------------
+		for (int i=0; i<this.getModel().getSize(); i++) {
+			if (this.getModel().getElementAt(i) == item) {
+				this.setSelectedIndex(i);
+				this.fireSelectionChanged(i, item);
+				return;
+			}
+		}
+		
+		// --- Item not found -> not in the list ----------
+		this.clearSelection();
+		
+	}
+	
+	/**
 	 * A custom {@link ListCellRenderer} based on {@link JRadioButton}s.
 	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
 	 */

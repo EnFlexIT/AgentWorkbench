@@ -2,8 +2,10 @@ package de.enflexit.df.core.processing.transformation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
 import tech.tablesaw.api.Table;
 
 /**
@@ -17,9 +19,9 @@ public abstract class AbstractDataTransformation {
 	}
 	
 	private ArrayList<DataTableNode> inputNodes;
-	private DataTableNode outputNode;
+	private DataTableNodeTransformationResult outputNode;
 	
-	private HashMap<String, Object> transformationParameters;
+	private Map<String, Object> transformationParameters;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#getInputNodes()
@@ -41,27 +43,35 @@ public abstract class AbstractDataTransformation {
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#getOutputNode()
 	 */
-	public DataTableNode getOutputNode() {
+	public DataTableNodeTransformationResult getOutputNode() {
 		return outputNode;
 	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#setOutputNode(de.enflexit.df.core.processing.transformationGraph.DataTableNode)
 	 */
-	public void setOutputNode(DataTableNode outputNode) {
+	public void setOutputNode(DataTableNodeTransformationResult outputNode) {
 		this.outputNode = outputNode;
 	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#getTransformationParameters()
 	 */
-	public HashMap<String, Object> getTransformationParameters() {
+	public Map<String, Object> getTransformationParameters() {
 		if (transformationParameters==null) {
 			transformationParameters = new HashMap<String, Object>();
 		}
 		return transformationParameters;
 	}
 	
+	/**
+	 * Sets the transformation parameters.
+	 * @param transformationParameters the transformation parameters
+	 */
+	public void setTransformationParameters(Map<String, Object> transformationParameters) {
+		this.transformationParameters = transformationParameters;
+	}
+
 	/**
 	 * Gets the transformation name.
 	 * @return the transformation name
