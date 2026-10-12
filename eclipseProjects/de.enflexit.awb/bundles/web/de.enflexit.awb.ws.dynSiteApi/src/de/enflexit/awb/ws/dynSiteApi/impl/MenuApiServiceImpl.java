@@ -1,7 +1,9 @@
 package de.enflexit.awb.ws.dynSiteApi.impl;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.enflexit.awb.ws.core.db.WebAppDatabaseHandler;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
@@ -13,39 +15,61 @@ import de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService;
 import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AssignContentToMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenu201Response;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.UpdateContentAssignmentRequest;
+import de.enflexit.awb.ws.dynSiteApi.security.UserPermissionHelper;
+import de.enflexit.db.userManagement.dataModel.GroupRole;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.SecurityContext;
 
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-23T10:17:15.337896100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApiServiceImpl extends MenuApiService {
- 
+
 	private WebAppDatabaseHandler webAppDatabaseHandler;
 
     /* (non-Javadoc)
     * @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#createMenu(de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem, jakarta.ws.rs.core.SecurityContext)
     */
     @Override
-    public Response createMenu(MenuItem menuItem, SecurityContext securityContext) throws NotFoundException {
-        
-    	if (menuItem == null) {
-            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu item is missing!")).build();
+    public Response createMenu(CreateMenuRequest createMenuRequest, SecurityContext securityContext) throws NotFoundException {
+    
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
-		
-    	if (menuItem.getCaption() == null || menuItem.getPosition() == null || menuItem.getIsHeadMenu() == null) {
-    		return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Caption, Position and isHeadMenu must be specified")).build();
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+    	
+    	// --- Validate the request ---------------------------------------------------------------
+    	if (createMenuRequest == null) {
+    		return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Request body is missing.")).build();
+    	}
+    	if (createMenuRequest.getAllowedRoles() == null || createMenuRequest.getAllowedRoles().isEmpty()) {
+    	    return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Allowed roles must be specified.")).build();
+    	}
+    	
+    	MenuItem menuItem = createMenuRequest.getContent();
+    	
+    	if (menuItem == null || menuItem.getCaption() == null || menuItem.getCaption().isBlank() || menuItem.getPosition() == null || menuItem.getIsHeadMenu() == null) {
+            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Missing required menu fields.")).build();
     	}
     	
     	if (menuItem.getIsHeadMenu() == false && menuItem.getParentId() == null) {
-            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "New menu is not defined as a head menu but no parent ID was provided")).build();
+            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "New menu is not defined as a head menu but no parent ID was provided.")).build();
     	}
     	
+    	// --- Convert the rest MenuItem to a database SiteMenu -----------------------------------
     	SiteMenu newMenu = TypeConverter.toDBSiteMenu(menuItem);
+    	
+    	// --- Try to persist the new menu and return the resulting id or error -------------------
     	try {
-    		this.getDatabaseHandler().persistNewMenu(newMenu);
+    		Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().findGroupRolesByNames(createMenuRequest.getAllowedRoles());
+    		this.getDatabaseHandler().persistNewMenu(newMenu, requiredRolesForAccess);
     		return Response.status(Status.CREATED).entity(new CreateMenu201Response().menuId(newMenu.getId())).build();
 			
 		} catch (IllegalArgumentException iae) {
@@ -63,8 +87,18 @@ public class MenuApiServiceImpl extends MenuApiService {
     @Override
     public Response deleteMenu(Integer menuID, SecurityContext securityContext) throws NotFoundException {
 
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+    	
+    	// --- Validate the request ---------------------------------------------------------------
     	if (menuID == null) {
-            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID is missing!")).build();
+            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID is missing.")).build();
     	}
 		
     	try {
@@ -79,16 +113,46 @@ public class MenuApiServiceImpl extends MenuApiService {
 		}
     }
     
+    /* (non-Javadoc)
+    * @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#getMenus(java.lang.String, jakarta.ws.rs.core.SecurityContext)
+    */
     @Override
     public Response getMenus(String lang, SecurityContext securityContext) throws NotFoundException {
-		// --- Get menus from database --------------------------------------------------
-		List<SiteMenu> dbMenuList = this.getDatabaseHandler().dbLoadEntityInstanceList(SiteMenu.class);
-		List<MenuItem> menuItemList = TypeConverter.toRestMenuItemList(dbMenuList, lang);
-		
-		// --- Prepare return type ------------------------------------------------------
-		MenuList menuList = new MenuList();
-		menuList.setMenuList(menuItemList);
-		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(menuList).build();
+	
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+    	
+    	// --- Get user roles to check if authorized, also to decide which menus to deliver -------
+    	Set<GroupRole> userRoles = UserPermissionHelper.getGroupRolesForUser(username);
+    	if (UserPermissionHelper.isUserInRole(userRoles, UserPermissionHelper.USER_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'User' required.")).build();
+    	}
+    	
+    	// --- Validate the request ---------------------------------------------------------------
+    	if (lang == null || lang.isBlank() == true) {
+            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Parameter 'lang' is missing.")).build();
+    	}
+
+    	// --- Collect Id's of the user's group roles to request their menus with -----------------
+    	Set<Integer> groupRoleIds = new HashSet<Integer>();
+    	userRoles.forEach(role -> groupRoleIds.add(role.getId()));
+    	
+    	try {
+    		List<SiteMenu> dbMenuList;
+    		// --- Get menus from database --------------------------------------------------------
+			dbMenuList = this.getDatabaseHandler().findMenusForUserRoles(groupRoleIds);
+			List<MenuItem> menuItemList = TypeConverter.toRestMenuItemList(dbMenuList, lang);
+			
+			// --- Prepare return type ------------------------------------------------------------
+			MenuList menuList = new MenuList();
+			menuList.setMenuList(menuItemList);
+			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(menuList).build();
+	
+		} catch (IOException | DatabaseException e) {
+			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
+		}
 
 	}
     
@@ -98,12 +162,26 @@ public class MenuApiServiceImpl extends MenuApiService {
     @Override
     public Response updateMenu(Integer menuID, MenuItem menuItem, SecurityContext securityContext) throws NotFoundException {
 		
-    	if (menuID == null || menuItem == null) {
-			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "menu ID and menu Item must be specified")).build();
-		}
-		
-		
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+    	
+    	// --- Validate the request ---------------------------------------------------------------
+    	if (menuID == null || menuItem == null || menuItem.getCaption() == null || menuItem.getCaption().isBlank() || menuItem.getPosition() == null || menuItem.getIsHeadMenu() == null) {
+    		return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Missing required menu fields.")).build();
+    	}
+    	
+    	if (menuItem.getIsHeadMenu() == false && menuItem.getParentId() == null) {
+            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu is not defined as a head menu but no parent ID was provided.")).build();
+    	}
+    	
     	SiteMenu updatedMenu = TypeConverter.toDBSiteMenu(menuItem);
+    	
 		try {
 			this.getDatabaseHandler().updateMenu(updatedMenu, menuID);
 			return Response.ok().build();
@@ -120,9 +198,36 @@ public class MenuApiServiceImpl extends MenuApiService {
     * @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#updateMenuPermissions(java.lang.Integer, java.lang.String, jakarta.ws.rs.core.SecurityContext)
     */
     @Override
-    public Response updateMenuPermissions(Integer menuID, String body, SecurityContext securityContext) throws NotFoundException {
-        // do some magic!
-        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    public Response updateMenuPermissions(Integer menuId, List<String> requestBody, SecurityContext securityContext) throws NotFoundException {
+        
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+    	
+    	// --- Validate the request ---------------------------------------------------------------
+    	if (menuId == null || requestBody == null || requestBody.size() == 0) {
+			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID and required roles must be specified.")).build(); 		
+    	}
+		try {
+			Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().findGroupRolesByNames(requestBody);
+			if (requiredRolesForAccess == null || requiredRolesForAccess.isEmpty() == true) {
+				throw new IllegalArgumentException("At least one valid group role has to be specified for the menu.");
+			}
+			
+			this.getDatabaseHandler().updateMenuPermissions(menuId, requiredRolesForAccess);
+			return Response.ok().build();
+
+		} catch (IllegalArgumentException iae) {
+			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
+
+		} catch (IOException | DatabaseException e) {
+			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
+		}
     }
 	
 	/* (non-Javadoc)
@@ -130,8 +235,19 @@ public class MenuApiServiceImpl extends MenuApiService {
 	*/
 	@Override
 	public Response removeAssignment(Integer menuID, Integer elementID, SecurityContext securityContext) throws NotFoundException {
-    	if (menuID == null || elementID == null) {
-			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "menu ID and menu Item must be specified")).build();
+    
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+		
+    	// --- Validate the request ---------------------------------------------------------------
+		if (menuID == null || elementID == null) {
+			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID and menu Item must be specified.")).build();
 		}
     	
 		try {
@@ -152,8 +268,18 @@ public class MenuApiServiceImpl extends MenuApiService {
 	@Override
 	public Response updateAssignmentAndPosition(UpdateContentAssignmentRequest updateContentAssignmentRequest, SecurityContext securityContext) throws NotFoundException {
 		
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+		
+    	// --- Validate the request ---------------------------------------------------------------
 		if (updateContentAssignmentRequest == null) {
-			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Request body is missing")).build();
+			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Request body is missing.")).build();
 		}
 		Integer elementId = updateContentAssignmentRequest.getElementId();
 		Integer sourceMenuId = updateContentAssignmentRequest.getSourceMenuId();
@@ -182,7 +308,17 @@ public class MenuApiServiceImpl extends MenuApiService {
 	*/
 	@Override
 	public Response assignContentToMenu(Integer menuID, Integer elementID, AssignContentToMenuRequest assignContentToMenuRequest, SecurityContext securityContext) throws NotFoundException {
+	
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
 		
+    	// --- Validate the request ---------------------------------------------------------------
 		if (assignContentToMenuRequest == null || assignContentToMenuRequest.getPosition() == null) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Request body is missing")).build();
 		}
@@ -200,20 +336,33 @@ public class MenuApiServiceImpl extends MenuApiService {
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
 		} catch (IOException | DatabaseException e) {
-			return Response.status(Status.SERVICE_UNAVAILABLE).entity(
-					new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
+			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
 	}
 
-		/**
-		 * Returns the database handler.
-		 *
-		 * @return the database handler
-		 */
-		private WebAppDatabaseHandler getDatabaseHandler() {
-			if (webAppDatabaseHandler == null) {
-				webAppDatabaseHandler = new WebAppDatabaseHandler();
-			}
-			return webAppDatabaseHandler;
+	/**
+	 * Returns the authenticated username.
+	 *
+	 * @param securityContext the security context
+	 * @return the authenticated username
+	 */
+	private String getAuthenticatedUsername(SecurityContext securityContext) {
+		if (securityContext == null || securityContext.getUserPrincipal() == null) {
+			return null;
 		}
+		return securityContext.getUserPrincipal().getName();
+	}
+	
+
+	/**
+	 * Returns the database handler.
+	 *
+	 * @return the database handler
+	 */
+	private WebAppDatabaseHandler getDatabaseHandler() {
+		if (webAppDatabaseHandler == null) {
+			webAppDatabaseHandler = new WebAppDatabaseHandler();
+		}
+		return webAppDatabaseHandler;
+	}
 }

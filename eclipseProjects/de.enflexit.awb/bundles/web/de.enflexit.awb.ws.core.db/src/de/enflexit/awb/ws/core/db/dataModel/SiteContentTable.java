@@ -1,6 +1,5 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OrderColumn;
 
 /**
@@ -24,7 +22,7 @@ import jakarta.persistence.OrderColumn;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "table_type")
-public abstract class SiteContentTable extends SiteContent implements Serializable {
+public abstract class SiteContentTable extends SiteContent {
 	
 	private static final long serialVersionUID = 1L;
 	

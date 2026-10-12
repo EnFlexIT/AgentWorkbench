@@ -13,10 +13,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentChart;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentImage;
-import de.enflexit.awb.ws.core.db.dataModel.SiteContentMedia;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentPropertyEntry;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentPropertyEntry.PropertyValueType;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference;
+import de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContentText;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
@@ -45,8 +46,7 @@ public class TypeConverter {
 	public static List<MenuItem> toRestMenuItemList(List<SiteMenu> dbSiteMenuList, String language) {
 		
 		// --- Fast exit ? --------------------------------
-		if (dbSiteMenuList==null) return null;
-		if (dbSiteMenuList.size()==0) return new ArrayList<>();
+		if (dbSiteMenuList==null || dbSiteMenuList.size() == 0) return Collections.emptyList();
 		
 		// --- Place everything into a HashMap ------------
 		HashMap<Integer, SiteMenu> siteMenuHashMap = new HashMap<>();
@@ -175,10 +175,6 @@ public class TypeConverter {
 		siteMenu.setCaption(menuItem.getCaption());
 		siteMenu.setPosition(menuItem.getPosition());
 		siteMenu.setHeadMenu(menuItem.getIsHeadMenu());
-		
-		// TODO find and set the values which are actually needed.
-//		siteMenu.setAccessRightLevel(...); 
-
 
 		SiteMenu parentMenu = new SiteMenu();
 		parentMenu.setId(menuItem.getParentId());
@@ -187,10 +183,6 @@ public class TypeConverter {
 		return siteMenu;
 	}
 	
-
-	// --------------------------------------------------------------------------------------------
-	// --- From here, static help method to handle site content -----------------------------------
-	// --------------------------------------------------------------------------------------------	
 	/**
 	 * Returns the specified list to a database site content list.
 	 *
@@ -203,167 +195,114 @@ public class TypeConverter {
 		
 		List<SiteContent> dbSiteContentList =  new ArrayList<>();
 		siteContentList.forEach(asc -> {
-			SiteContent dbSiteContent = TypeConverter.toDBSiteContent(asc);
+			SiteContent dbSiteContent = TypeConverter.restToDbContent(asc);
 			if (dbSiteContent!=null) {
 				dbSiteContentList.add(dbSiteContent);	
 			}
 		});
 		return dbSiteContentList;
-	}
+	}	
+
+	// --------------------------------------------------------------------------------------------
+	// --- From here, static help methods to map DB to REST content -------------------------------
+	// --------------------------------------------------------------------------------------------	
+
 
 	/**
-	 * To rest content.
+	 * Db to rest content.
 	 *
-	 * @param siteContent the site content
+	 * @param dbContent the site content
 	 * @return the abstract site content
 	 */
-	public static AbstractSiteContent toRestContent(de.enflexit.awb.ws.core.db.dataModel.SiteContent siteContent) {
+	public static AbstractSiteContent dbToRestContent(de.enflexit.awb.ws.core.db.dataModel.SiteContent dbContent) {
 		
-		AbstractSiteContent restContent = new AbstractSiteContent();
+		if (dbContent == null) return null;
 		
-		if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentText dbText) {
-			
-			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText restText = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText();
-			restText.setText(dbText.getTextData());
-			restContent = restText;
+		AbstractSiteContent restContent = switch (dbContent) {
+		case SiteContentText dbText -> mapTextDbToRest(dbText);
+		case SiteContentImage dbImage -> mapImageDbToRest(dbImage);
+		case SiteContentProperties dbProps -> mapPropertiesDbToRest(dbProps);
+        case SiteContentTableWithValues dbTableVal -> mapTableValuesDbToRest(dbTableVal);
+        case SiteContentTableWithReference dbTableRef -> mapTableRefDbToRest(dbTableRef);
+        case SiteContentChart dbChart -> mapChartDbToRest(dbChart);
+		default -> throw new IllegalArgumentException("Unexpected value: " + dbContent);
+		};
 		
-		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentImage dbImage) {
+		mapCommonFieldsDbToRest(dbContent, restContent);
 		
-			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage restImage = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage();
-			restImage.setDataInB64(dbImage.getTextData());
-			restContent = restImage;
-			
-		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbProperties) {
-			
-			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProps = TypeConverter.dbToRestPorperties(dbProperties);
-			restContent = restProps;
-			
-		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues dbTableWithValues) {
-			
-			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues restTableWithValues = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues();
-			TypeConverter.mapCommonTableFieldsDbToRest(dbTableWithValues, restTableWithValues);
-			
-			if (dbTableWithValues.getTableDataJson() != null && dbTableWithValues.getTableDataJson().isBlank() == false) {
-				try {
-					List<List<String>> data = OBJECT_MAPPER.readValue(dbTableWithValues.getTableDataJson(),
-							new TypeReference<List<List<String>>>() {
-							});
-					restTableWithValues.setData(data);
-				} catch (JsonProcessingException jpe) {
-					jpe.printStackTrace();
-				}
-			}
-			restContent = restTableWithValues;
-			
-		} else if (siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference dbTableWithReference) {
-		
-			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference restTableWithReference = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference();
-			TypeConverter.mapCommonTableFieldsDbToRest(dbTableWithReference, restTableWithReference);
-			restTableWithReference.setReference(dbTableWithReference.getReference());
-			restContent = restTableWithReference;
-			
-		} else if(siteContent instanceof de.enflexit.awb.ws.core.db.dataModel.SiteContentChart dbChart) {
-		
-			de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart restChart = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart();
-			restChart.setChart(dbChart.getChart());
-			restContent = restChart;
-		}
-		
-		if (restContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia scm && siteContent instanceof SiteContentMedia dbScm) {
-			scm.setMimeType(dbScm.getMimeType());
-		}
+		return restContent;
+	}
+	
+	/**
+	 * Map common fields db to rest.
+	 *
+	 * @param siteContent the site content
+	 * @param restContent the rest content
+	 */
+	private static void mapCommonFieldsDbToRest(SiteContent siteContent, AbstractSiteContent restContent) {
 		
 		restContent.setUniqueContentId(siteContent.getId());
 		restContent.setEditable(siteContent.isEditable());
 		restContent.setUpdatePeriodInSeconds(siteContent.getUpdatePeriodInSeconds());
 		
-		return restContent;
+	}
+	
+	/**
+	 * Map chart db to rest.
+	 *
+	 * @param dbChart the db chart
+	 * @return the de.enflexit.awb.ws.dyn site api.gen.model. site content chart
+	 */
+	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart mapChartDbToRest(SiteContentChart dbChart) {
+	
+		de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart restChart = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart();
+		restChart.setChart(dbChart.getChart());
+		return restChart;
+	}
+	
+	/**
+	 * Map table ref db to rest.
+	 *
+	 * @param dbTableRef the db table ref
+	 * @return the de.enflexit.awb.ws.dyn site api.gen.model. site content table with reference
+	 */
+	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference mapTableRefDbToRest(SiteContentTableWithReference dbTableRef) {
+	
+		de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference restTableWithReference = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference();
+		TypeConverter.mapCommonTableFieldsDbToRest(dbTableRef, restTableWithReference);
+		restTableWithReference.setReference(dbTableRef.getReference() == null ? "" : dbTableRef.getReference());
+		return restTableWithReference;
+	}
+	
+	/**
+	 * Map table values db to rest.
+	 *
+	 * @param dbTableVal the db table val
+	 * @return the de.enflexit.awb.ws.dyn site api.gen.model. site content table with values
+	 */
+	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues mapTableValuesDbToRest(SiteContentTableWithValues dbTableVal) {
+	
+		de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues restTableWithValues = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues();
+		TypeConverter.mapCommonTableFieldsDbToRest(dbTableVal, restTableWithValues);
 		
+		if (dbTableVal.getTableDataJson() != null && dbTableVal.getTableDataJson().isBlank() == false) {
+			try {
+				List<List<String>> data = OBJECT_MAPPER.readValue(dbTableVal.getTableDataJson(),
+						new TypeReference<List<List<String>>>() {});
+				restTableWithValues.setData(data);
+			} catch (JsonProcessingException jpe) {
+				jpe.printStackTrace();
+			}
+		}
+		return restTableWithValues;
 	}
 
 	/**
-	 * Converts the passed rest content to de.enflexit.awb.ws.core.db.dataModel.SiteContent (db SiteContent)
+	 * Map common table fields db to rest.
 	 *
-	 * @param siteContent the site content
-	 * @return the site content
+	 * @param dbTable the db table
+	 * @param restTable the rest table
 	 */
-	public static SiteContent toDBSiteContent(de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent siteContent) {
-		
-		if (siteContent == null) {
-			return null;
-		}
-		
-		SiteContent dbSiteContent = null;
-		
-		if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText scText) {
-			SiteContentText dbText = new de.enflexit.awb.ws.core.db.dataModel.SiteContentText();
-			dbText.setTextData(scText.getText());
-			dbSiteContent = dbText;
-		
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage scImage) {
-			SiteContentImage dbImage = new de.enflexit.awb.ws.core.db.dataModel.SiteContentImage();
-			dbImage.setTextData(scImage.getDataInB64());
-			dbSiteContent = dbImage;
-			
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties scProperties) {
-			SiteContentProperties dbProps = TypeConverter.restToDbProperties(scProperties);
-			dbSiteContent = dbProps;
-			
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues scTableWithValues) {
-
-			de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues dbTableWithValues = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues();
-			TypeConverter.mapCommonTableFieldsRestToDb(scTableWithValues, dbTableWithValues);
-			
-			if (scTableWithValues.getData() != null) {
-				try {
-					String tableDataJson = OBJECT_MAPPER.writeValueAsString(scTableWithValues.getData());
-					dbTableWithValues.setTableDataJson(tableDataJson);
-				} catch (JsonProcessingException jpe) {
-					jpe.printStackTrace();
-				}
-			}
-			
-			dbSiteContent = dbTableWithValues;
-				
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference scTableWithReference) {
-		
-			de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference dbTableWithReference = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference();	
-			
-			TypeConverter.mapCommonTableFieldsRestToDb(scTableWithReference, dbTableWithReference);
-			dbTableWithReference.setReference(scTableWithReference.getReference());
-			dbSiteContent = dbTableWithReference;
-			
-		} else if (siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart scChart) {
-			de.enflexit.awb.ws.core.db.dataModel.SiteContentChart dbChart = new SiteContentChart();
-			dbChart.setChart(scChart.getChart());
-			dbSiteContent = dbChart;
-		}
-		
-		
-		if (dbSiteContent instanceof SiteContentMedia scm && siteContent instanceof de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentMedia restScm ) {
-			scm.setMimeType(restScm.getMimeType());
-		}
-		
-		// --- Set common fields ------------------------------------------------------------------
-		dbSiteContent.setId(siteContent.getUniqueContentId());
-		dbSiteContent.setEditable(siteContent.getEditable());
-		dbSiteContent.setUpdatePeriodInSeconds(siteContent.getUpdatePeriodInSeconds());
-		
-		return dbSiteContent;
-	}
-
-	private static void mapCommonTableFieldsRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable restTable, de.enflexit.awb.ws.core.db.dataModel.SiteContentTable dbTable) {
-		
-		dbTable.setHeader(restTable.getHeader());
-		
-		if (restTable.getDataType() != null) {
-			List<String> dataTypes = new ArrayList<String>();
-			restTable.getDataType().forEach(dtype -> dataTypes.add(dtype.getValue()));
-			dbTable.setDataType(dataTypes);
-		}
-		
-	}
-
 	private static void mapCommonTableFieldsDbToRest(de.enflexit.awb.ws.core.db.dataModel.SiteContentTable dbTable, de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable restTable) {
 	
 		restTable.setHeader(dbTable.getHeader());
@@ -376,15 +315,43 @@ public class TypeConverter {
 	}
 	
 	/**
+	 * Map image db to rest.
+	 *
+	 * @param dbImage the db image
+	 * @return the de.enflexit.awb.ws.dyn site api.gen.model. site content image
+	 */
+	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage mapImageDbToRest(SiteContentImage dbImage) {
+		
+		de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage restImage = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage();
+		restImage.setDataInB64(dbImage.getTextData() == null ? "" : dbImage.getTextData());
+		restImage.setMimeType(dbImage.getMimeType() == null ? "" : dbImage.getMimeType());
+		return restImage;
+	}
+	
+	/**
+	 * Map text db to rest.
+	 *
+	 * @param dbText the db text
+	 * @return the de.enflexit.awb.ws.dyn site api.gen.model. site content text
+	 */
+	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText mapTextDbToRest(SiteContentText dbText) {
+		
+		de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText restText = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText();
+		restText.setText(dbText.getTextData() == null ? "" : dbText.getTextData());
+		restText.setMimeType(dbText.getMimeType()== null ? "" : dbText.getMimeType());
+		return restText;
+	}
+
+	/**
 	 * Converts de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties to de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties (db props to rest props)
 	 *
 	 * @param dbproperties the dbproperties
 	 * @return the de.enflexit.awb.ws.dyn site api.gen.model. site content properties
 	 */
-	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties dbToRestPorperties(de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbproperties){
+	private static de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties mapPropertiesDbToRest(de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbproperties){
 		
 		de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProps = new de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties();
-		if (dbproperties == null) return restProps;
+		if (dbproperties == null || dbproperties.getPropertyEntries() == null) return restProps;
 		
 		for (SiteContentPropertyEntry dbEntry : dbproperties.getPropertyEntries()) {
 			
@@ -417,16 +384,187 @@ public class TypeConverter {
 		return restProps;
 	}
 	
+	// --------------------------------------------------------------------------------------------
+	// --- From here, static help methods to map REST to DB content -------------------------------
+	// --------------------------------------------------------------------------------------------	
+
+	/**
+	 * Rest to db content.
+	 *
+	 * @param restContent the rest content
+	 * @return the de.enflexit.awb.ws.core.db.data model. site content
+	 */
+	public static de.enflexit.awb.ws.core.db.dataModel.SiteContent restToDbContent(AbstractSiteContent restContent) throws IllegalArgumentException {
+		
+		if (restContent == null) return null;
+		
+		SiteContent dbContent = switch (restContent) {
+		case de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText restText -> mapTextRestToDb(restText);
+		case de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage restImage -> mapImageRestToDb(restImage);
+		case de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProps -> mapPropertiesRestToDb(restProps);
+        case de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues restTableVal -> mapTableValuesRestToDb(restTableVal);
+        case de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference restTableRef -> mapTableRefRestToDb(restTableRef);
+        case de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart restChart -> mapChartRestToDb(restChart);
+		default -> throw new IllegalArgumentException("Unexpected value: " + restContent);
+		};
+		
+		mapCommonFieldsRestToDb(restContent, dbContent);
+		
+		return dbContent;
+	}
+	
+	/**
+	 * Map common fields rest to db.
+	 *
+	 * @param restContent the rest content
+	 * @param dbContent the db content
+	 */
+	private static void mapCommonFieldsRestToDb(AbstractSiteContent restContent, SiteContent dbContent) throws IllegalArgumentException {
+		
+		if (restContent.getEditable() == null || restContent.getUpdatePeriodInSeconds() == null) {
+			throw new IllegalArgumentException("Update period and editable can't be null");	
+		}
+		
+		dbContent.setId(restContent.getUniqueContentId());
+		dbContent.setEditable(restContent.getEditable());
+		dbContent.setUpdatePeriodInSeconds(restContent.getUpdatePeriodInSeconds());
+		
+	}
+	
+	/**
+	 * Map chart rest to db.
+	 *
+	 * @param restChart the rest chart
+	 * @return the de.enflexit.awb.ws.core.db.data model. site content chart
+	 */
+	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentChart mapChartRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart restChart) throws IllegalArgumentException {
+		
+		if (restChart.getChart() == null) {
+			throw new IllegalArgumentException("Chart of site content chart can't be null.");
+		}
+		de.enflexit.awb.ws.core.db.dataModel.SiteContentChart dbChart = new SiteContentChart();
+		dbChart.setChart(restChart.getChart());
+		return dbChart;
+	}
+	
+	/**
+	 * Map table ref rest to db.
+	 *
+	 * @param restTableRef the rest table ref
+	 * @return the de.enflexit.awb.ws.core.db.data model. site content table with reference
+	 */
+	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference mapTableRefRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithReference restTableRef) throws IllegalArgumentException {
+	
+		if (restTableRef.getReference() == null || restTableRef.getReference().isBlank()) {
+			throw new IllegalArgumentException("The reference of a table with reference can't be null.");
+		}
+		
+		de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference dbTableWithReference = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithReference();
+		TypeConverter.mapCommonTableFieldsRestToDb(restTableRef, dbTableWithReference);
+		dbTableWithReference.setReference(restTableRef.getReference());
+		return dbTableWithReference;
+	}
+	
+	/**
+	 * Map table values rest to db.
+	 *
+	 * @param restTableVal the rest table val
+	 * @return the de.enflexit.awb.ws.core.db.data model. site content table with values
+	 */
+	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues mapTableValuesRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTableWithValues restTableVal) throws IllegalArgumentException {
+		
+		de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues dbTableWithValues = new de.enflexit.awb.ws.core.db.dataModel.SiteContentTableWithValues();
+		TypeConverter.mapCommonTableFieldsRestToDb(restTableVal, dbTableWithValues);
+		
+		if (restTableVal.getData() != null) {
+			try {
+				String tableDataJson = OBJECT_MAPPER.writeValueAsString(restTableVal.getData());
+				dbTableWithValues.setTableDataJson(tableDataJson);
+			} catch (JsonProcessingException jpe) {
+				jpe.printStackTrace();
+			}
+		} else {
+			throw new IllegalArgumentException("Data of table with data can't be null.");
+		}
+		return dbTableWithValues;
+	}
+	
+	/**
+	 * Map image rest to db.
+	 *
+	 * @param restImage the rest image
+	 * @return the de.enflexit.awb.ws.core.db.data model. site content image
+	 */
+	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentImage mapImageRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentImage restImage) throws IllegalArgumentException {
+		
+		if (restImage.getMimeType() == null || restImage.getMimeType().isBlank()) {
+			throw new IllegalArgumentException("Mime type of an image can't be null.");
+		}
+		if (restImage.getDataInB64() == null || restImage.getDataInB64().isBlank()) {
+			throw new IllegalArgumentException("Data for an image can't be null");
+		}
+		
+		SiteContentImage dbImage = new de.enflexit.awb.ws.core.db.dataModel.SiteContentImage();
+		dbImage.setTextData(restImage.getDataInB64());
+		dbImage.setMimeType(restImage.getMimeType());
+		return dbImage;
+	}
+	
+	/**
+	 * Map text rest to db.
+	 *
+	 * @param restText the rest text
+	 * @return the de.enflexit.awb.ws.core.db.data model. site content text
+	 */
+	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentText mapTextRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentText restText) throws IllegalArgumentException {
+
+		if (restText.getMimeType() == null || restText.getMimeType().isBlank()) {
+			throw new IllegalArgumentException("Mime type of text can't be null.");
+		}
+		
+		SiteContentText dbText = new de.enflexit.awb.ws.core.db.dataModel.SiteContentText();
+		dbText.setTextData(restText.getText());
+		dbText.setMimeType(restText.getMimeType());
+		return dbText;
+	}
+
+
+	/**
+	 * Map common table fields rest to db.
+	 *
+	 * @param restTable the rest table
+	 * @param dbTable the db table
+	 */
+	private static void mapCommonTableFieldsRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentTable restTable, de.enflexit.awb.ws.core.db.dataModel.SiteContentTable dbTable) throws IllegalArgumentException {
+		
+		if (restTable.getHeader() == null || restTable.getHeader().size() == 0) {
+			throw new IllegalArgumentException("At least one header must be specified for a table.");
+		}
+		
+		if (restTable.getDataType() == null || restTable.getDataType().size() == 0) {
+			throw new IllegalArgumentException("At least one data type must be specified for a table");
+		}
+		
+		dbTable.setHeader(restTable.getHeader());
+
+		List<String> dataTypes = new ArrayList<String>();
+		restTable.getDataType().forEach(dtype -> dataTypes.add(dtype.getValue()));
+		dbTable.setDataType(dataTypes);
+
+	}
+
+
+	
 	/**
 	 * Converts de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties to de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties.
 	 *
 	 * @param restProperties the rest properties
 	 * @return the de.enflexit.awb.ws.core.db.data model. site content properties
 	 */
-	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties restToDbProperties(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProperties){
+	private static de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties mapPropertiesRestToDb(de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentProperties restProperties) throws IllegalArgumentException {
 		
 		de.enflexit.awb.ws.core.db.dataModel.SiteContentProperties dbProps = new SiteContentProperties();
-		if (restProperties == null) return dbProps;
+		if (restProperties == null || restProperties.getPropertyEntries() == null) return dbProps;
 		
 		for (PropertyEntry restEntry : restProperties.getPropertyEntries()) {
 			

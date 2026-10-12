@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AssignContentToMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenu201Response;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.UpdateContentAssignmentRequest;
@@ -38,7 +39,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the menu API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T11:32:49.824580100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T17:22:22.337087900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApi  {
 
    private final MenuApiService delegate;
@@ -99,9 +100,9 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response createMenu(@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  MenuItem menuItem,@Context SecurityContext securityContext)
+    public Response createMenu(@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull @Valid  CreateMenuRequest createMenuRequest,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.createMenu(menuItem, securityContext);
+        return delegate.createMenu(createMenuRequest, securityContext);
     }
 
     @jakarta.ws.rs.DELETE
@@ -200,7 +201,7 @@ public class MenuApi  {
     @jakarta.ws.rs.PUT
     @Path("/{menuId}/permissions")
     @Consumes({ "application/json" })
-    @Operation(summary = "Enables to set the required rights to access the specified menu", description = "", responses = {
+    @Operation(summary = "Set access roles for a menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The right was set", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -212,8 +213,8 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response updateMenuPermissions(@Schema(description= "The unique Id of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull  String body,@Context SecurityContext securityContext)
+    public Response updateMenuPermissions(@Schema(description= "The unique Id of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull  List<String> requestBody,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.updateMenuPermissions(menuId, body, securityContext);
+        return delegate.updateMenuPermissions(menuId, requestBody, securityContext);
     }
 }
