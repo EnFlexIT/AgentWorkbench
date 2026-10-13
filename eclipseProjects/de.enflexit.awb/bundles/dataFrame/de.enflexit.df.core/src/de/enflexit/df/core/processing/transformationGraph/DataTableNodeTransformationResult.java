@@ -44,6 +44,13 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 		}
 		return dataTable;
 	}
+	
+	/**
+	 * Resets the data table, e.g. after changing transformation parameters.
+	 */
+	public void resetDataTable() {
+		this.dataTable = null;
+	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformationGraph.DataTableNode#getLabelText()

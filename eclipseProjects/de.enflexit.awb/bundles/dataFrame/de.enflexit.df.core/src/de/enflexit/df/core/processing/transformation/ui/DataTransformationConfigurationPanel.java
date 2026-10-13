@@ -77,6 +77,8 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	private JButton jButtonApply;
 	private JButton jButtonCancel;
 	
+	private AbstractDataTransformation dataTransformation;
+	
 	/**
 	 * Instantiates a new j panel configure data transformation.
 	 */
@@ -341,6 +343,19 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 			
 			this.getTableNodesList().setEnabled(this.isTransformationSelected());
 			this.getJButtonApply().setEnabled(this.isTransformationSelected());
+		} else if (ae.getSource()==this.getJButtonApply()) {
+			if (this.dataTransformation==null) {
+				this.dataTransformation = this.getSelectedDataTransformation().getNewInstance();
+			}
+			
+			// --- Set the changed parameters to the transformation -----------
+			this.dataTransformation.getTransformationParameters().clear();
+			this.dataTransformation.setTransformationParameters(this.getConfiguredTransformationParameters());
+			
+			// --- Reset the results table, if already existing ---------------
+			if (this.dataTransformation.getOutputNode()!=null) {
+				this.dataTransformation.getOutputNode().resetDataTable();
+			}
 		}
 	}
 	
@@ -470,6 +485,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	 * @param transformation the new data transformation
 	 */
 	public void setDataTransformation(AbstractDataTransformation transformation) {
+		this.dataTransformation = transformation;
 		this.setModelToForm(transformation);
 	}
 	
@@ -483,6 +499,9 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 			DataTransformationService transformaitonService = this.getDataTransformationComboBoxModel().getElementAt(i);
 			if (transformaitonService!=null && transformaitonService.getName().equals(transformation.getTransformationName())) {
 				this.getJComboBoxSelectTransformation().setSelectedIndex(i);
+				
+				// --- Cannot change the type of an existing transformation
+				this.getJComboBoxSelectTransformation().setEnabled(false);
 			}
 		}
 		if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
@@ -490,6 +509,8 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		} else if (this.getTableNodesList() instanceof RadioButtonList<DataTableNode>) {
 			this.getTableNodesRadioButtonList().setSelectedItem(transformation.getInputNodes().get(0));
 		}
+		// --- Cannot change the input tables for an existing transformation --
+		this.getTableNodesList().setEnabled(false);
 		
 		((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).setConfiguredParameters(transformation.getTransformationParameters());
 		
