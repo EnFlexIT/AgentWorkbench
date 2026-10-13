@@ -31,7 +31,9 @@ import edu.uci.ics.jung.graph.event.GraphEvent;
 import edu.uci.ics.jung.graph.event.GraphEventListener;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
+import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
+import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
@@ -193,10 +195,9 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		if (visualizationViewer==null) {
 			
 			visualizationViewer = new VisualizationViewer<DataTableNode, DataTransformationEdge>(this.getGraphController().getGraphLayout());
-			
 			visualizationViewer.setBackground(AwbThemeColor.Canvas_Background.getColor());
 			
-			// --- Set a rounded rectangle as node shape. Dimensions are specified in the class constants above.
+			// --- Customize the renderer (round rectangles as nodes, straight lines as edges, node labels in the middle of the rectangle)
 			double xPos = -(NODE_RECTANGLE_WIDTH/2);	// JUNG coordinates refer to the center
 			double yPos = -(NODE_RECTANGLE_HEIGHT/2);
 			visualizationViewer.getRenderContext().setVertexShapeTransformer(node -> new RoundRectangle2D.Double(xPos, yPos, NODE_RECTANGLE_WIDTH, NODE_RECTANGLE_HEIGHT, NODE_RECTANGLE_ARC, NODE_RECTANGLE_ARC));
@@ -206,9 +207,12 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			
 			// --- Configure mouse interactions -----------
 			visualizationViewer.setPickSupport(new ShapePickSupport<DataTableNode, DataTransformationEdge>(visualizationViewer));
-			visualizationViewer.setGraphMouse(new DefaultModalGraphMouse<DataTableNode, DataTransformationEdge>());
-			visualizationViewer.addMouseListener(new TransformationGraphMouseAdapter(this));
-			
+			visualizationViewer.setGraphMouse(this.getZoomOnlyGraphMouse());
+			TransformationGraphMouseAdapter mouseAdapter = new TransformationGraphMouseAdapter(this);
+			visualizationViewer.addMouseListener(mouseAdapter);
+			visualizationViewer.addMouseMotionListener(mouseAdapter);
+
+			// --- Register as graph event listener -------
 			ObservableGraph<DataTableNode, DataTransformationEdge> graph = (ObservableGraph<DataTableNode, DataTransformationEdge>) this.getGraphController().getTransformationGraph();
 			graph.addGraphEventListener(this);
 			
@@ -463,12 +467,18 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		}
 	}
 	
+	/**
+	 * Hides the details view.
+	 */
 	private void hideDetailsPanel() {
 		this.getJSplitPaneMainView().setDividerLocation(1.0);
 		this.getJButtonRemove().setEnabled(false);
-		
 	}
 	
+	/**
+	 * Shows the details view for the provided node.
+	 * @param node the node
+	 */
 	private void showNodeDetails(DataTableNode node) {
 		Table tableToShow = node.getDataTable();
 		if (tableToShow!=null) {
@@ -483,6 +493,10 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		TransformationGraphEditorPanel.this.getJButtonRemove().setEnabled(true);
 	}
 	
+	/**
+	 * Shows the details view for the provided edge.
+	 * @param edge the edge
+	 */
 	private void showEdgeDetails(DataTransformationEdge edge) {
 		AbstractDataTransformation transformationToShow = edge.getDataTransformation();
 		if (transformationToShow!=null) {
@@ -495,6 +509,16 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		}
 		
 		TransformationGraphEditorPanel.this.getJButtonRemove().setEnabled(true);
+	}
+	
+	/**
+	 * Gets a {@link PluggableGraphMouse} that only uses the zoom plug-in ----- 
+	 * @return the zoom only graph mouse
+	 */
+	private PluggableGraphMouse getZoomOnlyGraphMouse() {
+		PluggableGraphMouse graphMouse = new PluggableGraphMouse();
+		graphMouse.add(new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, 1.1f, 0.9f));
+		return graphMouse;
 	}
 	
 }
