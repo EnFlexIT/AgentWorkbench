@@ -24,7 +24,7 @@ import java.awt.Font;
  * A simple list panel for selecting columns from table saw tables.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JPanelTableColumnSelection extends AbstractTransformationParameterConfigurationPanel {
+public class TableColumnSelectionPanel extends AbstractTransformationParameterConfigurationPanel {
 	
 	private static final long serialVersionUID = 7519193216640795836L;
 	private JScrollPane jScrollPaneSelectionList;
@@ -35,7 +35,7 @@ public class JPanelTableColumnSelection extends AbstractTransformationParameterC
 	/**
 	 * Instantiates a new j panel table column selection.
 	 */
-	public JPanelTableColumnSelection(DataTransformationService transformation) {
+	public TableColumnSelectionPanel(DataTransformationService transformation) {
 		super(transformation);
 		initialize();
 	}
@@ -136,13 +136,13 @@ public class JPanelTableColumnSelection extends AbstractTransformationParameterC
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
-		if (pce.getPropertyName().equals(JPanelDataTransformationConfiguration.EVENT_ID_TABLE_ADDED)) {
+		if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TABLE_ADDED)) {
 			DataTableNode affectedNode = (DataTableNode) pce.getNewValue();
 			this.addTable(affectedNode.getDataTable());
-		} else if (pce.getPropertyName().equals(JPanelDataTransformationConfiguration.EVENT_ID_TABLE_REMOVED)) {
+		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TABLE_REMOVED)) {
 			DataTableNode affectedNode = (DataTableNode) pce.getOldValue();
 			this.removeTable(affectedNode.getDataTable());
-		} else if (pce.getPropertyName().equals(JPanelDataTransformationConfiguration.EVENT_ID_TABLE_SELECTED)) {
+		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TABLE_SELECTED)) {
 			DataTableNode affectedNode = (DataTableNode) pce.getNewValue();
 			this.clearTableColumnsList();
 			this.addTable(affectedNode.getDataTable());

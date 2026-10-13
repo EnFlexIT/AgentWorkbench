@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.transformation;
+package de.enflexit.df.core.processing.transformation.filter;
 
 import java.util.List;
 import java.util.Objects;
@@ -239,9 +239,40 @@ public final class Filters {
 	public static FilterExpression isNotNull(String column) {
 		return new FilterCondition(NullFilter.isNotNull(column));
 	}
+	
+	/**
+	 * Creates a general comparison filter with the specified operator.
+	 * @param column the column to apply the filter on
+	 * @param operator the operator to apply
+	 * @param value the value to compare to
+	 * @return the filter expression
+	 */
+	public static FilterExpression compare(String column, FilterOperator operator, Object value) {
+		return new FilterCondition(new ComparisonFilter(column, operator, value));
+	}
+	
+	/**
+	 * Creates an and concatenation of a list of filter expressions.
+	 * @param expressions the expressions
+	 * @return the filter expression
+	 */
+	public static FilterExpression and(List<FilterExpression> expressions) {
+
+		Objects.requireNonNull(expressions, "expressions");
+
+		if (expressions.isEmpty()) {
+			throw new IllegalArgumentException("At least one filter expression is required");
+		}
+
+		if (expressions.size() == 1) {
+			return expressions.getFirst();
+		}
+
+		return new FilterGroup(LogicalOperator.AND, expressions);
+	}
 
 	/**
-	 * Creates an and concatenation of filters-
+	 * Creates an and concatenation of filters.
 	 * @param expressions the expressions
 	 * @return the filter expression
 	 */

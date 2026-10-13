@@ -1,8 +1,10 @@
-package de.enflexit.df.core.processing.transformation;
+package de.enflexit.df.core.processing.transformation.join;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 
 /**

@@ -8,25 +8,25 @@ import java.awt.event.ActionListener;
 import javax.swing.JDialog;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
-import de.enflexit.df.core.processing.ui.JPanelTransformationGraphEditor;
+import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
 
 /**
  * This class provides a dialog to configure data transformations.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JDialogDataTransformationConfiguration extends JDialog implements ActionListener{
+public class DataTransformationConfigurationDialog extends JDialog implements ActionListener{
 
 	private static final long serialVersionUID = -1462269913159910976L;
 	
-	private JPanelTransformationGraphEditor parentEditorPanel;
-	private JPanelDataTransformationConfiguration jPanelDataTransformationConfiguration;
+	private TransformationGraphEditorPanel parentEditorPanel;
+	private DataTransformationConfigurationPanel jPanelDataTransformationConfiguration;
 
 	/**
 	 * Instantiates a new j dialog data transformation configuration.
 	 * @param owner the owner
 	 * @param parentEditorPanel the parent editor panel
 	 */
-	public JDialogDataTransformationConfiguration(Window owner, JPanelTransformationGraphEditor parentEditorPanel) {
+	public DataTransformationConfigurationDialog(Window owner, TransformationGraphEditorPanel parentEditorPanel) {
 		super(owner);
 		this.parentEditorPanel = parentEditorPanel;
 		initialize();
@@ -47,9 +47,9 @@ public class JDialogDataTransformationConfiguration extends JDialog implements A
 	 * Gets the j panel data transforation configuration.
 	 * @return the j panel data transforation configuration
 	 */
-	private JPanelDataTransformationConfiguration getJPanelDataTransformationConfiguration() {
+	private DataTransformationConfigurationPanel getJPanelDataTransformationConfiguration() {
 		if (jPanelDataTransformationConfiguration == null) {
-			jPanelDataTransformationConfiguration = new JPanelDataTransformationConfiguration(this.parentEditorPanel);
+			jPanelDataTransformationConfiguration = new DataTransformationConfigurationPanel(this.parentEditorPanel);
 			jPanelDataTransformationConfiguration.getJComboBoxSelectTransformation().addActionListener(this);
 			jPanelDataTransformationConfiguration.addActionListenerToButtons(this);
 		}
