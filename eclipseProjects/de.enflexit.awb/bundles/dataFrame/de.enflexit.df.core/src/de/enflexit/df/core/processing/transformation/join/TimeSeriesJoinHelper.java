@@ -192,11 +192,11 @@ public class TimeSeriesJoinHelper {
 			existingNames.addAll(table.columnNames());
 		}
 
-		String candidate = "__join_time";
+		String candidate = "join_time";
 		int suffix = 1;
 
 		while (existingNames.contains(candidate)) {
-			candidate = "__join_time_" + suffix++;
+			candidate = "join_time_" + suffix++;
 		}
 
 		return candidate;

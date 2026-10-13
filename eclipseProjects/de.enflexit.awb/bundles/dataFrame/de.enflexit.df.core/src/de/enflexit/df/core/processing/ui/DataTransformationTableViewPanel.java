@@ -70,7 +70,7 @@ public class DataTransformationTableViewPanel extends JPanel {
 	public void setDataTable(DataTableNode dataTableNode) {
 		TablesawTableModel tableModel = new TablesawTableModel(dataTableNode.getDataTable());
 		this.getJTableData().setModel(tableModel);
-		this.getJLabelTableName().setText(dataTableNode.getLabelText());
+		this.getJLabelTableName().setText(dataTableNode.getLongText() + " (" + tableModel.getRowCount() + " rows)");
 	}
 	private JLabel getJLabelTableName() {
 		if (jLabelTableName == null) {

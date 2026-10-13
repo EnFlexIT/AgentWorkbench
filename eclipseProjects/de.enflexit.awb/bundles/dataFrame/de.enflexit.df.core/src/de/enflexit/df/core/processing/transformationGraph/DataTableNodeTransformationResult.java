@@ -63,7 +63,7 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 		for (DataTableNode inputNode : this.getDataTransformation().getInputNodes()) {
 			inputTables.add(inputNode.getLabelText());
 		}
-		return this.getLabelText() + "(" + String.join(", ", inputTables) + ")";
+		return this.getLabelText() + " [" + String.join(", ", inputTables) + "]";
 	}
 	
 	

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
@@ -25,7 +24,10 @@ import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.filter.DataTransformationServiceFilterRows;
 import de.enflexit.df.core.processing.transformation.filter.DateTimeInputParser;
 import de.enflexit.df.core.processing.transformation.filter.Filters;
+import de.enflexit.df.core.processing.transformation.filter.Filters.FilterCondition;
 import de.enflexit.df.core.processing.transformation.filter.Filters.FilterExpression;
+import de.enflexit.df.core.processing.transformation.filter.Filters.FilterGroup;
+import de.enflexit.df.core.processing.transformation.filter.Filters.TableFilter;
 import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilterTableModel.FilterRow;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
@@ -322,7 +324,41 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 	 */
 	@Override
 	public void setConfiguredParameters(Map<String, Object> parameters) {
-		// TODO Auto-generated method stub
-		
+		@SuppressWarnings("unchecked")
+		List<FilterExpression> filtersList = (List<FilterExpression>) parameters.get(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
+		for (FilterExpression fe : filtersList) {
+			this.addFilterExpressionToTableModel(fe);
+		}
+	}
+	
+	/**
+	 * Adds the filter expression to the table model.
+	 * @param filterExpression the filter expression
+	 */
+	private void addFilterExpressionToTableModel(FilterExpression filterExpression){
+		if (filterExpression instanceof FilterCondition fc) {
+			this.addTableRowForFilter(fc);
+		} else if (filterExpression instanceof FilterGroup fg) {
+			this.addTableRowsForFilterGroup(fg);
+		}
+	}
+	
+	/**
+	 * Adds the table rows for a filter group to the table.
+	 * @param filterGroup the filter group
+	 */
+	private void addTableRowsForFilterGroup(FilterGroup filterGroup) {
+		for (FilterExpression fe : filterGroup.expressions()) {
+			this.addFilterExpressionToTableModel(fe);
+		}
+	}
+	
+	/**
+	 * Adds the table row for a single filter to the table.
+	 * @param filterCondition the filter condition
+	 */
+	private void addTableRowForFilter(FilterCondition filterCondition) {
+		TableFilter tableFilter = filterCondition.filter();
+		this.getTableModel().addRow(tableFilter);
 	}
 }

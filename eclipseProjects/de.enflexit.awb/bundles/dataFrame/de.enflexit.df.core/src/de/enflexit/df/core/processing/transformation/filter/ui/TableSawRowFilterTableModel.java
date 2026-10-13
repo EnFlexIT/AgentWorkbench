@@ -5,7 +5,11 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import de.enflexit.df.core.processing.transformation.filter.Filters.BetweenFilter;
+import de.enflexit.df.core.processing.transformation.filter.Filters.ComparisonFilter;
 import de.enflexit.df.core.processing.transformation.filter.Filters.FilterOperator;
+import de.enflexit.df.core.processing.transformation.filter.Filters.NullFilter;
+import de.enflexit.df.core.processing.transformation.filter.Filters.TableFilter;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
@@ -154,6 +158,39 @@ public class TableSawRowFilterTableModel extends AbstractTableModel {
 		rows.add(new FilterRow(firstColumn, FilterOperator.EQUALS, "", ""));
 		fireTableRowsInserted(rows.size() - 1, rows.size() - 1);
 	}
+	
+	/**
+	 * Adds a row for the provided TableFiler.
+	 * @param tableFilter the table filter
+	 */
+	public void addRow(TableFilter tableFilter) {
+		if (tableFilter!=null) {
+
+			// --- Determine the column to filter on ----------------
+			Column<?> filterColumn = this.getColumnByName(tableFilter.column());
+			if (filterColumn==null) {
+				throw new IllegalArgumentException("The column " + tableFilter.column() + " could not be found!");
+			}
+
+			// --- Create a filter row according to the actual type of the filter
+			FilterRow filterRow = null;
+			if (tableFilter instanceof NullFilter nf) {
+				FilterOperator operator = nf.isNull() ? FilterOperator.IS_NULL : FilterOperator.IS_NOT_NULL;
+				filterRow = new FilterRow(filterColumn, operator, null, null);
+			} else if (tableFilter instanceof ComparisonFilter cf) {
+				filterRow = new FilterRow(filterColumn, cf.operator(), cf.value().toString(), null);
+			} else if (tableFilter instanceof BetweenFilter bf) {
+				filterRow = new FilterRow(filterColumn, FilterOperator.BETWEEN, bf.lower().toString(), bf.upper().toString());
+			}
+			
+			// --- Add the row to the table model -------------------
+			if (filterRow!=null) {
+				this.rows.add(filterRow);
+				fireTableRowsInserted(rows.size() - 1, rows.size() - 1);
+			}
+			
+		}
+	}
 
 	/**
 	 * Removes the row.
@@ -170,6 +207,15 @@ public class TableSawRowFilterTableModel extends AbstractTableModel {
 	 */
 	public List<FilterRow> getRows() {
 		return List.copyOf(rows);
+	}
+	
+	private Column<?> getColumnByName(String columnName){
+		for (Column<?> column : this.getAvailableColumns()) {
+			if (column.name().equals(columnName)) {
+				return column;
+			}
+		}
+		return null;
 	}
 
 }

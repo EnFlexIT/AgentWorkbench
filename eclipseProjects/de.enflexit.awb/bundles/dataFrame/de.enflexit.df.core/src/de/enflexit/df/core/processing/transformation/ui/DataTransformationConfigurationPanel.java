@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -240,9 +241,9 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		if (tableNodesListModel==null) {
 			tableNodesListModel = new DefaultListModel<DataTableNode>();
 			
-			for (DataTableNode node : this.parentEditorPanel.getGraphController().getTransformationGraph().getVertices()) {
-				tableNodesListModel.addElement(node);
-			}
+			ArrayList<DataTableNode> nodesList =  new ArrayList<DataTableNode>(this.parentEditorPanel.getGraphController().getTransformationGraph().getVertices());
+			nodesList.sort(Comparator.nullsFirst(Comparator.comparing(DataTableNode::getLongText, String.CASE_INSENSITIVE_ORDER)));
+			tableNodesListModel.addAll(nodesList);
 		}
 		return tableNodesListModel;
 	}
@@ -464,6 +465,10 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		this.getJButtonCancel().addActionListener(actionListener);
 	}
 	
+	/**
+	 * Sets the data transformation.
+	 * @param transformation the new data transformation
+	 */
 	public void setDataTransformation(AbstractDataTransformation transformation) {
 		this.setModelToForm(transformation);
 	}
