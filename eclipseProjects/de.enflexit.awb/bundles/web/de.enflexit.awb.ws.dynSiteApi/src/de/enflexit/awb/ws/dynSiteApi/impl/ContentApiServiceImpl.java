@@ -18,6 +18,7 @@ import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentWithMenuPosition;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
 import de.enflexit.awb.ws.dynSiteApi.security.UserPermissionHelper;
 import de.enflexit.charts.model.AbstractValueRow;
@@ -57,14 +58,19 @@ public class ContentApiServiceImpl extends ContentApiService {
 		
     	try {
 			List<SiteContent> contentList = this.getDatabaseHandler().getContentListOfMenuId(menuID);
-			List<AbstractSiteContent> restContentList = new ArrayList<>();
-			
-			for (SiteContent dbContent : contentList) {
-				AbstractSiteContent restContent = TypeConverter.dbToRestContent(dbContent);
+			List<SiteContentWithMenuPosition> restContentList = new ArrayList<>();
+
+			for (int position = 0; position < contentList.size(); position++) {
+				AbstractSiteContent restContent = TypeConverter.dbToRestContent(contentList.get(position));
 				if (restContent != null) {
-					restContentList.add(restContent);
+					SiteContentWithMenuPosition siteContent = new SiteContentWithMenuPosition();
+					siteContent.setContent(restContent);
+					// --- Content Positions are one based, so position +1 ------------------------
+					siteContent.setPosition(position +1);
+					restContentList.add(siteContent);
 				}
 			}
+			
 			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(restContentList).build();
 			
 		} catch (IllegalArgumentException iae) {
@@ -76,55 +82,55 @@ public class ContentApiServiceImpl extends ContentApiService {
     	
     }
     
-	private SiteContentList getSiteContentList(Integer menuID) {
-		
-		SiteContentList scList = new SiteContentList();
-
-		switch (menuID) {
-		case -1: 
-			scList.addContentListItem(DynamicContentFactory.createSiteContentText(1, 0,  false, null, "Example Text"));
-			scList.addContentListItem(DynamicContentFactory.createSiteContentText(2, 10, false, null, "Example Text that should be updated every 10 seconds"));
-			scList.addContentListItem(DynamicContentFactory.createSiteContentText(3, 0,  true,  null, "Example Text that is to edit"));
-			break;
-			
-		case -2:
-			String image1 = ImageHelper.getImageIconBase64Encoded("awb48.png");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(4, 0,  false, "image/png", image1, null, null));
-
-			String image2 = ImageHelper.getImageIconBase64Encoded("components.gif");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(5, 10, true,  "image/gif", image2, 200, null));
-			
-			String image3 = ImageHelper.getImageIconBase64Encoded("splash.bmp");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(6, 0,  false, "image/bmp", image3, null, 150));
-
-			String image4 = ImageHelper.getImageIconBase64Encoded("Survey_Logo.jpg");
-			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(7, 0,  true,  "image/jpg", image4, 100, 100));
-			break;
-
-		case -3:
-			List<PropertyEntry> peList = new ArrayList<>();
-			peList.add(DynamicContentFactory.createPropertyEntry("example.String", ValueType.STRING, "TestValue"));
-			peList.add(DynamicContentFactory.createPropertyEntry("example.boolean", ValueType.BOOLEAN, "true"));
-			peList.add(DynamicContentFactory.createPropertyEntry("example.integer", ValueType.INTEGER, "1"));
-			peList.add(DynamicContentFactory.createPropertyEntry("example.double", ValueType.DOUBLE, "3.1415"));
-			peList.add(DynamicContentFactory.createPropertyEntry("example.long", ValueType.LONG, String.valueOf(Long.MAX_VALUE)));
-			
-			scList.addContentListItem(DynamicContentFactory.createSiteContentProperties(8, 0, false, peList));
-			scList.addContentListItem(DynamicContentFactory.createSiteContentProperties(9, 0, true, peList));
-			break;
-			
-		case -4:
-			scList.addContentListItem(this.createExamplePieChart());
-			scList.addContentListItem(this.createExampleTimeSeriesChart());
-			scList.addContentListItem(this.createExampleBarChart());
-			scList.addContentListItem(this.createExampleLineChart());
-			break;
-						
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + menuID);
-		}
-		return scList;
-	}
+//	private SiteContentList getSiteContentList(Integer menuID) {
+//		
+//		SiteContentList scList = new SiteContentList();
+//
+//		switch (menuID) {
+//		case -1: 
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentText(1, 0,  false, null, "Example Text"));
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentText(2, 10, false, null, "Example Text that should be updated every 10 seconds"));
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentText(3, 0,  true,  null, "Example Text that is to edit"));
+//			break;
+//			
+//		case -2:
+//			String image1 = ImageHelper.getImageIconBase64Encoded("awb48.png");
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(4, 0,  false, "image/png", image1, null, null));
+//
+//			String image2 = ImageHelper.getImageIconBase64Encoded("components.gif");
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(5, 10, true,  "image/gif", image2, 200, null));
+//			
+//			String image3 = ImageHelper.getImageIconBase64Encoded("splash.bmp");
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(6, 0,  false, "image/bmp", image3, null, 150));
+//
+//			String image4 = ImageHelper.getImageIconBase64Encoded("Survey_Logo.jpg");
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentImage(7, 0,  true,  "image/jpg", image4, 100, 100));
+//			break;
+//
+//		case -3:
+//			List<PropertyEntry> peList = new ArrayList<>();
+//			peList.add(DynamicContentFactory.createPropertyEntry("example.String", ValueType.STRING, "TestValue"));
+//			peList.add(DynamicContentFactory.createPropertyEntry("example.boolean", ValueType.BOOLEAN, "true"));
+//			peList.add(DynamicContentFactory.createPropertyEntry("example.integer", ValueType.INTEGER, "1"));
+//			peList.add(DynamicContentFactory.createPropertyEntry("example.double", ValueType.DOUBLE, "3.1415"));
+//			peList.add(DynamicContentFactory.createPropertyEntry("example.long", ValueType.LONG, String.valueOf(Long.MAX_VALUE)));
+//			
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentProperties(8, 0, false, peList));
+//			scList.addContentListItem(DynamicContentFactory.createSiteContentProperties(9, 0, true, peList));
+//			break;
+//			
+//		case -4:
+//			scList.addContentListItem(this.createExamplePieChart());
+//			scList.addContentListItem(this.createExampleTimeSeriesChart());
+//			scList.addContentListItem(this.createExampleBarChart());
+//			scList.addContentListItem(this.createExampleLineChart());
+//			break;
+//						
+//		default:
+//			throw new IllegalArgumentException("Unexpected value: " + menuID);
+//		}
+//		return scList;
+//	}
 
 	/**
 	 * Creates an example pie chart.

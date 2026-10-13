@@ -16,7 +16,7 @@ package de.enflexit.awb.ws.dynSiteApi.gen.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentWithMenuPosition;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,18 +31,18 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   SiteContentList.JSON_PROPERTY_CONTENT_LIST
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T17:22:22.337087900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentList   {
   public static final String JSON_PROPERTY_CONTENT_LIST = "contentList";
   @JsonProperty(JSON_PROPERTY_CONTENT_LIST)
-  private List<@Valid AbstractSiteContent> contentList = new ArrayList<>();
+  private List<@Valid SiteContentWithMenuPosition> contentList = new ArrayList<>();
 
-  public SiteContentList contentList(List<@Valid AbstractSiteContent> contentList) {
+  public SiteContentList contentList(List<@Valid SiteContentWithMenuPosition> contentList) {
     this.contentList = contentList;
     return this;
   }
 
-  public SiteContentList addContentListItem(AbstractSiteContent contentListItem) {
+  public SiteContentList addContentListItem(SiteContentWithMenuPosition contentListItem) {
     if (this.contentList == null) {
       this.contentList = new ArrayList<>();
     }
@@ -57,11 +57,11 @@ public class SiteContentList   {
   @JsonProperty(value = "contentList")
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   @NotNull @Valid 
-  public List<@Valid AbstractSiteContent> getContentList() {
+  public List<@Valid SiteContentWithMenuPosition> getContentList() {
     return contentList;
   }
 
-  public void setContentList(List<@Valid AbstractSiteContent> contentList) {
+  public void setContentList(List<@Valid SiteContentWithMenuPosition> contentList) {
     this.contentList = contentList;
   }
 

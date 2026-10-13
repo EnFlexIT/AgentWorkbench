@@ -34,7 +34,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the content API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T17:22:22.337087900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentApi  {
 
    private final ContentApiService delegate;
@@ -62,7 +62,7 @@ public class ContentApi  {
 
     @jakarta.ws.rs.GET
     @Produces({ "application/json" })
-    @Operation(summary = "Returns the content for the specified Id", description = "", responses = {
+    @Operation(summary = "Returns the content for the specified menuId  [User or Editor role]", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "List of content elements", content = 
                 @Content(schema = @Schema(implementation = SiteContentList.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 

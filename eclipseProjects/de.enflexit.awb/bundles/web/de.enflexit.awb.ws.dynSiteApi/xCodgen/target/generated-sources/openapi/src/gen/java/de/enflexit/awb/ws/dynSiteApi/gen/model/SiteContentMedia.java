@@ -26,38 +26,13 @@ import jakarta.validation.Valid;
  * SiteContentMedia
  */
 @JsonPropertyOrder({
-  SiteContentMedia.JSON_PROPERTY_SITE_CONTENT_MEDIA_TYPE,
   SiteContentMedia.JSON_PROPERTY_MIME_TYPE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-06T17:22:22.337087900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentMedia extends AbstractSiteContent  {
-  public static final String JSON_PROPERTY_SITE_CONTENT_MEDIA_TYPE = "SiteContentMediaType";
-  @JsonProperty(JSON_PROPERTY_SITE_CONTENT_MEDIA_TYPE)
-  private String siteContentMediaType;
-
   public static final String JSON_PROPERTY_MIME_TYPE = "mimeType";
   @JsonProperty(JSON_PROPERTY_MIME_TYPE)
   private String mimeType;
-
-  public SiteContentMedia siteContentMediaType(String siteContentMediaType) {
-    this.siteContentMediaType = siteContentMediaType;
-    return this;
-  }
-
-  /**
-   * Get siteContentMediaType
-   * @return siteContentMediaType
-   **/
-  @JsonProperty(value = "SiteContentMediaType")
-  @Schema(description = "")
-  
-  public String getSiteContentMediaType() {
-    return siteContentMediaType;
-  }
-
-  public void setSiteContentMediaType(String siteContentMediaType) {
-    this.siteContentMediaType = siteContentMediaType;
-  }
 
   public SiteContentMedia mimeType(String mimeType) {
     this.mimeType = mimeType;
@@ -89,13 +64,12 @@ public class SiteContentMedia extends AbstractSiteContent  {
       return false;
     }
     SiteContentMedia siteContentMedia = (SiteContentMedia) o;
-    return super.equals(o) && Objects.equals(this.siteContentMediaType, siteContentMedia.siteContentMediaType) &&
-        Objects.equals(this.mimeType, siteContentMedia.mimeType);
+    return super.equals(o) && Objects.equals(this.mimeType, siteContentMedia.mimeType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), siteContentMediaType, super.hashCode(), mimeType);
+    return Objects.hash(super.hashCode(), mimeType);
   }
 
   @Override
@@ -103,7 +77,6 @@ public class SiteContentMedia extends AbstractSiteContent  {
     StringBuilder sb = new StringBuilder();
     sb.append("class SiteContentMedia {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    siteContentMediaType: ").append(toIndentedString(siteContentMediaType)).append("\n");
     sb.append("    mimeType: ").append(toIndentedString(mimeType)).append("\n");
     sb.append("}");
     return sb.toString();

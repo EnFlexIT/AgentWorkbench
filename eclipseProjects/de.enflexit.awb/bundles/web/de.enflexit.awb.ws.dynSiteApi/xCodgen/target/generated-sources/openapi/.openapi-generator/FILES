@@ -35,6 +35,7 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentTable.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentTableWithReference.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentTableWithValues.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentText.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentWithMenuPosition.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/UpdateContentAssignmentRequest.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/UpdateContentElementRequest.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValueType.java
