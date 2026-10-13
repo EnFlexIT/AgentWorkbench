@@ -24,6 +24,7 @@ import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenuContent;
 import de.enflexit.awb.ws.core.exceptions.DatabaseException;
+import de.enflexit.db.userManagement.UserManagementDatabaseHandler;
 import de.enflexit.db.userManagement.dataModel.GroupRole;
 import jakarta.persistence.TypedQuery;
 
@@ -36,7 +37,11 @@ import jakarta.persistence.TypedQuery;
 public class WebAppDatabaseHandler {
 	
 	private Session session;
+	private UserManagementDatabaseHandler umDbHandler;
+	
 	private static Logger LOGGER = LoggerFactory.getLogger(WebAppDatabaseHandler.class);
+	
+	
 	/**
 	 * Instantiates a new database handler.
 	 */
@@ -80,6 +85,18 @@ public class WebAppDatabaseHandler {
 	 */
 	public void dispose() {
 		this.setSession(null);
+		this.umDbHandler = null;
+	}
+	
+	/**
+	 * Returns the UserManagementDatabaseHandler.
+	 * @return the user management database handler
+	 */
+	public UserManagementDatabaseHandler getUserManagementDatabaseHandler() {
+		if (umDbHandler==null) {
+			umDbHandler = new UserManagementDatabaseHandler(this.getSession());
+		}
+		return umDbHandler;
 	}
 	
 	/**
