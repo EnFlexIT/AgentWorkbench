@@ -40,11 +40,17 @@ public abstract class DataTableNode {
 	 */
 	public abstract String getLabelText();
 	
+	/**
+	 * Can be used to provide a longer text, e.g. for selection lists. 
+	 * @return the long text
+	 */
+	public abstract String getLongText();
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return this.getLabelText();
+		return this.getLongText();
 	}
 }

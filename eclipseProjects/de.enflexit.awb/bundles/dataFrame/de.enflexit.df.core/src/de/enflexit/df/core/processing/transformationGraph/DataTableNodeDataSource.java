@@ -43,5 +43,14 @@ public class DataTableNodeDataSource extends DataTableNode {
 	public String getLabelText() {
 		return this.dataSourceDTNO!=null ? this.dataSourceDTNO.getCaption() : "Data source not set!";
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformationGraph.DataTableNode#getLongText()
+	 */
+	@Override
+	public String getLongText() {
+		// --- No separate long text ------------
+		return this.getLabelText();
+	}
 	
 }

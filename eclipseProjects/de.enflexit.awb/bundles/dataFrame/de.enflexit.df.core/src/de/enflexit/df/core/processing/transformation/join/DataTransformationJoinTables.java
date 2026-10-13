@@ -1,10 +1,13 @@
 package de.enflexit.df.core.processing.transformation.join;
 
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.join.TimeSeriesJoinHelper.InterpolationMode;
+import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
@@ -46,27 +49,43 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 	 */
 	private Table joinTables(Map<Table, Column<?>> joinTables) {
 		
-		Iterator<Map.Entry<Table, Column<?>>> tablesIterator = joinTables.entrySet().iterator();
-		
-		if (tablesIterator.hasNext()==false) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Empty join tables map, at least one entry is required!");
-			return null;
-		}
-		
-		Map.Entry<Table, Column<?>> first = tablesIterator.next();
-		Table resultTable = first.getKey();
-		String leftJoinColumn = first.getValue().name();
-		
-		while(tablesIterator.hasNext()) {
-			Map.Entry<Table, Column<?>> next = tablesIterator.next();
-			Table nextTable = next.getKey();
-			String nextJoinColumn = next.getValue().name();
+		if (this.isTemporalJoin(joinTables)) {
+			// --- Join on temporal column, delegate to helper class ---------
+			return TimeSeriesJoinHelper.joinTables(joinTables, InterpolationMode.LINEAR, ZoneId.systemDefault());
+		} else {
+			// --- Join on non-temporal column --------------------------------
+			//TODO Add check for matching join columns (type, values)
+			Iterator<Map.Entry<Table, Column<?>>> tablesIterator = joinTables.entrySet().iterator();
 			
-			resultTable = resultTable.joinOn(leftJoinColumn).rightJoinColumns(nextJoinColumn).with(nextTable).allowDuplicateColumnNames(true).join();
+			if (tablesIterator.hasNext()==false) {
+				System.err.println("[" + this.getClass().getSimpleName() + "] Empty join tables map, at least one entry is required!");
+				return null;
+			}
+			
+			// --- Start with the first table --------------------------------- 
+			Map.Entry<Table, Column<?>> first = tablesIterator.next();
+			Table resultTable = first.getKey();
+			String leftJoinColumn = first.getValue().name();
+			
+			// --- Iteratively join the other tables to the first one ---------
+			while(tablesIterator.hasNext()) {
+				Map.Entry<Table, Column<?>> next = tablesIterator.next();
+				Table nextTable = next.getKey();
+				String nextJoinColumn = next.getValue().name();
+				
+				resultTable = resultTable.joinOn(leftJoinColumn).rightJoinColumns(nextJoinColumn).with(nextTable).allowDuplicateColumnNames(true).join();
+			}
+			
+			return resultTable;
 		}
 		
 		
-		return resultTable;
+	}
+	
+	private boolean isTemporalJoin(Map<Table, Column<?>> joinTables){
+		Map.Entry<Table, Column<?>> first = joinTables.entrySet().iterator().next();
+		ColumnType columnType = first.getValue().type();
+		return (columnType==ColumnType.INSTANT || columnType==ColumnType.LOCAL_DATE_TIME);
 	}
 	
 	/**
