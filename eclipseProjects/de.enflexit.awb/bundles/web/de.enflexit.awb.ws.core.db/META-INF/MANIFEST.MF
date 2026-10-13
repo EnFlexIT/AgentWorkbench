@@ -17,5 +17,6 @@ Require-Bundle: de.enflexit.db.hibernate,
 Import-Package: de.enflexit.charts,
  de.enflexit.charts.model,
  de.enflexit.db.userManagement,
+ de.enflexit.db.userManagement.dataModel,
  jakarta.persistence,
  org.slf4j

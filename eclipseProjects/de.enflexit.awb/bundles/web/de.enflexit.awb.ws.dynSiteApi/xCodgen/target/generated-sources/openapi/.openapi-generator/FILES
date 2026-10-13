@@ -22,6 +22,7 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/AssignContentToMenuRequest.
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/CreateContentElement201Response.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/CreateContentRequest.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/CreateMenu201Response.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/CreateMenuRequest.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/MenuItem.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/MenuList.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/PropertyEntry.java

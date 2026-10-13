@@ -424,7 +424,7 @@ public class AppApiServiceImpl extends AppApiService {
 		// --- Check who is the user ----------------------------------------------------
 		Principal principal = securityContext.getUserPrincipal();
 		if (principal == null) {
-			return Response.status(Status.FORBIDDEN).variant(RestApiConfiguration.getResponseVariant()).build();
+			return Response.status(Status.UNAUTHORIZED).variant(RestApiConfiguration.getResponseVariant()).build();
 		}
 		
     	Message message = new Message();

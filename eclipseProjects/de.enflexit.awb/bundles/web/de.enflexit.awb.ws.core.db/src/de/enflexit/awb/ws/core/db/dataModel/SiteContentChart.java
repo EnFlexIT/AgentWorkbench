@@ -13,7 +13,6 @@
 
 package de.enflexit.awb.ws.core.db.dataModel;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
@@ -26,7 +25,7 @@ import jakarta.persistence.OneToOne;
  * SiteContentChart
  */
 @Entity
-public class SiteContentChart extends SiteContent implements Serializable  {
+public class SiteContentChart extends SiteContent  {
  
 	private static final long serialVersionUID = 1L;
 	

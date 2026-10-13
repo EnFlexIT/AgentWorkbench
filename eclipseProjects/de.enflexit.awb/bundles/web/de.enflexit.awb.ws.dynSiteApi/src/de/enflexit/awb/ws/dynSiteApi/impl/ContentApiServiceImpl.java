@@ -19,6 +19,7 @@ import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
+import de.enflexit.awb.ws.dynSiteApi.security.UserPermissionHelper;
 import de.enflexit.charts.model.AbstractValueRow;
 import de.enflexit.charts.model.BarChart;
 import de.enflexit.charts.model.DataSeries;
@@ -34,9 +35,23 @@ public class ContentApiServiceImpl extends ContentApiService {
   
 	private WebAppDatabaseHandler webAppDatabaseHandler;
 	
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.dynSiteApi.gen.ContentApiService#getMenuContent(java.lang.Integer, jakarta.ws.rs.core.SecurityContext)
+	*/
 	@Override
     public Response getMenuContent(Integer menuID, SecurityContext securityContext) throws NotFoundException {
-    	if (menuID==null) {
+    
+    	String username = securityContext.getUserPrincipal() == null ? null : securityContext.getUserPrincipal().getName();
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.USER_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'User' required.")).build();
+    	}
+    	
+    	// --- Validate the request ---------------------------------------------------------------
+		if (menuID==null) {
             return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Missing menuID!")).build();
     	}
 		
@@ -45,7 +60,7 @@ public class ContentApiServiceImpl extends ContentApiService {
 			List<AbstractSiteContent> restContentList = new ArrayList<>();
 			
 			for (SiteContent dbContent : contentList) {
-				AbstractSiteContent restContent = TypeConverter.toRestContent(dbContent);
+				AbstractSiteContent restContent = TypeConverter.dbToRestContent(dbContent);
 				if (restContent != null) {
 					restContentList.add(restContent);
 				}

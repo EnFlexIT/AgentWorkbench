@@ -1,7 +1,5 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
-import java.io.Serializable;
-
 import jakarta.persistence.Entity;
 
 /**
@@ -10,7 +8,7 @@ import jakarta.persistence.Entity;
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 @Entity
-public class SiteContentImage extends SiteContentMedia implements Serializable {
+public class SiteContentImage extends SiteContentMedia {
 
 	private static final long serialVersionUID = 1L;
 	

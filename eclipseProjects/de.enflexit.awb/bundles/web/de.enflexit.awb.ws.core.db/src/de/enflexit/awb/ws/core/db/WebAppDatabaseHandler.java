@@ -3,13 +3,18 @@ package de.enflexit.awb.ws.core.db;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.MutationQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +24,8 @@ import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenuContent;
 import de.enflexit.awb.ws.core.exceptions.DatabaseException;
+import de.enflexit.db.userManagement.dataModel.GroupRole;
+import jakarta.persistence.TypedQuery;
 
 
 /**
@@ -392,10 +399,183 @@ public class WebAppDatabaseHandler {
 		}
 		return successful;
 	}
+
+	/**
+	 * Find group roles by names.
+	 *
+	 * @param roleNames the role names
+	 * @return the sets the
+	 * @throws IOException 
+	 * @throws DatabaseException 
+	 * @throws IllegalArgumentException 
+	 */
+	public Set<GroupRole> findGroupRolesByNames(List<String> roleNames) throws IOException, DatabaseException, IllegalArgumentException {
 	
+		if (roleNames == null || roleNames.isEmpty() == true) {
+			throw new IllegalArgumentException("At least one group role name must be provided");
+		}
+		
+		Session session = this.getSession();
+		if (session == null) {
+	        throw new IOException("Could not obtain a valid database session.");
+	    }
+
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				String jpql = "SELECT gr FROM GroupRole gr WHERE gr.role IN :roleNames";
+				
+				TypedQuery<GroupRole> query = session.createQuery(jpql, GroupRole.class);
+				query.setParameter("roleNames", roleNames);
+				List<GroupRole> userGroupRoles = query.getResultList();
+				transaction.commit();
+				return new HashSet<GroupRole>(userGroupRoles);
+
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				this.rethrowExpectedOrDatabaseException("Error while fetching roles by names" , ex);
+				return new HashSet<>();
+				
+			} finally {
+				session.clear();
+			}
+	}
+	/**
+	 * Returns all unique group roles the specified user has in any group.
+	 *
+	 * @param userName the user name
+	 * @return the group roles for user
+	 * @throws IOException 
+	 * @throws DatabaseException 
+	 * @throws IllegalArgumentException 
+	 */
+	public Set<GroupRole> getGroupRolesForUser(String userName) throws IOException, DatabaseException {
+
+		if (userName == null || userName.isBlank() == true) return new HashSet<>(); 
+		
+		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			String sql = "SELECT DISTINCT ugr.id_group_role, " 
+					+ "ugr.role " 
+					+ "FROM um_group_role ugr "
+					+ "INNER JOIN um_user_group_roles uugr " 
+					+ "ON ugr.id_group_role = uugr.id_group_role "
+					+ "INNER JOIN um_user uu " + "ON uugr.id_user = uu.id_user " 
+					+ "WHERE uu.name = :userName ";
+
+			NativeQuery<GroupRole> query = session.createNativeQuery(sql, GroupRole.class);
+			query.setParameter("userName", userName);
+
+			List<GroupRole> userGroupRoles = query.getResultList();
+			transaction.commit();
+
+			return new HashSet<GroupRole>(userGroupRoles);
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while fetching group roles for user: " + userName, ex);
+			return new HashSet<>();
+
+		} finally {
+			session.clear();
+		}
+	}
+
+	/**
+	 * Returns the group roles the specified user has in the specified group.
+	 *
+	 * @param userName the user name
+	 * @param groupId the group id
+	 * @return the group roles for user
+	 * @throws IOException 
+	 * @throws DatabaseException 
+	 * @throws IllegalArgumentException 
+	 */
+	public Set<GroupRole> getGroupRolesForUser(String userName, Integer groupId) throws IOException, DatabaseException {
+	
+		if (userName == null || groupId == null) {
+			return new HashSet<>();
+		}
+		
+		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+				String sql = "SELECT ugr.id_group_role, "
+						+ "ugr.role "
+						+ "FROM um_group_role ugr "
+						+ "INNER JOIN um_user_group_roles uugr "
+						+ "ON ugr.id_group_role = uugr.id_group_role "
+						+ "INNER JOIN um_user uu "
+						+ "ON uugr.id_user = uu.id_user "
+						+ "WHERE uu.name = :userName "
+						+ "AND uugr.id_group = :groupId";
+				
+			NativeQuery<GroupRole> query = session.createNativeQuery(sql, GroupRole.class);
+			query.setParameter("userName", userName);
+			query.setParameter("groupId", groupId);
+
+			List<GroupRole> userGroupRoles = query.getResultList();
+			transaction.commit();
+			return new HashSet<GroupRole>(userGroupRoles);
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while fetching group roles for user: " + userName, ex);
+			return new HashSet<>();
+
+		} finally {
+			session.clear();
+		}
+	}
+		
 	// --------------------------------------------------------------------------------------------
 	// --- Site Menu Operations -------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------
+
+	public List<SiteMenu> findMenusForUserRoles(Collection<Integer> userGroupRoleIds) throws IOException, IllegalArgumentException, DatabaseException {
+		
+		if (userGroupRoleIds == null || userGroupRoleIds.isEmpty() == true) {
+			return Collections.emptyList();
+		}
+		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}	
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			String sql = "SELECT DISTINCT sm.* " +
+	                 "FROM site_menu sm " +
+	                 "INNER JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " +
+	                 "WHERE smgr.id_group_role IN (:roleIds) " +
+	                 "ORDER BY sm.position ASC";
+
+			NativeQuery<SiteMenu> query = session.createNativeQuery(sql, SiteMenu.class);
+	    	query.setParameter("roleIds", userGroupRoleIds);			
+			List<SiteMenu> menusForUser = query.getResultList();
+			transaction.commit();
+			return menusForUser;
+			
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while loading menus.", ex);
+			return Collections.emptyList();
+
+		} finally {
+			session.clear();
+		}
+	}
 	
 	/**
 	 * Persist a new menu
@@ -405,37 +585,61 @@ public class WebAppDatabaseHandler {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void persistNewMenu(SiteMenu menu) throws DatabaseException, IOException, IllegalArgumentException {
+	public void persistNewMenu(SiteMenu menu, Set<GroupRole> requiredRolesForAccess) throws DatabaseException, IOException, IllegalArgumentException {
 
+		if (menu == null || requiredRolesForAccess == null) {
+			throw new IllegalArgumentException("Menu and requiredRolesForAccess cannot be null.");
+		}
+		
 		Session session = this.getSession();
-		if (session != null) {
-			Transaction transaction = null;
-			
-			try {
-				SiteMenu parentMenu = null;
-				// --- Stays null if there is no parent -------------------------------------------
-				Integer parentMenuId = null;
-				transaction = session.beginTransaction();
-				if (menu.isHeadMenu() == false) {
-					// --- If the new menu is not a head menu, there has to be a parent menu ------
-					parentMenu = session.get(SiteMenu.class, menu.getParentMenu().getId());
-					if (parentMenu == null) throw new IllegalArgumentException("The specified parent menu could not be found");
-					parentMenuId = parentMenu.getId();
-				}
-				
-				menu.setParentMenu(parentMenu);
-				this.makeRoomForInsertedMenu(session, parentMenuId, menu.getPosition());
-				session.persist(menu);
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while persisting new menu.", ex);
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
 
-			} finally {
-				session.clear();
+			// --- Stays null if there is no parent -----------------------------------------------
+			Integer parentMenuId = null;
+			SiteMenu parentMenu = null;
+			
+			if (Boolean.FALSE.equals(menu.isHeadMenu())) {
+				// --- If the new menu is not a head menu, there has to be a parent menu ----------
+				parentMenu = session.get(SiteMenu.class, menu.getParentMenu().getId());
+
+				if (parentMenu == null)
+					throw new IllegalArgumentException("The specified parent menu could not be found");
+				parentMenuId = parentMenu.getId();
 			}
-		}		
+			menu.setParentMenu(parentMenu);
+			menu.setAllowedGroupRoles(requiredRolesForAccess);
+			
+			// --- Find the highest available position within the same parent ---------------------
+			int lastPosition = this.getMenuCountInParent(session, parentMenuId) +1;
+			
+			// --- If the requested position is < 1 default to last position ----------------------
+			int requestedPosition = menu.getPosition() < 1 ? lastPosition : menu.getPosition();
+			
+			// --- Actual position of new menu is the lower of requested and last position --------
+		    int actualPosition = Math.min(requestedPosition, lastPosition);
+		    menu.setPosition(actualPosition);
+		    
+		    // --- Adjust other menus position values if new menu is not inserted at the end ------
+		    if (actualPosition < lastPosition) {
+		    	this.makeRoomForInsertedMenu(session, parentMenuId, actualPosition);
+		    }
+
+			session.persist(menu);
+			transaction.commit();
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while persisting new menu.", ex);
+
+		} finally {
+			session.clear();
+		}
 	}
 
 	/**
@@ -447,48 +651,142 @@ public class WebAppDatabaseHandler {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	public void updateMenu(SiteMenu updatedMenu, Integer menuId) throws DatabaseException, IOException, IllegalArgumentException {
-	
-		Session session = this.getSession();
-		if (session != null) {
-			Transaction transaction = null;
-			
-			try {
-				transaction = session.beginTransaction();
-				
-				// --- Check if the specified menu exists -----------------------------------------
-				SiteMenu existingMenu = session.get(SiteMenu.class, menuId);
-				if (existingMenu == null) {
-					throw new IllegalArgumentException("The specified menu could not be found.");
-				}
-				
-				Integer oldParentId = existingMenu.getParentMenu() == null ? null : existingMenu.getParentMenu().getId();
-				Integer newParentId = updatedMenu.getParentMenu() == null ? null :updatedMenu.getParentMenu().getId();
-				
-				// --- Check if the parent and /or position are going to change -------------------
-				boolean parentChanged = oldParentId.equals(newParentId) == false;
-				boolean positionChanged = Objects.equals(existingMenu.getPosition(), updatedMenu.getPosition()) == false;
-				
-				if (parentChanged == true) {
-					// --- close gap in old menu and make room in the new one ---------------------
-					this.closeGapAfterRemovedMenu(session, existingMenu.getParentMenu().getId(), existingMenu.getPosition());
-					this.makeRoomForInsertedMenu(session, updatedMenu.getParentMenu().getId(), updatedMenu.getPosition());
-					
-				} else if (positionChanged == true) {
-					// --- Only need to reorder within parent menu --------------------------------
-					this.reorderMenusWithinSameParent(session, existingMenu.getParentMenu().getId(), existingMenu.getPosition(), updatedMenu.getPosition());
-				}
-				
-				session.merge(updatedMenu);
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while updating the menu in database.", ex);
 
-			} finally {
-				session.clear();
+		if (updatedMenu == null || menuId == null) {
+			throw new IllegalArgumentException("Menu to update and menu ID can't be null.");
+		}
+		
+		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		
+		Transaction transaction = null;
+
+		try {
+			transaction = session.beginTransaction();
+
+			// --- Check if the specified menu exists ---------------------------------------------
+			SiteMenu existingMenu = session.get(SiteMenu.class, menuId);
+			if (existingMenu == null) {
+				throw new IllegalArgumentException("The specified menu could not be found.");
 			}
-		}				
+
+			Integer oldParentId = existingMenu.getParentMenu() == null ? null : existingMenu.getParentMenu().getId();
+			Integer newParentId = updatedMenu.getParentMenu() == null ? null : updatedMenu.getParentMenu().getId();
+
+			
+			// --- Check if the parent and /or position are going to change -----------------------
+			boolean parentChanged = Objects.equals(oldParentId, newParentId) == false;
+			boolean positionChanged = Objects.equals(existingMenu.getPosition(), updatedMenu.getPosition()) == false;
+
+			int actualPosition = updatedMenu.getPosition();
+			
+			// --- If position or parent is going to change, make sure the new position is valid --
+			if (positionChanged == true || parentChanged == true) {
+				// --- Highest available position is the amount of menus within the parent --------
+				Integer lastPosition = this.getMenuCountInParent(session, newParentId);
+				if (parentChanged == true) {
+					// --- If parent is changing, add one to account for the new menu -------------
+					lastPosition = lastPosition +1;
+				}
+				/*If the requested position is < 1 it is set to 1. If the requested position is
+				 * higher than the last possible position, the latter is chosen. Else the requested
+				 * position will be used. */
+				actualPosition = Math.max(1, Math.min(updatedMenu.getPosition(), lastPosition));
+				updatedMenu.setPosition(actualPosition);
+			}
+			
+			if (parentChanged == true) {
+				// --- close gap in old  parent menu and make room in the new one -----------------
+				this.closeGapAfterRemovedMenu(session, oldParentId, existingMenu.getPosition());
+				this.makeRoomForInsertedMenu(session, newParentId, actualPosition);
+
+			} else if (positionChanged == true) {
+				// --- Only need to reorder within parent menu ------------------------------------
+				this.reorderMenusWithinSameParent(session, oldParentId, existingMenu.getPosition(), actualPosition);
+			}
+
+			session.merge(updatedMenu);
+			transaction.commit();
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while updateing the menu.", ex);
+
+		} finally {
+			session.clear();
+		}
+	}
+
+	/**
+	 * Update the required role to access the specified menu. Updates all sub-menus recursively.
+	 *
+	 * @param menuId the menu id
+	 * @param requiredRolesForAccess the required roles for access
+	 * @throws DatabaseException the database exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IllegalArgumentException the illegal argument exception
+	 */
+	public void updateMenuPermissions(Integer menuId, Set<GroupRole> requiredRolesForAccess) throws DatabaseException, IOException, IllegalArgumentException {
+		
+		if (menuId == null || requiredRolesForAccess == null || requiredRolesForAccess.size() == 0) {
+			throw new IllegalArgumentException("Menu ID and roles can't be null.");
+		}
+		
+		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			
+			// --- Try to get the requested menu --------------------------------------------------
+			SiteMenu menuToUpdate = session.get(SiteMenu.class, menuId);
+			if (menuToUpdate == null) {
+				throw new IllegalArgumentException("The specified menu could not be found.");
+			}
+			
+			// --- Set the new roles required to access it ----------------------------------------
+			menuToUpdate.setAllowedGroupRoles(requiredRolesForAccess);
+			
+			session.persist(menuToUpdate);
+			this.cascadePermissionsToSubMenus(session, menuToUpdate, requiredRolesForAccess);
+			
+			transaction.commit();
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while updateing menu permissions.", ex);
+
+		} finally {
+			session.clear();
+		}
+	}
+	/**
+	 * Cascade permissions to sub menus.
+	 *
+	 * @param session the session
+	 * @param parentMenu the parent menu
+	 * @param roles the roles
+	 */
+	private void cascadePermissionsToSubMenus(Session session, SiteMenu parentMenu, Set<GroupRole> roles) {
+	   
+		// --- No more sub menus to update --------------------------------------------------------
+		if (parentMenu.getChildMenus() == null || parentMenu.getChildMenus().isEmpty()) {
+	        return;
+	    }
+	    
+		// --- Set the roles for every child menu -------------------------------------------------
+	    for (SiteMenu subMenu : parentMenu.getChildMenus()) {
+	        subMenu.setAllowedGroupRoles(roles);
+	        session.persist(subMenu);
+	        
+	        // --- Recursive call for the child menus' sub menus ----------------------------------
+	        cascadePermissionsToSubMenus(session, subMenu, roles);
+	    }
 	}
 	
 	/**
@@ -500,36 +798,42 @@ public class WebAppDatabaseHandler {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	public void deleteMenuIncludingSubMenusById(Integer menuId) throws DatabaseException, IOException, IllegalArgumentException {
+	
+		if (menuId == null) {
+			throw new IllegalArgumentException("Menu ID can't be null.");
+		}
+		
 		Session session = this.getSession();
-		if (session != null) {
-			Transaction transaction = null;
-			
-			try {
-				transaction = session.beginTransaction();
-				
-				// --- Check if the specified menu exists -----------------------------------------
-				SiteMenu menuToDelete = session.get(SiteMenu.class, menuId);
-				if (menuToDelete == null) {
-					throw new IllegalArgumentException("The specified menu could not be found.");
-				}
-				// --- If the menu is a head menu, the parent is null -----------------------------
-				Integer parentMenuId = menuToDelete.getParentMenu() == null ? null : menuToDelete.getParentMenu().getId();
-				
-				// --- Recursively delete the menu and its sub menus ------------------------------
-				this.deleteMenuAndSubMenus(menuToDelete, session);
-				session.flush();
-				
-				this.closeGapAfterRemovedMenu(session, parentMenuId, menuToDelete.getPosition());
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while deleting menu hierarchy from database.", ex);
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		Transaction transaction = null;
 
-			} finally {
-				session.clear();
+		try {
+			transaction = session.beginTransaction();
+
+			// --- Check if the specified menu exists ---------------------------------------------
+			SiteMenu menuToDelete = session.get(SiteMenu.class, menuId);
+			if (menuToDelete == null) {
+				throw new IllegalArgumentException("The specified menu could not be found.");
 			}
-		}				
+			// --- If the menu is a head menu, the parent is null ---------------------------------
+			Integer parentMenuId = menuToDelete.getParentMenu() == null ? null : menuToDelete.getParentMenu().getId();
+
+			// --- Recursively delete the menu and its sub menus ----------------------------------
+			this.deleteMenuAndSubMenus(menuToDelete, session);
+			session.flush();
+
+			this.closeGapAfterRemovedMenu(session, parentMenuId, menuToDelete.getPosition());
+			transaction.commit();
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while deleting menu hierarchy from database.", ex);
+
+		} finally {
+			session.clear();
+		}
 	}
 	/**
 	 * Recursively deletes the menu and all of its sub menus, as well as their SiteMenuContent assignments.
@@ -573,32 +877,36 @@ public class WebAppDatabaseHandler {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	public SiteContent getContentElementById(Integer elementID) throws DatabaseException, IOException, IllegalArgumentException {
+
+		if (elementID == null) {
+			throw new IllegalArgumentException("Element ID can't be null.");
+		}
 		
 		Session session = this.getSession();
-		SiteContent requestedContentElement = null;
-		
-		if (session != null) {
-			Transaction transaction = null;
-
-			try {
-				transaction = session.beginTransaction();
-				requestedContentElement = session.get(SiteContent.class, elementID);
-				if (requestedContentElement == null) {
-					throw new IllegalArgumentException("The specified content element could not be found.");
-				}
-				transaction.commit();
-				return requestedContentElement;
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while reading content element.", ex);
-
-			} finally {
-				session.clear();
-			}
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
 		}
-		return requestedContentElement;
-	}	
+		
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			SiteContent requestedContentElement = session.get(SiteContent.class, elementID);
+
+			if (requestedContentElement == null) {
+				throw new IllegalArgumentException("The specified content element could not be found.");
+			}
+			transaction.commit();
+			return requestedContentElement;
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while reading content element.", ex);
+			return null;
+
+		} finally {
+			session.clear();
+		}
+	}
 	
 	/**
 	 * Persist the given content. The generated ID can be obtained through the passed 
@@ -614,10 +922,19 @@ public class WebAppDatabaseHandler {
 	public void persistNewContentElement(SiteContent siteContent, Integer menuId, Integer targetPosition) throws IllegalArgumentException, IOException, DatabaseException {
 
 		Session session = this.getSession();
-		if (session != null) {
+		if (session == null) {
+	        throw new IOException("Could not obtain a valid database session.");
+	    }
+		
+		if (menuId == null || siteContent == null || targetPosition == null) {
+			throw new IllegalArgumentException("Menu ID, target position and site content can't be null.");
+		}
+		
+		if (targetPosition < 1) {
+			throw new IllegalArgumentException("Target position must be > 0.");
+		}
 
 		Transaction transaction = null;
-		
 		try {
 			transaction = session.beginTransaction();
 			SiteMenu dbMenu = session.get(SiteMenu.class, menuId);
@@ -629,8 +946,7 @@ public class WebAppDatabaseHandler {
 			session.persist(siteContent);
 
 			// --- Determine the highest possible position by counting the content ----------------
-			Query<Long> query = session.createQuery(
-					"SELECT COUNT(smc) from SiteMenuContent smc WHERE smc.siteMenu.id = :menuId", Long.class);
+			Query<Long> query = session.createQuery("SELECT COUNT(smc) from SiteMenuContent smc WHERE smc.siteMenu.id = :menuId", Long.class);
 			query.setParameter("menuId", menuId);
 			Long lastPosition = query.getSingleResult() + 1;
 
@@ -642,17 +958,17 @@ public class WebAppDatabaseHandler {
 			 * positions by one to avoid duplicate position entries if the requested
 			 * position is not the last available one (otherwise unnecessary)
 			 */
-				if (actualPosition < lastPosition) {
-					this.makeRoomForInsertedContent(session, menuId, actualPosition);
-				}
-				
-				// --- Prepare and persist the junction table -------------------------------------
-				SiteMenuContent siteMenuContent = new SiteMenuContent();
-				siteMenuContent.setContentListPosition(targetPosition);
-				siteMenuContent.setSiteContent(siteContent);
-				siteMenuContent.setSiteMenu(dbMenu);
-				session.persist(siteMenuContent);
-				transaction.commit();
+			if (actualPosition < lastPosition) {
+				this.makeRoomForInsertedContent(session, menuId, actualPosition);
+			}
+
+			// --- Prepare and persist the junction table -----------------------------------------
+			SiteMenuContent siteMenuContent = new SiteMenuContent();
+			siteMenuContent.setContentListPosition(targetPosition);
+			siteMenuContent.setSiteContent(siteContent);
+			siteMenuContent.setSiteMenu(dbMenu);
+			session.persist(siteMenuContent);
+			transaction.commit();
 				
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
@@ -661,7 +977,6 @@ public class WebAppDatabaseHandler {
 			} finally {
 				session.clear();
 			}
-		}
 	}
 
 	/**
@@ -674,28 +989,32 @@ public class WebAppDatabaseHandler {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	public void updateContent(Integer elementID, SiteContent dbSiteContent) throws DatabaseException, IOException, IllegalArgumentException {
+
+		if (elementID == null || dbSiteContent == null) {
+			throw new IllegalArgumentException("Element ID and site content can't be null.");
+		}
 		
 		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
 		
-		if (session != null) {
-			Transaction transaction = null;
-
-			try {
-				transaction = session.beginTransaction();
-				if (dbSiteContent != null && this.getContentElementById(elementID) != null) {
-					session.merge(dbSiteContent);
-					transaction.commit();
-				} else {
-					throw new IllegalArgumentException();
-				}
-		
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while updating content element.", ex);
-
-			} finally {
-				session.clear();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			if (dbSiteContent != null && this.getContentElementById(elementID) != null) {
+				session.merge(dbSiteContent);
+				transaction.commit();
+			} else {
+				throw new IllegalArgumentException("Invalid content or id.");
 			}
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while updating content element.", ex);
+
+		} finally {
+			session.clear();
 		}
 	}
 
@@ -707,32 +1026,36 @@ public class WebAppDatabaseHandler {
 	 * @throws DatabaseException 
 	 */
 	public void deleteContentElementById(Integer elementId) throws IllegalArgumentException, IOException, DatabaseException {
+
+		if (elementId == null) {
+			throw new IllegalArgumentException("Element ID can't be null.");
+		}
 		
 		Session session = this.getSession();
-		if (session != null) {
-			Transaction transaction = null;
-			
-			try {
-				transaction = session.beginTransaction();
-				SiteContent contentToDelete = session.get(SiteContent.class, elementId);
-				if (contentToDelete == null) {
-					throw new IllegalArgumentException("ElementID " + elementId + " does not exist.");
-				}
-				//--- shift the content elements by -1 in all menus the content is associated with ------------
-				for (SiteMenuContent smc : contentToDelete.getSiteMenuContent()) {
-					this.closeGapAfterRemovedContent(session, smc.getSiteMenu().getId(), smc.getContentListPosition());
-				}
-				
-				session.remove(contentToDelete);
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while deleting content element.", ex);
-
-			} finally {
-				session.clear();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			SiteContent contentToDelete = session.get(SiteContent.class, elementId);
+			if (contentToDelete == null) {
+				throw new IllegalArgumentException("ElementID " + elementId + " does not exist.");
 			}
+			// --- shift the content elements by -1 in all menus the content is associated with ---
+			for (SiteMenuContent smc : contentToDelete.getSiteMenuContent()) {
+				this.closeGapAfterRemovedContent(session, smc.getSiteMenu().getId(), smc.getContentListPosition());
+			}
+			session.remove(contentToDelete);
+			transaction.commit();
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while deleting content element.", ex);
+
+		} finally {
+			session.clear();
 		}
 	}
 
@@ -744,54 +1067,59 @@ public class WebAppDatabaseHandler {
 	 * Assigns existing content to another menu.
 	 *
 	 * @param menuId the id of the menu which the content will be assigned to
-	 * @param contentElementId the id of the content element to assign
+	 * @param elementId the id of the content element to assign
 	 * @param targetPosition the one based position at which the content should appear in the menu
 	 * @throws DatabaseException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void assignContentToMenu(Integer menuId, Integer contentElementId, Integer targetPosition) throws DatabaseException, IOException, IllegalArgumentException {
+	public void assignContentToMenu(Integer menuId, Integer elementId, Integer targetPosition) throws DatabaseException, IOException, IllegalArgumentException {
+
+		if (elementId == null || menuId == null || targetPosition == null) {
+			throw new IllegalArgumentException("Element ID, menu ID and target position can't be null.");
+		}
 		
 		Session session = this.getSession();
 
-		if (session != null) {
-			Transaction transaction = null;
-			
-			try {
-				transaction = session.beginTransaction();
-				
-				// --- Check if the specified menu and content exist ------------------------------
-				SiteMenu targetMenu = session.get(SiteMenu.class, menuId);
-				SiteContent contentToAssign = session.get(SiteContent.class, contentElementId);
-				
-				if (targetMenu == null) {
-					throw new IllegalArgumentException("Menu with ID " + menuId + " could not be found");
-				}
-				if (contentToAssign == null) {
-					throw new IllegalArgumentException("Content element with ID " + contentElementId + " could not be found");
-				}
-				// --- Shift the existing content positions ---------------------------------------
-				this.makeRoomForInsertedContent(session, menuId, targetPosition);
-				
-				// --- Create the new content - menu relation -------------------------------------
-				SiteMenuContent newAssignment = new SiteMenuContent();
-				newAssignment.setContentListPosition(targetPosition);
-				newAssignment.setSiteContent(contentToAssign);
-				newAssignment.setSiteMenu(targetMenu);
-				targetMenu.getSiteMenuContent().add(newAssignment);
-				contentToAssign.getSiteMenuContent().add(newAssignment);
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		Transaction transaction = null;
 
-				session.persist(newAssignment);
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while assigning content to menu.", ex);
+		try {
+			transaction = session.beginTransaction();
 
-			} finally {
-				session.clear();
+			// --- Check if the specified menu and content exist ----------------------------------
+			SiteMenu targetMenu = session.get(SiteMenu.class, menuId);
+			SiteContent contentToAssign = session.get(SiteContent.class, elementId);
+
+			if (targetMenu == null) {
+				throw new IllegalArgumentException("Menu with ID " + menuId + " could not be found");
 			}
-		}		
+			if (contentToAssign == null) {
+				throw new IllegalArgumentException("Content element with ID " + elementId + " could not be found");
+			}
+			// --- Shift the existing content positions -------------------------------------------
+			this.makeRoomForInsertedContent(session, menuId, targetPosition);
+
+			// --- Create the new content - menu relation -----------------------------------------
+			SiteMenuContent newAssignment = new SiteMenuContent();
+			newAssignment.setContentListPosition(targetPosition);
+			newAssignment.setSiteContent(contentToAssign);
+			newAssignment.setSiteMenu(targetMenu);
+			targetMenu.getSiteMenuContent().add(newAssignment);
+			contentToAssign.getSiteMenuContent().add(newAssignment);
+
+			session.persist(newAssignment);
+			transaction.commit();
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while assigning content to menu.", ex);
+
+		} finally {
+			session.clear();
+		}
 	}
 	
 	/**
@@ -804,41 +1132,45 @@ public class WebAppDatabaseHandler {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	public void removeAssignmentOf(Integer menuId, Integer elementId) throws DatabaseException, IOException, IllegalArgumentException {
+
+		if (elementId == null || menuId == null) {
+			throw new IllegalArgumentException("Element ID and menu ID can't be null.");
+		}
 		
 		Session session = this.getSession();
-		if (session != null) {
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
 
 		Transaction transaction = null;
-		
+
 		try {
 			transaction = session.beginTransaction();
-			
+
 			SiteContent elementToBeDetached = session.get(SiteContent.class, elementId);
 			if (elementToBeDetached == null) {
 				throw new IllegalArgumentException("The specified element could not be found.");
 			}
 
 			Iterator<SiteMenuContent> iterator = elementToBeDetached.getSiteMenuContent().iterator();
-			
+
 			while (iterator.hasNext()) {
 				SiteMenuContent entry = iterator.next();
 				if (entry.getSiteMenu().getId().equals(menuId)) {
 					this.closeGapAfterRemovedContent(session, menuId, entry.getContentListPosition());
 					iterator.remove();
 					session.remove(entry);
-					
 				}
 			}
 			transaction.commit();
-				
+
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
 			this.rethrowExpectedOrDatabaseException("Error while removing content assignment.", ex);
 
-			} finally {
-				session.clear();
-			}
-		}		
+		} finally {
+			session.clear();
+		}
 	}
 	
 	/**
@@ -853,74 +1185,79 @@ public class WebAppDatabaseHandler {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
 	public void updateMenuAssignmentAndPosition(Integer elementId, Integer sourceMenuId, Integer targetMenuId, Integer targetPosition) throws DatabaseException, IOException, IllegalArgumentException {
+
+		if (elementId == null || sourceMenuId == null || targetMenuId == null || targetPosition == null) {
+			throw new IllegalArgumentException("Element ID, source menu ID, target menu ID and target position can't be null.");
+		}
 		
 		Session session = this.getSession();
-		if (session != null) {
-			Transaction transaction = null;
-
-			try {
-				transaction = session.beginTransaction();
-				SiteContent existingContent = session.get(SiteContent.class, elementId);
-				// --- Check if the specified content does exist ----------------------------------
-				if (existingContent == null) {
-					throw new IllegalArgumentException("The specified content element could not be found.");
-				}
-				// --- Check if the specified source menu does exist ------------------------------
-				SiteMenu targetMenu = session.get(SiteMenu.class, targetMenuId);
-				if (targetMenu == null) {
-					throw new IllegalArgumentException("The target menu could not be found");
-				}
-				
-				if (Objects.equals(sourceMenuId, targetMenuId) == false) {
-					// --- Case 1: Menu is going to change ----------------------------------------
-					
-					Iterator<SiteMenuContent> iterator = existingContent.getSiteMenuContent().iterator();
-					while (iterator.hasNext()) {
-						SiteMenuContent entry = iterator.next();
-						if (entry.getSiteMenu().getId().equals(sourceMenuId)) {
-							// --- Fix the positions of remaining content in the source menu ------
-							this.closeGapAfterRemovedContent(session, sourceMenuId, entry.getContentListPosition());
-							// --- Remove the contentElement - sourceMenu relation ----------------
-							iterator.remove();
-							session.remove(entry);
-						}
-					}
-					session.flush();
-					
-					this.makeRoomForInsertedContent(session, targetMenuId, targetPosition);
-					// --- Create the content - targetMenu relation -------------------------------
-					SiteMenuContent newAssignment = new SiteMenuContent();
-					newAssignment.setContentListPosition(targetPosition);
-					newAssignment.setSiteMenu(targetMenu);
-					newAssignment.setSiteContent(existingContent);
-					existingContent.getSiteMenuContent().add(newAssignment);
-					
-					session.persist(newAssignment);
-					
-				} else {
-
-					// --- Case 2: Change position within the same menu ---------------------------
-					for (SiteMenuContent smc : existingContent.getSiteMenuContent()) {
-						if (smc.getSiteMenu().getId().equals(sourceMenuId)) {
-							Integer startingPosition = smc.getContentListPosition();
-							reorderContentWithinSameMenu(session, sourceMenuId, startingPosition, targetPosition);
-							smc.setContentListPosition(targetPosition);
-							break;
-						}
-					}
-				}
-				
-				transaction.commit();
-		
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while updating menu assignment and position.", ex);
-
-			} finally {
-				session.clear();
-			}
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
 		}
-	}		
+		Transaction transaction = null;
+
+		try {
+			transaction = session.beginTransaction();
+			SiteContent existingContent = session.get(SiteContent.class, elementId);
+			// --- Check if the specified content does exist --------------------------------------
+			if (existingContent == null) {
+				throw new IllegalArgumentException("The specified content element could not be found.");
+			}
+			// --- Check if the specified source menu does exist ----------------------------------
+			SiteMenu targetMenu = session.get(SiteMenu.class, targetMenuId);
+			if (targetMenu == null) {
+				throw new IllegalArgumentException("The target menu could not be found");
+			}
+
+			if (Objects.equals(sourceMenuId, targetMenuId) == false) {
+				// --- Case 1: Menu is going to change --------------------------------------------
+
+				Iterator<SiteMenuContent> iterator = existingContent.getSiteMenuContent().iterator();
+				while (iterator.hasNext()) {
+					SiteMenuContent entry = iterator.next();
+					if (entry.getSiteMenu().getId().equals(sourceMenuId)) {
+						// --- Fix the positions of remaining content in the source menu ----------
+						this.closeGapAfterRemovedContent(session, sourceMenuId, entry.getContentListPosition());
+						// --- Remove the contentElement - sourceMenu relation --------------------
+						iterator.remove();
+						session.remove(entry);
+					}
+				}
+				session.flush();
+
+				this.makeRoomForInsertedContent(session, targetMenuId, targetPosition);
+				// --- Create the content - targetMenu relation -----------------------------------
+				SiteMenuContent newAssignment = new SiteMenuContent();
+				newAssignment.setContentListPosition(targetPosition);
+				newAssignment.setSiteMenu(targetMenu);
+				newAssignment.setSiteContent(existingContent);
+				existingContent.getSiteMenuContent().add(newAssignment);
+
+				session.persist(newAssignment);
+
+			} else {
+
+				// --- Case 2: Change position within the same menu -------------------------------
+				for (SiteMenuContent smc : existingContent.getSiteMenuContent()) {
+					if (smc.getSiteMenu().getId().equals(sourceMenuId)) {
+						Integer startingPosition = smc.getContentListPosition();
+						reorderContentWithinSameMenu(session, sourceMenuId, startingPosition, targetPosition);
+						smc.setContentListPosition(targetPosition);
+						break;
+					}
+				}
+			}
+
+			transaction.commit();
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while updating menu assignment and position.", ex);
+
+		} finally {
+			session.clear();
+		}
+	}
 
 	/**
 	 * Returns the list of content for the specified menuId
@@ -931,37 +1268,41 @@ public class WebAppDatabaseHandler {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public List<SiteContent> getContentListOfMenuId (Integer menuId) throws DatabaseException, IOException, IllegalArgumentException{
+	public List<SiteContent> getContentListOfMenuId(Integer menuId) throws DatabaseException, IOException, IllegalArgumentException {
+
+		if (menuId == null) {
+			throw new IllegalArgumentException("Menu ID can't be null.");
+		}
 		
 		Session session = this.getSession();
-		List<SiteContent> contentList = new ArrayList<SiteContent>();
 
-		if (session != null) {
-			Transaction transaction = null;
-			
-			try {
-				transaction = session.beginTransaction();
-				SiteMenu menuToLoad = session.get(SiteMenu.class, menuId);
-				if (menuToLoad == null) {
-					throw new IllegalArgumentException("Menu with id " + menuId + " could not be found");
-				}
-				
-				for (SiteMenuContent smc: menuToLoad.getSiteMenuContent()) {
-					if (smc.getSiteContent() != null) {
-						contentList.add(smc.getSiteContent());
-					}
-				}
-				transaction.commit();
-				
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while reading menu content list.", ex);
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		Transaction transaction = null;
 
-			} finally {
-				session.clear();
+		try {
+			transaction = session.beginTransaction();
+			SiteMenu menuToLoad = session.get(SiteMenu.class, menuId);
+			if (menuToLoad == null) {
+				throw new IllegalArgumentException("Menu with id " + menuId + " could not be found");
 			}
-		}		
-		return contentList;
+			List<SiteContent> contentList = new ArrayList<>();
+			for (SiteMenuContent smc : menuToLoad.getSiteMenuContent()) {
+				if (smc.getSiteContent() != null) {
+					contentList.add(smc.getSiteContent());
+				}
+			}
+			transaction.commit();
+			return contentList;
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while reading menu content list.", ex);
+			return Collections.emptyList();
+			
+		} finally {
+			session.clear();
+		}
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -1142,6 +1483,29 @@ public class WebAppDatabaseHandler {
 		query.setParameter("newPos", newPos);
 		query.setParameter("oldPos", oldPos);
 		query.executeUpdate();
+	}
+	
+	/**
+	 * Returns the amount of menus within the specified parent menu.
+	 *
+	 * @param session the session
+	 * @param parentId the parent id
+	 * @return the menu count in parent
+	 */
+	private int getMenuCountInParent(Session session, Integer parentId) {
+	    
+		String hql;
+	    TypedQuery<Long> query;
+	    
+	    if (parentId == null) {
+	        hql = "SELECT COUNT(m) FROM SiteMenu m WHERE m.parentMenu IS NULL";
+	        query = session.createQuery(hql, Long.class);
+	    } else {
+	        hql = "SELECT COUNT(m) FROM SiteMenu m WHERE m.parentMenu.id = :parentId";
+	        query = session.createQuery(hql, Long.class);
+	        query.setParameter("parentId", parentId);
+	    }
+	    return query.getSingleResult().intValue();
 	}
 	
 	// --------------------------------------------------------------

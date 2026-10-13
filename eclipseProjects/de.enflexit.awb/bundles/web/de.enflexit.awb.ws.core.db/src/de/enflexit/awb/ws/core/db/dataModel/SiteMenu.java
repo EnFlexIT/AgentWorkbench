@@ -2,16 +2,20 @@ package de.enflexit.awb.ws.core.db.dataModel;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import de.enflexit.db.userManagement.dataModel.GroupRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -29,7 +33,7 @@ public class SiteMenu implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_site_menu")
 	private Integer id;
 
@@ -46,11 +50,7 @@ public class SiteMenu implements Serializable {
 
 	@Column(name = "is_head_menu")
 	private boolean isHeadMenu;
-
-	@Column(name = "access_right_level")
-	private int accessRightLevel;
-	
-	
+		
 	@OneToMany(mappedBy = "siteMenu")
 	private Set<SiteMenuTranslation> translations;
 	@Transient
@@ -58,7 +58,14 @@ public class SiteMenu implements Serializable {
 	
 	@OneToMany(mappedBy = "siteMenu")
 	private Set<SiteMenuContent> siteMenuContent;
-	
+
+	@ManyToMany
+    @JoinTable(
+        name = "site_menu_group_roles", 
+        joinColumns = @JoinColumn(name = "id_site_menu"), 
+        inverseJoinColumns = @JoinColumn(name = "id_group_role")
+    )
+    private Set<GroupRole> allowedGroupRoles = new HashSet<>();
 	
 	/**
 	 * Returns the id.
@@ -149,23 +156,7 @@ public class SiteMenu implements Serializable {
 	public void setHeadMenu(boolean isHeadMenu) {
 		this.isHeadMenu = isHeadMenu;
 	}
-	
-	/**
-	 * Returns the access right level.
-	 * @return the access right level
-	 */
-	public int getAccessRightLevel() {
-		return accessRightLevel;
-	}
-	/**
-	 * Sets the access right level.
-	 * @param accessRightLevel the new access right level
-	 */
-	public void setAccessRightLevel(int accessRightLevel) {
-		this.accessRightLevel = accessRightLevel;
-	}
-	
-	
+		
 	/**
 	 * Returns the caption in the designate language.
 	 *
@@ -220,5 +211,13 @@ public class SiteMenu implements Serializable {
 	public void setSiteMenuContent(Set<SiteMenuContent> siteContentMenu) {
 		this.siteMenuContent = siteContentMenu;
 	}
+	
+	public Set<GroupRole> getAllowedGroupRoles() {
+        return allowedGroupRoles;
+    }
+
+    public void setAllowedGroupRoles(Set<GroupRole> allowedGroupRoles) {
+        this.allowedGroupRoles = allowedGroupRoles;
+    }
 	
 }
