@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenuContent;
 import de.enflexit.awb.ws.core.exceptions.DatabaseException;
+import de.enflexit.db.userManagement.UserManagementDatabaseHandler;
 import de.enflexit.db.userManagement.dataModel.GroupRole;
 import jakarta.persistence.TypedQuery;
 
@@ -36,7 +38,11 @@ import jakarta.persistence.TypedQuery;
 public class WebAppDatabaseHandler {
 	
 	private Session session;
+	private UserManagementDatabaseHandler umDbHandler;
+	
 	private static Logger LOGGER = LoggerFactory.getLogger(WebAppDatabaseHandler.class);
+	
+	
 	/**
 	 * Instantiates a new database handler.
 	 */
@@ -80,6 +86,18 @@ public class WebAppDatabaseHandler {
 	 */
 	public void dispose() {
 		this.setSession(null);
+		this.umDbHandler = null;
+	}
+	
+	/**
+	 * Returns the UserManagementDatabaseHandler.
+	 * @return the user management database handler
+	 */
+	public UserManagementDatabaseHandler getUserManagementDatabaseHandler() {
+		if (umDbHandler==null) {
+			umDbHandler = new UserManagementDatabaseHandler(this.getSession());
+		}
+		return umDbHandler;
 	}
 	
 	/**
@@ -706,8 +724,11 @@ public class WebAppDatabaseHandler {
 				// --- Only need to reorder within parent menu ------------------------------------
 				this.reorderMenusWithinSameParent(session, oldParentId, existingMenu.getPosition(), actualPosition);
 			}
-
-			session.merge(updatedMenu);
+			existingMenu.setCaption(updatedMenu.getCaption());
+			existingMenu.setPosition(actualPosition);
+			existingMenu.setHeadMenu(newParentId == null);
+			existingMenu.setTranslations(updatedMenu.getTranslations());
+			
 			transaction.commit();
 
 		} catch (Exception ex) {
@@ -1287,12 +1308,18 @@ public class WebAppDatabaseHandler {
 			if (menuToLoad == null) {
 				throw new IllegalArgumentException("Menu with id " + menuId + " could not be found");
 			}
+			// --- Get the menus' associated content and sort it by position ----------------------
+			List<SiteMenuContent> smcList = new ArrayList<>(menuToLoad.getSiteMenuContent());
+			smcList.sort(Comparator.comparing(SiteMenuContent::getContentListPosition));
+			
 			List<SiteContent> contentList = new ArrayList<>();
-			for (SiteMenuContent smc : menuToLoad.getSiteMenuContent()) {
+			
+			for (SiteMenuContent smc : smcList) {
 				if (smc.getSiteContent() != null) {
 					contentList.add(smc.getSiteContent());
 				}
 			}
+			
 			transaction.commit();
 			return contentList;
 		} catch (Exception ex) {
