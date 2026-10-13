@@ -1,19 +1,21 @@
-package de.enflexit.df.core.processing.transformation;
+package de.enflexit.df.core.processing.transformation.filter;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 
-import de.enflexit.df.core.processing.transformation.Filters.BetweenFilter;
-import de.enflexit.df.core.processing.transformation.Filters.ComparisonFilter;
-import de.enflexit.df.core.processing.transformation.Filters.FilterCondition;
-import de.enflexit.df.core.processing.transformation.Filters.FilterExpression;
-import de.enflexit.df.core.processing.transformation.Filters.FilterGroup;
-import de.enflexit.df.core.processing.transformation.Filters.FilterOperator;
-import de.enflexit.df.core.processing.transformation.Filters.LogicalOperator;
-import de.enflexit.df.core.processing.transformation.Filters.NullFilter;
-import de.enflexit.df.core.processing.transformation.Filters.TableFilter;
+import de.enflexit.df.core.processing.transformation.filter.Filters.BetweenFilter;
+import de.enflexit.df.core.processing.transformation.filter.Filters.ComparisonFilter;
+import de.enflexit.df.core.processing.transformation.filter.Filters.FilterCondition;
+import de.enflexit.df.core.processing.transformation.filter.Filters.FilterExpression;
+import de.enflexit.df.core.processing.transformation.filter.Filters.FilterGroup;
+import de.enflexit.df.core.processing.transformation.filter.Filters.FilterOperator;
+import de.enflexit.df.core.processing.transformation.filter.Filters.LogicalOperator;
+import de.enflexit.df.core.processing.transformation.filter.Filters.NullFilter;
+import de.enflexit.df.core.processing.transformation.filter.Filters.TableFilter;
 import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.DateColumn;
 import tech.tablesaw.api.DateTimeColumn;
@@ -29,6 +31,12 @@ import tech.tablesaw.selection.Selection;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public final class TableSawFilter {
+	
+	private static final ZoneId SYSTEM_ZONE = ZoneId.systemDefault();
+	
+	/**
+	 * Instantiates a new table saw filter.
+	 */
 	private TableSawFilter() {
 	}
 
@@ -186,7 +194,7 @@ public final class TableSawFilter {
 		// --- Handle comparison filters using the TableSaw mechanisms --------
 		if (filter instanceof ComparisonFilter comparison) {
 
-			LocalDate value = requireType(comparison.value(), LocalDate.class);
+			LocalDate value = requireTemporalType(comparison.value(), LocalDate.class);
 			return switch (comparison.operator()) {
 				case EQUALS -> column.isEqualTo(value);
 				case GREATER_THAN -> column.isAfter(value);
@@ -199,8 +207,8 @@ public final class TableSawFilter {
 
 		// --- Handle between filters using the TableSaw mechanisms -----------
 		if (filter instanceof BetweenFilter between) {
-			LocalDate lower = requireType(between.lower(), LocalDate.class);
-			LocalDate upper = requireType(between.upper(), LocalDate.class);
+			LocalDate lower = requireTemporalType(between.lower(), LocalDate.class);
+			LocalDate upper = requireTemporalType(between.upper(), LocalDate.class);
 			return column.isBetweenIncluding(lower, upper);
 		}
 
@@ -223,7 +231,7 @@ public final class TableSawFilter {
 		// --- Handle comparison filters using the TableSaw mechanisms --------
 		if (filter instanceof ComparisonFilter comparison) {
 
-			LocalDateTime value = requireType(comparison.value(), LocalDateTime.class);
+			LocalDateTime value = requireTemporalType(comparison.value(), LocalDateTime.class);
 			return switch (comparison.operator()) {
 				case EQUALS -> column.isEqualTo(value);
 				case GREATER_THAN -> column.isAfter(value);
@@ -236,8 +244,8 @@ public final class TableSawFilter {
 
 		// --- Handle between filters using the TableSaw mechanisms -----------
 		if (filter instanceof BetweenFilter between) {
-			LocalDateTime lower = requireType(between.lower(), LocalDateTime.class);
-			LocalDateTime upper = requireType(between.upper(), LocalDateTime.class);
+			LocalDateTime lower = requireTemporalType(between.lower(), LocalDateTime.class);
+			LocalDateTime upper = requireTemporalType(between.upper(), LocalDateTime.class);
 			return column.isBetweenIncluding(lower, upper);
 		}
 		throw unsupportedFilter(filter, "LocalDateTime");
@@ -253,7 +261,7 @@ public final class TableSawFilter {
 		// --- Handle comparison filters using the TableSaw mechanisms --------
 		if (filter instanceof ComparisonFilter comparison) {
 
-			Instant value = requireType(comparison.value(), Instant.class);
+			Instant value = requireTemporalType(comparison.value(), Instant.class);
 			return switch (comparison.operator()) {
 				case EQUALS -> column.isEqualTo(value);
 				case GREATER_THAN -> column.isAfter(value);
@@ -266,8 +274,8 @@ public final class TableSawFilter {
 
 		// --- Handle between filters using the TableSaw mechanisms -----------
 		if (filter instanceof BetweenFilter between) {
-			Instant lower = requireType(between.lower(), Instant.class);
-			Instant upper = requireType(between.upper(), Instant.class);
+			Instant lower = requireTemporalType(between.lower(), Instant.class);
+			Instant upper = requireTemporalType(between.upper(), Instant.class);
 			
 			Selection lowerBound = column.isAfter(lower).or(column.isEqualTo(lower));
 			Selection upperBound = column.isBefore(upper).or(column.isEqualTo(upper));
@@ -443,6 +451,52 @@ public final class TableSawFilter {
 		}
 
 		throw new IllegalArgumentException("Expected value of type " + expectedType.getSimpleName() + ", but got " + getClassName(value));
+	}
+	
+	/**
+	 * Casts an object to the specified temporal type if possible. Throws an {@link IllegalArgumentException} otherwise.
+	 * Includes type conversions between different temporal data types.
+	 * @param <T> the generic type
+	 * @param value the value
+	 * @param targetType the target type
+	 * @return the t
+	 */
+	private static <T> T requireTemporalType(Object value, Class<T> targetType) {
+
+		Objects.requireNonNull(value, "value");
+
+		if (targetType.isInstance(value)) {
+			return targetType.cast(value);
+		}
+
+		Object converted = null;
+
+		if (targetType == Instant.class) {
+			if (value instanceof LocalDateTime dateTime) {
+				converted = dateTime.atZone(SYSTEM_ZONE).toInstant();
+			} else if (value instanceof LocalDate date) {
+				converted = date.atStartOfDay(SYSTEM_ZONE).toInstant();
+			}
+		} else if (targetType == LocalDateTime.class) {
+			if (value instanceof Instant instant) {
+				converted = LocalDateTime.ofInstant(instant, SYSTEM_ZONE);
+			} else if (value instanceof LocalDate date) {
+				converted = date.atStartOfDay();
+			}
+		} else if (targetType == LocalDate.class) {
+			if (value instanceof LocalDateTime dateTime) {
+				converted = dateTime.toLocalDate();
+			} else if (value instanceof Instant instant) {
+				converted = instant.atZone(SYSTEM_ZONE).toLocalDate();
+			}
+		}
+
+		if (converted != null) {
+			return targetType.cast(converted);
+		}
+
+		throw new IllegalArgumentException(
+				"Cannot convert " + value.getClass().getSimpleName() + " to " + targetType.getSimpleName());
 	}
 
 	/**

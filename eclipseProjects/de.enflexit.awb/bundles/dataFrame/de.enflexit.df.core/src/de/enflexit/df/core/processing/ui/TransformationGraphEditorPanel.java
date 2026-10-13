@@ -5,8 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -21,8 +19,8 @@ import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
-import de.enflexit.df.core.processing.transformation.ui.JDialogDataTransformationConfiguration;
-import de.enflexit.df.core.processing.transformation.ui.JPanelDataTransformationConfiguration;
+import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationDialog;
+import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeDataSource;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
@@ -33,7 +31,9 @@ import edu.uci.ics.jung.graph.event.GraphEvent;
 import edu.uci.ics.jung.graph.event.GraphEventListener;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
+import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
+import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
@@ -47,7 +47,7 @@ import javax.swing.JSplitPane;
  * The Class JPanelTransformationGraphEditor.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JPanelTransformationGraphEditor extends JPanel implements ActionListener, GraphEventListener<DataTableNode, DataTransformationEdge> {
+public class TransformationGraphEditorPanel extends JPanel implements ActionListener, GraphEventListener<DataTableNode, DataTransformationEdge> {
 	
 	private static final long serialVersionUID = 3869719655631231629L;
 	
@@ -72,7 +72,7 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	private TransformationGraphController graphController;
 	
 	private DataTransformationTableViewPanel tableViewPanel;
-	private JPanelDataTransformationConfiguration transformationPanel;
+	private DataTransformationConfigurationPanel transformationPanel;
 	
 	private GraphZoomScrollPane graphZoomScrollPane;
 	private VisualizationViewer<DataTableNode, DataTransformationEdge> visualizationViewer;
@@ -84,7 +84,7 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	 * Instantiates a new j panel transformation graph editor.
 	 * @param graphController the graph controller
 	 */
-	public JPanelTransformationGraphEditor(DataController dataController) {
+	public TransformationGraphEditorPanel(DataController dataController) {
 		this.dataController = dataController;
 		this.initialize();
 	}
@@ -101,7 +101,7 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
+				TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(1.0);
 			}
 		});
 	}
@@ -170,9 +170,9 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 		}
 		return tableViewPanel;
 	}
-	private JPanelDataTransformationConfiguration getTransformationPanel() {
+	private DataTransformationConfigurationPanel getTransformationPanel() {
 		if (transformationPanel==null) {
-			transformationPanel = new JPanelDataTransformationConfiguration(this);
+			transformationPanel = new DataTransformationConfigurationPanel(this);
 		}
 		return transformationPanel;
 	}
@@ -191,14 +191,13 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	 * Gets the visualization viewer.
 	 * @return the visualization viewer
 	 */
-	private VisualizationViewer<DataTableNode, DataTransformationEdge> getVisualizationViewer() {
+	VisualizationViewer<DataTableNode, DataTransformationEdge> getVisualizationViewer() {
 		if (visualizationViewer==null) {
 			
 			visualizationViewer = new VisualizationViewer<DataTableNode, DataTransformationEdge>(this.getGraphController().getGraphLayout());
-			
 			visualizationViewer.setBackground(AwbThemeColor.Canvas_Background.getColor());
 			
-			// --- Set a rounded rectangle as node shape. Dimensions are specified in the class constants above.
+			// --- Customize the renderer (round rectangles as nodes, straight lines as edges, node labels in the middle of the rectangle)
 			double xPos = -(NODE_RECTANGLE_WIDTH/2);	// JUNG coordinates refer to the center
 			double yPos = -(NODE_RECTANGLE_HEIGHT/2);
 			visualizationViewer.getRenderContext().setVertexShapeTransformer(node -> new RoundRectangle2D.Double(xPos, yPos, NODE_RECTANGLE_WIDTH, NODE_RECTANGLE_HEIGHT, NODE_RECTANGLE_ARC, NODE_RECTANGLE_ARC));
@@ -208,9 +207,12 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 			
 			// --- Configure mouse interactions -----------
 			visualizationViewer.setPickSupport(new ShapePickSupport<DataTableNode, DataTransformationEdge>(visualizationViewer));
-			visualizationViewer.setGraphMouse(new DefaultModalGraphMouse<DataTableNode, DataTransformationEdge>());
-			visualizationViewer.addMouseListener(new TransformationGraphMouseAdapter());
-			
+			visualizationViewer.setGraphMouse(this.getZoomOnlyGraphMouse());
+			TransformationGraphMouseAdapter mouseAdapter = new TransformationGraphMouseAdapter(this);
+			visualizationViewer.addMouseListener(mouseAdapter);
+			visualizationViewer.addMouseMotionListener(mouseAdapter);
+
+			// --- Register as graph event listener -------
 			ObservableGraph<DataTableNode, DataTransformationEdge> graph = (ObservableGraph<DataTableNode, DataTransformationEdge>) this.getGraphController().getTransformationGraph();
 			graph.addGraphEventListener(this);
 			
@@ -280,7 +282,7 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	 */
 	private void showDataTransformationConfigurationDialog() {
 		Window owner = OwnerDetection.getOwnerWindowForComponent(this.getJButtonAddDataSource());
-		JDialogDataTransformationConfiguration transformationDialog = new JDialogDataTransformationConfiguration(owner, this);
+		DataTransformationConfigurationDialog transformationDialog = new DataTransformationConfigurationDialog(owner, this);
 		
 		Point buttonLocation = this.getjButtonAddDataTransformation().getLocationOnScreen();
 		Double dialogPositionX = buttonLocation.getX() + this.getjButtonAddDataTransformation().getWidth();
@@ -426,67 +428,6 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 	}
 
 	/**
-	 * The Class TransformationGraphMouseAdapter.
-	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
-	 */
-	private class TransformationGraphMouseAdapter extends MouseAdapter {
-		
-		/* (non-Javadoc)
-		 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
-		 */
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			
-			// --- Just a shorthand for shorter calls.
-			VisualizationViewer<DataTableNode, DataTransformationEdge> visViewer = JPanelTransformationGraphEditor.this.getVisualizationViewer();
-			
-			DataTableNode nodeClicked = visViewer.getPickSupport().getVertex(visViewer.getGraphLayout(), e.getX(), e.getY());
-			
-			// --- Clicked on a node, show the corresponding table ------------
-			if (nodeClicked!=null) {
-				JPanelTransformationGraphEditor.this.currentlySelectedGraphElement = nodeClicked;
-				Table tableToShow = nodeClicked.getDataTable();
-				if (tableToShow!=null) {
-					JPanelTransformationGraphEditor.this.getTableViewPanel().setDataTable(nodeClicked);
-					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setRightComponent(JPanelTransformationGraphEditor.this.getTableViewPanel());
-					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(0.67);
-				} else {
-					System.err.println("[" + this.getClass().getSimpleName() + "] No table to visualize!");
-					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
-				}
-				
-				JPanelTransformationGraphEditor.this.getJButtonRemove().setEnabled(true);
-				
-				return;
-			}
-			
-			// --- Clicked on an edge, show the corresponding transformation --
-			DataTransformationEdge edgeClicked = visViewer.getPickSupport().getEdge(visViewer.getGraphLayout(), e.getX(), e.getY());
-			JPanelTransformationGraphEditor.this.currentlySelectedGraphElement = edgeClicked;
-			if (edgeClicked!=null) {
-				AbstractDataTransformation transformationToShow = edgeClicked.getDataTransformation();
-				if (transformationToShow!=null) {
-					JPanelTransformationGraphEditor.this.getTransformationPanel().setDataTransformation(transformationToShow);
-					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setRightComponent(JPanelTransformationGraphEditor.this.getTransformationPanel());
-					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(0.67);
-				} else {
-					System.err.println("[" + this.getClass().getSimpleName() + "] No transformation defined!");
-					JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
-				}
-				
-				JPanelTransformationGraphEditor.this.getJButtonRemove().setEnabled(true);
-				
-				return;
-			}
-			
-			// --- Clicked on an empty area, hide the panel 
-			JPanelTransformationGraphEditor.this.currentlySelectedGraphElement = null;
-			JPanelTransformationGraphEditor.this.getJSplitPaneMainView().setDividerLocation(1.0);
-			JPanelTransformationGraphEditor.this.getJButtonRemove().setEnabled(false);
-		}
-	}
-	
-	/**
 	 * Finds the corresponding table node for the provided table..
 	 * @param dataTable the data table
 	 * @return the data table node, null if not found
@@ -498,6 +439,86 @@ public class JPanelTransformationGraphEditor extends JPanel implements ActionLis
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Sets the selected graph element.
+	 * @param graphElement the new selected graph element
+	 */
+	public void setSelectedGraphElement(Object graphElement) {
+		
+		if (graphElement==null) {
+			// --- Clear selection, hide details panel --------------
+			this.currentlySelectedGraphElement = null;
+			this.hideDetailsPanel();
+		} else if (graphElement instanceof DataTableNode node) {
+			// --- Show the details for the selected node -----------
+			this.currentlySelectedGraphElement = node;
+			this.showNodeDetails(node);
+			
+		} else if (graphElement instanceof DataTransformationEdge edge) {
+			// --- Show the details for the selected edge -----------
+			this.currentlySelectedGraphElement = edge;
+			this.showEdgeDetails(edge);
+			
+		} else {
+			// --- Unexpected type ----------------------------------
+			throw new IllegalArgumentException("Unsupported graph element type: " + graphElement.getClass().getName());
+		}
+	}
+	
+	/**
+	 * Hides the details view.
+	 */
+	private void hideDetailsPanel() {
+		this.getJSplitPaneMainView().setDividerLocation(1.0);
+		this.getJButtonRemove().setEnabled(false);
+	}
+	
+	/**
+	 * Shows the details view for the provided node.
+	 * @param node the node
+	 */
+	private void showNodeDetails(DataTableNode node) {
+		Table tableToShow = node.getDataTable();
+		if (tableToShow!=null) {
+			TransformationGraphEditorPanel.this.getTableViewPanel().setDataTable(node);
+			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTableViewPanel());
+			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.67);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No table to visualize!");
+			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(1.0);
+		}
+		
+		TransformationGraphEditorPanel.this.getJButtonRemove().setEnabled(true);
+	}
+	
+	/**
+	 * Shows the details view for the provided edge.
+	 * @param edge the edge
+	 */
+	private void showEdgeDetails(DataTransformationEdge edge) {
+		AbstractDataTransformation transformationToShow = edge.getDataTransformation();
+		if (transformationToShow!=null) {
+			TransformationGraphEditorPanel.this.getTransformationPanel().setDataTransformation(transformationToShow);
+			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTransformationPanel());
+			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.67);
+		} else {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No transformation defined!");
+			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(1.0);
+		}
+		
+		TransformationGraphEditorPanel.this.getJButtonRemove().setEnabled(true);
+	}
+	
+	/**
+	 * Gets a {@link PluggableGraphMouse} that only uses the zoom plug-in ----- 
+	 * @return the zoom only graph mouse
+	 */
+	private PluggableGraphMouse getZoomOnlyGraphMouse() {
+		PluggableGraphMouse graphMouse = new PluggableGraphMouse();
+		graphMouse.add(new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, 1.1f, 0.9f));
+		return graphMouse;
 	}
 	
 }

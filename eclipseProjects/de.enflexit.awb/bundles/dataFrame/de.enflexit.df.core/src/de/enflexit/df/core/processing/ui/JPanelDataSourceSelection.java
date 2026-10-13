@@ -33,12 +33,12 @@ public class JPanelDataSourceSelection extends JPanel {
 	private DefaultListModel<AbstractDataSourceDTNO<?>> dataSourcesListModel;
 	
 	private DataController dataController;
-	private JPanelTransformationGraphEditor parentEditor;
+	private TransformationGraphEditorPanel parentEditor;
 	
 	/**
 	 * Instantiates a new j panel source table selection.
 	 */
-	public JPanelDataSourceSelection(DataController dataController, JPanelTransformationGraphEditor parentEditor) {
+	public JPanelDataSourceSelection(DataController dataController, TransformationGraphEditorPanel parentEditor) {
 		this.dataController = dataController;
 		this.parentEditor = parentEditor;
 		initialize();

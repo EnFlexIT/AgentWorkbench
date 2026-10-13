@@ -20,7 +20,7 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 	
 	private JPanelDataSourceSelection jPanelSelectionList;
 	
-	private JPanelTransformationGraphEditor parentEditorPanel;
+	private TransformationGraphEditorPanel parentEditorPanel;
 	
 	private DataController dataControler;
 	
@@ -29,7 +29,7 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 	 * @param owner the owner
 	 * @param graphController the graph controller
 	 */
-	public JDialogDataSourceSelection(Window owner, JPanelTransformationGraphEditor parentEditor, DataController dataControler) {
+	public JDialogDataSourceSelection(Window owner, TransformationGraphEditorPanel parentEditor, DataController dataControler) {
 		super(owner);
 		this.parentEditorPanel = parentEditor;
 		this.dataControler = dataControler;
@@ -66,7 +66,7 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 	 * Gets the parent editor panel.
 	 * @return the parent editor panel
 	 */
-	private JPanelTransformationGraphEditor getParentEditorPanel() {
+	private TransformationGraphEditorPanel getParentEditorPanel() {
 		return parentEditorPanel;
 	}
 	
