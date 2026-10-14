@@ -33,7 +33,7 @@ import jakarta.validation.Valid;
 @JsonPropertyOrder({
   AbstractValueRow.JSON_PROPERTY_VALUE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "xValueType", visible = true)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = de.enflexit.charts.model.ValueRowCategory.class, name = "Category"),
   @JsonSubTypes.Type(value = de.enflexit.charts.model.ValueRowDateTime.class, name = "DateTime"),

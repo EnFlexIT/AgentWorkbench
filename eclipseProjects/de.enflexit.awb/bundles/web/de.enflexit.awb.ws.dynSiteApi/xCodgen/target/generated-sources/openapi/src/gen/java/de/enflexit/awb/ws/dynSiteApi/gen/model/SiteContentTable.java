@@ -33,7 +33,7 @@ import jakarta.validation.Valid;
   SiteContentTable.JSON_PROPERTY_HEADER,
   SiteContentTable.JSON_PROPERTY_DATA_TYPE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class SiteContentTable extends AbstractSiteContent  {
   public static final String JSON_PROPERTY_HEADER = "header";
   @JsonProperty(JSON_PROPERTY_HEADER)

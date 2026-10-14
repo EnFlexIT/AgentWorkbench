@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public abstract class ContentApiService {
     public abstract Response getMenuContent(Integer menuId,SecurityContext securityContext) throws NotFoundException;
 }

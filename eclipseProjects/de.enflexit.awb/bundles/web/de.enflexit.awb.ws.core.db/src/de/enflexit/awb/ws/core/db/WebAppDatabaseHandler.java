@@ -429,8 +429,11 @@ public class WebAppDatabaseHandler {
 	 */
 	public Set<GroupRole> findGroupRolesByNames(List<String> roleNames) throws IOException, DatabaseException, IllegalArgumentException {
 	
-		if (roleNames == null || roleNames.isEmpty() == true) {
-			throw new IllegalArgumentException("At least one group role name must be provided");
+		if (roleNames == null) {
+			throw new IllegalArgumentException("roleNames can't be null");
+		}
+		if (roleNames.isEmpty() == true) {
+			return new HashSet<GroupRole>();
 		}
 		
 		Session session = this.getSession();
@@ -457,52 +460,6 @@ public class WebAppDatabaseHandler {
 			} finally {
 				session.clear();
 			}
-	}
-	/**
-	 * Returns all unique group roles the specified user has in any group.
-	 *
-	 * @param userName the user name
-	 * @return the group roles for user
-	 * @throws IOException 
-	 * @throws DatabaseException 
-	 * @throws IllegalArgumentException 
-	 */
-	public Set<GroupRole> getGroupRolesForUser(String userName) throws IOException, DatabaseException {
-
-		if (userName == null || userName.isBlank() == true) return new HashSet<>(); 
-		
-		Session session = this.getSession();
-		if (session == null) {
-			throw new IOException("Could not obtain a valid database session.");
-		}
-
-		Transaction transaction = null;
-		try {
-			transaction = session.beginTransaction();
-			String sql = "SELECT DISTINCT ugr.id_group_role, " 
-					+ "ugr.role " 
-					+ "FROM um_group_role ugr "
-					+ "INNER JOIN um_user_group_roles uugr " 
-					+ "ON ugr.id_group_role = uugr.id_group_role "
-					+ "INNER JOIN um_user uu " + "ON uugr.id_user = uu.id_user " 
-					+ "WHERE uu.name = :userName ";
-
-			NativeQuery<GroupRole> query = session.createNativeQuery(sql, GroupRole.class);
-			query.setParameter("userName", userName);
-
-			List<GroupRole> userGroupRoles = query.getResultList();
-			transaction.commit();
-
-			return new HashSet<GroupRole>(userGroupRoles);
-
-		} catch (Exception ex) {
-			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while fetching group roles for user: " + userName, ex);
-			return new HashSet<>();
-
-		} finally {
-			session.clear();
-		}
 	}
 
 	/**
@@ -561,9 +518,9 @@ public class WebAppDatabaseHandler {
 	// --- Site Menu Operations -------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------
 
-	public List<SiteMenu> findMenusForUserRoles(Collection<Integer> userGroupRoleIds) throws IOException, IllegalArgumentException, DatabaseException {
+	public List<SiteMenu> findMenusForUserRoles(Collection<Integer> userGroupRoleIds, boolean includePublicMenus) throws IOException, IllegalArgumentException, DatabaseException {
 		
-		if (userGroupRoleIds == null || userGroupRoleIds.isEmpty() == true) {
+		if (userGroupRoleIds == null) {
 			return Collections.emptyList();
 		}
 		Session session = this.getSession();
@@ -573,11 +530,22 @@ public class WebAppDatabaseHandler {
 		Transaction transaction = null;
 		try {
 			transaction = session.beginTransaction();
-			String sql = "SELECT DISTINCT sm.* " +
-	                 "FROM site_menu sm " +
-	                 "INNER JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " +
-	                 "WHERE smgr.id_group_role IN (:roleIds) " +
-	                 "ORDER BY sm.position ASC";
+			String sql;
+			if (includePublicMenus == true) {
+				sql = "SELECT DISTINCT sm.* " +
+						"FROM site_menu sm " +
+						"LEFT JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " +
+						"WHERE smgr.id_group_role IN (:roleIds) " +
+						"OR smgr.id_site_menu IS NULL " +
+						"ORDER BY sm.position ASC";
+			} else {
+				
+				sql = "SELECT DISTINCT sm.* " +
+						"FROM site_menu sm " +
+						"LEFT JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " +
+						"WHERE smgr.id_group_role IN (:roleIds) " 
+						+ "ORDER BY sm.position ASC";
+			}
 
 			NativeQuery<SiteMenu> query = session.createNativeQuery(sql, SiteMenu.class);
 	    	query.setParameter("roleIds", userGroupRoleIds);			
@@ -751,7 +719,7 @@ public class WebAppDatabaseHandler {
 	 */
 	public void updateMenuPermissions(Integer menuId, Set<GroupRole> requiredRolesForAccess) throws DatabaseException, IOException, IllegalArgumentException {
 		
-		if (menuId == null || requiredRolesForAccess == null || requiredRolesForAccess.size() == 0) {
+		if (menuId == null || requiredRolesForAccess == null) {
 			throw new IllegalArgumentException("Menu ID and roles can't be null.");
 		}
 		
@@ -843,6 +811,8 @@ public class WebAppDatabaseHandler {
 
 			// --- Recursively delete the menu and its sub menus ----------------------------------
 			this.deleteMenuAndSubMenus(menuToDelete, session);
+			
+			// --- Flush the changes before closing the gap ---------------------------------------
 			session.flush();
 
 			this.closeGapAfterRemovedMenu(session, parentMenuId, menuToDelete.getPosition());
@@ -858,6 +828,7 @@ public class WebAppDatabaseHandler {
 	}
 	/**
 	 * Recursively deletes the menu and all of its sub menus, as well as their SiteMenuContent assignments.
+	 * Resulting orphaned content will be removed as well.
 	 *
 	 * @param menu the menu
 	 * @param session the session
@@ -874,10 +845,21 @@ public class WebAppDatabaseHandler {
 		if (menu.getSiteMenuContent() != null) {
 			Iterator<SiteMenuContent> iterator = menu.getSiteMenuContent().iterator();
 			while (iterator.hasNext()) {
-				// --- remove all assignments -----------------------------------------------------
+				
 				SiteMenuContent assignment = iterator.next();
+				
+				// --- Remember the associated content to remove if orphaned ---------------------
+				SiteContent content = assignment.getSiteContent();
+
+				// --- Remove the assignment on the menu's side -----------------------------------
 				iterator.remove();
+				
+				if (content != null && content.getSiteMenuContent() != null) {
+					// --- Remove the assignment on the content's side ----------------------------
+	                content.getSiteMenuContent().remove(assignment); 
+	            }
 				session.remove(assignment);
+				this.deleteContentIfOrphaned(session, content);
 			}
 		}
 		// --- remove the menu itself -------------------------------------------------------------
@@ -1168,6 +1150,7 @@ public class WebAppDatabaseHandler {
 		try {
 			transaction = session.beginTransaction();
 
+			// --- Check if the element exists ----------------------------------------------------
 			SiteContent elementToBeDetached = session.get(SiteContent.class, elementId);
 			if (elementToBeDetached == null) {
 				throw new IllegalArgumentException("The specified element could not be found.");
@@ -1176,12 +1159,24 @@ public class WebAppDatabaseHandler {
 			Iterator<SiteMenuContent> iterator = elementToBeDetached.getSiteMenuContent().iterator();
 
 			while (iterator.hasNext()) {
+				
 				SiteMenuContent entry = iterator.next();
+				SiteContent content = entry.getSiteContent();
+				
+				// --- Find the SiteMenuContent with the specified menuId -------------------------
 				if (entry.getSiteMenu().getId().equals(menuId)) {
 					this.closeGapAfterRemovedContent(session, menuId, entry.getContentListPosition());
+					// --- Remove the assignment from the menu's side
 					iterator.remove();
+					
+					// --- Remove the assignment from the Content's side --------------------------
+					if (content.getSiteMenuContent() != null) {
+				        content.getSiteMenuContent().remove(entry);
+				    }
 					session.remove(entry);
 				}
+				// --- If the content is not assigned to any menu, delete it -----------------------
+				this.deleteContentIfOrphaned(session, content);
 			}
 			transaction.commit();
 
@@ -1236,7 +1231,9 @@ public class WebAppDatabaseHandler {
 				Iterator<SiteMenuContent> iterator = existingContent.getSiteMenuContent().iterator();
 				while (iterator.hasNext()) {
 					SiteMenuContent entry = iterator.next();
+					
 					if (entry.getSiteMenu().getId().equals(sourceMenuId)) {
+						
 						// --- Fix the positions of remaining content in the source menu ----------
 						this.closeGapAfterRemovedContent(session, sourceMenuId, entry.getContentListPosition());
 						// --- Remove the contentElement - sourceMenu relation --------------------
@@ -1562,6 +1559,23 @@ public class WebAppDatabaseHandler {
 			LOGGER.error(defaultMessage, ex);
 			throw new DatabaseException(defaultMessage, ex);
 		}
+	}
+	
+	/**
+	 * Checks if the specified content is assigned to any menu and deletes it if not.
+	 *
+	 * @param session the session
+	 * @param content the content
+	 */
+	private void deleteContentIfOrphaned(Session session, SiteContent content) {
+	    
+		if (content == null) {
+	        return;
+	    }
+	    
+	    if (content.getSiteMenuContent() == null || content.getSiteMenuContent().isEmpty()) {
+	        session.remove(content);
+	    }
 	}
 	
 }

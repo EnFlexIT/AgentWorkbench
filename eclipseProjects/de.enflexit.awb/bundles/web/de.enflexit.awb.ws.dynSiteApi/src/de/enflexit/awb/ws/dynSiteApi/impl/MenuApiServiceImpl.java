@@ -117,17 +117,11 @@ public class MenuApiServiceImpl extends MenuApiService {
     * @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#getMenus(java.lang.String, jakarta.ws.rs.core.SecurityContext)
     */
     @Override
-    public Response getMenus(String lang, SecurityContext securityContext) throws NotFoundException {
+    public Response getMenus(String lang, String forRole, SecurityContext securityContext) throws NotFoundException {
 	
     	String username = this.getAuthenticatedUsername(securityContext);
     	if (username == null) {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
-    	}
-    	
-    	// --- Get user roles to check if authorized, also to decide which menus to deliver -------
-    	Set<GroupRole> userRoles = UserPermissionHelper.getGroupRolesForUser(username);
-    	if (UserPermissionHelper.isUserInRole(userRoles, UserPermissionHelper.USER_ROLE) == false) {
-    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'User' required.")).build();
     	}
     	
     	// --- Validate the request ---------------------------------------------------------------
@@ -135,14 +129,35 @@ public class MenuApiServiceImpl extends MenuApiService {
             return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Parameter 'lang' is missing.")).build();
     	}
 
-    	// --- Collect Id's of the user's group roles to request their menus with -----------------
-    	Set<Integer> groupRoleIds = new HashSet<Integer>();
-    	userRoles.forEach(role -> groupRoleIds.add(role.getId()));
+    	// --- Get user roles to check if authorized, also to decide which menus to deliver -------
+    	Set<GroupRole> userRoles = UserPermissionHelper.getGroupRolesForUser(username);
+    	GroupRole filterRole = null;
+
+		if (forRole != null) {
+			for (GroupRole role : userRoles) {
+				if (role.getRole().equalsIgnoreCase(forRole)) {
+					filterRole = role;
+				}
+			}
+			
+			if (filterRole == null) {
+				// --- User is trying to get menus for a role he doesn't possess ---------------------
+				return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: User does not possess the requested role: " + forRole)).build();
+			}
+		}
     	
+    	Set<Integer> groupRoleIds = new HashSet<Integer>();
+    	if (forRole != null) {
+    		groupRoleIds.add(filterRole.getId());
+    	} else {
+    		
+    		// --- Collect Id's of the user's group roles to request their menus with -----------------
+    		userRoles.forEach(role -> groupRoleIds.add(role.getId()));
+    	}
     	try {
     		List<SiteMenu> dbMenuList;
     		// --- Get menus from database --------------------------------------------------------
-			dbMenuList = this.getDatabaseHandler().findMenusForUserRoles(groupRoleIds);
+			dbMenuList = this.getDatabaseHandler().findMenusForUserRoles(groupRoleIds, filterRole == null);
 			List<MenuItem> menuItemList = TypeConverter.toRestMenuItemList(dbMenuList, lang);
 			
 			// --- Prepare return type ------------------------------------------------------------
@@ -210,15 +225,11 @@ public class MenuApiServiceImpl extends MenuApiService {
     	}
     	
     	// --- Validate the request ---------------------------------------------------------------
-    	if (menuId == null || requestBody == null || requestBody.size() == 0) {
+    	if (menuId == null || requestBody == null) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID and required roles must be specified.")).build(); 		
     	}
 		try {
-			Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().findGroupRolesByNames(requestBody);
-			if (requiredRolesForAccess == null || requiredRolesForAccess.isEmpty() == true) {
-				throw new IllegalArgumentException("At least one valid group role has to be specified for the menu.");
-			}
-			
+			Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().findGroupRolesByNames(requestBody);  		
 			this.getDatabaseHandler().updateMenuPermissions(menuId, requiredRolesForAccess);
 			return Response.ok().build();
 

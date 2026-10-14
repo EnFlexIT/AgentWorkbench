@@ -39,7 +39,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the menu API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApi  {
 
    private final MenuApiService delegate;
@@ -134,9 +134,9 @@ public class MenuApi  {
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             }, tags={  }) 
-    public Response getMenus(@Schema(description = "the language locale to use") @QueryParam("lang")  String lang,@Context SecurityContext securityContext)
+    public Response getMenus(@Schema(description = "the language locale to use") @QueryParam("lang")  String lang,@Schema(description = "Optional parameter to only receive menus associated to that role") @QueryParam("forRole")  String forRole,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.getMenus(lang, securityContext);
+        return delegate.getMenus(lang, forRole, securityContext);
     }
 
     @jakarta.ws.rs.DELETE
