@@ -28,9 +28,6 @@ public class DataTransformationFilterRows extends AbstractDataTransformation {
 		
 		Table resultTable = null;
 		
-		System.out.println("Starting filter transformation...");
-		long timestampStart = System.currentTimeMillis();
-		
 		Table inputTable = this.getInputNodes().get(0).getDataTable();
 		
 		@SuppressWarnings("unchecked")
@@ -44,9 +41,6 @@ public class DataTransformationFilterRows extends AbstractDataTransformation {
 			resultTable = TableSawFilter.filter(inputTable, combinedFilters);
 		}
 		
-		long timestampEnd = System.currentTimeMillis();
-		
-		System.out.println("Done after " + (timestampEnd-timestampStart)/1000 + " seconds");
 		return resultTable;
 		
 	}

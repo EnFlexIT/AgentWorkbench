@@ -97,7 +97,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		this.add(this.getJToolBarMain(), BorderLayout.NORTH);
 		this.add(getJSplitPaneMainView(), BorderLayout.CENTER);
 		
-		// --- Hide the right component intitially --------
+		// --- Hide the right component initially ---------
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -202,7 +202,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			double yPos = -(NODE_RECTANGLE_HEIGHT/2);
 			visualizationViewer.getRenderContext().setVertexShapeTransformer(node -> new RoundRectangle2D.Double(xPos, yPos, NODE_RECTANGLE_WIDTH, NODE_RECTANGLE_HEIGHT, NODE_RECTANGLE_ARC, NODE_RECTANGLE_ARC));
 			visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape<DataTableNode, DataTransformationEdge>(this.getGraphController().getTransformationGraph()).new Line());
-			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> node.getLabelText());
+			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> getLabelRendererHTMLString(node.getLabelText()));
 			visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 			
 			// --- Configure mouse interactions -----------
@@ -519,6 +519,25 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		PluggableGraphMouse graphMouse = new PluggableGraphMouse();
 		graphMouse.add(new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, 1.1f, 0.9f));
 		return graphMouse;
+	}
+	
+	private String getLabelRendererHTMLString(String labelString) {
+		return "<html><div style='width:130px; text-align:center;'>"
+		        + escapeHtml(labelString)
+		        + "</div></html>";
+	}
+	
+	private static String escapeHtml(String text) {
+	    if (text == null) {
+	        return "";
+	    }
+
+	    return text
+	        .replace("&", "&amp;")
+	        .replace("<", "&lt;")
+	        .replace(">", "&gt;")
+	        .replace("\"", "&quot;")
+	        .replace("'", "&#39;");
 	}
 	
 }

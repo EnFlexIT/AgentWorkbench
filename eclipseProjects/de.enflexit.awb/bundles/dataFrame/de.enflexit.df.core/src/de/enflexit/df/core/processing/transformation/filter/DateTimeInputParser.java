@@ -12,7 +12,7 @@ public class DateTimeInputParser {
 
 	// --- Define the accepted date formats -----------
 	private static final List<DateTimeFormatter> DATE_TIME_FORMATS = List.of(formatter("dd.MM.uuuu HH:mm:ss"),
-			formatter("dd.MM.uuuu HH:mm"));
+			formatter("dd.MM.uuuu HH:mm"), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
 	/**
 	 * Instantiates a new date time input parser.
