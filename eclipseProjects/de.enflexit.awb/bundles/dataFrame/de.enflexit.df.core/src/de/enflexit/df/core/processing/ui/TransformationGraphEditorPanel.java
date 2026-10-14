@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -19,7 +21,6 @@ import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
-import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationDialog;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeDataSource;
@@ -47,7 +48,7 @@ import javax.swing.JSplitPane;
  * The Class JPanelTransformationGraphEditor.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class TransformationGraphEditorPanel extends JPanel implements ActionListener, GraphEventListener<DataTableNode, DataTransformationEdge> {
+public class TransformationGraphEditorPanel extends JPanel implements ActionListener, GraphEventListener<DataTableNode, DataTransformationEdge>, PropertyChangeListener {
 	
 	private static final long serialVersionUID = 3869719655631231629L;
 	
@@ -78,7 +79,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private VisualizationViewer<DataTableNode, DataTransformationEdge> visualizationViewer;
 	private JSplitPane jSplitPaneMainView;
 	
-	private Object currentlySelectedGraphElement;
+	private Object selectedGraphElement;
 	
 	/**
 	 * Instantiates a new j panel transformation graph editor.
@@ -173,6 +174,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private DataTransformationConfigurationPanel getTransformationPanel() {
 		if (transformationPanel==null) {
 			transformationPanel = new DataTransformationConfigurationPanel(this);
+			transformationPanel.addChangeListener(this);
 		}
 		return transformationPanel;
 	}
@@ -253,7 +255,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		if (ae.getSource()==this.getJButtonAddDataSource()) {
 			this.showDataSourceSelectionDialog();
 		} else if (ae.getSource()==this.getjButtonAddDataTransformation()) {
-			this.showDataTransformationConfigurationDialog();
+			this.transformationPanel = null;
+			this.showEdgeDetails(null);
 		} else if (ae.getSource()==this.getJButtonRemove()) {
 			this.removeSelectedElement();
 		} else if (ae.getSource()==this.getJButtonVerify()) {
@@ -278,32 +281,16 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	}
 	
 	/**
-	 * Shows the data transformation configuration dialog.
-	 */
-	private void showDataTransformationConfigurationDialog() {
-		Window owner = OwnerDetection.getOwnerWindowForComponent(this.getJButtonAddDataSource());
-		DataTransformationConfigurationDialog transformationDialog = new DataTransformationConfigurationDialog(owner, this);
-		
-		Point buttonLocation = this.getjButtonAddDataTransformation().getLocationOnScreen();
-		Double dialogPositionX = buttonLocation.getX() + this.getjButtonAddDataTransformation().getWidth();
-		Double dialogPositionY = buttonLocation.getY();
-		
-		transformationDialog.setLocation(dialogPositionX.intValue(), dialogPositionY.intValue());
-		transformationDialog.setVisible(true);
-		transformationDialog.requestFocus();
-	}
-	
-	/**
 	 * Removes the currently selected element from the transformation graph.
 	 */
 	private void removeSelectedElement() {
-		if (this.currentlySelectedGraphElement!=null) {
-			if (this.currentlySelectedGraphElement instanceof DataTableNodeDataSource) {
-				this.removeDataSourceNode((DataTableNodeDataSource) this.currentlySelectedGraphElement);
-			} else if (this.currentlySelectedGraphElement instanceof DataTableNodeTransformationResult) {
-				this.removeDataTransformation((DataTableNodeTransformationResult) this.currentlySelectedGraphElement);
-			} else if (this.currentlySelectedGraphElement instanceof DataTransformationEdge) {
-				this.removeDataTransformation((DataTransformationEdge) this.currentlySelectedGraphElement);
+		if (this.selectedGraphElement!=null) {
+			if (this.selectedGraphElement instanceof DataTableNodeDataSource) {
+				this.removeDataSourceNode((DataTableNodeDataSource) this.selectedGraphElement);
+			} else if (this.selectedGraphElement instanceof DataTableNodeTransformationResult) {
+				this.removeDataTransformation((DataTableNodeTransformationResult) this.selectedGraphElement);
+			} else if (this.selectedGraphElement instanceof DataTransformationEdge) {
+				this.removeDataTransformation((DataTransformationEdge) this.selectedGraphElement);
 			}
 		} 
 	}
@@ -318,7 +305,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			JOptionPane.showMessageDialog(this, "The selected node is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the transformation first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
 		} else {
 			this.getGraphController().removeDataTableNode(dataSourceTableNode);
-			this.currentlySelectedGraphElement = null;
+			this.selectedGraphElement = null;
 			this.getJSplitPaneMainView().setDividerLocation(1.0);
 		}
 	}
@@ -342,7 +329,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			JOptionPane.showMessageDialog(this, "The result of the selected transformation is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the subsequent transformation(s) first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
 		} else {
 			this.getGraphController().removeDataTransformation(resultNode);
-			this.currentlySelectedGraphElement = null;
+			this.selectedGraphElement = null;
 			this.getJSplitPaneMainView().setDividerLocation(1.0);
 		}
 	}
@@ -449,22 +436,30 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		
 		if (graphElement==null) {
 			// --- Clear selection, hide details panel --------------
-			this.currentlySelectedGraphElement = null;
+			this.selectedGraphElement = null;
 			this.hideDetailsPanel();
 		} else if (graphElement instanceof DataTableNode node) {
 			// --- Show the details for the selected node -----------
-			this.currentlySelectedGraphElement = node;
+			this.selectedGraphElement = node;
 			this.showNodeDetails(node);
 			
 		} else if (graphElement instanceof DataTransformationEdge edge) {
 			// --- Show the details for the selected edge -----------
-			this.currentlySelectedGraphElement = edge;
+			this.selectedGraphElement = edge;
 			this.showEdgeDetails(edge);
 			
 		} else {
 			// --- Unexpected type ----------------------------------
 			throw new IllegalArgumentException("Unsupported graph element type: " + graphElement.getClass().getName());
 		}
+	}
+	
+	/**
+	 * Gets the selected graph element.
+	 * @return the selected graph element
+	 */
+	public Object getSelectedGraphElement() {
+		return this.selectedGraphElement;
 	}
 	
 	/**
@@ -498,17 +493,15 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * @param edge the edge
 	 */
 	private void showEdgeDetails(DataTransformationEdge edge) {
-		AbstractDataTransformation transformationToShow = edge.getDataTransformation();
-		if (transformationToShow!=null) {
-			TransformationGraphEditorPanel.this.getTransformationPanel().setDataTransformation(transformationToShow);
-			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTransformationPanel());
-			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.67);
-		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] No transformation defined!");
-			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(1.0);
+		if (edge!=null) {
+			AbstractDataTransformation transformationToShow = edge.getDataTransformation();
+			if (transformationToShow!=null) {
+				TransformationGraphEditorPanel.this.getTransformationPanel().setDataTransformation(transformationToShow);
+				TransformationGraphEditorPanel.this.getJButtonRemove().setEnabled(true);
+			}
 		}
-		
-		TransformationGraphEditorPanel.this.getJButtonRemove().setEnabled(true);
+		TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTransformationPanel());
+		TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.67);
 	}
 	
 	/**
@@ -521,12 +514,22 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		return graphMouse;
 	}
 	
+	/**
+	 * Creates a HTML version of the label text for centered display with line breaks.
+	 * @param labelString the label string
+	 * @return the label renderer HTML string
+	 */
 	private String getLabelRendererHTMLString(String labelString) {
 		return "<html><div style='width:130px; text-align:center;'>"
 		        + escapeHtml(labelString)
 		        + "</div></html>";
 	}
 	
+	/**
+	 * Escapes special characters for HTML.
+	 * @param text the original text
+	 * @return the modified text
+	 */
 	private static String escapeHtml(String text) {
 	    if (text == null) {
 	        return "";
@@ -538,6 +541,26 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	        .replace(">", "&gt;")
 	        .replace("\"", "&quot;")
 	        .replace("'", "&#39;");
+	}
+
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TRANSFORMATION_CREATED)) {
+			// --- Add the new transformation to the graph ----------
+			AbstractDataTransformation transformation = (AbstractDataTransformation) pce.getNewValue();
+			this.addNewDataTransformation(transformation);
+			this.setSelectedGraphElement(transformation.getOutputNode());
+		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TRANSFORMATION_MODIFIED)) {
+			// --- Select the output node to show the result --------
+			AbstractDataTransformation transformation = (AbstractDataTransformation) pce.getNewValue();
+			this.getGraphController().transformationModified(transformation);
+			this.setSelectedGraphElement(transformation.getOutputNode());
+		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TRANSFORMATION_CANCELED)) {
+			this.hideDetailsPanel();
+		}
 	}
 	
 }

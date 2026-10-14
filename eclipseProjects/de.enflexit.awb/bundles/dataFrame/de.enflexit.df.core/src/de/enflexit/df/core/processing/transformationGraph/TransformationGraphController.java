@@ -3,8 +3,10 @@ package de.enflexit.df.core.processing.transformationGraph;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -140,5 +142,46 @@ public class TransformationGraphController {
 		}
 		return null;
 	}
+	
+	/**
+	 * Notifies the transformation graph controller about a modified transformation.
+	 * @param transformation the transformation
+	 */
+	public void transformationModified(AbstractDataTransformation transformation) {
+		
+		// --- Find all transformations that might be affected by the change ------- ----
+		ArrayList<AbstractDataTransformation> dependentTransformations = new ArrayList<AbstractDataTransformation>();
+		dependentTransformations.addAll(this.findDependentTransformations(transformation));
+		
+		// --- Reset the transformation results, since they might be outdated ----------- 
+		for (AbstractDataTransformation resetTransformation : dependentTransformations) {
+			resetTransformation.resetResult();
+		}
+	}
+	
+	/**
+	 * Finds all subsequent transformations that depend on the result of the provided transformations, directly or indirectly.
+	 * @param transformation the transformation
+	 * @return the list of dependent transformations
+	 */
+	private ArrayList<AbstractDataTransformation> findDependentTransformations(AbstractDataTransformation transformation){
+		
+		HashSet<AbstractDataTransformation> dependentTransformaitons = new HashSet<AbstractDataTransformation>();
+		
+		// --- Check all defined transformations ------------------------------
+		for (DataTransformationEdge edge : this.getTransformationGraph().getEdges()) {
+			AbstractDataTransformation edgeTransformation = edge.getDataTransformation();
+			
+			// --- Direct dependency to the transformation in question --------
+			if (edgeTransformation.getInputNodes().contains(transformation.getOutputNode())) {
+				dependentTransformaitons.add(edgeTransformation);
+				// --- Also find dependencies for this transformation, since they are indirect dependencies
+				dependentTransformaitons.addAll(this.findDependentTransformations(edgeTransformation));
+			}
+		}
+		
+		return new ArrayList<AbstractDataTransformation>(dependentTransformaitons);
+	}
+	
 
 }

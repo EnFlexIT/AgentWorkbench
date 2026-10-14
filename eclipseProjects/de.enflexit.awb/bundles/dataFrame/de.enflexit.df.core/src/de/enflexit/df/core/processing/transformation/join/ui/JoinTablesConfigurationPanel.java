@@ -153,9 +153,9 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 	public Map<String, Object> getConfiguredParameters() {
 
 		// --- Collect the selected join columns for all tables -----
-		HashMap<Table, Column<?>> joinColumnsMap = new HashMap<Table, Column<?>>();
+		HashMap<DataTableNode, Column<?>> joinColumnsMap = new HashMap<DataTableNode, Column<?>>();
 		for (int i=0; i<this.getTableSelectionModel().getRowCount(); i++) {
-			Table joinTable = ((DataTableNode) this.getTableSelectionModel().getValueAt(i, 0)).getDataTable();
+			DataTableNode joinTable = (DataTableNode) this.getTableSelectionModel().getValueAt(i, 0);
 			Column<?> joinColumn = (Column<?>) this.getTableSelectionModel().getValueAt(i, 1);
 			joinColumnsMap.put(joinTable, joinColumn);
 		}

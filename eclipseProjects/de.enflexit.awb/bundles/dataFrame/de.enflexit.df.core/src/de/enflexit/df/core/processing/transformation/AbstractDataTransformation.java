@@ -83,4 +83,10 @@ public abstract class AbstractDataTransformation {
 	 * @return the result table
 	 */
 	public abstract Table performTransformation();
+	
+	public void resetResult() {
+		if (this.getOutputNode()!=null) {
+			this.getOutputNode().resetResultTable();
+		}
+	}
 }

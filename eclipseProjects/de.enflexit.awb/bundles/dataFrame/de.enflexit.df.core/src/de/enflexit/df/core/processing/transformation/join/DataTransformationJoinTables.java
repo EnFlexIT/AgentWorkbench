@@ -7,6 +7,7 @@ import java.util.Map;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.join.TimeSeriesJoinHelper.InterpolationMode;
+import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
@@ -31,9 +32,16 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 		
 		if (checkConfigurationParameterParamType(joinColumnsParam)==true) {
 			@SuppressWarnings("unchecked")
-			HashMap<Table, Column<?>> joinTablesMap = (HashMap<Table, Column<?>>) this.getTransformationParameters().get(PARAM_NAME_JOIN_COLUMNS);
+			//TODO Temporary solution, should use table node identifiers and column names later 
+			HashMap<DataTableNode, Column<?>> tablesNodesMap = (HashMap<DataTableNode, Column<?>>) this.getTransformationParameters().get(PARAM_NAME_JOIN_COLUMNS);
 			
-			resultTable = this.joinTables(joinTablesMap);
+			// --- Convert to Map<Table, Column<?>> -----------------
+			HashMap<Table, Column<?>> tablesMap = new HashMap<Table, Column<?>>();
+			for(Map.Entry<DataTableNode, Column<?>> entry : tablesNodesMap.entrySet()) {
+				tablesMap.put(entry.getKey().getDataTable(), entry.getValue());
+			}
+			
+			resultTable = this.joinTables(tablesMap);
 			
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Required parameter " + PARAM_NAME_JOIN_COLUMNS + " is missing or of an unexpected data type (must be HashMap<Table, Column<?>>");
@@ -78,10 +86,13 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 			
 			return resultTable;
 		}
-		
-		
 	}
 	
+	/**
+	 * Checks if the join is executed on a temporal column.
+	 * @param joinTables the join tables
+	 * @return true, if is temporal join
+	 */
 	private boolean isTemporalJoin(Map<Table, Column<?>> joinTables){
 		Map.Entry<Table, Column<?>> first = joinTables.entrySet().iterator().next();
 		ColumnType columnType = first.getValue().type();
@@ -98,7 +109,7 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 		return (
 				joinConfigurationParameter!=null 
 				&& joinConfigurationParameter instanceof HashMap<?, ?> hm 
-				&& hm.keySet().stream().allMatch(Table.class::isInstance) 
+				&& hm.keySet().stream().allMatch(DataTableNode.class::isInstance) 
 				&& hm.values().stream().allMatch(Column.class::isInstance));
 	}
 

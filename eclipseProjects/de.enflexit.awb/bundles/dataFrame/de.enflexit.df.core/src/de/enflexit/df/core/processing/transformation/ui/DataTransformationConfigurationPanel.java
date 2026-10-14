@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,6 +31,7 @@ import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilter
 import de.enflexit.df.core.processing.transformation.join.DataTransformationServiceJoinTables;
 import de.enflexit.df.core.processing.transformation.join.ui.JoinTablesConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
 import de.enflexit.df.core.processing.ui.CheckBoxList;
 import de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent;
 import de.enflexit.df.core.processing.ui.CheckBoxListSelectionListener;
@@ -52,9 +54,15 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	
 	private static final long serialVersionUID = -2310318384700465180L;
 	
+	// --- Events for notifying the parameters panel about selection changes ------------
 	public static final String EVENT_ID_TABLE_SELECTED = "tableSelected";
 	public static final String EVENT_ID_TABLE_ADDED = "tableAdded";
 	public static final String EVENT_ID_TABLE_REMOVED = "tableRemoved";
+	
+	// --- Events for notifying about new or modified transformations -------------------
+	public static final String EVENT_ID_TRANSFORMATION_CREATED = "transformationCreated";
+	public static final String EVENT_ID_TRANSFORMATION_MODIFIED = "transformationModified";
+	public static final String EVENT_ID_TRANSFORMATION_CANCELED = "transformaitonCanceled";
 	
 	private JLabel jLabelSelectTransformation;
 	private JComboBox<DataTransformationService> jComboBoxSelectTransformation;
@@ -94,6 +102,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	public DataTransformationConfigurationPanel(TransformationGraphEditorPanel parentEditorPanel) {
 		this.parentEditorPanel = parentEditorPanel;
 		this.initialize();
+		this.setToCurrentSelectionFromGraph();
 	}
 	
 	/**
@@ -217,6 +226,63 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		return tableNodesList;
 	}
 	
+	private void setToCurrentSelectionFromGraph() {
+		// --- If an element was selected in the parent graph, pre-select it in the table selection list
+		Object currentSelectionFromGraph = this.parentEditorPanel.getSelectedGraphElement();
+		if (currentSelectionFromGraph!=null) {
+			// --- Find the corresponding table node ------------
+			DataTableNode currentSelectionNode = this.getTableNodeForGraphElement(currentSelectionFromGraph);
+			int selectedElementIndex = this.getListIndexForTableNode(currentSelectionNode);
+			
+			if (selectedElementIndex>=0) {
+				// --- Select it in the list --------------------
+				tableNodesList.getSelectionModel().setSelectionInterval(selectedElementIndex, selectedElementIndex);
+				// --- Trigger seleciton-related events ---------
+				if (this.getTableNodesList() instanceof RadioButtonList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_SELECTED, null, currentSelectionNode);
+				} else if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_ADDED, null, currentSelectionNode);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Gets the table node for the provided graph element.
+	 * @param graphElement the graph element
+	 * @return the corresponding table node
+	 */
+	private DataTableNode getTableNodeForGraphElement(Object graphElement) {
+		if (graphElement instanceof DataTableNode dtn) {
+			// --- Table node, use directly ---------------
+			return dtn;
+		} else if (graphElement instanceof DataTransformationEdge dte) {
+			// Transformation edge, use output node -------
+			return dte.getDataTransformation().getOutputNode();
+		} else {
+			// --- Invalid graph element type -------------
+			throw new IllegalArgumentException("Unexpected graph element type: " + graphElement.getClass().getName());
+		}
+	}
+	
+	/**
+	 * Gets the list index for the provided graph element.
+	 * @param graphElement the graph element
+	 * @return the list index, -1 if not found
+	 */
+	private int getListIndexForTableNode(DataTableNode tableNode) {
+		if (tableNode!=null) {
+			
+			// --- Find the corresponding index in the list model  ------------
+			for (int i=0; i<this.getTableNodesListModel().size(); i++) {
+				if (this.getTableNodesListModel().getElementAt(i)==tableNode) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
 	private CheckBoxList<DataTableNode> getTableNodesCheckBoxList() {
 		if (tableNodesCheckBoxList==null) {
 			tableNodesCheckBoxList = new CheckBoxList<DataTableNode>(this.getTableNodesListModel());
@@ -253,7 +319,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	private JPanel getParametersConfigurationPanel() {
 		if (parametersConfigurationPanel==null) {
 			parametersConfigurationPanel = new JPanel();
-			parametersConfigurationPanel.add(new JLabel("Dummy Panel"));
+			parametersConfigurationPanel.add(new JLabel("No transformation selected"));
 		}
 		return parametersConfigurationPanel;
 	}
@@ -339,22 +405,39 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 				
 				AbstractTransformationParameterConfigurationPanel configPanel = this.getParameterConfigurationPanel(selectedTransformation);
 				this.setParametersConfigurationPanel(configPanel);
+				this.setToCurrentSelectionFromGraph();
 			}
 			
 			this.getTableNodesList().setEnabled(this.isTransformationSelected());
 			this.getJButtonApply().setEnabled(this.isTransformationSelected());
 		} else if (ae.getSource()==this.getJButtonApply()) {
+			
+			String eventID = null;
 			if (this.dataTransformation==null) {
+				eventID = EVENT_ID_TRANSFORMATION_CREATED;
 				this.dataTransformation = this.getSelectedDataTransformation().getNewInstance();
+				this.dataTransformation.getInputNodes().addAll(this.getSelectedInputNodes());
+			} else {
+				eventID = EVENT_ID_TRANSFORMATION_MODIFIED;
 			}
 			
-			// --- Set the changed parameters to the transformation -----------
+			// --- Set the configured parameters to the transformation --------
 			this.dataTransformation.getTransformationParameters().clear();
 			this.dataTransformation.setTransformationParameters(this.getConfiguredTransformationParameters());
 			
 			// --- Reset the results table, if already existing ---------------
 			if (this.dataTransformation.getOutputNode()!=null) {
-				this.dataTransformation.getOutputNode().resetDataTable();
+				this.dataTransformation.getOutputNode().resetResultTable();
+			}
+			
+			this.getPropertyChangeSupport().firePropertyChange(eventID, null, this.dataTransformation);
+		} else if (ae.getSource()==this.getJButtonCancel()) {
+			if (this.dataTransformation==null) {
+				// --- Creating a new transformation was canceled, notify the parent UI to close the panel
+				this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TRANSFORMATION_CANCELED, null, null);
+			} else {
+				// --- Editing an existing transformation was canceled, replace UI contents with the original values. 
+				this.setModelToForm(this.dataTransformation);
 			}
 		}
 	}
@@ -464,11 +547,31 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		}
 	}
 	
+	/**
+	 * Gets the property change support.
+	 * @return the property change support
+	 */
 	private PropertyChangeSupport getPropertyChangeSupport() {
 		if (propertyChangeSupport==null) {
 			propertyChangeSupport = new PropertyChangeSupport(this);
 		}
 		return propertyChangeSupport;
+	}
+	
+	/**
+	 * Adds a change listener.
+	 * @param changeListener the change listener
+	 */
+	public void addChangeListener(PropertyChangeListener changeListener) {
+		this.getPropertyChangeSupport().addPropertyChangeListener(changeListener);
+	}
+	
+	/**
+	 * Removes a change listener.
+	 * @param changeListener the change listener
+	 */
+	public void removeChangeListener(PropertyChangeListener changeListener) {
+		this.getPropertyChangeSupport().removePropertyChangeListener(changeListener);
 	}
 
 	/**
@@ -494,25 +597,29 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	 * @param transformation the transformation
 	 */
 	private void setModelToForm(AbstractDataTransformation transformation) {
-		// --- Set the corresponding transformation -------
-		for (int i=0; i<this.getDataTransformationComboBoxModel().getSize(); i++) {
-			DataTransformationService transformaitonService = this.getDataTransformationComboBoxModel().getElementAt(i);
-			if (transformaitonService!=null && transformaitonService.getName().equals(transformation.getTransformationName())) {
-				this.getJComboBoxSelectTransformation().setSelectedIndex(i);
-				
-				// --- Cannot change the type of an existing transformation
-				this.getJComboBoxSelectTransformation().setEnabled(false);
-			}
-		}
-		if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
-			this.getTableNodesCheckBoxList().setSelectedItems(transformation.getInputNodes());
-		} else if (this.getTableNodesList() instanceof RadioButtonList<DataTableNode>) {
-			this.getTableNodesRadioButtonList().setSelectedItem(transformation.getInputNodes().get(0));
-		}
-		// --- Cannot change the input tables for an existing transformation --
-		this.getTableNodesList().setEnabled(false);
 		
-		((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).setConfiguredParameters(transformation.getTransformationParameters());
+		if (transformation!=null) {
+			// --- Set the corresponding transformation -------
+			for (int i=0; i<this.getDataTransformationComboBoxModel().getSize(); i++) {
+				DataTransformationService transformaitonService = this.getDataTransformationComboBoxModel().getElementAt(i);
+				if (transformaitonService!=null && transformaitonService.getName().equals(transformation.getTransformationName())) {
+					this.getJComboBoxSelectTransformation().setSelectedIndex(i);
+					
+					// --- Cannot change the type of an existing transformation
+					this.getJComboBoxSelectTransformation().setEnabled(false);
+				}
+			}
+			if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
+				this.getTableNodesCheckBoxList().setSelectedItems(transformation.getInputNodes());
+			} else if (this.getTableNodesList() instanceof RadioButtonList<DataTableNode>) {
+				this.getTableNodesRadioButtonList().setSelectedItem(transformation.getInputNodes().get(0));
+			}
+			// --- Cannot change the input tables for an existing transformation --
+			this.getTableNodesList().setEnabled(false);
+			
+			((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).setConfiguredParameters(transformation.getTransformationParameters());
+		}
+		
 		
 	}
 	

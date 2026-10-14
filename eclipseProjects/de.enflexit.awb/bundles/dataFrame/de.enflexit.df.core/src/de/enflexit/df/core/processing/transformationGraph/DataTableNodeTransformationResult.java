@@ -48,7 +48,7 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	/**
 	 * Resets the data table, e.g. after changing transformation parameters.
 	 */
-	public void resetDataTable() {
+	public void resetResultTable() {
 		this.dataTable = null;
 	}
 
