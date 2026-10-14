@@ -20,12 +20,12 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public abstract class MenuApiService {
     public abstract Response assignContentToMenu(Integer menuId,Integer elementId,AssignContentToMenuRequest assignContentToMenuRequest,SecurityContext securityContext) throws NotFoundException;
     public abstract Response createMenu(CreateMenuRequest createMenuRequest,SecurityContext securityContext) throws NotFoundException;
     public abstract Response deleteMenu(Integer menuId,SecurityContext securityContext) throws NotFoundException;
-    public abstract Response getMenus(String lang,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response getMenus(String lang,String forRole,SecurityContext securityContext) throws NotFoundException;
     public abstract Response removeAssignment(Integer menuId,Integer elementId,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateAssignmentAndPosition(UpdateContentAssignmentRequest updateContentAssignmentRequest,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateMenu(Integer menuId,MenuItem menuItem,SecurityContext securityContext) throws NotFoundException;

@@ -3,7 +3,7 @@ package de.enflexit.awb.ws.dynSiteApi.gen;
 /**
  * The exception that can be used to store the HTTP status code returned by an API response.
  */
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-12T15:37:24.667226900+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ApiException extends Exception {
     /** The HTTP status code. */
     private int code;

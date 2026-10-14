@@ -33,7 +33,7 @@ public class UserPermissionHelper {
 		
 		if (userName == null) return Collections.emptySet();
 		try {
-			Set<GroupRole> userRoles = UserPermissionHelper.getDatabaseHandler().getGroupRolesForUser(userName);
+			Set<GroupRole> userRoles = UserPermissionHelper.getDatabaseHandler().getUserManagementDatabaseHandler().getFrontendUserRoles(userName);
 			return userRoles;
 			
 		} catch (Exception ex) {

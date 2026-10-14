@@ -1,13 +1,18 @@
 package de.enflexit.db.userManagement;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
+import de.enflexit.db.userManagement.dataModel.GroupRole;
 import de.enflexit.db.userManagement.dataModel.User;
 import de.enflexit.db.userManagement.dataModel.UserRole;
+import jakarta.persistence.TypedQuery;
 
 
 /**
@@ -226,24 +231,98 @@ public class UserManagementDatabaseHandler {
 	
 	
 	public List<String> getUserRoles() {
-		List<String> roles = this.getBackendUserRoles();
-		roles.addAll(this.getFrontendUserRoles());
-		return roles;
-	}
-	
-	public List<String> getBackendUserRoles() {
-		
 		List<String> roles = null;
+		return roles;
+	}
+	
+	public Set<UserRole> getBackendUserRoles(String userName) {
+		
+		Set<UserRole> roles = null;
 		
 		return roles;
 	}
 	
-	public List<String> getFrontendUserRoles() {
-		
-		List<String> roles = null;
-		
-		return roles;
+	/**
+	 * Returns all unique group roles the specified user has in any group.
+	 *
+	 * @param userName the user name
+	 * @return the group roles for user
+	 */
+	public Set<GroupRole> getFrontendUserRoles(String userName) {
+
+		if (userName == null || userName.isBlank() == true)
+			return new HashSet<>();
+
+		Session session = this.getSession();
+		if (session != null) {
+
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				String sql = "SELECT DISTINCT ugr.id_group_role, " 
+							+ "ugr.role " 
+							+ "FROM um_group_role ugr "
+							+ "INNER JOIN um_user_group_roles uugr " 
+							+ "ON ugr.id_group_role = uugr.id_group_role "
+							+ "INNER JOIN um_user uu " 
+							+ "ON uugr.id_user = uu.id_user " 
+							+ "WHERE uu.name = :userName ";
+
+				NativeQuery<GroupRole> query = session.createNativeQuery(sql, GroupRole.class);
+				query.setParameter("userName", userName);
+
+				List<GroupRole> userGroupRoles = query.getResultList();
+				transaction.commit();
+
+				return new HashSet<>(userGroupRoles);
+
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				return new HashSet<>();
+
+			} finally {
+				session.clear();
+			}
+		}
+		return new HashSet<>();
 	}
 	
+	/**
+	 * Find group roles by names.
+	 *
+	 * @param roleNames the role names
+	 * @return the sets the
+	 */
+	public Set<GroupRole> findGroupRolesByNames(List<String> roleNames) {
+		
+		if (roleNames == null || roleNames.isEmpty() == true) {
+			return new HashSet<>();
+		}
+
+		Session session = this.getSession();
+		
+		if (session != null) {
+
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				String jpql = "SELECT gr FROM GroupRole gr WHERE gr.role IN :roleNames";
+
+				TypedQuery<GroupRole> query = session.createQuery(jpql, GroupRole.class);
+				query.setParameter("roleNames", roleNames);
+				List<GroupRole> userGroupRoles = query.getResultList();
+				transaction.commit();
+				return new HashSet<GroupRole>(userGroupRoles);
+
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				return new HashSet<>();
+
+			} finally {
+				session.clear();
+			}
+		}
+		return new HashSet<>();
+	}
 	
 }
