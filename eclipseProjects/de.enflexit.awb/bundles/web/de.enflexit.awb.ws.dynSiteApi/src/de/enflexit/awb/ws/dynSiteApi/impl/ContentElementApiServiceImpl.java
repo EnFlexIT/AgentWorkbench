@@ -108,10 +108,6 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	if (username == null) {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
-		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInFrontendRole(username, UserPermissionHelper.USER_ROLE) == false) {
-    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'User' required.")).build();
-    	}
     	
     	// --- Validate the request --------------------------------------------------------------- 	
     	if (elementID == null) {
