@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-24T17:28:01.535014700+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-14T14:23:14.795417200+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class UserApiServiceImpl extends UserApiService {
     @Override
     public Response changePassword(PasswordChange passwordChange, SecurityContext securityContext) throws NotFoundException {
@@ -29,6 +29,11 @@ public class UserApiServiceImpl extends UserApiService {
     }
     @Override
     public Response getSessionTime(SecurityContext securityContext) throws NotFoundException {
+        // do some magic!
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    }
+    @Override
+    public Response getUserRoles(SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }

@@ -1,11 +1,13 @@
 package de.enflexit.awb.ws.restapi.impl;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.eclipse.jetty.security.UserPrincipal;
 import org.eclipse.jetty.security.openid.OpenIdUserPrincipal;
 
 import de.enflexit.awb.ws.core.ServletSecurityConfiguration;
+import de.enflexit.awb.ws.core.db.WebAppDatabaseHandler;
 import de.enflexit.awb.ws.core.security.jwt.JwtPrincipal;
 import de.enflexit.awb.ws.core.security.jwt.JwtSingleUserSecurityService.JwtParameter;
 import de.enflexit.awb.ws.core.session.UserSession;
@@ -190,6 +192,22 @@ public class UserApiImpl extends UserApiService {
 		// --- Nothing to do here ! ---
 		return null;
 	}
-	
+
+
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.restapi.gen.UserApiService#getUserRoles(jakarta.ws.rs.core.SecurityContext)
+	*/
+	@Override
+	public Response getUserRoles(SecurityContext securityContext) throws NotFoundException {
+		
+		Principal principal = securityContext.getUserPrincipal();
+		if (principal==null) {
+			String errMsg = "Could not find any principal information.";
+			return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
+		}
+		
+		List<String> userRoles = new WebAppDatabaseHandler().getUserManagementDatabaseHandler().getUserRoles(principal.getName());
+		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(userRoles).build();
+	}
 
 }

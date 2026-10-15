@@ -68,7 +68,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	
     	// --- Try to persist the new menu and return the resulting id or error -------------------
     	try {
-    		Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().findGroupRolesByNames(createMenuRequest.getAllowedRoles());
+    		Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().getUserManagementDatabaseHandler().findGroupRolesByNames(createMenuRequest.getAllowedRoles());
     		this.getDatabaseHandler().persistNewMenu(newMenu, requiredRolesForAccess);
     		return Response.status(Status.CREATED).entity(new CreateMenu201Response().menuId(newMenu.getId())).build();
 			
@@ -134,30 +134,38 @@ public class MenuApiServiceImpl extends MenuApiService {
     	GroupRole filterRole = null;
 
 		if (forRole != null) {
+			// --- A filter was specified look for a match in the clients roles -------------------
 			for (GroupRole role : userRoles) {
 				if (role.getRole().equalsIgnoreCase(forRole)) {
+					// --- The client actually possesses the role he wants to filter by -----------
 					filterRole = role;
 				}
 			}
 			
 			if (filterRole == null) {
-				// --- User is trying to get menus for a role he doesn't possess ---------------------
+				// --- Client is trying to get menus for a role he doesn't possess ----------------
 				return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: User does not possess the requested role: " + forRole)).build();
 			}
 		}
     	
     	Set<Integer> groupRoleIds = new HashSet<Integer>();
     	if (forRole != null) {
+    		// --- A filter was specified, only use the ID of the filter role ---------------------
     		groupRoleIds.add(filterRole.getId());
     	} else {
     		
-    		// --- Collect Id's of the user's group roles to request their menus with -----------------
+    		// --- No filter, collect all the users group role ID's -------------------------------
     		userRoles.forEach(role -> groupRoleIds.add(role.getId()));
     	}
+    	
     	try {
     		List<SiteMenu> dbMenuList;
+    		
+    		// --- Include menus without group restrictions if no filter role was specified -------
+    		boolean includePublicMenus = filterRole == null;
+
     		// --- Get menus from database --------------------------------------------------------
-			dbMenuList = this.getDatabaseHandler().findMenusForUserRoles(groupRoleIds, filterRole == null);
+			dbMenuList = this.getDatabaseHandler().getMenusForUserRoles(groupRoleIds, includePublicMenus);
 			List<MenuItem> menuItemList = TypeConverter.toRestMenuItemList(dbMenuList, lang);
 			
 			// --- Prepare return type ------------------------------------------------------------
@@ -229,7 +237,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID and required roles must be specified.")).build(); 		
     	}
 		try {
-			Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().findGroupRolesByNames(requestBody);  		
+			Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().getUserManagementDatabaseHandler().findGroupRolesByNames(requestBody);  		
 			this.getDatabaseHandler().updateMenuPermissions(menuId, requiredRolesForAccess);
 			return Response.ok().build();
 
@@ -363,7 +371,6 @@ public class MenuApiServiceImpl extends MenuApiService {
 		}
 		return securityContext.getUserPrincipal().getName();
 	}
-	
 
 	/**
 	 * Returns the database handler.

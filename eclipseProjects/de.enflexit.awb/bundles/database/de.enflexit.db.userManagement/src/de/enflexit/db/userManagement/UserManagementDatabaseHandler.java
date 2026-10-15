@@ -1,5 +1,6 @@
 package de.enflexit.db.userManagement;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -230,16 +231,77 @@ public class UserManagementDatabaseHandler {
 	
 	
 	
-	public List<String> getUserRoles() {
-		List<String> roles = null;
-		return roles;
+	/**
+	 * Returns the combined backend and frontend roles for the specified user.
+	 *
+	 * @param userName the user name
+	 * @return the user roles
+	 */
+	public List<String> getUserRoles(String userName) {
+		
+		if (userName == null || userName.isBlank() == true) {
+			return new ArrayList<>();
+		}
+	
+		Set<UserRole> backendRoles = this.getBackendUserRoles(userName);
+		Set<GroupRole> frontendRoles = this.getFrontendUserRoles(userName);
+
+		List<String> combinedRoles = new ArrayList<>();
+		for (UserRole role : backendRoles) {
+			combinedRoles.add(role.getRole());
+		}
+		for (GroupRole role : frontendRoles) {
+			combinedRoles.add(role.getRole());
+		}
+		
+		return combinedRoles;
 	}
 	
+	/**
+	 * Returns the backend user roles.
+	 *
+	 * @param userName the user name
+	 * @return the backend user roles
+	 */
 	public Set<UserRole> getBackendUserRoles(String userName) {
 		
-		Set<UserRole> roles = null;
+		if (userName == null || userName.isBlank() == true)
+			return new HashSet<>();
+
+		Session session = this.getSession();
+		if (session != null) {
+
+			Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				String sql = "SELECT uur.role,"
+						+ "uur.id_user_role "
+						+ "FROM  um_user uu "
+						+ "INNER JOIN  um_users_in_roles uuir "
+						+ "ON uu.id_user = uuir.id_user "
+						+ "INNER JOIN um_user_role uur "
+						+ "ON uuir.id_role = uur.id_user_role "
+						+ "WHERE uu.name = :userName"; 
+
+
+				NativeQuery<UserRole> query = session.createNativeQuery(sql, UserRole.class);
+				query.setParameter("userName", userName);
+
+				List<UserRole> userRoles = query.getResultList();
+				transaction.commit();
+
+				return new HashSet<>(userRoles);
+
+			} catch (Exception ex) {
+				this.doTransactionRollBack(transaction);
+				return new HashSet<>();
+
+			} finally {
+				session.clear();
+			}
+		}
 		
-		return roles;
+		return new HashSet<>();
 	}
 	
 	/**

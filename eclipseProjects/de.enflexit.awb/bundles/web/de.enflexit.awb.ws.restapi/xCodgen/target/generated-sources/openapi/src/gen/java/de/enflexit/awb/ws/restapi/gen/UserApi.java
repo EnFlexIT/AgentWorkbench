@@ -35,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the user API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-06-24T17:28:01.535014700+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-14T14:23:14.795417200+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class UserApi  {
 
    private final UserApiService delegate;
@@ -104,6 +104,20 @@ public class UserApi  {
     public Response getSessionTime(@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.getSessionTime(securityContext);
+    }
+
+    @jakarta.ws.rs.GET
+    @Path("/roles")
+    @Produces({ "application/json" })
+    @Operation(summary = "Get all roles the user is associated with", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "successfully fetched the requested user roles", content = 
+                @Content(schema = @Schema(implementation = String.class))),
+            },security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }, tags={ "user", }) 
+    public Response getUserRoles(@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.getUserRoles(securityContext);
     }
 
     @jakarta.ws.rs.GET
