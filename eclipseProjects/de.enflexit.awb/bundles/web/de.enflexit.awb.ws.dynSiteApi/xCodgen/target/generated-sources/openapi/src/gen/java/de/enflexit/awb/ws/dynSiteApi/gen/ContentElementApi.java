@@ -37,7 +37,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the contentElement API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-15T11:12:46.768264400+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class ContentElementApi  {
 
    private final ContentElementApiService delegate;
@@ -66,7 +66,7 @@ public class ContentElementApi  {
     @jakarta.ws.rs.POST
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @Operation(summary = "Create new content [Editor role]", description = "", responses = {
+    @Operation(summary = "Create a content element", description = "", responses = {
             @ApiResponse(responseCode = "201", description = "Content created", content = 
                 @Content(schema = @Schema(implementation = CreateContentElement201Response.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -85,7 +85,7 @@ public class ContentElementApi  {
 
     @jakarta.ws.rs.DELETE
     @Path("/{elementId}")
-    @Operation(summary = "Deletes the specified content element [Editor role]", description = "", responses = {
+    @Operation(summary = "Delete a content element", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The content element was deleted", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -105,7 +105,7 @@ public class ContentElementApi  {
     @jakarta.ws.rs.GET
     @Path("/{elementId}")
     @Produces({ "application/json" })
-    @Operation(summary = "Returns the content element for the specified Id [User role]", description = "", responses = {
+    @Operation(summary = "Get a content element", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "A single content element", content = 
                 @Content(schema = @Schema(implementation = AbstractSiteContent.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -125,7 +125,7 @@ public class ContentElementApi  {
     @jakarta.ws.rs.PUT
     @Path("/{elementId}")
     @Consumes({ "application/json" })
-    @Operation(summary = "Enables to update content elements [Editor role]", description = "", responses = {
+    @Operation(summary = "Update a content element", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The element was updated!", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 

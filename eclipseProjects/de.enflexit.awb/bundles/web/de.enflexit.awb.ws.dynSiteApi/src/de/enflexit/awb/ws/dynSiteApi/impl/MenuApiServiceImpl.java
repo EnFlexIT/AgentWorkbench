@@ -19,6 +19,7 @@ import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.UpdateContentAssignmentRequest;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.UpsertMenuTranslationRequest;
 import de.enflexit.awb.ws.dynSiteApi.security.UserPermissionHelper;
 import de.enflexit.db.userManagement.dataModel.GroupRole;
 import jakarta.ws.rs.core.Response;
@@ -41,7 +42,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
     	
@@ -92,7 +93,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
     	
@@ -130,7 +131,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	}
 
     	// --- Get user roles to check if authorized, also to decide which menus to deliver -------
-    	Set<GroupRole> userRoles = UserPermissionHelper.getGroupRolesForUser(username);
+    	Set<GroupRole> userRoles = UserPermissionHelper.getFrontendRolesFor(username);
     	GroupRole filterRole = null;
 
 		if (forRole != null) {
@@ -144,7 +145,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 			
 			if (filterRole == null) {
 				// --- Client is trying to get menus for a role he doesn't possess ----------------
-				return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: User does not possess the requested role: " + forRole)).build();
+				return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: User does not possess the specified group role: " + forRole)).build();
 			}
 		}
     	
@@ -190,7 +191,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
     	
@@ -228,7 +229,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
     	
@@ -260,7 +261,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
 		
@@ -292,7 +293,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
 		
@@ -326,14 +327,14 @@ public class MenuApiServiceImpl extends MenuApiService {
 	* @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#assignContentToMenu(java.lang.Integer, java.lang.Integer, de.enflexit.awb.ws.dynSiteApi.gen.model.AssignContentToMenuRequest, jakarta.ws.rs.core.SecurityContext)
 	*/
 	@Override
-	public Response assignContentToMenu(Integer menuID, Integer elementID, AssignContentToMenuRequest assignContentToMenuRequest, SecurityContext securityContext) throws NotFoundException {
+	public Response assignContentToMenu(Integer menuId, Integer elementId, AssignContentToMenuRequest assignContentToMenuRequest, SecurityContext securityContext) throws NotFoundException {
 	
     	String username = this.getAuthenticatedUsername(securityContext);
     	if (username == null) {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
 		
@@ -342,12 +343,12 @@ public class MenuApiServiceImpl extends MenuApiService {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Request body is missing")).build();
 		}
 
-		if (elementID == null || menuID == null) {
+		if (elementId == null || menuId == null) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Element ID and menu ID must be specified.")).build();
 		}
 
 		try {
-			this.getDatabaseHandler().assignContentToMenu(menuID, elementID, assignContentToMenuRequest.getPosition());
+			this.getDatabaseHandler().assignContentToMenu(menuId, elementId, assignContentToMenuRequest.getPosition());
 			return Response.ok().build();
 
 		} catch (IllegalArgumentException iae) {
@@ -359,6 +360,40 @@ public class MenuApiServiceImpl extends MenuApiService {
 		}
 	}
 
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#addTranslationToMenu(java.lang.Integer, de.enflexit.awb.ws.dynSiteApi.gen.model.AddTranslationToMenuRequest, jakarta.ws.rs.core.SecurityContext)
+	*/
+	@Override
+	public Response upsertMenuTranslation(Integer menuId, String locale, UpsertMenuTranslationRequest upsertMenuTranslationRequest, SecurityContext securityContext) throws NotFoundException {
+  
+		String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+		
+    	// --- Validate the request ---------------------------------------------------------------
+		if (upsertMenuTranslationRequest == null || menuId == null || locale == null || locale.isBlank() == true || upsertMenuTranslationRequest.getTranslatedCaption() == null) {
+			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID, locale and caption can't be null")).build();
+		}
+
+		try {
+			this.getDatabaseHandler().addTranslationToMenu(menuId, locale, upsertMenuTranslationRequest.getTranslatedCaption());
+			return Response.ok().build();
+
+		} catch (IllegalArgumentException iae) {
+			return Response.status(Status.BAD_REQUEST)
+					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
+
+		} catch (IOException | DatabaseException e) {
+			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
+		}
+	}
+
+	
 	/**
 	 * Returns the authenticated username.
 	 *
@@ -383,4 +418,6 @@ public class MenuApiServiceImpl extends MenuApiService {
 		}
 		return webAppDatabaseHandler;
 	}
+
+
 }

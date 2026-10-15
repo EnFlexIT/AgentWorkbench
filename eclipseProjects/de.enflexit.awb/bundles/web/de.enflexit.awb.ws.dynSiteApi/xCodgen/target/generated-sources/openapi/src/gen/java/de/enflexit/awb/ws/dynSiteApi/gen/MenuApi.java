@@ -17,6 +17,7 @@ import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.UpdateContentAssignmentRequest;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.UpsertMenuTranslationRequest;
 
 import java.util.Map;
 import java.util.List;
@@ -39,7 +40,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the menu API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-15T11:12:46.768264400+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApi  {
 
    private final MenuApiService delegate;
@@ -68,7 +69,7 @@ public class MenuApi  {
     @jakarta.ws.rs.PUT
     @Path("/{menuId}/contentElement/{elementId}")
     @Consumes({ "application/json" })
-    @Operation(summary = "Add the content element to the specified menu [Editor role]", description = "", responses = {
+    @Operation(summary = "Assign content to a menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "Content element was added to the menu", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -88,7 +89,7 @@ public class MenuApi  {
     @jakarta.ws.rs.POST
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
-    @Operation(summary = "Create a new menu [Editor role]", description = "", responses = {
+    @Operation(summary = "Create a new menu", description = "", responses = {
             @ApiResponse(responseCode = "201", description = "Menu created", content = 
                 @Content(schema = @Schema(implementation = CreateMenu201Response.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -107,7 +108,7 @@ public class MenuApi  {
 
     @jakarta.ws.rs.DELETE
     @Path("/{menuId}")
-    @Operation(summary = "Deletes the specified menu [Editor role]", description = "", responses = {
+    @Operation(summary = "Delete a menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The menu was deleted", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -126,7 +127,7 @@ public class MenuApi  {
 
     @jakarta.ws.rs.GET
     @Produces({ "application/json" })
-    @Operation(summary = "Enables to build-up the menu structure [User or Editor role]", description = "", responses = {
+    @Operation(summary = "Get available menu structure", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The menus to be seen by the current user", content = 
                 @Content(schema = @Schema(implementation = MenuList.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
@@ -141,7 +142,7 @@ public class MenuApi  {
 
     @jakarta.ws.rs.DELETE
     @Path("/{menuId}/contentElement/{elementId}")
-    @Operation(summary = "Remove a content element from a menu [Editor role]", description = "", responses = {
+    @Operation(summary = "Remove content assignment", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The assignment was removed", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -161,7 +162,7 @@ public class MenuApi  {
     @jakarta.ws.rs.PUT
     @Path("/contentElement/assignment")
     @Consumes({ "application/json" })
-    @Operation(summary = "Update menu assignment and content position [Editor role]", description = "", responses = {
+    @Operation(summary = "Update assignment and position", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "Assignment and position updated successfully", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -181,7 +182,7 @@ public class MenuApi  {
     @jakarta.ws.rs.PUT
     @Path("/{menuId}")
     @Consumes({ "application/json" })
-    @Operation(summary = "Enables to update a menu [Editor role]", description = "", responses = {
+    @Operation(summary = "Update a menu", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The menu was updated!", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -201,7 +202,7 @@ public class MenuApi  {
     @jakarta.ws.rs.PUT
     @Path("/{menuId}/permissions")
     @Consumes({ "application/json" })
-    @Operation(summary = "Set access roles for a menu [Editor role]", description = "", responses = {
+    @Operation(summary = "Set menu access roles", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The right was set", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = 
@@ -216,5 +217,25 @@ public class MenuApi  {
     public Response updateMenuPermissions(@Schema(description= "The unique Id of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description = "", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull  List<String> requestBody,@Context SecurityContext securityContext)
     throws NotFoundException {
         return delegate.updateMenuPermissions(menuId, requestBody, securityContext);
+    }
+
+    @jakarta.ws.rs.PUT
+    @Path("/{menuId}/translation/{locale}")
+    @Consumes({ "application/json" })
+    @Operation(summary = "Create or update a translation for a menu", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "Translation successfully created or updated", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            }, tags={  }) 
+    public Response upsertMenuTranslation(@Schema(description= "The unique Id of the menu", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("menuId") @NotNull  Integer menuId,@Schema(description= "The language code  (e.g. 'de', 'en')", requiredMode = Schema.RequiredMode.REQUIRED) @PathParam("locale") @NotNull  String locale,@Schema(description = "") @Valid  UpsertMenuTranslationRequest upsertMenuTranslationRequest,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.upsertMenuTranslation(menuId, locale, upsertMenuTranslationRequest, securityContext);
     }
 }

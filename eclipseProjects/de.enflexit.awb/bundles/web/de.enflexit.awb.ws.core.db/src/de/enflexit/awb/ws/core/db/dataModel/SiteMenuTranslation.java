@@ -33,6 +33,10 @@ public class SiteMenuTranslation implements Serializable {
 	private String captionTranslated;
 	
 
+	public void setSiteMenu(SiteMenu siteMenu) {
+		this.siteMenu = siteMenu;
+	}
+	
 	/**
 	 * Returns the locale.
 	 * @return the locale

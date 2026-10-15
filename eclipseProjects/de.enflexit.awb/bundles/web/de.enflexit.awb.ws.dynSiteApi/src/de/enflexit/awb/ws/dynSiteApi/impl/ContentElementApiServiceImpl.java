@@ -39,7 +39,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
     	
@@ -76,7 +76,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
     	
@@ -109,7 +109,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.USER_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInFrontendRole(username, UserPermissionHelper.USER_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'User' required.")).build();
     	}
     	
@@ -142,7 +142,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
 		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
     	}
     	

@@ -38,6 +38,7 @@ src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentText.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/SiteContentWithMenuPosition.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/UpdateContentAssignmentRequest.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/UpdateContentElementRequest.java
+src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/UpsertMenuTranslationRequest.java
 src/gen/java/de/enflexit/awb/ws/dynSiteApi/gen/model/ValueType.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/Bootstrap.java
 src/main/java/de/enflexit/awb/ws/dynSiteApi/gen/factories/ContentApiServiceFactory.java

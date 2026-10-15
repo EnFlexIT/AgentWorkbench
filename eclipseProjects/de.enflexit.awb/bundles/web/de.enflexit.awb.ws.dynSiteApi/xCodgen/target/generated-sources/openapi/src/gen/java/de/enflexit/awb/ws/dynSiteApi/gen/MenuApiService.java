@@ -10,6 +10,7 @@ import de.enflexit.awb.ws.dynSiteApi.gen.model.CreateMenuRequest;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.MenuList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.UpdateContentAssignmentRequest;
+import de.enflexit.awb.ws.dynSiteApi.gen.model.UpsertMenuTranslationRequest;
 
 import java.util.List;
 import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
@@ -20,7 +21,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-13T16:03:03.677731300+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-15T11:12:46.768264400+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public abstract class MenuApiService {
     public abstract Response assignContentToMenu(Integer menuId,Integer elementId,AssignContentToMenuRequest assignContentToMenuRequest,SecurityContext securityContext) throws NotFoundException;
     public abstract Response createMenu(CreateMenuRequest createMenuRequest,SecurityContext securityContext) throws NotFoundException;
@@ -30,4 +31,5 @@ public abstract class MenuApiService {
     public abstract Response updateAssignmentAndPosition(UpdateContentAssignmentRequest updateContentAssignmentRequest,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateMenu(Integer menuId,MenuItem menuItem,SecurityContext securityContext) throws NotFoundException;
     public abstract Response updateMenuPermissions(Integer menuId,List<String> requestBody,SecurityContext securityContext) throws NotFoundException;
+    public abstract Response upsertMenuTranslation(Integer menuId,String locale,UpsertMenuTranslationRequest upsertMenuTranslationRequest,SecurityContext securityContext) throws NotFoundException;
 }

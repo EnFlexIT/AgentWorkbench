@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +23,7 @@ import de.enflexit.awb.ws.core.db.dataModel.JettySession;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenuContent;
+import de.enflexit.awb.ws.core.db.dataModel.SiteMenuTranslation;
 import de.enflexit.awb.ws.core.exceptions.DatabaseException;
 import de.enflexit.db.userManagement.UserManagementDatabaseHandler;
 import de.enflexit.db.userManagement.dataModel.GroupRole;
@@ -418,107 +418,22 @@ public class WebAppDatabaseHandler {
 		return successful;
 	}
 
-	/**
-	 * Find group roles by names.
-	 *
-	 * @param roleNames the role names
-	 * @return the sets the
-	 * @throws IOException 
-	 * @throws DatabaseException 
-	 * @throws IllegalArgumentException 
-	 */
-	public Set<GroupRole> findGroupRolesByNames(List<String> roleNames) throws IOException, DatabaseException, IllegalArgumentException {
-	
-		if (roleNames == null) {
-			throw new IllegalArgumentException("roleNames can't be null");
-		}
-		if (roleNames.isEmpty() == true) {
-			return new HashSet<GroupRole>();
-		}
-		
-		Session session = this.getSession();
-		if (session == null) {
-	        throw new IOException("Could not obtain a valid database session.");
-	    }
-
-			Transaction transaction = null;
-			try {
-				transaction = session.beginTransaction();
-				String jpql = "SELECT gr FROM GroupRole gr WHERE gr.role IN :roleNames";
-				
-				TypedQuery<GroupRole> query = session.createQuery(jpql, GroupRole.class);
-				query.setParameter("roleNames", roleNames);
-				List<GroupRole> userGroupRoles = query.getResultList();
-				transaction.commit();
-				return new HashSet<GroupRole>(userGroupRoles);
-
-			} catch (Exception ex) {
-				this.doTransactionRollBack(transaction);
-				this.rethrowExpectedOrDatabaseException("Error while fetching roles by names" , ex);
-				return new HashSet<>();
-				
-			} finally {
-				session.clear();
-			}
-	}
-
-	/**
-	 * Returns the group roles the specified user has in the specified group.
-	 *
-	 * @param userName the user name
-	 * @param groupId the group id
-	 * @return the group roles for user
-	 * @throws IOException 
-	 * @throws DatabaseException 
-	 * @throws IllegalArgumentException 
-	 */
-	public Set<GroupRole> getGroupRolesForUser(String userName, Integer groupId) throws IOException, DatabaseException {
-	
-		if (userName == null || groupId == null) {
-			return new HashSet<>();
-		}
-		
-		Session session = this.getSession();
-		if (session == null) {
-			throw new IOException("Could not obtain a valid database session.");
-		}
-
-		Transaction transaction = null;
-		try {
-			transaction = session.beginTransaction();
-				String sql = "SELECT ugr.id_group_role, "
-						+ "ugr.role "
-						+ "FROM um_group_role ugr "
-						+ "INNER JOIN um_user_group_roles uugr "
-						+ "ON ugr.id_group_role = uugr.id_group_role "
-						+ "INNER JOIN um_user uu "
-						+ "ON uugr.id_user = uu.id_user "
-						+ "WHERE uu.name = :userName "
-						+ "AND uugr.id_group = :groupId";
-				
-			NativeQuery<GroupRole> query = session.createNativeQuery(sql, GroupRole.class);
-			query.setParameter("userName", userName);
-			query.setParameter("groupId", groupId);
-
-			List<GroupRole> userGroupRoles = query.getResultList();
-			transaction.commit();
-			return new HashSet<GroupRole>(userGroupRoles);
-
-		} catch (Exception ex) {
-			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while fetching group roles for user: " + userName, ex);
-			return new HashSet<>();
-
-		} finally {
-			session.clear();
-		}
-	}
 		
 	// --------------------------------------------------------------------------------------------
 	// --- Site Menu Operations -------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------
 
-	public List<SiteMenu> findMenusForUserRoles(Collection<Integer> userGroupRoleIds, boolean includePublicMenus) throws IOException, IllegalArgumentException, DatabaseException {
+	/**
+	 * Returns the menus which are visible for the specified roles. 
+	 *
+	 * @param userGroupRoleIds the user group role ids
+	 * @param includePublicMenus true if menus without group restrictions should be included
+	 * @return the menus for user roles
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws DatabaseException the database exception
+	 */
+	public List<SiteMenu> getMenusForUserRoles(Collection<Integer> userGroupRoleIds, boolean includePublicMenus) throws IOException, IllegalArgumentException, DatabaseException {
 		
 		if (userGroupRoleIds == null) {
 			return Collections.emptyList();
@@ -865,6 +780,74 @@ public class WebAppDatabaseHandler {
 		// --- remove the menu itself -------------------------------------------------------------
 		session.remove(menu);
 	}
+
+	/**
+	 * Adds the translation to the menu.
+	 *
+	 * @param menuId the menu id
+	 * @param locale the locale
+	 * @param translatedCaption the translated caption
+	 * @throws DatabaseException the database exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IllegalArgumentException the illegal argument exception
+	 */
+	public void addTranslationToMenu(Integer menuId, String locale, String translatedCaption) throws DatabaseException, IOException, IllegalArgumentException {
+		
+		if (menuId  == null || locale == null || locale.isBlank() == true || translatedCaption == null) {
+			throw new IllegalArgumentException("Menu Id, locale or translatedCaption are missing.");
+		}
+		
+		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}
+		
+		Transaction transaction = null;
+		try {
+			
+			transaction = session.beginTransaction();
+			
+			// --- Check if the specified menu existis --------------------------------------------
+			SiteMenu menuToUpdate = session.get(SiteMenu.class, menuId);
+			if (menuToUpdate == null) {
+				throw new IllegalArgumentException("The specified menu could not be found.");
+			}
+			
+			Set<SiteMenuTranslation> translations = menuToUpdate.getTranslations();
+			SiteMenuTranslation targetTranslation = null;
+			
+			for (SiteMenuTranslation translation : translations) {
+				if (translation.getLocale().equalsIgnoreCase(locale)) {
+					// --- There is already a translation for the locale  -------------------------
+					targetTranslation = translation;
+				}
+			}
+			
+			if (targetTranslation != null) {
+				// --- Translation exists already, just update the caption ------------------------
+				targetTranslation.setCaptionTranslated(translatedCaption);
+				
+			} else {
+				// --- There is currently no translation for the locale, add a new one ------------
+				targetTranslation = new SiteMenuTranslation();
+				targetTranslation.setSiteMenu(menuToUpdate);
+				targetTranslation.setLocale(locale);
+				targetTranslation.setCaptionTranslated(translatedCaption);
+				translations.add(targetTranslation);
+				session.persist(targetTranslation);
+			}
+			
+			transaction.commit();
+
+
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrDatabaseException("Error while updateing translation.", ex);
+
+		} finally {
+			session.clear();
+		}
+	}		
 	
 	// --------------------------------------------------------------------------------------------
 	// --- Site Content Operations ----------------------------------------------------------------
