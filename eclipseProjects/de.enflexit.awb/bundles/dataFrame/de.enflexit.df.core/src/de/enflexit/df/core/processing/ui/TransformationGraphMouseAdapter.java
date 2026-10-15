@@ -40,15 +40,17 @@ public class TransformationGraphMouseAdapter extends MouseAdapter {
 	@Override
 	public void mouseClicked(MouseEvent me) {
 		
+		// --- If currently dragged, ignore click event -------------
 		if (this.dragged==true) {
 			return;
 		}
 		
-		// --- Clicked on a node, show the corresponding table ------------
+		// --- Clicked on a node, show the corresponding table -------
 		DataTableNode nodeClicked = this.getVisViewer().getPickSupport().getVertex(this.getVisViewer().getGraphLayout(), me.getX(), me.getY());
 		if (nodeClicked!=null) {
 			this.graphEditorPanel.setSelectedGraphElement(nodeClicked);
 		} else {
+			// --- Clicked on an edge, show the corresponding transformation
 			DataTransformationEdge edgeClicked = this.getVisViewer().getPickSupport().getEdge(this.getVisViewer().getGraphLayout(), me.getX(), me.getY());
 			if (edgeClicked!=null) {
 				this.graphEditorPanel.setSelectedGraphElement(edgeClicked);
