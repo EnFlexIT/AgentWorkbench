@@ -174,8 +174,8 @@ public class RadioButtonList<E> extends JList<E> {
 			this.setText(this.listEntryStringFunction.apply(value));
 			this.setSelected(isSelected);
 
-			this.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
-			this.setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+			this.setBackground(list.getBackground());
+			this.setForeground(list.getForeground());
 
 			this.setFont(list.getFont());
 			this.setOpaque(true);

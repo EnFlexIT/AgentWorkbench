@@ -9,7 +9,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.JButton;
@@ -72,7 +71,6 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private DataController dataController;
 	private TransformationGraphController graphController;
 	
-	private DataTransformationTableViewPanel tableViewPanel;
 	private DataTransformationConfigurationPanel transformationPanel;
 	
 	private GraphZoomScrollPane graphZoomScrollPane;
@@ -165,12 +163,15 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		return graphZoomScrollPane;
 	}
 	
-	private DataTransformationTableViewPanel getTableViewPanel() {
-		if (tableViewPanel==null) {
-			tableViewPanel = new DataTransformationTableViewPanel();
-		}
-		return tableViewPanel;
+	/**
+	 * Creates a table details view panel for the provided table node.
+	 * @param tableNode the table node
+	 * @return the table view panel
+	 */
+	private DataTransformaitonTableDetailsViewPanel getTableDetailsViewPanel(DataTableNode tableNode) {
+		return new DataTransformaitonTableDetailsViewPanel(tableNode);
 	}
+	
 	private DataTransformationConfigurationPanel getTransformationPanel() {
 		if (transformationPanel==null) {
 			transformationPanel = new DataTransformationConfigurationPanel(this);
@@ -269,7 +270,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 */
 	private void showDataSourceSelectionDialog() {
 		Window owner = OwnerDetection.getOwnerWindowForComponent(this.getJButtonAddDataSource());
-		JDialogDataSourceSelection selectionDialog = new JDialogDataSourceSelection(owner, this, this.dataController);
+		DataSourceSelectionDialog selectionDialog = new DataSourceSelectionDialog(owner, this, this.dataController);
 		
 		Point buttonLocation = this.getJButtonAddDataSource().getLocationOnScreen();
 		Double dialogPositionX = buttonLocation.getX() + this.getJButtonAddDataSource().getWidth();
@@ -477,8 +478,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private void showNodeDetails(DataTableNode node) {
 		Table tableToShow = node.getDataTable();
 		if (tableToShow!=null) {
-			TransformationGraphEditorPanel.this.getTableViewPanel().setDataTable(node);
-			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTableViewPanel());
+			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTableDetailsViewPanel(node));
 			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.67);
 		} else {
 			System.err.println("[" + this.getClass().getSimpleName() + "] No table to visualize!");
@@ -501,7 +501,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			}
 		}
 		TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTransformationPanel());
-		TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.67);
+		TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.6);
 	}
 	
 	/**

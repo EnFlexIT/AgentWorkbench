@@ -112,8 +112,8 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.3, 0.7, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelSelectTransformation = new GridBagConstraints();
 		gbc_jLabelSelectTransformation.anchor = GridBagConstraints.WEST;
@@ -180,7 +180,6 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	private DefaultComboBoxModel<DataTransformationService> getDataTransformationComboBoxModel() {
 		if (dataTransformationComboBoxModel==null) {
 			dataTransformationComboBoxModel = new DefaultComboBoxModel<DataTransformationService>();
-			dataTransformationComboBoxModel.addElement(null);
 			List<DataTransformationService> transformationServices = ServiceFinder.findServices(DataTransformationService.class);
 			dataTransformationComboBoxModel.addAll(transformationServices);
 		}

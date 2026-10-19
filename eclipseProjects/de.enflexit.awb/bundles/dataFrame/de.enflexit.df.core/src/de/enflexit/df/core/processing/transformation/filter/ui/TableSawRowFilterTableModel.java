@@ -1,5 +1,9 @@
 package de.enflexit.df.core.processing.transformation.filter.ui;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +14,9 @@ import de.enflexit.df.core.processing.transformation.filter.Filters.ComparisonFi
 import de.enflexit.df.core.processing.transformation.filter.Filters.FilterOperator;
 import de.enflexit.df.core.processing.transformation.filter.Filters.NullFilter;
 import de.enflexit.df.core.processing.transformation.filter.Filters.TableFilter;
+import tech.tablesaw.api.DateColumn;
+import tech.tablesaw.api.DateTimeColumn;
+import tech.tablesaw.api.InstantColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
@@ -22,11 +29,15 @@ public class TableSawRowFilterTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 7217734849941836599L;
 	
 	private static final String[] COLUMN_NAMES = {"Column", "Filter", "Value/From", "To"};
+	private static final String DEFAULT_TIME_FORMAT = "dd.MM.yyyy HH:mm";
+	private static final ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();
 	
 	public record FilterRow(Column<?> column, FilterOperator operator, String value, String upperValue) {}
 	
 	private final ArrayList<FilterRow> rows = new ArrayList<TableSawRowFilterTableModel.FilterRow>();
 	private final List<Column<?>> columns;
+	
+	private DateTimeFormatter dateTimeFormatter;
 	
 	/**
 	 * Instantiates a new table saw row filter table model.
@@ -178,9 +189,9 @@ public class TableSawRowFilterTableModel extends AbstractTableModel {
 				FilterOperator operator = nf.isNull() ? FilterOperator.IS_NULL : FilterOperator.IS_NOT_NULL;
 				filterRow = new FilterRow(filterColumn, operator, null, null);
 			} else if (tableFilter instanceof ComparisonFilter cf) {
-				filterRow = new FilterRow(filterColumn, cf.operator(), cf.value().toString(), null);
+				filterRow = new FilterRow(filterColumn, cf.operator(), this.getStringForValue(filterColumn, cf.value()), null);
 			} else if (tableFilter instanceof BetweenFilter bf) {
-				filterRow = new FilterRow(filterColumn, FilterOperator.BETWEEN, bf.lower().toString(), bf.upper().toString());
+				filterRow = new FilterRow(filterColumn, FilterOperator.BETWEEN, this.getStringForValue(filterColumn, bf.lower()), this.getStringForValue(filterColumn, bf.upper()));
 			}
 			
 			// --- Add the row to the table model -------------------
@@ -190,6 +201,59 @@ public class TableSawRowFilterTableModel extends AbstractTableModel {
 			}
 			
 		}
+	}
+	
+	
+	/**
+	 * Provides an appropriate String representation of a value for the provided column.
+	 * @param column the column
+	 * @param value the value
+	 * @return the string representation
+	 */
+	private String getStringForValue(Column<?> column, Object value) {
+		if (isOfTemporalType(column)) {
+			// --- Special treatment for temporal types ------------- 
+			return this.temporalObjectToString(value);
+		} else {
+			// --- Standard toString for everything else ------------
+			return value.toString();
+		}
+		//TODO further custom representations required?
+	}
+	
+	/**
+	 * Provides a String representation of the provided temporal object, using time format and zone as specified in the class constants.
+	 * @param timeObject the time object
+	 * @return the string
+	 */
+	private String temporalObjectToString(Object timeObject) {
+		LocalDateTime localDateTime = null;
+		if (timeObject instanceof LocalDateTime) {
+			localDateTime = (LocalDateTime) timeObject;
+		} else if (timeObject instanceof Instant instant) {
+			localDateTime = LocalDateTime.from(instant.atZone(DEFAULT_TIME_ZONE));
+		} else {
+			throw new IllegalArgumentException("Unexpected temporal type: " + timeObject.getClass().getName());
+		}
+		
+		return this.getDateTimeFormatter().format(localDateTime);
+		
+	}
+	
+	private DateTimeFormatter getDateTimeFormatter() {
+		if (dateTimeFormatter==null) {
+			dateTimeFormatter = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT).withZone(DEFAULT_TIME_ZONE);
+		}
+		return dateTimeFormatter;
+	}
+	
+	/**
+	 * Checks if is of temporal type.
+	 * @param column the column
+	 * @return true, if is of temporal type
+	 */
+	private boolean isOfTemporalType(Column<?> column) {
+		return(column instanceof InstantColumn || column instanceof DateTimeColumn || column instanceof DateColumn);
 	}
 
 	/**

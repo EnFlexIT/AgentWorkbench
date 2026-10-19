@@ -10,7 +10,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.df.tablesaw,
  de.enflexit.db.hibernate,
- org.agentgui.lib.jung
+ org.agentgui.lib.jung,
+ de.enflexit.jfreechart
 Import-Package: com.google.common.base,
  com.google.gson,
  com.google.gson.stream,
@@ -19,6 +20,7 @@ Import-Package: com.google.common.base,
  de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.ui,
+ de.enflexit.charts.model,
  de.enflexit.common,
  de.enflexit.common.crypto,
  de.enflexit.common.images,

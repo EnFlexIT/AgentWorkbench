@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
-import de.enflexit.df.core.processing.transformation.join.TimeSeriesJoinHelper.InterpolationMode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
@@ -18,7 +17,17 @@ import tech.tablesaw.columns.Column;
  */
 public class DataTransformationJoinTables extends AbstractDataTransformation {
 	
+	public static final String PARAM_NAME_JOIN_TYPE = "joinType";
+	public static final String PARAM_NAME_INTERPOLATION_MODE = "interpolationMode";
 	public static final String PARAM_NAME_JOIN_COLUMNS = "joinColumns";
+	
+	public enum JoinType{
+		INNER, LEFT_OUTER, RIGHT_OUTER, FULL_OUTER
+	}
+	
+	public enum InterpolationMode {
+		NONE, LINEAR, STEP
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()

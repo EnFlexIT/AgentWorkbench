@@ -23,7 +23,7 @@ import de.enflexit.df.core.model.treeNode.DTNO_Base;
  * select and deselect them to specify the starting nodes of a transformation graph.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JPanelDataSourceSelection extends JPanel {
+public class DataSourceSelectionPanel extends JPanel {
 	
 	private static final long serialVersionUID = -2860160566604926918L;
 	
@@ -38,7 +38,7 @@ public class JPanelDataSourceSelection extends JPanel {
 	/**
 	 * Instantiates a new j panel source table selection.
 	 */
-	public JPanelDataSourceSelection(DataController dataController, TransformationGraphEditorPanel parentEditor) {
+	public DataSourceSelectionPanel(DataController dataController, TransformationGraphEditorPanel parentEditor) {
 		this.dataController = dataController;
 		this.parentEditor = parentEditor;
 		initialize();
