@@ -20,7 +20,6 @@ public class UserPermissionHelper {
 	private static Logger LOGGER = LoggerFactory.getLogger(UserPermissionHelper.class);
 	
 	public static final String EDITOR_ROLE = "editor";
-	public static final String USER_ROLE = "user";
 	
 	private static WebAppDatabaseHandler webAppDatabaseHandler;
 
@@ -36,14 +35,8 @@ public class UserPermissionHelper {
 		
 		if (userName == null) return Collections.emptySet();
 		
-		try {
 			Set<UserRole> userRoles = UserPermissionHelper.getDatabaseHandler().getUserManagementDatabaseHandler().getBackendUserRoles(userName);
 			return userRoles;
-			
-		} catch (Exception ex) {
-			LOGGER.error("Error while checking roles for User '{}'", userName, ex);
-			return Collections.emptySet();
-		}
 	}	
 	
 	/**
@@ -60,7 +53,6 @@ public class UserPermissionHelper {
         
         return isUserInBackendRole(roles, requiredRole);
 	}	
-
 	/**
 	 * Checks if is user in backend role.
 	 *
@@ -75,6 +67,8 @@ public class UserPermissionHelper {
 		return userRoles.stream().map(UserRole::getRole).anyMatch(roleName -> roleName.equalsIgnoreCase(requiredRole.trim()));		
 		
 	}
+	
+	
 	/**
 	 * Returns the group roles for user.
 	 *

@@ -9,18 +9,13 @@ import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.core.exceptions.DatabaseException;
 import de.enflexit.awb.ws.dynSiteApi.RestApiConfiguration;
 import de.enflexit.awb.ws.dynSiteApi.content.DynamicContentFactory;
-import de.enflexit.awb.ws.dynSiteApi.content.ImageHelper;
 import de.enflexit.awb.ws.dynSiteApi.content.TypeConverter;
 import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
 import de.enflexit.awb.ws.dynSiteApi.gen.ContentApiService;
 import de.enflexit.awb.ws.dynSiteApi.gen.NotFoundException;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.AbstractSiteContent;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.PropertyEntry;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentChart;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentList;
 import de.enflexit.awb.ws.dynSiteApi.gen.model.SiteContentWithMenuPosition;
-import de.enflexit.awb.ws.dynSiteApi.gen.model.ValueType;
-import de.enflexit.awb.ws.dynSiteApi.security.UserPermissionHelper;
 import de.enflexit.charts.model.AbstractValueRow;
 import de.enflexit.charts.model.BarChart;
 import de.enflexit.charts.model.DataSeries;
@@ -45,10 +40,6 @@ public class ContentApiServiceImpl extends ContentApiService {
     	String username = securityContext.getUserPrincipal() == null ? null : securityContext.getUserPrincipal().getName();
     	if (username == null) {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
-    	}
-		// --- Check if the user has the required role --------------------------------------------
-    	if (UserPermissionHelper.isUserInFrontendRole(username, UserPermissionHelper.USER_ROLE) == false) {
-    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'User' required.")).build();
     	}
     	
     	// --- Validate the request ---------------------------------------------------------------
@@ -81,7 +72,19 @@ public class ContentApiServiceImpl extends ContentApiService {
 		}
     	
     }
-    
+
+    /**
+     * Returns the database handler.
+     *
+     * @return the database handler
+     */
+    private WebAppDatabaseHandler getDatabaseHandler() {
+    	if (webAppDatabaseHandler == null) {
+    		webAppDatabaseHandler = new WebAppDatabaseHandler();
+    	}
+    	return webAppDatabaseHandler;
+    }	
+	
 //	private SiteContentList getSiteContentList(Integer menuID) {
 //		
 //		SiteContentList scList = new SiteContentList();
@@ -326,15 +329,4 @@ public class ContentApiServiceImpl extends ContentApiService {
 		return chartContent;
 	}
 	
-    /**
-     * Returns the database handler.
-     *
-     * @return the database handler
-     */
-    private WebAppDatabaseHandler getDatabaseHandler() {
-    	if (webAppDatabaseHandler == null) {
-    		webAppDatabaseHandler = new WebAppDatabaseHandler();
-    	}
-    	return webAppDatabaseHandler;
-    }	
 }
