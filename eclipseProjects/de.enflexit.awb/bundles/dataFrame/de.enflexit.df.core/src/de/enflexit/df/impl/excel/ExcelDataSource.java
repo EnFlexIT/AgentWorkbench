@@ -130,6 +130,7 @@ public class ExcelDataSource extends DefaultDataSource {
 		String config = new String();
 		
 		config = DatabaseDataSource.addConfigValue(config, KEY_ID, (this.getId() + ""));
+		config = DatabaseDataSource.addConfigValue(config, KEY_SHORT_UUID, (this.getShortUUID() + ""));
 		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, this.getName());
 		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
 		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, this.getRowsPerPage() + "");
@@ -169,6 +170,9 @@ public class ExcelDataSource extends DefaultDataSource {
 			switch (key) {
 			case KEY_ID:
 				this.setId(NumberHelper.parseInteger(value));
+				break;
+			case KEY_SHORT_UUID:
+				this.setShortUUID(value);
 				break;
 			case KEY_NAME:
 				this.setName(value);

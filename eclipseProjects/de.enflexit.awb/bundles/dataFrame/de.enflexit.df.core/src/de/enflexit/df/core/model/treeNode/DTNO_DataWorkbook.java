@@ -95,6 +95,14 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 	
 	
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.model.treeNode.DTNO_Base#getShortUUID()
+	 */
+	@Override
+	public String getShortUUID() {
+		return this.getDataWorkbook().getShortUUID();
+	}
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.treeNode.DTNO_Base#getCaption()
 	 */
 	@Override
@@ -199,6 +207,6 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 	 */
 	@Override
 	public void resetDetailViewPanel() { }
-	
+
 	
 }

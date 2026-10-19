@@ -180,6 +180,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		this.setDataWorkbookDatabaseHandler(null);
 		this.setSessionFactoryCreator(null);
 		this.setDataSources(null);
+		this.setOpen(false);
 	}
 	
 	
@@ -257,6 +258,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 		
 		DataWorkbook4DB dwbDB = new DataWorkbook4DB();
 		dwbDB.getID();
+		dwbDB.getShortUUID();
 		dwbDB.setName("Database Data Workbook");
 		dwbDB.setDescription("Description of the DataWorkbook, stored in a database");
 		return dwbDB;

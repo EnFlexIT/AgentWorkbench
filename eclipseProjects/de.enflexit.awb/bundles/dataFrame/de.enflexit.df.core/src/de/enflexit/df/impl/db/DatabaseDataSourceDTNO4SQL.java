@@ -41,6 +41,14 @@ public class DatabaseDataSourceDTNO4SQL extends AbstractDataSourceDTNO<DatabaseD
 	}
 	
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO#getShortUUID()
+	 */
+	@Override
+	public String getShortUUID() {
+		return this.getDatabaseSqlIntegration().getDatabaseQuery().getShortUUID();
+	}
+	
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO#getCaption()
 	 */
 	@Override

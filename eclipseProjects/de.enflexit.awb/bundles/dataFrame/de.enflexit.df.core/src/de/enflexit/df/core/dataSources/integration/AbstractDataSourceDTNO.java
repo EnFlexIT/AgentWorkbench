@@ -74,6 +74,13 @@ public abstract class AbstractDataSourceDTNO<DS extends DefaultDataSource> exten
 		return getDataSourceIntegration().getDataSource();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.model.treeNode.DTNO_Base#getShortUUID()
+	 */
+	@Override
+	public String getShortUUID() {
+		return this.getDataSource().getShortUUID();
+	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.model.DataTreeNodeObjectBase#getCaption()
