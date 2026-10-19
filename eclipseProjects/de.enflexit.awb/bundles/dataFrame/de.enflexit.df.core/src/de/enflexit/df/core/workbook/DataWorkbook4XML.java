@@ -32,7 +32,6 @@ public class DataWorkbook4XML extends DataWorkbook {
 	private static final long serialVersionUID = 5010880029903092936L;
 	
 	private transient File workbookXmlFile;
-
 	
 	/**
 	 * Instantiates a new data workbook 4 XML.
@@ -216,6 +215,7 @@ public class DataWorkbook4XML extends DataWorkbook {
 		
 		DataWorkbook4XML dwbXML = new DataWorkbook4XML(xmlFile);
 		dwbXML.getID();
+		dwbXML.getShortUUID();
 		dwbXML.setName(xmlFile.getName());
 		dwbXML.setDescription("Description of the XML DataWorkbook");
 		dwbXML.save();
@@ -227,6 +227,7 @@ public class DataWorkbook4XML extends DataWorkbook {
 	 */
 	@Override
 	public void close() {
-		// --- Nothing to do here -------------------------
+		// --- Nothing further to do here -----------------
+		this.setOpen(false);
 	}
 }

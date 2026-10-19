@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
@@ -364,6 +365,61 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 			this.removedDataSource(ado.getDataWorkbook(), ado.getDataSource());
 			break;
 		}
+	}
+	
+	
+	/**
+	 * Returns the expression path for the specified node by name.
+	 *
+	 * @param dtmNode the tree node to specify
+	 * @return the expression path by name
+	 */
+	public String getExpressionPathByName(DefaultMutableTreeNode dtmNode) {
+		
+		TreeNode[] nodePath =  dtmNode.getPath();
+		String expression = "";
+		boolean isSubDataSources = false;
+		
+		for (TreeNode tn : nodePath) {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) tn;
+			if (treeNode==this.getRootNode()) continue;
+			
+			// --- Get the data tree node object --------------------
+			DTNO_Base baseDTNO = (DTNO_Base) treeNode.getUserObject();
+			if (baseDTNO instanceof DTNO_DataWorkbook wbDTNO) {
+				expression += "DW('" + wbDTNO.getCaption() + "')";
+				
+			} else if (baseDTNO instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+				String dsPrefix = isSubDataSources==false ? "DS" : "SUB";
+				expression += "." + dsPrefix + "('" + dsDTNO.getCaption() + "')";
+				isSubDataSources = isSubDataSources==false ? dsDTNO.getDataSource().requiresSubConfiguration() : isSubDataSources;
+				
+			}
+		}
+		return expression;
+	}
+	
+	/**
+	 * Returns the expression path for the specified node by short UUID's.
+	 *
+	 * @param dtmNode the tree node to specify 
+	 * @return the expression path by short UUID
+	 */
+	public String getExpressionPathByUUID(DefaultMutableTreeNode dtmNode) {
+		
+		TreeNode[] nodePath =  dtmNode.getPath();
+		String expression = "";
+		
+		for (TreeNode tn : nodePath) {
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) tn;
+			if (treeNode==this.getRootNode()) continue;
+			
+			// --- Get the data tree node object --------------------
+			DTNO_Base baseDTNO = (DTNO_Base) treeNode.getUserObject();
+			expression = "sUUID('" + baseDTNO.getShortUUID() + "')";
+			
+		}
+		return expression;
 	}
 	
 }

@@ -7,6 +7,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * The Class ExpressionEditorTreeNode specifies a node in the expression editor GUI panel. 
  * Each node provides a {@link TreeMap}, containing expression templates grouped by categories. 
+ * 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class ExpressionEditorTreeNode extends DefaultMutableTreeNode {

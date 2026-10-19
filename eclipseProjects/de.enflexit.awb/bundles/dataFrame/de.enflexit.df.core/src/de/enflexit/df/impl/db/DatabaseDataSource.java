@@ -186,6 +186,7 @@ public class DatabaseDataSource extends DefaultDataSource {
 		String config = new String();
 
 		config = DatabaseDataSource.addConfigValue(config, KEY_ID, (this.getId() + ""));
+		config = DatabaseDataSource.addConfigValue(config, KEY_SHORT_UUID, (this.getShortUUID() + ""));
 		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, this.getName());
 		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
 		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, this.getRowsPerPage() + "");
@@ -234,6 +235,9 @@ public class DatabaseDataSource extends DefaultDataSource {
 				if (this.getId() == 0 && configID != null && configID != 0) {
 					this.setId(configID);
 				}
+				break;
+			case KEY_SHORT_UUID:
+				this.setShortUUID(value);
 				break;
 			case KEY_NAME:
 				this.setName(value);
@@ -336,6 +340,7 @@ public class DatabaseDataSource extends DefaultDataSource {
 
 		// --- Super class attributes -----------
 		if (dbDataSource.getId()!=0) 				dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ID, dbDataSource.getId() + "");
+		if (dbDataSource.getId()!=0) 				dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_SHORT_UUID, dbDataSource.getShortUUID() + "");
 		if (dbDataSource.getName()!=null) 			dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_NAME, dbDataSource.getName());
 		if (dbDataSource.getDescription()!=null) 	dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_DESCRIPTION, dbDataSource.getDescription());
 		if (dbDataSource.getRowsPerPage()!=0)		dbSettings.getHibernateDatabaseSettings().setProperty(DatabaseDataSource.KEY_ROWS_PER_PAGE, dbDataSource.getRowsPerPage() + "");
@@ -400,6 +405,10 @@ public class DatabaseDataSource extends DefaultDataSource {
 			Integer id = NumberHelper.parseInteger(idString);
 			if (id != null) dbDS.setId(id);
 		}
+		
+		String shortUUID = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_SHORT_UUID);
+		if (shortUUID!=null) dbDS.setShortUUID(shortUUID);
+		
 		String name = dbSettings.getHibernateDatabaseSettings().getProperty(DatabaseDataSource.KEY_NAME);
 		if (name != null) dbDS.setName(name);
 

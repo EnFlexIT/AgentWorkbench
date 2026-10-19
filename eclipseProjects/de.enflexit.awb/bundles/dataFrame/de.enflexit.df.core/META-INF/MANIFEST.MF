@@ -4,13 +4,14 @@ Bundle-Name: Data Frame - Core Bundel
 Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.df.core
 Automatic-Module-Name: de.enflexit.df.core
-Bundle-Version: 0.2.0.qualifier
+Bundle-Version: 0.5.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.df.tablesaw,
  de.enflexit.db.hibernate,
- org.agentgui.lib.jung
+ org.agentgui.lib.jung,
+ de.enflexit.expression
 Import-Package: com.google.common.base,
  com.google.gson,
  com.google.gson.stream,
@@ -36,7 +37,8 @@ Import-Package: com.google.common.base,
  org.osgi.framework.wiring,
  org.osgi.service.prefs,
  org.slf4j
-Service-Component: OSGI-INF/dataSourceServiceCsvDataSource.xml,
+Service-Component: OSGI-INF/dataFrameExpressionService.xml, 
+ OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dataSourceServiceDatabaseDataSource.xml,
  OSGI-INF/dataSourceServiceExcelDataSource.xml,
  OSGI-INF/dataSourceServiceProcessingDataSource.xml,

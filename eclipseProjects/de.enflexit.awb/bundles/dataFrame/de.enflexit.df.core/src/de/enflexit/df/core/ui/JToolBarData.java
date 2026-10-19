@@ -23,9 +23,12 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.OwnerDetection;
+import de.enflexit.common.swing.WindowSizeAndPostionController;
+import de.enflexit.common.swing.WindowSizeAndPostionController.JDialogPosition;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DataSourceHelper;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.DataControllerSelectionModel;
@@ -38,6 +41,9 @@ import de.enflexit.df.core.workbook.DataWorkbook4XML;
 import de.enflexit.df.impl.csv.CsvDataSource;
 import de.enflexit.df.impl.db.DatabaseDataSource;
 import de.enflexit.df.impl.excel.ExcelDataSource;
+import de.enflexit.expression.Expression;
+import de.enflexit.expression.ExpressionContext;
+import de.enflexit.expression.gui.ExpressionEditorDialog;
 
 /**
  * The Class JToolBarData.
@@ -81,6 +87,8 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	
 	private JButton jButtonDeleteDataSources;
 	
+	private JButton jButtonDataSelection;
+	
 	/**
 	 * Instantiates a new j tool bar data.
 	 * @param dataController the data controller
@@ -104,6 +112,8 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		this.add(this.getJButtonEditDataSources());
 		this.add(this.getJButtonDeleteDataSources());
 		this.addSeparator();
+		
+		this.add(this.getJButtonDataSelection());
 		
 		this.enableJButtonEnabledToSelection(null);
 	}
@@ -455,6 +465,22 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	}
 	
 	
+	/**
+	 * Returns the JButton edit data sources.
+	 * @return the JButton to edit data sources
+	 */
+	private JButton getJButtonDataSelection() {
+		if (jButtonDataSelection==null) {
+			jButtonDataSelection = new JButton();
+			jButtonDataSelection.setToolTipText("Selected Data From a workbook table");
+			jButtonDataSelection.setIcon(BundleHelper.getImageIcon("MBtableSelect.png"));
+			jButtonDataSelection.setPreferredSize(new Dimension(26, 26));
+			jButtonDataSelection.addActionListener(this);
+		}
+		return jButtonDataSelection;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
@@ -515,6 +541,10 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		// --- Edit or delete data sources --------------------------
 		this.getJButtonEditDataSources().setEnabled(dtnoDW!=null && dtnoDW.isDataSourcesLoaded());
 		this.getJButtonDeleteDataSources().setEnabled(dtnoDW!=null && dtnoDW.isDataSourcesLoaded());
+		
+		// --- Data selection ---------------------------------------
+		this.getJButtonDataSelection().setEnabled(dtnoDW!=null && dtnoDW.isDataSourcesLoaded());
+		
 	}
 
 	/**
@@ -577,8 +607,6 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 		this.validate();
 		this.repaint();
 	}
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -684,6 +712,12 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 				this.dataController.removeDataSourceAskUser(OwnerDetection.getOwnerWindowForComponent(this), dw, dtnoDataSource.getDataSource(), dtnoDataSource.getCaption());
 			}
 			
+		} else if (ae.getSource()==this.getJButtonDataSelection()) {
+			// --- Edit a data frame expression -------------------------------
+			Expression expression = this.getExpressionFromExpressionEditor(null);
+			if (expression!=null) {
+				
+			}
 		} 
 		
 	}
@@ -695,6 +729,45 @@ public class JToolBarData extends JToolBar implements ActionListener, PropertyCh
 	private void addNewDataWorkbook(DataWorkbook newDataWorkbook) {
 		this.dataController.addDataWorkbook(newDataWorkbook);
 		this.dataController.openDataWorkbook(newDataWorkbook);
+	}
+	
+	
+	/**
+	 * Returns the expression from expression editor.
+	 *
+	 * @param expression the expression
+	 * @return the expression from expression editor
+	 */
+	private Expression getExpressionFromExpressionEditor(Expression expression) {
+		
+		ExpressionContext eContext = new ExpressionContext();
+		eContext.addContextObject(this.getDataController());
+		
+		// --- Add DataSource-specific objects ----------------------------  
+		for (DataWorkbook dw : this.getDataController().getDataWorkbooks()) {
+			if (dw.isOpen()==false) continue;
+			List<DefaultDataSource> dSourceList = dw.getDataSources();
+			for (DefaultDataSource dSource : dSourceList) {
+				dSource.getDataSourceIntegration(getDataController(), dw).addContextObjectsToExpressionContext(eContext);
+			}
+		}
+		
+		// --- Show the dialog --------------------------------------------
+		Window ownerWindow = OwnerDetection.getOwnerWindowForComponent(this);
+		ExpressionEditorDialog editorDialog = new ExpressionEditorDialog(ownerWindow, expression, eContext, false);
+		//editorDialog.setExpressionServiceFilter(this.getExpressionLibraryFilter());
+		if (ownerWindow!=null) {
+			double scaleWidth = 1.15;
+			double scaleHeight = 0.95;
+			editorDialog.setSize((int)(ownerWindow.getWidth() * scaleWidth), (int)(ownerWindow.getHeight() * scaleHeight));
+			WindowSizeAndPostionController.setJDialogPositionOnScreen(editorDialog, JDialogPosition.ParentCenter);
+		}
+		editorDialog.setVisible(true);
+
+		if (editorDialog.isCanceled()==false) {
+			expression = editorDialog.getExpression();
+		}
+		return expression;
 	}
 	
 }

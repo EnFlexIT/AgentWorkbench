@@ -213,6 +213,7 @@ public class DataWorkbook4JSON extends DataWorkbook {
 		
 		DataWorkbook4JSON dwbJSON = new DataWorkbook4JSON(jsonFile);
 		dwbJSON.getID();
+		dwbJSON.getShortUUID();
 		dwbJSON.setName(jsonFile.getName());
 		dwbJSON.setDescription("Description of the XML DataWorkbook");
 		dwbJSON.save();
@@ -224,6 +225,7 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 */
 	@Override
 	public void close() {
-		// --- Nothing to do here -------------------------
+		// --- Nothing further to do here -----------------
+		this.setOpen(false);
 	}
 }

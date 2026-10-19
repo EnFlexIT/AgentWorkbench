@@ -6,6 +6,8 @@ import de.enflexit.df.core.dataSources.DataSourceIntegration;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.expression.ExpressionContext;
+import de.enflexit.expression.ExpressionService;
 
 /**
  * The Class AbstractDataSourceIntegration.
@@ -102,6 +104,14 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#addDataTreeSubNodes()
 	 */
 	public void addDataTreeSubNodes() { }
+
+	
+	/**
+	 * In the Context oF the {@link ExpressionService}, enables to add specific context objects to the provided ExpressionContext.
+	 * <b>Overwrite this method to add individual instances of specific data sources</b>
+	 * @param expressionContext the current ExpressionContext to work on
+	 */
+	public void addContextObjectsToExpressionContext(ExpressionContext expressionContext) { }
 	
 	
 	

@@ -12,9 +12,11 @@ import javax.swing.JOptionPane;
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.expression.DataFrameExpressionParser;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
 import de.enflexit.df.core.workbook.DataWorkbookReminder;
+import tech.tablesaw.api.Table;
 
 /**
  * The Class DataController.
@@ -229,6 +231,9 @@ public class DataController {
 				this.openDataSource(dataWorkbookWork, ds);
 			}	
 		}
+		// --- Mark workbook as 'open' ------------------------------
+		dataWorkbookWork.setOpen(true);
+		
 		this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbookWork));
 	}
 	/**
@@ -243,6 +248,9 @@ public class DataController {
 		try {
 			// --- Call to save the workbook ------------------------
 			int noOfDsBefore = dataWorkbook.getDataSourcesAllowNull()!=null ? dataWorkbook.getDataSourcesAllowNull().size() : 0; 
+			if (dataWorkbook.isOpen()==true && dataWorkbook.getDataSourcesAllowNull()!=null) {
+				dataWorkbook.getDataSources().forEach(ds -> ds.updateSubConfigurations());
+			}
 			dataWorkbook.save();
 			// --- Check if data sources were loaded ----------------
 			int noOfDsAfter  = dataWorkbook.getDataSourcesAllowNull()!=null ? dataWorkbook.getDataSourcesAllowNull().size() : 0;
@@ -278,6 +286,8 @@ public class DataController {
 				dataWorkbook.getExtensionCache().removeExtensions();
 				// --- Call to close the DataWorkbook ---------------
 				dataWorkbook.close();
+				dataWorkbook.setOpen(false);
+				
 				// --- Inform listener ------------------------------
 				this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 				
@@ -452,6 +462,24 @@ public class DataController {
 			dataTreeModel = new DataTreeModel(this);
 		}
 		return dataTreeModel;
+	}
+	
+	/**
+	 * Returns the data for the specified resourceLink.
+	 *
+	 * @param resourceLink the resource link
+	 * @return the data
+	 */
+	public Table getData(String resourceLink) {
+		
+		if (resourceLink==null || resourceLink.isBlank()==true) return null;
+		
+		try {
+			return new DataFrameExpressionParser(this, resourceLink).getData();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 	
 }

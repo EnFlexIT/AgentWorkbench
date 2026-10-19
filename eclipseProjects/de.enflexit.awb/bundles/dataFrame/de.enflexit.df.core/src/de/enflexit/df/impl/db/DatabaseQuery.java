@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
+import de.enflexit.common.UUID_Handler;
 
 /**
  * The Class DatabaseQuery.
@@ -15,11 +16,13 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 	private static final long serialVersionUID = 6770803530373291509L;
 	
 	public static final String KEY_NUMBER = "no";
+	public static final String KEY_SHORT_UUID = "UUID";
 	public static final String KEY_NAME  = "name";
 	public static final String KEY_SQL_STATEMENT  = "sql-statement";
 	public static final String KEY_ROWS_PER_PAGE = "rows-per-page";
 	
 	private int number;
+	private String shortUUID;
 	private String name;
 	private String sqlStatement;
 	private int rowsPerPage;
@@ -48,6 +51,16 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 	}
 	public void setNumber(int number) {
 		this.number = number;
+	}
+	
+	public String getShortUUID() {
+		if (shortUUID==null) {
+			shortUUID = UUID_Handler.generateShortUUID();
+		}
+		return shortUUID;
+	}
+	public void setShortUUID(String shortUUID) {
+		this.shortUUID = shortUUID;
 	}
 	
 	public String getName() {
@@ -119,6 +132,7 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 		String config = new String();
 		
 		config = DatabaseDataSource.addConfigValue(config, KEY_NUMBER, (dbQuery.getNumber() + ""));
+		config = DatabaseDataSource.addConfigValue(config, KEY_SHORT_UUID, (dbQuery.getShortUUID() + ""));
 		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, dbQuery.getName());
 		config = DatabaseDataSource.addConfigValue(config, KEY_SQL_STATEMENT, dbQuery.getSqlStatement());
 		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, (dbQuery.getRowsPerPage() + ""));
@@ -151,6 +165,9 @@ public class DatabaseQuery implements Serializable, Comparable<DatabaseQuery> {
 			case KEY_NUMBER:
 				Integer qNumber = NumberHelper.parseInteger(value);
 				dbQuery.setNumber(qNumber);
+				break;
+			case KEY_SHORT_UUID:
+				dbQuery.setShortUUID(value);
 				break;
 			case KEY_NAME:
 				dbQuery.setName(value);

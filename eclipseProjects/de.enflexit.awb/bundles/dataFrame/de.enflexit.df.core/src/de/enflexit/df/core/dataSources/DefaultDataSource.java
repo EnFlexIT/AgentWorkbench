@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
+import de.enflexit.common.UUID_Handler;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
@@ -38,6 +39,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
     "id",
+    "shortUUID",
     "name",
     "description",
     "rowsPerPage",
@@ -52,6 +54,9 @@ public class DefaultDataSource implements DataSource {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_data_source", nullable=false)
 	private int id;
+	
+	@Column(name="short_uuid", nullable=false)
+	private String shortUUID;
 	
 	@Column(nullable=true)
 	private String name;
@@ -115,6 +120,24 @@ public class DefaultDataSource implements DataSource {
 	@Override
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#getShortUUID()
+	 */
+	@Override
+	public String getShortUUID() {
+		if (shortUUID==null) {
+			shortUUID = UUID_Handler.generateShortUUID(); 
+		}
+		return shortUUID;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSource#setShortUUID(java.lang.String)
+	 */
+	@Override
+	public void setShortUUID(String newShortUUID) {
+		this.shortUUID = newShortUUID;
 	}
 	
 	/* (non-Javadoc)
@@ -303,7 +326,5 @@ public class DefaultDataSource implements DataSource {
 		return dataSourceSubConfigurations;
 	}
 
-
-	
 	
 }

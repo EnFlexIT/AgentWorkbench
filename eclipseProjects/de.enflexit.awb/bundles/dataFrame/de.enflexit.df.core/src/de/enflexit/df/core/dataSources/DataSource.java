@@ -16,6 +16,7 @@ import de.enflexit.df.core.workbook.DataWorkbook;
 public interface DataSource extends Serializable, Closeable {
 
 	public final static String KEY_ID = "ID";
+	public final static String KEY_SHORT_UUID = "UUID";
 	public final static String KEY_NAME = "Name";
 	public final static String KEY_DESCRIPTION = "Description";
 	public final static String KEY_ROWS_PER_PAGE = "RowsPerPage";
@@ -69,6 +70,17 @@ public interface DataSource extends Serializable, Closeable {
 	 */
 	public void setId(int id);
 	
+	
+	/**
+	 * Has to return the short UUID for the current data source.
+	 * @return the short UUID
+	 */
+	public String getShortUUID();
+	/**
+	 * Sets the short UUID.
+	 * @param value the new short UUID
+	 */
+	public void setShortUUID(String value);
 	
 	/**
 	 * Has to return the name of the data source.
