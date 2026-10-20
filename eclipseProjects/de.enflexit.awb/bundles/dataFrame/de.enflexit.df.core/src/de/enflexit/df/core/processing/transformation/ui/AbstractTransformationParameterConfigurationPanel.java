@@ -1,10 +1,10 @@
 package de.enflexit.df.core.processing.transformation.ui;
 
 import java.beans.PropertyChangeListener;
-import java.util.Map;
 
 import javax.swing.JPanel;
 
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 
 /**
@@ -29,13 +29,13 @@ public abstract class AbstractTransformationParameterConfigurationPanel extends 
 	 * Returns the parameters as configured in the component UI.  
 	 * @return the configured parameters
 	 */
-	public abstract Map<String, Object> getConfiguredParameters();
+	public abstract Properties getConfiguredParameters();
 	
 	/**
 	 * Sets the configured parameters to be displayed by the panel.
 	 * @param parameters the parameters
 	 */
-	public abstract void setConfiguredParameters(Map<String, Object> parameters);
+	public abstract void setConfiguredParameters(Properties parametersAsProperties);
 
 	/**
 	 * Gets the transformation.

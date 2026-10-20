@@ -1,6 +1,9 @@
 package de.enflexit.df.core.processing.transformation.filter;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.filter.Filters.FilterExpression;
 import tech.tablesaw.api.Table;
@@ -24,14 +27,14 @@ public class DataTransformationFilterRows extends AbstractDataTransformation {
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()
 	 */
 	@Override
-	public Table performTransformation() {
+	public Table performTransformation(DataController dataController) {
 		
 		Table resultTable = null;
 		
 		Table inputTable = this.getInputNodes().get(0).getDataTable();
 		
-		@SuppressWarnings("unchecked")
-		List<FilterExpression> filtersList = (List<FilterExpression>) this.getTransformationParameters().get(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
+		String filtersString = this.getTransformationParameters().getStringValue(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
+		List<FilterExpression> filtersList = this.createFilterExpressions(filtersString);
 		
 		if (filtersList==null || filtersList.isEmpty()) {
 			// --- No filters defined -> pass the original table
@@ -42,7 +45,11 @@ public class DataTransformationFilterRows extends AbstractDataTransformation {
 		}
 		
 		return resultTable;
-		
+	}
+	
+	private ArrayList<FilterExpression> createFilterExpressions(String filtersSTring){
+		//TODO actual implementation
+		return new ArrayList<Filters.FilterExpression>();
 	}
 	
 

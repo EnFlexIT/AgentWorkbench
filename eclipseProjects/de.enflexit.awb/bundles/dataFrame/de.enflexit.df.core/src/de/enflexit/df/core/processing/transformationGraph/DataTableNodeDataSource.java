@@ -52,5 +52,13 @@ public class DataTableNodeDataSource extends DataTableNode {
 		// --- No separate long text ------------
 		return this.getLabelText();
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformationGraph.DataTableNode#getDataSourceUUID()
+	 */
+	@Override
+	public String getDataSourceUUID() {
+		return this.dataSourceDTNO!=null ? this.dataSourceDTNO.getShortUUID() : null;
+	}
 	
 }

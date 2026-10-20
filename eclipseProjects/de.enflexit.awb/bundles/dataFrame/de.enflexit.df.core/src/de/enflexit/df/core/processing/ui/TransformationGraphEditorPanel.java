@@ -20,6 +20,7 @@ import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.DataTransformationVisitor;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeDataSource;
@@ -78,6 +79,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private JSplitPane jSplitPaneMainView;
 	
 	private Object selectedGraphElement;
+	
+	private DataTransformationVisitor transformationVisitor;
 	
 	/**
 	 * Instantiates a new j panel transformation graph editor.
@@ -169,6 +172,11 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * @return the table view panel
 	 */
 	private DataTransformaitonTableDetailsViewPanel getTableDetailsViewPanel(DataTableNode tableNode) {
+		
+		// --- If necessary, perform the transformation to generate the output data.
+		if (tableNode instanceof DataTableNodeTransformationResult transformationNode && tableNode.getDataTable()==null) {
+			this.getTransformationVisitor().performTransformation(transformationNode.getDataTransformation());
+		}
 		return new DataTransformaitonTableDetailsViewPanel(tableNode);
 	}
 	
@@ -189,6 +197,13 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			graphController = new TransformationGraphController();
 		}
 		return graphController;
+	}
+	/**
+	 * Gets the data controller.
+	 * @return the data controller
+	 */
+	public DataController getDataController() {
+		return dataController;
 	}
 	/**
 	 * Gets the visualization viewer.
@@ -416,13 +431,27 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	}
 
 	/**
-	 * Finds the corresponding table node for the provided table..
+	 * Finds the corresponding table node for the provided table.
 	 * @param dataTable the data table
 	 * @return the data table node, null if not found
 	 */
 	public DataTableNode findCorrespondingTableNode(Table dataTable) {
 		for (DataTableNode tableNode : this.getGraphController().getTransformationGraph().getVertices()) {
 			if (tableNode.getDataTable() == dataTable) {
+				return tableNode;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Find corresponding table node for the provided data source UUID..
+	 * @param dataSourceUUID the data source UUID
+	 * @return the data table node
+	 */
+	public DataTableNode findCorrespondingTableNode(String dataSourceUUID) {
+		for (DataTableNode tableNode : this.getGraphController().getTransformationGraph().getVertices()) {
+			if (tableNode.getDataSourceUUID().equals(dataSourceUUID)) {
 				return tableNode;
 			}
 		}
@@ -561,6 +590,13 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TRANSFORMATION_CANCELED)) {
 			this.hideDetailsPanel();
 		}
+	}
+	
+	public DataTransformationVisitor getTransformationVisitor() {
+		if (transformationVisitor==null) {
+			transformationVisitor = new DataTransformationVisitor(this.getDataController());
+		}
+		return transformationVisitor;
 	}
 	
 }

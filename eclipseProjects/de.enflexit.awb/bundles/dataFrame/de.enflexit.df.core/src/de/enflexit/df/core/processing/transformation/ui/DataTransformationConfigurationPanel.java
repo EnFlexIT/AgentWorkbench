@@ -16,12 +16,12 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
@@ -517,7 +517,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	 * Gets the configured transformation parameters.
 	 * @return the transformation parameters
 	 */
-	public Map<String, Object> getConfiguredTransformationParameters(){
+	public Properties getConfiguredTransformationParameters(){
 		return ((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).getConfiguredParameters();
 	}
 

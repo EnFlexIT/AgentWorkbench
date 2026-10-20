@@ -2,6 +2,7 @@ package de.enflexit.df.core.processing.transformationGraph;
 
 import java.util.ArrayList;
 
+import de.enflexit.common.UUID_Handler;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import tech.tablesaw.api.Table;
 
@@ -12,8 +13,8 @@ import tech.tablesaw.api.Table;
 public class DataTableNodeTransformationResult extends DataTableNode {
 	
 	private AbstractDataTransformation dataTransformation;
-	
 	private Table dataTable;
+	private String dataSourceUUID;
 
 	/**
 	 * Gets the data transformation.
@@ -37,11 +38,6 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	 */
 	@Override
 	public Table getDataTable() {
-		if (this.dataTransformation!=null) {
-			if (this.dataTable==null) {
-				this.dataTable = this.getDataTransformation().performTransformation();
-			}
-		}
 		return dataTable;
 	}
 	
@@ -73,6 +69,23 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 		return this.getLabelText() + " [" + String.join(", ", inputTables) + "]";
 	}
 	
-	
+	/**
+	 * Sets the data source UUID.
+	 * @param dataSourceUUID the new data source UUID
+	 */
+	public void setDataSourceUUID(String dataSourceUUID) {
+		this.dataSourceUUID = dataSourceUUID;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformationGraph.DataTableNode#getDataSourceUUID()
+	 */
+	@Override
+	public String getDataSourceUUID() {
+		if (this.dataSourceUUID==null) {
+			this.dataSourceUUID = UUID_Handler.generateShortUUID();
+		}
+		return this.dataSourceUUID;
+	}
 	
 }

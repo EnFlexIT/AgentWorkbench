@@ -11,14 +11,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.filter.DataTransformationServiceFilterRows;
@@ -218,12 +217,15 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#getConfiguredParameters()
 	 */
 	@Override
-	public Map<String, Object> getConfiguredParameters() {
-		List<FilterExpression> filtersList = this.createFiltersList();
+	public Properties getConfiguredParameters() {
 		
-		HashMap<String, Object> paramsMap = new HashMap<String, Object>();
-		paramsMap.put(DataTransformationServiceFilterRows.REQUIRED_PARAMETER, filtersList);
-		return paramsMap;
+		//TODO convert
+		List<FilterExpression> filtersList = this.createFiltersList();
+		String filtersString = "";
+		
+		Properties paramProperties = new Properties();
+		paramProperties.setStringValue(DataTransformationServiceFilterRows.REQUIRED_PARAMETER, TOOL_TIP_TEXT_KEY);
+		return paramProperties;
 	}
 	
 	/**
@@ -325,9 +327,11 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#setConfiguredParameters(java.util.Map)
 	 */
 	@Override
-	public void setConfiguredParameters(Map<String, Object> parameters) {
+	public void setConfiguredParameters(Properties parameters) {
 		@SuppressWarnings("unchecked")
-		List<FilterExpression> filtersList = (List<FilterExpression>) parameters.get(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
+		String filtersString = parameters.getStringValue(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
+		//TODO implement conversion
+		List<FilterExpression> filtersList = new ArrayList<Filters.FilterExpression>();
 		for (FilterExpression fe : filtersList) {
 			this.addFilterExpressionToTableModel(fe);
 		}

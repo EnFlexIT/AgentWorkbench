@@ -3,12 +3,12 @@ package de.enflexit.df.core.processing.transformation.ui;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.JScrollPane;
 
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.DataTransformationSelectColumns;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
@@ -31,7 +31,7 @@ public class TableColumnSelectionPanel extends AbstractTransformationParameterCo
 	private CheckBoxList<Column<?>> jListColumnSelection;
 	private DefaultListModel<Column<?>> columnsListModel;
 	private JLabel jLabelHeader;
-	
+
 	/**
 	 * Instantiates a new j panel table column selection.
 	 */
@@ -120,15 +120,52 @@ public class TableColumnSelectionPanel extends AbstractTransformationParameterCo
 		}
 		return selectedColumns;
 	}
+	
+	/**
+	 * Gets the names of the selected columns.
+	 * @return the selected column names
+	 */
+	public List<String> getSelectedColumnNames(){
+		ArrayList<String> selectedColumnNames = new ArrayList<String>();
+		for (Column<?> column : this.getSelectedColumns()) {
+			selectedColumnNames.add(column.name());
+		}
+		return selectedColumnNames;
+	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#getConfiguredParameters()
 	 */
 	@Override
-	public Map<String, Object> getConfiguredParameters() {
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put(this.getTransformation().getRequiredParameters().get(0), this.getSelectedColumns());
-		return params;
+	public Properties getConfiguredParameters() {
+		
+		Properties parameterProperties = new Properties();
+		
+		String columnsString = this.getSelectedColumnNames().stream().collect(Collectors.joining(","));
+		parameterProperties.setStringValue(DataTransformationSelectColumns.PROPERTY_NAME_SELECT_COLUMNS, columnsString);
+		
+		return parameterProperties;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#setConfiguredParameters(de.enflexit.common.properties.Properties)
+	 */
+	@Override
+	public void setConfiguredParameters(Properties parametersAsProperties) {
+		String columnsString = parametersAsProperties.getStringValue(DataTransformationSelectColumns.PROPERTY_NAME_SELECT_COLUMNS);
+		
+		if (columnsString==null || columnsString.isBlank()==true) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] No property found for required parameter " + DataTransformationSelectColumns.PROPERTY_NAME_SELECT_COLUMNS);
+		} else {
+			String[] columnNames = columnsString.split(DataTransformationSelectColumns.COLUMN_NAME_SEPARATOR);
+			ArrayList<Column<?>> selectedColumnsList = new ArrayList<Column<?>>();
+			for (String columnName : columnNames) {
+				Column<?> column = this.getColumnByName(columnName);
+				if (column!=null) {
+					selectedColumnsList.add(column);
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -148,19 +185,20 @@ public class TableColumnSelectionPanel extends AbstractTransformationParameterCo
 			this.addTable(affectedNode.getDataTable());
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#setConfiguredParameters(java.util.Map)
+	
+	/**
+	 * Gets the column by name.
+	 * @param columnName the column name
+	 * @return the column by name
 	 */
-	@Override
-	public void setConfiguredParameters(Map<String, Object> parameters) {
-		if (parameters!=null) {
-			Object selectColumnsObject = parameters.get(DataTransformationSelectColumns.TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
-			if (selectColumnsObject!=null && selectColumnsObject instanceof List<?> list && list.stream().allMatch(Column.class::isInstance)) {
-				@SuppressWarnings("unchecked")
-				List<Column<?>> selectedColumnsList = (List<Column<?>>) selectColumnsObject;
-				this.getJListColumnSelection().setSelectedItems(selectedColumnsList);
+	private Column<?> getColumnByName(String columnName){
+		for (int i=0; i<this.getColumnsListModel().size(); i++) {
+			Column<?> column = this.getColumnsListModel().getElementAt(i);
+			if (column.name().equals(columnName)) {
+				return column;
 			}
 		}
+		return null;
 	}
+
 }
