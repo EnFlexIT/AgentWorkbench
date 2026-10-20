@@ -12,10 +12,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.enflexit.df.core.processing.transformation.join.DataTransformationJoinTables.InterpolationMode;
+import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.DateTimeColumn;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.InstantColumn;
 import tech.tablesaw.api.NumericColumn;
+import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
@@ -24,11 +27,6 @@ import tech.tablesaw.columns.Column;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class TimeSeriesJoinHelper {
-	
-	public enum InterpolationMode {
-        STEP,
-        LINEAR
-    }
 	
 	/**
 	 * Joins the provided tables on their time columns. Times will be unified: 
@@ -272,46 +270,53 @@ public class TimeSeriesJoinHelper {
 	private static Table resample(Table sourceTable, String timeColumnName, List<Instant> targetTimes, InterpolationMode interpolationMode, ZoneId timeZoneID, String joinKey) {
 
 		Table sorted = sourceTable.sortOn(timeColumnName);
-
 		List<Instant> sourceTimes = readTimesAsInstant(sorted.column(timeColumnName), timeZoneID);
 
-		// --- Only numeric values will be interpolated
-		List<NumericColumn<?>> sourceValues = new ArrayList<>();
-		List<DoubleColumn> resultValues = new ArrayList<>();
+		// --- Create the result table with a common time column ---- 
+		Table resultTable = Table.create(sourceTable.name() + "_resampled");
+		InstantColumn resultTimeColumn = InstantColumn.create(joinKey);
+		resultTable.addColumns(resultTimeColumn);
 
-		Table result = Table.create(sourceTable.name() + "_resampled");
-
-		InstantColumn resultTime = InstantColumn.create(joinKey);
-		result.addColumns(resultTime);
+		// --- Manage source and result columns --------------------- 
+		List<Column<?>> sourceColumns = new ArrayList<>();
+		List<Column<?>> targetColumns = new ArrayList<>();
 
 		for (Column<?> column : sorted.columns()) {
 
-			// --- Skip the time column -------------------
+			// --- Skip time column ---------------------------------
 			if (column.name().equals(timeColumnName)) {
 				continue;
 			}
 
-			if (!(column instanceof NumericColumn<?> numeric)) {
-				throw new IllegalArgumentException("Column'" + column.name() + "' of table '" + sourceTable.name() + "' is not numeric!");
+			// --- Check for supported column types -----------------
+			Column<?> output;
+
+			if (column instanceof NumericColumn<?>) {
+				output = DoubleColumn.create(column.name());
+			} else if (column instanceof BooleanColumn) {
+				output = BooleanColumn.create(column.name());
+			} else if (column instanceof StringColumn) {
+				output = StringColumn.create(column.name());
+			} else {
+				throw new IllegalArgumentException("Unsupported column type '" + column.type() + "' for column '" + column.name() + "' in table '" + sourceTable.name() + "'");
 			}
 
-			for (int row = 0; row < numeric.size(); row++) {
-				if (numeric.isMissing(row)) {
-					throw new IllegalArgumentException("No measurement in column '" + column.name() + "', row " + row);
+			// --- Reject columns with missing values ---------------
+			for (int row = 0; row < column.size(); row++) {
+				if (column.isMissing(row)) {
+					throw new IllegalArgumentException("Missing value in column '" + column.name() + "', row " + row
+							+ " of table '" + sourceTable.name() + "'");
 				}
 			}
 
-			sourceValues.add(numeric);
-
-			DoubleColumn output = DoubleColumn.create(column.name());
-
-			resultValues.add(output);
-			result.addColumns(output);
+			sourceColumns.add(column);
+			targetColumns.add(output);
+			resultTable.addColumns(output);
 		}
 
 		int rightIndex = 0;
-		
-		// --- Iterate over the target times ------------------------
+
+		// --- Iterate over all time steps --------------------------
 		for (Instant target : targetTimes) {
 
 			while (rightIndex < sourceTimes.size() && sourceTimes.get(rightIndex).isBefore(target)) {
@@ -322,61 +327,86 @@ public class TimeSeriesJoinHelper {
 				throw new IllegalArgumentException("Target time exceeds the time range of " + sourceTable.name() + ": " + target);
 			}
 
-			// --- Get the timestamp from the table ----------------- 
 			Instant rightTime = sourceTimes.get(rightIndex);
 
-			// --- Exact match with the target time - no interpolation required
+			// --- Exact match: Keep the original value -------------
 			if (rightTime.equals(target)) {
-				resultTime.append(target);
+				resultTimeColumn.append(target);
 
-				// --- Take the original values from all columns --------------
-				for (int c = 0; c < sourceValues.size(); c++) {
-					resultValues.get(c).append(sourceValues.get(c).getDouble(rightIndex));
+				for (int c = 0; c < sourceColumns.size(); c++) {
+					
+					Column<?> sourceColumn = sourceColumns.get(c);
+					Column<?> targetColumn = targetColumns.get(c);
+					
+					if (sourceColumn instanceof NumericColumn<?> numeric) {
+						((DoubleColumn) targetColumn).append(numeric.getDouble(rightIndex));
+
+					} else if (sourceColumn instanceof BooleanColumn bool) {
+						((BooleanColumn) targetColumn).append(bool.get(rightIndex));
+
+					} else if (sourceColumn instanceof StringColumn string) {
+						((StringColumn) targetColumn).append(string.get(rightIndex));
+
+					} else {
+						throw new IllegalArgumentException("Unsupported column type: " + sourceColumn.name());
+					}
 				}
 
 				continue;
 			}
 
-			// --- Target time exceeded -> between two measurements -----------
-			
-			// --- Get the next earlier timestamp ----------------------------- 
+			// --- Target time is between two entries ---------------
 			int leftIndex = rightIndex - 1;
+
 			if (leftIndex < 0) {
-				throw new IllegalArgumentException("Unable to interpolate, no measurements available before " + target + " in table" + sourceTable.name());
+				throw new IllegalArgumentException("Unable to interpolate: no earlier measurement before " + target + " in table '" + sourceTable.name() + "'");
 			}
+
 			Instant leftTime = sourceTimes.get(leftIndex);
 
-			// --- Calculate fraction for linear interpolation ------
-			double fraction = 0.0;
-			if (interpolationMode == InterpolationMode.LINEAR) {
-				long totalNanos = Duration.between(leftTime, rightTime).toNanos();
-				long targetNanos = Duration.between(leftTime, target).toNanos();
-				fraction = (double) targetNanos / totalNanos;
-			}
+			resultTimeColumn.append(target);
 
-			resultTime.append(target);
+			// --- Adjust values according to their data type and the chosen interpolation mode
+			for (int c = 0; c < sourceColumns.size(); c++) {
+				Column<?> source = sourceColumns.get(c);
+				Column<?> output = targetColumns.get(c);
 
-			// --- Iterate over all columns, handle values according to the interpolation mode
-			for (int c = 0; c < sourceValues.size(); c++) {
-				NumericColumn<?> values = sourceValues.get(c);
+				// --- NUmeric - step or linear ---------------------
+				if (source instanceof NumericColumn<?> numeric) {
+					double leftValue = numeric.getDouble(leftIndex);
+					double value;
 
-				double leftValue = values.getDouble(leftIndex);
-				double value;
+					// --- Step -> just take the previous value ----- 
+					if (interpolationMode == InterpolationMode.STEP) {
+						value = leftValue;
+						
+					// --- Linear -> interpolate between previous and next
+					} else {
+						
+						// --- Calculate the interpolation factor ---
+						double fraction = 0.0;
+						long totalNanos = Duration.between(leftTime, rightTime).toNanos();
+						long targetNanos = Duration.between(leftTime, target).toNanos();
+						fraction = (double) targetNanos / totalNanos;
+						
+						// --- Calculate the interpolated value -----
+						double rightValue = numeric.getDouble(rightIndex);
+						value = leftValue + fraction * (rightValue - leftValue);
+					}
 
-				if (interpolationMode == InterpolationMode.STEP) {
-					// --- Step mode, just take the earlier value ---
-					value = leftValue;
-				} else {
-					// --- Linear interpolation, calculate the value for the target time 
-					double rightValue = values.getDouble(rightIndex);
-					value = leftValue + fraction * (rightValue - leftValue);
+					((DoubleColumn) output).append(value);
+
+				// --- Boolean or String -> always use step mode ----
+				} else if (source instanceof BooleanColumn bool) {
+					((BooleanColumn) output).append(bool.get(leftIndex));
+
+				} else if (source instanceof StringColumn string) {
+					((StringColumn) output).append(string.get(leftIndex));
 				}
-
-				resultValues.get(c).append(value);
 			}
 		}
 
-		return result;
+		return resultTable;
 	}
 
 }

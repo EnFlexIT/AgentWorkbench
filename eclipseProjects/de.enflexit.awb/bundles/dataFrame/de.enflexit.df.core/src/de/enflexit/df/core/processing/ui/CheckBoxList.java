@@ -195,12 +195,11 @@ public class CheckBoxList<E> extends JList<E> {
 		    this.setText(this.listEntryStringFunction.apply(value));
 		    this.setSelected(isSelected);
 		
-		    this.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
+		    this.setBackground(list.getBackground());
+		    this.setForeground(list.getForeground());
 		
-		    setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
-		
-		    setFont(list.getFont());
-		    setOpaque(true);
+		    this.setFont(list.getFont());
+		    this.setOpaque(true);
 		    
 		    this.setEnabled(list.isEnabled());
 		

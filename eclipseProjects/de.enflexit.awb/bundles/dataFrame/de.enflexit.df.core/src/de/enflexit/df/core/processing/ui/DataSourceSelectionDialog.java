@@ -14,11 +14,11 @@ import java.awt.BorderLayout;
  * Simple dialog for selecting data source tables.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JDialogDataSourceSelection extends JDialog implements ActionListener, CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>>{
+public class DataSourceSelectionDialog extends JDialog implements ActionListener, CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>>{
 
 	private static final long serialVersionUID = -653322247106918023L;
 	
-	private JPanelDataSourceSelection jPanelSelectionList;
+	private DataSourceSelectionPanel jPanelSelectionList;
 	
 	private TransformationGraphEditorPanel parentEditorPanel;
 	
@@ -29,7 +29,7 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 	 * @param owner the owner
 	 * @param graphController the graph controller
 	 */
-	public JDialogDataSourceSelection(Window owner, TransformationGraphEditorPanel parentEditor, DataController dataControler) {
+	public DataSourceSelectionDialog(Window owner, TransformationGraphEditorPanel parentEditor, DataController dataControler) {
 		super(owner);
 		this.parentEditorPanel = parentEditor;
 		this.dataControler = dataControler;
@@ -47,9 +47,9 @@ public class JDialogDataSourceSelection extends JDialog implements ActionListene
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
-	private JPanelDataSourceSelection getJPanelSelectionList() {
+	private DataSourceSelectionPanel getJPanelSelectionList() {
 		if (jPanelSelectionList == null) {
-			jPanelSelectionList = new JPanelDataSourceSelection(dataControler, parentEditorPanel);
+			jPanelSelectionList = new DataSourceSelectionPanel(dataControler, parentEditorPanel);
 			jPanelSelectionList.addCheckBoxListSelectionListener(this);
 		}
 		return jPanelSelectionList;

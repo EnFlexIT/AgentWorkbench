@@ -32,6 +32,7 @@ import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilter
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.ui.JTableHelper;
 import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.FloatColumn;
@@ -81,7 +82,7 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelRowFilters = new GridBagConstraints();
@@ -145,6 +146,7 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 		if (jTableFilterConfiguration == null) {
 			jTableFilterConfiguration = new JTable();
 			jTableFilterConfiguration.setModel(this.getTableModel());
+			jTableFilterConfiguration.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			
 			// --- Register custom renderers and editors for the first two columns
 			this.registerRenderersAndEditors();
@@ -341,6 +343,7 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 		} else if (filterExpression instanceof FilterGroup fg) {
 			this.addTableRowsForFilterGroup(fg);
 		}
+		JTableHelper.autoResizeColumns(this.getJTableFilterConfiguration());
 	}
 	
 	/**
