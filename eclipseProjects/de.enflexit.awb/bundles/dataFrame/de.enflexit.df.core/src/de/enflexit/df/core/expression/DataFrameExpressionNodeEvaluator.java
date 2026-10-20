@@ -102,10 +102,21 @@ public class DataFrameExpressionNodeEvaluator {
 				// --- If we have a column description, we have data ! --------
 				List<ColumnDescription> columnDescriptionList = dsDTNO.getColumnDescriptionList();
 				if (columnDescriptionList.size()>0) {
+					
+					// --- Predefine expression path ---------------------------
+					String pahtByName  = dc.getDataTreeModel().getExpressionPathByName(dtmNode);
+					String pahtBysUUID = dc.getDataTreeModel().getExpressionPathByUUID(dtmNode);
+					
+					ArrayList<String> tableAccessList = new ArrayList<>();
+					tableAccessList.add(pahtByName);
+					tableAccessList.add(pahtBysUUID);
+					
+					
 					// --- Define the expressions to be used ------------------
 					TreeMap<String, ArrayList<String>> expressionTemplate = new TreeMap<>();
-					expressionTemplate.put("Columns by name path", this.getColumnList(dc.getDataTreeModel().getExpressionPathByName(dtmNode), columnDescriptionList)); 
-					expressionTemplate.put("Columns by sUUID of table node", this.getColumnList( dc.getDataTreeModel().getExpressionPathByUUID(dtmNode), columnDescriptionList));
+					expressionTemplate.put("Complete Table", tableAccessList);
+					expressionTemplate.put("Columns by name path", this.getColumnList(pahtByName, columnDescriptionList)); 
+					expressionTemplate.put("Columns by sUUID of table node", this.getColumnList(pahtBysUUID, columnDescriptionList));
 					
 					exEditorNewTreeNode.setExpressionTemplates(expressionTemplate);
 				}

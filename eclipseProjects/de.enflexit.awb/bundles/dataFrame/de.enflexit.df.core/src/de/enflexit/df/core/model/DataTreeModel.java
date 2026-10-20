@@ -12,9 +12,11 @@ import javax.swing.tree.TreeNode;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
+import de.enflexit.df.core.expression.DataFrameExpressionConstants;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import tech.tablesaw.api.Table;
 
 /**
  * The Class DataTreeModel.
@@ -376,6 +378,8 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 */
 	public String getExpressionPathByName(DefaultMutableTreeNode dtmNode) {
 		
+		if (dtmNode==null) return null;
+		
 		TreeNode[] nodePath =  dtmNode.getPath();
 		String expression = "";
 		boolean isSubDataSources = false;
@@ -407,19 +411,47 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 */
 	public String getExpressionPathByUUID(DefaultMutableTreeNode dtmNode) {
 		
-		TreeNode[] nodePath =  dtmNode.getPath();
-		String expression = "";
+		if (dtmNode==null || dtmNode==this.getRootNode()) return null;
 		
-		for (TreeNode tn : nodePath) {
-			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) tn;
-			if (treeNode==this.getRootNode()) continue;
-			
-			// --- Get the data tree node object --------------------
-			DTNO_Base baseDTNO = (DTNO_Base) treeNode.getUserObject();
-			expression = "sUUID('" + baseDTNO.getShortUUID() + "')";
-			
+		// --- Get the data tree node object --------------------
+		DTNO_Base baseDTNO = (DTNO_Base) dtmNode.getUserObject();
+		return "sUUID('" + baseDTNO.getShortUUID() + "')";
+	}
+	/**
+	 * Returns the data table by ID.
+	 *
+	 * @param tableExpression the table expression
+	 * @return the data table by ID
+	 */
+	public Table getDataTableByExpression(String tableExpression) {
+		
+		if (tableExpression==null || tableExpression.isBlank()==true) return null;
+		
+		final String tbExpWork = tableExpression.trim().toLowerCase();
+		
+		// --- Search by name or short UUID -----------------------------------
+		boolean isShortUUID = tbExpWork.contains(DataFrameExpressionConstants.DF_EXPRESSION_SHORT_UUID_PREFIX.toLowerCase());
+		List<DefaultMutableTreeNode> matchingNodes = this.searchTreeNode(new DataTreeModelSearchFilter() {
+			@Override
+			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
+				String compExpression = null;
+				if (isShortUUID==true) {
+					compExpression = DataTreeModel.this.getExpressionPathByUUID(treeNode);
+				} else {
+					compExpression = DataTreeModel.this.getExpressionPathByName(treeNode);
+				}
+				return tbExpWork.equalsIgnoreCase(compExpression);
+			}
+		});
+	
+		// --- Return table, if possible --------------------------------------
+		if (matchingNodes!=null && matchingNodes.size()==1) {
+			DTNO_Base baseDTNO = (DTNO_Base) matchingNodes.get(0).getUserObject();
+			if (baseDTNO instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+				return dsDTNO.getTable();
+			}
 		}
-		return expression;
+		return null;
 	}
 	
 }

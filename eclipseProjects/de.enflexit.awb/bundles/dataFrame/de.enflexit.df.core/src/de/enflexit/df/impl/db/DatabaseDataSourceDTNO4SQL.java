@@ -54,7 +54,7 @@ public class DatabaseDataSourceDTNO4SQL extends AbstractDataSourceDTNO<DatabaseD
 	@Override
 	public String getCaption() {
 		DatabaseQuery dbQuery = this.getDatabaseSqlIntegration().getDatabaseQuery();
-		return dbQuery.getNumber() + ") " + dbQuery.getName();
+		return dbQuery.getNumber() + ". " + dbQuery.getName();
 	}
 	
 	/* (non-Javadoc)
