@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
 
 import de.enflexit.common.properties.Properties;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 
 /**
@@ -16,6 +17,8 @@ public abstract class AbstractTransformationParameterConfigurationPanel extends 
 	private static final long serialVersionUID = -2488414551927207932L;
 	
 	private DataTransformationService transformation;
+	
+	private DataController dataController;
 	
 	/**
 	 * Instantiates a new abstract transformation parameter configuration component.
@@ -51,6 +54,21 @@ public abstract class AbstractTransformationParameterConfigurationPanel extends 
 	 */
 	public void setTransformation(DataTransformationService transformation) {
 		this.transformation = transformation;
+	}
+
+	/**
+	 * Gets the data controller.
+	 * @return the data controller
+	 */
+	public DataController getDataController() {
+		return dataController;
+	}
+	/**
+	 * Sets the data controller.
+	 * @param dataController the new data controller
+	 */
+	public void setDataController(DataController dataController) {
+		this.dataController = dataController;
 	}
 	
 	

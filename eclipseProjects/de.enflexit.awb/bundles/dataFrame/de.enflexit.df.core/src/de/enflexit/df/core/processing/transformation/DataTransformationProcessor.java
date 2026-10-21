@@ -1,24 +1,26 @@
 package de.enflexit.df.core.processing.transformation;
 
-import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
+import tech.tablesaw.api.Table;
 
 /**
  * This visitor does the actuall processing of {@link AbstractDataTransformation}s, including upstream transformaitons if necessary. 
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataTransformationVisitor {
+public class DataTransformationProcessor {
 	
-	private DataController dataController;
+	private TransformationGraphController graphController;
 	
 	/**
-	 * Instantiates a new data transformation visitor.
-	 * @param dataController the data controller
+	 * Instantiates a new data transformation processor.
+	 * @param graphController the graph controller
 	 */
-	public DataTransformationVisitor(DataController dataController) {
-		this.dataController = dataController;
+	public DataTransformationProcessor(TransformationGraphController graphController) {
+		this.graphController = graphController;
 	}
+
 
 	/**
 	 * Perform transformation.
@@ -34,6 +36,7 @@ public class DataTransformationVisitor {
 			}
 		}
 		
-		transformation.performTransformation(this.dataController);
+		Table resultTable = transformation.performTransformation(this.graphController);
+		transformation.getOutputNode().setDataTable(resultTable);
 	}
 }

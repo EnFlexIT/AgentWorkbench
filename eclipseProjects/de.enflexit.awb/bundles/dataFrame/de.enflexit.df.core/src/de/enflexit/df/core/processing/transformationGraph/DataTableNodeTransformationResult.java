@@ -42,6 +42,14 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	}
 	
 	/**
+	 * Sets the data table.
+	 * @param dataTable the new data table
+	 */
+	public void setDataTable(Table dataTable) {
+		this.dataTable = dataTable;
+	}
+	
+	/**
 	 * Resets the data table, e.g. after changing transformation parameters.
 	 */
 	public void resetResultTable() {

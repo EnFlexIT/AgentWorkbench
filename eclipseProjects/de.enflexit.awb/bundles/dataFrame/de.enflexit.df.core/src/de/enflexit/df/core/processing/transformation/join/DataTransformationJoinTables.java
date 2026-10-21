@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
@@ -34,19 +34,19 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()
 	 */
 	@Override
-	public Table performTransformation(DataController dataController) {
+	public Table performTransformation(TransformationGraphController graphController) {
 		
 		Table resultTable = null;
 		String joinColumnsAsString = this.getTransformationParameters().getStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS);
 			
 		// --- Convert to Map<Table, Column<?>> -----------------
-		HashMap<Table, Column<?>> tablesMap = this.getJoinConfigurationFromParameterString(joinColumnsAsString, dataController);
+		HashMap<Table, Column<?>> tablesMap = this.getJoinConfigurationFromParameterString(joinColumnsAsString, graphController);
 		resultTable = this.joinTables(tablesMap);
 		
 		return resultTable;
 	}
 
-	private HashMap<Table, Column<?>> getJoinConfigurationFromParameterString(String parameterString, DataController dataController){
+	private HashMap<Table, Column<?>> getJoinConfigurationFromParameterString(String parameterString, TransformationGraphController graphController){
 		
 		HashMap<Table, Column<?>> joinConfig = new HashMap<Table, Column<?>>();
 		
@@ -57,7 +57,7 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 			String[] tableAndColumn = joinColumnDefinition.substring(startIndex, endIndex).split(":");
 			
 			//TODO convert UUID to expression
-			Table table = dataController.getDataTreeModel().getDataTableByExpression(tableAndColumn[0]);
+			Table table = graphController.getDataTableByUUID(tableAndColumn[0]);
 			
 			if (table!=null) {
 				Column<?> column = table.column(tableAndColumn[1]);

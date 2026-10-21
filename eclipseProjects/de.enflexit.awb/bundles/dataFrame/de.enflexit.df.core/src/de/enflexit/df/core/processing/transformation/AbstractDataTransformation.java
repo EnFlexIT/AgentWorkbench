@@ -5,6 +5,7 @@ import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import tech.tablesaw.api.Table;
 
 /**
@@ -81,9 +82,10 @@ public abstract class AbstractDataTransformation {
 	
 	/**
 	 * Performs the actual transformation.
+	 * @param graphController the graph controller
 	 * @return the result table
 	 */
-	public abstract Table performTransformation(DataController dataController);
+	public abstract Table performTransformation(TransformationGraphController graphController);
 	
 	public void resetResult() {
 		if (this.getOutputNode()!=null) {

@@ -19,6 +19,7 @@ import javax.swing.table.TableColumn;
 
 import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.filter.FilterPersistenceHelper;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.filter.DataTransformationServiceFilterRows;
 import de.enflexit.df.core.processing.transformation.filter.DateTimeInputParser;
@@ -55,6 +56,8 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 	private JTable jTableFilterConfiguration;
 	private TableSawRowFilterTableModel tableModel;
 	private JLabel jLabelRowFilters;
+
+	private DataTableNode tableNode;
 	
 	/**
 	 * Instantiates a new table saw row filter configuration panel.
@@ -196,6 +199,7 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 			
 			// --- Create and set a new table model -----------------
 			DataTableNode affectedNode = (DataTableNode) pce.getNewValue();
+			this.tableNode = affectedNode;
 			this.setTableModel(new TableSawRowFilterTableModel(affectedNode.getDataTable()));
 		}
 	}
@@ -219,12 +223,11 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 	@Override
 	public Properties getConfiguredParameters() {
 		
-		//TODO convert
 		List<FilterExpression> filtersList = this.createFiltersList();
-		String filtersString = "";
-		
+		FilterExpression andFilter = Filters.and(filtersList);
+		String filtersString = FilterPersistenceHelper.toJsonString(andFilter, tableNode.getDataSourceUUID());
 		Properties paramProperties = new Properties();
-		paramProperties.setStringValue(DataTransformationServiceFilterRows.REQUIRED_PARAMETER, TOOL_TIP_TEXT_KEY);
+		paramProperties.setStringValue(DataTransformationServiceFilterRows.REQUIRED_PARAMETER, filtersString);
 		return paramProperties;
 	}
 	
@@ -311,7 +314,7 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 			
 			// --- Delegate temporal types to a separate parser class
 			if (column instanceof TemporalColumn<?>) {
-				return DateTimeInputParser.parse(valueString);
+				return DateTimeInputParser.parseDateTime(valueString);
 			}
 		
 		// --- Parsing error -> input does not match target type
@@ -328,13 +331,9 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 	 */
 	@Override
 	public void setConfiguredParameters(Properties parameters) {
-		@SuppressWarnings("unchecked")
 		String filtersString = parameters.getStringValue(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
-		//TODO implement conversion
-		List<FilterExpression> filtersList = new ArrayList<Filters.FilterExpression>();
-		for (FilterExpression fe : filtersList) {
-			this.addFilterExpressionToTableModel(fe);
-		}
+		FilterExpression filterExpression = FilterPersistenceHelper.fromJsonString(filtersString, this.tableNode.getDataTable());
+		this.addFilterExpressionToTableModel(filterExpression);
 	}
 	
 	/**

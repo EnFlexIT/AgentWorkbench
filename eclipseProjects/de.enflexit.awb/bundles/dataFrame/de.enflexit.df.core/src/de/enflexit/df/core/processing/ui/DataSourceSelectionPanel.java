@@ -23,7 +23,7 @@ import de.enflexit.df.core.model.treeNode.DTNO_Base;
  * select and deselect them to specify the starting nodes of a transformation graph.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class DataSourceSelectionPanel extends JPanel {
+public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>>{
 	
 	private static final long serialVersionUID = -2860160566604926918L;
 	
@@ -85,6 +85,7 @@ public class DataSourceSelectionPanel extends JPanel {
 		if (jListSourceTables == null) {
 			jListSourceTables = new CheckBoxList<AbstractDataSourceDTNO<?>>(this.getDataSourcesListModel());
 			this.setInitialSelection();
+			jListSourceTables.addCheckBoxListSelectionListener(this);
 		}
 		return jListSourceTables;
 	}
@@ -171,6 +172,20 @@ public class DataSourceSelectionPanel extends JPanel {
 	 */
 	public void removeCheckBoxListSelectionListener(CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>> listener) {
 		this.getJListSourceTables().removeCheckBoxListSelectionListener(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.ui.CheckBoxListSelectionListener#selectionChanged(de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent)
+	 */
+	@Override
+	public void selectionChanged(CheckBoxListSelectionEvent<AbstractDataSourceDTNO<?>> checkboxListSelectionEvent) {
+		AbstractDataSourceDTNO<?> affectedDataSourceDTNO = checkboxListSelectionEvent.getItem();
+		if (checkboxListSelectionEvent.isSelected()==true) {
+			this.parentEditor.addDataSourceGraphNode(affectedDataSourceDTNO);
+		} else {
+			this.parentEditor.removeDataSourceGraphNode(affectedDataSourceDTNO);
+		}
+		
 	}
 		
 }

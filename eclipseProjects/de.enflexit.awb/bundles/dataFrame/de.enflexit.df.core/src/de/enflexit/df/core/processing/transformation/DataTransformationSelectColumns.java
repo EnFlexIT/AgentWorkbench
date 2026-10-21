@@ -2,7 +2,7 @@ package de.enflexit.df.core.processing.transformation;
 
 import java.util.ArrayList;
 
-import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import tech.tablesaw.api.Table;
 
 /**
@@ -18,7 +18,7 @@ public class DataTransformationSelectColumns extends AbstractDataTransformation 
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()
 	 */
 	@Override
-	public Table performTransformation(DataController dataController) {
+	public Table performTransformation(TransformationGraphController graphController) {
 		
 		Table inputTable = this.getInputNodes().get(0).getDataTable();
 		

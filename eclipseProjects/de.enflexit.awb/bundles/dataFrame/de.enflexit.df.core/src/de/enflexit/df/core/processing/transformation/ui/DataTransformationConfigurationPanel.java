@@ -243,6 +243,18 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_ADDED, null, currentSelectionNode);
 				}
 			}
+		} else {
+			// --- If nothing is set pre-select the first transformation and table
+			this.getJComboBoxSelectTransformation().setSelectedIndex(0);
+			if (this.getTableNodesListModel().size()>0) {
+				this.getTableNodesList().setSelectedIndex(0);
+				DataTableNode selectedNode = this.getTableNodesListModel().get(0);
+				if (this.getTableNodesList() instanceof RadioButtonList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_SELECTED, null, selectedNode);
+				} else if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_ADDED, null, selectedNode);
+				}
+			}
 		}
 	}
 	
@@ -332,6 +344,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		}
 		
 		// --- Set the new panel ----------------
+		paramConfigPanel.setDataController(this.parentEditorPanel.getDataController());
 		this.parametersConfigurationPanel = paramConfigPanel;
 		
 		// --- Put into the right position in the layout
