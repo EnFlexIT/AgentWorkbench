@@ -100,11 +100,19 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 		return this.treeNode;
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#addDataTreeSubNodes()
 	 */
 	public void addDataTreeSubNodes() { }
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#removeDataTreeSubNode(javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	public boolean removeDataTreeSubNode(DefaultMutableTreeNode treeNodeToRemove) { 
+		return true;
+	}
+	
 	
 	/**
 	 * In the Context oF the {@link ExpressionService}, enables to add specific context objects to the provided ExpressionContext.
@@ -112,6 +120,8 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 	 * @param expressionContext the current ExpressionContext to work on
 	 */
 	public void addContextObjectsToExpressionContext(ExpressionContext expressionContext) { }
+
+
 	
 	
 	

@@ -101,6 +101,34 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	
 	
 	/**
+	 * Returns the tree node of data workbook.
+	 *
+	 * @param dw the DataWorkbook to search for
+	 * @return the tree node of data workbook
+	 */
+	public DefaultMutableTreeNode getTreeNodeOfDataWorkbook(DataWorkbook dw) {
+		List<DefaultMutableTreeNode> nodesFound = this.searchTreeNode(this.getSearchFilter4DataWorkbook(dw));
+		if (nodesFound!=null && nodesFound.size()==1) {
+			return nodesFound.get(0);
+		}
+		return null;
+	}
+	/**
+	 * Returns the tree node of data source.
+	 *
+	 * @param ds the DataSource to search for
+	 * @return the tree node of data source
+	 */
+	public DefaultMutableTreeNode getTreeNodeOfDataSource(DefaultDataSource ds) {
+		List<DefaultMutableTreeNode> nodesFound = this.searchTreeNode(this.getSearchFilter4DataSource(ds));
+		if (nodesFound!=null && nodesFound.size()==1) {
+			return nodesFound.get(0);
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * Searches for tree nodes that matches the specified search filter.
 	 *
 	 * @param searchFilter the search filter
