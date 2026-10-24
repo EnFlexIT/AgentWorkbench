@@ -2,16 +2,15 @@ package de.enflexit.df.core.processing.transformation.join.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.join.DataTransformationJoinTables;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
-import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
 import java.awt.Component;
@@ -150,50 +149,57 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#getConfiguredParameters()
 	 */
 	@Override
-	public Map<String, Object> getConfiguredParameters() {
-
-		// --- Collect the selected join columns for all tables -----
-		HashMap<DataTableNode, Column<?>> joinColumnsMap = new HashMap<DataTableNode, Column<?>>();
+	public Properties getConfiguredParameters() {
+		Properties parameters = new Properties();
+		parameters.setStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS, this.joinColumnsToString());
+		return parameters;
+	}
+	
+	/**
+	 * Creates a String representation of the configured join columns.
+	 * @return the string
+	 */
+	private String joinColumnsToString() {
+		ArrayList<String> joinColumnStringsList = new ArrayList<String>();
 		for (int i=0; i<this.getTableSelectionModel().getRowCount(); i++) {
 			DataTableNode joinTable = (DataTableNode) this.getTableSelectionModel().getValueAt(i, 0);
 			Column<?> joinColumn = (Column<?>) this.getTableSelectionModel().getValueAt(i, 1);
-			joinColumnsMap.put(joinTable, joinColumn);
+			String joinColumnForTable = "[" + joinTable.getDataSourceUUID() + ":" + joinColumn.name() + "]";
+			joinColumnStringsList.add(joinColumnForTable);
 		}
-
-		// --- Wrap in a String Object HashMap to match the generic interface
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS, joinColumnsMap);
-		return parameters;
+		return joinColumnStringsList.stream().collect(Collectors.joining(","));
+	}
+	
+	private void setJoinColumnsFromString(String joinColumnsString) {
+		String[] joinColumnsArray = joinColumnsString.split(",");
+		for (String joinColumnDefinition : joinColumnsArray) {
+			int startIndex = joinColumnDefinition.startsWith("[") ? 1 : 0;
+			int endIndex = joinColumnDefinition.endsWith("]") ? joinColumnDefinition.length()-1 : joinColumnDefinition.length();
+			String[] tableAndColumn = joinColumnDefinition.substring(startIndex, endIndex).split(":");
+			
+			DataTableNode tableNode = this.parentEditorPanel.findCorrespondingTableNode(tableAndColumn[0]);
+			if (tableNode==null) {
+				System.err.println("No table node found for UUID " + tableAndColumn[0]);
+			} else {
+				Column<?> joinColumn = tableNode.getDataTable().column(tableAndColumn[1]);
+				if (joinColumn==null) {
+					System.err.println("Column " + tableAndColumn[1] + " not found for table " + tableNode.getLabelText());
+				} else {
+					this.getTableSelectionModel().addTable(tableNode, joinColumn);
+				}
+			}
+			
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#setConfiguredParameters(java.util.Map)
 	 */
 	@Override
-	public void setConfiguredParameters(Map<String, Object> parameters) {
+	public void setConfiguredParameters(Properties parameters) {
 		if (parameters!=null) {
-			Object joinConfigObject = parameters.get(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS);
-			
-			if (DataTransformationJoinTables.checkConfigurationParameterParamType(joinConfigObject)==true) {
-				
-				@SuppressWarnings("unchecked")
-				HashMap<Table, Column<?>> joinConfigMap = (HashMap<Table, Column<?>>) joinConfigObject;
-				for (Table joinTable : joinConfigMap.keySet()) {
-					
-					DataTableNode tableNode = this.parentEditorPanel.findCorrespondingTableNode(joinTable);
-					
-					if (tableNode==null) {
-						System.err.println("[" + this.getClass().getSimpleName() + "] No table node found for table " + joinTable.name());
-					} else {
-						Column<?> joinColumn = joinConfigMap.get(joinTable);
-						this.getTableSelectionModel().addTable(tableNode, joinColumn);
-					}
-					
-				}
-				
-			} else {
-				System.err.println("[" + this.getClass().getSimpleName() + "] Invalid parameter provided for " + DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS + ", must be a HashMap<Table, Column<?>>");
-			}
+			String joinColumnsString = parameters.getStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS);
+			this.setJoinColumnsFromString(joinColumnsString);
 		}
 	}
 	

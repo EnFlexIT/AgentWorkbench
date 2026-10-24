@@ -45,7 +45,7 @@ public class DataTransformationServiceSelectColumns implements DataTransformatio
 	@Override
 	public List<String> getRequiredParameters() {
 		ArrayList<String> requiredParameters = new ArrayList<String>();
-		requiredParameters.add(DataTransformationSelectColumns.TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
+		requiredParameters.add(DataTransformationSelectColumns.PROPERTY_NAME_SELECT_COLUMNS);
 		return requiredParameters;
 	}
 

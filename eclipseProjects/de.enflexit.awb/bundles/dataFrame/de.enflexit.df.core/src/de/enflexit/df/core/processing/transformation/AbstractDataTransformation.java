@@ -1,11 +1,11 @@
 package de.enflexit.df.core.processing.transformation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import de.enflexit.common.properties.Properties;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import tech.tablesaw.api.Table;
 
 /**
@@ -21,7 +21,9 @@ public abstract class AbstractDataTransformation {
 	private ArrayList<DataTableNode> inputNodes;
 	private DataTableNodeTransformationResult outputNode;
 	
-	private Map<String, Object> transformationParameters;
+	Properties transformationParameters;
+	
+	private ArrayList<DataTransformationMessage> messagesList;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#getInputNodes()
@@ -57,9 +59,9 @@ public abstract class AbstractDataTransformation {
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#getTransformationParameters()
 	 */
-	public Map<String, Object> getTransformationParameters() {
+	public Properties getTransformationParameters() {
 		if (transformationParameters==null) {
-			transformationParameters = new HashMap<String, Object>();
+			transformationParameters = new Properties();
 		}
 		return transformationParameters;
 	}
@@ -68,7 +70,7 @@ public abstract class AbstractDataTransformation {
 	 * Sets the transformation parameters.
 	 * @param transformationParameters the transformation parameters
 	 */
-	public void setTransformationParameters(Map<String, Object> transformationParameters) {
+	public void setTransformationParameters(Properties transformationParameters) {
 		this.transformationParameters = transformationParameters;
 	}
 
@@ -80,13 +82,25 @@ public abstract class AbstractDataTransformation {
 	
 	/**
 	 * Performs the actual transformation.
+	 * @param graphController the graph controller
 	 * @return the result table
 	 */
-	public abstract Table performTransformation();
+	public abstract Table performTransformation(TransformationGraphController graphController);
 	
 	public void resetResult() {
 		if (this.getOutputNode()!=null) {
 			this.getOutputNode().resetResultTable();
 		}
+	}
+	
+	/**
+	 * Gets the messages list.
+	 * @return the messages list
+	 */
+	public ArrayList<DataTransformationMessage> getMessagesList() {
+		if (messagesList==null) {
+			messagesList = new ArrayList<DataTransformationMessage>();
+		}
+		return messagesList;
 	}
 }

@@ -1,8 +1,10 @@
 package de.enflexit.df.core.processing.transformation.filter;
 
-import java.util.List;
+import de.enflexit.df.core.filter.FilterPersistenceHelper;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.filter.Filters.FilterExpression;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import tech.tablesaw.api.Table;
 
 /**
@@ -24,25 +26,21 @@ public class DataTransformationFilterRows extends AbstractDataTransformation {
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()
 	 */
 	@Override
-	public Table performTransformation() {
-		
-		Table resultTable = null;
-		
+	public Table performTransformation(TransformationGraphController graphController) {
 		Table inputTable = this.getInputNodes().get(0).getDataTable();
-		
-		@SuppressWarnings("unchecked")
-		List<FilterExpression> filtersList = (List<FilterExpression>) this.getTransformationParameters().get(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
-		
-		if (filtersList==null || filtersList.isEmpty()) {
-			// --- No filters defined -> pass the original table
-			resultTable = this.getInputNodes().get(0).getDataTable();
-		} else {
-			FilterExpression combinedFilters = Filters.and(filtersList);
-			resultTable = TableSawFilter.filter(inputTable, combinedFilters);
-		}
-		
-		return resultTable;
-		
+		String filtersString = this.getTransformationParameters().getStringValue(DataTransformationServiceFilterRows.REQUIRED_PARAMETER);
+		FilterExpression andFilter = this.createFilterExpressions(filtersString, inputTable);
+		return TableSawFilter.filter(inputTable, andFilter);
+	}
+	
+	/**
+	 * Creates the filter expressions.
+	 * @param filtersString the filters string
+	 * @param dataController the data controller
+	 * @return the array list
+	 */
+	private FilterExpression createFilterExpressions(String filtersString, Table table){
+		return FilterPersistenceHelper.fromJsonString(filtersString, table);
 	}
 	
 

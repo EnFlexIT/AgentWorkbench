@@ -62,7 +62,7 @@ public class DateTimeCellEditor extends AbstractCellEditor implements TableCellE
 
 	private boolean isValidInput() {
 		try {
-			DateTimeInputParser.parse(field.getText());
+			DateTimeInputParser.parseDateTime(field.getText());
 			return true;
 		} catch (DateTimeParseException ex) {
 			return false;

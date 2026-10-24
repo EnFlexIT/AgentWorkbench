@@ -16,12 +16,12 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
@@ -243,6 +243,18 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_ADDED, null, currentSelectionNode);
 				}
 			}
+		} else {
+			// --- If nothing is set pre-select the first transformation and table
+			this.getJComboBoxSelectTransformation().setSelectedIndex(0);
+			if (this.getTableNodesListModel().size()>0) {
+				this.getTableNodesList().setSelectedIndex(0);
+				DataTableNode selectedNode = this.getTableNodesListModel().get(0);
+				if (this.getTableNodesList() instanceof RadioButtonList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_SELECTED, null, selectedNode);
+				} else if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_ADDED, null, selectedNode);
+				}
+			}
 		}
 	}
 	
@@ -332,6 +344,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		}
 		
 		// --- Set the new panel ----------------
+		paramConfigPanel.setDataController(this.parentEditorPanel.getDataController());
 		this.parametersConfigurationPanel = paramConfigPanel;
 		
 		// --- Put into the right position in the layout
@@ -517,7 +530,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	 * Gets the configured transformation parameters.
 	 * @return the transformation parameters
 	 */
-	public Map<String, Object> getConfiguredTransformationParameters(){
+	public Properties getConfiguredTransformationParameters(){
 		return ((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).getConfiguredParameters();
 	}
 

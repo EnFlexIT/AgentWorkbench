@@ -1,9 +1,8 @@
 package de.enflexit.df.core.processing.transformation.ui;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
@@ -97,36 +96,36 @@ public class DefaultTransformationParameterConfigurationPanel extends AbstractTr
 		return parametersTableModel;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.processing.ui.AbstractTransformationParameterConfigurationPanel#getConfiguredParameters()
-	 */
-	@Override
-	public Map<String, Object> getConfiguredParameters() {
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		
-		// --- Convert the table entries to a key value map ---------
-		for (int i=0; i<this.getParametersTableModel().getRowCount(); i++) {
-			String paramName = (String) this.getParametersTableModel().getValueAt(i, 0);
-			Object paramValue = this.getParametersTableModel().getValueAt(i, 1);
-			parameters.put(paramName, paramValue);
-		}
-		
-		return parameters;
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#setConfiguredParameters(java.util.Map)
-	 */
-	@Override
-	public void setConfiguredParameters(Map<String, Object> parameters) {
-		this.getParametersTableModel().getDataVector().clear();
-		for (String paramName : parameters.keySet()) {
-			Vector<String> paramRow = new Vector<String>();
-			paramRow.add(paramName);
-			paramRow.add(parameters.get(paramName).toString());
-			this.getParametersTableModel().addRow(paramRow);
-		}
-	}
+//	/* (non-Javadoc)
+//	 * @see de.enflexit.df.core.processing.ui.AbstractTransformationParameterConfigurationPanel#getConfiguredParameters()
+//	 */
+//	@Override
+//	public Map<String, Object> getConfiguredParameters() {
+//		HashMap<String, Object> parameters = new HashMap<String, Object>();
+//		
+//		// --- Convert the table entries to a key value map ---------
+//		for (int i=0; i<this.getParametersTableModel().getRowCount(); i++) {
+//			String paramName = (String) this.getParametersTableModel().getValueAt(i, 0);
+//			Object paramValue = this.getParametersTableModel().getValueAt(i, 1);
+//			parameters.put(paramName, paramValue);
+//		}
+//		
+//		return parameters;
+//	}
+//	
+//	/* (non-Javadoc)
+//	 * @see de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel#setConfiguredParameters(java.util.Map)
+//	 */
+//	@Override
+//	public void setConfiguredParameters(Map<String, Object> parameters) {
+//		this.getParametersTableModel().getDataVector().clear();
+//		for (String paramName : parameters.keySet()) {
+//			Vector<String> paramRow = new Vector<String>();
+//			paramRow.add(paramName);
+//			paramRow.add(parameters.get(paramName).toString());
+//			this.getParametersTableModel().addRow(paramRow);
+//		}
+//	}
 
 	private JLabel getJLabelTransformaitonName() {
 		if (jLabelTest == null) {
@@ -142,6 +141,18 @@ public class DefaultTransformationParameterConfigurationPanel extends AbstractTr
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		// --- No action required ---------------
+	}
+
+	@Override
+	public void setConfiguredParameters(Properties parametersAsProperties) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Properties getConfiguredParameters() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -28,17 +28,38 @@ public class DateTimeInputParser {
 	private static DateTimeFormatter formatter(String pattern) {
 		return DateTimeFormatter.ofPattern(pattern).withResolverStyle(ResolverStyle.STRICT);
 	}
+	
+	/**
+	 * Parses the provided input String as LocalDate object.
+	 * @param input the input
+	 * @return the local date
+	 */
+	public static LocalDate parseDate(String input) {
+		String text = input == null ? "" : input.trim();
+
+		if (text.isEmpty()) {
+			throw new DateTimeParseException("Can't parse an empty string!", text, 0);
+		}
+		
+		try {
+			return LocalDate.parse(input, DATE);
+		} catch (DateTimeParseException ignored) {
+			// --- No matching format found ---------------------
+			throw new DateTimeParseException("Unable to parse date/time! Supported formats: dd.MM.yyyy, dd.MM.yyyy HH:mm, dd.MM.yyyy HH:mm:ss or ISO date time", text, 0);
+		}
+		
+	}
 
 	/**
 	 * Parses the provided input String as LocalDateTime object.
 	 * @param input the input
 	 * @return the local date time
 	 */
-	public static LocalDateTime parse(String input) {
+	public static LocalDateTime parseDateTime(String input) {
 		String text = input == null ? "" : input.trim();
 
 		if (text.isEmpty()) {
-			throw new DateTimeParseException("Keine Datumsangabe vorhanden", text, 0);
+			throw new DateTimeParseException("Can't parse an empty string!", text, 0);
 		}
 
 		// --- Try date/time formats, starting with the most detailed one
@@ -46,7 +67,7 @@ public class DateTimeInputParser {
 			try {
 				return LocalDateTime.parse(text, formatter);
 			} catch (DateTimeParseException ignored) {
-				// --- try the next more general format ---------
+				// --- Nothing to do here, trying the next format in the next iteration
 			}
 		}
 		
@@ -55,7 +76,7 @@ public class DateTimeInputParser {
 			return LocalDate.parse(input, DATE).atStartOfDay();
 		} catch (DateTimeParseException ignored) {
 			// --- No matching format found ---------------------
-			throw new DateTimeParseException("Unable to parse date/time! Supported formats: dd.MM.yyyy, dd.MM.yyyy HH:mm or dd.MM.yyyy HH:mm:ss", text, 0);
+			throw new DateTimeParseException("Unable to parse date/time! Supported formats: dd.MM.yyyy, dd.MM.yyyy HH:mm, dd.MM.yyyy HH:mm:ss or ISO date time", text, 0);
 		}
 		
 	}
