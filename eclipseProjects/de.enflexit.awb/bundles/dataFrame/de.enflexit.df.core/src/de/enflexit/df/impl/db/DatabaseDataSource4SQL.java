@@ -94,21 +94,21 @@ public class DatabaseDataSource4SQL extends DatabaseDataSource {
 	 */
 	@Override
 	public int getId() {
-		return this.getDatabaseDataSource().getId();
+		return this.getDatabaseQuery().getNumber();
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#getName()
 	 */
 	@Override
 	public String getName() {
-		return this.getDatabaseDataSource().getName();
+		return this.getDatabaseQuery().getName();
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#getDescription()
 	 */
 	@Override
 	public String getDescription() {
-		return this.getDatabaseDataSource().getDescription();
+		return this.getDatabaseQuery().getSqlStatement();
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSource#getRowsPerPage()

@@ -34,6 +34,8 @@ public class DatabaseDataSource extends DefaultDataSource {
 	public final static String KEY_USER_NAME = "UserName";
 	public final static String KEY_PASSWORD = "Password";
 
+	public final static String KEY_DATABASE_QUERY_LIST = "KEY_DATABASE_QUERY_LIST";
+	
 	private String factoryID;
 
 	private String dbmsName;
