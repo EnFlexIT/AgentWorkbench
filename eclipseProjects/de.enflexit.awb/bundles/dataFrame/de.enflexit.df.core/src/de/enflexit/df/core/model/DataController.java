@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.expression.DataFrameExpressionParser;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
@@ -402,9 +404,24 @@ public class DataController {
 	 */
 	public boolean removeDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		if (dw!=null && dataSource!=null && dw.getDataSources()!=null) {
-			boolean success = this.closeDataSource(dw, dataSource) && dw.removeDataSource(dataSource);
+			boolean success = false;
+			if (dw.getDataSources().indexOf(dataSource)>-1) {
+				// --- data source is direct data source in workbook ----------
+				success = this.closeDataSource(dw, dataSource) && dw.removeDataSource(dataSource);
+			} else {
+				// --- Possibly, a sub data source ----------------------------
+				DefaultMutableTreeNode tnDataSource = this.getDataTreeModel().getTreeNodeOfDataSource(dataSource);
+				if (tnDataSource!=null) {
+					DefaultMutableTreeNode tnParent = (DefaultMutableTreeNode) tnDataSource.getParent();
+					AbstractDataSourceDTNO<?> dtnoParent = (AbstractDataSourceDTNO<?>) tnParent.getUserObject();
+					success = dtnoParent.getDataSource().getDataSourceIntegration(this, dw).removeDataTreeSubNode(tnDataSource);
+				}
+			}
+			
 			// --- Inform property change listener ------------------
-			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
+			if (success==true) {
+				this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
+			}
 			return success;
 		}
 		return false;

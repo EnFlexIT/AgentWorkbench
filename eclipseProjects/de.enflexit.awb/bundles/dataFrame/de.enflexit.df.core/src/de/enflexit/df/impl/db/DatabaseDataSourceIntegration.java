@@ -150,18 +150,48 @@ public class DatabaseDataSourceIntegration extends AbstractDataSourceIntegration
 		this.getDataTreeNode().add(subNode);
 		this.getDataController().getDataTreeModel().informTreeNodeAdded(this.getDataTreeNode(), subNode);
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration#removeDataTreeSubNode(javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public boolean removeDataTreeSubNode(DefaultMutableTreeNode treeNodeToRemove) {
+		
+		if (treeNodeToRemove==null) return false;
+		
+		// ----------------------------------------------------------
+		// --- Remove sub node to the current EOM node --------------
+		// ----------------------------------------------------------
+		int idxOfSubNodeToRemove = this.getDataTreeNode().getIndex(treeNodeToRemove);
+		if (idxOfSubNodeToRemove==-1) return false;
+		
+		this.getDataTreeNode().remove(idxOfSubNodeToRemove);
+		this.getDataController().getDataTreeModel().informTreeNodeRemoved(this.getDataTreeNode(), treeNodeToRemove, idxOfSubNodeToRemove);
+
+		// ----------------------------------------------------------
+		// --- Maintain sub configuration ---------------------------
+		// ----------------------------------------------------------
+		DatabaseDataSourceDTNO4SQL dtnoSQL = (DatabaseDataSourceDTNO4SQL) treeNodeToRemove.getUserObject();
+		DatabaseQuery dbQuery = dtnoSQL.getDataSource().getDatabaseQuery();
+		int idxDbQuery = this.getDataSource().getDatabaseQueryList().indexOf(dbQuery);
+		if (idxDbQuery>-1) {
+			this.getDataSource().getDatabaseQueryList().remove(idxDbQuery);
+			// --- Update numbers -----------------------------------
+			for (int i = 0; i < this.getDataSource().getDatabaseQueryList().size(); i++) {
+				dbQuery = this.getDataSource().getDatabaseQueryList().get(i);
+				dbQuery.setNumber(i+1);
+			}
+			this.getDataSource().updateSubConfigurations();
+			this.getDataController().firePropertyChange(DatabaseDataSource.KEY_DATABASE_QUERY_LIST, dtnoSQL, this.getDataSource());
+		}
+		return true;
+	}
 	/**
 	 * Removes the data tree sub node that corresponds to the specified {@link DatabaseQuery}.
 	 * @param dbQueryToRemove the DatabaseQuery to remove
 	 */
 	public void removeDataTreeSubNode(DatabaseQuery dbQueryToRemove) {
-		
-		DefaultMutableTreeNode subNodeToRemove = this.getDataTreeSubNode(dbQueryToRemove);
-		if (subNodeToRemove==null) return;
-		
-		int idxOfSubNodeToRemove = this.getDataTreeNode().getIndex(subNodeToRemove);
-		this.getDataTreeNode().remove(idxOfSubNodeToRemove);
-		this.getDataController().getDataTreeModel().informTreeNodeRemoved(this.getDataTreeNode(), subNodeToRemove, idxOfSubNodeToRemove);
+		this.removeDataTreeSubNode(this.getDataTreeSubNode(dbQueryToRemove));
 	}
 
 	/**

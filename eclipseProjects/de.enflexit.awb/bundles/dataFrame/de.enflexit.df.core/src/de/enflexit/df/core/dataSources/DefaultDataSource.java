@@ -238,10 +238,11 @@ public class DefaultDataSource implements DataSource {
 	public boolean equals(Object compObj) {
 		
 		if (compObj==null) return false;
-		if (compObj instanceof DefaultDataSource ==false) return false;
+		if (compObj instanceof DefaultDataSource==false) return false;
 		
 		if (compObj==this) return true;
-
+		if (compObj.getClass().equals(this.getClass())==false) return false;
+		
 		// --- Compare the abstract data source first ---------------
 		DefaultDataSource adsComp = (DefaultDataSource) compObj;
 		
