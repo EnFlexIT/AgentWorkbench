@@ -1226,6 +1226,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 
 		if (evt.getPropertyName()==DatabaseDataSource.KEY_DATABASE_QUERY_LIST) {
 			if (evt.getNewValue()==this.databaseDataSourceIntegration.getDataSource()) {
+				// --- Renew data view --------------------
 				this.getTableModelDatabaseQuery().setRowCount(0);
 				this.fillTableModel();
 				if (this.getTableModelDatabaseQuery().getRowCount()>0) {
