@@ -245,7 +245,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 			}
 		} else {
 			// --- If nothing is set pre-select the first transformation and table
-			this.getJComboBoxSelectTransformation().setSelectedIndex(0);
+//			this.getJComboBoxSelectTransformation().setSelectedIndex(0);
 			if (this.getTableNodesListModel().size()>0) {
 				this.getTableNodesList().setSelectedIndex(0);
 				DataTableNode selectedNode = this.getTableNodesListModel().get(0);

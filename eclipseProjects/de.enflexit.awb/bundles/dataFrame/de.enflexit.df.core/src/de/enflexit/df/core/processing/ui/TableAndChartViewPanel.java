@@ -2,6 +2,8 @@ package de.enflexit.df.core.processing.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -15,6 +17,7 @@ import java.awt.Insets;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import de.enflexit.df.core.charts.TableSawChartHelper;
@@ -69,13 +72,6 @@ public class TableAndChartViewPanel extends JPanel implements ActionListener {
 		setLayout(new BorderLayout(0, 0));
 		add(getJPanelHeader(), BorderLayout.NORTH);
 		add(getJSplitPaneTableChart(), BorderLayout.CENTER);
-//		SwingUtilities.invokeLater(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				TableAndChartViewPanel.this.getJSplitPaneTableChart().setDividerLocation(1.0);
-//			}
-//		});
 	}
 
 	/**
@@ -178,7 +174,7 @@ public class TableAndChartViewPanel extends JPanel implements ActionListener {
 	private JTable getJTableData() {
 		if (jTableData == null) {
 			jTableData = new JTable();
-			jTableData.setDefaultRenderer(Object.class, new DateTimeTableCellRenderer(DEFAULT_TIME_FORMAT));
+			jTableData.setDefaultRenderer(Object.class, new DateAndNumberTableCellRenderer(DEFAULT_TIME_FORMAT));
 			jTableData.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
 		return jTableData;
@@ -230,5 +226,42 @@ public class TableAndChartViewPanel extends JPanel implements ActionListener {
 				this.getJSplitPaneTableChart().setDividerLocation(1.0);
 			}
 		}
+	}
+	
+	/**
+	 * This extension of {@link DateTimeTableCellRenderer} adds formating for decimal numbers.
+	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+	 */
+	private class DateAndNumberTableCellRenderer extends DateTimeTableCellRenderer {
+		
+		private static final long serialVersionUID = 7142510168344789846L;
+		
+		private static final int DECIMAL_PLACES = 2;
+		
+		private NumberFormat numberFormat;
+
+		public DateAndNumberTableCellRenderer(String dateTimeFormat) {
+			super(dateTimeFormat);
+			this.setHorizontalAlignment(SwingConstants.CENTER);
+		}
+		
+		@Override
+		protected void setValue(Object value) {
+			if (value instanceof Double || value instanceof Float) {
+				super.setValue(this.getNumberFormat().format(((Number)value).doubleValue()));
+			} else {
+				super.setValue(value);
+			}
+		}
+		
+		public NumberFormat getNumberFormat() {
+			if (numberFormat==null) {
+				numberFormat = NumberFormat.getInstance(Locale.US);	// Use . as separator
+				numberFormat.setMinimumFractionDigits(DECIMAL_PLACES);
+				numberFormat.setMaximumFractionDigits(DECIMAL_PLACES);
+			}
+			return numberFormat;
+		}
+		
 	}
 }

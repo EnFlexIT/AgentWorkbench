@@ -1,7 +1,6 @@
 package de.enflexit.df.core.processing.transformation.filter;
 
 import de.enflexit.df.core.filter.FilterPersistenceHelper;
-import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.filter.Filters.FilterExpression;
 import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;

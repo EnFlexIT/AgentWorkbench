@@ -2,7 +2,6 @@ package de.enflexit.df.core.processing.transformation;
 
 import java.util.ArrayList;
 import de.enflexit.common.properties.Properties;
-import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
 import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;

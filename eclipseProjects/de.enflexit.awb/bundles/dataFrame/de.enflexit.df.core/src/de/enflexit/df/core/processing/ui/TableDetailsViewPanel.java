@@ -94,6 +94,7 @@ public class TableDetailsViewPanel extends JPanel implements ActionListener {
 			columnTypes.put(columnName, column.type().name());
 
 			// --- Create the summary table for this column  
+			//TODO customize shown information
 			Table summary = column.summary();
 
 			if (summary.columnCount() < 2) {

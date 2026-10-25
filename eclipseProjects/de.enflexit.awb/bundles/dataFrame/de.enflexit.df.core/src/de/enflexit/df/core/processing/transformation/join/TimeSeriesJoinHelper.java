@@ -287,6 +287,20 @@ public class TimeSeriesJoinHelper {
 			if (column.name().equals(timeColumnName)) {
 				continue;
 			}
+			
+			// --- Check if a column is empty -----------------------
+		    boolean allMissing = true;
+		    for (int row = 0; row < column.size(); row++) {
+		        if (!column.isMissing(row)) {
+		            allMissing = false;
+		            break;
+		        }
+		    }
+
+		    // --- Skip empty columns -------------------------------
+		    if (allMissing) {
+		        continue;
+		    }
 
 			// --- Check for supported column types -----------------
 			Column<?> output;
