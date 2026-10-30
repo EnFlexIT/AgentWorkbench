@@ -40,6 +40,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import tech.tablesaw.api.Table;
 
 import javax.swing.JSplitPane;
+import java.awt.Font;
 
 /**
  * The Class JPanelTransformationGraphEditor.
@@ -65,6 +66,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private JButton jButtonAddDataTransformation;
 	private JButton jButtonRemove;
 	private JButton jButtonVerify;
+	private JButton jButtonApplyChanges;
+	private JButton jButtonRevertChanges;
 	
 	private DataController dataController;
 	private TransformationGraphController graphController;
@@ -78,6 +81,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private Object selectedGraphElement;
 	
 	private DataTransformationProcessor transformationVisitor;
+//	private ProcessingDataSource dataSource;
 	
 	/**
 	 * Instantiates a new j panel transformation graph editor.
@@ -112,6 +116,9 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			jToolBarMain.add(this.getjButtonAddDataTransformation());
 			jToolBarMain.add(getJButtonRemove());
 			jToolBarMain.add(getJButtonVerify());
+			jToolBarMain.addSeparator();
+			jToolBarMain.add(getJButtonApplyChanges());
+			jToolBarMain.add(getJButtonRevertChanges());
 		}
 		return jToolBarMain;
 	}
@@ -273,22 +280,28 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			JOptionPane.showMessageDialog(this, "Not implemented yet");
 		}
 	}
+
+	// Probably required later for persisting transformations. 
+	/**
+	 * Gets the data source for this transformation..
+	 * @return the data source
+	 */
+//	private ProcessingDataSource getDataSource() {
+//		if (dataSource==null) {
+//			DefaultDataSource dataSourceFromController = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSource();
+//			if (dataSourceFromController instanceof ProcessingDataSource pds) {
+//				this.dataSource = pds;
+//			} else {
+//				throw new IllegalArgumentException("Unexpected data source type: " + dataSourceFromController.getClass().getName());
+//			}
+//		}
+//		return dataSource;
+//	}
 	
 	/**
 	 * Shows the data source selection dialog.
 	 */
 	private void showDataSourceSelectionPanel() {
-//		Window owner = OwnerDetection.getOwnerWindowForComponent(this.getJButtonAddDataSource());
-//		DataSourceSelectionWindow selectionWindow = new DataSourceSelectionWindow(owner, this, this.dataController);
-//		
-//		Point buttonLocation = this.getJButtonAddDataSource().getLocationOnScreen();
-//		
-//		// --- Align centered below the button -------
-//		Double dialogPositionX = buttonLocation.getX() - (selectionWindow.getWidth() + this.getJButtonAddDataSource().getWidth())/2;
-//		Double dialogPositionY = buttonLocation.getY() + this.getJButtonAddDataSource().getHeight();
-//		
-//		selectionWindow.setLocation(dialogPositionX.intValue(), dialogPositionY.intValue());
-		
 		DataSourceSelectionPanel dataSelectionPanel = new DataSourceSelectionPanel(this.getDataController(), this);
 		this.getJSplitPaneMainView().setRightComponent(dataSelectionPanel);
 		this.getJSplitPaneMainView().setDividerLocation(0.8);
@@ -618,4 +631,20 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		return transformationVisitor;
 	}
 	
+	private JButton getJButtonApplyChanges() {
+		if (jButtonApplyChanges == null) {
+			jButtonApplyChanges = new JButton("Apply");
+			jButtonApplyChanges.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonApplyChanges.addActionListener(this);
+		}
+		return jButtonApplyChanges;
+	}
+	private JButton getJButtonRevertChanges() {
+		if (jButtonRevertChanges == null) {
+			jButtonRevertChanges = new JButton("Revert");
+			jButtonRevertChanges.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jButtonRevertChanges.addActionListener(this);
+		}
+		return jButtonRevertChanges;
+	}
 }

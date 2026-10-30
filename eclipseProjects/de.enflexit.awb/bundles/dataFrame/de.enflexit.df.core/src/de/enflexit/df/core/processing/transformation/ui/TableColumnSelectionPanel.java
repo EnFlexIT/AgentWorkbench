@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import javax.swing.JScrollPane;
 
 import de.enflexit.common.properties.Properties;
+import de.enflexit.common.swing.CheckBoxList;
 import de.enflexit.df.core.processing.transformation.DataTransformationSelectColumns;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.ui.CheckBoxList;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 

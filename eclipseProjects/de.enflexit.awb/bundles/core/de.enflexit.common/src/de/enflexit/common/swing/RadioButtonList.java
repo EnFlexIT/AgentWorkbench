@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.common.swing;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
@@ -102,10 +102,10 @@ public class RadioButtonList<E> extends JList<E> {
 	 * @see javax.swing.JComponent#processMouseEvent(java.awt.event.MouseEvent)
 	 */
 	@Override
-	protected void processMouseEvent(MouseEvent e) {
+	protected void processMouseEvent(MouseEvent me) {
 		
-		if (e.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-			int index = locationToIndex(e.getPoint());
+		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me)) {
+			int index = locationToIndex(me.getPoint());
 			
 			if (index >= 0) {
 				
@@ -115,11 +115,11 @@ public class RadioButtonList<E> extends JList<E> {
 					E item = this.getModel().getElementAt(index);
 					fireSelectionChanged(index, item);
 				}
-				e.consume();
+				me.consume();
                 return;
 			}
 		}
-		super.processMouseEvent(e);
+		super.processMouseEvent(me);
 	}
 	
 	/**

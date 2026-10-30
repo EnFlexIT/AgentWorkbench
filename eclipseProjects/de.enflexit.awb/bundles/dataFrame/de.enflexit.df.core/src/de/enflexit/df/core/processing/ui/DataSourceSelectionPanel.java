@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.enflexit.common.swing.CheckBoxList;
+import de.enflexit.common.swing.CheckBoxListSelectionEvent;
+import de.enflexit.common.swing.CheckBoxListSelectionListener;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;

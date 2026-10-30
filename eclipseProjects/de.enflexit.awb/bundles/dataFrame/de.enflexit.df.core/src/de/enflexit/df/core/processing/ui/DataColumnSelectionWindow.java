@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 import javax.swing.JWindow;
 
+import de.enflexit.common.swing.CheckBoxList;
+import de.enflexit.common.swing.CheckBoxListSelectionEvent;
+import de.enflexit.common.swing.CheckBoxListSelectionListener;
 import de.enflexit.df.core.charts.TableSawChartHelper;
 import de.enflexit.df.core.charts.TableSawChartViewPanel;
 import tech.tablesaw.api.Table;

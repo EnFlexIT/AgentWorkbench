@@ -22,6 +22,12 @@ import javax.swing.JScrollPane;
 
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.properties.Properties;
+import de.enflexit.common.swing.CheckBoxList;
+import de.enflexit.common.swing.CheckBoxListSelectionEvent;
+import de.enflexit.common.swing.CheckBoxListSelectionListener;
+import de.enflexit.common.swing.RadioButtonList;
+import de.enflexit.common.swing.RadioButtonListSelectionEvent;
+import de.enflexit.common.swing.RadioButtonListSelectionListener;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
@@ -32,13 +38,7 @@ import de.enflexit.df.core.processing.transformation.join.DataTransformationServ
 import de.enflexit.df.core.processing.transformation.join.ui.JoinTablesConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
-import de.enflexit.df.core.processing.ui.CheckBoxList;
-import de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent;
-import de.enflexit.df.core.processing.ui.CheckBoxListSelectionListener;
 import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
-import de.enflexit.df.core.processing.ui.RadioButtonList;
-import de.enflexit.df.core.processing.ui.RadioButtonListSelectionEvent;
-import de.enflexit.df.core.processing.ui.RadioButtonListSelectionListener;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;

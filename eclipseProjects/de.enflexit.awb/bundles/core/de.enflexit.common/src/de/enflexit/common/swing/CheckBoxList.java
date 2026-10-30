@@ -1,6 +1,7 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.common.swing;
 
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,31 +68,56 @@ public class CheckBoxList<E> extends JList<E> {
 	 */
 	@Override
     public void processMouseEvent(MouseEvent me) {
+		
+		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me)) {
 
-		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me) && me.getClickCount() == 1) {
-			 int index = this.locationToIndex(me.getPoint());
-			 
-			 if (index>=0) {
-				 
-				 // --- New selection state = opposite of the current
-				 boolean selected = !this.isSelectedIndex(index);
-				 if (selected) {
-					 this.addSelectionInterval(index, index);
-				 } else {
-					 this.removeSelectionInterval(index, index);
-				 }
-				 
-				 // --- Notify listeners about the change 
-				 E item = this.getModel().getElementAt(index);
-				 this.fireSelectionChangeEvent(index, item, selected);
-				 
-				 me.consume();
-				 return;
+			int index = this.locationToIndex(me.getPoint());
 
-			 }
-		 }
-		super.processMouseMotionEvent(me);
+			if (index >= 0) {
+
+				// --- Check if the click was actually inside the cell --------
+				Rectangle bounds = this.getCellBounds(index, index);
+
+				if (bounds != null && bounds.contains(me.getPoint())) {
+
+					// --- Handle the first click only (ignore accidental double clicks
+					if (me.getClickCount() == 1) {
+
+						boolean selected = !this.isSelectedIndex(index);
+
+						if (selected) {
+							this.addSelectionInterval(index, index);
+						} else {
+							this.removeSelectionInterval(index, index);
+						}
+
+						E item = this.getModel().getElementAt(index);
+
+						this.fireSelectionChangeEvent(index, item, selected);
+					}
+				}
+			}
+
+			// --- Prevent standard click handling for all left clicks --------
+			me.consume();
+			return;
+		}
+
+		super.processMouseEvent(me);
     }
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#processMouseMotionEvent(java.awt.event.MouseEvent)
+	 */
+	@Override
+	protected void processMouseMotionEvent(MouseEvent me) {
+		// --- Catch drag events to prevent unwanted movements from affecting the selection behaviour. 
+		if (me.getID() == MouseEvent.MOUSE_DRAGGED) {
+			me.consume();
+	        return;
+	    }
+		super.processMouseMotionEvent(me);
+	}
 	
 	/**
 	 * Gets the selection listeners.
@@ -205,6 +231,7 @@ public class CheckBoxList<E> extends JList<E> {
 		
 		    return this;
 		}
+		
 	}
 	
 }
