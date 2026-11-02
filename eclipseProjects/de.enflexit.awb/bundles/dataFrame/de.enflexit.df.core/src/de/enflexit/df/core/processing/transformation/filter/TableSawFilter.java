@@ -71,9 +71,8 @@ public final class TableSawFilter {
 	 * @return the selection
 	 */
 	private static Selection toSelection(Table table, FilterGroup filterGroup) {
-		List<Selection> selections = filterGroup.expressions().stream().map(expression -> toSelection(table, expression))
-				.toList();
-
+		
+		List<Selection> selections = filterGroup.expressions().stream().map(expression -> toSelection(table, expression)).toList();
 		Selection result = selections.getFirst();
 
 		for (int i = 1; i < selections.size(); i++) {
@@ -96,8 +95,8 @@ public final class TableSawFilter {
 	 * @return the selection
 	 */
 	private static Selection toSelection(Table table, TableFilter filter) {
+		
 		Column<?> column = getColumn(table, filter.column());
-
 		return switch (column) {
 			case StringColumn c -> filterString(c, filter);
 			case BooleanColumn c -> filterBoolean(c, filter);

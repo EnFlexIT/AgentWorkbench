@@ -59,6 +59,8 @@ public class DataController {
 	public static final String DC_DATA_SOURCE_CONFIGURATION_SHOW = "DC_DATA_SOURCE_CONFIGURATION_SHOW";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_CHANGED = "DC_DATA_SOURCE_CONFIGURATION_CHANGED";
 	
+	public static final String DC_PROPERTIES_CONFIGURATION_SHOW = "DC_PROPERTIES_CONFIGURATION_SHOW";
+	
 	public static final String DC_DATA_LOADED = "DC_DATA_LOADED";
 	
 	
