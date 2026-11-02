@@ -5,6 +5,8 @@ import java.util.List;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
+import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilterConfigurationPanel;
+import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 
 /**
@@ -60,6 +62,14 @@ public class DataTransformationServiceFilterRows implements DataTransformationSe
 	@Override
 	public AbstractDataTransformation getNewInstance() {
 		return new DataTransformationFilterRows();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getParameterConfigurationPanel()
+	 */
+	@Override
+	public AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel() {
+		return new TableSawRowFilterConfigurationPanel(this);
 	}
 
 }

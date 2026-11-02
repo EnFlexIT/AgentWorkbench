@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
+import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
+import de.enflexit.df.core.processing.transformation.ui.TableColumnSelectionPanel;
 
 /**
  * {@link DataTransformationService} implementation for select transformations.
@@ -55,6 +57,14 @@ public class DataTransformationServiceSelectColumns implements DataTransformatio
 	@Override
 	public AbstractDataTransformation getNewInstance() {
 		return new DataTransformationSelectColumns();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getParameterConfigurationPanel()
+	 */
+	@Override
+	public AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel() {
+		return new TableColumnSelectionPanel(this);
 	}
 
 }

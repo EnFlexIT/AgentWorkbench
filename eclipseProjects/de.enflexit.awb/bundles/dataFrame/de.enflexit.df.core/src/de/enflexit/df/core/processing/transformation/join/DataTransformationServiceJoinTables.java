@@ -5,6 +5,8 @@ import java.util.List;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
+import de.enflexit.df.core.processing.transformation.join.ui.JoinTablesConfigurationPanel;
+import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 
 /**
@@ -57,6 +59,14 @@ public class DataTransformationServiceJoinTables implements DataTransformationSe
 	@Override
 	public AbstractDataTransformation getNewInstance() {
 		return new DataTransformationJoinTables();
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getParameterConfigurationPanel()
+	 */
+	@Override
+	public AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel() {
+		return new JoinTablesConfigurationPanel(this);
 	}
 
 }

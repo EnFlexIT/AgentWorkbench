@@ -10,7 +10,6 @@ import de.enflexit.df.core.processing.transformation.join.DataTransformationJoin
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
 import tech.tablesaw.columns.Column;
 
 import java.awt.Component;
@@ -51,15 +50,13 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 	private JTable jTableSelectColumns;
 	private JoinConfigurationTableModel tableSelectionModel;
 	
-	private TransformationGraphEditorPanel parentEditorPanel;
 
 	/**
 	 * Instantiates a new j panel join columns selection.
 	 * @param transformation the transformation
 	 */
-	public JoinTablesConfigurationPanel(DataTransformationService transformation, TransformationGraphEditorPanel parentEditorPanel) {
+	public JoinTablesConfigurationPanel(DataTransformationService transformation) {
 		super(transformation);
-		this.parentEditorPanel = parentEditorPanel;
 		initialize();
 	}
 	private void initialize() {
@@ -175,15 +172,15 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 		for (String joinColumnDefinition : joinColumnsArray) {
 			int startIndex = joinColumnDefinition.startsWith("[") ? 1 : 0;
 			int endIndex = joinColumnDefinition.endsWith("]") ? joinColumnDefinition.length()-1 : joinColumnDefinition.length();
-			String[] tableAndColumn = joinColumnDefinition.substring(startIndex, endIndex).split(":");
+			String[] tableUuidAndColumnName = joinColumnDefinition.substring(startIndex, endIndex).split(":");
 			
-			DataTableNode tableNode = this.parentEditorPanel.findCorrespondingTableNode(tableAndColumn[0]);
+			DataTableNode tableNode = this.getGraphController().getTableNodeByUUID(tableUuidAndColumnName[0]);
 			if (tableNode==null) {
-				System.err.println("No table node found for UUID " + tableAndColumn[0]);
+				System.err.println("No table node found for UUID " + tableUuidAndColumnName[0]);
 			} else {
-				Column<?> joinColumn = tableNode.getDataTable().column(tableAndColumn[1]);
+				Column<?> joinColumn = tableNode.getDataTable().column(tableUuidAndColumnName[1]);
 				if (joinColumn==null) {
-					System.err.println("Column " + tableAndColumn[1] + " not found for table " + tableNode.getLabelText());
+					System.err.println("Column " + tableUuidAndColumnName[1] + " not found for table " + tableNode.getLabelText());
 				} else {
 					this.getTableSelectionModel().addTable(tableNode, joinColumn);
 				}

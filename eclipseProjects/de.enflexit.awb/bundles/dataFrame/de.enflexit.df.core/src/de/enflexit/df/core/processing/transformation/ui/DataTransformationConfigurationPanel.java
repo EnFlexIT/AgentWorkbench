@@ -31,11 +31,6 @@ import de.enflexit.common.swing.RadioButtonListSelectionListener;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformation.DataTransformationServiceSelectColumns;
-import de.enflexit.df.core.processing.transformation.filter.DataTransformationServiceFilterRows;
-import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilterConfigurationPanel;
-import de.enflexit.df.core.processing.transformation.join.DataTransformationServiceJoinTables;
-import de.enflexit.df.core.processing.transformation.join.ui.JoinTablesConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
 import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
@@ -460,15 +455,17 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	 * @return the parameter configuration panel
 	 */
 	private AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel(DataTransformationService transformaitonService) {
-		if (transformaitonService instanceof DataTransformationServiceSelectColumns) {
-			return new TableColumnSelectionPanel(transformaitonService);
-		} else if (transformaitonService instanceof  DataTransformationServiceJoinTables){
-			return new JoinTablesConfigurationPanel(transformaitonService, this.parentEditorPanel);
-		} else if (transformaitonService instanceof DataTransformationServiceFilterRows) {
-			return new TableSawRowFilterConfigurationPanel(transformaitonService);
-		} else {
-			return new DefaultTransformationParameterConfigurationPanel(transformaitonService);
+		
+		// --- Check for a service-specific implementation first ---- 
+		AbstractTransformationParameterConfigurationPanel parameterConfigurationPanel = transformaitonService.getParameterConfigurationPanel();
+		
+		// --- If there is none, use the default --------------------
+		if (parameterConfigurationPanel == null) {
+			parameterConfigurationPanel = new DefaultTransformationParameterConfigurationPanel(transformaitonService);
 		}
+
+		parameterConfigurationPanel.setGraphController(this.parentEditorPanel.getGraphController());
+		return parameterConfigurationPanel;
 	}
 	
 	/**

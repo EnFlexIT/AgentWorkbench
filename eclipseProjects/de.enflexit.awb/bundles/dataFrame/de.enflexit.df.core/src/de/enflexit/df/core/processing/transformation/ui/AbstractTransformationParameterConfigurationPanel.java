@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 
 /**
  * Abstract superclass for transformation-specific configuration components.
@@ -19,6 +20,8 @@ public abstract class AbstractTransformationParameterConfigurationPanel extends 
 	private DataTransformationService transformation;
 	
 	private DataController dataController;
+	
+	private TransformationGraphController graphController;
 	
 	/**
 	 * Instantiates a new abstract transformation parameter configuration component.
@@ -69,6 +72,21 @@ public abstract class AbstractTransformationParameterConfigurationPanel extends 
 	 */
 	public void setDataController(DataController dataController) {
 		this.dataController = dataController;
+	}
+
+	/**
+	 * Gets the graph controller.
+	 * @return the graph controller
+	 */
+	public TransformationGraphController getGraphController() {
+		return graphController;
+	}
+	/**
+	 * Sets the graph controller.
+	 * @param graphController the new graph controller
+	 */
+	public void setGraphController(TransformationGraphController graphController) {
+		this.graphController = graphController;
 	}
 	
 	
