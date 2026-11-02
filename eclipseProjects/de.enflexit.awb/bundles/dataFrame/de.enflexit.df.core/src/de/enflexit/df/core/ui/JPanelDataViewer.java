@@ -23,7 +23,7 @@ public class JPanelDataViewer extends JPanel {
 	
 	private JSplitPane jSplitPaneData;
 	private JPanelNavigation jPanelNavigation;
-	private JPanelDataTableView jPanelDataTableView;
+	private JPanelTreeNodeView jPanelTreeNodeView;
 	
 	
 	/**
@@ -80,7 +80,7 @@ public class JPanelDataViewer extends JPanel {
 			jSplitPaneData.setResizeWeight(0.25);
 			
 			jSplitPaneData.setLeftComponent(this.getJPanelNavigation());
-			jSplitPaneData.setRightComponent(this.getJPanelDataTableView());
+			jSplitPaneData.setRightComponent(this.getJPanelTreeNodeView());
 		}
 		return jSplitPaneData;
 	}
@@ -90,11 +90,11 @@ public class JPanelDataViewer extends JPanel {
 		}
 		return jPanelNavigation;
 	}
-	private JPanelDataTableView getJPanelDataTableView() {
-		if (jPanelDataTableView==null) {
-			jPanelDataTableView = new JPanelDataTableView(this.getDataController());
+	private JPanelTreeNodeView getJPanelTreeNodeView() {
+		if (jPanelTreeNodeView==null) {
+			jPanelTreeNodeView = new JPanelTreeNodeView(this.getDataController());
 		}
-		return jPanelDataTableView;
+		return jPanelTreeNodeView;
 	}
 	
 }

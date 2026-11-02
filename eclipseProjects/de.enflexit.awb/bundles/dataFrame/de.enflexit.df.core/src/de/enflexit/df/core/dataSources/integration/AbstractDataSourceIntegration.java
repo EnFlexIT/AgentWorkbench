@@ -1,5 +1,6 @@
 package de.enflexit.df.core.dataSources.integration;
 
+import javax.swing.JComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.df.core.dataSources.DataSourceIntegration;
@@ -121,8 +122,27 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 	 */
 	public void addContextObjectsToExpressionContext(ExpressionContext expressionContext) { }
 
-
 	
-	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesTitle()
+	 */
+	@Override
+	public String getPropertiesTitle() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public boolean providesPropertiesConfiguratoin(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public JComponent getPropertiesConfigurationPanel(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return null;
+	}
 	
 }

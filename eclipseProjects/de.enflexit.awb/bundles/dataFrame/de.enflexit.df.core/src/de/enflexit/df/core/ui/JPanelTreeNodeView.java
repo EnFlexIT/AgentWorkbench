@@ -1,6 +1,5 @@
 package de.enflexit.df.core.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -25,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -34,6 +34,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
@@ -49,20 +51,22 @@ import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 
 /**
- * The Class JPanelDataTableView.
+ * The Class JPanelTreeNodeView.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelDataTableView extends JPanel implements PropertyChangeListener, ActionListener {
+public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener, ActionListener {
 
 	private static final long serialVersionUID = -2503356793902058897L;
 
+	private static final String TAB_COLUMN_DESCRIPTION = "Column Description";
+	
 	public enum DataViewConfiguration {
-		No_ColumnDescription,
-		ColumnDescription_Top,
-		ColumnDescription_Right,
-		ColumnDescription_Left,
-		ColumnDescription_Bottom
+		No_PropertiesConfiguration,
+		PropertiesConfiguration_Top,
+		PropertiesConfiguration_Right,
+		PropertiesConfiguration_Left,
+		PropertiesConfiguration_Bottom
 	}
 	
 	
@@ -104,16 +108,17 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		private JToggleButton jToggleButtonOrientationClose;
 		
 	private ColumnDescriptionPanel columnDescriptionPanel;
-	private JPanel jPanelColumnDescriptionContainer;
+	private JTabbedPane jTabbedPanePropertiesContainer;
 	
 	private DataViewConfiguration currentDataViewConfiguration;
+	private DataViewConfiguration lastDataViewConfiguration;
 	
 		
 	/**
-	 * Instantiates a new JPanelDataTableView.
+	 * Instantiates a new JPanelTreeNodeView.
 	 * @param dataController the data controller
 	 */
-	public JPanelDataTableView(DataController dataController) {
+	public JPanelTreeNodeView(DataController dataController) {
 		this.setDataController(dataController);
 		this.initialize();
 	}
@@ -129,7 +134,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
-		this.setCurrentDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
+		this.setCurrentDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
 		this.getJToggleButtonOrientationClose().setSelected(true);
 		
 		GridBagConstraints gbc_jToolBarDatasetNavigation = new GridBagConstraints();
@@ -158,6 +163,14 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		if (this.dataController!=null) {
 			this.dataController.addPropertyChangeListener(this);
 		}
+	}
+	
+	/**
+	 * Returns the selected data tree node.
+	 * @return the selected data tree node
+	 */
+	private DefaultMutableTreeNode getSelectedDataTreeNode() {
+		return this.getDataController().getSelectionModel().getSelectedDataTreeNode();
 	}
 	/**
 	 * Returns the currently selected data tree node data source.
@@ -189,10 +202,11 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	 * @param currentDataViewConfiguration the new current data view configuration
 	 */
 	public void setCurrentDataViewConfiguration(DataViewConfiguration currentDataViewConfiguration) {
-		this.currentDataViewConfiguration = currentDataViewConfiguration;
-		this.setDataViewConfiguration(currentDataViewConfiguration);
+		if (currentDataViewConfiguration!=this.currentDataViewConfiguration) {
+			this.currentDataViewConfiguration = currentDataViewConfiguration;
+			this.setDataViewConfiguration(currentDataViewConfiguration);
+		}
 	}
-	
 	/**
 	 * Sets the data view configuration.
 	 * @param dataViewConfig the new data view configuration
@@ -210,29 +224,33 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		double resizeWeight = 0.95;
 		
 		switch (dataViewConfig) {
-		case No_ColumnDescription:
+		case No_PropertiesConfiguration:
 			this.jComponentDataViewConfiguration = this.getJScrollPaneData();
 			break;
-		case ColumnDescription_Top:
+		case PropertiesConfiguration_Top:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescriptionContainer(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJTabbedPanePropertiesContainer(), this.getJScrollPaneData());
 			break;
-		case ColumnDescription_Bottom:
+		case PropertiesConfiguration_Bottom:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescriptionContainer());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJTabbedPanePropertiesContainer());
 			break;
-		case ColumnDescription_Left:
+		case PropertiesConfiguration_Left:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelColumnDescriptionContainer(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJTabbedPanePropertiesContainer(), this.getJScrollPaneData());
 			break;
-		case ColumnDescription_Right:
+		case PropertiesConfiguration_Right:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJPanelColumnDescriptionContainer());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJTabbedPanePropertiesContainer());
 			break;
+		}
+		
+		if (dataViewConfig!=DataViewConfiguration.No_PropertiesConfiguration) {
+			this.lastDataViewConfiguration = dataViewConfig;
 		}
 		
 		this.add(this.jComponentDataViewConfiguration, this.getGridBagConstraintsDataViewConfiguration());
@@ -246,17 +264,62 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	}
 	
 	/**
-	 * Returns the container JPanel for the column description .
-	 * @return the j panel column description container
+	 * Returns the container JPanel for detail view property configurations.
+	 * @return the JPanel detail view properties container
 	 */
-	private JPanel getJPanelColumnDescriptionContainer() {
-		if (jPanelColumnDescriptionContainer==null) {
-			jPanelColumnDescriptionContainer = new JPanel();
-			jPanelColumnDescriptionContainer.setLayout(new BorderLayout());
-			jPanelColumnDescriptionContainer.add(this.getJPanelColumnDescription(), BorderLayout.CENTER);
+	private JTabbedPane getJTabbedPanePropertiesContainer() {
+		if (jTabbedPanePropertiesContainer==null) {
+			jTabbedPanePropertiesContainer = new JTabbedPane();
+			jTabbedPanePropertiesContainer.setTabPlacement(JTabbedPane.BOTTOM);
+			this.addUpdateOrRemovePropertiesTab(TAB_COLUMN_DESCRIPTION, this.getJPanelColumnDescription());
 		}
-		return jPanelColumnDescriptionContainer;
+		return jTabbedPanePropertiesContainer;
 	}
+	/**
+	 * Returns the component by title.
+	 *
+	 * @param tabbedPane the JTabbedPane pane
+	 * @param title the title
+	 * @return the component by title
+	 */
+	private JComponent getPropertiesTabComponentByTitle(String title) {
+		for (int i = 0; i < this.getJTabbedPanePropertiesContainer().getTabCount(); i++) {
+			if (title.equals(this.getJTabbedPanePropertiesContainer().getTitleAt(i))) {
+				return (JComponent) this.getJTabbedPanePropertiesContainer().getComponentAt(i);
+			}
+		}
+		return null;
+	}
+	/**
+	 * Adds, replaces or removes a properties tab.
+	 *
+	 * @param title the title of the tab
+	 * @param componentToUse the component to use. Set this to <code>null</code> if you want to remove a component
+	 */
+	private void addUpdateOrRemovePropertiesTab(String title, JComponent componentToUse) {
+		
+		if (title==null) return;
+		
+		// --- Check for previous components ------------------------
+		JComponent oldComp = this.getPropertiesTabComponentByTitle(title);
+		if (oldComp!=null) {
+			// --- Remove old component? ----------------------------
+			if (componentToUse==null || componentToUse!=oldComp) {
+				// --- Just remove component ------------------------
+				this.getJTabbedPanePropertiesContainer().remove(oldComp);
+			}
+		}
+		
+		// --- Add the component to use -----------------------------
+		if (componentToUse!=null) {
+			this.getJTabbedPanePropertiesContainer().addTab(title, componentToUse);
+		}
+		// --- Refresh view -----------------------------------------
+		this.getJTabbedPanePropertiesContainer().validate();
+		this.getJTabbedPanePropertiesContainer().repaint();
+		
+	}
+	
 	/**
 	 * Returns the column description panel.
 	 * @return the column description panel
@@ -281,23 +344,22 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	private JPanel getJPanelColumnDescription() {
 		return this.getColumnDescriptionPanel().getActualColumnDescriptionPanel();
 	}
+	
 	/**
 	 * Depending on the extension configured, sets the column description panel.
+	 * @param dtnoDS the current data source to be used
 	 */
 	private void setColumnDescriptionPanel(AbstractDataSourceDTNO<?> dtnoDS) {
 		
-		JPanel currPanelColDesc = (JPanel) this.getJPanelColumnDescriptionContainer().getComponent(0);
+		JPanel currPanelColDesc = (JPanel) this.getPropertiesTabComponentByTitle(TAB_COLUMN_DESCRIPTION);
 		
 		ColumnDescriptionPanel colDescPanel = this.getColumnDescriptionPanel();
 		JPanel newPanelColDesc  = colDescPanel.getActualColumnDescriptionPanel();
 		if (newPanelColDesc != currPanelColDesc) {
 			// --- Exchange ColumnDescriptionPanel ----------------------------
 			colDescPanel.setColumnDescription(null);
-			this.getJPanelColumnDescriptionContainer().remove(currPanelColDesc);
-			this.getJPanelColumnDescriptionContainer().add(newPanelColDesc, BorderLayout.CENTER);
-			this.getJPanelColumnDescriptionContainer().validate();
-			this.getJPanelColumnDescriptionContainer().repaint();
-		
+			this.addUpdateOrRemovePropertiesTab(TAB_COLUMN_DESCRIPTION, newPanelColDesc);
+			
 		} else {
 			// --- Data source selected? --------------------------------------
 			if (dtnoDS==null) {
@@ -372,7 +434,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 				@Override
 				public void valueChanged(ListSelectionEvent lse) {
 					if (lse.getValueIsAdjusting()==true) return;
-					JPanelDataTableView.this.setDatasetSelection(lse.getFirstIndex(), lse.getLastIndex(), false);
+					JPanelTreeNodeView.this.setDatasetSelection(lse.getFirstIndex(), lse.getLastIndex(), false);
 				}
 			});
 			
@@ -399,10 +461,10 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			            return;
 			        }
 
-			        int columnIndex = JPanelDataTableView.this.getJTableData().convertColumnIndexToModel(viewColumn);
-			        String columnName = JPanelDataTableView.this.getJTableData().getColumnName(columnIndex);
-			        ColumnDescription colDesc = JPanelDataTableView.this.getColumnDescription(columnName);
-			        JPanelDataTableView.this.getColumnDescriptionPanel().setColumnDescription(colDesc);
+			        int columnIndex = JPanelTreeNodeView.this.getJTableData().convertColumnIndexToModel(viewColumn);
+			        String columnName = JPanelTreeNodeView.this.getJTableData().getColumnName(columnIndex);
+			        ColumnDescription colDesc = JPanelTreeNodeView.this.getColumnDescription(columnName);
+			        JPanelTreeNodeView.this.getColumnDescriptionPanel().setColumnDescription(colDesc);
 				}
 			});
 		}
@@ -450,8 +512,9 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			
 			jToolBarDatasetNavigation.addSeparator();
 			jToolBarDatasetNavigation.add(this.getJLabelColumnDescription());
-			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationBottom());
-			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationTop());
+			// --- Removed to avoid further efforts for detail properties -----
+			//jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationBottom());
+			//jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationTop());
 			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationLeft());
 			jToolBarDatasetNavigation.add(this.getJToggleButtonOrientationRight());
 			jToolBarDatasetNavigation.addSeparator();
@@ -621,7 +684,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	
 	private JLabel getJLabelColumnDescription() {
 		if (jLabelColumnDescription==null) {
-			jLabelColumnDescription = new JLabel(" Column Description: ");
+			jLabelColumnDescription = new JLabel(" Property View: ");
 			jLabelColumnDescription.setFont(this.baseFont.deriveFont(Font.BOLD));
 		}
 		return jLabelColumnDescription;
@@ -631,7 +694,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		if (jToggleButtonOrientationBottom== null) {
 			jToggleButtonOrientationBottom = new JToggleButton();
 			jToggleButtonOrientationBottom.setIcon(BundleHelper.getImageIcon("OrientationBottom.png"));
-			jToggleButtonOrientationBottom.setToolTipText("Column Description: Bottom");
+			jToggleButtonOrientationBottom.setToolTipText("Property View: Bottom");
 			jToggleButtonOrientationBottom.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonOrientationBottom.setMargin(new Insets(0, 0, 0, 0));
 			jToggleButtonOrientationBottom.addActionListener(this);
@@ -642,7 +705,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		if (jToggleButtonOrientationTop== null) {
 			jToggleButtonOrientationTop = new JToggleButton();
 			jToggleButtonOrientationTop.setIcon(BundleHelper.getImageIcon("OrientationTop.png"));
-			jToggleButtonOrientationTop.setToolTipText("Column Description: Top");
+			jToggleButtonOrientationTop.setToolTipText("Property View: Top");
 			jToggleButtonOrientationTop.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonOrientationTop.setMargin(new Insets(0, 0, 0, 0));
 			jToggleButtonOrientationTop.addActionListener(this);
@@ -653,7 +716,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		if (jToggleButtonOrientationLeft == null) {
 			jToggleButtonOrientationLeft = new JToggleButton();
 			jToggleButtonOrientationLeft.setIcon(BundleHelper.getImageIcon("OrientationLeft.png"));
-			jToggleButtonOrientationLeft.setToolTipText("Column Description: Left");
+			jToggleButtonOrientationLeft.setToolTipText("Property View: Left");
 			jToggleButtonOrientationLeft.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonOrientationLeft.setMargin(new Insets(0, 0, 0, 0));
 			jToggleButtonOrientationLeft.addActionListener(this);
@@ -664,7 +727,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		if (jToggleButtonOrientationRight == null) {
 			jToggleButtonOrientationRight = new JToggleButton();
 			jToggleButtonOrientationRight.setIcon(BundleHelper.getImageIcon("OrientationRight.png"));
-			jToggleButtonOrientationRight.setToolTipText("Column Description: Right");
+			jToggleButtonOrientationRight.setToolTipText("Property View: Right");
 			jToggleButtonOrientationRight.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonOrientationRight.setMargin(new Insets(0, 0, 0, 0));
 			jToggleButtonOrientationRight.addActionListener(this);
@@ -676,7 +739,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 		if (jToggleButtonOrientationClose== null) {
 			jToggleButtonOrientationClose = new JToggleButton();
 			jToggleButtonOrientationClose.setIcon(BundleHelper.getImageIcon("MBclose.png"));
-			jToggleButtonOrientationClose.setToolTipText("Close Column Description");
+			jToggleButtonOrientationClose.setToolTipText("Close Property View");
 			jToggleButtonOrientationClose.setPreferredSize(new Dimension(26, 26));
 			jToggleButtonOrientationClose.setMargin(new Insets(0, 0, 0, 0));
 			jToggleButtonOrientationClose.addActionListener(this);
@@ -690,6 +753,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
+		DefaultMutableTreeNode treeNode = null;
 		AbstractDataSourceDTNO<?> dtnoDS = null;
 		
 		String propChanged = evt.getPropertyName();
@@ -710,7 +774,7 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						JPanelDataTableView.this.setDetailView(dtnoDSFinal);
+						JPanelTreeNodeView.this.setDetailView(dtnoDSFinal);
 					}
 				});
 			}
@@ -718,23 +782,40 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			
+			treeNode = this.getSelectedDataTreeNode();
 			dtnoDS = this.getSelectedDataTreeNodeDataSource();
 
 			// --- Current selection has no table -------------------
 			if (dtnoDS==null || dtnoDS.getTable()==null) {
 				// --- Hide description panel if currently visible --
 				if (this.isDescriptionPanelVisible()==true) {
-					this.setDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
+					this.setDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
 				}
-			} else if (this.currentDataViewConfiguration!=DataViewConfiguration.No_ColumnDescription && this.isDescriptionPanelVisible()==false) {
-				// --- Description panel should be visible but is not -> restore
+				
+			} else if (this.currentDataViewConfiguration!=DataViewConfiguration.No_PropertiesConfiguration && this.isDescriptionPanelVisible()==false) {
+				// --- Properties panel should be visible! ---------- 
 				this.setDataViewConfiguration(this.currentDataViewConfiguration);
+				// --- Check for data source properties ------------- 
+				if (dtnoDS.getDataSourceIntegration().providesPropertiesConfiguratoin(this.getDataController(), treeNode)==true) {
+					String title = dtnoDS.getDataSourceIntegration().getPropertiesTitle();
+					JComponent propComp = dtnoDS.getDataSourceIntegration().getPropertiesConfigurationPanel(this.getDataController(), treeNode);
+					this.addUpdateOrRemovePropertiesTab(title, propComp);
+				}
 			}
 			
 			this.setDetailView(dtnoDS);
 			this.setColumnDescriptionPanel(dtnoDS);
 			break;
 			
+		case DataController.DC_PROPERTIES_CONFIGURATION_SHOW:
+			// --- Show properties configuration or not -------------
+			boolean isShow = (boolean) evt.getNewValue();
+			if (isShow==false) {
+				this.setCurrentDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
+			} else {
+				this.setCurrentDataViewConfiguration(this.lastDataViewConfiguration!=null ? this.lastDataViewConfiguration : DataViewConfiguration.PropertiesConfiguration_Right);
+			}
+			break;
 		}
 		
 	}
@@ -774,9 +855,9 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							JPanelDataTableView.this.setDatasetSelection(dtnoDS.getRowSelected(), 0, true);
-							JPanelDataTableView.this.getJTextFieldRowsPerPage().setText(dtnoDS.getPaginationDataLoader().getNumberOfRecordsPerPage() + "");
-							JPanelDataTableView.this.getJTextFieldPageLoaded().setText(dtnoDS.getPaginationDataLoader().getPageNumberLoaded() + "");
+							JPanelTreeNodeView.this.setDatasetSelection(dtnoDS.getRowSelected(), 0, true);
+							JPanelTreeNodeView.this.getJTextFieldRowsPerPage().setText(dtnoDS.getPaginationDataLoader().getNumberOfRecordsPerPage() + "");
+							JPanelTreeNodeView.this.getJTextFieldPageLoaded().setText(dtnoDS.getPaginationDataLoader().getPageNumberLoaded() + "");
 						}
 					});
 					
@@ -853,15 +934,15 @@ public class JPanelDataTableView extends JPanel implements PropertyChangeListene
 			} catch (Exception ex) { }
 			
 		} else if (ae.getSource()==this.getJToggleButtonOrientationBottom()) {
-			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Bottom);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.PropertiesConfiguration_Bottom);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationTop()) {
-			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Top);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.PropertiesConfiguration_Top);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationLeft()) {
-			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Left);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.PropertiesConfiguration_Left);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationRight()) {
-			this.setCurrentDataViewConfiguration(DataViewConfiguration.ColumnDescription_Right);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.PropertiesConfiguration_Right);
 		} else if (ae.getSource()==this.getJToggleButtonOrientationClose()) {
-			this.setCurrentDataViewConfiguration(DataViewConfiguration.No_ColumnDescription);
+			this.setCurrentDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
 		}
 	}
 	

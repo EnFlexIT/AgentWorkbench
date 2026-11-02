@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
@@ -207,6 +208,29 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 	 */
 	@Override
 	public void resetDetailViewPanel() { }
+
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesTitle()
+	 */
+	@Override
+	public String getPropertiesTitle() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public boolean providesPropertiesConfiguratoin(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public JComponent getPropertiesConfigurationPanel(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return null;
+	}
 
 	
 }

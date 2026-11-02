@@ -60,8 +60,7 @@ public final class Filters {
 			Objects.requireNonNull(operator, "operator");
 			Objects.requireNonNull(value, "value");
 
-			if (operator == FilterOperator.BETWEEN || operator == FilterOperator.IS_NULL
-					|| operator == FilterOperator.IS_NOT_NULL) {
+			if (operator == FilterOperator.BETWEEN || operator == FilterOperator.IS_NULL || operator == FilterOperator.IS_NOT_NULL) {
 				throw new IllegalArgumentException("Operator " + operator + " is not valid for a ComparisonFilter");
 			}
 		}
