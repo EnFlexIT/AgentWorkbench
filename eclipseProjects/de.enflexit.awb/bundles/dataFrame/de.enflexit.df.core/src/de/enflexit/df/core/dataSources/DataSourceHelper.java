@@ -67,10 +67,6 @@ public class DataSourceHelper {
 	}
 	
 	
-	
-	
-	
-	
 	/**
 	 * Converts the specified data source to a DefaultDataSource.
 	 * @param ds the data source to convert
@@ -79,6 +75,7 @@ public class DataSourceHelper {
 
 		DefaultDataSource dDataSource = new DefaultDataSource();
 		dDataSource.setId(ds.getId());
+		dDataSource.setShortUUID(ds.getShortUUID());
 		dDataSource.setName(ds.getName());
 		dDataSource.setDescription(ds.getDescription());
 		dDataSource.setRowsPerPage(ds.getRowsPerPage());
@@ -134,6 +131,5 @@ public class DataSourceHelper {
 		} 
 		return actDS;
 	}
-	
 	
 }

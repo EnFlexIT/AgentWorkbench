@@ -44,6 +44,7 @@ public class ProcessingDataSource extends DefaultDataSource {
 		String config = new String();
 		
 		config = ProcessingDataSource.addConfigValue(config, KEY_ID, String.valueOf(this.getId()));
+		config = ProcessingDataSource.addConfigValue(config, KEY_SHORT_UUID, this.getShortUUID());
 		config = ProcessingDataSource.addConfigValue(config, KEY_NAME, this.getName());
 		config = ProcessingDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
 		
@@ -74,6 +75,9 @@ public class ProcessingDataSource extends DefaultDataSource {
 			switch (key) {
 			case KEY_ID:
 				this.setId(NumberHelper.parseInteger(value));
+				break;
+			case KEY_SHORT_UUID:
+				this.setShortUUID(value);
 				break;
 			case KEY_NAME:
 				this.setName(value);

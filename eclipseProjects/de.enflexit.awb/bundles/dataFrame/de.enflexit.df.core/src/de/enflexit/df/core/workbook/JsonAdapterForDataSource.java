@@ -28,6 +28,7 @@ public class JsonAdapterForDataSource extends TypeAdapter<DefaultDataSource>{
 
 		out.beginObject();
 		out.name("id").value(absDS.getId());
+		out.name("shortUUID").value(absDS.getShortUUID());
 		out.name("name").value(absDS.getName());
 		out.name("description").value(absDS.getDescription());
 
@@ -65,6 +66,8 @@ public class JsonAdapterForDataSource extends TypeAdapter<DefaultDataSource>{
 				absDS.setId(NumberHelper.parseInteger(in.nextString()));
 			} else if (name.equalsIgnoreCase("name") == true) {
 				absDS.setName(in.nextString());
+			} else if (name.equalsIgnoreCase("shortUUID") == true) {
+				absDS.setShortUUID(in.nextString());
 			} else if (name.equalsIgnoreCase("description") == true) {
 				absDS.setDescription(in.nextString());
 			} else if (name.equalsIgnoreCase("rowsPerPage") == true) {

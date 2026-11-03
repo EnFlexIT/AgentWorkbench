@@ -8,13 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.expression.DataFrameExpressionParser;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
 import de.enflexit.df.core.workbook.DataWorkbookReminder;
+import tech.tablesaw.api.Table;
 
 /**
  * The Class DataController.
@@ -54,6 +58,8 @@ public class DataController {
 	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_SHOW = "DC_DATA_SOURCE_CONFIGURATION_SHOW";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_CHANGED = "DC_DATA_SOURCE_CONFIGURATION_CHANGED";
+	
+	public static final String DC_PROPERTIES_CONFIGURATION_SHOW = "DC_PROPERTIES_CONFIGURATION_SHOW";
 	
 	public static final String DC_DATA_LOADED = "DC_DATA_LOADED";
 	
@@ -229,6 +235,9 @@ public class DataController {
 				this.openDataSource(dataWorkbookWork, ds);
 			}	
 		}
+		// --- Mark workbook as 'open' ------------------------------
+		dataWorkbookWork.setOpen(true);
+		
 		this.getPropertyChangeSupport().firePropertyChange(DC_OPENED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbookWork));
 	}
 	/**
@@ -243,6 +252,9 @@ public class DataController {
 		try {
 			// --- Call to save the workbook ------------------------
 			int noOfDsBefore = dataWorkbook.getDataSourcesAllowNull()!=null ? dataWorkbook.getDataSourcesAllowNull().size() : 0; 
+			if (dataWorkbook.isOpen()==true && dataWorkbook.getDataSourcesAllowNull()!=null) {
+				dataWorkbook.getDataSources().forEach(ds -> ds.updateSubConfigurations());
+			}
 			dataWorkbook.save();
 			// --- Check if data sources were loaded ----------------
 			int noOfDsAfter  = dataWorkbook.getDataSourcesAllowNull()!=null ? dataWorkbook.getDataSourcesAllowNull().size() : 0;
@@ -278,6 +290,8 @@ public class DataController {
 				dataWorkbook.getExtensionCache().removeExtensions();
 				// --- Call to close the DataWorkbook ---------------
 				dataWorkbook.close();
+				dataWorkbook.setOpen(false);
+				
 				// --- Inform listener ------------------------------
 				this.getPropertyChangeSupport().firePropertyChange(DC_CLOSED_DATA_WORKBOOK, null, AffectedDataObjects.create(dataWorkbook));
 				
@@ -392,9 +406,24 @@ public class DataController {
 	 */
 	public boolean removeDataSource(DataWorkbook dw, DefaultDataSource dataSource) {
 		if (dw!=null && dataSource!=null && dw.getDataSources()!=null) {
-			boolean success = this.closeDataSource(dw, dataSource) && dw.removeDataSource(dataSource);
+			boolean success = false;
+			if (dw.getDataSources().indexOf(dataSource)>-1) {
+				// --- data source is direct data source in workbook ----------
+				success = this.closeDataSource(dw, dataSource) && dw.removeDataSource(dataSource);
+			} else {
+				// --- Possibly, a sub data source ----------------------------
+				DefaultMutableTreeNode tnDataSource = this.getDataTreeModel().getTreeNodeOfDataSource(dataSource);
+				if (tnDataSource!=null) {
+					DefaultMutableTreeNode tnParent = (DefaultMutableTreeNode) tnDataSource.getParent();
+					AbstractDataSourceDTNO<?> dtnoParent = (AbstractDataSourceDTNO<?>) tnParent.getUserObject();
+					success = dtnoParent.getDataSource().getDataSourceIntegration(this, dw).removeDataTreeSubNode(tnDataSource);
+				}
+			}
+			
 			// --- Inform property change listener ------------------
-			this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
+			if (success==true) {
+				this.getPropertyChangeSupport().firePropertyChange(DC_REMOVED_DATA_SOURCE, AffectedDataObjects.create(dw, dataSource), null);
+			}
 			return success;
 		}
 		return false;
@@ -452,6 +481,24 @@ public class DataController {
 			dataTreeModel = new DataTreeModel(this);
 		}
 		return dataTreeModel;
+	}
+	
+	/**
+	 * Returns the data for the specified resourceLink.
+	 *
+	 * @param resourceLink the resource link
+	 * @return the data
+	 */
+	public Table getData(String resourceLink) {
+		
+		if (resourceLink==null || resourceLink.isBlank()==true) return null;
+		
+		try {
+			return new DataFrameExpressionParser(this, resourceLink).getData();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 	
 }

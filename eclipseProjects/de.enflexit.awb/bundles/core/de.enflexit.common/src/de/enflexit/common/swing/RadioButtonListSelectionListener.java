@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.common.swing;
 
 /**
  * The listener interface for receiving radioButtonListSelection events.

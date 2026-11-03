@@ -9,7 +9,7 @@ import javax.swing.JComponent;
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface DataSourceConfigurationPanel {
+public interface DataSourceConfigurationPanel extends PropertiesConfigurationPanel {
 
 	/**
 	 * Has to return the configuration toolbar components.
@@ -40,5 +40,6 @@ public interface DataSourceConfigurationPanel {
 	 * Has to reset the panel that is to be displayed in the detail area.
 	 */
 	public void resetDetailViewPanel();
+	
 	
 }

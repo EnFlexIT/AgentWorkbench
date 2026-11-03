@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.enflexit.common.swing.CheckBoxList;
+import de.enflexit.common.swing.CheckBoxListSelectionEvent;
+import de.enflexit.common.swing.CheckBoxListSelectionListener;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
@@ -23,7 +26,7 @@ import de.enflexit.df.core.model.treeNode.DTNO_Base;
  * select and deselect them to specify the starting nodes of a transformation graph.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class JPanelDataSourceSelection extends JPanel {
+public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>>{
 	
 	private static final long serialVersionUID = -2860160566604926918L;
 	
@@ -38,7 +41,7 @@ public class JPanelDataSourceSelection extends JPanel {
 	/**
 	 * Instantiates a new j panel source table selection.
 	 */
-	public JPanelDataSourceSelection(DataController dataController, TransformationGraphEditorPanel parentEditor) {
+	public DataSourceSelectionPanel(DataController dataController, TransformationGraphEditorPanel parentEditor) {
 		this.dataController = dataController;
 		this.parentEditor = parentEditor;
 		initialize();
@@ -85,6 +88,7 @@ public class JPanelDataSourceSelection extends JPanel {
 		if (jListSourceTables == null) {
 			jListSourceTables = new CheckBoxList<AbstractDataSourceDTNO<?>>(this.getDataSourcesListModel());
 			this.setInitialSelection();
+			jListSourceTables.addCheckBoxListSelectionListener(this);
 		}
 		return jListSourceTables;
 	}
@@ -171,6 +175,20 @@ public class JPanelDataSourceSelection extends JPanel {
 	 */
 	public void removeCheckBoxListSelectionListener(CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>> listener) {
 		this.getJListSourceTables().removeCheckBoxListSelectionListener(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.ui.CheckBoxListSelectionListener#selectionChanged(de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent)
+	 */
+	@Override
+	public void selectionChanged(CheckBoxListSelectionEvent<AbstractDataSourceDTNO<?>> checkboxListSelectionEvent) {
+		AbstractDataSourceDTNO<?> affectedDataSourceDTNO = checkboxListSelectionEvent.getItem();
+		if (checkboxListSelectionEvent.isSelected()==true) {
+			this.parentEditor.addDataSourceGraphNode(affectedDataSourceDTNO);
+		} else {
+			this.parentEditor.removeDataSourceGraphNode(affectedDataSourceDTNO);
+		}
+		
 	}
 		
 }

@@ -16,8 +16,8 @@ import de.enflexit.df.core.DatabaseHelper;
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  * 
- *  @see #getConnection()
- *  @see #getTableDictionary() 
+ * @see #getConnection()
+ * @see #getTableDictionary() 
  */
 public class DatabaseConnection {
 

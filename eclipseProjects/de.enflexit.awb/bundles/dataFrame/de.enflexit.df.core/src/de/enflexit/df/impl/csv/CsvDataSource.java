@@ -138,6 +138,7 @@ public class CsvDataSource extends DefaultDataSource {
 		
 		config = DatabaseDataSource.addConfigValue(config, KEY_ID, (this.getId() + ""));
 		config = DatabaseDataSource.addConfigValue(config, KEY_NAME, this.getName());
+		config = DatabaseDataSource.addConfigValue(config, KEY_SHORT_UUID, this.getShortUUID());
 		config = DatabaseDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
 		config = DatabaseDataSource.addConfigValue(config, KEY_ROWS_PER_PAGE, this.getRowsPerPage() + "");
 		
@@ -177,6 +178,9 @@ public class CsvDataSource extends DefaultDataSource {
 			case KEY_ID:
 				this.setId(NumberHelper.parseInteger(value));
 				break;
+			case KEY_SHORT_UUID:
+				this.setShortUUID(value);
+				break;
 			case KEY_NAME:
 				this.setName(value);
 				break;
@@ -205,6 +209,7 @@ public class CsvDataSource extends DefaultDataSource {
 		return this;
 	}
 	
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#equals(java.lang.Object)
 	 */

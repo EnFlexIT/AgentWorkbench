@@ -4,13 +4,15 @@ Bundle-Name: Data Frame - Core Bundel
 Bundle-Vendor: EnFlex.IT
 Bundle-SymbolicName: de.enflexit.df.core
 Automatic-Module-Name: de.enflexit.df.core
-Bundle-Version: 0.2.0.qualifier
+Bundle-Version: 0.5.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate
 Require-Bundle: de.enflexit.df.tablesaw,
  de.enflexit.db.hibernate,
- org.agentgui.lib.jung
+ org.agentgui.lib.jung,
+ de.enflexit.expression,
+ de.enflexit.jfreechart
 Import-Package: com.google.common.base,
  com.google.gson,
  com.google.gson.stream,
@@ -19,6 +21,7 @@ Import-Package: com.google.common.base,
  de.enflexit.awb.core,
  de.enflexit.awb.core.config,
  de.enflexit.awb.core.ui,
+ de.enflexit.charts.model,
  de.enflexit.common,
  de.enflexit.common.crypto,
  de.enflexit.common.images,
@@ -36,7 +39,8 @@ Import-Package: com.google.common.base,
  org.osgi.framework.wiring,
  org.osgi.service.prefs,
  org.slf4j
-Service-Component: OSGI-INF/dataSourceServiceCsvDataSource.xml,
+Service-Component: OSGI-INF/dataFrameExpressionService.xml, 
+ OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dataSourceServiceDatabaseDataSource.xml,
  OSGI-INF/dataSourceServiceExcelDataSource.xml,
  OSGI-INF/dataSourceServiceProcessingDataSource.xml,
@@ -48,12 +52,24 @@ Service-Component: OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dataTransformationServiceJoinTables.xml,
  OSGI-INF/dataTransformationServiceSelectColumns.xml
 Export-Package: de.enflexit.df.core,
+ de.enflexit.df.core.charts,
  de.enflexit.df.core.dataSources,
  de.enflexit.df.core.dataSources.integration,
+ de.enflexit.df.core.expression,
  de.enflexit.df.core.extension,
  de.enflexit.df.core.extension.test,
+ de.enflexit.df.core.filter,
  de.enflexit.df.core.model,
  de.enflexit.df.core.model.treeNode,
+ de.enflexit.df.core.processing,
+ de.enflexit.df.core.processing.transformation,
+ de.enflexit.df.core.processing.transformation.filter,
+ de.enflexit.df.core.processing.transformation.filter.ui,
+ de.enflexit.df.core.processing.transformation.join,
+ de.enflexit.df.core.processing.transformation.join.ui,
+ de.enflexit.df.core.processing.transformation.ui,
+ de.enflexit.df.core.processing.transformationGraph,
+ de.enflexit.df.core.processing.ui,
  de.enflexit.df.core.ui,
  de.enflexit.df.core.workbook,
  de.enflexit.df.core.workbook.db,

@@ -11,6 +11,7 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.ObservableGraph;
+import tech.tablesaw.api.Table;
 
 /**
  * This class manages the transformation graph.
@@ -181,6 +182,34 @@ public class TransformationGraphController {
 		}
 		
 		return new ArrayList<AbstractDataTransformation>(dependentTransformaitons);
+	}
+	
+	/**
+	 * Gets the data table by UUID.
+	 * @param uuid the uuid
+	 * @return the data table by UUID
+	 */
+	public Table getDataTableByUUID(String uuid) {
+		DataTableNode tableNode = this.getTableNodeByUUID(uuid);
+		if (tableNode!=null) {
+			return tableNode.getDataTable();
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Gets the table node by UUID.
+	 * @param uuid the uuid
+	 * @return the table node by UUID
+	 */
+	public DataTableNode getTableNodeByUUID(String uuid) {
+		for (DataTableNode tableNode : this.getTransformationGraph().getVertices()) {
+			if (tableNode.getDataSourceUUID().equals(uuid)) {
+				return tableNode;
+			}
+		}
+		return null;
 	}
 	
 

@@ -8,6 +8,8 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,7 +56,7 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelQueryConfiguration extends JPanel implements ActionListener {
+public class JPanelQueryConfiguration extends JPanel implements ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 1582587866051687200L;
 	
@@ -113,6 +115,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		this.fillTableModel();
 		this.setEditState(EditState.NoEditing);
 		this.updateTableDictionary();
+		this.getDataController().addPropertyChangeListener(this);
 	}
 	
 	/**
@@ -1213,6 +1216,25 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener {
 		Statement statem = this.getDatabaseConnection().getConnection().createStatement();
 		ResultSet resSet = statem.executeQuery(sqlStatement);
 		return Table.read().db(resSet);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+
+		if (evt.getPropertyName()==DatabaseDataSource.KEY_DATABASE_QUERY_LIST) {
+			if (evt.getNewValue()==this.databaseDataSourceIntegration.getDataSource()) {
+				// --- Renew data view --------------------
+				this.getTableModelDatabaseQuery().setRowCount(0);
+				this.fillTableModel();
+				if (this.getTableModelDatabaseQuery().getRowCount()>0) {
+					this.getJTableDatabaseQueries().setRowSelectionInterval(0, 0);
+				}
+			}
+		}
+		
 	}
 	
 }

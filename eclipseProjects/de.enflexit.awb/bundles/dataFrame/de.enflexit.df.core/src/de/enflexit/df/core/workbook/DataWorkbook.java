@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
+import de.enflexit.common.UUID_Handler;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DataSourceHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
@@ -35,6 +36,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataWorkbook", propOrder = {
     "id",
+    "shortUUID",
     "name",
     "description",
     "dataSources",
@@ -48,6 +50,8 @@ public abstract class DataWorkbook implements Serializable {
 	@GeneratedValue
 	@Column(name="id_data_workbook", nullable=false)
 	private Integer id;
+	@Column(name="short_uuid", nullable=false)
+	private String shortUUID;
 	@Column(nullable=false)
 	private String name;
 	private String description;
@@ -55,6 +59,8 @@ public abstract class DataWorkbook implements Serializable {
 	@XmlElementWrapper(name = "dataSources")
 	@XmlElement(name = "dataSource") 
 	protected List<DefaultDataSource> dataSources;
+
+	protected transient boolean open;
 	
 	@XmlElementWrapper(name = "workbookExtensions")
 	@XmlElement(name = "workbookExtension")
@@ -118,6 +124,17 @@ public abstract class DataWorkbook implements Serializable {
 		if (this.id==null) {
 			this.id = NumberHelper.getRandomInteger(0, Integer.MAX_VALUE);
 		}
+	}
+	
+	/**
+	 * Returns the short UUID of the current DataWorkbook.
+	 * @return the short UUID
+	 */
+	public String getShortUUID() {
+		if (shortUUID==null) {
+			shortUUID = UUID_Handler.generateShortUUID();
+		}
+		return shortUUID;
 	}
 	
 	
@@ -238,6 +255,22 @@ public abstract class DataWorkbook implements Serializable {
 		
 		// --- Remove the unconvertible DataSources from the list -------------
 		deleteCandidate.forEach(dsDelete -> dsListToEdit.remove(dsDelete));
+	}
+	
+	
+	/**
+	 * Sets that this workbook was 'opened' .
+	 * @param open the new open
+	 */
+	public void setOpen(boolean open) {
+		this.open = open;
+	}
+	/**
+	 * Enables to check if the workbook is open.
+	 * @return true, if is open
+	 */
+	public boolean isOpen() {
+		return open;
 	}
 	
 	

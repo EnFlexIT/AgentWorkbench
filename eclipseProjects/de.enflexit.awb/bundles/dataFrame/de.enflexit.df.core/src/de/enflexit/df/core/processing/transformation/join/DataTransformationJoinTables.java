@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
-import de.enflexit.df.core.processing.transformation.join.TimeSeriesJoinHelper.InterpolationMode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
@@ -18,37 +18,58 @@ import tech.tablesaw.columns.Column;
  */
 public class DataTransformationJoinTables extends AbstractDataTransformation {
 	
+	public static final String PARAM_NAME_JOIN_TYPE = "joinType";
+	public static final String PARAM_NAME_INTERPOLATION_MODE = "interpolationMode";
 	public static final String PARAM_NAME_JOIN_COLUMNS = "joinColumns";
+	
+	public enum JoinType{
+		INNER, LEFT_OUTER, RIGHT_OUTER, FULL_OUTER
+	}
+	
+	public enum InterpolationMode {
+		NONE, LINEAR, STEP
+	}
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()
 	 */
 	@Override
-	public Table performTransformation() {
+	public Table performTransformation(TransformationGraphController graphController) {
 		
 		Table resultTable = null;
-		
-		Object joinColumnsParam = this.getTransformationParameters().get(PARAM_NAME_JOIN_COLUMNS);
-		
-		if (checkConfigurationParameterParamType(joinColumnsParam)==true) {
-			@SuppressWarnings("unchecked")
-			//TODO Temporary solution, should use table node identifiers and column names later 
-			HashMap<DataTableNode, Column<?>> tablesNodesMap = (HashMap<DataTableNode, Column<?>>) this.getTransformationParameters().get(PARAM_NAME_JOIN_COLUMNS);
+		String joinColumnsAsString = this.getTransformationParameters().getStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS);
 			
-			// --- Convert to Map<Table, Column<?>> -----------------
-			HashMap<Table, Column<?>> tablesMap = new HashMap<Table, Column<?>>();
-			for(Map.Entry<DataTableNode, Column<?>> entry : tablesNodesMap.entrySet()) {
-				tablesMap.put(entry.getKey().getDataTable(), entry.getValue());
-			}
-			
-			resultTable = this.joinTables(tablesMap);
-			
-		} else {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Required parameter " + PARAM_NAME_JOIN_COLUMNS + " is missing or of an unexpected data type (must be HashMap<Table, Column<?>>");
-		}
+		// --- Convert to Map<Table, Column<?>> -----------------
+		HashMap<Table, Column<?>> tablesMap = this.getJoinConfigurationFromParameterString(joinColumnsAsString, graphController);
+		resultTable = this.joinTables(tablesMap);
 		
 		return resultTable;
 	}
+
+	private HashMap<Table, Column<?>> getJoinConfigurationFromParameterString(String parameterString, TransformationGraphController graphController){
+		
+		HashMap<Table, Column<?>> joinConfig = new HashMap<Table, Column<?>>();
+		
+		String[] joinColumnsArray = parameterString.split(",");
+		for (String joinColumnDefinition : joinColumnsArray) {
+			int startIndex = joinColumnDefinition.startsWith("[") ? 1 : 0;
+			int endIndex = joinColumnDefinition.endsWith("]") ? joinColumnDefinition.length()-1 : joinColumnDefinition.length();
+			String[] tableAndColumn = joinColumnDefinition.substring(startIndex, endIndex).split(":");
+			
+			//TODO convert UUID to expression
+			Table table = graphController.getDataTableByUUID(tableAndColumn[0]);
+			
+			if (table!=null) {
+				Column<?> column = table.column(tableAndColumn[1]);
+				if (column!=null) {
+					joinConfig.put(table, column);
+				}
+			}
+			
+		}
+		return joinConfig;
+	}
+	
 	
 	/**
 	 * Joins the provided tables. Expects a HashMap with the tables as keys and the corresponding join columns as values. 

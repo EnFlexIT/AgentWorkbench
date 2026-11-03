@@ -53,4 +53,11 @@ public abstract class DataTableNode {
 	public String toString() {
 		return this.getLongText();
 	}
+	
+	/**
+	 * Gets the data source UUID.
+	 * @return the data source UUID
+	 */
+	public abstract String getDataSourceUUID();
+	
 }

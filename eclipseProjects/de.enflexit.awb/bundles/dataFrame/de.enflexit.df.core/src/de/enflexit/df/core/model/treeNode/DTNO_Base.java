@@ -117,6 +117,14 @@ public class DTNO_Base {
 		return this.getErrorMessage()!=null && this.getErrorMessage().isBlank()==false;
 	}
 	
+	/**
+	 * Returns the short UUID.
+	 * @return the short UUID
+	 */
+	public String getShortUUID() {
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

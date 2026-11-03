@@ -72,9 +72,18 @@ public interface DataSourceIntegration<DS extends DefaultDataSource> extends Dat
 	 */
 	public DefaultMutableTreeNode getDataTreeNode();
 	
+	
 	/**
 	 * Has to add all data tree sub nodes.
 	 */
 	public void addDataTreeSubNodes();
+	
+	/**
+	 * Will be invoked, if a sub data source is to be removed.
+	 *
+	 * @param treeNodeToRemove the tree node to remove
+	 * @return true, if successful
+	 */
+	public boolean removeDataTreeSubNode(DefaultMutableTreeNode treeNodeToRemove);
 	
 }

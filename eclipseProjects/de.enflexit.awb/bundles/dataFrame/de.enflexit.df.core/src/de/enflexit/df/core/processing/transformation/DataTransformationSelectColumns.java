@@ -1,9 +1,9 @@
 package de.enflexit.df.core.processing.transformation;
 
-import java.util.List;
+import java.util.ArrayList;
 
+import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import tech.tablesaw.api.Table;
-import tech.tablesaw.columns.Column;
 
 /**
  * This {@link AbstractDataTransformation} selects a set of columns from the input table.
@@ -11,46 +11,53 @@ import tech.tablesaw.columns.Column;
  */
 public class DataTransformationSelectColumns extends AbstractDataTransformation {
 	
-	public static final String TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT = "columnsToSelect";
-	private static final String COLUMN_NAME_SEPARATOR = ",";
+	public static final String PROPERTY_NAME_SELECT_COLUMNS = "columns";
+	public static final String COLUMN_NAME_SEPARATOR = ",";
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()
 	 */
 	@Override
-	public Table performTransformation() {
+	public Table performTransformation(TransformationGraphController graphController) {
 		
 		Table inputTable = this.getInputNodes().get(0).getDataTable();
-		Table outputTable = null;
 		
 		// --- Perform several validity checks ----------------------
 		
 		if(this.getInputNodes()==null || this.getInputNodes().size()==0 || this.getInputNodes().size()>1) {
 			System.err.println("[" + this.getClass().getSimpleName() + "] Invalid input definition! This transformation requires exactly one input table!");
+			this.getMessagesList().add(DataTransformationMessage.error("Invalid input definition! This transformation requires exactly one input table!"));
 			return null;
 		}
 		
-		Object paramObject = this.getTransformationParameters().get(TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT);
-		if (paramObject==null) {
-			System.err.println("[" + this.getClass().getSimpleName() + "] Missing required parameter " + TRANSFORMATION_PARAMETER_COLUMNS_TO_SELECT + "!");
+		String columnsString = this.getTransformationParameters().getStringValue(PROPERTY_NAME_SELECT_COLUMNS);
+		if (columnsString==null || columnsString.isBlank()==true) {
+			System.err.println("[" + this.getClass().getSimpleName() + "] Missing required parameter " + PROPERTY_NAME_SELECT_COLUMNS + "!");
+			this.getMessagesList().add(DataTransformationMessage.error("Missing required parameter " + PROPERTY_NAME_SELECT_COLUMNS + "!"));
 			return null;
 		}
-		if (paramObject instanceof String) {
-			String[] columns = ((String)paramObject).split(COLUMN_NAME_SEPARATOR);
-			if (columns.length==0) {
-				System.err.println("[" + this.getClass().getSimpleName() + "] No columns specified for selection!");
-			} else {
-				outputTable = inputTable.selectColumns(columns);
+		
+		ArrayList<String> finalColumnsList = new ArrayList<String>();
+		String[] columnsArray = columnsString.split(COLUMN_NAME_SEPARATOR);
+		if (columnsArray.length>0) {
+			// --- Check if the specified columns actually exist, skip if not -----------
+			for (String columnName : columnsArray) {
+				if (inputTable.containsColumn(columnName)==true) {
+					finalColumnsList.add(columnName);
+				} else {
+					System.err.println("Column " + columnName + " not found in input table " + this.getInputNodes().get(0).getLabelText() + "!");
+					this.getMessagesList().add(DataTransformationMessage.warning("Column " + columnName + " not found in input table " + this.getInputNodes().get(0).getLabelText() + ", skipping..."));
+				}
 			}
-		} else if (paramObject instanceof List<?> list && list.stream().allMatch(Column.class::isInstance)) {
-			@SuppressWarnings("unchecked")
-			List<Column<?>> columnsList = (List<Column<?>>) paramObject;
-			outputTable = inputTable.selectColumns(columnsList.toArray(new Column<?>[0]));
 		}
 		
+		if (finalColumnsList.size()>0) {
+			this.getMessagesList().add(DataTransformationMessage.warning("No selection columns defined, returning the original table"));
+			return inputTable.selectColumns(finalColumnsList.toArray(new String[0]));
+		} else {
+			return inputTable;
+		}
 		
-		// --- If passed, return a table containing only the selected columns
-		return outputTable;
 	}
 
 	/* (non-Javadoc)

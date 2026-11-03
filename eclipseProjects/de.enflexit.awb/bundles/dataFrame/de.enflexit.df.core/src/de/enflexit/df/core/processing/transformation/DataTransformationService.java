@@ -2,7 +2,9 @@ package de.enflexit.df.core.processing.transformation;
 
 import java.util.List;
 
+import de.enflexit.common.properties.PropertiesPanel;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
+import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 
 /**
  * The interface every data transformation has to implement. The {@link AbstractDataTransformation} 
@@ -40,5 +42,11 @@ public interface DataTransformationService {
 	 * @return the new instance
 	 */
 	public abstract AbstractDataTransformation getNewInstance();
+	
+	/**
+	 * Returns an instance of a transformaiton-specific panel for parameter configuration. May return null, then a default implementation with a {@link PropertiesPanel} will be used.
+	 * @return the parameter configuration panel
+	 */
+	public abstract AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel();
 	
 }

@@ -16,29 +16,24 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 
 import de.enflexit.common.ServiceFinder;
+import de.enflexit.common.properties.Properties;
+import de.enflexit.common.swing.CheckBoxList;
+import de.enflexit.common.swing.CheckBoxListSelectionEvent;
+import de.enflexit.common.swing.CheckBoxListSelectionListener;
+import de.enflexit.common.swing.RadioButtonList;
+import de.enflexit.common.swing.RadioButtonListSelectionEvent;
+import de.enflexit.common.swing.RadioButtonListSelectionListener;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformation.DataTransformationServiceSelectColumns;
-import de.enflexit.df.core.processing.transformation.filter.DataTransformationServiceFilterRows;
-import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilterConfigurationPanel;
-import de.enflexit.df.core.processing.transformation.join.DataTransformationServiceJoinTables;
-import de.enflexit.df.core.processing.transformation.join.ui.JoinTablesConfigurationPanel;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
-import de.enflexit.df.core.processing.ui.CheckBoxList;
-import de.enflexit.df.core.processing.ui.CheckBoxListSelectionEvent;
-import de.enflexit.df.core.processing.ui.CheckBoxListSelectionListener;
 import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
-import de.enflexit.df.core.processing.ui.RadioButtonList;
-import de.enflexit.df.core.processing.ui.RadioButtonListSelectionEvent;
-import de.enflexit.df.core.processing.ui.RadioButtonListSelectionListener;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -112,8 +107,8 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.3, 0.7, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelSelectTransformation = new GridBagConstraints();
 		gbc_jLabelSelectTransformation.anchor = GridBagConstraints.WEST;
@@ -180,7 +175,6 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	private DefaultComboBoxModel<DataTransformationService> getDataTransformationComboBoxModel() {
 		if (dataTransformationComboBoxModel==null) {
 			dataTransformationComboBoxModel = new DefaultComboBoxModel<DataTransformationService>();
-			dataTransformationComboBoxModel.addElement(null);
 			List<DataTransformationService> transformationServices = ServiceFinder.findServices(DataTransformationService.class);
 			dataTransformationComboBoxModel.addAll(transformationServices);
 		}
@@ -242,6 +236,18 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_SELECTED, null, currentSelectionNode);
 				} else if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
 					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_ADDED, null, currentSelectionNode);
+				}
+			}
+		} else {
+			// --- If nothing is set pre-select the first transformation and table
+//			this.getJComboBoxSelectTransformation().setSelectedIndex(0);
+			if (this.getTableNodesListModel().size()>0) {
+				this.getTableNodesList().setSelectedIndex(0);
+				DataTableNode selectedNode = this.getTableNodesListModel().get(0);
+				if (this.getTableNodesList() instanceof RadioButtonList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_SELECTED, null, selectedNode);
+				} else if (this.getTableNodesList() instanceof CheckBoxList<DataTableNode>) {
+					this.getPropertyChangeSupport().firePropertyChange(EVENT_ID_TABLE_ADDED, null, selectedNode);
 				}
 			}
 		}
@@ -333,6 +339,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		}
 		
 		// --- Set the new panel ----------------
+		paramConfigPanel.setDataController(this.parentEditorPanel.getDataController());
 		this.parametersConfigurationPanel = paramConfigPanel;
 		
 		// --- Put into the right position in the layout
@@ -448,15 +455,17 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	 * @return the parameter configuration panel
 	 */
 	private AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel(DataTransformationService transformaitonService) {
-		if (transformaitonService instanceof DataTransformationServiceSelectColumns) {
-			return new TableColumnSelectionPanel(transformaitonService);
-		} else if (transformaitonService instanceof  DataTransformationServiceJoinTables){
-			return new JoinTablesConfigurationPanel(transformaitonService, this.parentEditorPanel);
-		} else if (transformaitonService instanceof DataTransformationServiceFilterRows) {
-			return new TableSawRowFilterConfigurationPanel(transformaitonService);
-		} else {
-			return new DefaultTransformationParameterConfigurationPanel(transformaitonService);
+		
+		// --- Check for a service-specific implementation first ---- 
+		AbstractTransformationParameterConfigurationPanel parameterConfigurationPanel = transformaitonService.getParameterConfigurationPanel();
+		
+		// --- If there is none, use the default --------------------
+		if (parameterConfigurationPanel == null) {
+			parameterConfigurationPanel = new DefaultTransformationParameterConfigurationPanel(transformaitonService);
 		}
+
+		parameterConfigurationPanel.setGraphController(this.parentEditorPanel.getGraphController());
+		return parameterConfigurationPanel;
 	}
 	
 	/**
@@ -518,7 +527,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	 * Gets the configured transformation parameters.
 	 * @return the transformation parameters
 	 */
-	public Map<String, Object> getConfiguredTransformationParameters(){
+	public Properties getConfiguredTransformationParameters(){
 		return ((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).getConfiguredParameters();
 	}
 

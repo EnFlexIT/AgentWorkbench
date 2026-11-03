@@ -1,11 +1,14 @@
 package de.enflexit.df.core.dataSources.integration;
 
+import javax.swing.JComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.df.core.dataSources.DataSourceIntegration;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.expression.ExpressionContext;
+import de.enflexit.expression.ExpressionService;
 
 /**
  * The Class AbstractDataSourceIntegration.
@@ -98,11 +101,48 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 		return this.treeNode;
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#addDataTreeSubNodes()
 	 */
 	public void addDataTreeSubNodes() { }
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.DataSourceIntegration#removeDataTreeSubNode(javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	public boolean removeDataTreeSubNode(DefaultMutableTreeNode treeNodeToRemove) { 
+		return true;
+	}
 	
 	
+	/**
+	 * In the Context oF the {@link ExpressionService}, enables to add specific context objects to the provided ExpressionContext.
+	 * <b>Overwrite this method to add individual instances of specific data sources</b>
+	 * @param expressionContext the current ExpressionContext to work on
+	 */
+	public void addContextObjectsToExpressionContext(ExpressionContext expressionContext) { }
+
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesTitle()
+	 */
+	@Override
+	public String getPropertiesTitle() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public boolean providesPropertiesConfiguratoin(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public JComponent getPropertiesConfigurationPanel(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return null;
+	}
 	
 }
