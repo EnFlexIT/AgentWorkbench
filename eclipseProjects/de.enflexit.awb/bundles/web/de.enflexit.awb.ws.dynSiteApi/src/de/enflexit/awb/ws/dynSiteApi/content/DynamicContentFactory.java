@@ -69,7 +69,7 @@ public class DynamicContentFactory {
 	 * @param height the height of the image
 	 * @return a new instance of the type SiteContentImage
 	 */
-	public static SiteContentImage createSiteContentImage(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, String mimeType, String dataInBase64, Integer width, Integer height) {
+	public static SiteContentImage createSiteContentImage(int uniqueContentID, int updatePeriodInSeconds, boolean isEditable, String mimeType, String dataInBase64) {
 		
 		SiteContentImage scImage = new SiteContentImage();
 		scImage.setUniqueContentId(uniqueContentID);

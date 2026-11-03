@@ -988,12 +988,18 @@ public class WebAppDatabaseHandler {
 		Transaction transaction = null;
 		try {
 			transaction = session.beginTransaction();
-			if (dbSiteContent != null && this.getContentElementById(elementID) != null) {
-				session.merge(dbSiteContent);
-				transaction.commit();
-			} else {
-				throw new IllegalArgumentException("Invalid content or id.");
+			
+			// --- Get the content element which is to be updated ---------------------------------
+			SiteContent existingContent = session.get(SiteContent.class, elementID);
+			if (existingContent == null) {
+				throw new IllegalArgumentException("The content element to update could not be found.");
 			}
+			
+			dbSiteContent.setId(elementID);
+			// --- Keep the existing set of siteMenuContent! --------------------------------------
+			dbSiteContent.setSiteMenuContent(existingContent.getSiteMenuContent());
+			session.merge(dbSiteContent);
+			transaction.commit();
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);

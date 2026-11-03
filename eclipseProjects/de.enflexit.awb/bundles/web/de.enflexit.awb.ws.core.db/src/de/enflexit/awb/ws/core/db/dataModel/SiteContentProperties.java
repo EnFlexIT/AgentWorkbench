@@ -1,5 +1,6 @@
 package de.enflexit.awb.ws.core.db.dataModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -23,6 +24,10 @@ public class SiteContentProperties extends SiteContent {
 	 * @return the property entries
 	 */
 	public List<SiteContentPropertyEntry> getPropertyEntries() {
+		
+		if (propertyEntries == null) {
+			propertyEntries = new ArrayList<SiteContentPropertyEntry>();
+		}
 		return propertyEntries;
 	}
 	/**

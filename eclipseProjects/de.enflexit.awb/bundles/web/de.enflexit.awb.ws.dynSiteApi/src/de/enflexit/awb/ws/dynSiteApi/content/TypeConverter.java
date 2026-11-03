@@ -568,6 +568,10 @@ public class TypeConverter {
 		
 		for (PropertyEntry restEntry : restProperties.getPropertyEntries()) {
 			
+			if (restEntry.getKey() == null || restEntry.getValue() == null || restEntry.getValueType() == null || restEntry.getValueType().toString().isBlank() == true) {
+				throw new IllegalArgumentException("Invalid property entry: key = '" + restEntry.getKey() + "'. Key, value and value type must be specified");
+			}
+			
 			SiteContentPropertyEntry dbEntry = new SiteContentPropertyEntry();
 			dbEntry.setPropertyKey(restEntry.getKey());
 			dbEntry.setPropertyValue(restEntry.getValue());
