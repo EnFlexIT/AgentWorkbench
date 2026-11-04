@@ -4,6 +4,7 @@ import de.enflexit.common.NumberHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -14,7 +15,14 @@ public class ProcessingDataSource extends DefaultDataSource {
 
 	private static final long serialVersionUID = 5845214876005739979L;
 	
+	private static final String KEY_TRANSFORMATION_GRAPH = "TransformationGraph";
+	
+	private static final String OPENING_BRACKET_REPLACER = "$%&";
+	private static final String CLOSING_BRACKET_REPLACER = "&%$";
+	
 	private ProcessingDataSourceIntegration dataSourceIntegration;
+	
+	private PersistentTransformationGraph persistentTransformationGraph;
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.dataSources.DefaultDataSource#newInstance()
@@ -47,6 +55,11 @@ public class ProcessingDataSource extends DefaultDataSource {
 		config = ProcessingDataSource.addConfigValue(config, KEY_SHORT_UUID, this.getShortUUID());
 		config = ProcessingDataSource.addConfigValue(config, KEY_NAME, this.getName());
 		config = ProcessingDataSource.addConfigValue(config, KEY_DESCRIPTION, this.getDescription());
+		
+		if (this.getPersistentTransformationGraph()!=null) {
+			String persGraphConfigString = this.replaceBrackets(this.getPersistentTransformationGraph().toJsonString());
+			config = ProcessingDataSource.addConfigValue(config, KEY_TRANSFORMATION_GRAPH, persGraphConfigString);
+		}
 		
 		return config;
 	}
@@ -85,9 +98,34 @@ public class ProcessingDataSource extends DefaultDataSource {
 			case KEY_DESCRIPTION:
 				this.setDescription(value);
 				break;
+			case KEY_TRANSFORMATION_GRAPH:
+				String persGraphJsonString = this.restoreBrackets(value);
+				this.setPersistentTransformationGraph(PersistentTransformationGraph.fromJsonString(persGraphJsonString));
+				break;
 			}
 		}
 		return this;
+	}
+	
+	/**
+	 * Replaces brackets with strings that will most likely never occur, because brackets are used by
+	 * the superclass method to mark configuration values.
+	 * @param originalString the original string
+	 * @return the string
+	 */
+	private String replaceBrackets(String originalString) {
+		String intermediaeString = originalString.replace("[", OPENING_BRACKET_REPLACER);
+		return intermediaeString.replace("]", CLOSING_BRACKET_REPLACER);
+	}
+	
+	/**
+	 * Restores the brackets that have been replaced by the defined replacer strings.
+	 * @param originalString the original string
+	 * @return the string
+	 */
+	private String restoreBrackets(String originalString) {
+		String intermediaeString = originalString.replace(OPENING_BRACKET_REPLACER, "[");
+		return intermediaeString.replace(CLOSING_BRACKET_REPLACER, "]");
 	}
 	
 	/* (non-Javadoc)
@@ -97,5 +135,22 @@ public class ProcessingDataSource extends DefaultDataSource {
 	public boolean requiresSubConfiguration() {
 		return true;
 	}
+
+	/**
+	 * Gets the persistent transformation graph.
+	 * @return the persistent transformation graph
+	 */
+	public PersistentTransformationGraph getPersistentTransformationGraph() {
+		return persistentTransformationGraph;
+	}
+	/**
+	 * Sets the persistent transformation graph.
+	 * @param persistentTransformationGraph the new persistent transformation graph
+	 */
+	public void setPersistentTransformationGraph(PersistentTransformationGraph persistentTransformationGraph) {
+		this.persistentTransformationGraph = persistentTransformationGraph;
+	}
+	
+	
 
 }

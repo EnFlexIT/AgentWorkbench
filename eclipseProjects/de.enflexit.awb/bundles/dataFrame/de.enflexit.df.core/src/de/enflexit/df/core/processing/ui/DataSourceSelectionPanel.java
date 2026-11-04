@@ -5,6 +5,8 @@ import java.awt.GridBagLayout;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
@@ -37,6 +39,8 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 	
 	private DataController dataController;
 	private TransformationGraphEditorPanel parentEditor;
+	
+	private boolean pauseSelectionListener;
 	
 	/**
 	 * Instantiates a new j panel source table selection.
@@ -97,7 +101,7 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 	 * Sets the initial selection according to the current graph state.
 	 */
 	private void setInitialSelection() {
-		this.getJListSourceTables().setPauseChangeListeners(true);
+		this.pauseSelectionListener = true;
 		
 		// --- Check if there is already a graph node for the data sources
 		for (int i=0; i<this.getDataSourcesListModel().size(); i++) {
@@ -109,7 +113,7 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 			}
 		}
 		
-		this.getJListSourceTables().setPauseChangeListeners(false);
+		this.pauseSelectionListener = false;
 	}
 	
 	/**
@@ -161,7 +165,6 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 
 	/**
 	 * Adds the check box list selection listener.
-	 *
 	 * @param listener the listener
 	 */
 	public void addCheckBoxListSelectionListener(CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>> listener) {
@@ -170,7 +173,6 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 	
 	/**
 	 * Removes the check box list selection listener.
-	 *
 	 * @param listener the listener
 	 */
 	public void removeCheckBoxListSelectionListener(CheckBoxListSelectionListener<AbstractDataSourceDTNO<?>> listener) {
@@ -182,11 +184,21 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 	 */
 	@Override
 	public void selectionChanged(CheckBoxListSelectionEvent<AbstractDataSourceDTNO<?>> checkboxListSelectionEvent) {
-		AbstractDataSourceDTNO<?> affectedDataSourceDTNO = checkboxListSelectionEvent.getItem();
-		if (checkboxListSelectionEvent.isSelected()==true) {
-			this.parentEditor.addDataSourceGraphNode(affectedDataSourceDTNO);
-		} else {
-			this.parentEditor.removeDataSourceGraphNode(affectedDataSourceDTNO);
+		if (this.pauseSelectionListener==false) {
+			AbstractDataSourceDTNO<?> affectedDataSourceDTNO = checkboxListSelectionEvent.getItem();
+			if (checkboxListSelectionEvent.isSelected()==true) {
+				this.parentEditor.addDataSourceGraphNode(affectedDataSourceDTNO);
+			} else {
+				boolean couldBeRemoved = this.parentEditor.removeDataSourceGraphNode(affectedDataSourceDTNO);
+				if (couldBeRemoved==false) {
+					// --- Unable to remove, set selected again ---------------
+					this.pauseSelectionListener = true;
+					this.getJListSourceTables().addItemToSelection(affectedDataSourceDTNO);
+					this.pauseSelectionListener = false;
+					
+					JOptionPane.showMessageDialog(this, "The selected node is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the transformation first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
+				}
+			}
 		}
 		
 	}

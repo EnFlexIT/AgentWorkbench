@@ -452,10 +452,22 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	 * @return the data table by ID
 	 */
 	public Table getDataTableByExpression(String tableExpression) {
+		AbstractDataSourceDTNO<?> dataSourceDTNO = this.getDataSourceDtnoByExpression(tableExpression);
+		if (dataSourceDTNO!=null) {
+			return dataSourceDTNO.getTable();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the data source dtno that matches the provided expression.
+	 * @param dtnoExpression the dtno expression
+	 * @return the data source dtno by expression
+	 */
+	public AbstractDataSourceDTNO<?> getDataSourceDtnoByExpression(String dtnoExpression){
+		if (dtnoExpression==null || dtnoExpression.isBlank()==true) return null;
 		
-		if (tableExpression==null || tableExpression.isBlank()==true) return null;
-		
-		final String tbExpWork = tableExpression.trim().toLowerCase();
+		final String tbExpWork = dtnoExpression.trim().toLowerCase();
 		
 		// --- Search by name or short UUID -----------------------------------
 		boolean isShortUUID = tbExpWork.contains(DataFrameExpressionConstants.DF_EXPRESSION_SHORT_UUID_PREFIX.toLowerCase());
@@ -476,7 +488,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		if (matchingNodes!=null && matchingNodes.size()==1) {
 			DTNO_Base baseDTNO = (DTNO_Base) matchingNodes.get(0).getUserObject();
 			if (baseDTNO instanceof AbstractDataSourceDTNO<?> dsDTNO) {
-				return dsDTNO.getTable();
+				return dsDTNO;
 			}
 		}
 		return null;

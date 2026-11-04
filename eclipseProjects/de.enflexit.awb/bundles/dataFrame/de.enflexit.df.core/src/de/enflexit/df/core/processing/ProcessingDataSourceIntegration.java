@@ -1,14 +1,18 @@
 package de.enflexit.df.core.processing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
-
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
+import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
 import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import edu.uci.ics.jung.graph.Graph;
 
 /**
  * The Class ProcessingDataSourceIntegration.
@@ -19,6 +23,8 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	private ProcessingDataSourceDTNO dtno;
 	private JPanelDataSourceConfigurationProcessing configPanel;
 	private TransformationGraphEditorPanel detailsViewPanel;
+	
+	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
 
 	/**
 	 * Instantiates a new processing data source integration.
@@ -76,7 +82,13 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	@Override
 	public JComponent getDetailViewPanel() {
 		if (detailsViewPanel==null) {
-			detailsViewPanel = new TransformationGraphEditorPanel(getDataController());
+			
+			detailsViewPanel = new TransformationGraphEditorPanel(this.getDataController());
+			PersistentTransformationGraph persTransGraph = this.dtno.getDataSource().getPersistentTransformationGraph();
+			if (persTransGraph!=null) {
+				detailsViewPanel.getGraphController().loadPersistentGraph(persTransGraph);
+				this.transformationGraph = detailsViewPanel.getGraphController().getTransformationGraph();
+			}
 		}
 		return detailsViewPanel;
 	}
@@ -89,5 +101,43 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration#addDataTreeSubNodes()
+	 */
+	@Override
+	public void addDataTreeSubNodes() {
+		if (this.transformationGraph!=null) {
+			ArrayList<DataTableNode> endNodes = this.findResultNodes(this.transformationGraph);
+			for (DataTableNode endNode : endNodes) {
+				this.addDataTreeSubNode(endNode);
+			}
+		}
+	}
+	
+	/**
+	 * Adds a sub node for the provided transformation result table node.
+	 * @param resultNode the result node
+	 */
+	private void addDataTreeSubNode(DataTableNode resultNode) {
+		//TODO work in progress
+	}
+	
+	/**
+	 * Find the nodes that represent a final transformation result.
+	 * @param transformationGraph the transformation graph
+	 * @return the array list
+	 */
+	private ArrayList<DataTableNode> findResultNodes(Graph<DataTableNode, DataTransformationEdge> transformationGraph){
+		ArrayList<DataTableNode> resultNodes = new ArrayList<DataTableNode>();
+		for (DataTableNode node : transformationGraph.getVertices()) {
+			if (transformationGraph.getOutEdges(node).size()==0) {
+				resultNodes.add(node);
+			}
+		}
+		return resultNodes;
+	}
+	
+	
 
 }
