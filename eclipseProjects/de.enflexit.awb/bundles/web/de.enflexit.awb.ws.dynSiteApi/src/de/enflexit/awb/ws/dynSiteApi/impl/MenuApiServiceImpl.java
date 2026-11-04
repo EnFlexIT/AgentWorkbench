@@ -50,9 +50,6 @@ public class MenuApiServiceImpl extends MenuApiService {
     	if (createMenuRequest == null) {
     		return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Request body is missing.")).build();
     	}
-    	if (createMenuRequest.getAllowedRoles() == null || createMenuRequest.getAllowedRoles().isEmpty()) {
-    	    return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Allowed roles must be specified.")).build();
-    	}
     	
     	MenuItem menuItem = createMenuRequest.getContent();
     	

@@ -165,6 +165,7 @@ public class TableColumnSelectionPanel extends AbstractTransformationParameterCo
 					selectedColumnsList.add(column);
 				}
 			}
+			this.getJListColumnSelection().setSelectedItems(selectedColumnsList);
 		}
 	}
 
