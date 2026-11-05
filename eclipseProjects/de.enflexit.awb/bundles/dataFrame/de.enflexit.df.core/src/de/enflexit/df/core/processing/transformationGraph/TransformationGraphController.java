@@ -3,10 +3,16 @@ package de.enflexit.df.core.processing.transformationGraph;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.DataTransformationService;
+import de.enflexit.df.core.processing.transformationGraph.PersistentTableNode.NodeType;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -19,14 +25,24 @@ import tech.tablesaw.api.Table;
  */
 public class TransformationGraphController {
 
-	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
+	private ObservableGraph<DataTableNode, DataTransformationEdge> transformationGraph;
 	private StaticLayout<DataTableNode, DataTransformationEdge> graphLayout;
 	
+	private DataController dataController;
+	
+	/**
+	 * Instantiates a new transformation graph controller.
+	 * @param dataController the data controller
+	 */
+	public TransformationGraphController(DataController dataController) {
+		this.dataController = dataController;
+	}
+
 	/**
 	 * Gets the transformation graph.
 	 * @return the transformation graph
 	 */
-	public Graph<DataTableNode, DataTransformationEdge> getTransformationGraph() {
+	public ObservableGraph<DataTableNode, DataTransformationEdge> getTransformationGraph() {
 		if (transformationGraph==null) {
 			transformationGraph = new ObservableGraph<DataTableNode, DataTransformationEdge>(new DirectedSparseGraph<DataTableNode, DataTransformationEdge>());
 		}
@@ -44,12 +60,27 @@ public class TransformationGraphController {
 		return graphLayout;
 	}
 	
+	
 	/**
 	 * Sets the transformation graph.
 	 * @param transformationGraph the transformation graph
 	 */
 	public void setTransformationGraph(Graph<DataTableNode, DataTransformationEdge> transformationGraph) {
-		this.transformationGraph = transformationGraph;
+		if (transformationGraph instanceof ObservableGraph<DataTableNode, DataTransformationEdge> og) {
+			this.transformationGraph = og;
+		} else {
+			ObservableGraph<DataTableNode, DataTransformationEdge> obsGraph = new ObservableGraph<DataTableNode, DataTransformationEdge>(transformationGraph);
+			this.transformationGraph = obsGraph;
+		}
+		this.resetGraphLayout(this.transformationGraph);
+	}
+	
+	/**
+	 * Resets the graph layout for a new graph.
+	 * @param transformationGraph the transformation graph
+	 */
+	private void resetGraphLayout(Graph<DataTableNode, DataTransformationEdge> transformationGraph) {
+		this.graphLayout = new StaticLayout<DataTableNode, DataTransformationEdge>(transformationGraph);
 	}
 	
 	/**
@@ -60,7 +91,8 @@ public class TransformationGraphController {
 	public void addDataTableNode(AbstractDataSourceDTNO<?> dataSourceDTNO, Point2D position) {
 		DataTableNodeDataSource dtNode = new DataTableNodeDataSource();
 		dtNode.setDataSourceDTNO(dataSourceDTNO);
-		this.addDataTableNode(dtNode, position);
+		dtNode.setPosition(position);
+		this.addDataTableNode(dtNode);
 	}
 	
 	/**
@@ -68,9 +100,19 @@ public class TransformationGraphController {
 	 * @param dataTableNode the node
 	 * @param position the position
 	 */
-	public void addDataTableNode(DataTableNode dataTableNode, Point2D position) {
+	public void addDataTableNode(DataTableNode dataTableNode) {
 		this.getTransformationGraph().addVertex(dataTableNode);
-		this.getGraphLayout().setLocation(dataTableNode, position.getX(), position.getY());
+		this.getGraphLayout().setLocation(dataTableNode, dataTableNode.getPosition().getX(), dataTableNode.getPosition().getY());
+	}
+	
+	/**
+	 * Adds a transformation edge between the provided data nodes.
+	 * @param edge the edge
+	 * @param nodeFrom the node from
+	 * @param nodeTo the node to
+	 */
+	public void addTransformationEdge(DataTransformationEdge edge, DataTableNode nodeFrom, DataTableNode nodeTo) {
+		this.getTransformationGraph().addEdge(edge, nodeFrom, nodeTo);
 	}
 	
 	/**
@@ -212,5 +254,61 @@ public class TransformationGraphController {
 		return null;
 	}
 	
+	public void loadPersistentGraph(PersistentTransformationGraph persistentGraph) {
+		// --- Create the nodes first, organized by their UUIDs ----- 
+		HashMap<String, DataTableNode> nodesByUUID = new HashMap<String, DataTableNode>();
+		for (PersistentTableNode persistentNode : persistentGraph.getTableNodes()) {
+			DataTableNode tableNode = null;
+			if (persistentNode.getNodeType()==NodeType.DATA_SOURCE) {
+				tableNode = new DataTableNodeDataSource();
+				((DataTableNodeDataSource)tableNode).setDataSourceDTNO(dataController.getDataTreeModel().getDataSourceDtnoByExpression("sUUID('" + persistentNode.getDataSourceUUID() + "')"));
+			} else if (persistentNode.getNodeType()==NodeType.TRANSFORMATION_RESULT) {
+				tableNode = new DataTableNodeTransformationResult();
+				((DataTableNodeTransformationResult)tableNode).setDataSourceUUID(persistentNode.getDataSourceUUID());
+			}
+			
+			if (tableNode!=null) {
+				tableNode.setPosition(new Point2D.Double(persistentNode.getPosX(), persistentNode.getPosY()));
+				this.addDataTableNode(tableNode);
+				
+				nodesByUUID.put(tableNode.getDataSourceUUID(), tableNode);
+			}
+		}
+		
+		// --- Create the edges for the transformations -------------
+		for (PersistentTransformation persistentEdge : persistentGraph.getTransformationEdges()) {
+			
+			DataTransformationService transformationService = this.getTransformationService(persistentEdge.getTransformationName());
+			if (transformationService!=null) {
+				AbstractDataTransformation  transformation = transformationService.getNewInstance();
+				transformation.setTransformationParameters(persistentEdge.getTransformationParameters());
+				DataTableNodeTransformationResult outputNode = (DataTableNodeTransformationResult)nodesByUUID.get(persistentEdge.getOutputNodeUUID());
+				transformation.setOutputNode(outputNode);
+				for (String inputNodeUUID : persistentEdge.getInputNodeUUIDs()) {
+					DataTableNode inputNode = nodesByUUID.get(inputNodeUUID);
+					DataTransformationEdge transformationEdge = new DataTransformationEdge();
+					transformationEdge.setDataTransformation(transformation);
+					this.addTransformationEdge(transformationEdge, inputNode, outputNode);
+					transformation.getInputNodes().add(inputNode);
+				}
+				outputNode.setDataTransformation(transformation);
+			}
+		}
+	}
+	
+	/**
+	 * Gets the transformation service for the provided transformation name.
+	 * @param transformationName the transformation name
+	 * @return the transformation service
+	 */
+	private DataTransformationService getTransformationService(String transformationName) {
+		List<DataTransformationService> services = ServiceFinder.findServices(DataTransformationService.class);
+		for (DataTransformationService service : services) {
+			if (service.getName().equals(transformationName)) {
+				return service;
+			}
+		}
+		return null;
+	}
 
 }

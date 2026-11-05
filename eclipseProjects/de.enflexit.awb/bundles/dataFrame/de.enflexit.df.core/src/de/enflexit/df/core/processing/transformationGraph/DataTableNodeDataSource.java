@@ -11,6 +11,8 @@ public class DataTableNodeDataSource extends DataTableNode {
 	
 	private AbstractDataSourceDTNO<?> dataSourceDTNO;
 	
+	private String uuid;
+	
 	/**
 	 * Gets the DTNO of the data source providing the table. Might be null if  
 	 * the table is not related to a data source, i.e. for intermediate steps.
@@ -58,7 +60,15 @@ public class DataTableNodeDataSource extends DataTableNode {
 	 */
 	@Override
 	public String getDataSourceUUID() {
-		return this.dataSourceDTNO!=null ? this.dataSourceDTNO.getShortUUID() : null;
+		return this.dataSourceDTNO!=null ? this.dataSourceDTNO.getShortUUID() : this.uuid;
+	}
+	
+	/**
+	 * Sets the uuid.
+	 * @param uuid the new uuid
+	 */
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 }

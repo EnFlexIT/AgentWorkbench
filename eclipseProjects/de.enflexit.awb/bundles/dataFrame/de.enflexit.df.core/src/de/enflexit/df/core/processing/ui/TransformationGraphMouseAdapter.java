@@ -109,7 +109,8 @@ public class TransformationGraphMouseAdapter extends MouseAdapter {
 			
 			layout.setLocation(this.draggedNode, newPosition);
 			this.draggedNode.setPosition(new Point2D.Double(newPosition.getX(), newPosition.getY()));
-		
+			this.graphEditorPanel.setGraphChanged(true);
+			
 		} else if (panCandidate && panPoint != null) {
 			// --- Move the graph view --------------------
 			int dx = me.getX() - this.panPoint.x;

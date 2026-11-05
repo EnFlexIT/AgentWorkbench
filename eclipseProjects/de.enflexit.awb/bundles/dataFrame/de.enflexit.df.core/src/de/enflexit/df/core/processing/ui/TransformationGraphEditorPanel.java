@@ -16,8 +16,10 @@ import javax.swing.JOptionPane;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.processing.ProcessingDataSource;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationProcessor;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
@@ -25,7 +27,9 @@ import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeDataSource;
 import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
 import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
+import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
 import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
+import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.ObservableGraph;
 import edu.uci.ics.jung.graph.event.GraphEvent;
 import edu.uci.ics.jung.graph.event.GraphEventListener;
@@ -40,7 +44,6 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import tech.tablesaw.api.Table;
 
 import javax.swing.JSplitPane;
-import java.awt.Font;
 
 /**
  * The Class JPanelTransformationGraphEditor.
@@ -84,7 +87,11 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private Object selectedGraphElement;
 	
 	private DataTransformationProcessor transformationVisitor;
-//	private ProcessingDataSource dataSource;
+	private ProcessingDataSource dataSource;
+	
+	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
+	
+	private boolean graphChanged;
 	
 	/**
 	 * Instantiates a new j panel transformation graph editor.
@@ -92,6 +99,12 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 */
 	public TransformationGraphEditorPanel(DataController dataController) {
 		this.dataController = dataController;
+		this.initialize();
+	}
+	
+	public TransformationGraphEditorPanel(DataController dataController, Graph<DataTableNode, DataTransformationEdge> transformationGraph) {
+		this.dataController = dataController;
+		this.transformationGraph = transformationGraph;
 		this.initialize();
 	}
 	
@@ -218,7 +231,10 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 */
 	public TransformationGraphController getGraphController() {
 		if (graphController==null) {
-			graphController = new TransformationGraphController();
+			graphController = new TransformationGraphController(this.getDataController());
+			if (this.transformationGraph!=null) {
+				graphController.setTransformationGraph(transformationGraph);
+			}
 		}
 		return graphController;
 	}
@@ -286,6 +302,22 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	    return null;
 	    
 	}
+	
+	/**
+	 * Gets the data source for this transformation..
+	 * @return the data source
+	 */
+	private ProcessingDataSource getDataSource() {
+		if (dataSource==null) {
+			DefaultDataSource dataSourceFromController = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSource();
+			if (dataSourceFromController instanceof ProcessingDataSource pds) {
+				this.dataSource = pds;
+			} else {
+				throw new IllegalArgumentException("Unexpected data source type: " + dataSourceFromController.getClass().getName());
+			}
+		}
+		return dataSource;
+	}
 
 	/**
 	 * Shows the data source selection dialog.
@@ -314,16 +346,17 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	/**
 	 * Tries to remove the provided data source table node.
 	 * @param dataSourceTableNode the data source table node
+	 * @return true, if the node could be removed
 	 */
-	private void removeDataSourceNode(DataTableNodeDataSource dataSourceTableNode) {
-		int outEdges = this.getGraphController().getTransformationGraph().getOutEdges(dataSourceTableNode).size();
-		if (outEdges>0) {
-			JOptionPane.showMessageDialog(this, "The selected node is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the transformation first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
-		} else {
-			this.getGraphController().removeDataTableNode(dataSourceTableNode);
+	private boolean removeDataSourceNode(DataTableNodeDataSource dataSourceTableNode) {
+		boolean couldBeRemoved = this.getGraphController().removeDataTableNode(dataSourceTableNode);
+		if (couldBeRemoved==true) {
 			this.selectedGraphElement = null;
 			this.getJSplitPaneMainView().setDividerLocation(1.0);
+		} else {
+			JOptionPane.showMessageDialog(this, "The selected node is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the transformation first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
 		}
+		return couldBeRemoved;
 	}
 	
 	/**
@@ -381,15 +414,20 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 */
 	public void addDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO, Point2D position) {
 		this.getGraphController().addDataTableNode(dataSourceDTNO, position);
+		this.setGraphChanged(true);
 	}
 	
 	/**
 	 * Removes the graph node for the provided data source from the graph.
 	 * @param dataSourceDTNO the data source DTNO
+	 * @return true, if the node could be removed
 	 */
-	public void removeDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
-		//TODO check if the source is involved in an active transformation
-		this.getGraphController().removeDataTableNode(dataSourceDTNO);
+	public boolean removeDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
+		boolean couldBeRemoved = this.getGraphController().removeDataTableNode(dataSourceDTNO)==true;
+		if (couldBeRemoved) {
+			this.setGraphChanged(true);
+		}
+		return couldBeRemoved;
 	}
 
 	/**
@@ -402,7 +440,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		outputNode.setDataTransformation(newTransformation);
 		outputNode.setPosition(this.determineOutputNodePosition(newTransformation));
 		
-		this.getGraphController().addDataTableNode(outputNode, outputNode.getPosition());
+		this.getGraphController().addDataTableNode(outputNode);
 		
 		for (DataTableNode inputNode : newTransformation.getInputNodes()) {
 			DataTransformationEdge transformationEdge = new DataTransformationEdge();
@@ -410,6 +448,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			
 			this.getGraphController().getTransformationGraph().addEdge(transformationEdge, inputNode, outputNode);
 		}
+		this.setGraphChanged(true);
 	}
 	
 	/**
@@ -603,6 +642,12 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			this.removeSelectedElement();
 		} else if (ae.getSource()==this.getJButtonVerify()) {
 			JOptionPane.showMessageDialog(this, "Not implemented yet");
+		} else if (ae.getSource()==this.getJButtonApplyChanges()) {
+			PersistentTransformationGraph persistentGraph = PersistentTransformationGraph.fromJungGraph(this.getGraphController().getTransformationGraph());
+			this.getDataSource().setPersistentTransformationGraph(persistentGraph);
+			this.setGraphChanged(false);
+		} else if (ae.getSource()==this.getJButtonRevertChanges()) {
+			//TODO implement graph reset
 		}
 	}
 
@@ -616,11 +661,14 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			AbstractDataTransformation transformation = (AbstractDataTransformation) pce.getNewValue();
 			this.addNewDataTransformation(transformation);
 			this.setSelectedGraphElement(transformation.getOutputNode());
+			
 		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TRANSFORMATION_MODIFIED)) {
 			// --- Select the output node to show the result --------
 			AbstractDataTransformation transformation = (AbstractDataTransformation) pce.getNewValue();
 			this.getGraphController().transformationModified(transformation);
 			this.setSelectedGraphElement(transformation.getOutputNode());
+			this.setGraphChanged(true);
+			
 		} else if (pce.getPropertyName().equals(DataTransformationConfigurationPanel.EVENT_ID_TRANSFORMATION_CANCELED)) {
 			this.hideDetailsPanel();
 		}
@@ -636,4 +684,36 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		}
 		return transformationVisitor;
 	}
+
+	/**
+	 * Checks if the graph has pending changes.
+	 * @return true, if is graph changed
+	 */
+	public boolean isGraphChanged() {
+		return graphChanged;
+	}
+	/**
+	 * Sets the graph changed status of the graph, adjusts button states accordingly.
+	 * @param graphChanged the new graph changed
+	 */
+	protected void setGraphChanged(boolean graphChanged) {
+		if (graphChanged!=this.isGraphChanged()) {
+			this.graphChanged = graphChanged;
+			this.getJButtonApplyChanges().setEnabled(graphChanged);
+			this.getJButtonRevertChanges().setEnabled(graphChanged);
+		}
+	}
+	
+	/**
+	 * Sets the transformation graph.
+	 *
+	 * @param transformationGraph the transformation graph
+	 */
+	public void setTransformationGraph(Graph<DataTableNode, DataTransformationEdge> transformationGraph) {
+		this.getGraphController().setTransformationGraph(transformationGraph);
+		this.getVisualizationViewer().setGraphLayout(this.getGraphController().getGraphLayout());
+		this.getVisualizationViewer().repaint();
+	}
+	
+	
 }

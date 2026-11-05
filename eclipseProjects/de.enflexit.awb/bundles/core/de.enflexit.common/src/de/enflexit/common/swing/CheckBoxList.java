@@ -191,6 +191,19 @@ public class CheckBoxList<E> extends JList<E> {
 		}
 	}
 	
+	/**
+	 * Adds the provided item to the selection.
+	 * @param item the item
+	 */
+	public void addItemToSelection(E item) {
+		for (int i=0; i<this.getModel().getSize(); i++) {
+			if (this.getModel().getElementAt(i)==item) {
+				this.addSelectionInterval(i, i);
+				return;
+			}
+		}
+	}
+	
 
 	/**
 	 * The Class CheckBoxListCellRenderer.
