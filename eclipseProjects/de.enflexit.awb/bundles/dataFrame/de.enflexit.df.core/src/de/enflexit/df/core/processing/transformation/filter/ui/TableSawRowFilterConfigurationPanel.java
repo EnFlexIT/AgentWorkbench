@@ -149,6 +149,7 @@ public class TableSawRowFilterConfigurationPanel extends AbstractTransformationP
 			jTableFilterConfiguration = new JTable();
 			jTableFilterConfiguration.setModel(this.getTableModel());
 			jTableFilterConfiguration.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			jTableFilterConfiguration.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 			
 			// --- Register custom renderers and editors for the first two columns
 			this.registerRenderersAndEditors();
