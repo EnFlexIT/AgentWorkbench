@@ -134,7 +134,7 @@ public abstract class AbstractDataSourceIntegration<DS extends DefaultDataSource
 	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
 	 */
 	@Override
-	public boolean providesPropertiesConfiguratoin(DataController dataController, DefaultMutableTreeNode treeNode) {
+	public boolean providesPropertiesConfiguration(DataController dataController, DefaultMutableTreeNode treeNode) {
 		return false;
 	}
 	/* (non-Javadoc)
