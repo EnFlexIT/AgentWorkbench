@@ -13,6 +13,8 @@ import de.enflexit.df.core.workbook.DataWorkbook;
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 public class ProcessingResultDataSourceIntegration extends AbstractDataSourceIntegration<ProcessingResultDataSource> {
+	
+	private ProcessingResultDataSourceDTNO dtno;
 
 
 	public ProcessingResultDataSourceIntegration(DataController dataController, DataWorkbook dataWorkbook, ProcessingResultDataSource dataSource) {
@@ -24,8 +26,10 @@ public class ProcessingResultDataSourceIntegration extends AbstractDataSourceInt
 	 */
 	@Override
 	public ProcessingResultDataSourceDTNO getDTNO() {
-		// TODO Auto-generated method stub
-		return null;
+		if (dtno==null) {
+			dtno = new ProcessingResultDataSourceDTNO(this);
+		}
+		return dtno;
 	}
 
 	/* (non-Javadoc)

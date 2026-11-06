@@ -700,7 +700,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		if (graphChanged!=this.isGraphChanged()) {
 			this.graphChanged = graphChanged;
 			this.getJButtonApplyChanges().setEnabled(graphChanged);
-			this.getJButtonRevertChanges().setEnabled(graphChanged);
+//			this.getJButtonRevertChanges().setEnabled(graphChanged);
 		}
 	}
 	

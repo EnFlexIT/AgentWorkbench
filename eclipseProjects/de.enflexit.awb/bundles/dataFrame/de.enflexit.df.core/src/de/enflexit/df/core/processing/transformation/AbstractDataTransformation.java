@@ -86,6 +86,9 @@ public abstract class AbstractDataTransformation {
 	 */
 	public abstract Table performTransformation(TransformationGraphController graphController);
 	
+	/**
+	 * Resets the result table.
+	 */
 	public void resetResult() {
 		if (this.getOutputNode()!=null) {
 			this.getOutputNode().resetResultTable();

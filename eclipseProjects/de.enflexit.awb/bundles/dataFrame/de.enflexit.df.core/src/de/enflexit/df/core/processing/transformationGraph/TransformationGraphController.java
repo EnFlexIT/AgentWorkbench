@@ -310,5 +310,21 @@ public class TransformationGraphController {
 		}
 		return null;
 	}
+	
+	/**
+	 * Gets the transformation for node.
+	 * @param tableNode the table node
+	 * @return the transformation for node
+	 */
+	public AbstractDataTransformation getTransformationForNode(DataTableNode tableNode) {
+		if (tableNode instanceof DataTableNodeTransformationResult resultNode) {
+			// --- Get the first incoming edge (the transformation is the same instance for all edges) 
+			DataTransformationEdge inEdge = this.getTransformationGraph().getInEdges(resultNode).iterator().next();
+			return inEdge.getDataTransformation();
+		} else {
+			// --- No transformation result node -> no transformation ---------
+			return null;
+		}
+	}
 
 }
