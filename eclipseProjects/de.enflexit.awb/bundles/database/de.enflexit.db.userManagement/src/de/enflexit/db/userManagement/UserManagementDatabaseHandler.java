@@ -256,6 +256,26 @@ public class UserManagementDatabaseHandler {
 		
 		return combinedRoles;
 	}
+
+	/**
+	 * Returns the frontend user roles as strings.
+	 *
+	 * @param userName the user name
+	 * @return the frontend user roles as strings
+	 */
+	public List<String> getFrontendUserRolesAsStrings(String userName){
+		
+		if (userName == null || userName.isBlank() == true) {
+			return new ArrayList<>();
+		}		
+
+		List<String> frontendRoles = new ArrayList<>();
+		for (GroupRole role : this.getFrontendUserRoles(userName)) {
+			frontendRoles.add(role.getRole());
+		}
+		
+		return frontendRoles;
+	}
 	
 	/**
 	 * Returns the backend user roles.

@@ -210,4 +210,20 @@ public class UserApiImpl extends UserApiService {
 		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(userRoles).build();
 	}
 
+
+	/* (non-Javadoc)
+	* @see de.enflexit.awb.ws.restapi.gen.UserApiService#getUserGroupRoles(jakarta.ws.rs.core.SecurityContext)
+	*/
+	@Override
+	public Response getUserGroupRoles(SecurityContext securityContext) throws NotFoundException {
+		
+		Principal principal = securityContext.getUserPrincipal();
+		if (principal==null) {
+			String errMsg = "Could not find any principal information.";
+			return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, errMsg)).build();
+		}
+		List<String> userRoles = new WebAppDatabaseHandler().getUserManagementDatabaseHandler().getFrontendUserRolesAsStrings(principal.getName());
+		return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(userRoles).build();
+	}
+
 }

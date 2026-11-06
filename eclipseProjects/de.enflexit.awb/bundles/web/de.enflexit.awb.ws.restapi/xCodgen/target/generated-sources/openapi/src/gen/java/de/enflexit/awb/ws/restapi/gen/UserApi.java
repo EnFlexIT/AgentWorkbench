@@ -35,7 +35,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the user API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-14T14:23:14.795417200+02:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-11-05T12:58:32.247711400+01:00[Europe/Berlin]", comments = "Generator version: 7.22.0")
 public class UserApi  {
 
    private final UserApiService delegate;
@@ -107,9 +107,23 @@ public class UserApi  {
     }
 
     @jakarta.ws.rs.GET
+    @Path("/groupRoles")
+    @Produces({ "application/json" })
+    @Operation(summary = "Get all group roles the client is associated with", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "successfully fetched the requested user group roles", content = 
+                @Content(schema = @Schema(implementation = String.class))),
+            },security = {
+            @SecurityRequirement(name = "bearerAuth")
+        }, tags={ "user", }) 
+    public Response getUserGroupRoles(@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.getUserGroupRoles(securityContext);
+    }
+
+    @jakarta.ws.rs.GET
     @Path("/roles")
     @Produces({ "application/json" })
-    @Operation(summary = "Get all roles the user is associated with", description = "", responses = {
+    @Operation(summary = "Get all roles the client is associated with", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "successfully fetched the requested user roles", content = 
                 @Content(schema = @Schema(implementation = String.class))),
             },security = {
