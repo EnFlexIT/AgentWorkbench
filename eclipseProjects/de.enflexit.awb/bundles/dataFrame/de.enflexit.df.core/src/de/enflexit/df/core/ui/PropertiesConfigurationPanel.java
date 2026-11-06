@@ -26,7 +26,7 @@ public interface PropertiesConfigurationPanel {
 	 * @param treeNode the currently handled tree node
 	 * @return true, if a property configuration will be provided
 	 */
-	public boolean providesPropertiesConfiguratoin(DataController dataController, DefaultMutableTreeNode treeNode);
+	public boolean providesPropertiesConfiguration(DataController dataController, DefaultMutableTreeNode treeNode);
 	
 	/**
 	 * Has to return the properties configuration panel.

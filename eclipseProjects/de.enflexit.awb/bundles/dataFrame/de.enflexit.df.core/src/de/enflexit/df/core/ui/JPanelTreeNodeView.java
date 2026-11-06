@@ -1,5 +1,6 @@
 package de.enflexit.df.core.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -39,6 +40,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.PropertiesConfigurationHelper;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
@@ -80,6 +82,8 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	private GridBagConstraints gbc_dataViewConfiguration;
 	private JComponent jComponentDataViewConfiguration;
 	
+	private JPanel jPanelData;
+	private JTabbedPane jTabbedPaneData;
 	private JScrollPane jScrollPaneData;
 	private JTable jTableData;
 	private JTableHeaderWithToolTips jTableHeaderWithToolTips;
@@ -225,32 +229,33 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 		
 		switch (dataViewConfig) {
 		case No_PropertiesConfiguration:
-			this.jComponentDataViewConfiguration = this.getJScrollPaneData();
+			this.jComponentDataViewConfiguration = this.getJPanelData();
 			break;
 		case PropertiesConfiguration_Top:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJTabbedPanePropertiesContainer(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJTabbedPanePropertiesContainer(), this.getJPanelData());
 			break;
 		case PropertiesConfiguration_Bottom:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getHeight() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJTabbedPanePropertiesContainer());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.VERTICAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelData(), this.getJTabbedPanePropertiesContainer());
 			break;
 		case PropertiesConfiguration_Left:
 			resizeWeight = (1-resizeWeight);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJTabbedPanePropertiesContainer(), this.getJScrollPaneData());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJTabbedPanePropertiesContainer(), this.getJPanelData());
 			break;
 		case PropertiesConfiguration_Right:
 			dividerLocation = (1 - dividerLocation);
 			dividerLocationAbs = (int) (this.getSize().getWidth() * dividerLocation);
-			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJScrollPaneData(), this.getJTabbedPanePropertiesContainer());
+			this.jComponentDataViewConfiguration = this.createJSplitPaneData(JSplitPane.HORIZONTAL_SPLIT, dividerLocation, resizeWeight, this.getJPanelData(), this.getJTabbedPanePropertiesContainer());
 			break;
 		}
 		
 		if (dataViewConfig!=DataViewConfiguration.No_PropertiesConfiguration) {
 			this.lastDataViewConfiguration = dataViewConfig;
+			this.updatePropertiesConfigurationPanel(this.getSelectedDataTreeNode(), this.getSelectedDataTreeNodeDataSource());
 		}
 		
 		this.add(this.jComponentDataViewConfiguration, this.getGridBagConstraintsDataViewConfiguration());
@@ -289,6 +294,17 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 			}
 		}
 		return null;
+	}
+	/**
+	 * Returns the list of properties configuration titles.
+	 * @return the properties configuration tab title list
+	 */
+	private List<String> getPropertiesConfigurationTabTitleList() {
+		List<String> tabTitleList = new ArrayList<>();
+		for (int i = 0; i < this.getJTabbedPanePropertiesContainer().getTabCount(); i++) {
+			tabTitleList.add(this.getJTabbedPanePropertiesContainer().getTitleAt(i));
+		}
+		return tabTitleList;
 	}
 	/**
 	 * Adds, replaces or removes a properties tab.
@@ -398,7 +414,7 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	 * @param resizeWeight the resize weight
 	 * @param topLeftComponent the top left component
 	 * @param bottomRightComponent the bottom right component
-	 * @return the j split pane
+	 * @return the JSplitPane for the data / property combination
 	 */
 	private JSplitPane createJSplitPaneData(int orientation, double dividerLocation, double resizeWeight, JComponent topLeftComponent, JComponent bottomRightComponent) {
 		JSplitPane jSplitPaneData = new JSplitPane();
@@ -416,6 +432,30 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 		return jSplitPaneData;
 	}
 	
+	private JPanel getJPanelData() {
+		if (jPanelData==null) {
+			jPanelData = new JPanel();
+			jPanelData.setLayout(new BorderLayout());
+			
+			// TODO if no further detail tabs ... 
+			int noOfTabs = 1;
+			if (noOfTabs>1) {
+				jPanelData.add(this.getJTabbedPaneData(), BorderLayout.CENTER);
+			} else {
+				jPanelData.add(this.getJScrollPaneData(), BorderLayout.CENTER);
+			}
+		}
+		return jPanelData;
+	}
+	
+	private JTabbedPane getJTabbedPaneData() {
+		if (jTabbedPaneData==null) {
+			jTabbedPaneData = new JTabbedPane();
+			jTabbedPaneData.setTabPlacement(JTabbedPane.TOP);
+			jTabbedPaneData.addTab("Data", this.getJScrollPaneData());
+		}
+		return jTabbedPaneData;
+	}
 	private JScrollPane getJScrollPaneData() {
 		if (jScrollPaneData == null) {
 			jScrollPaneData = new JScrollPane();
@@ -753,8 +793,8 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		
-		DefaultMutableTreeNode treeNode = null;
-		AbstractDataSourceDTNO<?> dtnoDS = null;
+		DefaultMutableTreeNode treeNode = this.getSelectedDataTreeNode();
+		AbstractDataSourceDTNO<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
 		
 		String propChanged = evt.getPropertyName();
 		
@@ -782,9 +822,6 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 			
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			
-			treeNode = this.getSelectedDataTreeNode();
-			dtnoDS = this.getSelectedDataTreeNodeDataSource();
-
 			// --- Current selection has no table -------------------
 			if (dtnoDS==null || dtnoDS.getTable()==null) {
 				// --- Hide description panel if currently visible --
@@ -795,16 +832,11 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 			} else if (this.currentDataViewConfiguration!=DataViewConfiguration.No_PropertiesConfiguration && this.isDescriptionPanelVisible()==false) {
 				// --- Properties panel should be visible! ---------- 
 				this.setDataViewConfiguration(this.currentDataViewConfiguration);
-				// --- Check for data source properties ------------- 
-				if (dtnoDS.getDataSourceIntegration().providesPropertiesConfiguratoin(this.getDataController(), treeNode)==true) {
-					String title = dtnoDS.getDataSourceIntegration().getPropertiesTitle();
-					JComponent propComp = dtnoDS.getDataSourceIntegration().getPropertiesConfigurationPanel(this.getDataController(), treeNode);
-					this.addUpdateOrRemovePropertiesTab(title, propComp);
-				}
 			}
 			
 			this.setDetailView(dtnoDS);
 			this.setColumnDescriptionPanel(dtnoDS);
+			this.updatePropertiesConfigurationPanel(treeNode, dtnoDS);
 			break;
 			
 		case DataController.DC_PROPERTIES_CONFIGURATION_SHOW:
@@ -819,6 +851,45 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 		}
 		
 	}
+	
+	/**
+	 * Update properties configuration panel.
+	 *
+	 * @param treeNode the tree node
+	 * @param dtnoDS the DTNO for the data source
+	 */
+	private void updatePropertiesConfigurationPanel(DefaultMutableTreeNode treeNode, AbstractDataSourceDTNO<?> dtnoDS) {
+		
+		// --- Build / Refresh the properties view? ----------------- 
+		if (this.currentDataViewConfiguration==DataViewConfiguration.No_PropertiesConfiguration) return; 
+		
+		// --- Get the list of the current property tabs ------------
+		List<String> tabsToRemove = this.getPropertiesConfigurationTabTitleList(); 
+		
+		// --- Check for data source properties --------------------- 
+		if (dtnoDS!=null && dtnoDS.getDataSourceIntegration().providesPropertiesConfiguration(this.getDataController(), treeNode)==true) {
+			String title = dtnoDS.getDataSourceIntegration().getPropertiesTitle();
+			JComponent propComp = dtnoDS.getDataSourceIntegration().getPropertiesConfigurationPanel(this.getDataController(), treeNode);
+			this.addUpdateOrRemovePropertiesTab(title, propComp);
+			tabsToRemove.remove(title);
+		}
+		
+		// --- Add service properties panels ------------------------
+		List<PropertiesConfigurationPanel> pcpList = PropertiesConfigurationHelper.getPropertiesConfigurationPanelListForTreeNode(this.getDataController(), treeNode);
+		for (PropertiesConfigurationPanel pcp : pcpList) {
+			this.addUpdateOrRemovePropertiesTab(pcp.getPropertiesTitle(), pcp.getPropertiesConfigurationPanel(this.getDataController(), treeNode));
+			tabsToRemove.remove(pcp.getPropertiesTitle());
+		}
+		
+		// --- Remove tabs that are not required here ---------------
+		tabsToRemove.forEach(pcpTitle -> {
+			if (pcpTitle.equals(TAB_COLUMN_DESCRIPTION)==false) {
+				this.addUpdateOrRemovePropertiesTab(pcpTitle, null);	
+			}
+		});
+		
+	}
+	
 	
 	/**
 	 * Sets the detail view.

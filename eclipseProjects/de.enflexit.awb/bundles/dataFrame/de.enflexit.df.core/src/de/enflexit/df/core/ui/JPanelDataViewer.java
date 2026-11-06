@@ -77,7 +77,7 @@ public class JPanelDataViewer extends JPanel {
 			jSplitPaneData = new JSplitPane();
 			jSplitPaneData.setOneTouchExpandable(true);
 			jSplitPaneData.setDividerSize(5);
-			jSplitPaneData.setResizeWeight(0.25);
+			jSplitPaneData.setResizeWeight(0.15);
 			
 			jSplitPaneData.setLeftComponent(this.getJPanelNavigation());
 			jSplitPaneData.setRightComponent(this.getJPanelTreeNodeView());
