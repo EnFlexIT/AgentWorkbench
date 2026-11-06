@@ -16,10 +16,9 @@ import javax.swing.JOptionPane;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.processing.ProcessingDataSource;
+import de.enflexit.df.core.processing.ProcessingDataSourceIntegration;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationProcessor;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
@@ -87,7 +86,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private Object selectedGraphElement;
 	
 	private DataTransformationProcessor transformationVisitor;
-	private ProcessingDataSource dataSource;
+	
+	private ProcessingDataSourceIntegration dataSourceIntegration;
 	
 	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
 	
@@ -304,19 +304,14 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	}
 	
 	/**
-	 * Gets the data source for this transformation..
-	 * @return the data source
+	 * Gets the data source integration.
+	 * @return the data source integration
 	 */
-	private ProcessingDataSource getDataSource() {
-		if (dataSource==null) {
-			DefaultDataSource dataSourceFromController = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSource();
-			if (dataSourceFromController instanceof ProcessingDataSource pds) {
-				this.dataSource = pds;
-			} else {
-				throw new IllegalArgumentException("Unexpected data source type: " + dataSourceFromController.getClass().getName());
-			}
+	private ProcessingDataSourceIntegration getDataSourceIntegration() {
+		if (dataSourceIntegration==null) {
+			dataSourceIntegration = (ProcessingDataSourceIntegration) this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSourceIntegration();
 		}
-		return dataSource;
+		return dataSourceIntegration;
 	}
 
 	/**
@@ -644,7 +639,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			JOptionPane.showMessageDialog(this, "Not implemented yet");
 		} else if (ae.getSource()==this.getJButtonApplyChanges()) {
 			PersistentTransformationGraph persistentGraph = PersistentTransformationGraph.fromJungGraph(this.getGraphController().getTransformationGraph());
-			this.getDataSource().setPersistentTransformationGraph(persistentGraph);
+			this.getDataSourceIntegration().setTransformationGraph(persistentGraph);
 			this.setGraphChanged(false);
 		} else if (ae.getSource()==this.getJButtonRevertChanges()) {
 			//TODO implement graph reset

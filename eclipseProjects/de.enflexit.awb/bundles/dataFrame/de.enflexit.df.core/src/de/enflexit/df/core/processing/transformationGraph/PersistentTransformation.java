@@ -1,5 +1,6 @@
 package de.enflexit.df.core.processing.transformationGraph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import de.enflexit.common.properties.Properties;
@@ -8,8 +9,9 @@ import de.enflexit.common.properties.Properties;
  * This class holds all information that is required for saving and loading {@link DataTransformationEdge}s.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class PersistentTransformation {
+public class PersistentTransformation implements Serializable {
 	
+	private static final long serialVersionUID = -1924241629656187251L;
 	private String transformationName;
 	private Properties transformationParameters;
 	

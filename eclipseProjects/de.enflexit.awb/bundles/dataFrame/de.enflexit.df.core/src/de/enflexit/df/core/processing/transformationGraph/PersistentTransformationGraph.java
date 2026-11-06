@@ -1,21 +1,51 @@
 package de.enflexit.df.core.processing.transformationGraph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import com.google.gson.Gson;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformationGraph.PersistentTableNode.NodeType;
 import edu.uci.ics.jung.graph.Graph;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * A reduced representation of the transformation graph for persisting.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class PersistentTransformationGraph {
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "TransformationGraph", propOrder = {
+    "dataSourceUUID",
+    "tableNodes",
+    "transformations"
+})
+public class PersistentTransformationGraph implements Serializable {
 	
+	private static final long serialVersionUID = 3221630447459025566L;
+	
+	private String dataSourceUUID;
 	private ArrayList<PersistentTableNode> tableNodes;
-	private ArrayList<PersistentTransformation> transformationEdges;
-	
+	private ArrayList<PersistentTransformation> transformations;
+
+	/**
+	 * Gets the data source UUID.
+	 * @return the data source UUID
+	 */
+	public String getDataSourceUUID() {
+		return dataSourceUUID;
+	}
+	/**
+	 * Sets the data source UUID.
+	 * @param dataSourceUUID the new data source UUID
+	 */
+	public void setDataSourceUUID(String dataSourceUUID) {
+		this.dataSourceUUID = dataSourceUUID;
+	}
+
 	/**
 	 * Gets the table nodes.
 	 * @return the table nodes
@@ -36,21 +66,21 @@ public class PersistentTransformationGraph {
 	}
 	
 	/**
-	 * Gets the transformation edges.
-	 * @return the transformation edges
+	 * Gets the transformations.
+	 * @return the transformations
 	 */
-	public ArrayList<PersistentTransformation> getTransformationEdges() {
-		if (transformationEdges==null) {
-			transformationEdges = new ArrayList<PersistentTransformation>();
+	public ArrayList<PersistentTransformation> getTransformations() {
+		if (transformations==null) {
+			transformations = new ArrayList<PersistentTransformation>();
 		}
-		return transformationEdges;
+		return transformations;
 	}
 	/**
-	 * Sets the transformation edges.
-	 * @param transformationEdges the new transformation edges
+	 * Sets the transformations.
+	 * @param transformations the new transformations
 	 */
-	public void setTransformationEdges(ArrayList<PersistentTransformation> transformationEdges) {
-		this.transformationEdges = transformationEdges;
+	public void setTransformations(ArrayList<PersistentTransformation> transformations) {
+		this.transformations = transformations;
 	}
 	
 	/**
@@ -85,26 +115,10 @@ public class PersistentTransformationGraph {
 			}
 			persistentEdge.setOutputNodeUUID(transformation.getOutputNode().getDataSourceUUID());
 			
-			persistentGraph.getTransformationEdges().add(persistentEdge);
+			persistentGraph.getTransformations().add(persistentEdge);
 		}
 		
 		return persistentGraph;
 	}
 	
-	/**
-	 * Converts this {@link PersistentTransformationGraph} to a JSON string.
-	 * @return the JSON string
-	 */
-	public String toJsonString() {
-		return new Gson().toJson(this);
-	}
-	
-	/**
-	 * Creates a {@link PersistentTransformationGraph} from the provided JSON string.
-	 * @param jsonString the json string
-	 * @return the persistent transformation graph
-	 */
-	public static PersistentTransformationGraph fromJsonString(String jsonString) {
-		return new Gson().fromJson(jsonString, PersistentTransformationGraph.class);
-	}
 }

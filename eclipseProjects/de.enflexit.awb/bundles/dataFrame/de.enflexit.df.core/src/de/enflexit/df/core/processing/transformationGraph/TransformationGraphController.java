@@ -276,7 +276,7 @@ public class TransformationGraphController {
 		}
 		
 		// --- Create the edges for the transformations -------------
-		for (PersistentTransformation persistentEdge : persistentGraph.getTransformationEdges()) {
+		for (PersistentTransformation persistentEdge : persistentGraph.getTransformations()) {
 			
 			DataTransformationService transformationService = this.getTransformationService(persistentEdge.getTransformationName());
 			if (transformationService!=null) {

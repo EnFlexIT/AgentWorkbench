@@ -1,31 +1,25 @@
 package de.enflexit.df.core.processing.transformationGraph;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 
 /**
  * This class holds all information that is required for saving and loading {@link DataTableNode}s.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class PersistentTableNode {
+public class PersistentTableNode implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public enum NodeType {
 		DATA_SOURCE, TRANSFORMATION_RESULT
 	}
-	
-//	private Point2D position;
-	
-	private NodeType nodeType;
+
 	private String dataSourceUUID;
+	private NodeType nodeType;
 	private double posX;
 	private double posY;
 
-//	/**
-//	 * Gets the position.
-//	 * @return the position
-//	 */
-//	public Point2D getPosition() {
-//		return position;
-//	}
 	/**
 	 * Sets the position.
 	 * @param position the new position

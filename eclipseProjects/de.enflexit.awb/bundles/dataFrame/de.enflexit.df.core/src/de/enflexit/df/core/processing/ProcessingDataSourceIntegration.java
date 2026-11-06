@@ -28,7 +28,6 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	private JPanelDataSourceConfigurationProcessing configPanel;
 	private TransformationGraphEditorPanel detailsViewPanel;
 	
-	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
 	private TransformationGraphController graphController;
 	
 	private DataTransformationProcessor transformationProcessor;
@@ -91,10 +90,9 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 		if (detailsViewPanel==null) {
 			
 			detailsViewPanel = new TransformationGraphEditorPanel(this.getDataController());
-			PersistentTransformationGraph persTransGraph = this.dtno.getDataSource().getPersistentTransformationGraph();
+			PersistentTransformationGraph persTransGraph = this.getTransformationGraph();
 			if (persTransGraph!=null) {
 				this.getGraphController().loadPersistentGraph(persTransGraph);
-				this.transformationGraph = this.getGraphController().getTransformationGraph();
 			}
 		}
 		return detailsViewPanel;
@@ -114,11 +112,9 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	 */
 	@Override
 	public void addDataTreeSubNodes() {
-		if (this.transformationGraph!=null) {
-			ArrayList<DataTableNode> endNodes = this.findResultNodes(this.transformationGraph);
-			for (DataTableNode endNode : endNodes) {
-				this.addDataTreeSubNode(endNode);
-			}
+		ArrayList<DataTableNode> endNodes = this.findResultNodes(this.getGraphController().getTransformationGraph());
+		for (DataTableNode endNode : endNodes) {
+			this.addDataTreeSubNode(endNode);
 		}
 	}
 	
@@ -175,5 +171,20 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 		}
 		return graphController;
 	}
+	
+	/**
+	 * Sets the transformation graph for this data source.
+	 * @param transformationGraph the new transformation graph
+	 */
+	public void setTransformationGraph(PersistentTransformationGraph transformationGraph) {
+		transformationGraph.setDataSourceUUID(this.getDataSource().getShortUUID());
+		this.getDataWorkbook().addTransformationGraph(transformationGraph);
+		this.addDataTreeSubNodes();
+	}
+	
+	private PersistentTransformationGraph getTransformationGraph() {
+		return this.getDataWorkbook().getTransformationGraphForDataSource(this.getDataSource().getShortUUID());
+	}
+
 
 }
