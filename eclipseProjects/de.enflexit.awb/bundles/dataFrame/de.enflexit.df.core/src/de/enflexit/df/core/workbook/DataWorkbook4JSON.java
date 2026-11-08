@@ -127,7 +127,17 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 */
 	private static Gson createGsonForDataWorkbook4JSON() {
 		//return new GsonBuilder().setPrettyPrinting().create();
-		return new GsonBuilder().registerTypeHierarchyAdapter(DefaultDataSource.class, new JsonAdapterForDataSource()).setPrettyPrinting().create();
+		
+		// --- Create a GsonBuilder with a custom type hierarchy adapter for data sources
+		GsonBuilder gsonBuilder = new GsonBuilder().registerTypeHierarchyAdapter(DefaultDataSource.class, new JsonAdapterForDataSource());
+		
+		// --- Add a strategy to ignore fields with an XmlTransient annotation
+		JsonExclusionStrategyXmlTransient excludeXmlTransientStrategy = new JsonExclusionStrategyXmlTransient();
+		gsonBuilder.addSerializationExclusionStrategy(excludeXmlTransientStrategy);
+		gsonBuilder.addDeserializationExclusionStrategy(excludeXmlTransientStrategy);
+		
+		// --- Create the final Gson instance and return it 
+		return gsonBuilder.setPrettyPrinting().create();
 	}
 	
 	/**

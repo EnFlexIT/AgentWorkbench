@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.transformationGraph;
+package de.enflexit.df.core.processing.transformation.graph;
 
 import java.awt.geom.Point2D;
 

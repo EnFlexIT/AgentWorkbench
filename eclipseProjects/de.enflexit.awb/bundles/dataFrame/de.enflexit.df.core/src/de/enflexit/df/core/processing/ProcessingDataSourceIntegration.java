@@ -10,11 +10,11 @@ import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.DataTransformationProcessor;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
-import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
-import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
-import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
+import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
+import de.enflexit.df.core.processing.transformation.graph.ui.TransformationGraphEditorPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -182,6 +182,10 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 		this.addDataTreeSubNodes();
 	}
 	
+	/**
+	 * Gets the transformation graph.
+	 * @return the transformation graph
+	 */
 	private PersistentTransformationGraph getTransformationGraph() {
 		return this.getDataWorkbook().getTransformationGraphForDataSource(this.getDataSource().getShortUUID());
 	}

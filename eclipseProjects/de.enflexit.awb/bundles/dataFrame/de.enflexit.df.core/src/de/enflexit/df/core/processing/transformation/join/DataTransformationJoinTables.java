@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
 import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;

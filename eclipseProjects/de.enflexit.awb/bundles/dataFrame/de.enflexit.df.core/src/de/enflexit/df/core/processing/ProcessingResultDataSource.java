@@ -1,7 +1,7 @@
 package de.enflexit.df.core.processing;
 
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import tech.tablesaw.api.Table;
 
 /**

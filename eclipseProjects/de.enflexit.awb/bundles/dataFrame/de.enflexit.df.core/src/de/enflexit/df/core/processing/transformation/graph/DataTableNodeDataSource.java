@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.transformationGraph;
+package de.enflexit.df.core.processing.transformation.graph;
 
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import tech.tablesaw.api.Table;

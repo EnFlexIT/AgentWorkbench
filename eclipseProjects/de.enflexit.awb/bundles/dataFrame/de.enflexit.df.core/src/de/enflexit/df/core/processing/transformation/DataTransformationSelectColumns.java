@@ -2,7 +2,7 @@ package de.enflexit.df.core.processing.transformation;
 
 import java.util.ArrayList;
 
-import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
+import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
 import tech.tablesaw.api.Table;
 
 /**

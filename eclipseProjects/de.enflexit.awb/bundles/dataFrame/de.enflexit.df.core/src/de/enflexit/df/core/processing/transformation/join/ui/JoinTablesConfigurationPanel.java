@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.join.DataTransformationJoinTables;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import tech.tablesaw.columns.Column;
 
 import java.awt.Component;

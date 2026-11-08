@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.df.core.processing.transformation.graph.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +23,8 @@ import javax.swing.SwingUtilities;
 import de.enflexit.df.core.charts.TableSawChartHelper;
 import de.enflexit.df.core.charts.TableSawChartViewPanel;
 import de.enflexit.df.core.model.TablesawTableModel;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.ui.JTableHelper;
 import de.enflexit.df.core.ui.DateTimeTableCellRenderer;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;

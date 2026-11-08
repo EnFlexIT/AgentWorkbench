@@ -29,9 +29,9 @@ import de.enflexit.df.core.processing.transformation.filter.Filters.FilterExpres
 import de.enflexit.df.core.processing.transformation.filter.Filters.FilterGroup;
 import de.enflexit.df.core.processing.transformation.filter.Filters.TableFilter;
 import de.enflexit.df.core.processing.transformation.filter.ui.TableSawRowFilterTableModel.FilterRow;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
 import de.enflexit.df.core.processing.ui.JTableHelper;
 import tech.tablesaw.api.BooleanColumn;
 import tech.tablesaw.api.DoubleColumn;

@@ -20,7 +20,9 @@ import de.enflexit.db.hibernate.connection.DatabaseConnectionManager;
 import de.enflexit.db.hibernate.connection.HibernateDatabaseConnectionService;
 import de.enflexit.db.hibernate.gui.DatabaseSettings;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTableNode;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformation;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.impl.db.DatabaseDataSource;
 
@@ -197,6 +199,8 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 		// --- Add classes of DataSources -------------------------------------
 		conf.addAnnotatedClass(DefaultDataSource.class);
 		conf.addAnnotatedClass(PersistentTransformationGraph.class);
+		conf.addAnnotatedClass(PersistentTableNode.class);
+		conf.addAnnotatedClass(PersistentTransformation.class);
 		try {
 			this.getDataWorkbook().getExtensionCache().addAnnotatedClassesToDataWorkbook4DB(this, conf);
 			

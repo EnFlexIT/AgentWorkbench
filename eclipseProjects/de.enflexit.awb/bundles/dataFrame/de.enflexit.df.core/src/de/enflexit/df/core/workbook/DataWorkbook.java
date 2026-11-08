@@ -12,7 +12,7 @@ import de.enflexit.common.UUID_Handler;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DataSourceHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
-import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

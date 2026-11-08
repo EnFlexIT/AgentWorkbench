@@ -8,6 +8,7 @@ import org.hibernate.query.Query;
 
 import de.enflexit.df.core.dataSources.DataSourceHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 
 /**
  * The Class DataWorkbookDatabaseHandler.
@@ -247,6 +248,24 @@ public class DataWorkbookDatabaseHandler {
 				this.dbSaveOrUpdateEntityInstance(defaultDS, true);
 			}
 		}
+	}
+	/**
+	 * Saves the transformation graphs from this workbook.
+	 * @param transformationGraphs the transformation graphs
+	 */
+	public void saveTransformationGraphs(List<PersistentTransformationGraph> transformationGraphs) {
+		for (PersistentTransformationGraph transformationGraph : transformationGraphs) {
+			boolean hasDBPrimarKey = transformationGraph.getId()!=null;
+			this.dbSaveOrUpdateEntityInstance(transformationGraph, hasDBPrimarKey);
+		}
+	}
+	
+	/**
+	 * Loads the transformation graphs from the database.
+	 * @return the list
+	 */
+	public List<PersistentTransformationGraph> loadTransformationGraphs(){
+		return dbLoadEntityInstanceList(PersistentTransformationGraph.class);
 	}
 	/**
 	 * Deletes the specified DataSource from the database.

@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.df.core.processing.transformation.graph.ui;
 
 import javax.swing.JPanel;
 
@@ -24,13 +24,13 @@ import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.ProcessingDataSourceIntegration;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationProcessor;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNodeDataSource;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNodeTransformationResult;
+import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
+import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNodeDataSource;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
-import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
-import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
-import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.ObservableGraph;
 import edu.uci.ics.jung.graph.event.GraphEvent;
