@@ -6,9 +6,11 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationProcessor;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
@@ -131,8 +133,24 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 		this.getDataController().getDataTreeModel().informTreeNodeAdded(this.getDataTreeNode(), subNode);
 		
 		if (resultNode.getDataTable()==null) {
-			this.getTransformationProcessor().performTransformation(this.getGraphController().getTransformationForNode(resultNode));
+			this.performTransformationInThread(this.getGraphController().getTransformationForNode(resultNode));
 		}
+	}
+	
+	/**
+	 * Performs the provided transformation in a separate thread.
+	 * @param transformation the transformation
+	 */
+	private void performTransformationInThread(AbstractDataTransformation transformation) {
+		Runnable transformationProcessor = new Runnable() {
+
+			@Override
+			public void run() {
+				ProcessingDataSourceIntegration.this.getTransformationProcessor().performTransformation(transformation);
+			}
+			
+		};
+		new Thread(transformationProcessor, "TransformationProcessor").start();
 	}
 	
 	/**
@@ -177,9 +195,31 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	 * @param transformationGraph the new transformation graph
 	 */
 	public void setTransformationGraph(PersistentTransformationGraph transformationGraph) {
+		PersistentTransformationGraph existingGraph = this.getDataWorkbook().getTransformationGraphForDataSource(this.getDataSource().getShortUUID());
+		if (existingGraph!=null) {
+			// --- Update the exiting graph instead of creating a new one -----
+			transformationGraph.setId(existingGraph.getId());
+		}
+		this.removeAllSubDataSources();
 		transformationGraph.setDataSourceUUID(this.getDataSource().getShortUUID());
 		this.getDataWorkbook().addTransformationGraph(transformationGraph);
 		this.addDataTreeSubNodes();
+	}
+
+	/**
+	 * Removes the all sub data sources with previous transformation results.
+	 */
+	private void removeAllSubDataSources() {
+		ArrayList<DefaultDataSource> sourcesToRemove = new ArrayList<DefaultDataSource>();
+		for (int i=0; i<this.getDataTreeNode().getChildCount(); i++) {
+			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) this.getDataTreeNode().getChildAt(i);
+			AbstractDataSourceDTNO<?> childDtno = (AbstractDataSourceDTNO<?>) childNode.getUserObject();
+			sourcesToRemove.add(childDtno.getDataSource());
+		}
+		
+		for (DefaultDataSource sourceToRemove : sourcesToRemove) {
+			this.getDataController().removeDataSource(this.getDataWorkbook(), sourceToRemove);
+		}
 	}
 	
 	/**
