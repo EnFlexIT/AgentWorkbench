@@ -1,7 +1,10 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.df.core.processing.transformation.graph.ui;
 
 import javax.swing.JPanel;
+
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,19 +19,18 @@ import javax.swing.JOptionPane;
 
 import de.enflexit.common.swing.AwbThemeColor;
 import de.enflexit.df.core.BundleHelper;
-import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.processing.ProcessingDataSource;
+import de.enflexit.df.core.processing.ProcessingDataSourceIntegration;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationProcessor;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNodeDataSource;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNodeTransformationResult;
+import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
+import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNodeDataSource;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNodeTransformationResult;
-import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
-import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
-import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.ObservableGraph;
 import edu.uci.ics.jung.graph.event.GraphEvent;
@@ -39,6 +41,7 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import tech.tablesaw.api.Table;
@@ -56,6 +59,12 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private static final double NODE_RECTANGLE_WIDTH = 140;
 	private static final double NODE_RECTANGLE_HEIGHT = 50;
 	private static final double NODE_RECTANGLE_ARC = 15;
+	
+	private static final Color COLOR_NODE_NORMAL = new Color(14, 87, 114); 
+	private static final Color COLOR_NODE_PICKED = new Color(112, 161, 192);
+	
+	private static final String HTML_COLOR_LABEL_NORMAL = "White";
+	private static final String HTML_COLOR_LABEL_PICKED = "Black";
 	
 	private static final String ICON_TABLE_LIGHT_MODE = "table_black.png";
 	private static final String ICON_TABLE_DARK_MODE = "table_grey.png";
@@ -87,7 +96,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	private Object selectedGraphElement;
 	
 	private DataTransformationProcessor transformationVisitor;
-	private ProcessingDataSource dataSource;
+	
+	private ProcessingDataSourceIntegration dataSourceIntegration;
 	
 	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
 	
@@ -260,7 +270,13 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			double yPos = -(NODE_RECTANGLE_HEIGHT/2);
 			visualizationViewer.getRenderContext().setVertexShapeTransformer(node -> new RoundRectangle2D.Double(xPos, yPos, NODE_RECTANGLE_WIDTH, NODE_RECTANGLE_HEIGHT, NODE_RECTANGLE_ARC, NODE_RECTANGLE_ARC));
 			visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape<DataTableNode, DataTransformationEdge>(this.getGraphController().getTransformationGraph()).new Line());
-			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> getLabelRendererHTMLString(node.getLabelText()));
+			
+			PickedState<DataTableNode> pickedState = this.getVisualizationViewer().getPickedVertexState();
+			visualizationViewer.getRenderContext().setVertexStrokeTransformer(node -> pickedState.isPicked(node) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
+			visualizationViewer.getRenderContext().setVertexFillPaintTransformer(node -> pickedState.isPicked(node) ? COLOR_NODE_PICKED : COLOR_NODE_NORMAL);
+//			visualizationViewer.getRenderContext().setVertexLabelRenderer(new CustomVertexLabelRenderer(pickedState));
+			
+			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> getLabelRendererHTMLString(node.getLabelText(), pickedState.isPicked(node)));
 			visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 			
 			// --- Configure mouse interactions -----------
@@ -283,40 +299,51 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * @return the next free node position
 	 */
 	protected Point2D getNextFreeNodePosition() {
-		final double startX = 0.10;
-	    final double startY = 0.10;
-	    final double step = 0.20;
-
-	    Dimension viewerSize = this.getVisualizationViewer().getSize();
-	    
-	    for (double relativeX = startX; relativeX<1.0; relativeX+=step) {
-	    	Point2D pointInView = new Point2D.Double(viewerSize.getWidth() * relativeX, viewerSize.getHeight() * startY);
-	    	
-	    	DataTableNode existingNode = this.getVisualizationViewer().getPickSupport().getVertex(this.getGraphController().getGraphLayout(), pointInView.getX(), pointInView.getY());
-	    	
-	    	if (existingNode==null) {
-	    		return this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(pointInView);
-	    	}
-	    }
-	    
-	    return null;
-	    
+		return this.getNextFreeNodePosition(null);
 	}
 	
 	/**
-	 * Gets the data source for this transformation..
-	 * @return the data source
+	 * Gets the next free node position, starting from the provided position.
+	 * @param startingFrom the starting position.
+	 * @return the next free node position
 	 */
-	private ProcessingDataSource getDataSource() {
-		if (dataSource==null) {
-			DefaultDataSource dataSourceFromController = this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSource();
-			if (dataSourceFromController instanceof ProcessingDataSource pds) {
-				this.dataSource = pds;
-			} else {
-				throw new IllegalArgumentException("Unexpected data source type: " + dataSourceFromController.getClass().getName());
+	protected Point2D getNextFreeNodePosition(Point2D startingFrom) {
+		double startX, startY;
+		Dimension viewerSize = this.getVisualizationViewer().getSize();
+		
+		if (startingFrom!=null) {
+			startX = startingFrom.getX() / viewerSize.getWidth();
+			startY = startingFrom.getY() / viewerSize.getHeight();
+		} else {
+			startX = 0.1;
+			startY = 0.1;
+		}
+		
+		final double step = 0.20;
+		
+		for (double relativeX = startX; relativeX<1.0; relativeX+=step) {
+			Point2D pointInView = new Point2D.Double(viewerSize.getWidth() * relativeX, viewerSize.getHeight() * startY);
+			
+			DataTableNode existingNode = this.getVisualizationViewer().getPickSupport().getVertex(this.getGraphController().getGraphLayout(), pointInView.getX(), pointInView.getY());
+			
+			if (existingNode==null) {
+				return this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(pointInView);
 			}
 		}
-		return dataSource;
+		
+		return null;
+		
+	}
+	
+	/**
+	 * Gets the data source integration.
+	 * @return the data source integration
+	 */
+	private ProcessingDataSourceIntegration getDataSourceIntegration() {
+		if (dataSourceIntegration==null) {
+			dataSourceIntegration = (ProcessingDataSourceIntegration) this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSourceIntegration();
+		}
+		return dataSourceIntegration;
 	}
 
 	/**
@@ -435,10 +462,15 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * @param newTransformation the new transformation
 	 */
 	public void addNewDataTransformation(AbstractDataTransformation newTransformation) {
+		
 		DataTableNodeTransformationResult outputNode = new DataTableNodeTransformationResult();
 		newTransformation.setOutputNode(outputNode);
 		outputNode.setDataTransformation(newTransformation);
-		outputNode.setPosition(this.determineOutputNodePosition(newTransformation));
+		// --- Determine a node position in relation to the input nodes -------
+		Point2D intendedNodePosition = this.determineOutputNodePosition(newTransformation);
+		// --- If already occupied, find a free spot --------------------------
+		Point2D finalNodePosition = this.getNextFreeNodePosition(intendedNodePosition);
+		outputNode.setPosition(finalNodePosition);
 		
 		this.getGraphController().addDataTableNode(outputNode);
 		
@@ -511,11 +543,17 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 */
 	public void setSelectedGraphElement(Object graphElement) {
 		
+		this.getVisualizationViewer().getPickedVertexState().clear();
+		
 		if (graphElement==null) {
 			// --- Clear selection, hide details panel --------------
 			this.selectedGraphElement = null;
 			this.hideDetailsPanel();
 		} else if (graphElement instanceof DataTableNode node) {
+			
+			// --- Mark as picked in the JUNG visualization
+			this.getVisualizationViewer().getPickedVertexState().pick(node, true);
+			
 			// --- Show the details for the selected node -----------
 			this.selectedGraphElement = node;
 			this.showNodeDetails(node);
@@ -604,8 +642,9 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * @param labelString the label string
 	 * @return the label renderer HTML string
 	 */
-	private String getLabelRendererHTMLString(String labelString) {
-		return "<html><div style='width:130px; text-align:center;'>"
+	private String getLabelRendererHTMLString(String labelString, boolean isPicked) {
+		String colorString = isPicked==true ? HTML_COLOR_LABEL_PICKED : HTML_COLOR_LABEL_NORMAL;
+		return "<html><div style='width:130px; text-align:center; font-weight: bold; color: " + colorString + "'>"
 		        + escapeHtml(labelString)
 		        + "</div></html>";
 	}
@@ -644,7 +683,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			JOptionPane.showMessageDialog(this, "Not implemented yet");
 		} else if (ae.getSource()==this.getJButtonApplyChanges()) {
 			PersistentTransformationGraph persistentGraph = PersistentTransformationGraph.fromJungGraph(this.getGraphController().getTransformationGraph());
-			this.getDataSource().setPersistentTransformationGraph(persistentGraph);
+			this.getDataSourceIntegration().setTransformationGraph(persistentGraph);
 			this.setGraphChanged(false);
 		} else if (ae.getSource()==this.getJButtonRevertChanges()) {
 			//TODO implement graph reset
@@ -700,7 +739,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		if (graphChanged!=this.isGraphChanged()) {
 			this.graphChanged = graphChanged;
 			this.getJButtonApplyChanges().setEnabled(graphChanged);
-			this.getJButtonRevertChanges().setEnabled(graphChanged);
+//			this.getJButtonRevertChanges().setEnabled(graphChanged);
 		}
 	}
 	
@@ -714,6 +753,5 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		this.getVisualizationViewer().setGraphLayout(this.getGraphController().getGraphLayout());
 		this.getVisualizationViewer().repaint();
 	}
-	
 	
 }

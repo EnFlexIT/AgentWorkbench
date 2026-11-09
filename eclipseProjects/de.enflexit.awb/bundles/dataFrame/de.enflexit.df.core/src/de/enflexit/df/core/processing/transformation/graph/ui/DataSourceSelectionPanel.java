@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.df.core.processing.transformation.graph.ui;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;

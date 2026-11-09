@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.transformationGraph;
+package de.enflexit.df.core.processing.transformation.graph;
 
 
 import java.awt.geom.Point2D;
@@ -12,7 +12,10 @@ import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformationGraph.PersistentTableNode.NodeType;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTableNode;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformation;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTableNode.NodeType;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -276,7 +279,7 @@ public class TransformationGraphController {
 		}
 		
 		// --- Create the edges for the transformations -------------
-		for (PersistentTransformation persistentEdge : persistentGraph.getTransformationEdges()) {
+		for (PersistentTransformation persistentEdge : persistentGraph.getTransformations()) {
 			
 			DataTransformationService transformationService = this.getTransformationService(persistentEdge.getTransformationName());
 			if (transformationService!=null) {
@@ -309,6 +312,22 @@ public class TransformationGraphController {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Gets the transformation for node.
+	 * @param tableNode the table node
+	 * @return the transformation for node
+	 */
+	public AbstractDataTransformation getTransformationForNode(DataTableNode tableNode) {
+		if (tableNode instanceof DataTableNodeTransformationResult resultNode) {
+			// --- Get the first incoming edge (the transformation is the same instance for all edges) 
+			DataTransformationEdge inEdge = this.getTransformationGraph().getInEdges(resultNode).iterator().next();
+			return inEdge.getDataTransformation();
+		} else {
+			// --- No transformation result node -> no transformation ---------
+			return null;
+		}
 	}
 
 }

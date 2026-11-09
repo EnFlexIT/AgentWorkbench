@@ -12,6 +12,7 @@ import de.enflexit.common.UUID_Handler;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DataSourceHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,7 +41,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "name",
     "description",
     "dataSources",
-    "workbookExtensions"
+    "workbookExtensions",
+    "transformationGraphs"
 })
 public abstract class DataWorkbook implements Serializable {
 
@@ -66,7 +68,10 @@ public abstract class DataWorkbook implements Serializable {
 	@XmlElement(name = "workbookExtension")
 	protected List<String> workbookExtensions;
 	protected transient ExtensionCache extensionCache;
-
+	
+	@XmlElementWrapper(name = "transformationGraphs")
+	@XmlElement(name = "transformationGraph")
+	protected List<PersistentTransformationGraph> transformationGraphs;
 	
 	/**
 	 * Instantiates a new data workbook.
@@ -330,6 +335,56 @@ public abstract class DataWorkbook implements Serializable {
 		return extensionCache;
 	}
 	
+	/**
+	 * Gets the transformation graphs.
+	 * @return the transformation graphs
+	 */
+	public List<PersistentTransformationGraph> getTransformationGraphs() {
+		if (transformationGraphs==null) {
+			transformationGraphs = new ArrayList<PersistentTransformationGraph>();
+		}
+		return transformationGraphs;
+	}
+	/**
+	 * Sets the transformation graphs.
+	 * @param transformationGraphs the new transformation graphs
+	 */
+	public void setTransformationGraphs(List<PersistentTransformationGraph> transformationGraphs) {
+		this.transformationGraphs = transformationGraphs;
+	}
+	
+	/**
+	 * Returns the transformation graph for the data source with the provided UUID.
+	 * @param dataSourceUUID the data source UUID
+	 * @return the transformation graph, null if not found
+	 */
+	public PersistentTransformationGraph getTransformationGraphForDataSource(String dataSourceUUID) {
+		for (PersistentTransformationGraph persTransGraph : this.getTransformationGraphs()) {
+			if (persTransGraph.getDataSourceUUID().equals(dataSourceUUID)) {
+				return persTransGraph;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Adds a transformation graph to the list. If there is a graph for the same data source already, it will be replaced.
+	 * @param transformationGraph the transformation graph
+	 */
+	public void addTransformationGraph(PersistentTransformationGraph transformationGraph) {
+		
+		// --- Check if the data source UUID is set, otherwise the graph can't be properly assigned later
+		if (transformationGraph.getDataSourceUUID()==null) {
+			throw new IllegalArgumentException("The data source UUID of a transformaiton graph must not be null!");
+		}
+
+		// --- If there is already a transformation graph for this data source, replace it --------
+		PersistentTransformationGraph prevoiusGraph = this.getTransformationGraphForDataSource(transformationGraph.getDataSourceUUID());
+		if (prevoiusGraph!=null) {
+			this.getTransformationGraphs().remove(prevoiusGraph);
+		}
+		this.getTransformationGraphs().add(transformationGraph);
+	}
 	
 	/**
 	 * Has to save the current data workbook.

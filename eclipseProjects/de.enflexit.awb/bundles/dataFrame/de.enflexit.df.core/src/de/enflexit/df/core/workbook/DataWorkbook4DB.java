@@ -138,6 +138,8 @@ public class DataWorkbook4DB extends DataWorkbook {
 					this.setDataSourcesFromStorageConfiguration();
 				}
 			}
+			
+			this.setTransformationGraphs(dbHandler.loadTransformationGraphs());
 		}
 		return dataSources;
 	}
@@ -164,6 +166,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 				// --- If DB-handler is available, save the data sources ------
 				this.setDataSourcesToStorageConfiguration();
 				this.getDataWorkbookDatabaseHandler().saveDataSources(this.getDataSources());
+				this.getDataWorkbookDatabaseHandler().saveTransformationGraphs(this.getTransformationGraphs());
 				return true;
 			}
 			

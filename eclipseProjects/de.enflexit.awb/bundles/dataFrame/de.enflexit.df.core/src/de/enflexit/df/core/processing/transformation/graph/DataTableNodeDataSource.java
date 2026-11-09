@@ -1,4 +1,4 @@
-package de.enflexit.df.core.processing.transformationGraph;
+package de.enflexit.df.core.processing.transformation.graph;
 
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import tech.tablesaw.api.Table;
@@ -12,6 +12,8 @@ public class DataTableNodeDataSource extends DataTableNode {
 	private AbstractDataSourceDTNO<?> dataSourceDTNO;
 	
 	private String uuid;
+	
+	private static boolean debug = false;
 	
 	/**
 	 * Gets the DTNO of the data source providing the table. Might be null if  
@@ -35,6 +37,25 @@ public class DataTableNodeDataSource extends DataTableNode {
 	 */
 	@Override
 	public Table getDataTable() {
+		if (this.dataSourceDTNO==null) return null;
+		
+		Table table = this.dataSourceDTNO.getTable();
+		int tries = 0;
+		while (table==null && tries < 10) {
+			try {
+				Thread.sleep(1000);
+				tries++;
+				table = this.dataSourceDTNO.getTable();
+				if (debug==true) {
+					System.out.println("[" + this.getClass().getSimpleName() + "] Table not available for " + this.getLabelText() + "! Retrying...");
+				}
+			} catch (InterruptedException e) {
+			}
+		}
+		if (debug==true) {
+			System.out.println("[" + this.getClass().getSimpleName() + "] Table found for " + this.getLabelText() + " after " + tries + " retries");
+		}
+		
 		return this.dataSourceDTNO!=null ? this.dataSourceDTNO.getTable() : null;
 	}
 

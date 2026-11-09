@@ -30,10 +30,10 @@ import de.enflexit.common.swing.RadioButtonListSelectionEvent;
 import de.enflexit.common.swing.RadioButtonListSelectionListener;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
+import de.enflexit.df.core.processing.transformation.graph.ui.TransformationGraphEditorPanel;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
-import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;

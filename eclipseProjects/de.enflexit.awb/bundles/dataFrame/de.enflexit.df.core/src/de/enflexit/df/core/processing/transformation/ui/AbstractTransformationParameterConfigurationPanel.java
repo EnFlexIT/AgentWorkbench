@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformationGraph.TransformationGraphController;
+import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
 
 /**
  * Abstract superclass for transformation-specific configuration components.

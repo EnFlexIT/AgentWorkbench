@@ -1,8 +1,9 @@
-package de.enflexit.df.core.processing.ui;
+package de.enflexit.df.core.processing.transformation.graph.ui;
 
 import javax.swing.JTabbedPane;
 
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.ui.TableDetailsViewPanel;
 
 /**
  * This panel shows the actual table data, a chart representation  and some chart details.

@@ -4,13 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.processing.transformationGraph.DataTableNode;
-import de.enflexit.df.core.processing.transformationGraph.DataTransformationEdge;
-import de.enflexit.df.core.processing.transformationGraph.PersistentTransformationGraph;
-import de.enflexit.df.core.processing.ui.TransformationGraphEditorPanel;
+import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.DataTransformationProcessor;
+import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
+import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
+import de.enflexit.df.core.processing.transformation.graph.ui.TransformationGraphEditorPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -24,7 +30,9 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	private JPanelDataSourceConfigurationProcessing configPanel;
 	private TransformationGraphEditorPanel detailsViewPanel;
 	
-	private Graph<DataTableNode, DataTransformationEdge> transformationGraph;
+	private TransformationGraphController graphController;
+	
+	private DataTransformationProcessor transformationProcessor;
 
 	/**
 	 * Instantiates a new processing data source integration.
@@ -84,10 +92,9 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 		if (detailsViewPanel==null) {
 			
 			detailsViewPanel = new TransformationGraphEditorPanel(this.getDataController());
-			PersistentTransformationGraph persTransGraph = this.dtno.getDataSource().getPersistentTransformationGraph();
+			PersistentTransformationGraph persTransGraph = this.getTransformationGraph();
 			if (persTransGraph!=null) {
-				detailsViewPanel.getGraphController().loadPersistentGraph(persTransGraph);
-				this.transformationGraph = detailsViewPanel.getGraphController().getTransformationGraph();
+				this.getGraphController().loadPersistentGraph(persTransGraph);
 			}
 		}
 		return detailsViewPanel;
@@ -107,11 +114,9 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	 */
 	@Override
 	public void addDataTreeSubNodes() {
-		if (this.transformationGraph!=null) {
-			ArrayList<DataTableNode> endNodes = this.findResultNodes(this.transformationGraph);
-			for (DataTableNode endNode : endNodes) {
-				this.addDataTreeSubNode(endNode);
-			}
+		ArrayList<DataTableNode> endNodes = this.findResultNodes(this.getGraphController().getTransformationGraph());
+		for (DataTableNode endNode : endNodes) {
+			this.addDataTreeSubNode(endNode);
 		}
 	}
 	
@@ -120,7 +125,32 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 	 * @param resultNode the result node
 	 */
 	private void addDataTreeSubNode(DataTableNode resultNode) {
-		//TODO work in progress
+		ProcessingResultDataSource dataSource = new ProcessingResultDataSource(resultNode, this.getDataSource());
+		ProcessingResultDataSourceIntegration dsIntegration = new ProcessingResultDataSourceIntegration(this.getDataController(), this.getDataWorkbook(), dataSource);
+		DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(dsIntegration.getDTNO());
+		
+		this.getDataTreeNode().add(subNode);
+		this.getDataController().getDataTreeModel().informTreeNodeAdded(this.getDataTreeNode(), subNode);
+		
+		if (resultNode.getDataTable()==null) {
+			this.performTransformationInThread(this.getGraphController().getTransformationForNode(resultNode));
+		}
+	}
+	
+	/**
+	 * Performs the provided transformation in a separate thread.
+	 * @param transformation the transformation
+	 */
+	private void performTransformationInThread(AbstractDataTransformation transformation) {
+		Runnable transformationProcessor = new Runnable() {
+
+			@Override
+			public void run() {
+				ProcessingDataSourceIntegration.this.getTransformationProcessor().performTransformation(transformation);
+			}
+			
+		};
+		new Thread(transformationProcessor, "TransformationProcessor").start();
 	}
 	
 	/**
@@ -138,6 +168,67 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 		return resultNodes;
 	}
 	
+	/**
+	 * Gets the transformation processor.
+	 * @return the transformation processor
+	 */
+	private DataTransformationProcessor getTransformationProcessor() {
+		if (transformationProcessor==null) {
+			transformationProcessor = new DataTransformationProcessor(this.getGraphController());
+		}
+		return transformationProcessor;
+	}
 	
+	/**
+	 * Gets the graph controller.
+	 * @return the graph controller
+	 */
+	public TransformationGraphController getGraphController() {
+		if (graphController==null) {
+			graphController = ((TransformationGraphEditorPanel)this.getDetailViewPanel()).getGraphController();
+		}
+		return graphController;
+	}
+	
+	/**
+	 * Sets the transformation graph for this data source.
+	 * @param transformationGraph the new transformation graph
+	 */
+	public void setTransformationGraph(PersistentTransformationGraph transformationGraph) {
+		PersistentTransformationGraph existingGraph = this.getDataWorkbook().getTransformationGraphForDataSource(this.getDataSource().getShortUUID());
+		if (existingGraph!=null) {
+			// --- Update the exiting graph instead of creating a new one -----
+			transformationGraph.setId(existingGraph.getId());
+		}
+		this.removeAllSubDataSources();
+		transformationGraph.setDataSourceUUID(this.getDataSource().getShortUUID());
+		this.getDataWorkbook().addTransformationGraph(transformationGraph);
+		this.addDataTreeSubNodes();
+	}
+
+	/**
+	 * Removes the all sub data sources with previous transformation results.
+	 */
+	private void removeAllSubDataSources() {
+		ArrayList<DefaultDataSource> sourcesToRemove = new ArrayList<DefaultDataSource>();
+		for (int i=0; i<this.getDataTreeNode().getChildCount(); i++) {
+			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) this.getDataTreeNode().getChildAt(i);
+			AbstractDataSourceDTNO<?> childDtno = (AbstractDataSourceDTNO<?>) childNode.getUserObject();
+			sourcesToRemove.add(childDtno.getDataSource());
+		}
+		
+		for (DefaultDataSource sourceToRemove : sourcesToRemove) {
+			this.getDataController().removeDataSource(this.getDataWorkbook(), sourceToRemove);
+		}
+	}
+	
+	/**
+	 * Gets the transformation graph.
+	 * @return the transformation graph
+	 */
+	private PersistentTransformationGraph getTransformationGraph() {
+		return this.getDataWorkbook().getTransformationGraphForDataSource(this.getDataSource().getShortUUID());
+	}
+
 
 }
