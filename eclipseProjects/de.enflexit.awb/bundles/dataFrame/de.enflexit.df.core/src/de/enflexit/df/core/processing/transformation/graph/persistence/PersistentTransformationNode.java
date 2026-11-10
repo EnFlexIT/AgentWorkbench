@@ -5,28 +5,19 @@ import java.io.Serializable;
 
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * This class holds all information that is required for saving and loading {@link DataTableNode}s.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-@Entity
-@Table(name="data_table_node")
+@Embeddable
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PersistentTableNode implements Serializable {
+public class PersistentTransformationNode implements Serializable {
 	
 	private static final long serialVersionUID = -690331646007738930L;
 	
@@ -34,16 +25,6 @@ public class PersistentTableNode implements Serializable {
 		DATA_SOURCE, TRANSFORMATION_RESULT
 	}
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_table_node", nullable=false)
-	private Integer id;
-	
-	@ManyToOne(fetch = FetchType.LAZY, targetEntity = PersistentTransformationGraph.class)
-	@JoinColumn(name = "id_transformation_graph", nullable = false)
-	@XmlTransient
-	private PersistentTransformationGraph transformationGraph;
-	
 	@Column(name="uuid_data_source", nullable=false)
 	private String dataSourceUUID;
 	
@@ -55,38 +36,6 @@ public class PersistentTableNode implements Serializable {
 	private double posX;
 	@Column(name="pos_y", nullable=false)
 	private double posY;
-
-	/**
-	 * Gets the id.
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * Sets the id.
-	 * @param id the new id
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	/**
-	 * Gets the transformation graph.
-	 * @return the transformation graph
-	 */
-	public PersistentTransformationGraph getTransformationGraph() {
-		return transformationGraph;
-	}
-
-	/**
-	 * Sets the transformation graph.
-	 * @param transformationGraph the new transformation graph
-	 */
-	public void setTransformationGraph(PersistentTransformationGraph transformationGraph) {
-		this.transformationGraph = transformationGraph;
-	}
 
 	/**
 	 * Sets the position.

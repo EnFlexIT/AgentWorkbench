@@ -46,6 +46,12 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 		return resultTable;
 	}
 
+	/**
+	 * Gets the join configuration from parameter string.
+	 * @param parameterString the parameter string
+	 * @param graphController the graph controller
+	 * @return the join configuration from parameter string
+	 */
 	private HashMap<Table, Column<?>> getJoinConfigurationFromParameterString(String parameterString, TransformationGraphController graphController){
 		
 		HashMap<Table, Column<?>> joinConfig = new HashMap<Table, Column<?>>();

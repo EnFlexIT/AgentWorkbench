@@ -9,15 +9,17 @@ import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNodeDataSource;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNodeTransformationResult;
 import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
-import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTableNode.NodeType;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationNode.NodeType;
 import edu.uci.ics.jung.graph.Graph;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -30,7 +32,7 @@ import jakarta.xml.bind.annotation.XmlType;
  */
 
 @Entity
-@Table(name="transformation_graphs")
+@Table(name="data_transformation_graphs")
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -38,7 +40,7 @@ import jakarta.xml.bind.annotation.XmlType;
 	"id",
     "dataSourceUUID",
     "tableNodes",
-    "transformations"
+    "transformationEdges"
 })
 public class PersistentTransformationGraph implements Serializable {
 	
@@ -52,20 +54,15 @@ public class PersistentTransformationGraph implements Serializable {
 	@Column(name="uuid_data_source", nullable=false)
 	private String dataSourceUUID;
 	
-	@OneToMany(
-		    mappedBy = "transformationGraph",
-		    targetEntity = PersistentTableNode.class,
-		    cascade = CascadeType.ALL,
-		    orphanRemoval = true
-		)
-	private List<PersistentTableNode> tableNodes;
-	@OneToMany(
-		    mappedBy = "transformationGraph",
-		    targetEntity = PersistentTransformation.class,
-		    cascade = CascadeType.ALL,
-		    orphanRemoval = true
-		)
-	private List<PersistentTransformation> transformations;
+	@ElementCollection
+	@CollectionTable(name = "data_transformation_node", joinColumns = @JoinColumn(name = "id_transformation_graph"))
+	@OrderColumn(name = "node_order")
+	private List<PersistentTransformationNode> tableNodes;
+	
+	@ElementCollection
+	@CollectionTable(name = "data_transformation_edge", joinColumns = @JoinColumn(name = "id_transformation_graph"))
+	@OrderColumn(name = "edge_order")
+	private List<PersistentTransformationEdge> transformationEdges;
 	
 	/**
 	 * Gets the id.
@@ -100,9 +97,9 @@ public class PersistentTransformationGraph implements Serializable {
 	 * Gets the table nodes.
 	 * @return the table nodes
 	 */
-	public List<PersistentTableNode> getTableNodes() {
+	public List<PersistentTransformationNode> getTableNodes() {
 		if (tableNodes==null) {
-			tableNodes = new ArrayList<PersistentTableNode>();
+			tableNodes = new ArrayList<PersistentTransformationNode>();
 		}
 		return tableNodes;
 	}
@@ -111,7 +108,7 @@ public class PersistentTransformationGraph implements Serializable {
 	 * Sets the table nodes.
 	 * @param tableNodes the new table nodes
 	 */
-	public void setTableNodes(List<PersistentTableNode> tableNodes) {
+	public void setTableNodes(List<PersistentTransformationNode> tableNodes) {
 		this.tableNodes = tableNodes;
 	}
 	
@@ -119,18 +116,18 @@ public class PersistentTransformationGraph implements Serializable {
 	 * Gets the transformations.
 	 * @return the transformations
 	 */
-	public List<PersistentTransformation> getTransformations() {
-		if (transformations==null) {
-			transformations = new ArrayList<PersistentTransformation>();
+	public List<PersistentTransformationEdge> getTransformationEdges() {
+		if (transformationEdges==null) {
+			transformationEdges = new ArrayList<PersistentTransformationEdge>();
 		}
-		return transformations;
+		return transformationEdges;
 	}
 	/**
 	 * Sets the transformations.
-	 * @param transformations the new transformations
+	 * @param transformationEdges the new transformations
 	 */
-	public void setTransformations(List<PersistentTransformation> transformations) {
-		this.transformations = transformations;
+	public void setTransformationEdges(List<PersistentTransformationEdge> transformationEdges) {
+		this.transformationEdges = transformationEdges;
 	}
 	
 	/**
@@ -142,32 +139,46 @@ public class PersistentTransformationGraph implements Serializable {
 		
 		PersistentTransformationGraph persistentGraph = new PersistentTransformationGraph();
 		
+		// --- Process table nodes ----------------------------------
 		for (DataTableNode tableNode : transformationGraph.getVertices()) {
-			PersistentTableNode persistentNode = new PersistentTableNode();
+			PersistentTransformationNode persistentNode = new PersistentTransformationNode();
+			
+			// --- Determine node type ------------------------------
 			if (tableNode instanceof DataTableNodeDataSource) {
 				persistentNode.setNodeType(NodeType.DATA_SOURCE);
 			} else if (tableNode instanceof DataTableNodeTransformationResult) {
 				persistentNode.setNodeType(NodeType.TRANSFORMATION_RESULT);
 			}
-			persistentNode.setTransformationGraph(persistentGraph);
+			
 			persistentNode.setPosition(tableNode.getPosition());
 			persistentNode.setDataSourceUUID(tableNode.getDataSourceUUID());
 			
 			persistentGraph.getTableNodes().add(persistentNode);
 		}
-		
+
+		// --- Process transformation edges -------------------------
+		ArrayList<AbstractDataTransformation> processedTransformations = new ArrayList<AbstractDataTransformation>();
 		for (DataTransformationEdge transformationEdge : transformationGraph.getEdges()) {
-			PersistentTransformation persistentEdge = new PersistentTransformation();
 			AbstractDataTransformation transformation = transformationEdge.getDataTransformation();
-			persistentEdge.setTransformationGraph(persistentGraph);
+			
+			// --- For transformations with multiple edges, skip the later ones
+			if (processedTransformations.contains(transformation)) continue;
+			
+			// --- Collect transformation details -------------------
+			PersistentTransformationEdge persistentEdge = new PersistentTransformationEdge();
 			persistentEdge.setTransformationName(transformation.getTransformationName());
 			persistentEdge.setTransformationParameters(transformation.getTransformationParameters());
+			persistentEdge.setOutputNodeUUID(transformation.getOutputNode().getDataSourceUUID());
+			
+			// --- Collect all input nodes --------------------------
 			for (DataTableNode inputNode : transformation.getInputNodes()) {
 				persistentEdge.getInputNodeUUIDs().add(inputNode.getDataSourceUUID());
 			}
-			persistentEdge.setOutputNodeUUID(transformation.getOutputNode().getDataSourceUUID());
 			
-			persistentGraph.getTransformations().add(persistentEdge);
+			persistentGraph.getTransformationEdges().add(persistentEdge);
+			
+			// --- Remember this transformation was already processed 
+			processedTransformations.add(transformation);
 		}
 		
 		return persistentGraph;
