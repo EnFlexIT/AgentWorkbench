@@ -367,19 +367,21 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	 */
 	private void setColumnDescriptionPanel(AbstractDataSourceDTNO<?> dtnoDS) {
 		
-		JPanel currPanelColDesc = (JPanel) this.getPropertiesTabComponentByTitle(TAB_COLUMN_DESCRIPTION);
-		
 		ColumnDescriptionPanel colDescPanel = this.getColumnDescriptionPanel();
-		JPanel newPanelColDesc  = colDescPanel.getActualColumnDescriptionPanel();
-		if (newPanelColDesc != currPanelColDesc) {
-			// --- Exchange ColumnDescriptionPanel ----------------------------
+		if (dtnoDS==null ||  dtnoDS.getTable()==null || dtnoDS.getPaginationDataLoader()==null) {
+			// --- Nothing to show with data -> remove column description -----  
 			colDescPanel.setColumnDescription(null);
-			this.addUpdateOrRemovePropertiesTab(TAB_COLUMN_DESCRIPTION, newPanelColDesc);
+			this.addUpdateOrRemovePropertiesTab(TAB_COLUMN_DESCRIPTION, null);
 			
 		} else {
-			// --- Data source selected? --------------------------------------
-			if (dtnoDS==null) {
+			// --- Data are to be shown ---------------------------------------
+			JPanel currPanelColDesc = (JPanel) this.getPropertiesTabComponentByTitle(TAB_COLUMN_DESCRIPTION);
+			JPanel newPanelColDesc  = colDescPanel.getActualColumnDescriptionPanel();
+			if (newPanelColDesc != currPanelColDesc) {
+				// --- Exchange ColumnDescriptionPanel ------------------------
 				colDescPanel.setColumnDescription(null);
+				this.addUpdateOrRemovePropertiesTab(TAB_COLUMN_DESCRIPTION, newPanelColDesc);
+				
 			} else {
 				// --- Changed data source? -----------------------------------
 				DataSource currDataSource = dtnoDS.getDataSource();
@@ -388,7 +390,6 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 				}
 				this.lastDataSource = currDataSource;
 			}
-			
 		}
 	}
 	
@@ -578,8 +579,7 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	 */
 	private void setJToolDatasetNavigationEnabled() {
 		
-		AbstractDataSourceDTNO<?> dtnoDS = this.getSelectedDataTreeNodeDataSource();
-		boolean isEnabledToolBar = (dtnoDS!=null && this.getPaginationDataLoader()!=null);
+		boolean isEnabledToolBar = this.getJTabbedPanePropertiesContainer().getTabCount()>0;
 		
 		this.getJToggleButtonEnabledPagination().setSelected(isEnabledToolBar && this.getPaginationDataLoader()!=null && this.getPaginationDataLoader().isPaginationActivated()==true);
 		this.setJToggleButtonEnabledPaginationIcon();
@@ -823,20 +823,18 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
 			
 			// --- Current selection has no table -------------------
-			if (dtnoDS==null || dtnoDS.getTable()==null) {
-				// --- Hide description panel if currently visible --
-				if (this.isDescriptionPanelVisible()==true) {
-					this.setDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
-				}
-				
-			} else if (this.currentDataViewConfiguration!=DataViewConfiguration.No_PropertiesConfiguration && this.isDescriptionPanelVisible()==false) {
+			if (this.currentDataViewConfiguration!=DataViewConfiguration.No_PropertiesConfiguration && this.isDescriptionPanelVisible()==false) {
 				// --- Properties panel should be visible! ---------- 
 				this.setDataViewConfiguration(this.currentDataViewConfiguration);
 			}
 			
-			this.setDetailView(dtnoDS);
 			this.setColumnDescriptionPanel(dtnoDS);
 			this.updatePropertiesConfigurationPanel(treeNode, dtnoDS);
+			this.setDetailView(dtnoDS);
+			
+			if (this.isDescriptionPanelVisible()==true && this.getJTabbedPanePropertiesContainer().getTabCount()==0) {
+				this.setDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
+			}
 			break;
 			
 		case DataController.DC_PROPERTIES_CONFIGURATION_SHOW:
@@ -1074,7 +1072,7 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 					break;
 				case Integer.MAX_VALUE:
 					dataRowToSelect = this.getJTableData().getRowCount();
-					if (dtnoDS.getPaginationDataLoader().isPaginationActivated()==true) {
+					if (dtnoDS.getPaginationDataLoader()!=null && dtnoDS.getPaginationDataLoader().isPaginationActivated()==true) {
 						dtnoDS.loadNextPageAsynchronous();
 					}
 					break;

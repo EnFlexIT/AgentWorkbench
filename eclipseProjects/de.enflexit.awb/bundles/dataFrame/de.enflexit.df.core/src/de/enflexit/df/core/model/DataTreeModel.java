@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -13,8 +14,8 @@ import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceIntegration;
 import de.enflexit.df.core.expression.DataFrameExpressionConstants;
-import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.workbook.DataWorkbook;
 import tech.tablesaw.api.Table;
 
@@ -253,12 +254,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		DTNO_DataWorkbook dtnoDW = new DTNO_DataWorkbook(this.getDataController(), dataWorkbook);
 		
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dtnoDW);
-		this.getRootNode().add(newNode);
-		
-		Object[] pathToParent = this.getRootNode().getPath();
-		int[] newIndicies = {this.getRootNode().getIndex(newNode)};
-		Object[] newChildren = {newNode}; 
-		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+		this.insertNodeInto(newNode, this.getRootNode(), this.getRootNode().getChildCount());
 	}
 	
 	/**
@@ -332,12 +328,7 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		
 		// --- Create new node and add to parent --------------------
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(ds);
-		dwNode.add(newNode);
-		
-		Object[] pathToParent = dwNode.getPath();
-		int[] newIndicies = {dwNode.getIndex(newNode)};
-		Object[] newChildren = {newNode}; 
-		this.fireTreeNodesInserted(this, pathToParent, newIndicies, newChildren);
+		this.insertNodeInto(newNode, dwNode, dwNode.getChildCount());
 		
 		// --- Set the node to the data source integration ----------
 		dsIntegration.setDataTreeNode(newNode);
@@ -365,6 +356,11 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 
+		if (SwingUtilities.isEventDispatchThread()==false) {
+			SwingUtilities.invokeLater(() -> this.propertyChange(evt));
+			return;
+		}
+		
 		AffectedDataObjects ado = null;
 		switch (evt.getPropertyName()) {
 		case DataController.DC_ADDED_DATA_WORKBOOK:

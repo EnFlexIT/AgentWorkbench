@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <project>
     <projectName>Data Analytics Example</projectName>
-    <projectView>Developer</projectView>
+    <projectStartTab>2</projectStartTab>
+    <projectView>User</projectView>
     <projectTreeVisible>true</projectTreeVisible>
-    <projectTabHeaderVisible>true</projectTabHeaderVisible>
+    <projectTabHeaderVisible>false</projectTabHeaderVisible>
     <versionTag>Complete Project</versionTag>
     <updateAutoConfiguration>0</updateAutoConfiguration>
     <updateDateLastChecked>0</updateDateLastChecked>
     <projectFeatures/>
-    <plugins/>
+    <plugins>
+        <className>de.enflexit.df.core.plugin.DataFramePlugin</className>
+    </plugins>
     <subOntologies/>
     <jadeConfiguration>
         <skipUserRequestForJadeStart>false</skipUserRequestForJadeStart>

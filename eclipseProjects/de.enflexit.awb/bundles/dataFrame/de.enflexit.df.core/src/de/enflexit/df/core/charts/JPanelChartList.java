@@ -65,22 +65,24 @@ public class JPanelChartList extends JPanel {
 		gbc_jScrollPaneChartList.gridx = 0;
 		gbc_jScrollPaneChartList.gridy = 1;
 		this.add(this.getJScrollPaneChartList(), gbc_jScrollPaneChartList);
-		GridBagConstraints gbc_jButtonDelete = new GridBagConstraints();
-		gbc_jButtonDelete.insets = new Insets(5, 5, 0, 5);
-		gbc_jButtonDelete.gridx = 1;
-		gbc_jButtonDelete.gridy = 1;
-		this.add(this.getJButtonDelete(), gbc_jButtonDelete);
+		
 		GridBagConstraints gbc_jButtonMoveUp = new GridBagConstraints();
-		gbc_jButtonMoveUp.insets = new Insets(15, 5, 0, 5);
+		gbc_jButtonMoveUp.insets = new Insets(5, 5, 0, 5);
 		gbc_jButtonMoveUp.gridx = 1;
-		gbc_jButtonMoveUp.gridy = 2;
+		gbc_jButtonMoveUp.gridy = 1;
 		this.add(this.getJButtonMoveUp(), gbc_jButtonMoveUp);
 		GridBagConstraints gbc_jButtonMoveDown = new GridBagConstraints();
 		gbc_jButtonMoveDown.insets = new Insets(5, 5, 0, 5);
-		gbc_jButtonMoveDown.anchor = GridBagConstraints.NORTH;
 		gbc_jButtonMoveDown.gridx = 1;
-		gbc_jButtonMoveDown.gridy = 3;
+		gbc_jButtonMoveDown.gridy = 2;
 		this.add(this.getJButtonMoveDown(), gbc_jButtonMoveDown);
+		
+		GridBagConstraints gbc_jButtonDelete = new GridBagConstraints();
+		gbc_jButtonDelete.insets = new Insets(15, 5, 0, 5);
+		gbc_jButtonDelete.anchor = GridBagConstraints.NORTH;
+		gbc_jButtonDelete.gridx = 1;
+		gbc_jButtonDelete.gridy = 3;
+		this.add(this.getJButtonDelete(), gbc_jButtonDelete);
 	}
 
 	
