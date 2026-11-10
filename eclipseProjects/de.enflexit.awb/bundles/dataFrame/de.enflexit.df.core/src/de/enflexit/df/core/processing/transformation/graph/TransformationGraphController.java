@@ -295,6 +295,7 @@ public class TransformationGraphController {
 					transformation.getInputNodes().add(inputNode);
 				}
 				outputNode.setDataTransformation(transformation);
+				outputNode.setResultTableName(persistentEdge.getResultTableName());
 			}
 		}
 	}

@@ -15,6 +15,8 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	private AbstractDataTransformation dataTransformation;
 	private Table dataTable;
 	private String dataSourceUUID;
+	
+	private String resultTableName;
 
 	/**
 	 * Gets the data transformation.
@@ -61,7 +63,11 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	 */
 	@Override
 	public String getLabelText() {
-		return this.getDataTransformation().getTransformationName();
+		if (this.getResultTableName()!=null && this.getResultTableName().isBlank()==false) {
+			return this.getResultTableName();
+		} else {
+			return this.getDataTransformation().getTransformationName();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -69,12 +75,17 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	 */
 	@Override
 	public String getLongText() {
-		// --- Append the input tables for the long text ------------
-		ArrayList<String> inputTables = new ArrayList<>();
-		for (DataTableNode inputNode : this.getDataTransformation().getInputNodes()) {
-			inputTables.add(inputNode.getLabelText());
+		
+		if (this.getResultTableName()!=null && this.getResultTableName().isBlank()==false) {
+			return this.getResultTableName();
+		} else {
+			// --- Append the input tables for the long text ------------
+			ArrayList<String> inputTables = new ArrayList<>();
+			for (DataTableNode inputNode : this.getDataTransformation().getInputNodes()) {
+				inputTables.add(inputNode.getLabelText());
+			}
+			return this.getLabelText() + " [" + String.join(", ", inputTables) + "]";
 		}
-		return this.getLabelText() + " [" + String.join(", ", inputTables) + "]";
 	}
 	
 	/**
@@ -95,5 +106,22 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 		}
 		return this.dataSourceUUID;
 	}
+
+	/**
+	 * Gets the result table name.
+	 * @return the result table name
+	 */
+	public String getResultTableName() {
+		return resultTableName;
+	}
+	/**
+	 * Sets the result table name.
+	 * @param resultTableName the new result table name
+	 */
+	public void setResultTableName(String resultTableName) {
+		this.resultTableName = resultTableName;
+	}
+	
+	
 	
 }
