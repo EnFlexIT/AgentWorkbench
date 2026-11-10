@@ -279,7 +279,10 @@ public class JPanelNavigation extends JPanel implements ActionListener, Property
 			// --- Ensure that the new TreePath was selected ------------------ 
 			TreePath tpSelected = this.getJTreeData().getSelectionPath();
 			TreePath tpSelectedNew = (TreePath)evt.getNewValue();
-			if (tpSelected.equals(tpSelectedNew)==false) {
+			if (tpSelected==null && tpSelectedNew==null) return;
+			
+			boolean isNewSelection = (tpSelected==null && tpSelectedNew!=null) || tpSelected.equals(tpSelectedNew)==false;
+			if (isNewSelection==true) {
 				this.getJTreeData().setSelectionPath(tpSelectedNew);
 			}
 			// --- Check for the correct configuration view -------------------

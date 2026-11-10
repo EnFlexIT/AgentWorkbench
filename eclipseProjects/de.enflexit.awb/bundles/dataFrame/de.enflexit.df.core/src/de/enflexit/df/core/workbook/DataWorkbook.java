@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.common.NumberHelper;
 import de.enflexit.common.StringHelper;
 import de.enflexit.common.UUID_Handler;
@@ -42,7 +43,8 @@ import jakarta.xml.bind.annotation.XmlType;
     "description",
     "dataSources",
     "workbookExtensions",
-    "transformationGraphs"
+    "transformationGraphs",
+    "chartList"
 })
 public abstract class DataWorkbook implements Serializable {
 
@@ -72,6 +74,11 @@ public abstract class DataWorkbook implements Serializable {
 	@XmlElementWrapper(name = "transformationGraphs")
 	@XmlElement(name = "transformationGraph")
 	protected List<PersistentTransformationGraph> transformationGraphs;
+	
+	@XmlElementWrapper(name = "chartList")
+	@XmlElement(name = "chart")
+	protected List<AbstractChart> chartList;
+	
 	
 	/**
 	 * Instantiates a new data workbook.
@@ -335,6 +342,7 @@ public abstract class DataWorkbook implements Serializable {
 		return extensionCache;
 	}
 	
+	
 	/**
 	 * Gets the transformation graphs.
 	 * @return the transformation graphs
@@ -352,7 +360,6 @@ public abstract class DataWorkbook implements Serializable {
 	public void setTransformationGraphs(List<PersistentTransformationGraph> transformationGraphs) {
 		this.transformationGraphs = transformationGraphs;
 	}
-	
 	/**
 	 * Returns the transformation graph for the data source with the provided UUID.
 	 * @param dataSourceUUID the data source UUID
@@ -366,7 +373,6 @@ public abstract class DataWorkbook implements Serializable {
 		}
 		return null;
 	}
-	
 	/**
 	 * Adds a transformation graph to the list. If there is a graph for the same data source already, it will be replaced.
 	 * @param transformationGraph the transformation graph
@@ -384,6 +390,35 @@ public abstract class DataWorkbook implements Serializable {
 			this.getTransformationGraphs().remove(prevoiusGraph);
 		}
 		this.getTransformationGraphs().add(transformationGraph);
+	}
+	
+	
+	/**
+	 * Returns the chart list.
+	 * @return the chart list
+	 */
+	public List<AbstractChart> getChartList() {
+		if (chartList==null) {
+			chartList = new ArrayList<>();
+		}
+		return chartList;
+	}
+	/**
+	 * Sets the chart list.
+	 * @param chartList the new chart list
+	 */
+	public void setChartList(List<AbstractChart> chartList) {
+		this.chartList = chartList;
+	}
+	/**
+	 * Adds the specified chart to the workbook.
+	 *
+	 * @param chart the chart
+	 * @return true, if successful
+	 */
+	public boolean addChart(AbstractChart chart) {
+		if (this.getChartList().contains(chart)==true) return false;
+		return this.getChartList().add(chart);
 	}
 	
 	/**

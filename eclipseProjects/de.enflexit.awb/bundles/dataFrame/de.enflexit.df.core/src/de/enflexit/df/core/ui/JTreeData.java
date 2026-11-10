@@ -157,7 +157,6 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 					// --- Show context menu ----------------------------------
 					Rectangle pathBounds = JTreeData.this.getPathBounds(JTreeData.this.getSelectionPath());
 					JTreeData.this.getJPopupMenuDataTree().show (JTreeData.this, pathBounds.x, pathBounds.y + pathBounds.height);
-					
 				}
 			}
 		};
@@ -185,17 +184,14 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			@Override
 			public void treeNodesInserted(TreeModelEvent tme) {
 				
-				Object[] pathBase = tme.getPath();
 				Object[] children = tme.getChildren();
+				if (children == null || children.length == 0) return;
 
-				Object[] pathSelection = new Object [pathBase.length + 1];
-				int i;
-				for (i = 0; i < pathBase.length; i++) {
-					pathSelection[i] = pathBase[i];
-				}
-				pathSelection[i] = children[0];
-				JTreeData.this.setSelectionPath(new TreePath(pathSelection));
-				
+				final DefaultMutableTreeNode newNode = (DefaultMutableTreeNode) children[0];
+				SwingUtilities.invokeLater(() -> {
+					if (newNode.getRoot() != JTreeData.this.getModel().getRoot()) return;
+					JTreeData.this.setSelectionPath(new TreePath(newNode.getPath()));
+				});
 			}
 
 			/* (non-Javadoc)
@@ -204,27 +200,21 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 			@Override
 			public void treeNodesRemoved(TreeModelEvent tme) {
 				
-				TreePath parentTreePath = tme.getTreePath();
-				DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentTreePath.getLastPathComponent();
-				if (parentNode.getChildCount()>0) {
+				final TreePath parentTreePath = tme.getTreePath();
+				final int removedIndex = tme.getChildIndices()[0];
 
-					// --- Check to have a child index not larger than number of children ---------
-					int childIndex = tme.getChildIndices()[0];
-					if (childIndex > parentNode.getChildCount()-1) {
-						childIndex = parentNode.getChildCount()-1;
+				SwingUtilities.invokeLater(() -> {
+					DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentTreePath.getLastPathComponent();
+					int childCount = parentNode.getChildCount();
+					if (childCount > 0) {
+						int childIndex = Math.min(removedIndex, childCount - 1);
+						DefaultMutableTreeNode childNodeToSelect = (DefaultMutableTreeNode) parentNode.getChildAt(childIndex);
+						JTreeData.this.setSelectionPath(new TreePath(childNodeToSelect.getPath()));
+					} else {
+						JTreeData.this.setSelectionPath(parentTreePath);
 					}
-					// --- Get a childIndex to which an node exist --------------------------------
-					while (childIndex>=0 && parentNode.getChildAt(childIndex)==null) {
-						childIndex--;
-					}
-					// --- Set next selected child node -------------------------------------------
-					DefaultMutableTreeNode childNodeToSelect = (DefaultMutableTreeNode) parentNode.getChildAt(childIndex);
-					JTreeData.this.setSelectionPath(new TreePath(childNodeToSelect.getPath()));
-					
-				} else {
-					// --- Just select the parent node --------------------------------------------
-					JTreeData.this.setSelectionPath(parentTreePath);
-				}
+				});				
+				
 			}
 
 			/* (non-Javadoc)
@@ -236,6 +226,7 @@ public class JTreeData extends JTree implements TreeSelectionListener {
 		};
 		return tml;
 	}
+	
 	
 	/**
 	 * Returns the mouse adapter for this JTree.
