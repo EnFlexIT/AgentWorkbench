@@ -80,6 +80,12 @@ public abstract class AbstractDataTransformation {
 	public abstract String getTransformationName();
 	
 	/**
+	 * Verifies the specified transformation parameters.
+	 * @return true, if the parameters are valid.
+	 */
+	public abstract boolean verifyParameters();
+	
+	/**
 	 * Performs the actual transformation.
 	 * @param graphController the graph controller
 	 * @return the result table

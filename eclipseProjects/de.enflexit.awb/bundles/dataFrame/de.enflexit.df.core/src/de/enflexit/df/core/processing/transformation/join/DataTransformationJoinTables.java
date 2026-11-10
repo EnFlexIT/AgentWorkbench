@@ -1,16 +1,18 @@
 package de.enflexit.df.core.processing.transformation.join;
 
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
-import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
+import tech.tablesaw.joining.JoinType;
 
 /**
  * This {@link AbstractDataTransformation} merges two or more input tables to a single table.
@@ -22,9 +24,7 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 	public static final String PARAM_NAME_INTERPOLATION_MODE = "interpolationMode";
 	public static final String PARAM_NAME_JOIN_COLUMNS = "joinColumns";
 	
-	public enum JoinType{
-		INNER, LEFT_OUTER, RIGHT_OUTER, FULL_OUTER
-	}
+	private boolean useSpecialTemporalJoin = false;
 	
 	public enum InterpolationMode {
 		NONE, LINEAR, STEP
@@ -38,12 +38,21 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 		
 		Table resultTable = null;
 		String joinColumnsAsString = this.getTransformationParameters().getStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS);
+		JoinType joinType = this.getJoinTypeFromParameterss(this.getTransformationParameters());
+		if (joinType==null) {
+			joinType = JoinType.INNER;
+		}
 			
 		// --- Convert to Map<Table, Column<?>> -----------------
 		HashMap<Table, Column<?>> tablesMap = this.getJoinConfigurationFromParameterString(joinColumnsAsString, graphController);
-		resultTable = this.joinTables(tablesMap);
+		resultTable = this.joinTables(tablesMap, joinType);
 		
 		return resultTable;
+	}
+	
+	private JoinType getJoinTypeFromParameterss(Properties parameterProperties) {
+		String joinTypeString = parameterProperties.getStringValue(PARAM_NAME_JOIN_TYPE);
+		return joinTypeString!=null ? JoinType.valueOf(joinTypeString) : null;
 	}
 
 	/**
@@ -82,12 +91,14 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 	 * @param joinTables the join tables
 	 * @return the joined table
 	 */
-	private Table joinTables(Map<Table, Column<?>> joinTables) {
+	private Table joinTables(Map<Table, Column<?>> joinTables, JoinType joinType) {
 		
-		if (this.isTemporalJoin(joinTables)) {
-			// --- Join on temporal column, delegate to helper class ---------
+		if (this.useSpecialTemporalJoin) {
+			// --- The initial, time series specific with integrated time step unification
+			//TODO likely to be removed 
 			return TimeSeriesJoinHelper.joinTables(joinTables, InterpolationMode.LINEAR, ZoneId.systemDefault());
 		} else {
+			// --- The more general, configurable 
 			// --- Join on non-temporal column --------------------------------
 			//TODO Add check for matching join columns (type, values)
 			Iterator<Map.Entry<Table, Column<?>>> tablesIterator = joinTables.entrySet().iterator();
@@ -100,7 +111,7 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 			// --- Start with the first table --------------------------------- 
 			Map.Entry<Table, Column<?>> first = tablesIterator.next();
 			Table resultTable = first.getKey();
-			String leftJoinColumn = first.getValue().name();
+			String resultJoinColumn = first.getValue().name();
 			
 			// --- Iteratively join the other tables to the first one ---------
 			while(tablesIterator.hasNext()) {
@@ -108,22 +119,30 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 				Table nextTable = next.getKey();
 				String nextJoinColumn = next.getValue().name();
 				
-				resultTable = resultTable.joinOn(leftJoinColumn).rightJoinColumns(nextJoinColumn).with(nextTable).allowDuplicateColumnNames(true).join();
+				resultTable = resultTable.joinOn(resultJoinColumn).rightJoinColumns(nextJoinColumn).type(joinType).with(nextTable).allowDuplicateColumnNames(true).join();
+				
+				if (joinType==JoinType.RIGHT_OUTER) {
+					// --- For right outer joins, the join column from the right table is kept
+					resultJoinColumn = nextJoinColumn;
+					// --- Move the join column to the first position
+					resultTable = this.putColumnToFront(resultTable, resultJoinColumn);
+				}
 			}
-			
-			return resultTable;
+			return resultTable.sortAscendingOn(resultJoinColumn);
 		}
 	}
 	
 	/**
-	 * Checks if the join is executed on a temporal column.
-	 * @param joinTables the join tables
-	 * @return true, if is temporal join
+	 * Puts the specified column to the first position.
+	 * @param table the table
+	 * @param columnName the column name
+	 * @return the table
 	 */
-	private boolean isTemporalJoin(Map<Table, Column<?>> joinTables){
-		Map.Entry<Table, Column<?>> first = joinTables.entrySet().iterator().next();
-		ColumnType columnType = first.getValue().type();
-		return (columnType==ColumnType.INSTANT || columnType==ColumnType.LOCAL_DATE_TIME);
+	private Table putColumnToFront(Table table, String columnName) {
+		ArrayList<String> columns = new ArrayList<>(table.columnNames());
+		columns.remove(columnName);
+		columns.add(0, columnName);
+		return table.reorderColumns(columns.toArray(new String[0]));
 	}
 	
 	/**
@@ -146,5 +165,14 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 	@Override
 	public String getTransformationName() {
 		return DataTransformationServiceJoinTables.TRANSFORMATION_NAME;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#verifyParameters()
+	 */
+	@Override
+	public boolean verifyParameters() {
+		// TODO check for at least two tables and matching join column data types
+		return true;
 	}
 }

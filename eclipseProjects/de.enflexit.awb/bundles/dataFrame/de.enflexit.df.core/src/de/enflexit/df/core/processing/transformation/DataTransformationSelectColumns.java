@@ -68,4 +68,12 @@ public class DataTransformationSelectColumns extends AbstractDataTransformation 
 		return DataTransformationServiceSelectColumns.TRANSFORMATION_NAME;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#verifyParameters()
+	 */
+	@Override
+	public boolean verifyParameters() {
+		return true;
+	}
+
 }

@@ -148,6 +148,9 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 	 */
 	private void recursivelyCollectRelevantDataSources(DefaultMutableTreeNode startNode, ArrayList<AbstractDataSourceDTNO<?>> sourcesList) {
 		
+		// --- Ignore the sub-tree for the current data source - transformation results from the same graph should not be listed 
+		if(this.isCurrentTransformationTreeNode(startNode)==true) return;
+		
 		// --- Check if the start node is relevant ------------------
 		DTNO_Base dtno = (DTNO_Base) startNode.getUserObject();
 		if (dtno instanceof AbstractDataSourceDTNO<?>) {
@@ -161,6 +164,11 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 		for (int i=0; i<startNode.getChildCount(); i++) {
 			this.recursivelyCollectRelevantDataSources((DefaultMutableTreeNode) startNode.getChildAt(i), sourcesList);
 		}
+	}
+	
+	private boolean isCurrentTransformationTreeNode(DefaultMutableTreeNode treeNode) {
+		DefaultMutableTreeNode currentDataSourceTreeNode = this.dataController.getSelectionModel().getSelectedDataTreeNode();
+		return (currentDataSourceTreeNode==treeNode);
 	}
 
 	/**
