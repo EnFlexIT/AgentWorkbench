@@ -12,10 +12,10 @@ import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTableNode;
-import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformation;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationNode;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationEdge;
 import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
-import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTableNode.NodeType;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationNode.NodeType;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -260,7 +260,7 @@ public class TransformationGraphController {
 	public void loadPersistentGraph(PersistentTransformationGraph persistentGraph) {
 		// --- Create the nodes first, organized by their UUIDs ----- 
 		HashMap<String, DataTableNode> nodesByUUID = new HashMap<String, DataTableNode>();
-		for (PersistentTableNode persistentNode : persistentGraph.getTableNodes()) {
+		for (PersistentTransformationNode persistentNode : persistentGraph.getTableNodes()) {
 			DataTableNode tableNode = null;
 			if (persistentNode.getNodeType()==NodeType.DATA_SOURCE) {
 				tableNode = new DataTableNodeDataSource();
@@ -279,7 +279,7 @@ public class TransformationGraphController {
 		}
 		
 		// --- Create the edges for the transformations -------------
-		for (PersistentTransformation persistentEdge : persistentGraph.getTransformations()) {
+		for (PersistentTransformationEdge persistentEdge : persistentGraph.getTransformationEdges()) {
 			
 			DataTransformationService transformationService = this.getTransformationService(persistentEdge.getTransformationName());
 			if (transformationService!=null) {

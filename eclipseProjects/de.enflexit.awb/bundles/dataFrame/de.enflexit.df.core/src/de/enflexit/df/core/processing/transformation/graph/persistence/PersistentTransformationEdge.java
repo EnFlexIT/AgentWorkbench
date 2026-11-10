@@ -8,39 +8,20 @@ import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.Embeddable;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * This class holds all information that is required for saving and loading {@link DataTransformationEdge}s.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
 
-@Entity
-@Table(name="data_transformation_edge")
+@Embeddable
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PersistentTransformation implements Serializable {
+public class PersistentTransformationEdge implements Serializable {
 	
 	private static final long serialVersionUID = -1924241629656187251L;
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_transformation_edge", nullable=false)
-	private Integer id;
-	
-	@ManyToOne(fetch = FetchType.LAZY, targetEntity = PersistentTransformationGraph.class)
-	@JoinColumn(name = "id_transformation_graph", nullable = false)
-	@XmlTransient
-	private PersistentTransformationGraph transformationGraph;
 	
 	@Column(name="transformation_name", nullable=false)
 	private String transformationName;
@@ -56,35 +37,6 @@ public class PersistentTransformation implements Serializable {
 	@Column(name="output_node_uuid", nullable=false)
 	private String outputNodeUUID;
 	
-	/**
-	 * Gets the id.
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
-	/**
-	 * Sets the id.
-	 * @param id the new id
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	/**
-	 * Gets the transformation graph.
-	 * @return the transformation graph
-	 */
-	public PersistentTransformationGraph getTransformationGraph() {
-		return transformationGraph;
-	}
-	/**
-	 * Sets the transformation graph.
-	 * @param transformationGraph the new transformation graph
-	 */
-	public void setTransformationGraph(PersistentTransformationGraph transformationGraph) {
-		this.transformationGraph = transformationGraph;
-	}
-
 	/**
 	 * Gets the transformation name.
 	 * @return the transformation name

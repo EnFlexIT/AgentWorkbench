@@ -15,13 +15,11 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTableNode;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 
 /**
@@ -106,16 +104,6 @@ public class DataWorkbook4XML extends DataWorkbook {
 		try {
 			// --- Update the workbooks storage configuration -------
 			dataWorkbook.setDataSourcesToStorageConfiguration();
-			
-			try {
-				System.out.println("XmlTransient: " + PersistentTableNode.class.getDeclaredField("transformationGraph").getAnnotation(XmlTransient.class));
-			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			
 			// --- Prepare Context and Marshaller -------------------
 			JAXBContext pc = JAXBContext.newInstance(DataWorkbook4XML.class);
