@@ -467,10 +467,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 			if (this.dataTransformation.getOutputNode()!=null) {
 				this.dataTransformation.getOutputNode().resetResultTable();
 			}
-			if (this.getJTextFieldResultTableName().getText()!=null) {
-				this.dataTransformation.getOutputNode().setResultTableName(this.getJTextFieldResultTableName().getText());
-			}
-			
+			this.dataTransformation.setOutputTableName(this.getJTextFieldResultTableName().getText());
 			this.getPropertyChangeSupport().firePropertyChange(eventID, null, this.dataTransformation);
 		} else if (ae.getSource()==this.getJButtonCancel()) {
 			if (this.dataTransformation==null) {
@@ -660,7 +657,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 			// --- Cannot change the input tables for an existing transformation --
 			this.getTableNodesList().setEnabled(false);
 			
-			this.getJTextFieldResultTableName().setText(transformation.getOutputNode().getResultTableName());
+			this.getJTextFieldResultTableName().setText(transformation.getOutputTableName());
 			
 			((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).setConfiguredParameters(transformation.getTransformationParameters());
 		}

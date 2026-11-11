@@ -360,14 +360,18 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 */
 	private void removeSelectedElement() {
 		if (this.selectedGraphElement!=null) {
+			boolean wasRemoved = false;
 			if (this.selectedGraphElement instanceof DataTableNodeDataSource) {
-				this.removeDataSourceNode((DataTableNodeDataSource) this.selectedGraphElement);
+				wasRemoved = this.removeDataSourceNode((DataTableNodeDataSource) this.selectedGraphElement);
 			} else if (this.selectedGraphElement instanceof DataTableNodeTransformationResult) {
-				this.removeDataTransformation((DataTableNodeTransformationResult) this.selectedGraphElement);
+				wasRemoved = this.removeDataTransformation((DataTableNodeTransformationResult) this.selectedGraphElement);
 			} else if (this.selectedGraphElement instanceof DataTransformationEdge) {
-				this.removeDataTransformation((DataTransformationEdge) this.selectedGraphElement);
+				wasRemoved = this.removeDataTransformation((DataTransformationEdge) this.selectedGraphElement);
 			}
-		} 
+			if (wasRemoved==true) {
+				this.setGraphChanged(true);
+			}
+		}
 	}
 	
 	/**
@@ -390,23 +394,25 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * Tries to remove the data transformation represented by the currently selected edge.
 	 * @param transformationEdge the transformation edge
 	 */
-	private void removeDataTransformation(DataTransformationEdge transformationEdge) {
+	private boolean removeDataTransformation(DataTransformationEdge transformationEdge) {
 		AbstractDataTransformation dataTransformation = transformationEdge.getDataTransformation();
-		this.removeDataTransformation(dataTransformation.getOutputNode());
+		return this.removeDataTransformation(dataTransformation.getOutputNode());
 	}
 	
 	/**
 	 * Tries to remove the data transformation represented by the currently result node.
 	 * @param resultNode the result node
 	 */
-	private void removeDataTransformation(DataTableNodeTransformationResult resultNode) {
+	private boolean removeDataTransformation(DataTableNodeTransformationResult resultNode) {
 		int outEdges = this.getGraphController().getTransformationGraph().getOutEdges(resultNode).size();
 		if (outEdges>0) {
 			JOptionPane.showMessageDialog(this, "The result of the selected transformation is an input for at least one subsequent transformation!\nIf you want to remove it, remove or reconfigure the subsequent transformation(s) first.", "Currently not possible", JOptionPane.WARNING_MESSAGE);
+			return false;
 		} else {
 			this.getGraphController().removeDataTransformation(resultNode);
 			this.selectedGraphElement = null;
 			this.getJSplitPaneMainView().setDividerLocation(1.0);
+			return true;
 		}
 	}
 

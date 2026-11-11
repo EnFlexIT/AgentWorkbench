@@ -20,6 +20,8 @@ public abstract class AbstractDataTransformation {
 	private ArrayList<DataTableNode> inputNodes;
 	private DataTableNodeTransformationResult outputNode;
 	
+	private String outputTableName;
+	
 	Properties transformationParameters;
 	
 	private ArrayList<DataTransformationMessage> messagesList;
@@ -55,6 +57,21 @@ public abstract class AbstractDataTransformation {
 		this.outputNode = outputNode;
 	}
 	
+	/**
+	 * Gets the output table name.
+	 * @return the output table name
+	 */
+	public String getOutputTableName() {
+		return outputTableName;
+	}
+	/**
+	 * Sets the output table name.
+	 * @param outputTableName the new output table name
+	 */
+	public void setOutputTableName(String outputTableName) {
+		this.outputTableName = outputTableName;
+	}
+
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformation#getTransformationParameters()
 	 */
