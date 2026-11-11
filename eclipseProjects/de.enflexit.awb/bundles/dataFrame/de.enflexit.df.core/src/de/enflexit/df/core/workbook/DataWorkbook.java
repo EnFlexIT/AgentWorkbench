@@ -13,6 +13,7 @@ import de.enflexit.common.UUID_Handler;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DataSourceHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.processing.ProcessingDataSource;
 import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -224,6 +225,15 @@ public abstract class DataWorkbook implements Serializable {
 	 */
 	public boolean removeDataSource(DefaultDataSource dataSource) {
 		if (dataSource==null) return false;
+		
+		if (dataSource instanceof ProcessingDataSource) {
+			// --- If there is a transformation graph related to the data source, remove it too 
+			PersistentTransformationGraph transformaitonGraph = this.getTransformationGraphForDataSource(dataSource.getShortUUID());
+			if (transformaitonGraph!=null) {
+				this.removeTransformationGraph(transformaitonGraph);
+			}
+		}
+		
 		return this.getDataSources().remove(dataSource);
 	}
 	
@@ -393,6 +403,13 @@ public abstract class DataWorkbook implements Serializable {
 		this.getTransformationGraphs().add(transformationGraph);
 	}
 	
+	/**
+	 * Removes the transformation graph.
+	 * @param transformationGraph the transformation graph
+	 */
+	public void removeTransformationGraph(PersistentTransformationGraph transformationGraph) {
+		this.getTransformationGraphs().remove(transformationGraph);
+	}
 	
 	/**
 	 * Returns the chart list.

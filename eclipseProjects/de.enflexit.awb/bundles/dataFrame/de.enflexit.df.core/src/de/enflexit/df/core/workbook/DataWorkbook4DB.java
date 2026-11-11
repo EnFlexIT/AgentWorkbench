@@ -10,6 +10,7 @@ import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
 import de.enflexit.df.core.workbook.db.DataWorkbookDatabaseHandler;
 import de.enflexit.df.core.workbook.db.SessionFactoryCreator;
 import de.enflexit.df.impl.db.DatabaseDataSource;
@@ -152,6 +153,15 @@ public class DataWorkbook4DB extends DataWorkbook {
 	@Override
 	public boolean removeDataSource(DefaultDataSource dataSource) {
 		return super.removeDataSource(dataSource) && this.getDataWorkbookDatabaseHandler().deleteDataSource(dataSource);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#removeTransformationGraph(de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph)
+	 */
+	@Override
+	public void removeTransformationGraph(PersistentTransformationGraph transformationGraph) {
+		super.removeTransformationGraph(transformationGraph);
+		this.getDataWorkbookDatabaseHandler().deleteTransformationGraph(transformationGraph);
 	}
 	
 	/* (non-Javadoc)
