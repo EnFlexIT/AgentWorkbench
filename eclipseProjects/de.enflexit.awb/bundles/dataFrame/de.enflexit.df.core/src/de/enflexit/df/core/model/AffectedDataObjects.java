@@ -1,5 +1,6 @@
 package de.enflexit.df.core.model;
 
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
@@ -69,6 +70,13 @@ public class AffectedDataObjects {
 	 */
 	public DefaultDataSource getDataSource() {
 		return this.getInstance(DefaultDataSource.class);
+	}
+	/**
+	 * Returns the affected chart, if available.
+	 * @return the chart
+	 */
+	public AbstractChart getChart() {
+		return this.getInstance(AbstractChart.class);
 	}
 	
 	/**

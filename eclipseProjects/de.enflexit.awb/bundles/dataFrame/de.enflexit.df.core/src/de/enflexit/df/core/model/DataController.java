@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.df.core.dataSources.DataSource;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
@@ -55,6 +56,9 @@ public class DataController {
 	public static final String DC_CLOSED_DATA_SOURCE = "DC_CLOSED_DATA_SOURCE";
 	public static final String DC_REMOVED_DATA_SOURCE = "DC_REMOVED_DATA_SOURCE";
 
+	public static final String DC_CHART_ADDED = "DC_CHART_ADDED";
+	public static final String DC_CHART_REMOVED = "DC_CHART_REMOVED";
+	
 	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_SHOW = "DC_DATA_SOURCE_CONFIGURATION_SHOW";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_CHANGED = "DC_DATA_SOURCE_CONFIGURATION_CHANGED";
@@ -499,6 +503,55 @@ public class DataController {
 			ex.printStackTrace();
 		}
 		return null;
+	}
+	
+	
+	// ------------------------------------------------------------------------
+	// --- From here, chart handling ------------------------------------------
+	// ------------------------------------------------------------------------
+	/**
+	 * Returns a new chart ID for the specified {@link DataWorkbook}.
+	 *
+	 * @param dw the DataWorkbook
+	 * @return the new chart ID
+	 */
+	public int getNewChartID(DataWorkbook dw) {
+		int maxID = 0;
+		for (AbstractChart chart : dw.getChartList()) {
+			maxID = Math.max(chart.getChartId(), maxID);
+		}
+		return maxID+1;
+	}
+	/**
+	 * Adds the specified chart to the workbook.
+	 *
+	 * @param dw the DataWorkbook to which the chart should be added
+	 * @param newChart the new chart to add
+	 * @return true, if successful
+	 */
+	public boolean addChart(DataWorkbook dw, AbstractChart newChart) {
+		
+		if (dw.getChartList().contains(newChart)==true) return false;
+		boolean success = dw.getChartList().add(newChart);
+		if (success==true) {
+			this.firePropertyChange(DC_CHART_ADDED, null, AffectedDataObjects.create(dw, newChart));
+		}
+		return success;
+	}
+	/**
+	 * Removes the specified chart from the workbook.
+	 *
+	 * @param dw the DataWorkbook from which the chart should be remove
+	 * @param chart the chart to delete
+	 */
+	public boolean removeChart(DataWorkbook dw, AbstractChart chart) {
+		
+		if (dw.getChartList().contains(chart)==false) return false;
+		boolean success = dw.getChartList().remove(chart);
+		if (success==true) {
+			this.firePropertyChange(DC_CHART_REMOVED, AffectedDataObjects.create(dw, chart), null);
+		}
+		return success;
 	}
 	
 }

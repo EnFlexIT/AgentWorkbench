@@ -16,10 +16,12 @@ package de.enflexit.charts.model;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.Entity;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * PieChart
  */
+@XmlRootElement(name = "PieChart")
 @JsonPropertyOrder({
 })
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T09:46:43.439350200+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")

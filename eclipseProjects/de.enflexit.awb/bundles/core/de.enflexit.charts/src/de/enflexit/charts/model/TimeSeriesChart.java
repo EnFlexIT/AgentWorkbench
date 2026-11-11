@@ -21,10 +21,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * TimeSeriesChart
  */
+@XmlRootElement(name = "TimeSeriesChart")
 @JsonPropertyOrder({
   TimeSeriesChart.JSON_PROPERTY_TIME_FORMAT
 })

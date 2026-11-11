@@ -36,10 +36,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * AbstractChart
  */
+@XmlSeeAlso({BarChart.class, PieChart.class, ScatterPlot.class, LineChart.class, TimeSeriesChart.class})
+@XmlRootElement(name = "chart")
+
 @JsonPropertyOrder({
   AbstractChart.JSON_PROPERTY_CHART_ID,
   AbstractChart.JSON_PROPERTY_TITLE,
@@ -51,9 +56,9 @@ import jakarta.validation.constraints.NotNull;
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-09-22T13:18:19.321033100+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "chartType", visible = false)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = BarChart.class, name = "BarChart"),
-  @JsonSubTypes.Type(value = LineChart.class, name = "LineChart"),
   @JsonSubTypes.Type(value = PieChart.class, name = "PieChart"),
   @JsonSubTypes.Type(value = ScatterPlot.class, name = "ScatterPlot"),
+  @JsonSubTypes.Type(value = LineChart.class, name = "LineChart"),
   @JsonSubTypes.Type(value = TimeSeriesChart.class, name = "TimeSeriesChart"),
 })
 

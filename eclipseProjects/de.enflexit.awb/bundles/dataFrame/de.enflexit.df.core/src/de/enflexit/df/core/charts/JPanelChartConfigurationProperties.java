@@ -18,10 +18,12 @@ import de.enflexit.charts.model.LineChart;
 import de.enflexit.charts.model.PieChart;
 import de.enflexit.charts.model.ScatterPlot;
 import de.enflexit.charts.model.TimeSeriesChart;
-import de.enflexit.common.swing.AwbThemeImageIcon;
-import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.ui.PropertiesConfigurationPanel;
+import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
  * The Class JPanelChartConfigurationProperties.
@@ -55,11 +57,10 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	 * Initialize.
 	 */
 	private void initialize() {
-		setLayout(new BorderLayout(0, 0));
-		add(getJToolBarChart(), BorderLayout.NORTH);
-		add(getJSplitPaneConfiguration(), BorderLayout.CENTER);
+		this.setLayout(new BorderLayout(0, 0));
+		this.add(this.getJToolBarChart(), BorderLayout.NORTH);
+		this.add(this.getJSplitPaneConfiguration(), BorderLayout.CENTER);
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesTitle()
@@ -75,9 +76,14 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	@Override
 	public boolean providesPropertiesConfiguration(DataController dataController, DefaultMutableTreeNode treeNode) {
 		
-		//System.out.println("Test, Test ... :-) ");
+		DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
 		
-		return true;
+		if (dtno instanceof DTNO_DataWorkbook) {
+			return true;
+		} else if (dtno instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+			if (dsDTNO.getTable()!=null) return true;
+		}
+		return false;
 	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
@@ -86,6 +92,7 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	public JComponent getPropertiesConfigurationPanel(DataController dataController, DefaultMutableTreeNode treeNode) {
 		this.dataController = dataController;
 		this.dataTreeNode = treeNode;
+		this.getJPanelChartList().setTreeNodeSelection(this.dataController, this.dataTreeNode);
 		return this;
 	}
 	
@@ -105,7 +112,7 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		if (jButtonBarChart == null) {
 			jButtonBarChart = new JButton();
 			jButtonBarChart.setToolTipText("Create new Bar Chart");
-			jButtonBarChart.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("chart/ChartBars16-Light.png"), BundleHelper.getImageIcon("chart/ChartBars16-Dark.png")));
+			jButtonBarChart.setIcon(ChartIconFactory.createBarChartIcon());
 			jButtonBarChart.setPreferredSize(new Dimension(26, 26));
 			jButtonBarChart.addActionListener(this);
 		}
@@ -115,7 +122,7 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		if (jButtonPieChart == null) {
 			jButtonPieChart = new JButton();
 			jButtonPieChart.setToolTipText("Create new Pie Chart");
-			jButtonPieChart.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("chart/ChartPie16-Light.png"), BundleHelper.getImageIcon("chart/ChartPie16-Dark.png")));
+			jButtonPieChart.setIcon(ChartIconFactory.createPieChartIcon());
 			jButtonPieChart.setPreferredSize(new Dimension(26, 26));
 			jButtonPieChart.addActionListener(this);
 		}
@@ -125,7 +132,7 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		if (jButtonScatterChart == null) {
 			jButtonScatterChart = new JButton();
 			jButtonScatterChart.setToolTipText("Create new Scatter Plot");
-			jButtonScatterChart.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("chart/ChartScatter16-Light.png"), BundleHelper.getImageIcon("chart/ChartScatter16-Dark.png")));
+			jButtonScatterChart.setIcon(ChartIconFactory.createScatterPlotIcon());
 			jButtonScatterChart.setPreferredSize(new Dimension(26, 26));
 			jButtonScatterChart.addActionListener(this);
 		}
@@ -135,7 +142,7 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		if (jButtonXYChart == null) {
 			jButtonXYChart = new JButton();
 			jButtonXYChart.setToolTipText("Create new XY Chart");
-			jButtonXYChart.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("chart/ChartXY16-Light.png"), BundleHelper.getImageIcon("chart/ChartXY16-Dark.png")));
+			jButtonXYChart.setIcon(ChartIconFactory.createXYChartIcon());
 			jButtonXYChart.setPreferredSize(new Dimension(26, 26));
 			jButtonXYChart.addActionListener(this);
 		}
@@ -145,7 +152,7 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		if (jButtonTimeSeriesChart == null) {
 			jButtonTimeSeriesChart = new JButton();
 			jButtonTimeSeriesChart.setToolTipText("Create new TimeSeries Chart");
-			jButtonTimeSeriesChart.setIcon(new AwbThemeImageIcon(BundleHelper.getImageIcon("chart/ChartTimeSeries16-Light.png"), BundleHelper.getImageIcon("chart/ChartTimeSeries16-Dark.png")));
+			jButtonTimeSeriesChart.setIcon(ChartIconFactory.createTimeSeriesChartIcon());
 			jButtonTimeSeriesChart.setPreferredSize(new Dimension(26, 26));
 			jButtonTimeSeriesChart.addActionListener(this);
 		}
@@ -190,16 +197,39 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		}
 	}
 	
+	/**
+	 * Returns the current data workbook.
+	 * @return the data workbook
+	 */
+	private DataWorkbook getDataWorkbook() {
+		DefaultMutableTreeNode searchNode = this.dataTreeNode;
+		if (searchNode!=null) {
+			while (searchNode.getParent()!=null) {
+				if (searchNode.getUserObject() instanceof DTNO_DataWorkbook dwDTNO) {
+					return dwDTNO.getDataWorkbook();
+				}
+				searchNode = (DefaultMutableTreeNode) searchNode.getParent();
+			}
+		}
+		return null;
+	}
+	/**
+	 * Adds the new chart.
+	 *
+	 * @param absChart the abs chart
+	 */
 	private void addNewChart(AbstractChart absChart) {
 		
 		if (absChart==null) return;
 		
-		absChart.setChartId(null);
+		DataWorkbook dw = this.getDataWorkbook();
+		
+		absChart.setChartId(this.dataController.getNewChartID(dw));
 		absChart.setTitle("New " + absChart.getClass().getSimpleName());
 		absChart.setShowLegend(true);
 
 		// --- Add to the list of charts for the workbook --------
-		
+		this.dataController.addChart(dw, absChart);
 	}
 	
 	

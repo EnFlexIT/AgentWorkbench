@@ -12,6 +12,7 @@ Import-Package: com.fasterxml.jackson.annotation,
  jakarta.persistence,
  jakarta.validation,
  jakarta.validation.constraints,
+ jakarta.xml.bind.annotation;version="[4.0.0,5.0.0)",
  org.osgi.framework,
  org.osgi.framework.wiring
 Require-Bundle: de.enflexit.db.hibernate,

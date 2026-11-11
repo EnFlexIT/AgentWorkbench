@@ -22,6 +22,7 @@ import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
@@ -76,7 +77,7 @@ public abstract class DataWorkbook implements Serializable {
 	protected List<PersistentTransformationGraph> transformationGraphs;
 	
 	@XmlElementWrapper(name = "chartList")
-	@XmlElement(name = "chart")
+	@XmlElementRef
 	protected List<AbstractChart> chartList;
 	
 	
@@ -410,16 +411,7 @@ public abstract class DataWorkbook implements Serializable {
 	public void setChartList(List<AbstractChart> chartList) {
 		this.chartList = chartList;
 	}
-	/**
-	 * Adds the specified chart to the workbook.
-	 *
-	 * @param chart the chart
-	 * @return true, if successful
-	 */
-	public boolean addChart(AbstractChart chart) {
-		if (this.getChartList().contains(chart)==true) return false;
-		return this.getChartList().add(chart);
-	}
+	
 	
 	/**
 	 * Has to save the current data workbook.

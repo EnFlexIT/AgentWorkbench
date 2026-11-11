@@ -83,6 +83,7 @@ public class TableSawChartHelper {
 	 * @return the time series chart
 	 */
 	public static final TimeSeriesChart createTimeSeriesChartFromTable(Table table, Column<?> xValueColumn, List<Column<?>> yValueColumns) {
+		
 		TimeSeriesChart timeSeriesChart = new TimeSeriesChart();
 		
 		DateTimeFormatter isoDateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;

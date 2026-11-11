@@ -307,6 +307,30 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 		return tabTitleList;
 	}
 	/**
+	 * Returns the properties configuration title selected.
+	 * @return the properties configuration title selected
+	 */
+	private String getPropertiesConfigurationTitleSelected() {
+		int index = this.getJTabbedPanePropertiesContainer().getSelectedIndex();
+		if (index >= 0) {
+		    return this.getJTabbedPanePropertiesContainer().getTitleAt(index);
+		}
+		return null;
+	}
+	/**
+	 * Sets the properties configuration title selected.
+	 * @param selectedTab the new properties configuration title selected
+	 */
+	private void setPropertiesConfigurationTitleSelected(String selectedTab) {
+		if (selectedTab==null || selectedTab.isBlank()==true) return;
+		for (int i = 0; i < this.getJTabbedPanePropertiesContainer().getTabCount(); i++) {
+			if (selectedTab.equals(this.getJTabbedPanePropertiesContainer().getTitleAt(i))) {
+				this.getJTabbedPanePropertiesContainer().setSelectedIndex(i);
+				return;
+			}
+		}
+	}
+	/**
 	 * Adds, replaces or removes a properties tab.
 	 *
 	 * @param title the title of the tab
@@ -821,19 +845,27 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 			break;
 			
 		case DataController.DC_NEW_TREE_PATH_SELECTED:
+
+			// --- Remind currently selected property tab -----------
+			String selectedTab = this.getPropertiesConfigurationTitleSelected();
 			
 			// --- Current selection has no table -------------------
 			if (this.currentDataViewConfiguration!=DataViewConfiguration.No_PropertiesConfiguration && this.isDescriptionPanelVisible()==false) {
 				// --- Properties panel should be visible! ---------- 
 				this.setDataViewConfiguration(this.currentDataViewConfiguration);
 			}
-			
+
+			// --- Update view -------------------------------------- 
 			this.setColumnDescriptionPanel(dtnoDS);
 			this.updatePropertiesConfigurationPanel(treeNode, dtnoDS);
 			this.setDetailView(dtnoDS);
 			
 			if (this.isDescriptionPanelVisible()==true && this.getJTabbedPanePropertiesContainer().getTabCount()==0) {
+				// --- Hide properties panel ------------------------
 				this.setDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
+			} else {
+				// --- Reselect property tab, if available ---------- 
+				this.setPropertiesConfigurationTitleSelected(selectedTab);
 			}
 			break;
 			
@@ -857,9 +889,6 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	 * @param dtnoDS the DTNO for the data source
 	 */
 	private void updatePropertiesConfigurationPanel(DefaultMutableTreeNode treeNode, AbstractDataSourceDTNO<?> dtnoDS) {
-		
-		// --- Build / Refresh the properties view? ----------------- 
-		if (this.currentDataViewConfiguration==DataViewConfiguration.No_PropertiesConfiguration) return; 
 		
 		// --- Get the list of the current property tabs ------------
 		List<String> tabsToRemove = this.getPropertiesConfigurationTabTitleList(); 
