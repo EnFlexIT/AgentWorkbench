@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.model.DataController;
@@ -140,6 +141,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 			}
 			
 			this.setTransformationGraphs(dbHandler.loadTransformationGraphs());
+			this.setChartList(dbHandler.loadCharts());
 		}
 		return dataSources;
 	}
@@ -150,6 +152,14 @@ public class DataWorkbook4DB extends DataWorkbook {
 	@Override
 	public boolean removeDataSource(DefaultDataSource dataSource) {
 		return super.removeDataSource(dataSource) && this.getDataWorkbookDatabaseHandler().deleteDataSource(dataSource);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.workbook.DataWorkbook#removeChart(de.enflexit.charts.model.AbstractChart)
+	 */
+	@Override
+	public boolean removeChart(AbstractChart chartToRemove) {
+		return super.removeChart(chartToRemove) && this.getDataWorkbookDatabaseHandler().deleteChart(chartToRemove);
 	}
 	
 	/* (non-Javadoc)
@@ -167,6 +177,7 @@ public class DataWorkbook4DB extends DataWorkbook {
 				this.setDataSourcesToStorageConfiguration();
 				this.getDataWorkbookDatabaseHandler().saveDataSources(this.getDataSources());
 				this.getDataWorkbookDatabaseHandler().saveTransformationGraphs(this.getTransformationGraphs());
+				this.getDataWorkbookDatabaseHandler().saveCharts(this.getChartList());
 				return true;
 			}
 			

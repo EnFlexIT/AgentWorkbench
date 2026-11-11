@@ -411,6 +411,24 @@ public abstract class DataWorkbook implements Serializable {
 	public void setChartList(List<AbstractChart> chartList) {
 		this.chartList = chartList;
 	}
+	/**
+	 * Adds the specified chart to the list of charts.
+	 *
+	 * @param newChart the new chart
+	 * @return true, if successful
+	 */
+	public boolean addChart(AbstractChart newChart) {
+		if (this.getChartList().contains(newChart)==true) return false;
+		return this.getChartList().add(newChart);
+	}
+	/**
+	 * Removes the specified chart from the list of charts.
+	 * @param newChart the new chart
+	 */
+	public boolean removeChart(AbstractChart chartToRemove) {
+		if (this.getChartList().contains(chartToRemove)==false) return false;
+		return this.getChartList().remove(chartToRemove);
+	}
 	
 	
 	/**

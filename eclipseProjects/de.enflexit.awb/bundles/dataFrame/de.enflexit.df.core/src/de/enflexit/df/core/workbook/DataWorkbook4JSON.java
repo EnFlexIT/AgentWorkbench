@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.FileSelection;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
@@ -126,8 +127,14 @@ public class DataWorkbook4JSON extends DataWorkbook {
 	 * @return the gson
 	 */
 	private static Gson createGsonForDataWorkbook4JSON() {
-		// --- Create the final Gson instance and return it 
-		return new GsonBuilder().registerTypeHierarchyAdapter(DefaultDataSource.class, new JsonAdapterForDataSource()).setPrettyPrinting().create();
+		
+		GsonBuilder builder = new GsonBuilder();
+		builder = builder.registerTypeHierarchyAdapter(DefaultDataSource.class, new JsonAdapterForDataSource());
+		builder = builder.registerTypeAdapter(AbstractChart.class, new JsonAdapterForCharts());
+		builder = builder.setPrettyPrinting();
+		
+		// --- Create the Gson instance and return it -----  
+		return builder.create();
 	}
 	
 	/**
