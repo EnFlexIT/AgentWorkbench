@@ -41,6 +41,15 @@ public class DataTransformationFilterRows extends AbstractDataTransformation {
 	private FilterExpression createFilterExpressions(String filtersString, Table table){
 		return FilterPersistenceHelper.fromJsonString(filtersString, table);
 	}
+
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#verifyParameters()
+	 */
+	@Override
+	public boolean verifyParameters() {
+		// TODO Implement filter-dependet parameter check!
+		return true;
+	}
 	
 
 }

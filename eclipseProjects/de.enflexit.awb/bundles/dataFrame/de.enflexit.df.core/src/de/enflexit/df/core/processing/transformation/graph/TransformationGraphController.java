@@ -285,6 +285,7 @@ public class TransformationGraphController {
 			if (transformationService!=null) {
 				AbstractDataTransformation  transformation = transformationService.getNewInstance();
 				transformation.setTransformationParameters(persistentEdge.getTransformationParameters());
+				transformation.setOutputTableName(persistentEdge.getResultTableName());
 				DataTableNodeTransformationResult outputNode = (DataTableNodeTransformationResult)nodesByUUID.get(persistentEdge.getOutputNodeUUID());
 				transformation.setOutputNode(outputNode);
 				for (String inputNodeUUID : persistentEdge.getInputNodeUUIDs()) {

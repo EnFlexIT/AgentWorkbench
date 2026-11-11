@@ -169,6 +169,7 @@ public class PersistentTransformationGraph implements Serializable {
 			persistentEdge.setTransformationName(transformation.getTransformationName());
 			persistentEdge.setTransformationParameters(transformation.getTransformationParameters());
 			persistentEdge.setOutputNodeUUID(transformation.getOutputNode().getDataSourceUUID());
+			persistentEdge.setResultTableName(transformation.getOutputTableName());
 			
 			// --- Collect all input nodes --------------------------
 			for (DataTableNode inputNode : transformation.getInputNodes()) {

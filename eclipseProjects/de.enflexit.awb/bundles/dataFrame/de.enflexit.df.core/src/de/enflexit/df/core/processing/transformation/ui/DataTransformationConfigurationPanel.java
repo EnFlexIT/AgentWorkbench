@@ -40,6 +40,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JTextField;
 
 /**
  * This panel provides a UI to configure data transformations.
@@ -81,6 +82,8 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	private JButton jButtonCancel;
 	
 	private AbstractDataTransformation dataTransformation;
+	private JLabel jLabelResultTableName;
+	private JTextField jTextFieldResultTableName;
 	
 	/**
 	 * Instantiates a new j panel configure data transformation.
@@ -106,9 +109,9 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.3, 0.7, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.3, 0.7, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelSelectTransformation = new GridBagConstraints();
 		gbc_jLabelSelectTransformation.anchor = GridBagConstraints.WEST;
@@ -122,36 +125,47 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		gbc_jComboBoxSelectTransformation.gridx = 1;
 		gbc_jComboBoxSelectTransformation.gridy = 0;
 		add(getJComboBoxSelectTransformation(), gbc_jComboBoxSelectTransformation);
+		GridBagConstraints gbc_jLabelResultTableName = new GridBagConstraints();
+		gbc_jLabelResultTableName.anchor = GridBagConstraints.WEST;
+		gbc_jLabelResultTableName.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelResultTableName.gridx = 0;
+		gbc_jLabelResultTableName.gridy = 1;
+		add(getJLabelResultTableName(), gbc_jLabelResultTableName);
+		GridBagConstraints gbc_jTextFieldResultTableName = new GridBagConstraints();
+		gbc_jTextFieldResultTableName.insets = new Insets(5, 5, 5, 10);
+		gbc_jTextFieldResultTableName.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jTextFieldResultTableName.gridx = 1;
+		gbc_jTextFieldResultTableName.gridy = 1;
+		add(getJTextFieldResultTableName(), gbc_jTextFieldResultTableName);
 		GridBagConstraints gbc_jLabelInputTables = new GridBagConstraints();
 		gbc_jLabelInputTables.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jLabelInputTables.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelInputTables.gridx = 0;
-		gbc_jLabelInputTables.gridy = 1;
+		gbc_jLabelInputTables.gridy = 2;
 		add(getJLabelInputTables(), gbc_jLabelInputTables);
 		GridBagConstraints gbc_jScrollPaneTablesList = new GridBagConstraints();
 		gbc_jScrollPaneTablesList.insets = new Insets(5, 5, 5, 10);
 		gbc_jScrollPaneTablesList.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneTablesList.gridx = 1;
-		gbc_jScrollPaneTablesList.gridy = 1;
+		gbc_jScrollPaneTablesList.gridy = 2;
 		add(getJScrollPaneTablesList(), gbc_jScrollPaneTablesList);
 		GridBagConstraints gbc_jLabelParameters = new GridBagConstraints();
 		gbc_jLabelParameters.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jLabelParameters.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelParameters.gridx = 0;
-		gbc_jLabelParameters.gridy = 2;
+		gbc_jLabelParameters.gridy = 3;
 		add(getJLabelParameters(), gbc_jLabelParameters);
 		GridBagConstraints gbc_jScrollPaneParametersTable = new GridBagConstraints();
 		gbc_jScrollPaneParametersTable.insets = new Insets(5, 5, 5, 10);
 		gbc_jScrollPaneParametersTable.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneParametersTable.gridx = 1;
-		gbc_jScrollPaneParametersTable.gridy = 2;
+		gbc_jScrollPaneParametersTable.gridy = 3;
 		add(this.getParametersConfigurationPanel(), gbc_jScrollPaneParametersTable);
 		GridBagConstraints gbc_jPanelButtons = new GridBagConstraints();
 		gbc_jPanelButtons.gridwidth = 2;
-		gbc_jPanelButtons.insets = new Insets(0, 0, 0, 5);
 		gbc_jPanelButtons.fill = GridBagConstraints.BOTH;
 		gbc_jPanelButtons.gridx = 0;
-		gbc_jPanelButtons.gridy = 3;
+		gbc_jPanelButtons.gridy = 4;
 		add(getJPanelButtons(), gbc_jPanelButtons);
 	}
 
@@ -322,6 +336,23 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		return tableNodesListModel;
 	}
 	
+	private JLabel getJLabelResultTableName() {
+		if (jLabelResultTableName == null) {
+			jLabelResultTableName = new JLabel("Result Table Name");
+			jLabelResultTableName.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelResultTableName;
+	}
+
+	private JTextField getJTextFieldResultTableName() {
+		if (jTextFieldResultTableName == null) {
+			jTextFieldResultTableName = new JTextField();
+			jTextFieldResultTableName.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldResultTableName.setColumns(10);
+		}
+		return jTextFieldResultTableName;
+	}
+
 	private JPanel getParametersConfigurationPanel() {
 		if (parametersConfigurationPanel==null) {
 			parametersConfigurationPanel = new JPanel();
@@ -347,7 +378,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		gbc_paramsConfigPanel.insets = new Insets(5, 5, 0, 10);
 		gbc_paramsConfigPanel.fill = GridBagConstraints.BOTH;
 		gbc_paramsConfigPanel.gridx = 1;
-		gbc_paramsConfigPanel.gridy = 2;
+		gbc_paramsConfigPanel.gridy = 3;
 		this.add(this.parametersConfigurationPanel, gbc_paramsConfigPanel);
 		this.getPropertyChangeSupport().addPropertyChangeListener(paramConfigPanel);
 		this.revalidate();
@@ -436,7 +467,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 			if (this.dataTransformation.getOutputNode()!=null) {
 				this.dataTransformation.getOutputNode().resetResultTable();
 			}
-			
+			this.dataTransformation.setOutputTableName(this.getJTextFieldResultTableName().getText());
 			this.getPropertyChangeSupport().firePropertyChange(eventID, null, this.dataTransformation);
 		} else if (ae.getSource()==this.getJButtonCancel()) {
 			if (this.dataTransformation==null) {
@@ -626,10 +657,11 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 			// --- Cannot change the input tables for an existing transformation --
 			this.getTableNodesList().setEnabled(false);
 			
+			this.getJTextFieldResultTableName().setText(transformation.getOutputTableName());
+			
 			((AbstractTransformationParameterConfigurationPanel)this.getParametersConfigurationPanel()).setConfiguredParameters(transformation.getTransformationParameters());
 		}
 		
 		
 	}
-	
 }

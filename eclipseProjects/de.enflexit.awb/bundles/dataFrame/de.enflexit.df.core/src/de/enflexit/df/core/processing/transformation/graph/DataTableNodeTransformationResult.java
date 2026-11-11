@@ -15,7 +15,7 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	private AbstractDataTransformation dataTransformation;
 	private Table dataTable;
 	private String dataSourceUUID;
-
+	
 	/**
 	 * Gets the data transformation.
 	 * @return the data transformation
@@ -61,7 +61,15 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	 */
 	@Override
 	public String getLabelText() {
-		return this.getDataTransformation().getTransformationName();
+		String outputTableName = this.getDataTransformation().getOutputTableName();
+		
+		if (outputTableName!=null && outputTableName.isBlank()==false) {
+			// --- If a name was specified for the output table, use that -----
+			return outputTableName;  
+		} else {
+			// --- If not, use the transformation name as default -------------
+			return this.getDataTransformation().getTransformationName();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -69,12 +77,20 @@ public class DataTableNodeTransformationResult extends DataTableNode {
 	 */
 	@Override
 	public String getLongText() {
-		// --- Append the input tables for the long text ------------
-		ArrayList<String> inputTables = new ArrayList<>();
-		for (DataTableNode inputNode : this.getDataTransformation().getInputNodes()) {
-			inputTables.add(inputNode.getLabelText());
+		
+		String outputTableName = this.getDataTransformation().getOutputTableName();
+		
+		if (outputTableName!=null && outputTableName.isBlank()==false) {
+			// --- If a name was specified for the output table, use that -----
+			return outputTableName;  
+		} else {
+			// --- If not, use the transformation name with appended input tables 
+			ArrayList<String> inputTables = new ArrayList<>();
+			for (DataTableNode inputNode : this.getDataTransformation().getInputNodes()) {
+				inputTables.add(inputNode.getLabelText());
+			}
+			return this.getLabelText() + " [" + String.join(", ", inputTables) + "]";
 		}
-		return this.getLabelText() + " [" + String.join(", ", inputTables) + "]";
 	}
 	
 	/**

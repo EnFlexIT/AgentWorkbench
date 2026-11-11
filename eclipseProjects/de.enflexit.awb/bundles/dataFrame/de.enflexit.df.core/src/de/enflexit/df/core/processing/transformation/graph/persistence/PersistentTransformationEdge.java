@@ -26,6 +26,9 @@ public class PersistentTransformationEdge implements Serializable {
 	@Column(name="transformation_name", nullable=false)
 	private String transformationName;
 	
+	@Column(name="result_table_name")
+	private String resultTableName;
+	
 	@Convert(converter = PropertiesConverter.class)
 	@Column(name = "transformation_parameters", columnDefinition = "TEXT")
 	private Properties transformationParameters;
@@ -53,6 +56,21 @@ public class PersistentTransformationEdge implements Serializable {
 		this.transformationName = transformationName;
 	}
 	
+	/**
+	 * Gets the result table name.
+	 * @return the result table name
+	 */
+	public String getResultTableName() {
+		return resultTableName;
+	}
+	/**
+	 * Sets the result table name.
+	 * @param resultTableName the new result table name
+	 */
+	public void setResultTableName(String resultTableName) {
+		this.resultTableName = resultTableName;
+	}
+
 	/**
 	 * Gets the transformation parameters.
 	 * @return the transformation parameters

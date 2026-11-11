@@ -11,6 +11,7 @@ import de.enflexit.df.core.processing.transformation.join.DataTransformationJoin
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import tech.tablesaw.columns.Column;
+import tech.tablesaw.joining.JoinType;
 
 import java.awt.Component;
 
@@ -31,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -49,7 +51,8 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 	
 	private JTable jTableSelectColumns;
 	private JoinConfigurationTableModel tableSelectionModel;
-	
+	private JLabel jLabelJoinType;
+	private JComboBox<JoinType> jComboBoxJoinType;
 
 	/**
 	 * Instantiates a new j panel join columns selection.
@@ -61,31 +64,59 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 	}
 	private void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
+		GridBagConstraints gbc_jLabelJoinType = new GridBagConstraints();
+		gbc_jLabelJoinType.anchor = GridBagConstraints.EAST;
+		gbc_jLabelJoinType.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelJoinType.gridx = 0;
+		gbc_jLabelJoinType.gridy = 0;
+		add(getJLabelJoinType(), gbc_jLabelJoinType);
+		GridBagConstraints gbc_jComboBoxJoinType = new GridBagConstraints();
+		gbc_jComboBoxJoinType.insets = new Insets(0, 0, 5, 5);
+		gbc_jComboBoxJoinType.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jComboBoxJoinType.gridx = 1;
+		gbc_jComboBoxJoinType.gridy = 0;
+		add(getJComboBoxJoinType(), gbc_jComboBoxJoinType);
 		GridBagConstraints gbc_jLabelHeader = new GridBagConstraints();
-		gbc_jLabelHeader.insets = new Insets(0, 0, 0, 0);
+		gbc_jLabelHeader.gridwidth = 2;
+		gbc_jLabelHeader.insets = new Insets(0, 0, 5, 5);
 		gbc_jLabelHeader.gridx = 0;
-		gbc_jLabelHeader.gridy = 0;
+		gbc_jLabelHeader.gridy = 1;
 		add(getJLabelHeader(), gbc_jLabelHeader);
 		GridBagConstraints gbc_jButtonVerify = new GridBagConstraints();
 		gbc_jButtonVerify.anchor = GridBagConstraints.EAST;
-		gbc_jButtonVerify.insets = new Insets(0, 0, 0, 0);
-		gbc_jButtonVerify.gridx = 1;
-		gbc_jButtonVerify.gridy = 0;
+		gbc_jButtonVerify.insets = new Insets(0, 0, 5, 0);
+		gbc_jButtonVerify.gridx = 2;
+		gbc_jButtonVerify.gridy = 1;
 		add(getJButtonVerify(), gbc_jButtonVerify);
 		GridBagConstraints gbc_jScrollPaneSelectionTable = new GridBagConstraints();
-		gbc_jScrollPaneSelectionTable.gridwidth = 2;
-		gbc_jScrollPaneSelectionTable.insets = new Insets(0, 0, 0, 0);
+		gbc_jScrollPaneSelectionTable.gridwidth = 3;
+		gbc_jScrollPaneSelectionTable.insets = new Insets(0, 0, 0, 5);
 		gbc_jScrollPaneSelectionTable.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneSelectionTable.gridx = 0;
-		gbc_jScrollPaneSelectionTable.gridy = 1;
+		gbc_jScrollPaneSelectionTable.gridy = 2;
 		add(getJScrollPaneSelectionTable(), gbc_jScrollPaneSelectionTable);
 	}
 	
+	private JLabel getJLabelJoinType() {
+		if (jLabelJoinType == null) {
+			jLabelJoinType = new JLabel("Join Type");
+			jLabelJoinType.setFont(new Font("Dialog", Font.PLAIN, 12));
+		}
+		return jLabelJoinType;
+	}
+	private JComboBox<JoinType> getJComboBoxJoinType() {
+		if (jComboBoxJoinType == null) {
+			jComboBoxJoinType = new JComboBox<>();
+			jComboBoxJoinType.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jComboBoxJoinType.setModel(new DefaultComboBoxModel<JoinType>(JoinType.values()));
+		}
+		return jComboBoxJoinType;
+	}
 	private JLabel getJLabelHeader() {
 		if (jLabelHeader == null) {
 			jLabelHeader = new JLabel("Select table columns for joining");
@@ -149,6 +180,8 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 	public Properties getConfiguredParameters() {
 		Properties parameters = new Properties();
 		parameters.setStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS, this.joinColumnsToString());
+		JoinType joinType = (JoinType) this.getJComboBoxJoinType().getSelectedItem();
+		parameters.setStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_TYPE, joinType.toString());
 		return parameters;
 	}
 	
@@ -195,8 +228,15 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 	@Override
 	public void setConfiguredParameters(Properties parameters) {
 		if (parameters!=null) {
+			
+			// --- Set the join columns to the table ----------------
 			String joinColumnsString = parameters.getStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_COLUMNS);
 			this.setJoinColumnsFromString(joinColumnsString);
+			
+			// --- Set the join type
+			String joinTypeString = parameters.getStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_TYPE);
+			JoinType joinType = joinTypeString!=null ? JoinType.valueOf(parameters.getStringValue(DataTransformationJoinTables.PARAM_NAME_JOIN_TYPE)) : JoinType.INNER;
+			this.getJComboBoxJoinType().setSelectedItem(joinType);
 		}
 	}
 	
@@ -462,7 +502,4 @@ public class JoinTablesConfigurationPanel extends AbstractTransformationParamete
 			return this;
 		}
 	}
-
-	
-	
 }
