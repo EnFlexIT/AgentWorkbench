@@ -13,6 +13,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
+import de.enflexit.charts.ChartDataModelHelper;
 import de.enflexit.db.hibernate.ColumnOrderingStrategyAsDefinedInClass;
 import de.enflexit.db.hibernate.HibernateDatabaseService;
 import de.enflexit.db.hibernate.HibernateUtilities;
@@ -201,6 +202,7 @@ public class SessionFactoryCreator implements HibernateDatabaseConnectionService
 		conf.addAnnotatedClass(PersistentTransformationGraph.class);
 		conf.addAnnotatedClass(PersistentTransformationNode.class);
 		conf.addAnnotatedClass(PersistentTransformationEdge.class);
+		ChartDataModelHelper.addChartDataModelClasses(conf);
 		try {
 			this.getDataWorkbook().getExtensionCache().addAnnotatedClassesToDataWorkbook4DB(this, conf);
 			

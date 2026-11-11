@@ -17,6 +17,7 @@ import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.expression.DataFrameExpressionParser;
 import de.enflexit.df.core.workbook.DataWorkbook;
+import de.enflexit.df.core.workbook.DataWorkbook4DB;
 import de.enflexit.df.core.workbook.DataWorkbookLocation;
 import de.enflexit.df.core.workbook.DataWorkbookReminder;
 import tech.tablesaw.api.Table;
@@ -512,10 +513,13 @@ public class DataController {
 	/**
 	 * Returns a new chart ID for the specified {@link DataWorkbook}.
 	 *
-	 * @param dw the DataWorkbook
+	 * @param dw the actual DataWorkbook
 	 * @return the new chart ID
 	 */
-	public int getNewChartID(DataWorkbook dw) {
+	public Integer getNewChartID(DataWorkbook dw) {
+		
+		if (dw instanceof DataWorkbook4DB) return null;
+		
 		int maxID = 0;
 		for (AbstractChart chart : dw.getChartList()) {
 			maxID = Math.max(chart.getChartId(), maxID);
@@ -530,9 +534,7 @@ public class DataController {
 	 * @return true, if successful
 	 */
 	public boolean addChart(DataWorkbook dw, AbstractChart newChart) {
-		
-		if (dw.getChartList().contains(newChart)==true) return false;
-		boolean success = dw.getChartList().add(newChart);
+		boolean success = dw.addChart(newChart);
 		if (success==true) {
 			this.firePropertyChange(DC_CHART_ADDED, null, AffectedDataObjects.create(dw, newChart));
 		}
@@ -545,9 +547,7 @@ public class DataController {
 	 * @param chart the chart to delete
 	 */
 	public boolean removeChart(DataWorkbook dw, AbstractChart chart) {
-		
-		if (dw.getChartList().contains(chart)==false) return false;
-		boolean success = dw.getChartList().remove(chart);
+		boolean success = dw.removeChart(chart);
 		if (success==true) {
 			this.firePropertyChange(DC_CHART_REMOVED, AffectedDataObjects.create(dw, chart), null);
 		}

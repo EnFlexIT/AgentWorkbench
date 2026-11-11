@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.df.core.dataSources.DataSourceHelper;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
 import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationGraph;
@@ -250,6 +251,15 @@ public class DataWorkbookDatabaseHandler {
 		}
 	}
 	/**
+	 * Deletes the specified DataSource from the database.
+	 * @param dataSource the data source
+	 */
+	public boolean deleteDataSource(DefaultDataSource dataSource) {
+		return this.dbDeleteEntityInstance(DataSourceHelper.toDefaultDataSource(dataSource));
+	}
+	
+	
+	/**
 	 * Saves the transformation graphs from this workbook.
 	 * @param transformationGraphs the transformation graphs
 	 */
@@ -259,7 +269,6 @@ public class DataWorkbookDatabaseHandler {
 			this.dbSaveOrUpdateEntityInstance(transformationGraph, hasDBPrimarKey);
 		}
 	}
-	
 	/**
 	 * Loads the transformation graphs from the database.
 	 * @return the list
@@ -267,12 +276,33 @@ public class DataWorkbookDatabaseHandler {
 	public List<PersistentTransformationGraph> loadTransformationGraphs(){
 		return dbLoadEntityInstanceList(PersistentTransformationGraph.class);
 	}
+	
+	
 	/**
-	 * Deletes the specified DataSource from the database.
-	 * @param dataSource the data source
+	 * Saves the specified chart list to the database.
+	 * @param chartList the chart list
 	 */
-	public boolean deleteDataSource(DefaultDataSource dataSource) {
-		return this.dbDeleteEntityInstance(DataSourceHelper.toDefaultDataSource(dataSource));
+	public void saveCharts(List<AbstractChart> chartList) {
+		for (AbstractChart chart : chartList) {
+			boolean hasDBPrimarKey = chart.getChartId()!=null;
+			this.dbSaveOrUpdateEntityInstance(chart, hasDBPrimarKey);
+		}
+	}
+	/**
+	 * Loads charts from the database.
+	 * @return the list
+	 */
+	public List<AbstractChart> loadCharts() {
+		return dbLoadEntityInstanceList(AbstractChart.class);
+	}
+	/**
+	 * Deletes the specified chart from the database.
+	 *
+	 * @param chartToRemove the chart to remove
+	 * @return true, if successful
+	 */
+	public boolean deleteChart(AbstractChart chartToRemove) {
+		return this.dbDeleteEntityInstance(chartToRemove);
 	}
 	
 }
