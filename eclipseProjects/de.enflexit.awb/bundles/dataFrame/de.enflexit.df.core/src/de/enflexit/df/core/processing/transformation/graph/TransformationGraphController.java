@@ -2,14 +2,20 @@ package de.enflexit.df.core.processing.transformation.graph;
 
 
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.processing.ProcessingDataSourceIntegration;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationNode;
@@ -26,12 +32,17 @@ import tech.tablesaw.api.Table;
  * This class manages the transformation graph.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class TransformationGraphController {
+public class TransformationGraphController implements PropertyChangeListener {
 
 	private ObservableGraph<DataTableNode, DataTransformationEdge> transformationGraph;
 	private StaticLayout<DataTableNode, DataTransformationEdge> graphLayout;
 	
 	private DataController dataController;
+	
+	private ReentrantLock lockWaitForDTNOs;
+	private Condition conditionDtnoAvailable;
+	
+	private boolean isDebug = false;
 	
 	/**
 	 * Instantiates a new transformation graph controller.
@@ -39,6 +50,7 @@ public class TransformationGraphController {
 	 */
 	public TransformationGraphController(DataController dataController) {
 		this.dataController = dataController;
+		this.dataController.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -257,8 +269,115 @@ public class TransformationGraphController {
 		return null;
 	}
 	
-	public void loadPersistentGraph(PersistentTransformationGraph persistentGraph) {
-		// --- Create the nodes first, organized by their UUIDs ----- 
+	/**
+	 * Gets the transformation service for the provided transformation name.
+	 * @param transformationName the transformation name
+	 * @return the transformation service
+	 */
+	private DataTransformationService getTransformationService(String transformationName) {
+		List<DataTransformationService> services = ServiceFinder.findServices(DataTransformationService.class);
+		for (DataTransformationService service : services) {
+			if (service.getName().equals(transformationName)) {
+				return service;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the data transformation that leads to the provided data table node.
+	 * @param tableNode the table node
+	 * @return the transformation for node
+	 */
+	public AbstractDataTransformation getTransformationForNode(DataTableNode tableNode) {
+		if (tableNode instanceof DataTableNodeTransformationResult resultNode) {
+			// --- Get the first incoming edge (the transformation is the same instance for all edges) 
+			DataTransformationEdge inEdge = this.getTransformationGraph().getInEdges(resultNode).iterator().next();
+			return inEdge.getDataTransformation();
+		} else {
+			// --- No transformation result node -> no transformation ---------
+			return null;
+		}
+	}
+	
+	/**
+	 * Determines the UUIDs of all data sources that are required for this transformation graph.
+	 * @param persTransGraph the transformation graph definition.
+	 * @return the UUIDs of the required data sources
+	 */
+	private ArrayList<String> determineRequiredDataSourceUUIDs(PersistentTransformationGraph persTransGraph){
+		ArrayList<String> requiredDataSourceUUIDs = new ArrayList<String>();
+		for (PersistentTransformationNode dataNode : persTransGraph.getTableNodes()) {
+			if (dataNode.getNodeType()==NodeType.DATA_SOURCE) {
+				requiredDataSourceUUIDs.add(dataNode.getDataSourceUUID());
+			}
+		}
+		return requiredDataSourceUUIDs;
+	};
+	
+	/**
+	 * Checks if the  DTNOs with the specified UUIDs are available.
+	 * @param uuidsLists the UUIDs to check
+	 * @return true, if successful
+	 */
+	private boolean checkDTNOsAvailable(ArrayList<String> uuidsLists) {
+		
+		for (String uuid : uuidsLists) {
+			AbstractDataSourceDTNO<?> dtno = dataController.getDataTreeModel().getDataSourceDtnoByExpression("sUUID('" + uuid + "')");
+			if (dtno==null) {
+				if (this.isDebug==true) System.out.println("[" + this.getClass().getSimpleName() + "] DTNO not available for " + uuid);
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Creates an actual transformation graph from the provided {@link PersistentTransformationGraph}.
+	 * @param persistentGraph the persistent graph
+	 */
+	public void loadPersistentGraph(PersistentTransformationGraph persistentGraph, ProcessingDataSourceIntegration dsIntegration) {
+		this.loadGraphInThread(persistentGraph, dsIntegration);
+	}
+	
+	/**
+	 * Starts a thread to load a persisted transformation graph.
+	 * @param persistentGraph the persistent graph
+	 */
+	private void loadGraphInThread(PersistentTransformationGraph persistentGraph, ProcessingDataSourceIntegration dsIntegration) {
+		Thread loadGraphThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				TransformationGraphController.this.loadGraph(persistentGraph, dsIntegration);
+			}
+		}, "PersistenceGraphLoader");
+		loadGraphThread.start();
+	}
+	
+	/**
+	 * Performs the actual graph loading.
+	 * @param persistentGraph the persistent graph
+	 */
+	private void loadGraph(PersistentTransformationGraph persistentGraph, ProcessingDataSourceIntegration dsIntegration) {
+		
+		// --- Wait until all required DTNOs are available --------------------
+		ArrayList<String> requiredDataSourceUUIDs = this.determineRequiredDataSourceUUIDs(persistentGraph);
+		while (this.checkDTNOsAvailable(requiredDataSourceUUIDs)==false) {
+			try {
+				if (this.isDebug==true) System.out.println("[" + this.getClass().getSimpleName() + "] Missing DTNOs, waiting...");
+				this.getLockWaitForDTNOs().lock();
+				this.getConditionDtnoAvailable().await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} finally {
+				this.getLockWaitForDTNOs().unlock();
+			}
+		}
+		
+		if (this.isDebug==true) System.out.println("[" + this.getClass().getSimpleName() + "] All required DTNOs available, creating the graph");
+		
+		// --- Create the nodes first, organized by their UUIDs ---------------
 		HashMap<String, DataTableNode> nodesByUUID = new HashMap<String, DataTableNode>();
 		for (PersistentTransformationNode persistentNode : persistentGraph.getTableNodes()) {
 			DataTableNode tableNode = null;
@@ -298,37 +417,46 @@ public class TransformationGraphController {
 				outputNode.setDataTransformation(transformation);
 			}
 		}
+		
+		dsIntegration.addDataTreeSubNodes();
+		
 	}
 	
 	/**
-	 * Gets the transformation service for the provided transformation name.
-	 * @param transformationName the transformation name
-	 * @return the transformation service
+	 * Gets the lock that is required for waiting for new DTNOs.
+	 * @return the lock wait for DTNOs
 	 */
-	private DataTransformationService getTransformationService(String transformationName) {
-		List<DataTransformationService> services = ServiceFinder.findServices(DataTransformationService.class);
-		for (DataTransformationService service : services) {
-			if (service.getName().equals(transformationName)) {
-				return service;
-			}
+	private synchronized ReentrantLock getLockWaitForDTNOs() {
+		if (lockWaitForDTNOs==null) {
+			lockWaitForDTNOs = new ReentrantLock();
 		}
-		return null;
+		return lockWaitForDTNOs;
 	}
 	
 	/**
-	 * Gets the transformation for node.
-	 * @param tableNode the table node
-	 * @return the transformation for node
+	 * Gets the condition that will be triggered when a new data source was loaded. 
+	 * @return the condition dtno available
 	 */
-	public AbstractDataTransformation getTransformationForNode(DataTableNode tableNode) {
-		if (tableNode instanceof DataTableNodeTransformationResult resultNode) {
-			// --- Get the first incoming edge (the transformation is the same instance for all edges) 
-			DataTransformationEdge inEdge = this.getTransformationGraph().getInEdges(resultNode).iterator().next();
-			return inEdge.getDataTransformation();
-		} else {
-			// --- No transformation result node -> no transformation ---------
-			return null;
+	private synchronized Condition getConditionDtnoAvailable() {
+		if (conditionDtnoAvailable==null) {
+			conditionDtnoAvailable = this.getLockWaitForDTNOs().newCondition();
+		}
+		return conditionDtnoAvailable;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		if (pce.getPropertyName().equals(DataController.DC_DATA_LOADED)) {
+			AffectedDataObjects ados = (AffectedDataObjects) pce.getNewValue();
+			if (this.isDebug==true) System.out.println("[" + this.getClass().getSimpleName() + "] Received data source loaded event for " + ados.getDataTreeNodeObject().getShortUUID() + "(" + ados.getDataTreeNodeObject().getCaption() + ")");
+			
+			this.getLockWaitForDTNOs().lock();
+			this.getConditionDtnoAvailable().signal();
+			this.getLockWaitForDTNOs().unlock();
 		}
 	}
-
+	
 }
