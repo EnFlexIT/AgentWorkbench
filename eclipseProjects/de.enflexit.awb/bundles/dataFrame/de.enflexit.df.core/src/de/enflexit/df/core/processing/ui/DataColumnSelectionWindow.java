@@ -11,7 +11,7 @@ import javax.swing.JWindow;
 import de.enflexit.common.swing.CheckBoxList;
 import de.enflexit.common.swing.CheckBoxListSelectionEvent;
 import de.enflexit.common.swing.CheckBoxListSelectionListener;
-import de.enflexit.df.core.charts.TableSawChartHelper;
+import de.enflexit.df.core.charts.ChartHelper;
 import de.enflexit.df.core.charts.TableSawChartViewPanel;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
@@ -221,7 +221,7 @@ public class DataColumnSelectionWindow extends JWindow implements ActionListener
 		this.getJListColumnSelection().clearSelection();
 		ArrayList<String> columnNames = new ArrayList<String>();
 		for (Column<?> column : table.columns()) {
-			if (TableSawChartHelper.isTemporalColumn(column)==false) {
+			if (ChartHelper.isTemporalColumn(column)==false) {
 				columnNames.add(column.name());
 			}
 		}

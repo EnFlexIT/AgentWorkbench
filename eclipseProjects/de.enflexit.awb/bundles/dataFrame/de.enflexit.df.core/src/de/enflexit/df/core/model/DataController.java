@@ -57,8 +57,11 @@ public class DataController {
 	public static final String DC_CLOSED_DATA_SOURCE = "DC_CLOSED_DATA_SOURCE";
 	public static final String DC_REMOVED_DATA_SOURCE = "DC_REMOVED_DATA_SOURCE";
 
+	public static final String DC_CHART_SELECTED = "DC_CHART_SELECTED";
 	public static final String DC_CHART_ADDED = "DC_CHART_ADDED";
 	public static final String DC_CHART_REMOVED = "DC_CHART_REMOVED";
+	
+	public static final String DC_CHART_EDITED_TITLE_OR_LABEL = "DC_CHART_EDITED_TITLE_OR_LABEL";
 	
 	public static final String DC_NEW_TREE_PATH_SELECTED = "DC_NEW_TREE_PATH_SELECTED";
 	public static final String DC_DATA_SOURCE_CONFIGURATION_SHOW = "DC_DATA_SOURCE_CONFIGURATION_SHOW";

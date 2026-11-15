@@ -20,7 +20,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import de.enflexit.df.core.charts.TableSawChartHelper;
+import de.enflexit.df.core.charts.ChartHelper;
 import de.enflexit.df.core.charts.TableSawChartViewPanel;
 import de.enflexit.df.core.model.TablesawTableModel;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
@@ -188,7 +188,7 @@ public class TableAndChartViewPanel extends JPanel implements ActionListener {
 	 */
 	private Column<?> findTemporalColumn(Table table){
 		for (Column<?> column : table.columns()) {
-			if (TableSawChartHelper.isTemporalColumn(column)){
+			if (ChartHelper.isTemporalColumn(column)){
 				return column;
 			}
 		}

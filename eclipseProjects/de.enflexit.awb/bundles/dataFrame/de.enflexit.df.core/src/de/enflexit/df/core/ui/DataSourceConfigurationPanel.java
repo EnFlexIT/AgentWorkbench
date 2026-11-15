@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import de.enflexit.df.core.extension.PropertiesConfigurationPanelService;
+
 /**
  * The Interface DataSourceConfigurationPanel.
  * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface DataSourceConfigurationPanel extends PropertiesConfigurationPanel {
+public interface DataSourceConfigurationPanel extends PropertiesConfigurationPanelService {
 
 	/**
 	 * Has to return the configuration toolbar components.

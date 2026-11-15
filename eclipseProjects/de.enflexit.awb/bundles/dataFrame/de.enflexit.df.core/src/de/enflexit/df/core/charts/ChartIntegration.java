@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -19,20 +20,23 @@ import de.enflexit.charts.model.PieChart;
 import de.enflexit.charts.model.ScatterPlot;
 import de.enflexit.charts.model.TimeSeriesChart;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.extension.DetailViewPanelService;
+import de.enflexit.df.core.extension.PropertiesConfigurationPanelService;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
-import de.enflexit.df.core.ui.PropertiesConfigurationPanel;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
- * The Class JPanelChartConfigurationProperties.
+ * The Class ChartIntegration.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelChartConfigurationProperties extends JPanel implements PropertiesConfigurationPanel, ActionListener {
+public class ChartIntegration extends JPanel implements PropertiesConfigurationPanelService, DetailViewPanelService, ActionListener {
 
 	private static final long serialVersionUID = -890032683256656426L;
+	
+	private ChartProcessor chartProcessor;
 	
 	private DataController dataController;
 	private DefaultMutableTreeNode dataTreeNode;
@@ -43,14 +47,16 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	private JButton jButtonScatterChart;
 	private JButton jButtonXYChart;
 	private JButton jButtonTimeSeriesChart;
+	
 	private JSplitPane jSplitPaneConfiguration;
 	private JPanelChartList jPanelChartList;
+	private JPanelChartConfiguration jPanelChartConfiguration;
 	
 	
 	/**
 	 * Instantiates a new j panel chart configuration properties.
 	 */
-	public JPanelChartConfigurationProperties() {
+	public ChartIntegration() {
 		this.initialize();
 	}
 	/**
@@ -63,7 +69,7 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesTitle()
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#getPropertiesTitle()
 	 */
 	@Override
 	public String getPropertiesTitle() {
@@ -71,13 +77,14 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
 	 */
 	@Override
 	public boolean providesPropertiesConfiguration(DataController dataController, DefaultMutableTreeNode treeNode) {
 		
+		if (treeNode==null) return false;
+
 		DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
-		
 		if (dtno instanceof DTNO_DataWorkbook) {
 			return true;
 		} else if (dtno instanceof AbstractDataSourceDTNO<?> dsDTNO) {
@@ -86,15 +93,49 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		return false;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
 	 */
 	@Override
 	public JComponent getPropertiesConfigurationPanel(DataController dataController, DefaultMutableTreeNode treeNode) {
 		this.dataController = dataController;
 		this.dataTreeNode = treeNode;
 		this.getJPanelChartList().setTreeNodeSelection(this.dataController, this.dataTreeNode);
+		this.getJPanelChartConfiguration().setTreeNodeSelection(this.dataController, this.dataTreeNode);
 		return this;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DetailViewPanelService#providesDetailView(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public boolean providesDetailView(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return this.providesPropertiesConfiguration(dataController, treeNode);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DetailViewPanelService#getDetailViewPanels(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public List<DetailViewTabComponent> getDetailViewPanels(DataController dataController, DefaultMutableTreeNode treeNode) {
+		this.dataController = dataController;
+		this.dataTreeNode = treeNode;
+		if (this.dataController!=null && this.dataTreeNode!=null) {
+			return this.getChartProcessor().getDetailViewPanels(this.dataController, this.getDataWorkbook());
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the chart processor that contains all .
+	 * @return the chart processor
+	 */
+	public ChartProcessor getChartProcessor() {
+		if (chartProcessor==null) {
+			chartProcessor = new ChartProcessor();
+		}
+		return chartProcessor;
+	}
+	
 	
 	private JToolBar getJToolBarChart() {
 		if (jToolBarChart == null) {
@@ -163,10 +204,11 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	private JSplitPane getJSplitPaneConfiguration() {
 		if (jSplitPaneConfiguration == null) {
 			jSplitPaneConfiguration = new JSplitPane();
-			jSplitPaneConfiguration.setResizeWeight(0.5);
+			jSplitPaneConfiguration.setResizeWeight(0.3);
 			
 			jSplitPaneConfiguration.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			jSplitPaneConfiguration.setTopComponent(this.getJPanelChartList());
+			jSplitPaneConfiguration.setBottomComponent(this.getJPanelChartConfiguration());
 		}
 		return jSplitPaneConfiguration;
 	}
@@ -175,6 +217,12 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 			jPanelChartList = new JPanelChartList();
 		}
 		return jPanelChartList;
+	}
+	private JPanelChartConfiguration getJPanelChartConfiguration() {
+		if (jPanelChartConfiguration==null) {
+			jPanelChartConfiguration = new JPanelChartConfiguration();
+		}
+		return jPanelChartConfiguration;
 	}
 	
 	
@@ -231,6 +279,5 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 		// --- Add to the list of charts for the workbook --------
 		this.dataController.addChart(dw, absChart);
 	}
-	
 	
 }
