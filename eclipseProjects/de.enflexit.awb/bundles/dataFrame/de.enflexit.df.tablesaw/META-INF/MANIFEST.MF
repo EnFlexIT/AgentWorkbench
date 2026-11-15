@@ -75,8 +75,7 @@ Bundle-ClassPath: .,
  lib/univocity-parsers-2.9.1.jar,
  lib/xmlbeans-5.3.0.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Require-Bundle: com.ibm.icu,
- it.unimi.dsi.fastutil,
+Require-Bundle: it.unimi.dsi.fastutil,
  org.apache.commons.commons-codec,
  org.apache.commons.commons-collections4,
  org.apache.commons.commons-compress,

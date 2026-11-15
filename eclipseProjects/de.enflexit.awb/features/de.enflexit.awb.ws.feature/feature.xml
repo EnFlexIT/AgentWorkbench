@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.feature"
       label="AWB Web Server-Feature"
-      version="12.1.6.qualifier"
+      version="12.1.12.qualifier"
       provider-name="EnFlex.IT"
       plugin="de.enflexit.awb.ws.core"
       os="linux,macosx,win32"

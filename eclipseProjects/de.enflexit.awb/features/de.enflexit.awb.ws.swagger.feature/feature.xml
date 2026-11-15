@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.swagger.feature"
       label="AWB Swagger-Feature"
-      version="2.2.15.qualifier"
+      version="2.2.55.qualifier"
       provider-name="EnFlex.IT">
 
    <description url="http://www.example.com/description">

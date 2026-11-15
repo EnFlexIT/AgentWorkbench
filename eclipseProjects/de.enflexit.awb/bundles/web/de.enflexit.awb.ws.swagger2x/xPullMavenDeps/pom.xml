@@ -6,7 +6,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<swagger.version>2.2.15</swagger.version>
+		<swagger.version>2.2.55</swagger.version>
 	</properties>
 
 	<dependencies>

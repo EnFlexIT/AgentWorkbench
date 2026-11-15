@@ -14,6 +14,7 @@ Import-Package: de.enflexit.awb.core.classLoadService,
  de.enflexit.awb.desktop.project,
  de.enflexit.awb.simulation.balancing,
  de.enflexit.awb.simulation.environment.time,
+ de.enflexit.common.classLoadService,
  jade.content.onto,
  jade.core
 Require-Bundle: de.enflexit.df.core
