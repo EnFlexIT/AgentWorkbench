@@ -94,7 +94,7 @@ public class ProcessingDataSourceIntegration extends AbstractDataSourceIntegrati
 			detailsViewPanel = new TransformationGraphEditorPanel(this.getDataController());
 			PersistentTransformationGraph persTransGraph = this.getTransformationGraph();
 			if (persTransGraph!=null) {
-				this.getGraphController().loadPersistentGraph(persTransGraph);
+				this.getGraphController().loadPersistentGraph(persTransGraph, this);
 			}
 		}
 		return detailsViewPanel;

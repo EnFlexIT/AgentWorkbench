@@ -69,6 +69,12 @@ public class CheckBoxList<E> extends JList<E> {
 	@Override
     public void processMouseEvent(MouseEvent me) {
 		
+		// --- Ignore mouse interaction if list is disabled -------------------
+		if (this.isEnabled()==false) {
+			me.consume();
+			return;
+		}
+		
 		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me)) {
 
 			int index = this.locationToIndex(me.getPoint());
@@ -112,7 +118,7 @@ public class CheckBoxList<E> extends JList<E> {
 	@Override
 	protected void processMouseMotionEvent(MouseEvent me) {
 		// --- Catch drag events to prevent unwanted movements from affecting the selection behaviour. 
-		if (me.getID() == MouseEvent.MOUSE_DRAGGED) {
+		if (this.isEnabled()==false || me.getID() == MouseEvent.MOUSE_DRAGGED) {
 			me.consume();
 	        return;
 	    }

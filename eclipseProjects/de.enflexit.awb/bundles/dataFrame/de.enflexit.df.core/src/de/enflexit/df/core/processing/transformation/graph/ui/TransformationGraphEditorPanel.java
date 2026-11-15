@@ -112,12 +112,6 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		this.initialize();
 	}
 	
-	public TransformationGraphEditorPanel(DataController dataController, Graph<DataTableNode, DataTransformationEdge> transformationGraph) {
-		this.dataController = dataController;
-		this.transformationGraph = transformationGraph;
-		this.initialize();
-	}
-	
 	/**
 	 * Initializes the UI elements.
 	 */
@@ -227,6 +221,10 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		return new DataTransformaitonTableDetailsViewPanel(tableNode);
 	}
 	
+	/**
+	 * Gets the transformation configuration panel.
+	 * @return the transformation panel
+	 */
 	private DataTransformationConfigurationPanel getTransformationPanel() {
 		if (transformationPanel==null) {
 			transformationPanel = new DataTransformationConfigurationPanel(this);
@@ -255,6 +253,63 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	public DataController getDataController() {
 		return dataController;
 	}
+	
+	/**
+	 * Gets the data source integration.
+	 * @return the data source integration
+	 */
+	private ProcessingDataSourceIntegration getDataSourceIntegration() {
+		if (dataSourceIntegration==null) {
+			dataSourceIntegration = (ProcessingDataSourceIntegration) this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSourceIntegration();
+		}
+		return dataSourceIntegration;
+	}
+	
+	/**
+	 * Sets the transformation graph.
+	 *
+	 * @param transformationGraph the transformation graph
+	 */
+	public void setTransformationGraph(Graph<DataTableNode, DataTransformationEdge> transformationGraph) {
+		this.getGraphController().setTransformationGraph(transformationGraph);
+		this.getVisualizationViewer().setGraphLayout(this.getGraphController().getGraphLayout());
+		this.getVisualizationViewer().repaint();
+	}
+	
+	/**
+	 * Gets the transformation processor.
+	 * @return the transformation processor
+	 */
+	public DataTransformationProcessor getTransformationProcessor() {
+		if (transformationVisitor==null) {
+			transformationVisitor = new DataTransformationProcessor(this.getGraphController());
+		}
+		return transformationVisitor;
+	}
+
+	/**
+	 * Checks if the graph has pending changes.
+	 * @return true, if is graph changed
+	 */
+	public boolean isGraphChanged() {
+		return graphChanged;
+	}
+	/**
+	 * Sets the graph changed status of the graph, adjusts button states accordingly.
+	 * @param graphChanged the new graph changed
+	 */
+	protected void setGraphChanged(boolean graphChanged) {
+		if (graphChanged!=this.isGraphChanged()) {
+			this.graphChanged = graphChanged;
+			this.getJButtonApplyChanges().setEnabled(graphChanged);
+//			this.getJButtonRevertChanges().setEnabled(graphChanged);
+		}
+	}
+	
+	
+	// ----------------------------------------------------
+	// --- Methods related to the visualization viewer ----
+	
 	/**
 	 * Gets the visualization viewer.
 	 * @return the visualization viewer
@@ -295,6 +350,49 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	}
 	
 	/**
+	 * Gets a {@link PluggableGraphMouse} that only uses the zoom plug-in ----- 
+	 * @return the zoom only graph mouse
+	 */
+	private PluggableGraphMouse getZoomOnlyGraphMouse() {
+		PluggableGraphMouse graphMouse = new PluggableGraphMouse();
+		graphMouse.add(new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, 0.9f, 1.1f));
+		return graphMouse;
+	}
+	
+	/**
+	 * Creates a HTML version of the label text for centered display with line breaks.
+	 * @param labelString the label string
+	 * @return the label renderer HTML string
+	 */
+	private String getLabelRendererHTMLString(String labelString, boolean isPicked) {
+		String colorString = isPicked==true ? HTML_COLOR_LABEL_PICKED : HTML_COLOR_LABEL_NORMAL;
+		return "<html><div style='width:130px; text-align:center; font-weight: bold; color: " + colorString + "'>"
+		        + escapeHtml(labelString)
+		        + "</div></html>";
+	}
+	
+	/**
+	 * Escapes special characters for HTML.
+	 * @param text the original text
+	 * @return the modified text
+	 */
+	private static String escapeHtml(String text) {
+	    if (text == null) {
+	        return "";
+	    }
+
+	    return text
+	        .replace("&", "&amp;")
+	        .replace("<", "&lt;")
+	        .replace(">", "&gt;")
+	        .replace("\"", "&quot;")
+	        .replace("'", "&#39;");
+	}
+	
+	// --------------------------------------------------------------
+	// --- Methods related to positioning new nodes -----------------
+	
+	/**
 	 * Gets the next free node position.
 	 * @return the next free node position
 	 */
@@ -332,28 +430,114 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		}
 		
 		return null;
-		
 	}
 	
 	/**
-	 * Gets the data source integration.
-	 * @return the data source integration
+	 * Determines the position for the output node of a data transformation in relation to the input nodes.
+	 * @param dataTransformation the data transformation
+	 * @return the position
 	 */
-	private ProcessingDataSourceIntegration getDataSourceIntegration() {
-		if (dataSourceIntegration==null) {
-			dataSourceIntegration = (ProcessingDataSourceIntegration) this.getDataController().getSelectionModel().getSelectedDataTreeNodeDataSource().getDataSourceIntegration();
+	private Point2D determineOutputNodePosition(AbstractDataTransformation dataTransformation) {
+		
+		// --- Distance from the calculated reference coordinate ----
+		double defaultDistanceX = 0;
+		double defaultDistanceY = 150;
+		
+		double meanX = 0;
+		double maxY = 0;
+
+		// --- Calculate reference coordinate: Mean of X values, max of Y values
+		for (DataTableNode inputNode : dataTransformation.getInputNodes()) {
+			meanX += this.getGraphController().getGraphLayout().getX(inputNode);
+			
+			double nodeY = this.getGraphController().getGraphLayout().getY(inputNode);
+			maxY = (maxY<nodeY ? nodeY : maxY);
 		}
-		return dataSourceIntegration;
+		meanX /= dataTransformation.getInputNodes().size();
+		
+		return new Point2D.Double(meanX+defaultDistanceX, maxY+defaultDistanceY);
 	}
 
 	/**
-	 * Shows the data source selection dialog.
+	 * Shows the data source selection panel.
 	 */
 	private void showDataSourceSelectionPanel() {
 		DataSourceSelectionPanel dataSelectionPanel = new DataSourceSelectionPanel(this.getDataController(), this);
 		this.getJSplitPaneMainView().setRightComponent(dataSelectionPanel);
 		this.getJSplitPaneMainView().setDividerLocation(0.8);
 	}
+	
+	
+
+	/**
+	 * Update buttons state.
+	 */
+	private void updateButtonsState() {
+		this.getjButtonAddDataTransformation().setEnabled(this.getGraphController().getTransformationGraph().getVertexCount()>0);
+	}
+	
+	// --------------------------------------------------------------
+	// --- Methods related to adding new elements to the graph ------
+	
+	/**
+	 * Adds a new graph node for the provided data source at the specified position.
+	 * @param dataSourceDTNO the data source DTNO
+	 */
+	public void addDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
+		this.addDataSourceGraphNode(dataSourceDTNO, this.getNextFreeNodePosition());
+	}
+	
+	/**
+	 * Adds a new graph node for the provided data source. The position will be determined automatically.
+	 * @param dataSourceDTNO the data source DTNO
+	 * @param position the position
+	 */
+	public void addDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO, Point2D position) {
+		this.getGraphController().addDataTableNode(dataSourceDTNO, position);
+		this.setGraphChanged(true);
+	}
+	
+	/**
+	 * Removes the graph node for the provided data source from the graph.
+	 * @param dataSourceDTNO the data source DTNO
+	 * @return true, if the node could be removed
+	 */
+	public boolean removeDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
+		boolean couldBeRemoved = this.getGraphController().removeDataTableNode(dataSourceDTNO)==true;
+		if (couldBeRemoved) {
+			this.setGraphChanged(true);
+		}
+		return couldBeRemoved;
+	}
+
+	/**
+	 * Adds a new data transformation to the graph.
+	 * @param newTransformation the new transformation
+	 */
+	public void addNewDataTransformation(AbstractDataTransformation newTransformation) {
+		
+		DataTableNodeTransformationResult outputNode = new DataTableNodeTransformationResult();
+		newTransformation.setOutputNode(outputNode);
+		outputNode.setDataTransformation(newTransformation);
+		// --- Determine a node position in relation to the input nodes -------
+		Point2D intendedNodePosition = this.determineOutputNodePosition(newTransformation);
+		// --- If already occupied, find a free spot --------------------------
+		Point2D finalNodePosition = this.getNextFreeNodePosition(intendedNodePosition);
+		outputNode.setPosition(finalNodePosition);
+		
+		this.getGraphController().addDataTableNode(outputNode);
+		
+		for (DataTableNode inputNode : newTransformation.getInputNodes()) {
+			DataTransformationEdge transformationEdge = new DataTransformationEdge();
+			transformationEdge.setDataTransformation(newTransformation);
+			
+			this.getGraphController().getTransformationGraph().addEdge(transformationEdge, inputNode, outputNode);
+		}
+		this.setGraphChanged(true);
+	}
+	
+	// --------------------------------------------------------------
+	// --- Methods related to removing elements from the graph ------
 	
 	/**
 	 * Removes the currently selected element from the transformation graph.
@@ -415,134 +599,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			return true;
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see edu.uci.ics.jung.graph.event.GraphEventListener#handleGraphEvent(edu.uci.ics.jung.graph.event.GraphEvent)
-	 */
-	@Override
-	public void handleGraphEvent(GraphEvent<DataTableNode, DataTransformationEdge> arg0) {
-		this.getVisualizationViewer().repaint();
-		this.updateButtonsState();
-	}
 	
-	/**
-	 * Update buttons state.
-	 */
-	private void updateButtonsState() {
-		this.getjButtonAddDataTransformation().setEnabled(this.getGraphController().getTransformationGraph().getVertexCount()>0);
-	}
-	
-	/**
-	 * Adds a new graph node for the provided data source at the specified position.
-	 * @param dataSourceDTNO the data source DTNO
-	 */
-	public void addDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
-		this.addDataSourceGraphNode(dataSourceDTNO, this.getNextFreeNodePosition());
-	}
-	
-	/**
-	 * Adds a new graph node for the provided data source. The position will be determined automatically.
-	 * @param dataSourceDTNO the data source DTNO
-	 * @param position the position
-	 */
-	public void addDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO, Point2D position) {
-		this.getGraphController().addDataTableNode(dataSourceDTNO, position);
-		this.setGraphChanged(true);
-	}
-	
-	/**
-	 * Removes the graph node for the provided data source from the graph.
-	 * @param dataSourceDTNO the data source DTNO
-	 * @return true, if the node could be removed
-	 */
-	public boolean removeDataSourceGraphNode(AbstractDataSourceDTNO<?> dataSourceDTNO) {
-		boolean couldBeRemoved = this.getGraphController().removeDataTableNode(dataSourceDTNO)==true;
-		if (couldBeRemoved) {
-			this.setGraphChanged(true);
-		}
-		return couldBeRemoved;
-	}
-
-	/**
-	 * Adds a new data transformation to the graph.
-	 * @param newTransformation the new transformation
-	 */
-	public void addNewDataTransformation(AbstractDataTransformation newTransformation) {
-		
-		DataTableNodeTransformationResult outputNode = new DataTableNodeTransformationResult();
-		newTransformation.setOutputNode(outputNode);
-		outputNode.setDataTransformation(newTransformation);
-		// --- Determine a node position in relation to the input nodes -------
-		Point2D intendedNodePosition = this.determineOutputNodePosition(newTransformation);
-		// --- If already occupied, find a free spot --------------------------
-		Point2D finalNodePosition = this.getNextFreeNodePosition(intendedNodePosition);
-		outputNode.setPosition(finalNodePosition);
-		
-		this.getGraphController().addDataTableNode(outputNode);
-		
-		for (DataTableNode inputNode : newTransformation.getInputNodes()) {
-			DataTransformationEdge transformationEdge = new DataTransformationEdge();
-			transformationEdge.setDataTransformation(newTransformation);
-			
-			this.getGraphController().getTransformationGraph().addEdge(transformationEdge, inputNode, outputNode);
-		}
-		this.setGraphChanged(true);
-	}
-	
-	/**
-	 * Determines the position for the output node of a data transformation in relation to the input nodes.
-	 * @param dataTransformation the data transformation
-	 * @return the position
-	 */
-	private Point2D determineOutputNodePosition(AbstractDataTransformation dataTransformation) {
-		
-		// --- Distance from the calculated reference coordinate ----
-		double defaultDistanceX = 0;
-		double defaultDistanceY = 150;
-		
-		double meanX = 0;
-		double maxY = 0;
-
-		// --- Calculate reference coordinate: Mean of X values, max of Y values
-		for (DataTableNode inputNode : dataTransformation.getInputNodes()) {
-			meanX += this.getGraphController().getGraphLayout().getX(inputNode);
-			
-			double nodeY = this.getGraphController().getGraphLayout().getY(inputNode);
-			maxY = (maxY<nodeY ? nodeY : maxY);
-		}
-		meanX /= dataTransformation.getInputNodes().size();
-		
-		return new Point2D.Double(meanX+defaultDistanceX, maxY+defaultDistanceY);
-	}
-
-	/**
-	 * Finds the corresponding table node for the provided table.
-	 * @param dataTable the data table
-	 * @return the data table node, null if not found
-	 */
-	public DataTableNode findCorrespondingTableNode(Table dataTable) {
-		for (DataTableNode tableNode : this.getGraphController().getTransformationGraph().getVertices()) {
-			if (tableNode.getDataTable() == dataTable) {
-				return tableNode;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Find corresponding table node for the provided data source UUID..
-	 * @param dataSourceUUID the data source UUID
-	 * @return the data table node
-	 */
-	public DataTableNode findCorrespondingTableNode(String dataSourceUUID) {
-		for (DataTableNode tableNode : this.getGraphController().getTransformationGraph().getVertices()) {
-			if (tableNode.getDataSourceUUID().equals(dataSourceUUID)) {
-				return tableNode;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Sets the selected graph element.
 	 * @param graphElement the new selected graph element
@@ -596,7 +653,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * @param node the node
 	 */
 	private void showNodeDetails(DataTableNode node) {
-		if (this.getTableFroNode(node)!=null) {
+		if (this.getTableForNode(node)!=null) {
 			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setRightComponent(TransformationGraphEditorPanel.this.getTableDetailsViewPanel(node));
 			TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.67);
 		} else {
@@ -605,16 +662,6 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		}
 		
 		TransformationGraphEditorPanel.this.getJButtonRemove().setEnabled(true);
-	}
-	
-	private Table getTableFroNode(DataTableNode tableNode) {
-		Table table = tableNode.getDataTable();
-		if (table==null && tableNode instanceof DataTableNodeTransformationResult transformationNode) {
-			this.getTransformationProcessor().performTransformation(transformationNode.getDataTransformation());
-			table = tableNode.getDataTable();
-		}
-		return table;
-		
 	}
 	
 	/**
@@ -633,45 +680,54 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		TransformationGraphEditorPanel.this.getJSplitPaneMainView().setDividerLocation(0.6);
 	}
 	
+	// --------------------------------------------------------------
+	// --- Helper methods for accessing graph elements --------------
+	
 	/**
-	 * Gets a {@link PluggableGraphMouse} that only uses the zoom plug-in ----- 
-	 * @return the zoom only graph mouse
+	 * Finds the corresponding table node for the provided table.
+	 * @param dataTable the data table
+	 * @return the data table node, null if not found
 	 */
-	private PluggableGraphMouse getZoomOnlyGraphMouse() {
-		PluggableGraphMouse graphMouse = new PluggableGraphMouse();
-		graphMouse.add(new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, 0.9f, 1.1f));
-		return graphMouse;
+	public DataTableNode findCorrespondingTableNode(Table dataTable) {
+		for (DataTableNode tableNode : this.getGraphController().getTransformationGraph().getVertices()) {
+			if (tableNode.getDataTable() == dataTable) {
+				return tableNode;
+			}
+		}
+		return null;
 	}
 	
 	/**
-	 * Creates a HTML version of the label text for centered display with line breaks.
-	 * @param labelString the label string
-	 * @return the label renderer HTML string
+	 * Find corresponding table node for the provided data source UUID..
+	 * @param dataSourceUUID the data source UUID
+	 * @return the data table node
 	 */
-	private String getLabelRendererHTMLString(String labelString, boolean isPicked) {
-		String colorString = isPicked==true ? HTML_COLOR_LABEL_PICKED : HTML_COLOR_LABEL_NORMAL;
-		return "<html><div style='width:130px; text-align:center; font-weight: bold; color: " + colorString + "'>"
-		        + escapeHtml(labelString)
-		        + "</div></html>";
+	public DataTableNode findCorrespondingTableNode(String dataSourceUUID) {
+		for (DataTableNode tableNode : this.getGraphController().getTransformationGraph().getVertices()) {
+			if (tableNode.getDataSourceUUID().equals(dataSourceUUID)) {
+				return tableNode;
+			}
+		}
+		return null;
 	}
 	
 	/**
-	 * Escapes special characters for HTML.
-	 * @param text the original text
-	 * @return the modified text
+	 * Gets the data table for the provided node.
+	 * @param tableNode the table node
+	 * @return the table for node
 	 */
-	private static String escapeHtml(String text) {
-	    if (text == null) {
-	        return "";
-	    }
-
-	    return text
-	        .replace("&", "&amp;")
-	        .replace("<", "&lt;")
-	        .replace(">", "&gt;")
-	        .replace("\"", "&quot;")
-	        .replace("'", "&#39;");
+	private Table getTableForNode(DataTableNode tableNode) {
+		Table table = tableNode.getDataTable();
+		if (table==null && tableNode instanceof DataTableNodeTransformationResult transformationNode) {
+			this.getTransformationProcessor().performTransformation(transformationNode.getDataTransformation());
+			table = tableNode.getDataTable();
+		}
+		return table;
 	}
+	
+	// ----------------------------------------------------
+	// --- Handler methods for listeners ------------------ 
+	
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -719,45 +775,13 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		}
 	}
 	
-	/**
-	 * Gets the transformation processor.
-	 * @return the transformation processor
+	/* (non-Javadoc)
+	 * @see edu.uci.ics.jung.graph.event.GraphEventListener#handleGraphEvent(edu.uci.ics.jung.graph.event.GraphEvent)
 	 */
-	public DataTransformationProcessor getTransformationProcessor() {
-		if (transformationVisitor==null) {
-			transformationVisitor = new DataTransformationProcessor(this.getGraphController());
-		}
-		return transformationVisitor;
+	@Override
+	public void handleGraphEvent(GraphEvent<DataTableNode, DataTransformationEdge> arg0) {
+		this.getVisualizationViewer().repaint();
+		this.updateButtonsState();
 	}
 
-	/**
-	 * Checks if the graph has pending changes.
-	 * @return true, if is graph changed
-	 */
-	public boolean isGraphChanged() {
-		return graphChanged;
-	}
-	/**
-	 * Sets the graph changed status of the graph, adjusts button states accordingly.
-	 * @param graphChanged the new graph changed
-	 */
-	protected void setGraphChanged(boolean graphChanged) {
-		if (graphChanged!=this.isGraphChanged()) {
-			this.graphChanged = graphChanged;
-			this.getJButtonApplyChanges().setEnabled(graphChanged);
-//			this.getJButtonRevertChanges().setEnabled(graphChanged);
-		}
-	}
-	
-	/**
-	 * Sets the transformation graph.
-	 *
-	 * @param transformationGraph the transformation graph
-	 */
-	public void setTransformationGraph(Graph<DataTableNode, DataTransformationEdge> transformationGraph) {
-		this.getGraphController().setTransformationGraph(transformationGraph);
-		this.getVisualizationViewer().setGraphLayout(this.getGraphController().getGraphLayout());
-		this.getVisualizationViewer().repaint();
-	}
-	
 }

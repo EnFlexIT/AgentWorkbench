@@ -277,6 +277,14 @@ public class DataWorkbookDatabaseHandler {
 		return dbLoadEntityInstanceList(PersistentTransformationGraph.class);
 	}
 	
+	/**
+	 * Deletes the specified  transformation graph from the database.
+	 * @param transformationGraph the transformation graph
+	 * @return true, if successful
+	 */
+	public boolean deleteTransformationGraph(PersistentTransformationGraph transformationGraph) {
+		return this.dbDeleteEntityInstance(transformationGraph);
+	}
 	
 	/**
 	 * Saves the specified chart list to the database.

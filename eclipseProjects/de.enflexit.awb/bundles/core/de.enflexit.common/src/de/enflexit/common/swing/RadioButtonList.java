@@ -104,6 +104,12 @@ public class RadioButtonList<E> extends JList<E> {
 	@Override
 	protected void processMouseEvent(MouseEvent me) {
 		
+		// --- Ignore mouse interaction if list is disabled -------------------
+		if (this.isEnabled()==false) {
+			me.consume();
+			return;
+		}
+		
 		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me)) {
 			int index = locationToIndex(me.getPoint());
 			
