@@ -96,4 +96,8 @@
          id="io.swagger.core.v3.swagger-annotations.jakarta"
          version="0.0.0"/>
 
+   <plugin
+         id="de.enflexit.charts"
+         version="0.0.0"/>
+
 </feature>
