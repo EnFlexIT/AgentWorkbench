@@ -30,10 +30,13 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 	        this.label = label;
 	    }
     	
-    	public String label() {
+    	/**
+	     * Gets the label.
+	     * @return the string
+	     */
+	    public String label() {
 			return label;
 		}
-	    
 	}
 
 	/* (non-Javadoc)

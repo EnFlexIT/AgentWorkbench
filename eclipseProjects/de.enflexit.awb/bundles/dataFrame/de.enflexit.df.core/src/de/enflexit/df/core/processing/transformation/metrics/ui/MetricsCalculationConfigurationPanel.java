@@ -51,32 +51,32 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
+		GridBagConstraints gbc_jLabelMetrics = new GridBagConstraints();
+		gbc_jLabelMetrics.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelMetrics.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelMetrics.gridx = 0;
+		gbc_jLabelMetrics.gridy = 0;
+		add(getJLabelMetrics(), gbc_jLabelMetrics);
+		GridBagConstraints gbc_jScrollPaneMetricsList = new GridBagConstraints();
+		gbc_jScrollPaneMetricsList.insets = new Insets(0, 5, 5, 10);
+		gbc_jScrollPaneMetricsList.fill = GridBagConstraints.BOTH;
+		gbc_jScrollPaneMetricsList.gridx = 1;
+		gbc_jScrollPaneMetricsList.gridy = 0;
+		add(getJScrollPaneMetricsList(), gbc_jScrollPaneMetricsList);
 		GridBagConstraints gbc_jLabelReferenceColumn = new GridBagConstraints();
 		gbc_jLabelReferenceColumn.anchor = GridBagConstraints.WEST;
 		gbc_jLabelReferenceColumn.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelReferenceColumn.gridx = 0;
-		gbc_jLabelReferenceColumn.gridy = 0;
+		gbc_jLabelReferenceColumn.gridy = 1;
 		add(getJLabelReferenceColumn(), gbc_jLabelReferenceColumn);
 		GridBagConstraints gbc_jComboBoxReferenceColumn = new GridBagConstraints();
 		gbc_jComboBoxReferenceColumn.insets = new Insets(5, 5, 5, 10);
 		gbc_jComboBoxReferenceColumn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jComboBoxReferenceColumn.gridx = 1;
-		gbc_jComboBoxReferenceColumn.gridy = 0;
+		gbc_jComboBoxReferenceColumn.gridy = 1;
 		add(getJComboBoxReferenceColumn(), gbc_jComboBoxReferenceColumn);
-		GridBagConstraints gbc_jLabelMetrics = new GridBagConstraints();
-		gbc_jLabelMetrics.anchor = GridBagConstraints.NORTHWEST;
-		gbc_jLabelMetrics.insets = new Insets(5, 5, 5, 5);
-		gbc_jLabelMetrics.gridx = 0;
-		gbc_jLabelMetrics.gridy = 1;
-		add(getJLabelMetrics(), gbc_jLabelMetrics);
-		GridBagConstraints gbc_jScrollPaneMetricsList = new GridBagConstraints();
-		gbc_jScrollPaneMetricsList.insets = new Insets(5, 5, 5, 10);
-		gbc_jScrollPaneMetricsList.fill = GridBagConstraints.BOTH;
-		gbc_jScrollPaneMetricsList.gridx = 1;
-		gbc_jScrollPaneMetricsList.gridy = 1;
-		add(getJScrollPaneMetricsList(), gbc_jScrollPaneMetricsList);
 		GridBagConstraints gbc_jLabelCompareColumns = new GridBagConstraints();
 		gbc_jLabelCompareColumns.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jLabelCompareColumns.insets = new Insets(5, 5, 0, 5);
@@ -181,6 +181,7 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<String>();
 		comboBoxModel.addAll(columnsList);
 		this.getJComboBoxReferenceColumn().setModel(comboBoxModel);
+		this.getJComboBoxReferenceColumn().setSelectedIndex(0);
 	}
 	
 	/* (non-Javadoc)
@@ -198,6 +199,5 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	@Override
 	public void setConfiguredParameters(Properties parametersAsProperties) {
 		// TODO Auto-generated method stub
-	
 	}
 }

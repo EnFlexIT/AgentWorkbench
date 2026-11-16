@@ -111,7 +111,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.3, 0.7, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.3, 0.0, 0.7, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		GridBagConstraints gbc_jLabelSelectTransformation = new GridBagConstraints();
 		gbc_jLabelSelectTransformation.anchor = GridBagConstraints.WEST;
@@ -125,30 +125,30 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		gbc_jComboBoxSelectTransformation.gridx = 1;
 		gbc_jComboBoxSelectTransformation.gridy = 0;
 		add(getJComboBoxSelectTransformation(), gbc_jComboBoxSelectTransformation);
-		GridBagConstraints gbc_jLabelResultTableName = new GridBagConstraints();
-		gbc_jLabelResultTableName.anchor = GridBagConstraints.WEST;
-		gbc_jLabelResultTableName.insets = new Insets(5, 5, 5, 5);
-		gbc_jLabelResultTableName.gridx = 0;
-		gbc_jLabelResultTableName.gridy = 1;
-		add(getJLabelResultTableName(), gbc_jLabelResultTableName);
-		GridBagConstraints gbc_jTextFieldResultTableName = new GridBagConstraints();
-		gbc_jTextFieldResultTableName.insets = new Insets(5, 5, 5, 10);
-		gbc_jTextFieldResultTableName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_jTextFieldResultTableName.gridx = 1;
-		gbc_jTextFieldResultTableName.gridy = 1;
-		add(getJTextFieldResultTableName(), gbc_jTextFieldResultTableName);
 		GridBagConstraints gbc_jLabelInputTables = new GridBagConstraints();
 		gbc_jLabelInputTables.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jLabelInputTables.insets = new Insets(5, 5, 5, 5);
 		gbc_jLabelInputTables.gridx = 0;
-		gbc_jLabelInputTables.gridy = 2;
+		gbc_jLabelInputTables.gridy = 1;
 		add(getJLabelInputTables(), gbc_jLabelInputTables);
 		GridBagConstraints gbc_jScrollPaneTablesList = new GridBagConstraints();
 		gbc_jScrollPaneTablesList.insets = new Insets(5, 5, 5, 10);
 		gbc_jScrollPaneTablesList.fill = GridBagConstraints.BOTH;
 		gbc_jScrollPaneTablesList.gridx = 1;
-		gbc_jScrollPaneTablesList.gridy = 2;
+		gbc_jScrollPaneTablesList.gridy = 1;
 		add(getJScrollPaneTablesList(), gbc_jScrollPaneTablesList);
+		GridBagConstraints gbc_jLabelResultTableName = new GridBagConstraints();
+		gbc_jLabelResultTableName.anchor = GridBagConstraints.WEST;
+		gbc_jLabelResultTableName.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelResultTableName.gridx = 0;
+		gbc_jLabelResultTableName.gridy = 2;
+		add(getJLabelResultTableName(), gbc_jLabelResultTableName);
+		GridBagConstraints gbc_jTextFieldResultTableName = new GridBagConstraints();
+		gbc_jTextFieldResultTableName.insets = new Insets(5, 5, 5, 10);
+		gbc_jTextFieldResultTableName.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jTextFieldResultTableName.gridx = 1;
+		gbc_jTextFieldResultTableName.gridy = 2;
+		add(getJTextFieldResultTableName(), gbc_jTextFieldResultTableName);
 		GridBagConstraints gbc_jLabelParameters = new GridBagConstraints();
 		gbc_jLabelParameters.anchor = GridBagConstraints.NORTHWEST;
 		gbc_jLabelParameters.insets = new Insets(5, 5, 5, 5);
@@ -664,4 +664,5 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 		
 		
 	}
+
 }

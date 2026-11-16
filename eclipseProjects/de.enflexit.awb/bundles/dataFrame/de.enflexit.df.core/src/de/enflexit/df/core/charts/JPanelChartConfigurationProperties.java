@@ -76,6 +76,8 @@ public class JPanelChartConfigurationProperties extends JPanel implements Proper
 	@Override
 	public boolean providesPropertiesConfiguration(DataController dataController, DefaultMutableTreeNode treeNode) {
 		
+		if (treeNode==null) return false;
+		
 		DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
 		
 		if (dtno instanceof DTNO_DataWorkbook) {
