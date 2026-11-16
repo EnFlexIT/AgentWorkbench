@@ -1,4 +1,4 @@
-package de.enflexit.df.core.ui;
+package de.enflexit.df.core.extension;
 
 import javax.swing.JComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -7,11 +7,11 @@ import de.enflexit.df.core.model.DataController;
 
 
 /**
- * The Interface PropertiesConfigurationPanel.
+ * The Interface PropertiesConfigurationPanelService.
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public interface PropertiesConfigurationPanel {
+public interface PropertiesConfigurationPanelService {
 	
 	/**
 	 * has to return the title of the properties configuration panel.

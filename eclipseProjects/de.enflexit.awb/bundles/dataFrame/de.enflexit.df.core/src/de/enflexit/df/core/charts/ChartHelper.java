@@ -1,6 +1,10 @@
 package de.enflexit.df.core.charts;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -9,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -26,7 +31,7 @@ import tech.tablesaw.columns.Column;
  * This class provides several helper methods to create different chart representations from TableSaw tables.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class TableSawChartHelper {
+public class ChartHelper {
 	
 	public static ZoneId DEFAULT_TIME_ZONE = ZoneId.systemDefault();
 	
@@ -44,6 +49,20 @@ public class TableSawChartHelper {
 		};
 	
 	private static final float DEFAULT_CHART_LINE_WIDTH = 2f;
+	
+	
+	/**
+	 * Creates the default drawing supplier with the AWB chart colors.
+	 * @return the drawing supplier
+	 */
+	public static DefaultDrawingSupplier createDrawingSupplier() {
+		return new DefaultDrawingSupplier(
+				DEFAULT_CHART_COLORS,
+				DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
+				new Stroke[] { new BasicStroke(2.0f) },                       // line width for all series
+				DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
+				new Shape[] { new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0) });  // circles as points
+	}
 	
 	/**
 	 * Creates a time series chart from provided table, trying to determine the time column automatically.

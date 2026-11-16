@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.awb.ws.jackson.feature"
       label="AWB Jackson-Feature"
-      version="2.18.0.qualifier"
+      version="2.19.1.qualifier"
       provider-name="Enflex.IT">
 
    <description url="http://www.example.com/description">

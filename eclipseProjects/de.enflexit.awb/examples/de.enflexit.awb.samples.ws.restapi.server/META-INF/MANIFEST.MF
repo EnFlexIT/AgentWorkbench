@@ -26,6 +26,7 @@ Require-Bundle: de.enflexit.awb.ws.core,
  com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-base,
  com.fasterxml.jackson.jakarta.rs.jackson-jakarta-rs-json-provider,
  com.fasterxml.jackson.module.jackson-module-jakarta-xmlbind-annotations,
+ io.swagger.core.v3.swagger-annotations.jakarta,
  de.enflexit.awb.ws.swagger2x
 Import-Package: de.enflexit.awb.simulation.load,
  jakarta.annotation,

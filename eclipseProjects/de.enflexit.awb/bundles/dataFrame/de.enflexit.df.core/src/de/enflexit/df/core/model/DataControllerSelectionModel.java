@@ -1,9 +1,12 @@
 package de.enflexit.df.core.model;
 
+import java.util.List;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.treeNode.DTNO_Base;
 import de.enflexit.df.core.ui.DataSourceConfigurationPanel;
@@ -19,6 +22,7 @@ public class DataControllerSelectionModel {
 	private DataController dataController;
 	
 	private TreePath selectedTreePath;
+	private List<AbstractChart> selectedCharts;
 	
 	/**
 	 * Instantiates a new data controller selection model.
@@ -65,6 +69,28 @@ public class DataControllerSelectionModel {
 		this.getDataController().firePropertyChange(DataController.DC_NEW_TREE_PATH_SELECTED, oldSelectedTreePath, newSelectedTreePath);
 	}
 
+	
+	/**
+	 * Returns the currently selected charts.
+	 * @return the selected charts
+	 */
+	public List<AbstractChart> getSelectedCharts() {
+		return selectedCharts;
+	}
+	/**
+	 * Sets the selected charts.
+	 * @param selectedCharts the list of newly selected charts
+	 */
+	public void setSelectedCharts(List<AbstractChart> newSelectedCharts) {
+		
+		List<AbstractChart> oldSelectedCharts = null;
+		if (this.selectedCharts!=null) {
+			oldSelectedCharts = this.selectedCharts;
+		}
+		this.selectedCharts = newSelectedCharts;
+		this.getDataController().firePropertyChange(DataController.DC_CHART_SELECTED, oldSelectedCharts, newSelectedCharts);
+	}
+	
 	
 	/**
 	 * Returns the currently selected tree node (a {@link DefaultMutableTreeNode}.
@@ -174,5 +200,5 @@ public class DataControllerSelectionModel {
 		}
 		return null;
 	}
-	
+
 }

@@ -1,0 +1,283 @@
+package de.enflexit.df.core.charts;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import de.enflexit.charts.model.AbstractChart;
+import de.enflexit.charts.model.BarChart;
+import de.enflexit.charts.model.LineChart;
+import de.enflexit.charts.model.PieChart;
+import de.enflexit.charts.model.ScatterPlot;
+import de.enflexit.charts.model.TimeSeriesChart;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.extension.DetailViewPanelService;
+import de.enflexit.df.core.extension.PropertiesConfigurationPanelService;
+import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.treeNode.DTNO_Base;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
+import de.enflexit.df.core.workbook.DataWorkbook;
+
+/**
+ * The Class ChartIntegration.
+ *
+ * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
+ */
+public class ChartIntegration extends JPanel implements PropertiesConfigurationPanelService, DetailViewPanelService, ActionListener {
+
+	private static final long serialVersionUID = -890032683256656426L;
+	
+	private ChartProcessor chartProcessor;
+	
+	private DataController dataController;
+	private DefaultMutableTreeNode dataTreeNode;
+	
+	private JToolBar jToolBarChart;
+	private JButton jButtonBarChart;
+	private JButton jButtonPieChart;
+	private JButton jButtonScatterChart;
+	private JButton jButtonXYChart;
+	private JButton jButtonTimeSeriesChart;
+	
+	private JSplitPane jSplitPaneConfiguration;
+	private JPanelChartList jPanelChartList;
+	private JPanelChartConfiguration jPanelChartConfiguration;
+	
+	
+	/**
+	 * Instantiates a new j panel chart configuration properties.
+	 */
+	public ChartIntegration() {
+		this.initialize();
+	}
+	/**
+	 * Initialize.
+	 */
+	private void initialize() {
+		this.setLayout(new BorderLayout(0, 0));
+		this.add(this.getJToolBarChart(), BorderLayout.NORTH);
+		this.add(this.getJSplitPaneConfiguration(), BorderLayout.CENTER);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#getPropertiesTitle()
+	 */
+	@Override
+	public String getPropertiesTitle() {
+		return "Chart Configuration";
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public boolean providesPropertiesConfiguration(DataController dataController, DefaultMutableTreeNode treeNode) {
+		
+		if (treeNode==null) return false;
+
+		DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
+		if (dtno instanceof DTNO_DataWorkbook) {
+			return true;
+		} else if (dtno instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+			if (dsDTNO.getTable()!=null) return true;
+		}
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public JComponent getPropertiesConfigurationPanel(DataController dataController, DefaultMutableTreeNode treeNode) {
+		this.dataController = dataController;
+		this.dataTreeNode = treeNode;
+		this.getJPanelChartList().setTreeNodeSelection(this.dataController, this.dataTreeNode);
+		this.getJPanelChartConfiguration().setTreeNodeSelection(this.dataController, this.dataTreeNode);
+		return this;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DetailViewPanelService#providesDetailView(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public boolean providesDetailView(DataController dataController, DefaultMutableTreeNode treeNode) {
+		return this.providesPropertiesConfiguration(dataController, treeNode);
+	}
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DetailViewPanelService#getDetailViewPanels(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 */
+	@Override
+	public List<DetailViewTabComponent> getDetailViewPanels(DataController dataController, DefaultMutableTreeNode treeNode) {
+		this.dataController = dataController;
+		this.dataTreeNode = treeNode;
+		if (this.dataController!=null && this.dataTreeNode!=null) {
+			return this.getChartProcessor().getDetailViewPanels(this.dataController, this.getDataWorkbook());
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the chart processor that contains all .
+	 * @return the chart processor
+	 */
+	public ChartProcessor getChartProcessor() {
+		if (chartProcessor==null) {
+			chartProcessor = new ChartProcessor();
+		}
+		return chartProcessor;
+	}
+	
+	
+	private JToolBar getJToolBarChart() {
+		if (jToolBarChart == null) {
+			jToolBarChart = new JToolBar();
+			jToolBarChart.setFloatable(false);
+			jToolBarChart.add(getJButtonBarChart());
+			jToolBarChart.add(getJButtonPieChart());
+			jToolBarChart.add(getJButtonScatterChart());
+			jToolBarChart.add(getJButtonXYChart());
+			jToolBarChart.add(getJButtonTimeSeriesChart());
+		}
+		return jToolBarChart;
+	}
+	private JButton getJButtonBarChart() {
+		if (jButtonBarChart == null) {
+			jButtonBarChart = new JButton();
+			jButtonBarChart.setToolTipText("Create new Bar Chart");
+			jButtonBarChart.setIcon(ChartIconFactory.createBarChartIcon());
+			jButtonBarChart.setPreferredSize(new Dimension(26, 26));
+			jButtonBarChart.addActionListener(this);
+		}
+		return jButtonBarChart;
+	}
+	private JButton getJButtonPieChart() {
+		if (jButtonPieChart == null) {
+			jButtonPieChart = new JButton();
+			jButtonPieChart.setToolTipText("Create new Pie Chart");
+			jButtonPieChart.setIcon(ChartIconFactory.createPieChartIcon());
+			jButtonPieChart.setPreferredSize(new Dimension(26, 26));
+			jButtonPieChart.addActionListener(this);
+		}
+		return jButtonPieChart;
+	}
+	private JButton getJButtonScatterChart() {
+		if (jButtonScatterChart == null) {
+			jButtonScatterChart = new JButton();
+			jButtonScatterChart.setToolTipText("Create new Scatter Plot");
+			jButtonScatterChart.setIcon(ChartIconFactory.createScatterPlotIcon());
+			jButtonScatterChart.setPreferredSize(new Dimension(26, 26));
+			jButtonScatterChart.addActionListener(this);
+		}
+		return jButtonScatterChart;
+	}
+	private JButton getJButtonXYChart() {
+		if (jButtonXYChart == null) {
+			jButtonXYChart = new JButton();
+			jButtonXYChart.setToolTipText("Create new XY Chart");
+			jButtonXYChart.setIcon(ChartIconFactory.createXYChartIcon());
+			jButtonXYChart.setPreferredSize(new Dimension(26, 26));
+			jButtonXYChart.addActionListener(this);
+		}
+		return jButtonXYChart;
+	}
+	private JButton getJButtonTimeSeriesChart() {
+		if (jButtonTimeSeriesChart == null) {
+			jButtonTimeSeriesChart = new JButton();
+			jButtonTimeSeriesChart.setToolTipText("Create new TimeSeries Chart");
+			jButtonTimeSeriesChart.setIcon(ChartIconFactory.createTimeSeriesChartIcon());
+			jButtonTimeSeriesChart.setPreferredSize(new Dimension(26, 26));
+			jButtonTimeSeriesChart.addActionListener(this);
+		}
+		return jButtonTimeSeriesChart;
+	}
+	
+	
+	private JSplitPane getJSplitPaneConfiguration() {
+		if (jSplitPaneConfiguration == null) {
+			jSplitPaneConfiguration = new JSplitPane();
+			jSplitPaneConfiguration.setResizeWeight(0.3);
+			
+			jSplitPaneConfiguration.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jSplitPaneConfiguration.setTopComponent(this.getJPanelChartList());
+			jSplitPaneConfiguration.setBottomComponent(this.getJPanelChartConfiguration());
+		}
+		return jSplitPaneConfiguration;
+	}
+	private JPanelChartList getJPanelChartList() {
+		if (jPanelChartList == null) {
+			jPanelChartList = new JPanelChartList();
+		}
+		return jPanelChartList;
+	}
+	private JPanelChartConfiguration getJPanelChartConfiguration() {
+		if (jPanelChartConfiguration==null) {
+			jPanelChartConfiguration = new JPanelChartConfiguration();
+		}
+		return jPanelChartConfiguration;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if (ae.getSource()==this.getJButtonBarChart()) {
+			this.addNewChart(new BarChart());
+		} else if (ae.getSource()==this.getJButtonPieChart()) {
+			this.addNewChart(new PieChart());
+		} else if (ae.getSource()==this.getJButtonScatterChart()) {
+			this.addNewChart(new ScatterPlot());
+		} else if (ae.getSource()==this.getJButtonXYChart()) {
+			this.addNewChart(new LineChart());			
+		} else if (ae.getSource()==this.getJButtonTimeSeriesChart()) {
+			this.addNewChart(new TimeSeriesChart());
+		}
+	}
+	
+	/**
+	 * Returns the current data workbook.
+	 * @return the data workbook
+	 */
+	private DataWorkbook getDataWorkbook() {
+		DefaultMutableTreeNode searchNode = this.dataTreeNode;
+		if (searchNode!=null) {
+			while (searchNode.getParent()!=null) {
+				if (searchNode.getUserObject() instanceof DTNO_DataWorkbook dwDTNO) {
+					return dwDTNO.getDataWorkbook();
+				}
+				searchNode = (DefaultMutableTreeNode) searchNode.getParent();
+			}
+		}
+		return null;
+	}
+	/**
+	 * Adds the new chart.
+	 *
+	 * @param absChart the abs chart
+	 */
+	private void addNewChart(AbstractChart absChart) {
+		
+		if (absChart==null) return;
+		
+		DataWorkbook dw = this.getDataWorkbook();
+		
+		absChart.setChartId(this.dataController.getNewChartID(dw));
+		absChart.setTitle("New " + absChart.getClass().getSimpleName());
+		absChart.setShowLegend(true);
+
+		// --- Add to the list of charts for the workbook --------
+		this.dataController.addChart(dw, absChart);
+	}
+	
+}

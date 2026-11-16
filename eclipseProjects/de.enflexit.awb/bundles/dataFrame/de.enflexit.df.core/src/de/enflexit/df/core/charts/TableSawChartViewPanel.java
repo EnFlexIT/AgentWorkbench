@@ -108,7 +108,7 @@ public class TableSawChartViewPanel extends JPanel implements ActionListener {
 				this.getXyPlot().setDomainGridlinePaint(AwbThemeColor.Chart_GridLine.getColor());
 				this.getXyPlot().setRangeGridlinePaint(AwbThemeColor.Chart_GridLine.getColor());
 
-				if (TableSawChartHelper.isTemporalColumn(this.xAxisColumn)) {
+				if (ChartHelper.isTemporalColumn(this.xAxisColumn)) {
 					DateAxis axis = new DateAxis(xAxisColumn.name());
 					axis.setDateFormatOverride(new SimpleDateFormat("dd.MM.yyyy HH:mm"));
 					this.getXyPlot().setDomainAxis(axis);
@@ -129,7 +129,7 @@ public class TableSawChartViewPanel extends JPanel implements ActionListener {
 	 */
 	private XYSeriesCollection<String> getSeriesCollection() {
 		if (seriesCollection==null) {
-			seriesCollection = TableSawChartHelper.createJFreeChartSeriesCollection(this.table);
+			seriesCollection = ChartHelper.createJFreeChartSeriesCollection(this.table);
 		}
 		return seriesCollection;
 	}
@@ -158,8 +158,8 @@ public class TableSawChartViewPanel extends JPanel implements ActionListener {
 		XYSeriesCollection<String> tsc = this.getSeriesCollection();
 		XYItemRenderer renderer = this.getXyPlot().getRenderer();
 		for (int iTS = 0; iTS < tsc.getSeriesCount(); iTS++) {
-			renderer.setSeriesPaint(iTS, TableSawChartHelper.getChartColor(colorCounter));
-			renderer.setSeriesStroke(iTS, new BasicStroke(TableSawChartHelper.getDefaultChartLineWidth()));
+			renderer.setSeriesPaint(iTS, ChartHelper.getChartColor(colorCounter));
+			renderer.setSeriesStroke(iTS, new BasicStroke(ChartHelper.getDefaultChartLineWidth()));
 			colorCounter++;
 		}
 	}

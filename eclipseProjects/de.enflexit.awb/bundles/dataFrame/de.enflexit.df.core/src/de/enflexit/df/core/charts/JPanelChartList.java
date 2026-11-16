@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -20,6 +21,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
@@ -50,9 +53,9 @@ public class JPanelChartList extends JPanel implements PropertyChangeListener, A
 
 	private JLabel jLabelHeader;
 	private JScrollPane jScrollPaneChartList;
-	private JButton jButtonDelete;
 	private JButton jButtonMoveUp;
 	private JButton jButtonMoveDown;
+	private JButton jButtonDelete;
 	
 	private DefaultListModel<AbstractChart> listModelCharts;
 	private JList<AbstractChart> jListCharts;
@@ -147,9 +150,7 @@ public class JPanelChartList extends JPanel implements PropertyChangeListener, A
 		if (chartSelected!=null) {
 			this.getJListCharts().setSelectedValue(chartSelected, true);
 		}
-		
 	}
-	
 	private void addToListModelCharts(AbstractChart chart) {
 		this.getListModelCharts().addElement(chart);
 	}
@@ -159,11 +160,11 @@ public class JPanelChartList extends JPanel implements PropertyChangeListener, A
 			jListCharts = new JList<>(this.getListModelCharts());
 			jListCharts.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jListCharts.setCellRenderer(new DefaultListCellRenderer() {
-				private Icon barChartIcon = ChartIconFactory.createBarChartIcon();
-				private Icon pieChartIcon = ChartIconFactory.createPieChartIcon();
-				private Icon scatterPlotIcon = ChartIconFactory.createScatterPlotIcon();
-				private Icon xyChartIcon = ChartIconFactory.createXYChartIcon();
-				private Icon timeSeriesChartIcon = ChartIconFactory.createTimeSeriesChartIcon();
+				private final Icon barChartIcon = ChartIconFactory.createBarChartIcon();
+				private final Icon pieChartIcon = ChartIconFactory.createPieChartIcon();
+				private final Icon scatterPlotIcon = ChartIconFactory.createScatterPlotIcon();
+				private final Icon xyChartIcon = ChartIconFactory.createXYChartIcon();
+				private final Icon timeSeriesChartIcon = ChartIconFactory.createTimeSeriesChartIcon();
 				@Override
 				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 					JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -183,21 +184,18 @@ public class JPanelChartList extends JPanel implements PropertyChangeListener, A
 					return label;
 				}
 			});
+			jListCharts.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent lse) {
+					if (lse.getValueIsAdjusting()==true) return;
+					if (JPanelChartList.this.dataController==null) return;
+					JPanelChartList.this.dataController.getSelectionModel().setSelectedCharts(JPanelChartList.this.getJListCharts().getSelectedValuesList());
+				}
+			});
 		}
 		return jListCharts;
 	}
 	
-	
-	private JButton getJButtonDelete() {
-		if (jButtonDelete == null) {
-			jButtonDelete = new JButton();
-			jButtonDelete.setIcon(BundleHelper.getImageIcon("Delete.png"));
-			jButtonDelete.setPreferredSize(new Dimension(26, 26));
-			jButtonDelete.setToolTipText("Delete Chart");
-			jButtonDelete.addActionListener(this);
-		}
-		return jButtonDelete;
-	}
 	
 	private JButton getJButtonMoveUp() {
 		if (jButtonMoveUp == null) {
@@ -218,6 +216,17 @@ public class JPanelChartList extends JPanel implements PropertyChangeListener, A
 			jButtonMoveDown.addActionListener(this);
 		}
 		return jButtonMoveDown;
+	}
+	
+	private JButton getJButtonDelete() {
+		if (jButtonDelete == null) {
+			jButtonDelete = new JButton();
+			jButtonDelete.setIcon(BundleHelper.getImageIcon("Delete.png"));
+			jButtonDelete.setPreferredSize(new Dimension(26, 26));
+			jButtonDelete.setToolTipText("Delete Chart");
+			jButtonDelete.addActionListener(this);
+		}
+		return jButtonDelete;
 	}
 	
 	/**
@@ -271,21 +280,30 @@ public class JPanelChartList extends JPanel implements PropertyChangeListener, A
 	public void actionPerformed(ActionEvent ae) {
 	
 		// --- Which chart is selected ? ------------------
-		AbstractChart chartSelected = this.getJListCharts().getSelectedValue();
-		if (chartSelected==null) return;
+		List<AbstractChart> chartSelected = this.getJListCharts().getSelectedValuesList();
+		if (chartSelected==null || chartSelected.size()==0) return;
 		
 		// --- Do the desired action ----------------------
 		if (ae.getSource()==this.getJButtonMoveUp()) {
-			this.moveChart(chartSelected, -1);
+			this.moveChart(chartSelected.get(0), -1);
 		} else if (ae.getSource()==this.getJButtonMoveDown()) {
-			this.moveChart(chartSelected, 1);
+			this.moveChart(chartSelected.get(0), 1);
 			
 		} else if (ae.getSource()==this.getJButtonDelete()) {
+			String question = null;
+			if (chartSelected.size()>1) {
+				question = "Are you sure that you want to delete the " + chartSelected.size() + " selected charts?";
+			} else {
+				question = "Are you sure that you want to delete chart '" + chartSelected.get(0).getTitle() + "'?";
+			}
 			Window owner = OwnerDetection.getOwnerWindowForComponent(this); 
-			int answer = AwbMessageDialog.showConfirmDialog(owner, "Are you sure that you want to delete chart '" + chartSelected.getTitle() + "'?", "Delete Chart?", AwbMessageDialog.YES_NO_OPTION, AwbMessageDialog.QUESTION_MESSAGE);
+			int answer = AwbMessageDialog.showConfirmDialog(owner, question, "Delete Chart?", AwbMessageDialog.YES_NO_OPTION, AwbMessageDialog.QUESTION_MESSAGE);
 			if (answer==AwbMessageDialog.YES_OPTION) {
-				this.dataController.removeChart(this.getDataWorkbook(), chartSelected);
-				this.getListModelCharts().removeElement(chartSelected);
+				for (AbstractChart chart : chartSelected) {
+					this.dataController.removeChart(this.getDataWorkbook(), chart);
+					this.getListModelCharts().removeElement(chart);
+				}
+				this.dataController.getSelectionModel().setSelectedCharts(null);
 			}
 			
 		}
@@ -331,6 +349,9 @@ public class JPanelChartList extends JPanel implements PropertyChangeListener, A
 			AbstractChart chart = ado.getChart();
 			this.updateListModelCharts();
 			this.getJListCharts().setSelectedValue(chart, true);
+			break;
+		case DataController.DC_CHART_EDITED_TITLE_OR_LABEL:
+			this.getJListCharts().repaint();
 			break;
 		}
 		

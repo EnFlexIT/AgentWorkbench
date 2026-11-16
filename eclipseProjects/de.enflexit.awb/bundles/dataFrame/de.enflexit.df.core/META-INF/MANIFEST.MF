@@ -40,7 +40,7 @@ Import-Package: com.google.common.base,
  org.osgi.framework.wiring,
  org.osgi.service.prefs,
  org.slf4j
-Service-Component: OSGI-INF/chartPropertiesConfigurationService.xml, 
+Service-Component: OSGI-INF/chartIntegrationService.xml, 
  OSGI-INF/dataFrameExpressionService.xml, 
  OSGI-INF/dataSourceServiceCsvDataSource.xml,
  OSGI-INF/dataSourceServiceDatabaseDataSource.xml,

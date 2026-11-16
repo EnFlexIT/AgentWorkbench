@@ -11,7 +11,8 @@ Require-Bundle: jakarta.servlet-api,
  de.enflexit.awb.ws.core,
  com.google.gson,
  org.glassfish.jersey.containers.jersey-container-servlet-core;bundle-version="2.35.0",
- de.enflexit.awb.ws.swagger2x;bundle-version="2.1.13"
+ io.swagger.core.v3.swagger-annotations.jakarta,
+ de.enflexit.awb.ws.swagger2x
 Export-Package: de.enflexit.awb.samples.ws.api,
  de.enflexit.awb.samples.ws.api.endPoints
 Bundle-ActivationPolicy: lazy

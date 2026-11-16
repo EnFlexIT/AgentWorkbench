@@ -2,7 +2,7 @@
 <feature
       id="de.enflexit.common.feature"
       label="AWB Common-Feature"
-      version="2.4.0.qualifier"
+      version="2.5.0.qualifier"
       provider-name="EnFlex.IT"
       os="linux,macosx,win32"
       arch="x86_64,aarch64">
@@ -90,6 +90,14 @@
 
    <plugin
          id="de.enflexit.logging.db"
+         version="0.0.0"/>
+
+   <plugin
+         id="io.swagger.core.v3.swagger-annotations.jakarta"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.enflexit.charts"
          version="0.0.0"/>
 
 </feature>

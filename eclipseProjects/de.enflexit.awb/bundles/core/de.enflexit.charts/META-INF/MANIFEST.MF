@@ -8,14 +8,14 @@ Export-Package: de.enflexit.charts,
 Automatic-Module-Name: de.enflexit.charts
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: com.fasterxml.jackson.annotation,
+ io.swagger.v3.oas.annotations.media,
  jakarta.annotation,
  jakarta.persistence,
  jakarta.validation,
  jakarta.validation.constraints,
- jakarta.xml.bind.annotation;version="[4.0.0,5.0.0)",
+ jakarta.xml.bind.annotation,
  org.osgi.framework,
  org.osgi.framework.wiring
-Require-Bundle: de.enflexit.db.hibernate,
- de.enflexit.awb.ws.swagger2x
+Require-Bundle: de.enflexit.db.hibernate
 Bundle-Vendor: EnFlex.IT
 Eclipse-RegisterBuddy: de.enflexit.db.hibernate

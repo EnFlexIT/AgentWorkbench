@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Swagger 2.x for OpenAPI 3.0
 Bundle-SymbolicName: de.enflexit.awb.ws.swagger2x
-Bundle-Version: 2.2.15.qualifier
+Bundle-Version: 2.2.55.qualifier
 Automatic-Module-Name: de.enflexit.awb.ws.swagger2x
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: EnFlex.IT
 Bundle-ActivationPolicy: lazy
 Require-Bundle: jakarta.ws.rs-api;bundle-version="3.1.0",
+ io.swagger.core.v3.swagger-annotations.jakarta;bundle-version="2.2.55",
  com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.14.1",
  com.fasterxml.jackson.core.jackson-core;bundle-version="2.14.1",
  com.fasterxml.jackson.core.jackson-databind;bundle-version="2.14.1",
@@ -18,14 +19,13 @@ Require-Bundle: jakarta.ws.rs-api;bundle-version="3.1.0",
  org.yaml.snakeyaml;bundle-version="1.27.0",
  org.apache.commons.lang3;bundle-version="3.11.0"
 Bundle-ClassPath: .,
- lib/classgraph-4.8.154.jar,
- lib/javassist-3.29.2-GA.jar,
- lib/swagger-annotations-jakarta-2.2.15.jar,
- lib/swagger-core-jakarta-2.2.15.jar,
- lib/swagger-integration-jakarta-2.2.15.jar,
- lib/swagger-jaxrs2-jakarta-2.2.15.jar,
- lib/swagger-jaxrs2-servlet-initializer-v2-jakarta-2.2.15.jar,
- lib/swagger-models-jakarta-2.2.15.jar
+ lib/classgraph-4.8.192.jar,
+ lib/javassist-3.30.2-GA.jar,
+ lib/swagger-core-jakarta-2.2.55.jar,
+ lib/swagger-integration-jakarta-2.2.55.jar,
+ lib/swagger-jaxrs2-jakarta-2.2.55.jar,
+ lib/swagger-jaxrs2-servlet-initializer-v2-jakarta-2.2.55.jar,
+ lib/swagger-models-jakarta-2.2.55.jar
 Export-Package: .,
  io.swagger.v3.core.converter,
  io.swagger.v3.core.filter,
@@ -40,19 +40,6 @@ Export-Package: .,
  io.swagger.v3.jaxrs2.integration.resources,
  io.swagger.v3.jaxrs2.integration.servlet,
  io.swagger.v3.jaxrs2.util,
- io.swagger.v3.oas.annotations,
- io.swagger.v3.oas.annotations.callbacks,
- io.swagger.v3.oas.annotations.enums,
- io.swagger.v3.oas.annotations.extensions,
- io.swagger.v3.oas.annotations.headers,
- io.swagger.v3.oas.annotations.info,
- io.swagger.v3.oas.annotations.links,
- io.swagger.v3.oas.annotations.media,
- io.swagger.v3.oas.annotations.parameters,
- io.swagger.v3.oas.annotations.responses,
- io.swagger.v3.oas.annotations.security,
- io.swagger.v3.oas.annotations.servers,
- io.swagger.v3.oas.annotations.tags,
  io.swagger.v3.oas.integration,
  io.swagger.v3.oas.integration.api,
  io.swagger.v3.oas.models,

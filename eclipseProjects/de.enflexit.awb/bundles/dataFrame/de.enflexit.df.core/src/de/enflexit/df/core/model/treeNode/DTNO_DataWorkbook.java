@@ -211,21 +211,21 @@ public class DTNO_DataWorkbook extends DTNO_Base implements DataSourceConfigurat
 
 
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesTitle()
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#getPropertiesTitle()
 	 */
 	@Override
 	public String getPropertiesTitle() {
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#providesPropertiesConfiguratoin(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
 	 */
 	@Override
 	public boolean providesPropertiesConfiguration(DataController dataController, DefaultMutableTreeNode treeNode) {
 		return false;
 	}
 	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanel#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
+	 * @see de.enflexit.df.core.ui.PropertiesConfigurationPanelService#getPropertiesConfigurationPanel(de.enflexit.df.core.model.DataController, javax.swing.tree.DefaultMutableTreeNode)
 	 */
 	@Override
 	public JComponent getPropertiesConfigurationPanel(DataController dataController, DefaultMutableTreeNode treeNode) {
