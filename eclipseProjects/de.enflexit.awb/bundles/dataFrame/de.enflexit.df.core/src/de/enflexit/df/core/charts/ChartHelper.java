@@ -59,7 +59,7 @@ public class ChartHelper {
 		return new DefaultDrawingSupplier(
 				DEFAULT_CHART_COLORS,
 				DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
-				new Stroke[] { new BasicStroke(2.0f) },                       // line width for all series
+				new Stroke[] { new BasicStroke(DEFAULT_CHART_LINE_WIDTH) },                       // line width for all series
 				DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
 				new Shape[] { new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0) });  // circles as points
 	}
