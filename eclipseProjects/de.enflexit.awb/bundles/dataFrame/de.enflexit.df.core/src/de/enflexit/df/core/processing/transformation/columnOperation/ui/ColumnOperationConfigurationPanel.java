@@ -24,8 +24,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JToolBar;
 import javax.swing.table.TableColumnModel;
 
-import com.google.gson.Gson;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
@@ -38,7 +36,7 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 
 	private static final long serialVersionUID = -2642757287072217301L;
 	
-	public static final String COMBOBOX_NULL_PLACEHOLDER = "--- please select ---";
+	public static final String COMBOBOX_NULL_PLACEHOLDER = "please select";
 	
 	private JToolBar jToolBarColumnOperations;
 	private JScrollPane jScrollPaneColumnOperations;

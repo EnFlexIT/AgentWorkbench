@@ -3,12 +3,13 @@ package de.enflexit.df.core.processing.transformation.metrics.ui;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 import java.util.List;
-
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.swing.CheckBoxList;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
+import de.enflexit.df.core.processing.transformation.metrics.DataTransformationCalculateMetrics;
 import de.enflexit.df.core.processing.transformation.metrics.DataTransformationCalculateMetrics.Metrics;
+import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculationParametersHelper;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import tech.tablesaw.api.Table;
@@ -67,7 +68,7 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 		add(getJScrollPaneMetricsList(), gbc_jScrollPaneMetricsList);
 		GridBagConstraints gbc_jLabelReferenceColumn = new GridBagConstraints();
 		gbc_jLabelReferenceColumn.anchor = GridBagConstraints.WEST;
-		gbc_jLabelReferenceColumn.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelReferenceColumn.insets = new Insets(5, 0, 5, 5);
 		gbc_jLabelReferenceColumn.gridx = 0;
 		gbc_jLabelReferenceColumn.gridy = 1;
 		add(getJLabelReferenceColumn(), gbc_jLabelReferenceColumn);
@@ -79,7 +80,7 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 		add(getJComboBoxReferenceColumn(), gbc_jComboBoxReferenceColumn);
 		GridBagConstraints gbc_jLabelCompareColumns = new GridBagConstraints();
 		gbc_jLabelCompareColumns.anchor = GridBagConstraints.NORTHWEST;
-		gbc_jLabelCompareColumns.insets = new Insets(5, 5, 0, 5);
+		gbc_jLabelCompareColumns.insets = new Insets(5, 0, 0, 5);
 		gbc_jLabelCompareColumns.gridx = 0;
 		gbc_jLabelCompareColumns.gridy = 2;
 		add(getJLabelCompareColumns(), gbc_jLabelCompareColumns);
@@ -189,8 +190,11 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	 */
 	@Override
 	public Properties getConfiguredParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		Properties parametersAsProperties = new Properties();
+		parametersAsProperties.setStringValue(DataTransformationCalculateMetrics.PARAM_NAME_SELECTED_METRICS, MetricsCalculationParametersHelper.buildMetricsListString(this.getMetricsList().getSelectedValuesList()));
+		parametersAsProperties.setStringValue(DataTransformationCalculateMetrics.PARAM_NAME_REFERENCE_COLUMN, (String) this.getJComboBoxReferenceColumn().getSelectedItem());
+		parametersAsProperties.setStringValue(DataTransformationCalculateMetrics.PARAM_NAME_COMPARE_COLUMNS, MetricsCalculationParametersHelper.buildColumnsString(this.getCompareColumnsList().getSelectedValuesList()));
+		return parametersAsProperties;
 	}
 	
 	/* (non-Javadoc)
@@ -198,6 +202,15 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	 */
 	@Override
 	public void setConfiguredParameters(Properties parametersAsProperties) {
-		// TODO Auto-generated method stub
+		String metricsListString = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_SELECTED_METRICS);
+		List<Metrics> metricsList = MetricsCalculationParametersHelper.parseMetricsListString(metricsListString);
+		this.getMetricsList().setSelectedItems(metricsList);
+		
+		String referencsColumnName = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_REFERENCE_COLUMN);
+		this.getJComboBoxReferenceColumn().setSelectedItem(referencsColumnName);
+		
+		String compareColumnsAsString = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_COMPARE_COLUMNS);
+		List<String> compareColumns = MetricsCalculationParametersHelper.parseCompareColumnsString(compareColumnsAsString);
+		this.getCompareColumnsList().setSelectedItems(compareColumns);
 	}
 }
