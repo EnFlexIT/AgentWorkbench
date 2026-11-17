@@ -69,6 +69,14 @@ public class DataTransformationSelectColumns extends AbstractDataTransformation 
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#getLabelText()
+	 */
+	@Override
+	public String getLabelText() {
+		return "Select Columns";
+	}
+
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#verifyParameters()
 	 */
 	@Override

@@ -33,6 +33,14 @@ public class DataTransformationColumnOperation extends AbstractDataTransformatio
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#getLabelText()
+	 */
+	@Override
+	public String getLabelText() {
+		return "Calculation";
+	}
+
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#verifyParameters()
 	 */
 	@Override

@@ -56,6 +56,15 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#getLabelText()
+	 */
+	@Override
+	public String getLabelText() {
+//		return "Metrics";
+		return "";
+	}
+
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#verifyParameters()
 	 */
 	@Override

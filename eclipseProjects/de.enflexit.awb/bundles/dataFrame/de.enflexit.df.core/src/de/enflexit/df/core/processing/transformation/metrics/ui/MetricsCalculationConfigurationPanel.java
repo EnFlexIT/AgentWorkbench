@@ -1,7 +1,9 @@
 package de.enflexit.df.core.processing.transformation.metrics.ui;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.swing.CheckBoxList;
@@ -12,6 +14,7 @@ import de.enflexit.df.core.processing.transformation.metrics.DataTransformationC
 import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculationParametersHelper;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
+import tech.tablesaw.api.NumericColumn;
 import tech.tablesaw.api.Table;
 
 import java.awt.GridBagLayout;
@@ -174,15 +177,27 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	 * Rebuilds the list models for table column selection.
 	 */
 	private void rebuildListModels() {
-		List<String> columnsList = this.table.columnNames();
-		DefaultListModel<String> checkboxListModel = new DefaultListModel<String>();
-		checkboxListModel.addAll(columnsList);
-		this.getCompareColumnsList().setModel(checkboxListModel);
 		
+		// --- Metrics calculation only makes sense for numeric columns 
+		ArrayList<String> numericColumns = new ArrayList<String>();
+		for (String columnName : this.table.columnNames()) {
+			if (this.table.column(columnName) instanceof NumericColumn<?>) {
+				numericColumns.add(columnName);
+			}
+		}
+		Collections.sort(numericColumns);
+		
+		// --- Build the ComboBoxModel for selecting the reference column -----
 		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<String>();
-		comboBoxModel.addAll(columnsList);
+		comboBoxModel.addAll(numericColumns);
 		this.getJComboBoxReferenceColumn().setModel(comboBoxModel);
 		this.getJComboBoxReferenceColumn().setSelectedIndex(0);
+		
+		// --- Build the CheckBoxListModel for selecting columns to compare ---
+		DefaultListModel<String> checkboxListModel = new DefaultListModel<String>();
+		checkboxListModel.addAll(numericColumns);
+		this.getCompareColumnsList().setModel(checkboxListModel);
+		
 	}
 	
 	/* (non-Javadoc)
