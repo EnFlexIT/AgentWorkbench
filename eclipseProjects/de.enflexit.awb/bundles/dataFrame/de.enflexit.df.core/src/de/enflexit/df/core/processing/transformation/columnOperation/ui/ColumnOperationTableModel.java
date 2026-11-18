@@ -7,8 +7,8 @@ import javax.swing.table.AbstractTableModel;
 
 import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationRegistry;
 import de.enflexit.df.core.processing.transformation.columnOperation.DataOperation;
-import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperation;
-import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperation.ResultHandling;
+import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationDefinition;
+import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationDefinition.ResultHandling;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
@@ -16,17 +16,18 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = 1662729256093404502L;
 
-	private final List<ColumnOperation> rules = new ArrayList<>();
+	private final List<ColumnOperationDefinition> rules = new ArrayList<>();
 
 	private Table tableSawTable;
 
-	private final ColumnOperationRegistry operationRegistry;
-
 	private static final String[] COLUMN_NAMES = { "Column", "Operation", "Parameter", "ResultMode" };
 
-	public ColumnOperationTableModel(Table tableSawTable, ColumnOperationRegistry operationRegistry) {
+	/**
+	 * Instantiates a new column operation table model.
+	 * @param tableSawTable the table saw table
+	 */
+	public ColumnOperationTableModel(Table tableSawTable) {
 		this.tableSawTable = tableSawTable;
-		this.operationRegistry = operationRegistry;
 	}
 
 	/* (non-Javadoc)
@@ -58,12 +59,12 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		ColumnOperation rule = rules.get(rowIndex);
+		ColumnOperationDefinition rule = rules.get(rowIndex);
 		return switch(columnIndex) {
 		case 0 -> findColumnByName(rule.getColumnName());
-		case 1 -> this.operationRegistry.getOperationByID(rule.getOperationID());
+		case 1 -> ColumnOperationRegistry.getInstance().getOperationByID(rule.getOperationID());
 		case 2 -> rule.getParameter();
-		case 4 -> rule.getResultHandling();
+		case 3 -> rule.getResultHandling();
 		default -> null;
 		};
 	}
@@ -73,7 +74,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	 * @param columnName the column name
 	 * @return the column
 	 */
-	private Column<?> findColumnByName(String columnName) {
+	protected Column<?> findColumnByName(String columnName) {
 		if (this.tableSawTable.columnNames().contains(columnName)) {
 			return this.tableSawTable.column(columnName);
 		} else {
@@ -94,7 +95,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
-		ColumnOperation rule = rules.get(rowIndex);
+		ColumnOperationDefinition rule = rules.get(rowIndex);
 		
 		switch(columnIndex) {
 		case 0:
@@ -109,7 +110,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 			rule.setParameter(null);
 			break;
 		case 2:
-			rule.setParameter((String) value);
+			rule.setParameter(value.toString());
 			break;
 		case 3:
 			rule.setResultHandling((ResultHandling) value);
@@ -124,7 +125,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	 * Adds a new rule to the table.
 	 */
 	public void addRule() {
-		rules.add(new ColumnOperation());
+		rules.add(new ColumnOperationDefinition());
 		fireTableRowsInserted(rules.size() - 1, rules.size() - 1);
 	}
 	
@@ -141,7 +142,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	 * Gets the currently defined rules.
 	 * @return the rules
 	 */
-	public List<ColumnOperation> getRules() {
+	public List<ColumnOperationDefinition> getRules() {
 		return this.rules;
 	}
 	
@@ -149,7 +150,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	 * Sets the operations list.
 	 * @param operationsList the new operations list
 	 */
-	public void setOperationsList(List<ColumnOperation> operationsList) {
+	public void setOperationsList(List<ColumnOperationDefinition> operationsList) {
 		this.rules.clear();
 		this.rules.addAll(operationsList);
 	}
@@ -159,7 +160,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 	 * @param rowIndex the row index
 	 * @return the rule
 	 */
-	public ColumnOperation getRule(int rowIndex) {
+	public ColumnOperationDefinition getRule(int rowIndex) {
 	    return rules.get(rowIndex);
 	}
 
@@ -188,7 +189,7 @@ public class ColumnOperationTableModel extends AbstractTableModel {
 			return List.of();
 		}
 
-		return operationRegistry.getOperationsForColumn(column);
+		return ColumnOperationRegistry.getInstance().getOperationsForColumn(column);
 	}
 
 }

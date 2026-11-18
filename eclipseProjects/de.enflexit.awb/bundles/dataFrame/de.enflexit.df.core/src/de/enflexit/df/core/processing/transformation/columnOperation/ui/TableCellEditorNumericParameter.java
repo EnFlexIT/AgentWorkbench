@@ -9,13 +9,13 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
 import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationRegistry;
-import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperation;
+import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationDefinition;
 
 /**
  * TableCellEditor for column operation parameters.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class TableCellEditorOperationParameter extends AbstractCellEditor implements TableCellEditor {
+public class TableCellEditorNumericParameter extends AbstractCellEditor implements TableCellEditor {
 
 	private static final long serialVersionUID = -4165561231611848172L;
 	
@@ -25,17 +25,14 @@ public class TableCellEditorOperationParameter extends AbstractCellEditor implem
 
 	private final JTable jTtable;
 	
-	private final ColumnOperationRegistry operationRegistry;
-
 	/**
 	 * Instantiates a new table cell editor operation parameter.
 	 * @param jTable the table
 	 * @param tableModel the table model
 	 */
-	public TableCellEditorOperationParameter(JTable jTable, ColumnOperationTableModel tableModel, ColumnOperationRegistry operationRegistry) {
+	public TableCellEditorNumericParameter(JTable jTable, ColumnOperationTableModel tableModel) {
 		this.jTtable = jTable;
 		this.tableModel = tableModel;
-		this.operationRegistry = operationRegistry;
 	}
 
 	/* (non-Javadoc)
@@ -64,14 +61,14 @@ public class TableCellEditorOperationParameter extends AbstractCellEditor implem
 		int viewRow = this.jTtable.getEditingRow();
 		int modelRow = this.jTtable.convertRowIndexToModel(viewRow);
 
-		ColumnOperation rule = this.tableModel.getRule(modelRow);
+		ColumnOperationDefinition rule = this.tableModel.getRule(modelRow);
 
 		try {
 			if (rule.getOperationID() == null) {
 				throw new IllegalArgumentException("Please select an operation first!");
 			}
 
-			this.operationRegistry.getOperationByID(rule.getOperationID()).parseParameter(textField.getText());
+			ColumnOperationRegistry.getInstance().getOperationByID(rule.getOperationID()).parseParameter(textField.getText());
 
 			return super.stopCellEditing();
 

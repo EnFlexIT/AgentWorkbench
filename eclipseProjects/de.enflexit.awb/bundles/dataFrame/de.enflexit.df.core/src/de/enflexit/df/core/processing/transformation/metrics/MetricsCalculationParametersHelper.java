@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.enflexit.df.core.processing.transformation.metrics.DataTransformationCalculateMetrics.Metrics;
-
 /**
  * This class provides static methods to support parameter handling for Metrics calculation.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
@@ -37,10 +35,10 @@ public class MetricsCalculationParametersHelper {
 	 * @param selectedMetricsList the selected metrics list
 	 * @return the string
 	 */
-	public static String buildMetricsListString(List<Metrics> selectedMetricsList) {
+	public static String buildMetricsListString(List<MetricsCalculation> selectedMetricsList) {
 		ArrayList<String> metricsStringList = new ArrayList<String>();
-		for (Metrics metric : selectedMetricsList) {
-			metricsStringList.add(metric.toString());
+		for (MetricsCalculation metric : selectedMetricsList) {
+			metricsStringList.add(metric.getMetricsIdentifier());
 		}
 		return metricsStringList.stream().collect(Collectors.joining(SEPARATOR));
 	}
@@ -49,11 +47,11 @@ public class MetricsCalculationParametersHelper {
 	 * @param selectedMetricsListString the selected metrics list string
 	 * @return the list
 	 */
-	public static List<Metrics> parseMetricsListString(String selectedMetricsListString) {
-		ArrayList<Metrics> metricsList = new ArrayList<Metrics>();
+	public static List<MetricsCalculation> parseMetricsListString(String selectedMetricsListString) {
+		ArrayList<MetricsCalculation> metricsList = new ArrayList<MetricsCalculation>();
 		String[] metricsArray = selectedMetricsListString.split(SEPARATOR);
 		for (int i=0; i<metricsArray.length; i++) {
-			Metrics metric = Metrics.valueOf(metricsArray[i]);
+			MetricsCalculation metric = MetricsCalculationRegistry.getInstance().getMetricsCalculationByIdentifier(metricsArray[i]);
 			if (metric!=null) {
 				metricsList.add(metric);
 			}

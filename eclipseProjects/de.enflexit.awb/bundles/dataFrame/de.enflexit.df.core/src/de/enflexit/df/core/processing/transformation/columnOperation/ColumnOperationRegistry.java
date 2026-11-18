@@ -12,17 +12,28 @@ import tech.tablesaw.columns.Column;
 public class ColumnOperationRegistry {
 
 	private final List<DataOperation> operations = new ArrayList<>();
+	
+	private static ColumnOperationRegistry instance;
 
 	/**
 	 * Instantiates a new column operation registry.
 	 */
-	public ColumnOperationRegistry() {
+	private ColumnOperationRegistry() {
 		
 		// --- Register supported operations --------------
-		this.register(new NumericalDataOperation(NumericalDataOperation.Operation.ADD));
-		this.register(new NumericalDataOperation(NumericalDataOperation.Operation.SUBTRACT));
-		this.register(new NumericalDataOperation(NumericalDataOperation.Operation.MULTIPLY));
-		this.register(new NumericalDataOperation(NumericalDataOperation.Operation.DIVIDE));
+		this.register(new NumericColumnOperation(NumericColumnOperation.Operation.ADD));
+		this.register(new NumericColumnOperation(NumericColumnOperation.Operation.SUBTRACT));
+		this.register(new NumericColumnOperation(NumericColumnOperation.Operation.MULTIPLY));
+		this.register(new NumericColumnOperation(NumericColumnOperation.Operation.DIVIDE));
+		this.register(new TemporalColumnOperation(TemporalColumnOperation.Operation.ADD));
+		this.register(new TemporalColumnOperation(TemporalColumnOperation.Operation.SUBTRACT));
+	}
+	
+	public static ColumnOperationRegistry getInstance() {
+		if (instance==null) {
+			instance = new ColumnOperationRegistry();
+		}
+		return instance;
 	}
 
 	/**

@@ -10,7 +10,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import de.enflexit.df.core.processing.transformation.columnOperation.DataOperation;
-import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperation;
+import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationDefinition;
 
 /**
  * TableCellEditor for selecting column operations.
@@ -51,7 +51,7 @@ public class TableCellEditorOperationSelection extends AbstractCellEditor implem
 		
 		int modelRow = table.convertRowIndexToModel(row);
 
-        ColumnOperation rule = tableModel.getRule(modelRow);
+        ColumnOperationDefinition rule = tableModel.getRule(modelRow);
 
         // --- Populate the ComboBox with the operations that are applicable for the selected column.  
         this.comboBox.removeAllItems();

@@ -17,7 +17,7 @@ public interface MetricsCalculation {
 	 * This method should return a user-friendly display name to be used in the UI.
 	 * @return the metric display name
 	 */
-	public String getMetricDisplayName();
+	public String getDisplayName();
 	
 	/**
 	 * Implement this method to calculate the actual value for this metric on two columns.

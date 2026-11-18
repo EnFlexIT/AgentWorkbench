@@ -2,7 +2,6 @@ package de.enflexit.df.core.processing.transformation.metrics.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import de.enflexit.common.properties.Properties;
@@ -10,8 +9,9 @@ import de.enflexit.common.swing.CheckBoxList;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.metrics.DataTransformationCalculateMetrics;
-import de.enflexit.df.core.processing.transformation.metrics.DataTransformationCalculateMetrics.Metrics;
+import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculation;
 import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculationParametersHelper;
+import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculationRegistry;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
 import tech.tablesaw.api.NumericColumn;
@@ -39,7 +39,7 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	private JComboBox<String> jComboBoxReferenceColumn;
 	private JLabel jLabelMetrics;
 	private JScrollPane jScrollPaneMetricsList;
-	private CheckBoxList<Metrics> metricsList;
+	private CheckBoxList<MetricsCalculation> metricsList;
 	private JLabel jLabelCompareColumns;
 	private JScrollPane jScrollPaneCompareColumnsList;
 	private CheckBoxList<String> compareColumnsList;
@@ -122,11 +122,12 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 		}
 		return jScrollPaneMetricsList;
 	}
-	private CheckBoxList<Metrics> getMetricsList() {
+	private CheckBoxList<MetricsCalculation> getMetricsList() {
 		if (metricsList==null) {
-			DefaultListModel<Metrics> metricsListModel = new DefaultListModel<Metrics>();
-			metricsListModel.addAll(Arrays.asList(Metrics.values()));
-			metricsList = new CheckBoxList<Metrics>(metricsListModel, Metrics::label);
+			List<MetricsCalculation> availableMetrics = MetricsCalculationRegistry.getInstance().getMetricsList();
+			DefaultListModel<MetricsCalculation> metricsListModel = new DefaultListModel<MetricsCalculation>();
+			metricsListModel.addAll(availableMetrics);
+			metricsList = new CheckBoxList<MetricsCalculation>(metricsListModel, MetricsCalculation::getDisplayName);
 		}
 		return metricsList;
 	}
@@ -218,7 +219,7 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	@Override
 	public void setConfiguredParameters(Properties parametersAsProperties) {
 		String metricsListString = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_SELECTED_METRICS);
-		List<Metrics> metricsList = MetricsCalculationParametersHelper.parseMetricsListString(metricsListString);
+		List<MetricsCalculation> metricsList = MetricsCalculationParametersHelper.parseMetricsListString(metricsListString);
 		this.getMetricsList().setSelectedItems(metricsList);
 		
 		String referencsColumnName = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_REFERENCE_COLUMN);

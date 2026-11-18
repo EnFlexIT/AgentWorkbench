@@ -9,9 +9,8 @@ import java.util.stream.Collectors;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
-import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationRegistry;
 import de.enflexit.df.core.processing.transformation.columnOperation.DataTransformationServiceColumnOperation;
-import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperation;
+import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationDefinition;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
@@ -48,8 +47,6 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 	
 	private DataTableNode tableNode;
 	
-	private ColumnOperationRegistry operationRegistry;
-	
 	/**
 	 * Instantiates a new column operation configuration panel.
 	 * @param transformation the transformation
@@ -83,13 +80,14 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 		if (jTableColumnOperations == null) {
 			jTableColumnOperations = new JTable();
 			jTableColumnOperations.setModel(this.getTableModel());
+			jTableColumnOperations.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 			
 		}
 		return jTableColumnOperations;
 	}
 	private ColumnOperationTableModel getTableModel() {
 		if (tableModel==null) {
-			tableModel = new ColumnOperationTableModel(this.getTableSawTable(), this.getOperationRegistry());
+			tableModel = new ColumnOperationTableModel(this.getTableSawTable());
 		}
 		return tableModel;
 	}
@@ -108,16 +106,6 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 		return jButtonRemoveOperation;
 	}
 	
-	/**
-	 * Gets the operation registry.
-	 * @return the operation registry
-	 */
-	private ColumnOperationRegistry getOperationRegistry() {
-		if (operationRegistry==null) {
-			operationRegistry = new ColumnOperationRegistry();
-		}
-		return operationRegistry;
-	}
 	
 	/**
 	 * Gets the table saw table.
@@ -131,7 +119,7 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 	 * Resets the table model and editors according to the currently selected table saw table.
 	 */
 	private void resetTableModelAndEditors() {
-		this.tableModel = new ColumnOperationTableModel(this.getTableSawTable(), this.getOperationRegistry());
+		this.tableModel = new ColumnOperationTableModel(this.getTableSawTable());
 		this.getJTableColumnOperations().setModel(this.tableModel);
 		
 		TableColumnModel columnModel = this.getJTableColumnOperations().getColumnModel(); 
@@ -139,9 +127,9 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 		columnModel.getColumn(0).setCellRenderer(new TableCellRendererColumnSelection());
 		columnModel.getColumn(1).setCellEditor(new TableCellEditorOperationSelection(tableModel));
 		columnModel.getColumn(1).setCellRenderer(new TableCellRendererOperationSelection());
-		columnModel.getColumn(2).setCellEditor(new TableCellEditorOperationParameter(this.getJTableColumnOperations(), tableModel, this.getOperationRegistry()));
+		columnModel.getColumn(2).setCellEditor(new TableCellEditorParameter(this.getJTableColumnOperations(), tableModel));
 		columnModel.getColumn(3).setCellEditor(new TableCellEditorResultHandlingSelection(tableModel));
-		
+		columnModel.getColumn(3).setCellRenderer(new TableCellRendererResultHandlingSelection());
 	}
 	
 
@@ -150,10 +138,10 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 	 */
 	@Override
 	public Properties getConfiguredParameters() {
-		List<ColumnOperation> operationsList =  this.getTableModel().getRules();
+		List<ColumnOperationDefinition> operationsList =  this.getTableModel().getRules();
 		ArrayList<String> operationStrings = new ArrayList<String>();
 		
-		for (ColumnOperation operation : operationsList) {
+		for (ColumnOperationDefinition operation : operationsList) {
 			operationStrings.add(operation.toString());
 		}
 		
@@ -172,9 +160,9 @@ public class ColumnOperationConfigurationPanel extends AbstractTransformationPar
 		String operationsListString = parametersAsProperties.getStringValue(DataTransformationServiceColumnOperation.PARAM_NAME_TRANSFORMATIONS_LIST);
 		List<String> operationStrings = Arrays.asList(operationsListString.split(","));
 		
-		ArrayList<ColumnOperation> operationsList = new ArrayList<ColumnOperation>();
+		ArrayList<ColumnOperationDefinition> operationsList = new ArrayList<ColumnOperationDefinition>();
 		for (String operationString : operationStrings) {
-			operationsList.add(ColumnOperation.fromString(operationString));
+			operationsList.add(ColumnOperationDefinition.fromString(operationString));
 		}
 		this.getTableModel().setOperationsList(operationsList);
 	}

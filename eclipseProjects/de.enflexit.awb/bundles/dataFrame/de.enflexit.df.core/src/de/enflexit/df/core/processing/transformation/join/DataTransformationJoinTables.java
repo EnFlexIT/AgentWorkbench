@@ -172,8 +172,7 @@ public class DataTransformationJoinTables extends AbstractDataTransformation {
 	 */
 	@Override
 	public String getLabelText() {
-//		return "Join Tables";
-		return "";
+		return "Join";
 	}
 
 	/* (non-Javadoc)

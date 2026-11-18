@@ -19,17 +19,17 @@ public class TableCellRendererOperationSelection extends DefaultTableCellRendere
 	 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		super.getTableCellRendererComponent(
-	            table, value, isSelected, hasFocus, row, column);
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+			int row, int column) {
+		super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-	        if (value instanceof DataOperation operation) {
-	            setText(operation.getDisplayName());
-	        } else {
-	            setText(ColumnOperationConfigurationPanel.COMBOBOX_NULL_PLACEHOLDER);
-	        }
+		if (value instanceof DataOperation operation) {
+			setText(operation.getDisplayName());
+		} else {
+			setText(ColumnOperationConfigurationPanel.COMBOBOX_NULL_PLACEHOLDER);
+		}
 
-	        return this;
+		return this;
 	}
 
 }

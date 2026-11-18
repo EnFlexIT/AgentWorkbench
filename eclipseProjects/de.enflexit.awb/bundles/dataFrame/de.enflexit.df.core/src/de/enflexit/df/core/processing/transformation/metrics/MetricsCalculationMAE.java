@@ -8,8 +8,8 @@ import tech.tablesaw.api.NumericColumn;
  */
 public class MetricsCalculationMAE implements MetricsCalculation {
 	
-	private static final String METRIC_IDENTIFIER = "RMSE";
-	private static final String METRIC_DISPLAY_NAME = "Root Mean Square Error";
+	private static final String METRIC_IDENTIFIER = "MAE";
+	private static final String METRIC_DISPLAY_NAME = "Mean Absolute Error";
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.metrics.MetricsCalculation#getMetricsIdentifier()
@@ -23,7 +23,7 @@ public class MetricsCalculationMAE implements MetricsCalculation {
 	 * @see de.enflexit.df.core.processing.transformation.metrics.MetricsCalculation#getMetricDisplayName()
 	 */
 	@Override
-	public String getMetricDisplayName() {
+	public String getDisplayName() {
 		return METRIC_DISPLAY_NAME;
 	}
 

@@ -1,12 +1,11 @@
 package de.enflexit.df.core.processing.transformation.columnOperation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import com.google.gson.Gson;
-
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
-import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperation.ResultHandling;
+import de.enflexit.df.core.processing.transformation.columnOperation.ColumnOperationDefinition.ResultHandling;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.graph.TransformationGraphController;
 import tech.tablesaw.api.Table;
@@ -18,9 +17,7 @@ import tech.tablesaw.columns.Column;
  */
 public class DataTransformationColumnOperation extends AbstractDataTransformation {
 	
-	private List<ColumnOperation> operationsList;
-	
-	private ColumnOperationRegistry operationRegistry;
+	private List<ColumnOperationDefinition> operationsList;
 	
 	private ArrayList<ResultWrapper> resultsList;
 
@@ -54,9 +51,9 @@ public class DataTransformationColumnOperation extends AbstractDataTransformatio
 	 */
 	@Override
 	public Table performTransformation(TransformationGraphController graphController) {
-		List<ColumnOperation> operationsList = this.getOperationsFromParameters();
-		for (ColumnOperation rule : operationsList) {
-			DataOperation operation = this.getOperationRegistry().getOperationByID(rule.getOperationID());
+		List<ColumnOperationDefinition> operationsList = this.getOperationsFromParameters();
+		for (ColumnOperationDefinition rule : operationsList) {
+			DataOperation operation = ColumnOperationRegistry.getInstance().getOperationByID(rule.getOperationID());
 			Column<?> originalColumn = this.getInputTable().column(rule.getColumnName());
 			if (operation.supports(originalColumn)) {
 				Object parameter = operation.parseParameter(rule.getParameter());
@@ -75,7 +72,7 @@ public class DataTransformationColumnOperation extends AbstractDataTransformatio
 				resultTable.replaceColumn(result.modifiedColumn);
 			} else {
 				// --- Append the result, keep the original column --
-				result.modifiedColumn.setName(result.originalColumn.name() + "_mod");
+//				result.modifiedColumn.setName(result.originalColumn.name() + "_mod");
 				resultTable.addColumns(result.modifiedColumn);
 			}
 		}
@@ -87,26 +84,22 @@ public class DataTransformationColumnOperation extends AbstractDataTransformatio
 	 * Gets the operations list.
 	 * @return the operations list
 	 */
-	public List<ColumnOperation> getOperationsList() {
+	public List<ColumnOperationDefinition> getOperationsList() {
 		return operationsList;
 	}
 
-	public List<ColumnOperation> getOperationsFromParameters() {
-		String operationsListString = this.getTransformationParameters().getStringValue(DataTransformationServiceColumnOperation.PARAM_NAME_TRANSFORMATIONS_LIST);
-		@SuppressWarnings("unchecked")
-		List<ColumnOperation> operationsList = new Gson().fromJson(operationsListString, List.class);
-		return operationsList;
-	}
-	
 	/**
-	 * Gets the operation registry.
-	 * @return the operation registry
+	 * Gets the configured operations from the parameters.
+	 * @return the operations
 	 */
-	private ColumnOperationRegistry getOperationRegistry() {
-		if (operationRegistry==null) {
-			operationRegistry = new ColumnOperationRegistry();
+	public List<ColumnOperationDefinition> getOperationsFromParameters() {
+		String operationsListString = this.getTransformationParameters().getStringValue(DataTransformationServiceColumnOperation.PARAM_NAME_TRANSFORMATIONS_LIST);
+		List<String> operationStrings = Arrays.asList(operationsListString.split(","));
+		ArrayList<ColumnOperationDefinition> operationsList = new ArrayList<ColumnOperationDefinition>();
+		for (String operationString : operationStrings) {
+			operationsList.add(ColumnOperationDefinition.fromString(operationString));
 		}
-		return operationRegistry;
+		return operationsList;
 	}
 	
 	private Table getInputTable() {

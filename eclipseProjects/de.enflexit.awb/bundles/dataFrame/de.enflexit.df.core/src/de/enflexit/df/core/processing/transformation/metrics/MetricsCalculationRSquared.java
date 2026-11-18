@@ -23,7 +23,7 @@ public class MetricsCalculationRSquared implements MetricsCalculation {
 	 * @see de.enflexit.df.core.processing.transformation.metrics.MetricsCalculation#getMetricDisplayName()
 	 */
 	@Override
-	public String getMetricDisplayName() {
+	public String getDisplayName() {
 		return METRIC_DISPLAY_NAME;
 	}
 

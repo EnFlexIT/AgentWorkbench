@@ -7,7 +7,7 @@ import tech.tablesaw.columns.Column;
  * {@link DataOperation} for simple numeric operations.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */
-public class NumericalDataOperation implements DataOperation {
+public class NumericColumnOperation implements DataOperation {
 	
 	public enum Operation {
 		ADD("numeric.add"),
@@ -31,7 +31,7 @@ public class NumericalDataOperation implements DataOperation {
 
 	private final Operation operation;
 
-	public NumericalDataOperation(Operation type) {
+	public NumericColumnOperation(Operation type) {
 		this.operation = type;
 	}
 

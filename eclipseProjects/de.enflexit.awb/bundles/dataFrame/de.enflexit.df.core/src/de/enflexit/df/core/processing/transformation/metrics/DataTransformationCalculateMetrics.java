@@ -17,34 +17,6 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 	public static final String PARAM_NAME_REFERENCE_COLUMN = "referenceColumn";
 	public static final String PARAM_NAME_COMPARE_COLUMNS = "compareColumns";
 	
-	/**
-	 * The supported metrics
-	 * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
-	 */
-	public enum Metrics {
-		R_SQUARED("R²"),
-		RMSE("Root mean squared error"), 
-		MAE("Mean absolute error"), 
-		MSE("Mean squared error");
-		
-		final String label;
-
-	    /**
-    	 * Instantiates a new metrics.
-    	 * @param label the label
-    	 */
-    	private Metrics(String label) {
-	        this.label = label;
-	    }
-    	
-    	/**
-	     * Gets the label.
-	     * @return the string
-	     */
-	    public String label() {
-			return label;
-		}
-	}
 	private Table inputTable;
 
 	/* (non-Javadoc)
@@ -78,7 +50,7 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 	 */
 	@Override
 	public Table performTransformation(TransformationGraphController graphController) {
-		List<Metrics> metricsToCalculate = this.getSelectedMetricsList();
+		List<MetricsCalculation> metricsToCalculate = this.getSelectedMetricsList();
 		List<String> compareColumnNames = this.getCompareColumnsList();
 		
 		List<Column<?>> resultTableColumns = new ArrayList<Column<?>>(); 
@@ -90,14 +62,13 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 		Column<?> referenceColumn = this.getInputTable().column(this.getTransformationParameters().getStringValue(PARAM_NAME_REFERENCE_COLUMN));
 		
 		if (referenceColumn instanceof NumericColumn<?> referenceColumnNumeric) {
-			for(Metrics metric : metricsToCalculate) {
-				DoubleColumn metricColumn = DoubleColumn.create(metric.label());
+			for(MetricsCalculation metric : metricsToCalculate) {
+				DoubleColumn metricColumn = DoubleColumn.create(metric.getDisplayName());
 				for(String compareColumnName : compareColumnNames) {
 					Column<?> compareColumn = this.getInputTable().column(compareColumnName);
 					if (compareColumn instanceof NumericColumn<?> compareColumnNumeric) {
 						
-						MetricsCalculation metricsCalculation = this.getMetricsCalculation(metric);
-						Double metricValue = metricsCalculation.calculateMetric(referenceColumnNumeric, compareColumnNumeric);
+						Double metricValue = metric.calculateMetric(referenceColumnNumeric, compareColumnNumeric);
 						metricColumn.append(metricValue);
 					} else {
 						throw new IllegalArgumentException("Compare column " + compareColumn.name() + " is not numeric!");
@@ -114,30 +85,10 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 	}
 	
 	/**
-	 * Gets the metrics calculation.
-	 * @param metric the metric
-	 * @return the metrics calculation
-	 */
-	private MetricsCalculation getMetricsCalculation(Metrics metric) {
-		switch (metric) {
-		case R_SQUARED: 
-			return new MetricsCalculationRSquared();
-		case RMSE:
-			return new MetricsCalculationRMSE();
-		case MAE:
-			return new MetricsCalculationMAE();
-		case MSE:
-			return new MetricsCalculationMSE();
-		default:
-			throw new IllegalArgumentException("Unexpected metric: " + metric);
-		}
-	}
-	
-	/**
 	 * Gets the list of selected metrics from the parameters.
 	 * @return the selected metrics list
 	 */
-	private List<Metrics> getSelectedMetricsList(){
+	private List<MetricsCalculation> getSelectedMetricsList(){
 		String selectedMetricsListString = this.getTransformationParameters().getStringValue(PARAM_NAME_SELECTED_METRICS);
 		return MetricsCalculationParametersHelper.parseMetricsListString(selectedMetricsListString);
 	}
@@ -161,5 +112,7 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 		}
 		return inputTable;
 	}
+	
+	
 
 }
