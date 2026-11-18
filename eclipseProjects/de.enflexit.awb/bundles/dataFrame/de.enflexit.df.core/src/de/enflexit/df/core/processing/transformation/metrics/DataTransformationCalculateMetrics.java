@@ -89,13 +89,15 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 		
 		Column<?> referenceColumn = this.getInputTable().column(this.getTransformationParameters().getStringValue(PARAM_NAME_REFERENCE_COLUMN));
 		
-		if (referenceColumn instanceof NumericColumn<?> ncRefCol) {
+		if (referenceColumn instanceof NumericColumn<?> referenceColumnNumeric) {
 			for(Metrics metric : metricsToCalculate) {
 				DoubleColumn metricColumn = DoubleColumn.create(metric.label());
 				for(String compareColumnName : compareColumnNames) {
 					Column<?> compareColumn = this.getInputTable().column(compareColumnName);
-					if (compareColumn instanceof NumericColumn<?> ncCompCOl) {
-						Double metricValue = this.calculateMetric(ncRefCol, ncCompCOl, metric);
+					if (compareColumn instanceof NumericColumn<?> compareColumnNumeric) {
+						
+						MetricsCalculation metricsCalculation = this.getMetricsCalculation(metric);
+						Double metricValue = metricsCalculation.calculateMetric(referenceColumnNumeric, compareColumnNumeric);
 						metricColumn.append(metricValue);
 					} else {
 						throw new IllegalArgumentException("Compare column " + compareColumn.name() + " is not numeric!");
@@ -111,82 +113,24 @@ public class DataTransformationCalculateMetrics extends AbstractDataTransformati
 		return resultTable;
 	}
 	
-	
 	/**
-	 * Calculates the specified metric on the provided columns.
-	 * @param referenceColumn the reference column
-	 * @param compareColumn the compare column
+	 * Gets the metrics calculation.
 	 * @param metric the metric
-	 * @return the double
+	 * @return the metrics calculation
 	 */
-	private Double calculateMetric(NumericColumn<?> referenceColumn, NumericColumn<?> compareColumn, Metrics metric) {
-		
-		// --- Determine the number of valid compare pairs and the reference sum --------
-		int n = 0;
-		double sumReference = 0.0;
-		
-		for (int i = 0; i < referenceColumn.size(); i++) {
-			if (referenceColumn.isMissing(i) || compareColumn.isMissing(i)) {
-				continue;
-			}
-
-			double reference = referenceColumn.getDouble(i);
-
-			sumReference += reference;
-			n++;
-		}
-		
-		double meanReference = sumReference / n;
-
-		// --- Calculate some error values required later -----------
-	    double sumSquaredError = 0.0;
-	    double sumAbsoluteError = 0.0;
-	    double sumSquaredTotal = 0.0;
-	    
-		for (int i = 0; i < referenceColumn.size(); i++) {
-
-			if (referenceColumn.isMissing(i) || compareColumn.isMissing(i)) {
-				continue;
-			}
-
-			double reference = referenceColumn.getDouble(i);
-			double compare = compareColumn.getDouble(i);
-			double error = reference - compare;
-
-			sumSquaredError += error * error;
-			sumAbsoluteError += Math.abs(error);
-			sumSquaredTotal += Math.pow(reference - meanReference, 2);
-		}
-
-		// --- Calculate the actually required metric ---------------
-		Double result;
+	private MetricsCalculation getMetricsCalculation(Metrics metric) {
 		switch (metric) {
-
-        case R_SQUARED:
-            result = sumSquaredTotal > 0.0
-                ? 1.0 - sumSquaredError / sumSquaredTotal
-                : Double.NaN;
-            break;
-
-        case RMSE:
-            result = Math.sqrt(sumSquaredError / n);
-            break;
-
-        case MAE:
-            result = sumAbsoluteError / n;
-            break;
-
-        case MSE:
-            result = sumSquaredError / n;
-            break;
-
-        default:
-            throw new IllegalArgumentException(
-                "Unsupported metric: " + metric
-            );
-	    }
-	
-	    return result;
+		case R_SQUARED: 
+			return new MetricsCalculationRSquared();
+		case RMSE:
+			return new MetricsCalculationRMSE();
+		case MAE:
+			return new MetricsCalculationMAE();
+		case MSE:
+			return new MetricsCalculationMSE();
+		default:
+			throw new IllegalArgumentException("Unexpected metric: " + metric);
+		}
 	}
 	
 	/**
