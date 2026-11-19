@@ -1,6 +1,8 @@
 package de.enflexit.df.core.processing.transformation.columnOperation.ui;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 import javax.swing.AbstractCellEditor;
@@ -21,7 +23,7 @@ public class TableCellEditorResultHandlingSelection extends AbstractCellEditor i
 
 	private static final long serialVersionUID = -4175541173932198400L;
 	
-	private final JComboBox<ResultHandling> comboBox = new JComboBox<ResultHandling>();
+	private JComboBox<ResultHandling> comboBoxCellEditor;
 	
 	private final ColumnOperationTableModel tableModel;
 	
@@ -31,19 +33,37 @@ public class TableCellEditorResultHandlingSelection extends AbstractCellEditor i
 	 */
 	public TableCellEditorResultHandlingSelection(ColumnOperationTableModel tableModel) {
 		this.tableModel = tableModel;
-		this.comboBox.setRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				
-				if (value instanceof ResultHandling rh) {
-					this.setText(rh.getLabel());
+	}
+	
+	/**
+	 * Gets the combo box cell editor.
+	 * @return the combo box cell editor
+	 */
+	private JComboBox<ResultHandling> getComboBoxCellEditor() {
+		if (comboBoxCellEditor==null) {
+			comboBoxCellEditor = new JComboBox<ResultHandling>();
+			comboBoxCellEditor.setRenderer(new DefaultListCellRenderer() {
+				@Override
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+					super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+					
+					if (value instanceof ResultHandling rh) {
+						this.setText(rh.getLabel());
+					}
+					
+					return this;
 				}
+			});
+			comboBoxCellEditor.addActionListener(new ActionListener() {
 				
-				return this;
-			}
-		});
-		Arrays.asList(ResultHandling.values()).forEach(this.comboBox::addItem);
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					TableCellEditorResultHandlingSelection.this.stopCellEditing();
+				}
+			});
+			Arrays.asList(ResultHandling.values()).forEach(comboBoxCellEditor::addItem);
+		}
+		return comboBoxCellEditor;
 	}
 
 	/* (non-Javadoc)
@@ -54,11 +74,11 @@ public class TableCellEditorResultHandlingSelection extends AbstractCellEditor i
 		int modelRow = table.convertRowIndexToModel(row);
 		ColumnOperationDefinition rule = this.tableModel.getRule(modelRow);
 		if (rule.getResultHandling()!=null) {
-			this.comboBox.setSelectedItem(rule.getResultHandling());
+			this.getComboBoxCellEditor().setSelectedItem(rule.getResultHandling());
 		} else {
-			this.comboBox.setSelectedIndex(0);
+			this.getComboBoxCellEditor().setSelectedIndex(0);
 		}
-		return this.comboBox;
+		return this.getComboBoxCellEditor();
 	}
 	
 	/* (non-Javadoc)
@@ -66,7 +86,7 @@ public class TableCellEditorResultHandlingSelection extends AbstractCellEditor i
 	 */
 	@Override
 	public Object getCellEditorValue() {
-		return this.comboBox.getSelectedItem();
+		return this.getComboBoxCellEditor().getSelectedItem();
 	}
 
 

@@ -45,6 +45,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.LayoutLensShapePickSupport;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
+import edu.uci.ics.jung.visualization.renderers.DefaultEdgeLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import tech.tablesaw.api.Table;
 
@@ -336,30 +337,30 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> getLabelRendererHTMLString(node.getLabelText(), pickedNodesState.isPicked(node)));
 			visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 			
-			// --- Configure mouse interactions -----------
+			// --- Configure mouse interactions ---------------------
 			visualizationViewer.setPickSupport(new ShapePickSupport<DataTableNode, DataTransformationEdge>(visualizationViewer));
 			visualizationViewer.setGraphMouse(this.getZoomOnlyGraphMouse());
 			TransformationGraphMouseAdapter mouseAdapter = new TransformationGraphMouseAdapter(this);
 			visualizationViewer.addMouseListener(mouseAdapter);
 			visualizationViewer.addMouseMotionListener(mouseAdapter);
 			
-			// --- Require less exact clicks for element selection
+			// --- Require less exact clicks for element selection --
 			visualizationViewer.setPickSupport(new LayoutLensShapePickSupport<>(visualizationViewer, 6.0f));
-			visualizationViewer.getRenderContext().setEdgeDrawPaintTransformer(edge -> Color.BLACK);
 			
-			visualizationViewer.getRenderContext().setEdgeLabelTransformer(edge -> edge.getDataTransformation().getLabelText());
-			visualizationViewer.getRenderContext().setEdgeLabelClosenessTransformer(context -> 0.6f);
-			visualizationViewer.getRenderContext().getEdgeLabelRenderer().setRotateEdgeLabels(false);
-			visualizationViewer.getRenderContext().setEdgeFontTransformer(edge -> new Font("SansSerif", Font.PLAIN, 12));
-			visualizationViewer.getRenderContext().setLabelOffset(50);
-			
-
-			
+			// --- Visualization of edges ---------------------------
 			PickedState<DataTransformationEdge> pickedEdgesState = visualizationViewer.getPickedEdgeState();
 			visualizationViewer.getRenderContext().setEdgeStrokeTransformer(edge -> pickedEdgesState.isPicked(edge) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
 			visualizationViewer.getRenderContext().setEdgeArrowStrokeTransformer(edge -> pickedEdgesState.isPicked(edge) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
+			
+			// --- Visualization of edge labels ---------------------
+			visualizationViewer.getRenderContext().setEdgeLabelTransformer(edge -> edge.getDataTransformation().getLabelText());
+			visualizationViewer.getRenderContext().setEdgeFontTransformer(edge -> new Font("SansSerif", Font.PLAIN, 12));
+			visualizationViewer.getRenderContext().setEdgeDrawPaintTransformer(edge -> Color.BLACK);
+			visualizationViewer.getRenderContext().setEdgeLabelClosenessTransformer(context -> 0.5f);
+			visualizationViewer.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.BLACK, false));
+			visualizationViewer.getRenderContext().setLabelOffset(50);
 
-			// --- Register as graph event listener -------
+			// --- Register as graph event listener -----------------
 			ObservableGraph<DataTableNode, DataTransformationEdge> graph = (ObservableGraph<DataTableNode, DataTransformationEdge>) this.getGraphController().getTransformationGraph();
 			graph.addGraphEventListener(this);
 			

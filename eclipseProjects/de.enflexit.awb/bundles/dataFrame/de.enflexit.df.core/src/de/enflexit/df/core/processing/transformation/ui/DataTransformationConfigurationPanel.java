@@ -443,7 +443,9 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 				
 				AbstractTransformationParameterConfigurationPanel configPanel = this.getParameterConfigurationPanel(selectedTransformation);
 				this.setParametersConfigurationPanel(configPanel);
-				this.setToCurrentSelectionFromGraph();
+				if (this.parentEditorPanel.getSelectedGraphElement() instanceof DataTableNode) {
+					this.setToCurrentSelectionFromGraph();
+				}
 			}
 			
 			this.getTableNodesList().setEnabled(this.isTransformationSelected());

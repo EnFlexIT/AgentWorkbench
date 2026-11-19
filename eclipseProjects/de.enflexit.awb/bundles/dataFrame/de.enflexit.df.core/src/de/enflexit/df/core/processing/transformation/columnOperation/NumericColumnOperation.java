@@ -71,10 +71,12 @@ public class NumericColumnOperation implements DataOperation {
 	public Object parseParameter(String paramString) {
 		Double paramValue = null;
 		
-		try {
-			paramValue = Double.parseDouble(paramString);
-		} catch (NumberFormatException nfe) {
-			throw new IllegalArgumentException("The provided param value " + paramString + " is not numeric!");
+		if (paramString!=null && paramString.isBlank()==false) {
+			try {
+				paramValue = Double.parseDouble(paramString);
+			} catch (NumberFormatException nfe) {
+				throw new IllegalArgumentException("The provided param value " + paramString + " is not numeric!");
+			}
 		}
 		
 		return paramValue;

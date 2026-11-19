@@ -1,6 +1,8 @@
 package de.enflexit.df.core.processing.transformation.columnOperation.ui;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.AbstractCellEditor;
@@ -20,32 +22,48 @@ public class TableCellEditorColumnSelection extends AbstractCellEditor implement
 
 	private static final long serialVersionUID = -6680389599369085465L;
 	
-	private final JComboBox<Column<?>> comboBox = new JComboBox<>();
+	private JComboBox<Column<?>> comboBoxCellEditor;
 
 	/**
 	 * Instantiates a new column selection table cell editor.
 	 * @param columns the columns
 	 */
 	public TableCellEditorColumnSelection(List<Column<?>> columns) {
-		
-		this.comboBox.addItem(null);
-		columns.forEach(comboBox::addItem);
-		
-		this.comboBox.setRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean selected, boolean focus) {
+		this.getComboBoxCellEditor().addItem(null);
+		columns.forEach(this.getComboBoxCellEditor()::addItem);
+	}
 	
-				super.getListCellRendererComponent(list, value, index, selected, focus);
-	
-				if (value==null) {
-					this.setText(ColumnOperationConfigurationPanel.COMBOBOX_NULL_PLACEHOLDER);
-				} else if (value instanceof Column<?> column) {
-					this.setText(column.name());
+	/**
+	 * Gets the combo box cell editor.
+	 * @return the combo box cell editor
+	 */
+	private JComboBox<Column<?>> getComboBoxCellEditor() {
+		if (comboBoxCellEditor==null) {
+			comboBoxCellEditor = new JComboBox<Column<?>>();
+			comboBoxCellEditor.setRenderer(new DefaultListCellRenderer() {
+				@Override
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean selected, boolean focus) {
+		
+					super.getListCellRendererComponent(list, value, index, selected, focus);
+		
+					if (value==null) {
+						this.setText(ColumnOperationConfigurationPanel.COMBOBOX_NULL_PLACEHOLDER);
+					} else if (value instanceof Column<?> column) {
+						this.setText(column.name());
+					}
+		
+					return this;
 				}
-	
-				return this;
-			}
-		});
+			});
+			comboBoxCellEditor.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					TableCellEditorColumnSelection.this.stopCellEditing();
+				}
+			});
+			
+		}
+		return comboBoxCellEditor;
 	}
 
 	/* (non-Javadoc)
@@ -53,8 +71,8 @@ public class TableCellEditorColumnSelection extends AbstractCellEditor implement
 	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-		this.comboBox.setSelectedItem(value);
-		return this.comboBox;
+		this.getComboBoxCellEditor().setSelectedItem(value);
+		return this.getComboBoxCellEditor();
 	}
 	
 	/* (non-Javadoc)
@@ -62,7 +80,7 @@ public class TableCellEditorColumnSelection extends AbstractCellEditor implement
 	 */
 	@Override
 	public Object getCellEditorValue() {
-		return this.comboBox.getSelectedItem();
+		return this.getComboBoxCellEditor().getSelectedItem();
 	}
 
 

@@ -1,6 +1,8 @@
 package de.enflexit.df.core.processing.transformation.columnOperation.ui;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultListCellRenderer;
@@ -20,27 +22,51 @@ public class TableCellEditorOperationSelection extends AbstractCellEditor implem
 
 	private static final long serialVersionUID = -4311264859994351847L;
 
-	private final JComboBox<DataOperation> comboBox = new JComboBox<>();
+	private JComboBox<DataOperation> comboBoxCellEditor;
 
 	private final ColumnOperationTableModel tableModel;
 
+	/**
+	 * Instantiates a new table cell editor operation selection.
+	 *
+	 * @param tableModel the table model
+	 */
 	public TableCellEditorOperationSelection(ColumnOperationTableModel tableModel) {
 		this.tableModel = tableModel;
-		comboBox.setRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean selected,	boolean focus) {
+	}
+	
+	/**
+	 * Gets the combo box cell editor.
+	 * @return the combo box cell editor
+	 */
+	private JComboBox<DataOperation> getComboBoxCellEditor() {
+		if (comboBoxCellEditor==null) {
+			comboBoxCellEditor = new JComboBox<DataOperation>();
+			comboBoxCellEditor.setRenderer(new DefaultListCellRenderer() {
+				@Override
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean selected,	boolean focus) {
 
-				super.getListCellRendererComponent(list, value, index, selected, focus);
+					super.getListCellRendererComponent(list, value, index, selected, focus);
 
-				if (value==null) {
-					this.setText(ColumnOperationConfigurationPanel.COMBOBOX_NULL_PLACEHOLDER);
-				} else  if (value instanceof DataOperation op) {
-					this.setText(op.getDisplayName());
+					if (value==null) {
+						this.setText(ColumnOperationConfigurationPanel.COMBOBOX_NULL_PLACEHOLDER);
+					} else  if (value instanceof DataOperation op) {
+						this.setText(op.getDisplayName());
+					}
+
+					return this;
 				}
-
-				return this;
-			}
-		});
+			});
+			comboBoxCellEditor.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					TableCellEditorOperationSelection.this.stopCellEditing();
+				}
+			});
+				
+		}
+		return comboBoxCellEditor;
 	}
 
 	/* (non-Javadoc)
@@ -54,14 +80,14 @@ public class TableCellEditorOperationSelection extends AbstractCellEditor implem
         ColumnOperationDefinition rule = tableModel.getRule(modelRow);
 
         // --- Populate the ComboBox with the operations that are applicable for the selected column.  
-        this.comboBox.removeAllItems();
-        this.comboBox.addItem(null);
+        this.getComboBoxCellEditor().removeAllItems();
+        this.getComboBoxCellEditor().addItem(null);
         if (rule.getColumnName()!=null) {
-        	this.tableModel.getOperations(rule.getColumnName()).forEach(comboBox::addItem);
+        	this.tableModel.getOperations(rule.getColumnName()).forEach(comboBoxCellEditor::addItem);
         }
-        this.comboBox.setSelectedItem(value);
+        this.getComboBoxCellEditor().setSelectedItem(value);
 		
-		return this.comboBox;
+		return this.getComboBoxCellEditor();
 	}
 
 	/* (non-Javadoc)
@@ -69,6 +95,6 @@ public class TableCellEditorOperationSelection extends AbstractCellEditor implem
 	 */
 	@Override
 	public Object getCellEditorValue() {
-		return this.comboBox.getSelectedItem();
+		return this.getComboBoxCellEditor().getSelectedItem();
 	}
 }

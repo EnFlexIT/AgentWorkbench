@@ -7,8 +7,8 @@ package de.enflexit.df.core.processing.transformation.columnOperation;
 public class ColumnOperationDefinition {
 	
 	public enum ResultHandling {
-		REPLACE("Replace Column"),
-		APPEND("New Column");
+		REPLACE("Replace column"),
+		APPEND("Append new column");
 		
 		private ResultHandling(String label) {
 			this.label = label;
