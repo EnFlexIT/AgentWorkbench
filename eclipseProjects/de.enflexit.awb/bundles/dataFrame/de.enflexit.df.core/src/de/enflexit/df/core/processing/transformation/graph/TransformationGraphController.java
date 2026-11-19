@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.AffectedDataObjects;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.processing.ProcessingDataSourceIntegration;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
+import de.enflexit.df.core.processing.transformation.DataTransformationRegistry;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationNode;
 import de.enflexit.df.core.processing.transformation.graph.persistence.PersistentTransformationEdge;
@@ -275,7 +275,7 @@ public class TransformationGraphController implements PropertyChangeListener {
 	 * @return the transformation service
 	 */
 	private DataTransformationService getTransformationService(String transformationName) {
-		List<DataTransformationService> services = ServiceFinder.findServices(DataTransformationService.class);
+		List<DataTransformationService> services = DataTransformationRegistry.getInstance().getKnownDataTransformations();
 		for (DataTransformationService service : services) {
 			if (service.getName().equals(transformationName)) {
 				return service;

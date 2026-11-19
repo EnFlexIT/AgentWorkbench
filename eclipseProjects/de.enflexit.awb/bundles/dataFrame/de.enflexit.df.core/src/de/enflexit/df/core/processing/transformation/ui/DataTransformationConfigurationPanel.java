@@ -20,7 +20,6 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
 
-import de.enflexit.common.ServiceFinder;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.swing.CheckBoxList;
 import de.enflexit.common.swing.CheckBoxListSelectionEvent;
@@ -30,6 +29,7 @@ import de.enflexit.common.swing.RadioButtonListSelectionEvent;
 import de.enflexit.common.swing.RadioButtonListSelectionListener;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation;
 import de.enflexit.df.core.processing.transformation.AbstractDataTransformation.InputType;
+import de.enflexit.df.core.processing.transformation.DataTransformationRegistry;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
 import de.enflexit.df.core.processing.transformation.graph.DataTransformationEdge;
 import de.enflexit.df.core.processing.transformation.graph.ui.TransformationGraphEditorPanel;
@@ -189,7 +189,7 @@ public class DataTransformationConfigurationPanel extends JPanel implements Acti
 	private DefaultComboBoxModel<DataTransformationService> getDataTransformationComboBoxModel() {
 		if (dataTransformationComboBoxModel==null) {
 			dataTransformationComboBoxModel = new DefaultComboBoxModel<DataTransformationService>();
-			List<DataTransformationService> transformationServices = ServiceFinder.findServices(DataTransformationService.class);
+			List<DataTransformationService> transformationServices = DataTransformationRegistry.getInstance().getKnownDataTransformations();
 			dataTransformationComboBoxModel.addAll(transformationServices);
 		}
 		return dataTransformationComboBoxModel;

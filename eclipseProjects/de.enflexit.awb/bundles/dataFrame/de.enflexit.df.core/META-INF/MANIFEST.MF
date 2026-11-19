@@ -49,12 +49,7 @@ Service-Component: OSGI-INF/chartIntegrationService.xml,
  OSGI-INF/dataFramePerspectiveService.xml,
  OSGI-INF/dwExtensionTestColumnDescription.xml,
  OSGI-INF/dwExtensionTestDatabaseWorkbook.xml,
- OSGI-INF/dwExtensionTestMenue.xml,
- OSGI-INF/dataTransformationServiceCalculateMetrics.xml,
- OSGI-INF/dataTransformationServiceColumnOperation.xml,
- OSGI-INF/dataTransformationServiceFilterRows.xml,
- OSGI-INF/dataTransformationServiceJoinTables.xml,
- OSGI-INF/dataTransformationServiceSelectColumns.xml
+ OSGI-INF/dwExtensionTestMenue.xml
 Export-Package: de.enflexit.df.core,
  de.enflexit.df.core.charts,
  de.enflexit.df.core.dataSources,
