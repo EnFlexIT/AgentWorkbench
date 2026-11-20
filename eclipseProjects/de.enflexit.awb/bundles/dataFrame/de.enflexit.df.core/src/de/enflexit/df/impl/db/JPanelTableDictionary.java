@@ -71,6 +71,22 @@ public class JPanelTableDictionary extends JPanel {
 	}
 	
 	/**
+	 * Gets the table dictionary.
+	 * @return the table dictionary
+	 */
+	protected TableDictionary getTableDictionary() {
+		return tableDictionary;
+	}
+	
+	/**
+	 * Gets the name of the selected table.
+	 * @return the selected table
+	 */
+	protected String getSelectedTable() {
+		return this.getJListTables().getSelectedValue();
+	}
+	
+	/**
 	 * Initialize.
 	 */
 	private void initialize() {
@@ -136,7 +152,6 @@ public class JPanelTableDictionary extends JPanel {
 				@Override
 				public void valueChanged(ListSelectionEvent lsEv) {
 					if (lsEv.getValueIsAdjusting()==true) return;
-					JPanelTableDictionary.this.getJListTables().getModel().getElementAt(lsEv.getFirstIndex());
 					JPanelTableDictionary.this.fillTableModelTableColumns();
 				}
 			});

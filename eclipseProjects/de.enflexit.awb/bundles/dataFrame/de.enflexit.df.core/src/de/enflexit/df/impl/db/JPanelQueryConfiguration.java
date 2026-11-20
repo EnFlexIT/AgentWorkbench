@@ -974,10 +974,38 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 	 */
 	private DatabaseQuery createNewDatabaseQuery() {
 		DatabaseQuery dbq = new DatabaseQuery();
+		// --- If a table is selected in the sub panel, use that --------------
+		String tableName = this.getTableNameForQuery();
+		String sortColumn = this.getSortColumnForQuery(tableName);
 		dbq.setNumber(this.getTableModelDatabaseQuery().getRowCount() + 1);
 		dbq.setName("New database query");
-		dbq.setSqlStatement("SELECT * FROM MyTable ORDER BY date_time;");
+		dbq.setSqlStatement("SELECT * FROM " + tableName + " ORDER BY " + sortColumn + ";");
 		return dbq;
+	}
+	
+	/**
+	 * Gets the table name to use for the query.
+	 * @return the table name for query
+	 */
+	private String getTableNameForQuery() {
+		return this.getJPanelTableDictionary().getSelectedTable()!=null ? this.getJPanelTableDictionary().getSelectedTable() : "MyTable";
+	}
+	
+	/**
+	 * Gets the sort column for query. Will use the first temporal column, or return a placeholder name if none found.
+	 * @param tableName the table name
+	 * @return the sort column for query
+	 */
+	private String getSortColumnForQuery(String tableName) {
+		if (tableName!=null && tableName.isBlank()==false) {
+			List<TableColumn> columnsList = this.getJPanelTableDictionary().getTableDictionary().get(tableName);
+			for (TableColumn tc : columnsList) {
+				if (tc.getDataType().equals("timestamp") || tc.getDataType().equals("timestamptz")) {
+					return tc.getColumnName();
+				}
+			}
+		}
+		return "date_time";
 	}
 	
 	/**
