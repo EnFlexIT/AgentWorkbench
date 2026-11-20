@@ -97,6 +97,12 @@ public abstract class AbstractDataTransformation {
 	public abstract String getTransformationName();
 	
 	/**
+	 * This method should return a short text for graph edge labels.
+	 * @return the label text
+	 */
+	public abstract String getLabelText();
+	
+	/**
 	 * Verifies the specified transformation parameters.
 	 * @return true, if the parameters are valid.
 	 */

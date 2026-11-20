@@ -9,6 +9,10 @@ import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.metrics.ui.MetricsCalculationConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 
+/**
+ * {@link DataTransformationService} implementation for regression metrics calculation.
+ * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
+ */
 public class DataTransformationServiceCalculateMetrics implements DataTransformationService {
 	
 	public static final String TRANSFORMATION_NAME = "Calculate Metrics";

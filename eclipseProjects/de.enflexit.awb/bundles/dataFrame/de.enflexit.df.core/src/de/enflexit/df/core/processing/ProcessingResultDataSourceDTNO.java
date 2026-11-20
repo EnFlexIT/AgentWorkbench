@@ -84,7 +84,9 @@ public class ProcessingResultDataSourceDTNO extends AbstractDataSourceDTNO<Proce
 			ProcessingDataSourceIntegration processingIntegration = getProcessingDataSourceIntegration();
 			DataTransformationProcessor transformationProcessor = new DataTransformationProcessor(processingIntegration.getGraphController());
 			AbstractDataTransformation transformation = processingIntegration.getGraphController().getTransformationForNode(this.getDataSource().getResultNode());
-			transformationProcessor.performTransformation(transformation);
+			if (this.getDataSource().getResultNode().getDataTable()==null) {
+				transformationProcessor.performTransformation(transformation);
+			}
 			return this.getDataSource().getResultNode().getDataTable();
 		}
 		

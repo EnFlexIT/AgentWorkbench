@@ -1,16 +1,20 @@
 package de.enflexit.df.core.processing.transformation.metrics.ui;
 
 import java.beans.PropertyChangeEvent;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.swing.CheckBoxList;
 import de.enflexit.df.core.processing.transformation.DataTransformationService;
 import de.enflexit.df.core.processing.transformation.graph.DataTableNode;
-import de.enflexit.df.core.processing.transformation.metrics.DataTransformationCalculateMetrics.Metrics;
+import de.enflexit.df.core.processing.transformation.metrics.DataTransformationCalculateMetrics;
+import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculation;
+import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculationParametersHelper;
+import de.enflexit.df.core.processing.transformation.metrics.MetricsCalculationRegistry;
 import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationParameterConfigurationPanel;
 import de.enflexit.df.core.processing.transformation.ui.DataTransformationConfigurationPanel;
+import tech.tablesaw.api.NumericColumn;
 import tech.tablesaw.api.Table;
 
 import java.awt.GridBagLayout;
@@ -35,7 +39,7 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	private JComboBox<String> jComboBoxReferenceColumn;
 	private JLabel jLabelMetrics;
 	private JScrollPane jScrollPaneMetricsList;
-	private CheckBoxList<Metrics> metricsList;
+	private CheckBoxList<MetricsCalculation> metricsList;
 	private JLabel jLabelCompareColumns;
 	private JScrollPane jScrollPaneCompareColumnsList;
 	private CheckBoxList<String> compareColumnsList;
@@ -51,35 +55,35 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
+		GridBagConstraints gbc_jLabelMetrics = new GridBagConstraints();
+		gbc_jLabelMetrics.anchor = GridBagConstraints.NORTHWEST;
+		gbc_jLabelMetrics.insets = new Insets(0, 0, 5, 5);
+		gbc_jLabelMetrics.gridx = 0;
+		gbc_jLabelMetrics.gridy = 0;
+		add(getJLabelMetrics(), gbc_jLabelMetrics);
+		GridBagConstraints gbc_jScrollPaneMetricsList = new GridBagConstraints();
+		gbc_jScrollPaneMetricsList.insets = new Insets(0, 5, 5, 10);
+		gbc_jScrollPaneMetricsList.fill = GridBagConstraints.BOTH;
+		gbc_jScrollPaneMetricsList.gridx = 1;
+		gbc_jScrollPaneMetricsList.gridy = 0;
+		add(getJScrollPaneMetricsList(), gbc_jScrollPaneMetricsList);
 		GridBagConstraints gbc_jLabelReferenceColumn = new GridBagConstraints();
 		gbc_jLabelReferenceColumn.anchor = GridBagConstraints.WEST;
-		gbc_jLabelReferenceColumn.insets = new Insets(5, 5, 5, 5);
+		gbc_jLabelReferenceColumn.insets = new Insets(5, 0, 5, 5);
 		gbc_jLabelReferenceColumn.gridx = 0;
-		gbc_jLabelReferenceColumn.gridy = 0;
+		gbc_jLabelReferenceColumn.gridy = 1;
 		add(getJLabelReferenceColumn(), gbc_jLabelReferenceColumn);
 		GridBagConstraints gbc_jComboBoxReferenceColumn = new GridBagConstraints();
 		gbc_jComboBoxReferenceColumn.insets = new Insets(5, 5, 5, 10);
 		gbc_jComboBoxReferenceColumn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jComboBoxReferenceColumn.gridx = 1;
-		gbc_jComboBoxReferenceColumn.gridy = 0;
+		gbc_jComboBoxReferenceColumn.gridy = 1;
 		add(getJComboBoxReferenceColumn(), gbc_jComboBoxReferenceColumn);
-		GridBagConstraints gbc_jLabelMetrics = new GridBagConstraints();
-		gbc_jLabelMetrics.anchor = GridBagConstraints.NORTHWEST;
-		gbc_jLabelMetrics.insets = new Insets(5, 5, 5, 5);
-		gbc_jLabelMetrics.gridx = 0;
-		gbc_jLabelMetrics.gridy = 1;
-		add(getJLabelMetrics(), gbc_jLabelMetrics);
-		GridBagConstraints gbc_jScrollPaneMetricsList = new GridBagConstraints();
-		gbc_jScrollPaneMetricsList.insets = new Insets(5, 5, 5, 10);
-		gbc_jScrollPaneMetricsList.fill = GridBagConstraints.BOTH;
-		gbc_jScrollPaneMetricsList.gridx = 1;
-		gbc_jScrollPaneMetricsList.gridy = 1;
-		add(getJScrollPaneMetricsList(), gbc_jScrollPaneMetricsList);
 		GridBagConstraints gbc_jLabelCompareColumns = new GridBagConstraints();
 		gbc_jLabelCompareColumns.anchor = GridBagConstraints.NORTHWEST;
-		gbc_jLabelCompareColumns.insets = new Insets(5, 5, 0, 5);
+		gbc_jLabelCompareColumns.insets = new Insets(5, 0, 0, 5);
 		gbc_jLabelCompareColumns.gridx = 0;
 		gbc_jLabelCompareColumns.gridy = 2;
 		add(getJLabelCompareColumns(), gbc_jLabelCompareColumns);
@@ -118,11 +122,12 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 		}
 		return jScrollPaneMetricsList;
 	}
-	private CheckBoxList<Metrics> getMetricsList() {
+	private CheckBoxList<MetricsCalculation> getMetricsList() {
 		if (metricsList==null) {
-			DefaultListModel<Metrics> metricsListModel = new DefaultListModel<Metrics>();
-			metricsListModel.addAll(Arrays.asList(Metrics.values()));
-			metricsList = new CheckBoxList<Metrics>(metricsListModel, Metrics::label);
+			List<MetricsCalculation> availableMetrics = MetricsCalculationRegistry.getInstance().getMetricsList();
+			DefaultListModel<MetricsCalculation> metricsListModel = new DefaultListModel<MetricsCalculation>();
+			metricsListModel.addAll(availableMetrics);
+			metricsList = new CheckBoxList<MetricsCalculation>(metricsListModel, MetricsCalculation::getDisplayName);
 		}
 		return metricsList;
 	}
@@ -173,14 +178,27 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	 * Rebuilds the list models for table column selection.
 	 */
 	private void rebuildListModels() {
-		List<String> columnsList = this.table.columnNames();
+		
+		// --- Metrics calculation only makes sense for numeric columns 
+		ArrayList<String> numericColumns = new ArrayList<String>();
+		for (String columnName : this.table.columnNames()) {
+			if (this.table.column(columnName) instanceof NumericColumn<?>) {
+				numericColumns.add(columnName);
+			}
+		}
+		Collections.sort(numericColumns);
+		
+		// --- Build the ComboBoxModel for selecting the reference column -----
+		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<String>();
+		comboBoxModel.addAll(numericColumns);
+		this.getJComboBoxReferenceColumn().setModel(comboBoxModel);
+		this.getJComboBoxReferenceColumn().setSelectedIndex(0);
+		
+		// --- Build the CheckBoxListModel for selecting columns to compare ---
 		DefaultListModel<String> checkboxListModel = new DefaultListModel<String>();
-		checkboxListModel.addAll(columnsList);
+		checkboxListModel.addAll(numericColumns);
 		this.getCompareColumnsList().setModel(checkboxListModel);
 		
-		DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<String>();
-		comboBoxModel.addAll(columnsList);
-		this.getJComboBoxReferenceColumn().setModel(comboBoxModel);
 	}
 	
 	/* (non-Javadoc)
@@ -188,8 +206,11 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	 */
 	@Override
 	public Properties getConfiguredParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		Properties parametersAsProperties = new Properties();
+		parametersAsProperties.setStringValue(DataTransformationCalculateMetrics.PARAM_NAME_SELECTED_METRICS, MetricsCalculationParametersHelper.buildMetricsListString(this.getMetricsList().getSelectedValuesList()));
+		parametersAsProperties.setStringValue(DataTransformationCalculateMetrics.PARAM_NAME_REFERENCE_COLUMN, (String) this.getJComboBoxReferenceColumn().getSelectedItem());
+		parametersAsProperties.setStringValue(DataTransformationCalculateMetrics.PARAM_NAME_COMPARE_COLUMNS, MetricsCalculationParametersHelper.buildColumnsString(this.getCompareColumnsList().getSelectedValuesList()));
+		return parametersAsProperties;
 	}
 	
 	/* (non-Javadoc)
@@ -197,7 +218,15 @@ public class MetricsCalculationConfigurationPanel extends AbstractTransformation
 	 */
 	@Override
 	public void setConfiguredParameters(Properties parametersAsProperties) {
-		// TODO Auto-generated method stub
-	
+		String metricsListString = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_SELECTED_METRICS);
+		List<MetricsCalculation> metricsList = MetricsCalculationParametersHelper.parseMetricsListString(metricsListString);
+		this.getMetricsList().setSelectedItems(metricsList);
+		
+		String referencsColumnName = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_REFERENCE_COLUMN);
+		this.getJComboBoxReferenceColumn().setSelectedItem(referencsColumnName);
+		
+		String compareColumnsAsString = parametersAsProperties.getStringValue(DataTransformationCalculateMetrics.PARAM_NAME_COMPARE_COLUMNS);
+		List<String> compareColumns = MetricsCalculationParametersHelper.parseCompareColumnsString(compareColumnsAsString);
+		this.getCompareColumnsList().setSelectedItems(compareColumns);
 	}
 }

@@ -6,6 +6,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -41,8 +42,10 @@ import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.picking.LayoutLensShapePickSupport;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
+import edu.uci.ics.jung.visualization.renderers.DefaultEdgeLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import tech.tablesaw.api.Table;
 
@@ -320,28 +323,44 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			visualizationViewer = new VisualizationViewer<DataTableNode, DataTransformationEdge>(this.getGraphController().getGraphLayout());
 			visualizationViewer.setBackground(AwbThemeColor.Canvas_Background.getColor());
 			
-			// --- Customize the renderer (round rectangles as nodes, straight lines as edges, node labels in the middle of the rectangle)
+			// --- Customize node rendering ---------------
+			
+			// --- Round rectangle nodes 
 			double xPos = -(NODE_RECTANGLE_WIDTH/2);	// JUNG coordinates refer to the center
 			double yPos = -(NODE_RECTANGLE_HEIGHT/2);
 			visualizationViewer.getRenderContext().setVertexShapeTransformer(node -> new RoundRectangle2D.Double(xPos, yPos, NODE_RECTANGLE_WIDTH, NODE_RECTANGLE_HEIGHT, NODE_RECTANGLE_ARC, NODE_RECTANGLE_ARC));
 			visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape<DataTableNode, DataTransformationEdge>(this.getGraphController().getTransformationGraph()).new Line());
 			
-			PickedState<DataTableNode> pickedState = this.getVisualizationViewer().getPickedVertexState();
-			visualizationViewer.getRenderContext().setVertexStrokeTransformer(node -> pickedState.isPicked(node) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
-			visualizationViewer.getRenderContext().setVertexFillPaintTransformer(node -> pickedState.isPicked(node) ? COLOR_NODE_PICKED : COLOR_NODE_NORMAL);
-//			visualizationViewer.getRenderContext().setVertexLabelRenderer(new CustomVertexLabelRenderer(pickedState));
-			
-			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> getLabelRendererHTMLString(node.getLabelText(), pickedState.isPicked(node)));
+			PickedState<DataTableNode> pickedNodesState = this.getVisualizationViewer().getPickedVertexState();
+			visualizationViewer.getRenderContext().setVertexStrokeTransformer(node -> pickedNodesState.isPicked(node) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
+			visualizationViewer.getRenderContext().setVertexFillPaintTransformer(node -> pickedNodesState.isPicked(node) ? COLOR_NODE_PICKED : COLOR_NODE_NORMAL);
+			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> getLabelRendererHTMLString(node.getLabelText(), pickedNodesState.isPicked(node)));
 			visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 			
-			// --- Configure mouse interactions -----------
+			// --- Configure mouse interactions ---------------------
 			visualizationViewer.setPickSupport(new ShapePickSupport<DataTableNode, DataTransformationEdge>(visualizationViewer));
 			visualizationViewer.setGraphMouse(this.getZoomOnlyGraphMouse());
 			TransformationGraphMouseAdapter mouseAdapter = new TransformationGraphMouseAdapter(this);
 			visualizationViewer.addMouseListener(mouseAdapter);
 			visualizationViewer.addMouseMotionListener(mouseAdapter);
+			
+			// --- Require less exact clicks for element selection --
+			visualizationViewer.setPickSupport(new LayoutLensShapePickSupport<>(visualizationViewer, 6.0f));
+			
+			// --- Visualization of edges ---------------------------
+			PickedState<DataTransformationEdge> pickedEdgesState = visualizationViewer.getPickedEdgeState();
+			visualizationViewer.getRenderContext().setEdgeStrokeTransformer(edge -> pickedEdgesState.isPicked(edge) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
+			visualizationViewer.getRenderContext().setEdgeArrowStrokeTransformer(edge -> pickedEdgesState.isPicked(edge) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
+			
+			// --- Visualization of edge labels ---------------------
+			visualizationViewer.getRenderContext().setEdgeLabelTransformer(edge -> edge.getDataTransformation().getLabelText());
+			visualizationViewer.getRenderContext().setEdgeFontTransformer(edge -> new Font("SansSerif", Font.PLAIN, 12));
+			visualizationViewer.getRenderContext().setEdgeDrawPaintTransformer(edge -> Color.BLACK);
+			visualizationViewer.getRenderContext().setEdgeLabelClosenessTransformer(context -> 0.5f);
+			visualizationViewer.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.BLACK, false));
+			visualizationViewer.getRenderContext().setLabelOffset(50);
 
-			// --- Register as graph event listener -------
+			// --- Register as graph event listener -----------------
 			ObservableGraph<DataTableNode, DataTransformationEdge> graph = (ObservableGraph<DataTableNode, DataTransformationEdge>) this.getGraphController().getTransformationGraph();
 			graph.addGraphEventListener(this);
 			
@@ -607,6 +626,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	public void setSelectedGraphElement(Object graphElement) {
 		
 		this.getVisualizationViewer().getPickedVertexState().clear();
+		this.getVisualizationViewer().getPickedEdgeState().clear();
 		
 		if (graphElement==null) {
 			// --- Clear selection, hide details panel --------------
@@ -622,6 +642,10 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			this.showNodeDetails(node);
 			
 		} else if (graphElement instanceof DataTransformationEdge edge) {
+			
+			// --- Mark as picked in the JUNG visualization
+			this.getVisualizationViewer().getPickedEdgeState().pick(edge, true);
+			
 			// --- Show the details for the selected edge -----------
 			this.selectedGraphElement = edge;
 			this.showEdgeDetails(edge);

@@ -22,6 +22,15 @@ public class DataTransformationFilterRows extends AbstractDataTransformation {
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#getLabelText()
+	 */
+	@Override
+	public String getLabelText() {
+		//TODO add filter criteria?
+		return "Filter Rows";
+	}
+
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.AbstractDataTransformation#performTransformation()
 	 */
 	@Override

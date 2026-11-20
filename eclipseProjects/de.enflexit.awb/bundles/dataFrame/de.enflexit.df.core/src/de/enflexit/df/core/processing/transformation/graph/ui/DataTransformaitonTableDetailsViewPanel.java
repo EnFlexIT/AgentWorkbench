@@ -13,7 +13,7 @@ public class DataTransformaitonTableDetailsViewPanel extends JTabbedPane {
 
 	private static final long serialVersionUID = 4093993807670949275L;
 	
-	private TableAndChartViewPanel tableAndChartPanel;
+	private TablePreviewPanel tableAndChartPanel;
 	private TableDetailsViewPanel detailsPanel;
 	
 	private DataTableNode tableNode;
@@ -28,9 +28,9 @@ public class DataTransformaitonTableDetailsViewPanel extends JTabbedPane {
 		this.addTab("Table Info", this.getDetailsPanel());
 	}
 	
-	public TableAndChartViewPanel getTableAndChartPanel() {
+	public TablePreviewPanel getTableAndChartPanel() {
 		if (tableAndChartPanel==null) {
-			tableAndChartPanel = new TableAndChartViewPanel(this.tableNode);
+			tableAndChartPanel = new TablePreviewPanel(this.tableNode);
 		}
 		return tableAndChartPanel;
 	}
