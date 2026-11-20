@@ -3,6 +3,7 @@ package de.enflexit.df.descriptionService;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -102,7 +103,15 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 		this.dataController = jToolBarData.getDataController();
 		jToolBarData.add(this.getjButtonDescriptionEditor());
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#getColumnDescriptionsForDatabaseTable(java.lang.String)
+	 */
+	@Override
+	public HashMap<String, String> getColumnDescriptionsForDatabaseTable(String dbTableName) {
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#updateColumnDescriptionList(java.util.List)
 	 */

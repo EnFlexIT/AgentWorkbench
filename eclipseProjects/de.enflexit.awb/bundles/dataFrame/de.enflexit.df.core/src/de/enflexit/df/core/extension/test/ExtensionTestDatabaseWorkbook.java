@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -107,6 +108,13 @@ public class ExtensionTestDatabaseWorkbook implements DataWorkbookExtension {
 		return jButtonHello;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#getColumnDescriptionsForDatabaseTable(java.lang.String)
+	 */
+	@Override
+	public HashMap<String, String> getColumnDescriptionsForDatabaseTable(String dbTableName) {
+		return null;
+	}
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.DataWorkbookExtension#updateColumnDescriptionList(java.util.List)
 	 */

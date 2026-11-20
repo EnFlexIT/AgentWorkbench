@@ -3,6 +3,7 @@ package de.enflexit.df.core.workbook;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.cfg.Configuration;
@@ -257,6 +258,31 @@ public class ExtensionCache {
 		this.getMainToolbarComponents().addAll(componentListAdded);
 	}
 
+	/**
+	 * Returns the column descriptions for database table.
+	 *
+	 * @param dbTableName the db table name
+	 * @return the column descriptions for database table
+	 */
+	public HashMap<String, String> getColumnDescriptionsForDatabaseTable(String dbTableName) {
+		
+		if (dbTableName==null || dbTableName.isBlank()==true) return null;
+		
+		for (DataWorkbookExtension extension : this.getExtensionList()) {
+			
+			try {
+				// --- Check for an implementation ------------------ 
+				HashMap<String, String> cdFromDB = extension.getColumnDescriptionsForDatabaseTable(dbTableName);
+				if (cdFromDB!=null) {
+					return cdFromDB;
+				}
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Will try to get updates for the column description list.

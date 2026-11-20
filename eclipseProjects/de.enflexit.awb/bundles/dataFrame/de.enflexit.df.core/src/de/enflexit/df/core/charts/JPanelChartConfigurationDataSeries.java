@@ -25,6 +25,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.charts.model.AbstractChart;
@@ -33,6 +34,7 @@ import de.enflexit.charts.model.DataSeriesWithReference;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.ui.selection.JTextFieldNodeSelection;
 
 /**
  * The Class JPanelChartConfigurationDataSeries.
@@ -43,6 +45,9 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 
 	private static final long serialVersionUID = -9203558305257293840L;
 
+	private DataController dataController;
+	private DefaultMutableTreeNode dataTreeNode;
+	
 	private JPanelChartConfiguration jPanelChartConfiguration;
 	private AbstractChart chart;
 	private DataSeries dataSeries;
@@ -61,6 +66,8 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private JButton jButtonMoveDown;
 	private JButton jButtonDelete;
 	private JButton jButtonAddSeries;
+	private JLabel jLabelTable;
+	private JTextFieldNodeSelection textFieldNodeSelection;
 	
 	/**
 	 * Instantiates a new j panel chart configuration base.
@@ -77,9 +84,9 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeaderDataSerieses = new GridBagConstraints();
@@ -139,6 +146,18 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		gbc_jCheckBoxSecondaryYAxis.gridx = 1;
 		gbc_jCheckBoxSecondaryYAxis.gridy = 6;
 		add(getJCheckBoxSecondaryYAxis(), gbc_jCheckBoxSecondaryYAxis);
+		GridBagConstraints gbc_jLabelTable = new GridBagConstraints();
+		gbc_jLabelTable.anchor = GridBagConstraints.EAST;
+		gbc_jLabelTable.insets = new Insets(10, 5, 0, 0);
+		gbc_jLabelTable.gridx = 0;
+		gbc_jLabelTable.gridy = 7;
+		add(getJLabelTable(), gbc_jLabelTable);
+		GridBagConstraints gbc_textFieldNodeSelection = new GridBagConstraints();
+		gbc_textFieldNodeSelection.insets = new Insets(10, 5, 0, 0);
+		gbc_textFieldNodeSelection.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textFieldNodeSelection.gridx = 1;
+		gbc_textFieldNodeSelection.gridy = 7;
+		add(getTextFieldNodeSelection(), gbc_textFieldNodeSelection);
 	}
 	
 	private JLabel getJLabelHeaderDataSerieses() {
@@ -263,6 +282,17 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		return jButtonDelete;
 	}
 	
+	/**
+	 * Sets the current tree node selection.
+	 *
+	 * @param dataController the data controller
+	 * @param dataTreeNode the data tree node
+	 */
+	public void setTreeNodeSelection(DataController dataController, DefaultMutableTreeNode dataTreeNode) {
+		this.dataController = dataController;
+		this.dataTreeNode = dataTreeNode;
+		this.getTextFieldNodeSelection().setDataController(this.dataController);
+	}
 	
 	/**
 	 * Sets the chart to the UI.
@@ -384,6 +414,22 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	 */
 	private void informBaseConfigurationChanged() {
 		this.jPanelChartConfiguration.informAboutChartEdit(DataController.DC_CHART_EDITED_TITLE_OR_LABEL, null, this.chart);
+	}
+	
+	private JLabel getJLabelTable() {
+		if (jLabelTable == null) {
+			jLabelTable = new JLabel("Table:");
+			jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelTable;
+	}
+	private JTextFieldNodeSelection getTextFieldNodeSelection() {
+		if (textFieldNodeSelection == null) {
+			textFieldNodeSelection = new JTextFieldNodeSelection(this.jPanelChartConfiguration.getDataController());
+			textFieldNodeSelection.setFont(new Font("Dialog", Font.PLAIN, 12));
+			textFieldNodeSelection.setText("");
+		}
+		return textFieldNodeSelection;
 	}
 	
 }

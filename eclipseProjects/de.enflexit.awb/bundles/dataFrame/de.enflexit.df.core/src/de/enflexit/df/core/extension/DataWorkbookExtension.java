@@ -1,5 +1,6 @@
 package de.enflexit.df.core.extension;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.cfg.Configuration;
@@ -62,6 +63,14 @@ public interface DataWorkbookExtension {
 	 */
 	public void addMainToolbarComponents(JToolBarData jToolBarData);
 
+	/**
+	 * Returns the column descriptions for database table.
+	 *
+	 * @param dbTableName the db table name
+	 * @return the column descriptions for database table
+	 */
+	public HashMap<String, String> getColumnDescriptionsForDatabaseTable(String dbTableName);
+	
 	/**
 	 * Can be used to update the specified column description list.
 	 * @param columnDescriptionList the column description list

@@ -32,26 +32,28 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
 		Component renderComp = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus); 
 		JLabel renderLabel = renderComp instanceof JLabel ? (JLabel) renderComp : null;
 		if (value instanceof DefaultMutableTreeNode) {
-			// --- Get the DTNO_Base -------------------
+			// --- Get the DTNO_Base --------------------------------
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
-			DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
-			
-			// --- Set Icon and Label -------------------------------
-			renderLabel.setIcon(dtno.getImageIcon());
-			renderLabel.setText(dtno.getCaption());
-			renderLabel.setToolTipText(dtno.getToolTipText());
-			
-			// --- Do we have an error ------------------------------
-			if (dtno.getErrorMessage()!=null) {
-				renderLabel.setForeground(AwbThemeColor.ErrorText.getColor());
-			}
-			
-			// --- Do we see a closed DataWorkbook here? ------------
-			if (dtno instanceof DTNO_DataWorkbook) {
-				DTNO_DataWorkbook dtnoDW = (DTNO_DataWorkbook) dtno;
-				if (dtno.getErrorMessage()==null && dtnoDW.isDataSourcesLoaded()==false) {
-					renderLabel.setForeground(new AwbColor(Color.LIGHT_GRAY, Color.GRAY));
-					renderLabel.setIcon(new ImageIcon(ImageHelper.setTransparency(dtno.getImageIcon(), 0.5f)));
+			if (treeNode.getUserObject() instanceof DTNO_Base) {
+				DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
+				
+				// --- Set Icon and Label ---------------------------
+				renderLabel.setIcon(dtno.getImageIcon());
+				renderLabel.setText(dtno.getCaption());
+				renderLabel.setToolTipText(dtno.getToolTipText());
+				
+				// --- Do we have an error --------------------------
+				if (dtno.getErrorMessage()!=null) {
+					renderLabel.setForeground(AwbThemeColor.ErrorText.getColor());
+				}
+				
+				// --- Do we see a closed DataWorkbook here? --------
+				if (dtno instanceof DTNO_DataWorkbook) {
+					DTNO_DataWorkbook dtnoDW = (DTNO_DataWorkbook) dtno;
+					if (dtno.getErrorMessage()==null && dtnoDW.isDataSourcesLoaded()==false) {
+						renderLabel.setForeground(new AwbColor(Color.LIGHT_GRAY, Color.GRAY));
+						renderLabel.setIcon(new ImageIcon(ImageHelper.setTransparency(dtno.getImageIcon(), 0.5f)));
+					}
 				}
 			}
 			
