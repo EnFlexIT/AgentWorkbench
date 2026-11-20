@@ -109,7 +109,13 @@ public class DecsriptionServiceWorkbookExtension implements DataWorkbookExtensio
 	 */
 	@Override
 	public HashMap<String, String> getColumnDescriptionsForDatabaseTable(String dbTableName) {
-		return null;
+		HashMap<String, DataColumnDescription> descriptionsForTable = this.getDescriptionsController().getColumnDescriptionsForTable(dbTableName);
+		HashMap<String, String> reducedDescriptions = new HashMap<String, String>();
+		for (String columnName : descriptionsForTable.keySet()) {
+			DataColumnDescription colDesc = descriptionsForTable.get(columnName);
+			reducedDescriptions.put(columnName, colDesc.getDescription());
+		}
+		return reducedDescriptions;
 	}
 	
 	/* (non-Javadoc)

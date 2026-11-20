@@ -2,6 +2,7 @@ package de.enflexit.df.core.processing.transformation;
 
 import java.util.ArrayList;
 
+import de.enflexit.common.ServiceFinder;
 import de.enflexit.df.core.processing.transformation.columnOperation.DataTransformationServiceColumnOperation;
 import de.enflexit.df.core.processing.transformation.filter.DataTransformationServiceFilterRows;
 import de.enflexit.df.core.processing.transformation.join.DataTransformationServiceJoinTables;
@@ -15,7 +16,7 @@ public class DataTransformationRegistry {
 	
 	private static DataTransformationRegistry instance;
 	
-	private ArrayList<DataTransformationService> knownDataTransformaitons;
+	private ArrayList<DataTransformationService> internalTransformaitons;
 
 	/**
 	 * Instantiates a new data transformation registry. Private singleton constructor.
@@ -36,14 +37,24 @@ public class DataTransformationRegistry {
 	}
 	
 	/**
+	 * Gets the known data transformations.
+	 * @return the known data transformations
+	 */
+	private ArrayList<DataTransformationService> getInternalDataTransformations() {
+		if (internalTransformaitons==null) {
+			internalTransformaitons = new ArrayList<DataTransformationService>();
+		}
+		return internalTransformaitons;
+	}
+	/**
 	 * Register transformation services.
 	 */
 	private void registerTransformationServices() {
-		this.getKnownDataTransformations().add(new DataTransformationServiceCalculateMetrics());
-		this.getKnownDataTransformations().add(new DataTransformationServiceColumnOperation());
-		this.getKnownDataTransformations().add(new DataTransformationServiceFilterRows());
-		this.getKnownDataTransformations().add(new DataTransformationServiceJoinTables());
-		this.getKnownDataTransformations().add(new DataTransformationServiceSelectColumns());
+		this.getInternalDataTransformations().add(new DataTransformationServiceCalculateMetrics());
+		this.getInternalDataTransformations().add(new DataTransformationServiceColumnOperation());
+		this.getInternalDataTransformations().add(new DataTransformationServiceFilterRows());
+		this.getInternalDataTransformations().add(new DataTransformationServiceJoinTables());
+		this.getInternalDataTransformations().add(new DataTransformationServiceSelectColumns());
 	}
 	
 	/**
@@ -51,10 +62,10 @@ public class DataTransformationRegistry {
 	 * @return the known data transformations
 	 */
 	public ArrayList<DataTransformationService> getKnownDataTransformations() {
-		if (knownDataTransformaitons==null) {
-			knownDataTransformaitons = new ArrayList<DataTransformationService>();
-		}
-		return knownDataTransformaitons;
+		ArrayList<DataTransformationService> knownDataTransformations= new ArrayList<DataTransformationService>();
+		knownDataTransformations.addAll(this.getInternalDataTransformations());
+		knownDataTransformations.addAll(ServiceFinder.findServices(DataTransformationService.class));
+		return knownDataTransformations;
 	}
 	
 	

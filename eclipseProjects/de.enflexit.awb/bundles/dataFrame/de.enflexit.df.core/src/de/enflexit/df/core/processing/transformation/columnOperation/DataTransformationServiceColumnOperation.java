@@ -37,6 +37,14 @@ public class DataTransformationServiceColumnOperation implements DataTransformat
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getCategory()
+	 */
+	@Override
+	public String getCategory() {
+		return DataTransformationService.CATEGORY_BASIC_FUNCTIONS;
+	}
+
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getInputType()
 	 */
 	@Override

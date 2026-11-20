@@ -1062,7 +1062,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							JPanelQueryConfiguration.this.getJPanelTableDictionary().setTableDictionary(tbDictionary);
+							JPanelQueryConfiguration.this.getJPanelTableDictionary().setTableDictionary(tbDictionary, JPanelQueryConfiguration.this.databaseDataSourceIntegration);
 						}
 					}); 
 				}

@@ -35,6 +35,14 @@ public class DataTransformationServiceCalculateMetrics implements DataTransforma
 	}
 
 	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getCategory()
+	 */
+	@Override
+	public String getCategory() {
+		return DataTransformationService.CATEGORY_STATISTIC_FUNCTIONS;
+	}
+
+	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getInputType()
 	 */
 	@Override

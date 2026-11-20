@@ -37,6 +37,14 @@ public class DataTransformationServiceFilterRows implements DataTransformationSe
 		// TODO Auto-generated method stub
 		return TRANSFORMATION_DESCRIPTION;
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getCategory()
+	 */
+	@Override
+	public String getCategory() {
+		return DataTransformationService.CATEGORY_BASIC_FUNCTIONS;
+	}
 
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.processing.transformation.DataTransformationService#getInputType()
