@@ -123,7 +123,7 @@ public class DescriptionsController implements PropertyChangeListener{
 	 * @param colDesc the column description
 	 */
 	public void storeDataColumnDescriptionToDB(DataColumnDescription colDesc) {
-		this.getDatabaseHandler().dbSaveOrUpdateEntityInstance(colDesc, true);
+		this.getDatabaseHandler().dbSaveOrUpdateEntityInstance(colDesc, colDesc.getId()!=null);
 	}
 	
 	/**

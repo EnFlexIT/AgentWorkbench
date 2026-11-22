@@ -219,7 +219,6 @@ public class ColumnDescriptionEditorColumnSelectionPanel extends JPanel implemen
 		ColumnDescription colDesc = this.findMatchingColumnDescription(columnName);
 		DataColumnDescription columnDescription = new DataColumnDescription();
 		columnDescription.setColumnName(columnName);
-		columnDescription.setDataSource(this.getDataSourceDTNO().getDataSource());
 		if (colDesc!=null && colDesc.getTableName()!=null) {
 			String tableNameOnly = DescriptionServiceHelper.removeAlsoAvailableFromTableName(colDesc.getTableName()); 
 			columnDescription.setTableName(tableNameOnly);
