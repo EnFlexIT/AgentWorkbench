@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -49,6 +50,7 @@ import edu.uci.ics.jung.visualization.picking.LayoutLensShapePickSupport;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.DefaultEdgeLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import tech.tablesaw.api.Table;
 
@@ -62,15 +64,17 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	
 	private static final long serialVersionUID = 3869719655631231629L;
 	
-	private static final double NODE_RECTANGLE_WIDTH = 140;
-	private static final double NODE_RECTANGLE_HEIGHT = 50;
-	private static final double NODE_RECTANGLE_ARC = 15;
+	private static final int NODE_RECTANGLE_WIDTH = 140;
+	private static final int NODE_RECTANGLE_HEIGHT = 50;
+	private static final int NODE_RECTANGLE_ARC = 15;
+	
+	private static final int NODE_LABEL_MAX_WIDTH = 130;
 	
 	private static final Color COLOR_NODE_NORMAL = new Color(14, 87, 114); 
 	private static final Color COLOR_NODE_PICKED = new Color(112, 161, 192);
 	
-	private static final String HTML_COLOR_LABEL_NORMAL = "White";
-	private static final String HTML_COLOR_LABEL_PICKED = "Black";
+	private static final Color COLOR_NODE_LABEL_NORMAL = Color.WHITE;
+	private static final Color COLOR_NODE_LABEL_PICKED = Color.BLACK;
 	
 	private static final String ICON_TABLE_LIGHT_MODE = "table_black.png";
 	private static final String ICON_TABLE_DARK_MODE = "table_grey.png";
@@ -327,28 +331,22 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			visualizationViewer.setBackground(AwbThemeColor.Canvas_Background.getColor());
 			
 			// --- Customize node rendering ---------------
-			
 			// --- Round rectangle nodes 
 			double xPos = -(NODE_RECTANGLE_WIDTH/2);	// JUNG coordinates refer to the center
 			double yPos = -(NODE_RECTANGLE_HEIGHT/2);
 			visualizationViewer.getRenderContext().setVertexShapeTransformer(node -> new RoundRectangle2D.Double(xPos, yPos, NODE_RECTANGLE_WIDTH, NODE_RECTANGLE_HEIGHT, NODE_RECTANGLE_ARC, NODE_RECTANGLE_ARC));
 			visualizationViewer.getRenderContext().setEdgeShapeTransformer(new EdgeShape<DataTableNode, DataTransformationEdge>(this.getGraphController().getTransformationGraph()).new Line());
-			
+
+			// --- Fonts and colors -----------------------
 			PickedState<DataTableNode> pickedNodesState = this.getVisualizationViewer().getPickedVertexState();
+			visualizationViewer.getRenderContext().setVertexFontTransformer(node -> new Font("SansSerif", Font.BOLD, 12));
+			visualizationViewer.setForeground(COLOR_NODE_LABEL_NORMAL);
+			visualizationViewer.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(COLOR_NODE_LABEL_PICKED));
 			visualizationViewer.getRenderContext().setVertexStrokeTransformer(node -> pickedNodesState.isPicked(node) ? new BasicStroke(3.0f) : new BasicStroke(1.0f));
 			visualizationViewer.getRenderContext().setVertexFillPaintTransformer(node -> pickedNodesState.isPicked(node) ? COLOR_NODE_PICKED : COLOR_NODE_NORMAL);
-			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> getLabelRendererHTMLString(node.getLabelText(), pickedNodesState.isPicked(node)));
+			visualizationViewer.getRenderContext().setVertexLabelTransformer(node -> this.getNodeDisplayLabel(node));
 			visualizationViewer.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
-			
-			// --- Configure mouse interactions ---------------------
-			visualizationViewer.setPickSupport(new ShapePickSupport<DataTableNode, DataTransformationEdge>(visualizationViewer));
-			visualizationViewer.setGraphMouse(this.getZoomOnlyGraphMouse());
-			TransformationGraphMouseAdapter mouseAdapter = new TransformationGraphMouseAdapter(this);
-			visualizationViewer.addMouseListener(mouseAdapter);
-			visualizationViewer.addMouseMotionListener(mouseAdapter);
-			
-			// --- Require less exact clicks for element selection --
-			visualizationViewer.setPickSupport(new LayoutLensShapePickSupport<>(visualizationViewer, 6.0f));
+			visualizationViewer.setVertexToolTipTransformer(node -> node.getLabelText());
 			
 			// --- Visualization of edges ---------------------------
 			PickedState<DataTransformationEdge> pickedEdgesState = visualizationViewer.getPickedEdgeState();
@@ -363,6 +361,16 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			visualizationViewer.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.BLACK, false));
 			visualizationViewer.getRenderContext().setLabelOffset(50);
 
+			// --- Configure mouse interactions ---------------------
+			visualizationViewer.setPickSupport(new ShapePickSupport<DataTableNode, DataTransformationEdge>(visualizationViewer));
+			visualizationViewer.setGraphMouse(this.getZoomOnlyGraphMouse());
+			TransformationGraphMouseAdapter mouseAdapter = new TransformationGraphMouseAdapter(this);
+			visualizationViewer.addMouseListener(mouseAdapter);
+			visualizationViewer.addMouseMotionListener(mouseAdapter);
+			
+			// --- Require less exact clicks for element selection --
+			visualizationViewer.setPickSupport(new LayoutLensShapePickSupport<>(visualizationViewer, 6.0f));
+			
 			// --- Register as graph event listener -----------------
 			ObservableGraph<DataTableNode, DataTransformationEdge> graph = (ObservableGraph<DataTableNode, DataTransformationEdge>) this.getGraphController().getTransformationGraph();
 			graph.addGraphEventListener(this);
@@ -381,34 +389,50 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		return graphMouse;
 	}
 	
-	/**
-	 * Creates a HTML version of the label text for centered display with line breaks.
-	 * @param labelString the label string
-	 * @return the label renderer HTML string
-	 */
-	private String getLabelRendererHTMLString(String labelString, boolean isPicked) {
-		String colorString = isPicked==true ? HTML_COLOR_LABEL_PICKED : HTML_COLOR_LABEL_NORMAL;
-		return "<html><div style='width:130px; text-align:center; font-weight: bold; color: " + colorString + "'>"
-		        + escapeHtml(labelString)
-		        + "</div></html>";
+	// --------------------------------------------------------------
+	// --- Methods related to node label handling -------------------
+	
+	
+	private String getNodeDisplayLabel(DataTableNode node) {
+		String labelText = node.getLabelText();
+		Font font = new Font("SansSerif", Font.BOLD, 14);
+		FontMetrics fontMetrics = getVisualizationViewer().getFontMetrics(font);
+		return truncateLabelString(labelText, fontMetrics, NODE_LABEL_MAX_WIDTH);
 	}
 	
 	/**
-	 * Escapes special characters for HTML.
-	 * @param text the original text
-	 * @return the modified text
+	 * Truncates the label string to the specified max width.
+	 * @param labelString the label string
+	 * @param fontMetrics the font metrics
+	 * @param maxWidth the max width
+	 * @return the string
 	 */
-	private static String escapeHtml(String text) {
-	    if (text == null) {
-	        return "";
-	    }
+	private String truncateLabelString(String labelString, FontMetrics fontMetrics, int maxWidth) {
 
-	    return text
-	        .replace("&", "&amp;")
-	        .replace("<", "&lt;")
-	        .replace(">", "&gt;")
-	        .replace("\"", "&quot;")
-	        .replace("'", "&#39;");
+		if (labelString == null || labelString.isEmpty()) {
+			return "";
+		}
+
+		if (fontMetrics.stringWidth(labelString) <= maxWidth) {
+			return labelString;
+		}
+
+		String ellipsis = "...";
+		int ellipsisWidth = fontMetrics.stringWidth(ellipsis);
+
+		int end = labelString.length();
+
+		while (end > 0) {
+			end = labelString.offsetByCodePoints(end, -1);
+
+			String shortened = labelString.substring(0, end);
+
+			if (fontMetrics.stringWidth(shortened) + ellipsisWidth <= maxWidth) {
+				return shortened + ellipsis;
+			}
+		}
+
+		return ellipsis;
 	}
 	
 	// --------------------------------------------------------------
@@ -430,28 +454,49 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	protected Point2D getNextFreeNodePosition(Point2D startingFrom) {
 		double startX, startY;
 		Dimension viewerSize = this.getVisualizationViewer().getSize();
-		
-		if (startingFrom!=null) {
-			startX = startingFrom.getX() / viewerSize.getWidth();
-			startY = startingFrom.getY() / viewerSize.getHeight();
+
+		// --- Intended gap between two node positions --------------
+		double horizontalGap = NODE_RECTANGLE_WIDTH / 2;
+		double verticalGap = NODE_RECTANGLE_HEIGHT;
+
+		// --- Determine position to start from ---------------------
+		if (startingFrom != null) {
+			startX = startingFrom.getX() + NODE_RECTANGLE_WIDTH + horizontalGap;
+			startY = startingFrom.getY();
 		} else {
-			startX = 0.1;
-			startY = 0.1;
+			startX = horizontalGap + NODE_RECTANGLE_WIDTH / 2;
+			startY = verticalGap + NODE_RECTANGLE_HEIGHT / 2;
 		}
-		
-		final double step = 0.20;
-		
-		for (double relativeX = startX; relativeX<1.0; relativeX+=step) {
-			Point2D pointInView = new Point2D.Double(viewerSize.getWidth() * relativeX, viewerSize.getHeight() * startY);
-			
+
+		double x = startX;
+		double y = startY;
+
+		while (true) {
+
+			// --- Check if a node at this position would be inside the visible area ----
+			if (x + NODE_RECTANGLE_WIDTH / 2 > viewerSize.getWidth()
+					|| y + NODE_RECTANGLE_HEIGHT / 2 > viewerSize.getHeight()) {
+
+				// --- If not, start a new row ---------------------
+				x = startX;
+				y += NODE_RECTANGLE_HEIGHT + verticalGap;
+
+			}
+
+			// --- Next possible node position (center of rectangle) --------------------
+			Point2D pointInView = new Point2D.Double(x, y);
+
+			// --- Check for conflicts with existing nodes ------------------------------
 			DataTableNode existingNode = this.getVisualizationViewer().getPickSupport().getVertex(this.getGraphController().getGraphLayout(), pointInView.getX(), pointInView.getY());
-			
-			if (existingNode==null) {
+
+			if (existingNode == null) {
+				// --- No conflict -> return position -----------------------------------
 				return this.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(pointInView);
+			} else {
+				// --- Conflict -> try the next possible position -----------------------
+				x += NODE_RECTANGLE_WIDTH + horizontalGap;
 			}
 		}
-		
-		return null;
 	}
 	
 	/**
@@ -483,7 +528,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	/**
 	 * Shows the data source selection panel.
 	 */
-	private void showDataSourceSelectionPanel() {
+	private void showDataSourceSelectionWindow() {
 //		DataSourceSelectionPanel dataSelectionPanel = new DataSourceSelectionPanel(this.getDataController(), this);
 //		this.getJSplitPaneMainView().setRightComponent(dataSelectionPanel);
 //		this.getJSplitPaneMainView().setDividerLocation(0.8);
@@ -492,10 +537,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 		DataSourceSelectionWindow selectionWindow = new DataSourceSelectionWindow(owner, this, this.dataController);
 		Point buttonLocation = this.getJButtonAddDataSource().getLocationOnScreen();
 		
-		// --- Align centered below the button -------
-//		Double windowPositionX = buttonLocation.getX() - (selectionWindow.getWidth() + this.getJButtonAddDataSource().getWidth())/2;
-		
-		Double windowPositionX = buttonLocation.getX();
+		// --- Align the right border of the window to the right border of the button
+		Double windowPositionX = buttonLocation.getX() - selectionWindow.getWidth() + this.getJButtonAddDataSource().getWidth();
 		Double windowPositionY = buttonLocation.getY() + this.getJButtonAddDataSource().getHeight();
 		
 		selectionWindow.setLocation(windowPositionX.intValue(), windowPositionY.intValue());
@@ -775,7 +818,7 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource()==this.getJButtonAddDataSource()) {
-			this.showDataSourceSelectionPanel();
+			this.showDataSourceSelectionWindow();
 		} else if (ae.getSource()==this.getjButtonAddDataTransformation()) {
 			this.transformationPanel = null;
 			this.showEdgeDetails(null);
