@@ -3,11 +3,13 @@ package de.enflexit.df.core.processing.transformation.graph.ui;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.GridBagConstraints;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.enflexit.common.swing.AwbLookAndFeelAdjustments;
 import de.enflexit.common.swing.CheckBoxList;
 import de.enflexit.common.swing.CheckBoxListSelectionEvent;
 import de.enflexit.common.swing.CheckBoxListSelectionListener;
@@ -32,7 +35,7 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 	
 	private static final long serialVersionUID = -2860160566604926918L;
 	
-	private JLabel jScrollPaneSourceTableList;
+	private JLabel jLabelHeader;
 	private JScrollPane scrollPane;
 	private CheckBoxList<AbstractDataSourceDTNO<?>> jListSourceTables;
 	private DefaultListModel<AbstractDataSourceDTNO<?>> dataSourcesListModel;
@@ -66,20 +69,24 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 		gbc_jScrollPaneSourceTableList.insets = new Insets(5, 5, 5, 0);
 		gbc_jScrollPaneSourceTableList.gridx = 0;
 		gbc_jScrollPaneSourceTableList.gridy = 0;
-		add(getJScrollPaneSourceTableList(), gbc_jScrollPaneSourceTableList);
+		add(getJLabelHeader(), gbc_jScrollPaneSourceTableList);
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		add(getScrollPane(), gbc_scrollPane);
+		
+		Color borderColor = AwbLookAndFeelAdjustments.isDarkLookAndFeel() ? new Color(75, 110, 175) : Color.BLACK;
+		this.setBorder(BorderFactory.createLineBorder(borderColor, 1));
 	}
 
-	private JLabel getJScrollPaneSourceTableList() {
-		if (jScrollPaneSourceTableList == null) {
-			jScrollPaneSourceTableList = new JLabel("Data source tables");
-			jScrollPaneSourceTableList.setFont(new Font("Dialog", Font.BOLD, 12));
+	private JLabel getJLabelHeader() {
+		if (jLabelHeader == null) {
+			jLabelHeader = new JLabel("Data source tables");
+			jLabelHeader.setFont(new Font("Dialog", Font.BOLD, 12));
+			jLabelHeader.setBorder(null);
 		}
-		return jScrollPaneSourceTableList;
+		return jLabelHeader;
 	}
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
@@ -93,6 +100,7 @@ public class DataSourceSelectionPanel extends JPanel implements CheckBoxListSele
 			jListSourceTables = new CheckBoxList<AbstractDataSourceDTNO<?>>(this.getDataSourcesListModel());
 			this.setInitialSelection();
 			jListSourceTables.addCheckBoxListSelectionListener(this);
+			jListSourceTables.setBorder(null);
 		}
 		return jListSourceTables;
 	}

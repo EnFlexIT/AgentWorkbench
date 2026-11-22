@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -19,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import de.enflexit.common.swing.AwbThemeColor;
+import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
@@ -220,8 +223,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * @param tableNode the table node
 	 * @return the table view panel
 	 */
-	private DataTransformaitonTableDetailsViewPanel getTableDetailsViewPanel(DataTableNode tableNode) {
-		return new DataTransformaitonTableDetailsViewPanel(tableNode);
+	private TablePreviewPanel getTableDetailsViewPanel(DataTableNode tableNode) {
+		return new TablePreviewPanel(tableNode);
 	}
 	
 	/**
@@ -481,9 +484,22 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * Shows the data source selection panel.
 	 */
 	private void showDataSourceSelectionPanel() {
-		DataSourceSelectionPanel dataSelectionPanel = new DataSourceSelectionPanel(this.getDataController(), this);
-		this.getJSplitPaneMainView().setRightComponent(dataSelectionPanel);
-		this.getJSplitPaneMainView().setDividerLocation(0.8);
+//		DataSourceSelectionPanel dataSelectionPanel = new DataSourceSelectionPanel(this.getDataController(), this);
+//		this.getJSplitPaneMainView().setRightComponent(dataSelectionPanel);
+//		this.getJSplitPaneMainView().setDividerLocation(0.8);
+		
+		Window owner = OwnerDetection.getOwnerWindowForComponent(this.getJButtonAddDataSource());
+		DataSourceSelectionWindow selectionWindow = new DataSourceSelectionWindow(owner, this, this.dataController);
+		Point buttonLocation = this.getJButtonAddDataSource().getLocationOnScreen();
+		
+		// --- Align centered below the button -------
+//		Double windowPositionX = buttonLocation.getX() - (selectionWindow.getWidth() + this.getJButtonAddDataSource().getWidth())/2;
+		
+		Double windowPositionX = buttonLocation.getX();
+		Double windowPositionY = buttonLocation.getY() + this.getJButtonAddDataSource().getHeight();
+		
+		selectionWindow.setLocation(windowPositionX.intValue(), windowPositionY.intValue());
+		selectionWindow.setVisible(true);
 	}
 	
 	
