@@ -13,40 +13,50 @@ import de.enflexit.df.core.processing.transformation.ui.AbstractTransformationPa
  */
 public interface DataTransformationService {
 	
+	public static final String CATEGORY_BASIC_FUNCTIONS = "Basic Functions"; 
+	public static final String CATEGORY_STATISTIC_FUNCTIONS = "Statistic Functions";
+	public static final String CATEGORY_SERVICE_FUNCTIONS = "Service Functions";
+	
 	/**
 	 * Gets the name of this data transformation.
 	 * @return the name
 	 */
-	public abstract String getName();
+	public String getName();
 	
 	/**
 	 * Gets a description for this data transformation.
 	 * @return the description
 	 */
-	public abstract String getDescription();
+	public String getDescription();
+	
+	/**
+	 * Gets the category.
+	 * @return the category
+	 */
+	public String getCategory();
 	
 	/**
 	 *  Gets the input type (single or multi table) for this data transformation.
 	 * @return the input type
 	 */
-	public abstract InputType getInputType();
+	public InputType getInputType();
 	
 	/**
 	 * Gets a list of required parameters for this transformation.
 	 * @return the required parameters
 	 */
-	public abstract List<String> getRequiredParameters();
+	public List<String> getRequiredParameters();
 	
 	/**
 	 * Returns a new instance of the {@link AbstractDataTransformation} subclass implementing this transformation.
 	 * @return the new instance
 	 */
-	public abstract AbstractDataTransformation getNewInstance();
+	public AbstractDataTransformation getNewInstance();
 	
 	/**
 	 * Returns an instance of a transformaiton-specific panel for parameter configuration. May return null, then a default implementation with a {@link PropertiesPanel} will be used.
 	 * @return the parameter configuration panel
 	 */
-	public abstract AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel();
+	public AbstractTransformationParameterConfigurationPanel getParameterConfigurationPanel();
 	
 }

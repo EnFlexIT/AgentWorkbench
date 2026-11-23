@@ -16,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import java.awt.Insets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,6 +31,8 @@ public class JPanelTableDictionary extends JPanel {
 	
 	private TableDictionary tableDictionary;
 	
+	private DatabaseDataSourceIntegration dataSourceIntegration;
+	
 	private JLabel jLLabelHeaderTable;
 	private JScrollPane jScrollPaneTables;
 	private DefaultListModel<String> listModelTables;
@@ -39,29 +42,48 @@ public class JPanelTableDictionary extends JPanel {
 	private JLabel jLabelHeaderColumn;
 	private DefaultTableModel tableModelColumns;
 	private JTable jTableColumns;
-
+	
+	private HashMap<String, HashMap<String, String>> columnDescriptionsByTableName;
+	
 	/**
 	 * Instantiates a new JPanelTableDictionary.
 	 */
-	public JPanelTableDictionary() {
-		this(null);
+	public JPanelTableDictionary(DatabaseDataSourceIntegration dataSourceIntegration) {
+		this(null, dataSourceIntegration);
 	}
 	/**
 	 * Instantiates a new JPanelTableDictionary.
 	 * @param tableDictionary the {@link TableDictionary} to display
 	 */
-	public JPanelTableDictionary(TableDictionary tableDictionary) {
+	public JPanelTableDictionary(TableDictionary tableDictionary, DatabaseDataSourceIntegration dataSourceIntegration) {
 		this.initialize();
-		this.setTableDictionary(tableDictionary);
+		this.setTableDictionary(tableDictionary, dataSourceIntegration);
 	}
 	/**
 	 * Sets the table dictionary.
 	 * @param tableDictionary the new table dictionary
 	 */
-	public void setTableDictionary(TableDictionary tableDictionary) {
+	public void setTableDictionary(TableDictionary tableDictionary, DatabaseDataSourceIntegration dataSourceIntegration) {
 		this.tableDictionary = tableDictionary;
+		this.dataSourceIntegration = dataSourceIntegration;
 		this.fillListModelTables();
 		this.fillTableModelTableColumns();
+	}
+	
+	/**
+	 * Gets the table dictionary.
+	 * @return the table dictionary
+	 */
+	protected TableDictionary getTableDictionary() {
+		return tableDictionary;
+	}
+	
+	/**
+	 * Gets the name of the selected table.
+	 * @return the selected table
+	 */
+	protected String getSelectedTable() {
+		return this.getJListTables().getSelectedValue();
 	}
 	
 	/**
@@ -163,6 +185,7 @@ public class JPanelTableDictionary extends JPanel {
 			Vector<String> columnHeader = new Vector<>();
 			columnHeader.add("TableColumn");
 			columnHeader.add("Column Name");
+			columnHeader.add("Column Description");
 			columnHeader.add("Data Type");
 			columnHeader.add("Size");
 			columnHeader.add("nullable");
@@ -179,13 +202,13 @@ public class JPanelTableDictionary extends JPanel {
 					case 0:
 						clazz = TableColumn.class;
 						break;
-					case 1, 2: 
+					case 1, 2, 3: 
 						clazz = String.class;
 						break;
-					case 3:
+					case 4:
 						clazz = Integer.class;
 						break;
-					case 4:
+					case 5:
 						clazz = Boolean.class;
 						break;
 					default:
@@ -202,18 +225,19 @@ public class JPanelTableDictionary extends JPanel {
 		this.fillTableModelTableColumns(this.getJListTables().getSelectedValue());
 	}
 	private void fillTableModelTableColumns(String tableName) {
-
+		
 		if (this.tableDictionary==null || tableName==null || tableName.isBlank()==true) return;
 		List<TableColumn> tcList = this.tableDictionary.getTableColumnList(tableName);
 		if (tcList==null) return;
 		this.getTableModelTableColumns().setRowCount(0);
-		tcList.forEach(tc -> this.addTableColumnToTableModel(tc));
+		tcList.forEach(tc -> this.addTableColumnToTableModel(tc, this.getColumnDescriptionsForTable(tableName)));
 	}
-	private void addTableColumnToTableModel(TableColumn tc) {
+	private void addTableColumnToTableModel(TableColumn tc, HashMap<String, String> comumnDescriptions) {
 		
 		Vector<Object> dataRow = new Vector<>();
 		dataRow.add(tc);
 		dataRow.add(tc.getColumnName());
+		dataRow.add(comumnDescriptions!=null ? comumnDescriptions.get(tc.getColumnName()) : null);
 		dataRow.add(tc.getDataType());
 		dataRow.add(tc.getSize());
 		dataRow.add(tc.isNullable());
@@ -233,21 +257,25 @@ public class JPanelTableDictionary extends JPanel {
 			colModel.getColumn(0).setMinWidth(0);
 			colModel.getColumn(0).setMaxWidth(0);
 			// --- Column Name ------------------
-			//colModel.getColumn(1).setPreferredWidth(100);
-			//colModel.getColumn(1).setMinWidth(80);
-			//colModel.getColumn(1).setMaxWidth(120);
+			colModel.getColumn(1).setPreferredWidth(180);
+			colModel.getColumn(1).setMinWidth(160);
+			colModel.getColumn(1).setMaxWidth(240);
+			// --- Column Description -----------
+//			colModel.getColumn(2).setPreferredWidth(100);
+//			colModel.getColumn(2).setMinWidth(80);
+//			colModel.getColumn(2).setMaxWidth(120);
 			// --- Data Type --------------------		
-			colModel.getColumn(2).setPreferredWidth(80);
-			colModel.getColumn(2).setMinWidth(60);
-			colModel.getColumn(2).setMaxWidth(100);
-			// --- Size -------------------------
 			colModel.getColumn(3).setPreferredWidth(80);
 			colModel.getColumn(3).setMinWidth(60);
 			colModel.getColumn(3).setMaxWidth(100);
-			// --- nullable ---------------------
+			// --- Size -------------------------
 			colModel.getColumn(4).setPreferredWidth(80);
 			colModel.getColumn(4).setMinWidth(60);
 			colModel.getColumn(4).setMaxWidth(100);
+			// --- nullable ---------------------
+			colModel.getColumn(5).setPreferredWidth(80);
+			colModel.getColumn(5).setMinWidth(60);
+			colModel.getColumn(5).setMaxWidth(100);
 			
 			jTableColumns.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 				@Override
@@ -262,4 +290,35 @@ public class JPanelTableDictionary extends JPanel {
 		}
 		return jTableColumns;
 	}
+	
+	// ----------------------------------------------------
+	// --- Methods for handling column descriptions -------
+	
+	/**
+	 * Gets the column descriptions for the specified table.
+	 * @param tableName the table name
+	 * @return the column descriptions
+	 */
+	private HashMap<String, String> getColumnDescriptionsForTable(String tableName) {
+		HashMap<String, String> colDescsForTable = this.getColumnDescriptionsByTableName().get(tableName);
+		if (colDescsForTable == null) {
+			colDescsForTable = this.dataSourceIntegration.getDataWorkbook().getExtensionCache().getColumnDescriptionsForDatabaseTable(tableName);
+			if (colDescsForTable!=null) {
+				this.getColumnDescriptionsByTableName().put(tableName, colDescsForTable);
+			}
+		}
+		return colDescsForTable;
+	}
+	
+	/**
+	 * Gets the column descriptions by table name.
+	 * @return the column descriptions by table name
+	 */
+	private HashMap<String, HashMap<String, String>> getColumnDescriptionsByTableName() {
+		if (columnDescriptionsByTableName==null) {
+			columnDescriptionsByTableName = new HashMap<String, HashMap<String,String>>();
+		}
+		return columnDescriptionsByTableName;
+	}
+	
 }

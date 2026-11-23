@@ -46,6 +46,7 @@ import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.TableHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.dataSources.integration.AbstractPaginationDataLoader;
 import de.enflexit.df.core.model.DataController;
@@ -974,10 +975,35 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 	 */
 	private DatabaseQuery createNewDatabaseQuery() {
 		DatabaseQuery dbq = new DatabaseQuery();
+		// --- If a table is selected in the sub panel, use that --------------
+		String tableName = this.getTableNameForQuery();
+		String sortColumn = this.getSortColumnForQuery(tableName);
 		dbq.setNumber(this.getTableModelDatabaseQuery().getRowCount() + 1);
 		dbq.setName("New database query");
-		dbq.setSqlStatement("SELECT * FROM MyTable ORDER BY date_time;");
+		dbq.setSqlStatement("SELECT * FROM " + tableName + " ORDER BY " + sortColumn + ";");
 		return dbq;
+	}
+	
+	/**
+	 * Gets the table name to use for the query.
+	 * @return the table name for query
+	 */
+	private String getTableNameForQuery() {
+		return this.getJPanelTableDictionary().getSelectedTable()!=null ? this.getJPanelTableDictionary().getSelectedTable() : "MyTable";
+	}
+	
+	/**
+	 * Gets the sort column for query. Will use the first temporal column, or return a placeholder name if none found.
+	 * @param tableName the table name
+	 * @return the sort column for query
+	 */
+	private String getSortColumnForQuery(String tableName) {
+		String temporalColumnName = null;
+		if (tableName!=null && tableName.isBlank()==false) {
+			List<TableColumn> columnsList = this.getJPanelTableDictionary().getTableDictionary().get(tableName);
+			temporalColumnName = TableHelper.getTemporalColumnName(columnsList);
+		}
+		return temporalColumnName!=null ? temporalColumnName : "date_time";
 	}
 	
 	/**
@@ -1062,7 +1088,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							JPanelQueryConfiguration.this.getJPanelTableDictionary().setTableDictionary(tbDictionary);
+							JPanelQueryConfiguration.this.getJPanelTableDictionary().setTableDictionary(tbDictionary, JPanelQueryConfiguration.this.databaseDataSourceIntegration);
 						}
 					}); 
 				}

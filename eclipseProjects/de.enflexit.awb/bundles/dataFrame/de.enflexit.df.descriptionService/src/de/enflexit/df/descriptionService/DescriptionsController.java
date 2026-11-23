@@ -3,6 +3,7 @@ package de.enflexit.df.descriptionService;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.enflexit.df.core.model.DataController;
@@ -69,6 +70,22 @@ public class DescriptionsController implements PropertyChangeListener{
 	}
 	
 	/**
+	 * Gets the column descriptions for the specified table.
+	 * @param tableName the table name
+	 * @return the column descriptions for table
+	 */
+	public HashMap<String, DataColumnDescription> getColumnDescriptionsForTable(String tableName) {
+		if (this.getColumnDescriptionsList()==null) return null;
+		HashMap<String, DataColumnDescription> descriptionsForTable = new HashMap<String, DataColumnDescription>();
+		for (DataColumnDescription colDesc : this.getColumnDescriptionsList()) {
+			if (colDesc.getTableName()==null || colDesc.getTableName().equals(DescriptionServiceHelper.removeAlsoAvailableFromTableName(tableName))){
+				descriptionsForTable.put(colDesc.getColumnName(), colDesc);
+			}
+		}
+		return descriptionsForTable;
+	}
+	
+	/**
 	 * Gets the database handler.
 	 * @return the database handler
 	 */
@@ -106,7 +123,7 @@ public class DescriptionsController implements PropertyChangeListener{
 	 * @param colDesc the column description
 	 */
 	public void storeDataColumnDescriptionToDB(DataColumnDescription colDesc) {
-		this.getDatabaseHandler().dbSaveOrUpdateEntityInstance(colDesc, true);
+		this.getDatabaseHandler().dbSaveOrUpdateEntityInstance(colDesc, colDesc.getId()!=null);
 	}
 	
 	/**
