@@ -27,10 +27,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * DataSeriesWithValues
  */
+
+@XmlRootElement(name = "DataSeriesWithValues")
+
 @JsonPropertyOrder({
   DataSeriesWithValues.JSON_PROPERTY_ENTRIES
 })

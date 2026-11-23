@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
@@ -16,6 +17,35 @@ import javax.swing.ImageIcon;
  */
 public class ImageHelper {
 
+	
+	/**
+	 * Converts an {@link Icon} into a {@link BufferedImage}.
+	 * @param image the image to convert
+	 * @return the converted buffered image
+	 */
+	public static BufferedImage convertToBufferedImage(Icon icon) {
+		
+		// --- Is a buffered image already? -----------------------------------
+		if (icon instanceof BufferedImage) {
+			return (BufferedImage) icon;
+		}
+
+		int w = Math.max(icon.getIconWidth(), 1);
+		int h = Math.max(icon.getIconHeight(), 1);
+
+		// --- Create a BufferedImage -----------------------------------------
+		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = img.createGraphics();
+		try {
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			icon.paintIcon(null, g, 0, 0);
+		} finally {
+			g.dispose();
+		}
+		return img;
+	}
+	
+	
 	/**
 	 * Converts an {@link Image} into a {@link BufferedImage}.
 	 * @param image the image to convert

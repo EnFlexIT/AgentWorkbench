@@ -204,6 +204,7 @@ public class ChartIntegration extends JPanel implements PropertiesConfigurationP
 	private JSplitPane getJSplitPaneConfiguration() {
 		if (jSplitPaneConfiguration == null) {
 			jSplitPaneConfiguration = new JSplitPane();
+			jSplitPaneConfiguration.setDividerLocation(0.67);
 			jSplitPaneConfiguration.setResizeWeight(0.3);
 			
 			jSplitPaneConfiguration.setOrientation(JSplitPane.VERTICAL_SPLIT);

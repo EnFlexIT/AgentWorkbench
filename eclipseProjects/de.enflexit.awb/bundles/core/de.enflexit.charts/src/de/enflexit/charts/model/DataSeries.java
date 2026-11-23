@@ -30,10 +30,16 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * DataSeries
  */
+
+@XmlSeeAlso({DataSeriesWithReference.class, DataSeriesWithValues.class})
+@XmlRootElement(name = "DataSeries")
+
 @JsonPropertyOrder({
   DataSeries.JSON_PROPERTY_LABEL,
   DataSeries.JSON_PROPERTY_SECONDARY_Y_AXIS

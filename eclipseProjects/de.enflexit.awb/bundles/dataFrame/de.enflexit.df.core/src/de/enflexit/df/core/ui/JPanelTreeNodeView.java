@@ -638,7 +638,9 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	private void setDetailViewTabToChart(AbstractChart chart) {
 		if (chart==null) return;
 		JComponent compToFocus = this.getDetailViewTabComponentByTitle(chart.getTitle());
-		this.getJTabbedPaneDetailView().setSelectedComponent(compToFocus);
+		if (compToFocus!=null) {
+			this.getJTabbedPaneDetailView().setSelectedComponent(compToFocus);
+		}
 	}
 	
 	private JScrollPane getJScrollPaneData() {

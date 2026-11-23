@@ -22,10 +22,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * DataSeriesWithReference
  */
+
+@XmlRootElement(name = "DataSeriesWithReference")
+
 @JsonPropertyOrder({
   DataSeriesWithReference.JSON_PROPERTY_REFERENCE
 })

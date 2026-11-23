@@ -13,10 +13,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 
 import de.enflexit.common.swing.CheckBoxList;
+import de.enflexit.common.swing.CheckBoxListSelectionListener;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.extension.ColumnDescription;
 import javax.swing.JTextField;
@@ -26,6 +28,7 @@ import javax.swing.JButton;
 
 /**
  * The Class JPanelColumnSelection.
+ * 
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
 public class JPanelColumnSelection extends JPanel {
@@ -43,7 +46,7 @@ public class JPanelColumnSelection extends JPanel {
 	private JLabel jLabelSearch;
 	private JTextField JTextFieldSearch;
 	private JButton jButtonSearchReset;
-	
+
 	
 	/**
 	 * Instantiates a new j panel column selection.
@@ -207,6 +210,21 @@ public class JPanelColumnSelection extends JPanel {
 		}
 		return jCheckBoxList;
 	}
+	/**
+	 * Adds the check box list selection listener.
+	 * @param selectionListener the selection listener
+	 */
+	public void addCheckBoxListSelectionListener(CheckBoxListSelectionListener<ColumnDescription> selectionListener) {
+		this.getJCheckBoxList().addCheckBoxListSelectionListener(selectionListener);
+	}
+	/**
+	 * Adds the check box list selection listener.
+	 * @param selectionListener the selection listener
+	 */
+	public void removeCheckBoxListSelectionListener(CheckBoxListSelectionListener<ColumnDescription> selectionListener) {
+		this.getJCheckBoxList().removeCheckBoxListSelectionListener(selectionListener);
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- Selection area -----------------------------------------------------
@@ -216,37 +234,49 @@ public class JPanelColumnSelection extends JPanel {
 	 * @param selColumnNames the new selected columns
 	 */
 	public void setSelectedColumns(List<String> selColumnNames) {
-		// TODO
+		
+		if (selColumnNames==null) return;
+
+		// --- Convert all to lower case ----------------------------
+		List<String> selColumnNamesToLower = selColumnNames.stream().map(String::toLowerCase).toList(); ;
+		HashSet<String> quickCheckHash = new HashSet<>(selColumnNamesToLower);
+
+		// --- Define result list -----------------------------------
+		List<ColumnDescription> listOfColumnDescriptions = new ArrayList<>(); 
+		// --- Run through model data -------------------------------
+		for (int i = 0; i < this.getListModel().size(); i++) {
+			
+			ColumnDescription cd = this.getListModel().get(i);
+			if (quickCheckHash.contains(cd.getColumnName().toLowerCase())==true) {
+				listOfColumnDescriptions.add(cd);
+			}
+		}
+		this.setSelectedColumnDescriptions(listOfColumnDescriptions);
 	}
-	
 	/**
 	 * Returns the selected columns.
 	 * @return the selected columns
 	 */
 	public List<String> getSelectedColumns() {
-		
 		List<String> selColumns = new ArrayList<>();
-		// TODO		
+		this.getSelectedColumnDescriptions().forEach(cd -> selColumns.add(cd.getColumnName()));
 		return selColumns;
 	}
+	
 	
 	/**
 	 * Sets the selected ColumnDescription.
 	 * @param selColumnDescriptions the new selected column descriptions
 	 */
 	public void setSelectedColumnDescriptions(List<ColumnDescription> selColumnDescriptions) {
-
-		// TODO
+		this.getJCheckBoxList().setSelectedItems(selColumnDescriptions);
 	}
 	/**
 	 * Returns the selected ColumnDescription.
 	 * @return the selected ColumnDescription
 	 */
 	public List<ColumnDescription> getSelectedColumnDescriptions() {
-		
-		List<ColumnDescription> selColumns = new ArrayList<>();
-		// TODO		
-		return selColumns;
+		return this.getJCheckBoxList().getSelectedValuesList();
 	}
 	
 	// ------------------------------------------------------------------------

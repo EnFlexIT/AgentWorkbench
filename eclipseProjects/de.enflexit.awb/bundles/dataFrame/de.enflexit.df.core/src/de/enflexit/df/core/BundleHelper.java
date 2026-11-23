@@ -1,7 +1,9 @@
 package de.enflexit.df.core;
 
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
+import de.enflexit.common.images.ImageHelper;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 
 /**
@@ -57,8 +59,11 @@ public class BundleHelper {
 	 * @return the themed icon
 	 */
 	public static AwbThemeImageIcon getThemedIcon(String image) {
-		ImageIcon icon = BundleHelper.getImageIcon(image);
-		return new AwbThemeImageIcon(icon );
+		ImageIcon imageIcon = BundleHelper.getImageIcon(image);
+		if (imageIcon==null) {
+			imageIcon = new ImageIcon(ImageHelper.convertToBufferedImage(UIManager.getIcon("html.missingImage")));
+		}
+		return new AwbThemeImageIcon(imageIcon);
 	}
 	
 }

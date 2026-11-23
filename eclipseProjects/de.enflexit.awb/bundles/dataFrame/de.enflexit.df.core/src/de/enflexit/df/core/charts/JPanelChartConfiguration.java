@@ -110,7 +110,7 @@ public class JPanelChartConfiguration extends JTabbedPane implements PropertyCha
 		this.dataTreeNode = dataTreeNode;
 		
 		// --- Inform sub panels ----------------
-		this.getJPanelChartConfigurationDataSeries().setTreeNodeSelection(this.dataController, dataTreeNode);
+		this.getJPanelChartConfigurationDataSeries().setTreeNodeSelection(this.dataController, this.dataTreeNode);
 	}
 
 	/**

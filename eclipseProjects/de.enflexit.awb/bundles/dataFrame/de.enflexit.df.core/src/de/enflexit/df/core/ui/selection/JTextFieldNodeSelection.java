@@ -123,9 +123,12 @@ public class JTextFieldNodeSelection extends JTextField {
 	 */
 	public DefaultMutableTreeNode getSelectedTreeNode() {
 		// --- We need the TreeNode from the DataController !! ------
-		DefaultMutableTreeNode treeNodeLocal = (DefaultMutableTreeNode) this.getJTreeDataWorkbooks().getSelectionPath().getLastPathComponent();
-		if (treeNodeLocal!=null) {
-			return this.dataController.getDataTreeModel().getTreeNodeOfUserObject(treeNodeLocal.getUserObject());
+		TreePath selection = this.getJTreeDataWorkbooks().getSelectionPath();
+		if (selection!=null) {
+			DefaultMutableTreeNode treeNodeLocal = (DefaultMutableTreeNode) this.getJTreeDataWorkbooks().getSelectionPath().getLastPathComponent();
+			if (treeNodeLocal!=null) {
+				return this.dataController.getDataTreeModel().getTreeNodeOfUserObject(treeNodeLocal.getUserObject());
+			}
 		}
 		return null;
 	}
@@ -169,7 +172,10 @@ public class JTextFieldNodeSelection extends JTextField {
 	 * Hides the popup.
 	 */
 	private void hidePopup() {
-		if (popup!=null) popup.setVisible(false);
+		if (popup!=null) {
+			popup.setVisible(false);
+			this.postActionEvent();
+		}
 	}
 	/**
 	 * Checks if the popup is visible.

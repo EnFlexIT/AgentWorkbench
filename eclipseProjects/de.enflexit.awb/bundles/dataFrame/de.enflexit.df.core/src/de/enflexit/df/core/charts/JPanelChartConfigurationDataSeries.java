@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
@@ -31,12 +32,15 @@ import de.enflexit.awb.core.ui.AwbMessageDialog;
 import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.charts.model.DataSeries;
 import de.enflexit.charts.model.DataSeriesWithReference;
+import de.enflexit.common.swing.CheckBoxListSelectionEvent;
+import de.enflexit.common.swing.CheckBoxListSelectionListener;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
+import de.enflexit.df.core.extension.ColumnDescription;
 import de.enflexit.df.core.model.DataController;
-import de.enflexit.df.core.ui.selection.JTextFieldNodeSelection;
 import de.enflexit.df.core.ui.selection.JPanelColumnSelection;
+import de.enflexit.df.core.ui.selection.JTextFieldNodeSelection;
 
 /**
  * The Class JPanelChartConfigurationDataSeries.
@@ -50,12 +54,12 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private DataController dataController;
 	private DefaultMutableTreeNode dataTreeNode;
 	
+	private AbstractChart chart;
+	private DataSeries dataSeries;
 	private String referenceTable;
 	private List<String> referenceColumns;
 	
 	private JPanelChartConfiguration jPanelChartConfiguration;
-	private AbstractChart chart;
-	private DataSeries dataSeries;
 	private boolean isPauseDocumentListener;
 	
 	private JLabel jLabelHeaderDataSerieses;
@@ -183,6 +187,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private JScrollPane getJScrollPaneDataSeries() {
 		if (jScrollPaneDataSeries == null) {
 			jScrollPaneDataSeries = new JScrollPane();
+			jScrollPaneDataSeries.setPreferredSize(new Dimension(100, 100));
 			jScrollPaneDataSeries.setViewportView(getJListDataSerieses());
 		}
 		return jScrollPaneDataSeries;
@@ -250,6 +255,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		if (jCheckBoxSecondaryYAxis == null) {
 			jCheckBoxSecondaryYAxis = new JCheckBox("use secondary y-axis");
 			jCheckBoxSecondaryYAxis.setFont(new Font("Dialog", Font.BOLD, 12));
+			jCheckBoxSecondaryYAxis.addActionListener(this);
 		}
 		return jCheckBoxSecondaryYAxis;
 	}
@@ -306,7 +312,6 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		if (jTextFieldNodeSelection == null) {
 			jTextFieldNodeSelection = new JTextFieldNodeSelection(this.jPanelChartConfiguration.getDataController(), false);
 			jTextFieldNodeSelection.setFont(new Font("Dialog", Font.PLAIN, 12));
-			jTextFieldNodeSelection.setText("");
 			jTextFieldNodeSelection.addActionListener(this);
 		}
 		return jTextFieldNodeSelection;
@@ -315,6 +320,12 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private JPanelColumnSelection getJPanelColumnSelection() {
 		if (jPanelColumnSelection == null) {
 			jPanelColumnSelection = new JPanelColumnSelection();
+			jPanelColumnSelection.addCheckBoxListSelectionListener(new CheckBoxListSelectionListener<ColumnDescription>() {
+				@Override
+				public void selectionChanged(CheckBoxListSelectionEvent<ColumnDescription> cblse) {
+					JPanelChartConfigurationDataSeries.this.updateDataSeriesReference();
+				}
+			});
 		}
 		return jPanelColumnSelection;
 	}
@@ -358,18 +369,59 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		if (this.dataSeries==null) {
 			this.getJTextFieldLabel().setText("");
 			this.getJCheckBoxSecondaryYAxis().setSelected(false);
+			this.getJTextFieldNodeSelection().setSelectedTreeNode(null);
+			this.getJPanelColumnSelection().setColumnDescriptionList(null);
 			
 		} else {
 			this.getJTextFieldLabel().setText(this.dataSeries.getLabel());
 			this.getJCheckBoxSecondaryYAxis().setSelected(this.dataSeries.getSecondaryYAxis());
 			if (this.dataSeries instanceof DataSeriesWithReference dsRef) {
-				String reference = dsRef.getReference();
-				// TODO: Check if reference is enough to 
-				DefaultMutableTreeNode treeNodeToSelect = this.dataController.getDataTreeModel().getTreeNodeOfExpression(reference);
-				this.getJTextFieldNodeSelection().setSelectedTreeNode(treeNodeToSelect);
+				String jointReference = dsRef.getReference();
+				if (jointReference!=null && jointReference.isBlank()==false) {
+					// --- Extract the relevant parts of the reference -------- 
+					String[] jointReferenceArray = jointReference.split(".COL");
+					this.referenceTable = jointReferenceArray[0];
+					String colString = jointReferenceArray[1];
+					colString = colString.substring(1, colString.length()-1);
+					this.referenceColumns = Arrays.asList(colString.split(","));
+					
+					// --- Get the node of 'referenceTable' -------------------
+					DefaultMutableTreeNode treeNodeToSelect = this.dataController.getDataTreeModel().getTreeNodeOfExpression(this.referenceTable);
+					this.getJTextFieldNodeSelection().setSelectedTreeNode(treeNodeToSelect);
+					// --- Fill the list of selectable columns ----------------
+					if (treeNodeToSelect!=null && treeNodeToSelect.getUserObject() instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+						this.getJPanelColumnSelection().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
+					} else {
+						this.getJPanelColumnSelection().setColumnDescriptionList(null);
+					}
+					// --- Set the selected columns ---------------------------
+					this.getJPanelColumnSelection().setSelectedColumns(this.referenceColumns);
+					
+				} else {
+					this.getJTextFieldNodeSelection().setSelectedTreeNode(null);
+					this.getJPanelColumnSelection().setColumnDescriptionList(null);
+					
+				}
 			}
 		}
 		this.isPauseDocumentListener = false;
+	}
+	/**
+	 * Updates the data series reference.
+	 */
+	private void updateDataSeriesReference() {
+		
+		if (this.dataSeries instanceof DataSeriesWithReference dsRef) {
+			
+			this.referenceColumns = this.getJPanelColumnSelection().getSelectedColumns();
+			String colString = this.referenceColumns!=null ? String.join(",", this.referenceColumns) : null;
+
+			String jointReference = null;
+			if (colString!=null && this.referenceTable!=null && referenceTable.isBlank()==false) {
+				jointReference = this.referenceTable + ".COL(" + colString + ")";
+			}
+			dsRef.setReference(jointReference);
+		}
 	}
 	
 	
@@ -410,17 +462,22 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 				this.setDataSeries(null);
 			}
 			
+		} else if (ae.getSource()==this.getJCheckBoxSecondaryYAxis()) {
+			if (this.dataSeries!=null) {
+				this.dataSeries.setSecondaryYAxis(this.getJCheckBoxSecondaryYAxis().isSelected());
+			}
+			
 		} else if (ae.getSource()==this.getJTextFieldNodeSelection()) {
 			// --- Table was chosen - update column list ------------
 			DefaultMutableTreeNode treeNodeSelected = this.getJTextFieldNodeSelection().getSelectedTreeNode();
-			if (treeNodeSelected.getUserObject() instanceof AbstractDataSourceDTNO<?> dsDTNO) {
-				
+			this.referenceTable = this.dataController.getDataTreeModel().getExpressionPathByUUID(treeNodeSelected);
+			this.updateDataSeriesReference();
+			// --- Update UI accordingly ----------------------------
+			if (treeNodeSelected!=null && treeNodeSelected.getUserObject() instanceof AbstractDataSourceDTNO<?> dsDTNO) {
 				this.getJPanelColumnSelection().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
-				// TODO
+			} else {
+				this.getJPanelColumnSelection().setColumnDescriptionList(null);
 			}
-			
-			
-			this.referenceTable = this.dataController.getDataTreeModel().getExpressionPathByUUID(treeNodeSelected); 
 			
 		}
 	}

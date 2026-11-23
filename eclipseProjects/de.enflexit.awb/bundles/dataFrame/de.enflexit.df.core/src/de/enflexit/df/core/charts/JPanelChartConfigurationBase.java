@@ -170,7 +170,7 @@ public class JPanelChartConfigurationBase extends JPanel implements DocumentList
 	}
 	private JLabel getJLabelChartID_Value() {
 		if (jLabelChartID_Value == null) {
-			jLabelChartID_Value = new JLabel("42");
+			jLabelChartID_Value = new JLabel("");
 			jLabelChartID_Value.setFont(new Font("Dialog", Font.BOLD, 12));
 		}
 		return jLabelChartID_Value;
