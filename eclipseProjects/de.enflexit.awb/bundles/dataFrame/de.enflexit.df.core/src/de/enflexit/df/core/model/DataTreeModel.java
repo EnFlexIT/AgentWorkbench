@@ -127,6 +127,19 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		}
 		return null;
 	}
+	/**
+	 * Returns the tree node of the specified user object.
+	 *
+	 * @param userObject the user object
+	 * @return the tree node of the specified user object
+	 */
+	public DefaultMutableTreeNode getTreeNodeOfUserObject(Object userObject) {
+		List<DefaultMutableTreeNode> nodesFound = this.searchTreeNode(this.getSearchFilter4UserObject(userObject));
+		if (nodesFound!=null && nodesFound.size()==1) {
+			return nodesFound.get(0);
+		}
+		return null;
+	}
 	
 	
 	/**
@@ -214,6 +227,20 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 					}
 				}
 				return false;
+			}
+		};
+	}
+	/**
+	 * Returns a DataTreeModelSearchFilter for the specified user Object of a tree node.
+	 *
+	 * @param userObject the user object
+	 * @return the search filter 4 data source
+	 */
+	private DataTreeModelSearchFilter getSearchFilter4UserObject(final Object userObject) {
+		return new DataTreeModelSearchFilter() {
+			@Override
+			public boolean matchesFilterCriteria(DefaultMutableTreeNode treeNode) {
+				return treeNode.getUserObject()==userObject;
 			}
 		};
 	}
@@ -441,29 +468,17 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 		DTNO_Base baseDTNO = (DTNO_Base) dtmNode.getUserObject();
 		return "sUUID('" + baseDTNO.getShortUUID() + "')";
 	}
-	/**
-	 * Returns the data table by ID.
-	 *
-	 * @param tableExpression the table expression
-	 * @return the data table by ID
-	 */
-	public Table getDataTableByExpression(String tableExpression) {
-		AbstractDataSourceDTNO<?> dataSourceDTNO = this.getDataSourceDtnoByExpression(tableExpression);
-		if (dataSourceDTNO!=null) {
-			return dataSourceDTNO.getTable();
-		}
-		return null;
-	}
 	
 	/**
-	 * Returns the data source dtno that matches the provided expression.
-	 * @param dtnoExpression the dtno expression
-	 * @return the data source dtno by expression
+	 * Returns the tree node of the specified expression.
+	 * @param expression the expression
+	 * @return the tree node found for the specified expression
 	 */
-	public AbstractDataSourceDTNO<?> getDataSourceDtnoByExpression(String dtnoExpression){
-		if (dtnoExpression==null || dtnoExpression.isBlank()==true) return null;
+	public DefaultMutableTreeNode getTreeNodeOfExpression(String expression){
 		
-		final String tbExpWork = dtnoExpression.trim().toLowerCase();
+		if (expression==null || expression.isBlank()==true) return null;
+		
+		final String tbExpWork = expression.trim().toLowerCase();
 		
 		// --- Search by name or short UUID -----------------------------------
 		boolean isShortUUID = tbExpWork.contains(DataFrameExpressionConstants.DF_EXPRESSION_SHORT_UUID_PREFIX.toLowerCase());
@@ -482,10 +497,39 @@ public class DataTreeModel extends DefaultTreeModel implements PropertyChangeLis
 	
 		// --- Return table, if possible --------------------------------------
 		if (matchingNodes!=null && matchingNodes.size()==1) {
-			DTNO_Base baseDTNO = (DTNO_Base) matchingNodes.get(0).getUserObject();
+			return matchingNodes.get(0);
+		}
+		return null;
+	}
+	/**
+	 * Returns the data source DTNO that matches the provided expression.
+	 * @param dtnoExpression the DTNO expression
+	 * @return the data source DTNO by expression
+	 */
+	public AbstractDataSourceDTNO<?> getDataSourceDtnoByExpression(String dtnoExpression){
+		
+		if (dtnoExpression==null || dtnoExpression.isBlank()==true) return null;
+	
+		// --- Return table, if possible --------------------------------------
+		DefaultMutableTreeNode matchingNode = this.getTreeNodeOfExpression(dtnoExpression);
+		if (matchingNode!=null) {
+			DTNO_Base baseDTNO = (DTNO_Base) matchingNode.getUserObject();
 			if (baseDTNO instanceof AbstractDataSourceDTNO<?> dsDTNO) {
 				return dsDTNO;
 			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the data table by ID.
+	 *
+	 * @param tableExpression the table expression
+	 * @return the data table by ID
+	 */
+	public Table getDataTableByExpression(String tableExpression) {
+		AbstractDataSourceDTNO<?> dataSourceDTNO = this.getDataSourceDtnoByExpression(tableExpression);
+		if (dataSourceDTNO!=null) {
+			return dataSourceDTNO.getTable();
 		}
 		return null;
 	}

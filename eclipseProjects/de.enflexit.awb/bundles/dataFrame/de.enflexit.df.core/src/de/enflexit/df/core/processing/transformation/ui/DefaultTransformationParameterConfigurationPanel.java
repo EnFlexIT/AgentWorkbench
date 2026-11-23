@@ -10,7 +10,7 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.JLabel;
 
 /**
- * Default transformation configuration panel, providing a table with one row for each required
+ * DescriptionPanel transformation configuration panel, providing a table with one row for each required
  * parameter. All returned parameter values will be strings, parse as required if necessary.
  * @author Nils Loose - SOFTEC - Paluno - University of Duisburg-Essen
  */

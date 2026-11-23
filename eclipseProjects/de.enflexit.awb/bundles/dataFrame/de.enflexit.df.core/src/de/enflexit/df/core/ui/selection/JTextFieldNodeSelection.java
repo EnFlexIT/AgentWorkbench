@@ -6,6 +6,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.tree.*;
 
 import de.enflexit.df.core.model.DataController;
+import de.enflexit.df.core.model.treeNode.DTNO_DataWorkbook;
 import de.enflexit.df.core.ui.DataTreeCellRenderer;
 
 import java.awt.*;
@@ -21,6 +22,7 @@ public class JTextFieldNodeSelection extends JTextField {
 	private static final long serialVersionUID = -3980525980117609729L;
 
 	private DataController dataController;
+	private boolean showInactiveWorkbooks;
 	
 	private JTree jTreeDataWorkbooks;
 	private JWindow popup;
@@ -30,7 +32,7 @@ public class JTextFieldNodeSelection extends JTextField {
 
 	
 	/**
-	 * Instantiates a new j text field node selection.
+	 * Instantiates a new JTextFieldNodeSelection.
 	 * (Just for the use of the WindowBuilder)
 	 */
 	@Deprecated
@@ -38,14 +40,22 @@ public class JTextFieldNodeSelection extends JTextField {
 		this(null);
 	}
 	/**
-	 * Instantiates a new j text field node selection.
-	 *
+	 * Instantiates a new JTextFieldNodeSelection.
 	 * @param dataController the data controller
-	 * @param columns the columns
 	 */
 	public JTextFieldNodeSelection(DataController dataController) {
+		this(dataController, true);
+	}
+	/**
+	 * Instantiates a new JTextFieldNodeSelection.
+	 *
+	 * @param dataController the data controller
+	 * @param showInactiveWorkbooks the indicator to show inactive workbooks or not 
+	 */
+	public JTextFieldNodeSelection(DataController dataController, boolean showInactiveWorkbooks) {
 		super();
 		this.dataController = dataController;
+		this.showInactiveWorkbooks = showInactiveWorkbooks;
 		
 		this.applyFilter("");
 
@@ -83,8 +93,8 @@ public class JTextFieldNodeSelection extends JTextField {
 	}
 
 	/**
-	 * Returns the j tree data workbooks.
-	 * @return the j tree data workbooks
+	 * Returns the JTree data workbooks.
+	 * @return the JTree data workbooks
 	 */
 	private JTree getJTreeDataWorkbooks() {
 		if (jTreeDataWorkbooks == null) {
@@ -96,15 +106,39 @@ public class JTextFieldNodeSelection extends JTextField {
 			jTreeDataWorkbooks.setCellRenderer(new DataTreeCellRenderer());
 			jTreeDataWorkbooks.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e) {
-					TreePath path = jTreeDataWorkbooks.getPathForLocation(e.getX(), e.getY());
-					if (path != null) {
+				public void mouseClicked(MouseEvent me) {
+					TreePath path = jTreeDataWorkbooks.getPathForLocation(me.getX(), me.getY());
+					if (path!=null) {
 						choose(path);
 					}
 				}
 			});
 		}
 		return jTreeDataWorkbooks;
+	}
+	
+	/**
+	 * Returns the selected tree node.
+	 * @return the selected tree node
+	 */
+	public DefaultMutableTreeNode getSelectedTreeNode() {
+		// --- We need the TreeNode from the DataController !! ------
+		DefaultMutableTreeNode treeNodeLocal = (DefaultMutableTreeNode) this.getJTreeDataWorkbooks().getSelectionPath().getLastPathComponent();
+		if (treeNodeLocal!=null) {
+			return this.dataController.getDataTreeModel().getTreeNodeOfUserObject(treeNodeLocal.getUserObject());
+		}
+		return null;
+	}
+	/**
+	 * Sets the selected tree node.
+	 * @param treeNodeSelected the new selected tree node
+	 */
+	public void setSelectedTreeNode(DefaultMutableTreeNode treeNodeSelected) {
+		String caption = null;
+		if (treeNodeSelected!=null) {
+			caption = String.valueOf(treeNodeSelected.getUserObject());
+		}
+		this.setText(caption);
 	}
 	
 	/**
@@ -234,21 +268,25 @@ public class JTextFieldNodeSelection extends JTextField {
 	 * which case all its children are also included) or if at least one of its descendants matches.
 	 *
 	 * @param node the node
-	 * @param f the f
+	 * @param filterPhrase the filter phrase
 	 * @return the default mutable tree node
 	 */
-	private DefaultMutableTreeNode filter(DefaultMutableTreeNode node, String f) {
+	private DefaultMutableTreeNode filter(DefaultMutableTreeNode node, String filterPhrase) {
 		
 		if (node==null) return null;
+
+		// --- Show inactive data workbooks? ------------------------
+		boolean skipThisClosedDataWorkbookNode = (this.showInactiveWorkbooks==false && node.getUserObject() instanceof DTNO_DataWorkbook dwDTNO && dwDTNO.getDataWorkbook().isOpen()==false);
+		if (skipThisClosedDataWorkbookNode==true) return null;
 		
-		boolean isRoot = (node == this.getOriginalRootNode());
-		if (!isRoot && (f.isEmpty() || matches(node, f))) {
-			return deepCopy(node);
+		boolean isRootNode = (node==this.getOriginalRootNode());
+		if (isRootNode==false && (filterPhrase.isEmpty() || this.matches(node, filterPhrase))) {
+			return this.deepCopy(node);
 		}
 
 		DefaultMutableTreeNode copy = null;
 		for (int i = 0; i < node.getChildCount(); i++) {
-			DefaultMutableTreeNode child = filter((DefaultMutableTreeNode) node.getChildAt(i), f);
+			DefaultMutableTreeNode child = this.filter((DefaultMutableTreeNode) node.getChildAt(i), filterPhrase);
 			if (child != null) {
 				if (copy == null) {
 					copy = new DefaultMutableTreeNode(node.getUserObject());
@@ -260,14 +298,14 @@ public class JTextFieldNodeSelection extends JTextField {
 	}
 
 	/**
-	 * Matches.
+	 * Checks if the specified node matches the search phrase.
 	 *
 	 * @param node the node
-	 * @param f the f
-	 * @return true, if successful
+	 * @param filterPhrase the filter phrase
+	 * @return true, if the specified successful
 	 */
-	private boolean matches(DefaultMutableTreeNode node, String f) {
-		return String.valueOf(node.getUserObject()).toLowerCase().contains(f);
+	private boolean matches(DefaultMutableTreeNode node, String filterPhrase) {
+		return String.valueOf(node.getUserObject()).toLowerCase().contains(filterPhrase);
 	}
 	/**
 	 * Deep copy.
@@ -279,7 +317,7 @@ public class JTextFieldNodeSelection extends JTextField {
 		
 		DefaultMutableTreeNode copy = new DefaultMutableTreeNode(node.getUserObject());
 		for (int i = 0; i < node.getChildCount(); i++) {
-			copy.add(deepCopy((DefaultMutableTreeNode) node.getChildAt(i)));
+			copy.add(this.deepCopy((DefaultMutableTreeNode) node.getChildAt(i)));
 		}
 		return copy;
 	}
@@ -354,9 +392,10 @@ public class JTextFieldNodeSelection extends JTextField {
 		am.put("treeChoose", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TreePath p = getJTreeDataWorkbooks().getSelectionPath();
-				if (isPopupVisible() && p != null)
-					choose(p);
+				TreePath selection = getJTreeDataWorkbooks().getSelectionPath();
+				if (isPopupVisible()==true && selection!=null) {
+					choose(selection);
+				}
 			}
 		});
 		am.put("treeHide", new AbstractAction() {

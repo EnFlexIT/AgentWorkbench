@@ -7,6 +7,7 @@ import de.enflexit.common.StringHelper;
 import de.enflexit.common.properties.Properties;
 import de.enflexit.common.properties.PropertyValue;
 import de.enflexit.df.core.dataSources.DefaultDataSource;
+import de.enflexit.df.core.extension.ColumnDescriptionRenderer.DescriptionUseCase;
 import de.enflexit.df.core.workbook.DataWorkbook;
 
 /**
@@ -183,7 +184,7 @@ public class ColumnDescription {
 		String customized = null;
 		if (this.getColumnDescriptionRenderer()!=null) {
 			try {
-				customized = this.getColumnDescriptionRenderer().getDescription(this);
+				customized = this.getColumnDescriptionRenderer().getDescription(this, DescriptionUseCase.DescriptionPanel);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -201,7 +202,7 @@ public class ColumnDescription {
 		String customized = null;
 		if (this.getColumnDescriptionRenderer()!=null) {
 			try {
-				customized = this.getColumnDescriptionRenderer().getToolTip(this);
+				customized = this.getColumnDescriptionRenderer().getDescription(this, DescriptionUseCase.Tooltip);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -212,7 +213,25 @@ public class ColumnDescription {
 		}
 		return this.getDefaultDescription();
 	}
-	
+	/**
+	 * Returns the description for column selection.
+	 * @return the description for column selection
+	 */
+	public String getDescriptionForColumnSelection() {
+		String customized = null;
+		if (this.getColumnDescriptionRenderer()!=null) {
+			try {
+				customized = this.getColumnDescriptionRenderer().getDescription(this, DescriptionUseCase.ColumnSelection);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		if (customized!=null) {
+			return customized;
+		}
+		return this.getColumnName() + " (" + this.getColumnType() + ")";
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -221,6 +240,7 @@ public class ColumnDescription {
 	public String toString() {
 		return this.getDescription();
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

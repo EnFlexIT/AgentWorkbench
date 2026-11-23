@@ -33,8 +33,10 @@ import de.enflexit.charts.model.DataSeries;
 import de.enflexit.charts.model.DataSeriesWithReference;
 import de.enflexit.common.swing.OwnerDetection;
 import de.enflexit.df.core.BundleHelper;
+import de.enflexit.df.core.dataSources.integration.AbstractDataSourceDTNO;
 import de.enflexit.df.core.model.DataController;
 import de.enflexit.df.core.ui.selection.JTextFieldNodeSelection;
+import de.enflexit.df.core.ui.selection.JPanelColumnSelection;
 
 /**
  * The Class JPanelChartConfigurationDataSeries.
@@ -47,6 +49,9 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 
 	private DataController dataController;
 	private DefaultMutableTreeNode dataTreeNode;
+	
+	private String referenceTable;
+	private List<String> referenceColumns;
 	
 	private JPanelChartConfiguration jPanelChartConfiguration;
 	private AbstractChart chart;
@@ -67,7 +72,8 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private JButton jButtonDelete;
 	private JButton jButtonAddSeries;
 	private JLabel jLabelTable;
-	private JTextFieldNodeSelection textFieldNodeSelection;
+	private JTextFieldNodeSelection jTextFieldNodeSelection;
+	private JPanelColumnSelection jPanelColumnSelection;
 	
 	/**
 	 * Instantiates a new j panel chart configuration base.
@@ -84,9 +90,9 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		this.setLayout(gridBagLayout);
 		
 		GridBagConstraints gbc_jLabelHeaderDataSerieses = new GridBagConstraints();
@@ -147,7 +153,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		gbc_jCheckBoxSecondaryYAxis.gridy = 6;
 		add(getJCheckBoxSecondaryYAxis(), gbc_jCheckBoxSecondaryYAxis);
 		GridBagConstraints gbc_jLabelTable = new GridBagConstraints();
-		gbc_jLabelTable.anchor = GridBagConstraints.EAST;
+		gbc_jLabelTable.anchor = GridBagConstraints.WEST;
 		gbc_jLabelTable.insets = new Insets(10, 5, 0, 0);
 		gbc_jLabelTable.gridx = 0;
 		gbc_jLabelTable.gridy = 7;
@@ -157,7 +163,14 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		gbc_textFieldNodeSelection.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldNodeSelection.gridx = 1;
 		gbc_textFieldNodeSelection.gridy = 7;
-		add(getTextFieldNodeSelection(), gbc_textFieldNodeSelection);
+		add(getJTextFieldNodeSelection(), gbc_textFieldNodeSelection);
+		GridBagConstraints gbc_jPanelColumnSelection = new GridBagConstraints();
+		gbc_jPanelColumnSelection.insets = new Insets(5, 5, 5, 5);
+		gbc_jPanelColumnSelection.gridwidth = 3;
+		gbc_jPanelColumnSelection.fill = GridBagConstraints.BOTH;
+		gbc_jPanelColumnSelection.gridx = 0;
+		gbc_jPanelColumnSelection.gridy = 8;
+		add(getJPanelColumnSelection(), gbc_jPanelColumnSelection);
 	}
 	
 	private JLabel getJLabelHeaderDataSerieses() {
@@ -282,6 +295,31 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		return jButtonDelete;
 	}
 	
+	private JLabel getJLabelTable() {
+		if (jLabelTable == null) {
+			jLabelTable = new JLabel("Table:");
+			jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
+		}
+		return jLabelTable;
+	}
+	private JTextFieldNodeSelection getJTextFieldNodeSelection() {
+		if (jTextFieldNodeSelection == null) {
+			jTextFieldNodeSelection = new JTextFieldNodeSelection(this.jPanelChartConfiguration.getDataController(), false);
+			jTextFieldNodeSelection.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jTextFieldNodeSelection.setText("");
+			jTextFieldNodeSelection.addActionListener(this);
+		}
+		return jTextFieldNodeSelection;
+	}
+	
+	private JPanelColumnSelection getJPanelColumnSelection() {
+		if (jPanelColumnSelection == null) {
+			jPanelColumnSelection = new JPanelColumnSelection();
+		}
+		return jPanelColumnSelection;
+	}
+	
+	
 	/**
 	 * Sets the current tree node selection.
 	 *
@@ -291,7 +329,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	public void setTreeNodeSelection(DataController dataController, DefaultMutableTreeNode dataTreeNode) {
 		this.dataController = dataController;
 		this.dataTreeNode = dataTreeNode;
-		this.getTextFieldNodeSelection().setDataController(this.dataController);
+		this.getJTextFieldNodeSelection().setDataController(this.dataController);
 	}
 	
 	/**
@@ -326,7 +364,9 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 			this.getJCheckBoxSecondaryYAxis().setSelected(this.dataSeries.getSecondaryYAxis());
 			if (this.dataSeries instanceof DataSeriesWithReference dsRef) {
 				String reference = dsRef.getReference();
-				
+				// TODO: Check if reference is enough to 
+				DefaultMutableTreeNode treeNodeToSelect = this.dataController.getDataTreeModel().getTreeNodeOfExpression(reference);
+				this.getJTextFieldNodeSelection().setSelectedTreeNode(treeNodeToSelect);
 			}
 		}
 		this.isPauseDocumentListener = false;
@@ -342,7 +382,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		if (this.chart==null) return;
 		
 		if (ae.getSource()==this.getJButtonAddSeries()) {
-			// --- Add new DataSeries ---------------------
+			// --- Add new DataSeries -------------------------------
 			DataSeries dsNew = new DataSeriesWithReference();
 			dsNew.setLabel("New Series " + (this.chart.getDataSeries().size() + 1));
 			this.chart.addDataSeriesItem(dsNew);
@@ -357,7 +397,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 			
 			
 		} else if (ae.getSource()==this.getJButtonDelete()) {
-			// --- Delete selected dDataSeries ------------
+			// --- Delete selected dDataSeries ----------------------
 			DataSeries dsDelete = this.getJListDataSerieses().getSelectedValue();
 			if (dsDelete==null) return;
 			
@@ -369,6 +409,18 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 				this.chart.getDataSeries().remove(dsDelete);
 				this.setDataSeries(null);
 			}
+			
+		} else if (ae.getSource()==this.getJTextFieldNodeSelection()) {
+			// --- Table was chosen - update column list ------------
+			DefaultMutableTreeNode treeNodeSelected = this.getJTextFieldNodeSelection().getSelectedTreeNode();
+			if (treeNodeSelected.getUserObject() instanceof AbstractDataSourceDTNO<?> dsDTNO) {
+				
+				this.getJPanelColumnSelection().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
+				// TODO
+			}
+			
+			
+			this.referenceTable = this.dataController.getDataTreeModel().getExpressionPathByUUID(treeNodeSelected); 
 			
 		}
 	}
@@ -414,22 +466,6 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	 */
 	private void informBaseConfigurationChanged() {
 		this.jPanelChartConfiguration.informAboutChartEdit(DataController.DC_CHART_EDITED_TITLE_OR_LABEL, null, this.chart);
-	}
-	
-	private JLabel getJLabelTable() {
-		if (jLabelTable == null) {
-			jLabelTable = new JLabel("Table:");
-			jLabelTable.setFont(new Font("Dialog", Font.BOLD, 12));
-		}
-		return jLabelTable;
-	}
-	private JTextFieldNodeSelection getTextFieldNodeSelection() {
-		if (textFieldNodeSelection == null) {
-			textFieldNodeSelection = new JTextFieldNodeSelection(this.jPanelChartConfiguration.getDataController());
-			textFieldNodeSelection.setFont(new Font("Dialog", Font.PLAIN, 12));
-			textFieldNodeSelection.setText("");
-		}
-		return textFieldNodeSelection;
 	}
 	
 }

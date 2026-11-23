@@ -95,6 +95,7 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	 * @return the HTML representation of the column details. May be null if no details are specified for the column.
 	 */
 	private String getColumnDetailsHTML(ColumnDescription columnDescription) {
+		
 		DataColumnDescription colDescFromDB = this.descriptionController.getColumnDescription(columnDescription.getColumnName(), columnDescription.getTableName());
 		if (colDescFromDB!=null) {
 			StringBuffer columnDetailsHTML = new StringBuffer();
@@ -159,24 +160,29 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	private String getKeyValueTableRow(String key, String value) {
 		return "<tr><td class=\"key\">" + key + ":</td><td>" + (value!=null ? value : "Not specified" + "</td></tr>");
 	}
-	
 
+	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.ColumnDescriptionRenderer#getDescription(de.enflexit.df.core.extension.ColumnDescription)
 	 */
 	@Override
-	public String getDescription(ColumnDescription columnDescription) {
-		String columnDetailsText = this.getColumnDetailsHTML(columnDescription);
-		return (columnDetailsText!=null ? columnDetailsText : PLACEHOLDER_NO_DECSRIPTION_FOUND);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.extension.ColumnDescriptionRenderer#getToolTip(de.enflexit.df.core.extension.ColumnDescription)
-	 */
-	@Override
-	public String getToolTip(ColumnDescription columnDescription) {
-		String columnDetailsText = this.getColumnDetailsHTML(columnDescription);
-		return (columnDetailsText!=null ? columnDetailsText : columnDescription.getDefaultDescription());
+	public String getDescription(ColumnDescription columnDescription, DescriptionUseCase descriptionUseCase) {
+		
+		String descText = null;
+		switch (descriptionUseCase) {
+		case DescriptionPanel:
+			descText = this.getColumnDetailsHTML(columnDescription);
+			descText = (descText!=null ? descText : PLACEHOLDER_NO_DECSRIPTION_FOUND);
+			break;
+			
+		case Tooltip:
+			descText = this.getColumnDetailsHTML(columnDescription);
+			descText = (descText!=null ? descText : columnDescription.getDefaultDescription());
+			break;
+		case ColumnSelection:
+			break;
+		}
+		return descText;
 	}
 
 }

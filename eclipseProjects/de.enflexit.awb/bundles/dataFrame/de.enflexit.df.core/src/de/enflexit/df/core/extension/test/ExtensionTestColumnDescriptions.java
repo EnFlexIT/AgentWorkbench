@@ -146,13 +146,27 @@ public class ExtensionTestColumnDescriptions implements DataWorkbookExtension {
 		if (cdRenderer==null) {
 			cdRenderer = new ColumnDescriptionRenderer() {
 				@Override
+				public String getDescription(ColumnDescription columnDescription, DescriptionUseCase descriptionUseCase) {
+					String descText = null;
+					switch (descriptionUseCase) {
+					case DescriptionPanel:
+						descText = this.getDescription(columnDescription);
+						break;
+					case Tooltip:
+						descText = this.getToolTip(columnDescription);
+						break;
+					case ColumnSelection:
+						descText = this.getDescriptionForColumnSelection(columnDescription);
+						break;
+					}
+					return descText;
+				}
 				public String getDescription(ColumnDescription columnDescription) {
 					String colDesc = columnDescription.getDefaultDescription();
 					colDesc = colDesc.replaceAll("\\n", "<br>");
 					colDesc = "<html><b>" + colDesc + "</html>";
 					return colDesc;
 				}
-				@Override
 				public String getToolTip(ColumnDescription columnDescription) {
 					String colDesc = columnDescription.getDefaultDescription();
 					colDesc = colDesc.replaceAll("\\n", "<br><b>");
@@ -160,6 +174,11 @@ public class ExtensionTestColumnDescriptions implements DataWorkbookExtension {
 					colDesc = "<html><b>" + colDesc + "</html>";
 					return colDesc;
 				}
+				public String getDescriptionForColumnSelection(ColumnDescription columnDescription) {
+					String colDesc = columnDescription.getColumnName() + " (" + columnDescription.getColumnType() + ") Customized!";
+					return colDesc;
+				}
+
 			};
 		}
 		return cdRenderer;

@@ -37,6 +37,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.enflexit.charts.model.AbstractChart;
 import de.enflexit.common.swing.AwbThemeImageIcon;
 import de.enflexit.common.swing.KeyAdapter4Numbers;
 import de.enflexit.df.core.BundleHelper;
@@ -375,7 +376,7 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 	 * @return the column description panel
 	 */
 	public ColumnDescriptionPanel getColumnDescriptionPanel() {
-		// --- Default Case -----------------------------------------
+		// --- DescriptionPanel Case -----------------------------------------
 		if (columnDescriptionPanel==null) {
 			columnDescriptionPanel = new JPanelColumnDescription();
 		}
@@ -630,7 +631,15 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 		}
 		return tabTitleList;
 	}
-	
+	/**
+	 * Sets the focus within the detail view tab to the specified chart.
+	 * @param chart the new detail view tab to chart
+	 */
+	private void setDetailViewTabToChart(AbstractChart chart) {
+		if (chart==null) return;
+		JComponent compToFocus = this.getDetailViewTabComponentByTitle(chart.getTitle());
+		this.getJTabbedPaneDetailView().setSelectedComponent(compToFocus);
+	}
 	
 	private JScrollPane getJScrollPaneData() {
 		if (jScrollPaneData == null) {
@@ -1028,6 +1037,13 @@ public class JPanelTreeNodeView extends JPanel implements PropertyChangeListener
 				this.setCurrentDataViewConfiguration(DataViewConfiguration.No_PropertiesConfiguration);
 			} else {
 				this.setCurrentDataViewConfiguration(this.lastDataViewConfiguration!=null ? this.lastDataViewConfiguration : DataViewConfiguration.PropertiesConfiguration_Right);
+			}
+			break;
+			
+		case DataController.DC_CHART_SELECTED:
+			List<AbstractChart> chartsSelected = this.dataController.getSelectionModel().getSelectedCharts();
+			if (chartsSelected!=null && chartsSelected.size()==1) {
+				this.setDetailViewTabToChart(chartsSelected.get(0));
 			}
 			break;
 		}
