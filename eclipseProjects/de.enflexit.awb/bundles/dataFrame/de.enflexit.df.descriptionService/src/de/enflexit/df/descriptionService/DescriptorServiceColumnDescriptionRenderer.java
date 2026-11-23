@@ -52,51 +52,13 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 		this.descriptionController = descriptionController;
 	}
 	
-//	/**
-//	 * Gets the description as plain text, using escape sequences (\n, \t) for formatting.
-//	 * @param columnDescription the {@link ColumnDescription} for the column of interest.
-//	 * @return the column details text. May be null if no details are specified for the column.
-//	 */
-//	private String getColumnDetailsPlainText(ColumnDescription columnDescription) {
-//		// --- If there is a description stored in the DB, build a customized description string based on the specified information. 
-//		DataColumnDescription colDescFromDB = this.descriptionController.getColumnDescription(columnDescription.getColumnName(), columnDescription.getTableName());
-//		if (colDescFromDB!=null) {
-//			StringBuffer descriptionText = new StringBuffer();
-//			
-//			if(colDescFromDB.getTableName()!=null && colDescFromDB.getTableName().isBlank()==false) {
-//				descriptionText.append("DB Table:\t" + colDescFromDB.getTableName() + "\n");
-//			}
-//			if (colDescFromDB.getColumnName()!=null && colDescFromDB.getColumnName().isBlank()==false) {
-//				descriptionText.append("Column:\t" + colDescFromDB.getColumnName() + "\n");
-//			}
-//			descriptionText.append("Description:\t" + (colDescFromDB.getDescription()!=null ? colDescFromDB.getDescription() : "Not specified") + "\n");
-//			descriptionText.append("Data Type:\t" + (colDescFromDB.getColumnType()!=null ? ColumnType.valueOf(colDescFromDB.getColumnType()).getPrinterFriendlyName() : "Not specified") + "\n");
-//			descriptionText.append("Unit:\t" + (colDescFromDB.getUnit()!=null&&colDescFromDB.getUnit().isBlank()==false ? colDescFromDB.getUnit() : "Not specified") + "\n");
-//			descriptionText.append("Min. Value:\t" + (colDescFromDB.getMinValue()!=null ? colDescFromDB.getMinValue() : "Not specified") + "\n");
-//			descriptionText.append("Max. Value:\t" + (colDescFromDB.getMaxValue()!=null ? colDescFromDB.getMaxValue() : "Not specified") + "\n");
-//			
-//			if (colDescFromDB.getAlternativeIDs().size()>0) {
-//				descriptionText.append("\nAlternative IDs:\n");
-//				for (DataColumnAlternativeID altID : colDescFromDB.getAlternativeIDs()) {
-//					descriptionText.append("- " + altID.getAlternativeIdentifier() + "\n");
-//				}
-//			}
-//			
-//			return descriptionText.toString();
-//			
-//		} else {
-//			return null;
-//		}
-//	}
-	
 	/**
 	 * Gets a HTML representation of the column description details.
 	 * @param columnDescription the {@link ColumnDescription} for the column of interest.
 	 * @return the HTML representation of the column details. May be null if no details are specified for the column.
 	 */
-	private String getColumnDetailsHTML(ColumnDescription columnDescription) {
+	private String getColumnDetailsHTML(DataColumnDescription colDescFromDB) {
 		
-		DataColumnDescription colDescFromDB = this.descriptionController.getColumnDescription(columnDescription.getColumnName(), columnDescription.getTableName());
 		if (colDescFromDB!=null) {
 			StringBuffer columnDetailsHTML = new StringBuffer();
 			columnDetailsHTML.append("<html>" + cssStylesHeader + "<table>");
@@ -160,7 +122,6 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	private String getKeyValueTableRow(String key, String value) {
 		return "<tr><td class=\"key\">" + key + ":</td><td>" + (value!=null ? value : "Not specified" + "</td></tr>");
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see de.enflexit.df.core.extension.ColumnDescriptionRenderer#getDescription(de.enflexit.df.core.extension.ColumnDescription)
@@ -168,21 +129,48 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	@Override
 	public String getDescription(ColumnDescription columnDescription, DescriptionUseCase descriptionUseCase) {
 		
+		DataColumnDescription colDescFromDB = this.descriptionController.getColumnDescription(columnDescription.getColumnName(), columnDescription.getTableName());
+		
 		String descText = null;
 		switch (descriptionUseCase) {
 		case DescriptionPanel:
-			descText = this.getColumnDetailsHTML(columnDescription);
-			descText = (descText!=null ? descText : PLACEHOLDER_NO_DECSRIPTION_FOUND);
+			descText = this.getColumnDetailsHTML(colDescFromDB);
+			if (descText==null) {
+				descText = PLACEHOLDER_NO_DECSRIPTION_FOUND;
+			}
 			break;
 			
 		case Tooltip:
-			descText = this.getColumnDetailsHTML(columnDescription);
-			descText = (descText!=null ? descText : columnDescription.getDefaultDescription());
+			descText = this.getColumnDetailsHTML(colDescFromDB);
+			if (descText==null) {
+				descText = columnDescription.getDefaultDescription();
+			}
 			break;
 		case ColumnSelection:
+			descText = this.getColumnDescriptionForSelection(colDescFromDB);
+			if (descText==null) {
+				descText = columnDescription.getDefaultDescription();
+			}
 			break;
 		}
 		return descText;
+	}
+	
+	/**
+	 * Gets a description string for column selection lists.
+	 * @param columnDescription the column description
+	 * @return the description string
+	 */
+	private String getColumnDescriptionForSelection(DataColumnDescription columnDescription) {
+		
+		if (columnDescription==null) return null;
+		
+		String descriptionString = columnDescription.getColumnName() + "(" + columnDescription.getColumnType() + ")";
+		if (columnDescription.getDescription()!=null && columnDescription.getDescription().isBlank()==false) {
+			descriptionString += " " + columnDescription.getDescription();
+		}
+		
+		return descriptionString;
 	}
 
 }
