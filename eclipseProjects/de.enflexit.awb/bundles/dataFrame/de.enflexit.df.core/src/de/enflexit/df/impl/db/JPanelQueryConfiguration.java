@@ -35,6 +35,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -57,7 +59,7 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelQueryConfiguration extends JPanel implements ActionListener, PropertyChangeListener {
+public class JPanelQueryConfiguration extends JPanel implements ActionListener, PropertyChangeListener, TableModelListener {
 
 	private static final long serialVersionUID = 1582587866051687200L;
 	
@@ -820,6 +822,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 		if (jPanelTableDictionary == null) {
 			jPanelTableDictionary = new JPanelTableDictionary(null);
 			jPanelTableDictionary.setPreferredSize(new Dimension(200, 300));
+			jPanelTableDictionary.addTableModelListener(this);
 		}
 		return jPanelTableDictionary;
 	}
@@ -980,7 +983,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 		String sortColumn = this.getSortColumnForQuery(tableName);
 		dbq.setNumber(this.getTableModelDatabaseQuery().getRowCount() + 1);
 		dbq.setName("New database query");
-		dbq.setSqlStatement("SELECT * FROM " + tableName + " ORDER BY " + sortColumn + ";");
+		dbq.setSqlStatement("SELECT " + this.getJPanelTableDictionary().getColumnSelectionString() + " FROM " + tableName + " ORDER BY " + sortColumn + ";");
 		return dbq;
 	}
 	
@@ -1004,6 +1007,13 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 			temporalColumnName = TableHelper.getTemporalColumnName(columnsList);
 		}
 		return temporalColumnName!=null ? temporalColumnName : "date_time";
+	}
+	
+	private String replaceSelectColumnPart(String sqlStatement) {
+		String partBefore = sqlStatement.substring(0, "SELECT ".length());
+		String partAfter = sqlStatement.substring(sqlStatement.indexOf(" FROM"));
+		String selectColumnsPart = this.getJPanelTableDictionary().getColumnSelectionString();
+		return partBefore + selectColumnsPart + partAfter;
 	}
 	
 	/**
@@ -1261,6 +1271,21 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 			}
 		}
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+	 */
+	@Override
+	public void tableChanged(TableModelEvent tme) {
+		// --- If there is an active database query, update it according to the changes made in the table
+		if (this.getDatabaseQuery()!=null) {
+			String sqlStatement = this.getDatabaseQuery().getSqlStatement();
+			String newStatement = this.replaceSelectColumnPart(sqlStatement);
+			DatabaseQuery newQuery = new DatabaseQuery();
+			newQuery.setSqlStatement(newStatement);
+			this.setDatabaseQuery(newQuery);
+		}
 	}
 	
 }

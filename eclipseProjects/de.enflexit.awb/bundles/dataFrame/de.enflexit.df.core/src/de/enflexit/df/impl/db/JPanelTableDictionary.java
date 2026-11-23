@@ -12,13 +12,16 @@ import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * The Class JPanelTableDictionary.
@@ -28,6 +31,9 @@ import java.util.Vector;
 public class JPanelTableDictionary extends JPanel {
 
 	private static final long serialVersionUID = 3871846230244677856L;
+	
+	private static final int COLUMN_INDEX_COLUMN_SELECTED = 1;
+	private static final int COLUMN_INDEX_COLUMN_NAME = 2;
 	
 	private TableDictionary tableDictionary;
 	
@@ -184,6 +190,7 @@ public class JPanelTableDictionary extends JPanel {
 			
 			Vector<String> columnHeader = new Vector<>();
 			columnHeader.add("TableColumn");
+			columnHeader.add("Select");
 			columnHeader.add("Column Name");
 			columnHeader.add("Column Description");
 			columnHeader.add("Data Type");
@@ -193,7 +200,8 @@ public class JPanelTableDictionary extends JPanel {
 			tableModelColumns = new DefaultTableModel(null, columnHeader) {
 				@Override
 				public boolean isCellEditable(int row, int column) {
-					return false;
+					// --- Only the select column can be changed ----
+					return column==1;
 				}
 				@Override
 				public Class<?> getColumnClass(int columnIndex) {
@@ -202,13 +210,13 @@ public class JPanelTableDictionary extends JPanel {
 					case 0:
 						clazz = TableColumn.class;
 						break;
-					case 1, 2, 3: 
+					case 2, 3, 4: 
 						clazz = String.class;
 						break;
-					case 4:
+					case 5:
 						clazz = Integer.class;
 						break;
-					case 5:
+					case 1, 6:
 						clazz = Boolean.class;
 						break;
 					default:
@@ -236,6 +244,7 @@ public class JPanelTableDictionary extends JPanel {
 		
 		Vector<Object> dataRow = new Vector<>();
 		dataRow.add(tc);
+		dataRow.add(true);	// --- Include in selection by default
 		dataRow.add(tc.getColumnName());
 		dataRow.add(comumnDescriptions!=null ? comumnDescriptions.get(tc.getColumnName()) : null);
 		dataRow.add(tc.getDataType());
@@ -256,26 +265,31 @@ public class JPanelTableDictionary extends JPanel {
 			colModel.getColumn(0).setPreferredWidth(0);
 			colModel.getColumn(0).setMinWidth(0);
 			colModel.getColumn(0).setMaxWidth(0);
+			// --- Include in select statement? -
+			colModel.getColumn(1).setPreferredWidth(80);
+			colModel.getColumn(1).setMinWidth(60);
+			colModel.getColumn(1).setMaxWidth(100);
+			
 			// --- Column Name ------------------
-			colModel.getColumn(1).setPreferredWidth(180);
-			colModel.getColumn(1).setMinWidth(160);
-			colModel.getColumn(1).setMaxWidth(240);
+			colModel.getColumn(2).setPreferredWidth(180);
+			colModel.getColumn(2).setMinWidth(160);
+			colModel.getColumn(2).setMaxWidth(240);
 			// --- Column Description -----------
-//			colModel.getColumn(2).setPreferredWidth(100);
-//			colModel.getColumn(2).setMinWidth(80);
-//			colModel.getColumn(2).setMaxWidth(120);
+//			colModel.getColumn(3).setPreferredWidth(100);
+//			colModel.getColumn(3).setMinWidth(80);
+//			colModel.getColumn(3).setMaxWidth(120);
 			// --- Data Type --------------------		
-			colModel.getColumn(3).setPreferredWidth(80);
-			colModel.getColumn(3).setMinWidth(60);
-			colModel.getColumn(3).setMaxWidth(100);
-			// --- Size -------------------------
 			colModel.getColumn(4).setPreferredWidth(80);
 			colModel.getColumn(4).setMinWidth(60);
 			colModel.getColumn(4).setMaxWidth(100);
-			// --- nullable ---------------------
+			// --- Size -------------------------
 			colModel.getColumn(5).setPreferredWidth(80);
 			colModel.getColumn(5).setMinWidth(60);
 			colModel.getColumn(5).setMaxWidth(100);
+			// --- nullable ---------------------
+			colModel.getColumn(6).setPreferredWidth(80);
+			colModel.getColumn(6).setMinWidth(60);
+			colModel.getColumn(6).setMaxWidth(100);
 			
 			jTableColumns.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 				@Override
@@ -319,6 +333,56 @@ public class JPanelTableDictionary extends JPanel {
 			columnDescriptionsByTableName = new HashMap<String, HashMap<String,String>>();
 		}
 		return columnDescriptionsByTableName;
+	}
+	
+	// ----------------------------------------------------
+	// --- Methods for handling column selection ----------
+	
+	/**
+	 * Gets the selected column names.
+	 * @return the selected column names
+	 */
+	private List<String> getSelectedColumnNames(){
+		ArrayList<String> selectedColumns = new ArrayList<String>();
+		for (int i=0; i<this.getTableModelTableColumns().getRowCount(); i++) {
+			Boolean isSelected = (Boolean) this.getTableModelTableColumns().getValueAt(i, COLUMN_INDEX_COLUMN_SELECTED);
+			if (isSelected==true) {
+				String columnName = (String) this.getTableModelTableColumns().getValueAt(i, COLUMN_INDEX_COLUMN_NAME);
+				selectedColumns.add(columnName);
+			}
+		}
+		return selectedColumns;
+	}
+	
+	/**
+	 * Gets a query string for column selection based on the currently selected columns.
+	 * @return the column selection string
+	 */
+	protected String getColumnSelectionString() {
+		List<String> selectedColumns = this.getSelectedColumnNames();
+		if (selectedColumns.size()==this.getTableModelTableColumns().getRowCount()) {
+			// --- Select all columns ---------------------
+			return "*";
+		} else {
+			// --- Select individual  columns -------------
+			return selectedColumns.stream().collect(Collectors.joining(", "));
+		}
+	}
+	
+	/**
+	 * Adds a table model listener to the table columns table.
+	 * @param tableModelListener the table model listener
+	 */
+	public void addTableModelListener(TableModelListener tableModelListener) {
+		this.getTableModelTableColumns().addTableModelListener(tableModelListener);
+	}
+	
+	/**
+	 * Removes a table model listener from the table columns table.
+	 * @param tableModelListener the table model listener
+	 */
+	public void removeTableModelListener(TableModelListener tableModelListener) {
+		this.getTableModelTableColumns().removeTableModelListener(tableModelListener);
 	}
 	
 }
