@@ -257,9 +257,13 @@ public class JPanelTableDictionary extends JPanel {
 			colModel.getColumn(0).setMinWidth(0);
 			colModel.getColumn(0).setMaxWidth(0);
 			// --- Column Name ------------------
-			//colModel.getColumn(1).setPreferredWidth(100);
-			//colModel.getColumn(1).setMinWidth(80);
-			//colModel.getColumn(1).setMaxWidth(120);
+			colModel.getColumn(1).setPreferredWidth(180);
+			colModel.getColumn(1).setMinWidth(160);
+			colModel.getColumn(1).setMaxWidth(240);
+			// --- Column Description -----------
+//			colModel.getColumn(2).setPreferredWidth(100);
+//			colModel.getColumn(2).setMinWidth(80);
+//			colModel.getColumn(2).setMaxWidth(120);
 			// --- Data Type --------------------		
 			colModel.getColumn(3).setPreferredWidth(80);
 			colModel.getColumn(3).setMinWidth(60);
