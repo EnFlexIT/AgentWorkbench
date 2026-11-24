@@ -177,11 +177,17 @@ public class RadioButtonList<E> extends JList<E> {
 		 */
 		@Override
 		public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected, boolean cellHasFocus) {
+			
 			this.setText(this.listEntryStringFunction.apply(value));
 			this.setSelected(isSelected);
 
-			this.setBackground(list.getBackground());
-			this.setForeground(list.getForeground());
+			 if (isSelected) {
+	            this.setBackground(list.getSelectionBackground());
+	            this.setForeground(list.getSelectionForeground());
+	        } else {
+	        	this.setBackground(list.getBackground());
+	        	this.setForeground(list.getForeground());
+	        }
 
 			this.setFont(list.getFont());
 			this.setOpaque(true);

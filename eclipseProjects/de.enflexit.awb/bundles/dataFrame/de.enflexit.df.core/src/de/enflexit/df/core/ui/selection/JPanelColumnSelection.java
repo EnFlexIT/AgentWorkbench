@@ -18,10 +18,12 @@ import java.util.List;
 import java.util.function.Function;
 
 import de.enflexit.common.swing.CheckBoxList;
+import de.enflexit.common.swing.CheckBoxListSelectionEvent;
 import de.enflexit.common.swing.CheckBoxListSelectionListener;
 import de.enflexit.df.core.BundleHelper;
 import de.enflexit.df.core.extension.ColumnDescription;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.JButton;
@@ -35,6 +37,8 @@ public class JPanelColumnSelection extends JPanel {
 
 	private static final long serialVersionUID = 903249138584365791L;
 	
+	private List<ColumnDescription> selectedColumnDescriptions;
+	
 	private JLabel jLableColumnSelection;
 	
 	private JButton jButtonSelectAll;
@@ -47,12 +51,21 @@ public class JPanelColumnSelection extends JPanel {
 	private JTextField JTextFieldSearch;
 	private JButton jButtonSearchReset;
 
-	
 	/**
-	 * Instantiates a new j panel column selection.
+	 * Instantiates a new JPanelColumnSelection.
 	 */
 	public JPanelColumnSelection() {
+		this(null);
+	}
+	/**
+	 * Instantiates a new JPanelColumnSelection.
+	 * @param headerText the header text
+	 */
+	public JPanelColumnSelection(String headerText) {
 		this.initialize();
+		if (headerText!=null) {
+			this.setHeader(headerText);
+		}
 	}
 	/**
 	 * Initialize.
@@ -113,6 +126,14 @@ public class JPanelColumnSelection extends JPanel {
 		}
 		return jLableColumnSelection;
 	}
+	/**
+	 * Sets the header.
+	 * @param newHeaderText the new header
+	 */
+	public void setHeader(String newHeaderText) {
+		this.getJLableColumnSelection().setText(newHeaderText==null ? "" : newHeaderText);
+	}
+	
 	
 	private JButton getJButtonSelectAll() {
 		if (jButtonSelectAll == null) {
@@ -121,7 +142,12 @@ public class JPanelColumnSelection extends JPanel {
 			jButtonSelectAll.setIcon(BundleHelper.getThemedIcon("MBselectAll.png"));
 			jButtonSelectAll.setPreferredSize(new Dimension(26, 26));
 			jButtonSelectAll.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonSelectAll.addActionListener(null);
+			jButtonSelectAll.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					JPanelColumnSelection.this.adjustSelectionForAllVisibleElements(true);
+				}
+			});
 		}
 		return jButtonSelectAll;
 	}
@@ -132,10 +158,36 @@ public class JPanelColumnSelection extends JPanel {
 			jButtonClearSelection.setIcon(BundleHelper.getThemedIcon("MBselectNone.png"));
 			jButtonClearSelection.setPreferredSize(new Dimension(26, 26));
 			jButtonClearSelection.setFont(new Font("Dialog", Font.BOLD, 12));
-			jButtonClearSelection.addActionListener(null);
+			jButtonClearSelection.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					JPanelColumnSelection.this.adjustSelectionForAllVisibleElements(false);
+				}
+			});
 		}
 		return jButtonClearSelection;
 	}
+	/**
+	 * Adjust selection for all visible elements.
+	 * @param true to add all elements to the current selection
+	 */
+	private void adjustSelectionForAllVisibleElements(boolean add) {
+		
+		ListModel<ColumnDescription> listModel = this.getJCheckBoxList().getModel();
+		for (int i = 0; i < listModel.getSize(); i++) {
+			ColumnDescription cd = listModel.getElementAt(i);
+			if (add==true) {
+				if (this.getInternalSelectedColumnDescriptions().contains(cd)==false) {
+					this.getInternalSelectedColumnDescriptions().add(cd);
+				}
+			} else {
+				this.getInternalSelectedColumnDescriptions().remove(cd);
+			}
+		}
+		this.getJCheckBoxList().setSelectedItems(this.getInternalSelectedColumnDescriptions());
+		
+	}
+	
 	
 	private JScrollPane getJScrollPaneColumnSelection() {
 		if (jScrollPaneColumnSelection == null) {
@@ -176,7 +228,7 @@ public class JPanelColumnSelection extends JPanel {
 		 DefaultListModel<ColumnDescription> listModelFiltered = new DefaultListModel<>();
 		 for (int i = 0; i < this.getListModel().size(); i++) {
 			 ColumnDescription cd = this.getListModel().get(i);
-			 if (cd.getDefaultDescription().toLowerCase().contains(searchPhrase)) {
+			 if (cd.getDescriptionForColumnSelection().toLowerCase().contains(searchPhrase)) {
 				 listModelFiltered.addElement(cd);
 			 }
 		 }
@@ -192,6 +244,7 @@ public class JPanelColumnSelection extends JPanel {
 		} else {
 			this.getJCheckBoxList().setModel(this.getListModelFiltered(searchPrahse));
 		}
+		this.getJCheckBoxList().setSelectedItems(this.getInternalSelectedColumnDescriptions());
 	}
 	
 	/**
@@ -207,6 +260,18 @@ public class JPanelColumnSelection extends JPanel {
 				}
 			});
 			jCheckBoxList.setFont(new Font("Dialog", Font.PLAIN, 12));
+			jCheckBoxList.addCheckBoxListSelectionListener(new CheckBoxListSelectionListener<ColumnDescription>() {
+				@Override
+				public void selectionChanged(CheckBoxListSelectionEvent<ColumnDescription> cblse) {
+					ColumnDescription cd = cblse.getItem();
+					if (cblse.isSelected()==true) {
+						JPanelColumnSelection.this.getInternalSelectedColumnDescriptions().add(cd);
+					} else {
+						JPanelColumnSelection.this.getInternalSelectedColumnDescriptions().remove(cd);
+					}
+				}
+			});
+			
 		}
 		return jCheckBoxList;
 	}
@@ -230,7 +295,7 @@ public class JPanelColumnSelection extends JPanel {
 	// --- Selection area -----------------------------------------------------
 	// ------------------------------------------------------------------------
 	/**
-	 * Sets the selected columns.
+	 * Sets the selected columns according to the list of column names.
 	 * @param selColumnNames the new selected columns
 	 */
 	public void setSelectedColumns(List<String> selColumnNames) {
@@ -245,7 +310,6 @@ public class JPanelColumnSelection extends JPanel {
 		List<ColumnDescription> listOfColumnDescriptions = new ArrayList<>(); 
 		// --- Run through model data -------------------------------
 		for (int i = 0; i < this.getListModel().size(); i++) {
-			
 			ColumnDescription cd = this.getListModel().get(i);
 			if (quickCheckHash.contains(cd.getColumnName().toLowerCase())==true) {
 				listOfColumnDescriptions.add(cd);
@@ -254,7 +318,7 @@ public class JPanelColumnSelection extends JPanel {
 		this.setSelectedColumnDescriptions(listOfColumnDescriptions);
 	}
 	/**
-	 * Returns the selected columns.
+	 * Returns the selected column names as list.
 	 * @return the selected columns
 	 */
 	public List<String> getSelectedColumns() {
@@ -269,6 +333,8 @@ public class JPanelColumnSelection extends JPanel {
 	 * @param selColumnDescriptions the new selected column descriptions
 	 */
 	public void setSelectedColumnDescriptions(List<ColumnDescription> selColumnDescriptions) {
+		this.getJTextFieldSearch().setText("");
+		this.setInternalSelectedColumnDescriptions(selColumnDescriptions);
 		this.getJCheckBoxList().setSelectedItems(selColumnDescriptions);
 	}
 	/**
@@ -276,8 +342,27 @@ public class JPanelColumnSelection extends JPanel {
 	 * @return the selected ColumnDescription
 	 */
 	public List<ColumnDescription> getSelectedColumnDescriptions() {
-		return this.getJCheckBoxList().getSelectedValuesList();
+		return this.getInternalSelectedColumnDescriptions();
 	}
+	
+	/**
+	 * Sets the internal selected column descriptions.
+	 * @param selectedElements the new internal selected column descriptions
+	 */
+	private void setInternalSelectedColumnDescriptions(List<ColumnDescription> selectedElements) {
+		this.selectedColumnDescriptions = selectedElements;
+	}
+	/**
+	 * Returns the internal selected column descriptions.
+	 * @return the internal selected column descriptions
+	 */
+	private List<ColumnDescription> getInternalSelectedColumnDescriptions() {
+		if (this.selectedColumnDescriptions==null) {
+			this.selectedColumnDescriptions = new ArrayList<>();
+		}
+		return this.selectedColumnDescriptions;
+	}
+	
 	
 	// ------------------------------------------------------------------------
 	// --- Search area --------------------------------------------------------

@@ -298,7 +298,7 @@ public class JPanelChartConfigurationBase extends JPanel implements DocumentList
 			this.getJTextFieldChartYLabel_2().setText("");
 			
 		} else {
-			this.getJLabelChartID_Value().setText(chart.getChartId() + "");
+			this.getJLabelChartID_Value().setText(chart.getChartId()==null ? "" : chart.getChartId() + "");
 			this.getJTextFieldChartTitle().setText(chart.getTitle());
 			this.getJCheckBoxShowLegend().setSelected(chart.getShowLegend());
 			this.getJTextFieldChartXLabel_1().setText(chart.getxAxisLabel());

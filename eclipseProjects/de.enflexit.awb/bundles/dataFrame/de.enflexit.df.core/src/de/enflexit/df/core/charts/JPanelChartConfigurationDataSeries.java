@@ -77,7 +77,11 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private JButton jButtonAddSeries;
 	private JLabel jLabelTable;
 	private JTextFieldNodeSelection jTextFieldNodeSelection;
-	private JPanelColumnSelection jPanelColumnSelection;
+
+	private JPanel jPanelColumnSelection;
+	private JPanelColumnSelection jPanelColumnSelectionY;
+	private JPanelColumnSelection jPanelColumnSelectionX;
+	
 	
 	/**
 	 * Instantiates a new j panel chart configuration base.
@@ -133,7 +137,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		
 		GridBagConstraints gbc_jButtonDelete = new GridBagConstraints();
 		gbc_jButtonDelete.insets = new Insets(15, 5, 0, 5);
-		gbc_jButtonDelete.anchor = GridBagConstraints.NORTH;
+		gbc_jButtonDelete.anchor = GridBagConstraints.SOUTH;
 		gbc_jButtonDelete.gridx = 2;
 		gbc_jButtonDelete.gridy = 4;
 		this.add(this.getJButtonDelete(), gbc_jButtonDelete);
@@ -187,7 +191,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private JScrollPane getJScrollPaneDataSeries() {
 		if (jScrollPaneDataSeries == null) {
 			jScrollPaneDataSeries = new JScrollPane();
-			jScrollPaneDataSeries.setPreferredSize(new Dimension(100, 100));
+			jScrollPaneDataSeries.setPreferredSize(new Dimension(100, 130));
 			jScrollPaneDataSeries.setViewportView(getJListDataSerieses());
 		}
 		return jScrollPaneDataSeries;
@@ -310,24 +314,63 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	}
 	private JTextFieldNodeSelection getJTextFieldNodeSelection() {
 		if (jTextFieldNodeSelection == null) {
-			jTextFieldNodeSelection = new JTextFieldNodeSelection(this.jPanelChartConfiguration.getDataController(), false);
+			jTextFieldNodeSelection = new JTextFieldNodeSelection(this.dataController, false);
 			jTextFieldNodeSelection.setFont(new Font("Dialog", Font.PLAIN, 12));
 			jTextFieldNodeSelection.addActionListener(this);
 		}
 		return jTextFieldNodeSelection;
 	}
 	
-	private JPanelColumnSelection getJPanelColumnSelection() {
+	private JPanel getJPanelColumnSelection() {
 		if (jPanelColumnSelection == null) {
-			jPanelColumnSelection = new JPanelColumnSelection();
-			jPanelColumnSelection.addCheckBoxListSelectionListener(new CheckBoxListSelectionListener<ColumnDescription>() {
+			jPanelColumnSelection = new JPanel();
+			GridBagLayout gbl_jPanelColumnSelection = new GridBagLayout();
+			gbl_jPanelColumnSelection.columnWidths = new int[]{0, 0, 0};
+			gbl_jPanelColumnSelection.rowHeights = new int[]{0, 0};
+			gbl_jPanelColumnSelection.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+			gbl_jPanelColumnSelection.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+			jPanelColumnSelection.setLayout(gbl_jPanelColumnSelection);
+			GridBagConstraints gbc_jPanelColumnSelectionX = new GridBagConstraints();
+			gbc_jPanelColumnSelectionX.fill = GridBagConstraints.BOTH;
+			gbc_jPanelColumnSelectionX.gridx = 0;
+			gbc_jPanelColumnSelectionX.gridy = 0;
+			gbc_jPanelColumnSelectionX.weightx = 0.5;
+			jPanelColumnSelection.add(getJPanelColumnSelectionX(), gbc_jPanelColumnSelectionX);
+			GridBagConstraints gbc_jPanelColumnSelectionY = new GridBagConstraints();
+			gbc_jPanelColumnSelectionY.insets = new Insets(0, 5, 0, 0);
+			gbc_jPanelColumnSelectionY.fill = GridBagConstraints.BOTH;
+			gbc_jPanelColumnSelectionY.gridx = 1;
+			gbc_jPanelColumnSelectionY.gridy = 0;
+			gbc_jPanelColumnSelectionY.weightx = 0.5;
+			jPanelColumnSelection.add(getJPanelColumnSelectionY(), gbc_jPanelColumnSelectionY);
+		}
+		return jPanelColumnSelection;
+	}
+	private JPanelColumnSelection getJPanelColumnSelectionX() {
+		if (jPanelColumnSelectionX == null) {
+			jPanelColumnSelectionX = new JPanelColumnSelection("x-Axis");
+			jPanelColumnSelectionX.setPreferredSize(new Dimension(100, 150));
+			jPanelColumnSelectionX.addCheckBoxListSelectionListener(new CheckBoxListSelectionListener<ColumnDescription>() {
 				@Override
 				public void selectionChanged(CheckBoxListSelectionEvent<ColumnDescription> cblse) {
 					JPanelChartConfigurationDataSeries.this.updateDataSeriesReference();
 				}
 			});
 		}
-		return jPanelColumnSelection;
+		return jPanelColumnSelectionX;
+	}
+	private JPanelColumnSelection getJPanelColumnSelectionY() {
+		if (jPanelColumnSelectionY == null) {
+			jPanelColumnSelectionY = new JPanelColumnSelection("y-Axis");
+			jPanelColumnSelectionY.setPreferredSize(new Dimension(100, 150));
+			jPanelColumnSelectionY.addCheckBoxListSelectionListener(new CheckBoxListSelectionListener<ColumnDescription>() {
+				@Override
+				public void selectionChanged(CheckBoxListSelectionEvent<ColumnDescription> cblse) {
+					JPanelChartConfigurationDataSeries.this.updateDataSeriesReference();
+				}
+			});
+		}
+		return jPanelColumnSelectionY;
 	}
 	
 	
@@ -352,8 +395,16 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		this.chart = chart;
 		if (this.chart==null) {
 			this.fillDataSeriesDataModel(null);
+			this.setDataSeries(null);
 		} else {
-			this.fillDataSeriesDataModel(this.chart.getDataSeries());
+			List<DataSeries> dsList = this.chart.getDataSeries();
+			this.fillDataSeriesDataModel(dsList);
+			if (dsList.size()>0) {
+				this.getJListDataSerieses().setSelectedValue(dsList.get(0), true);
+				this.setDataSeries(dsList.get(0));
+			} else {
+				this.setDataSeries(null);
+			}
 		}
 	}
 	/**
@@ -370,7 +421,8 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 			this.getJTextFieldLabel().setText("");
 			this.getJCheckBoxSecondaryYAxis().setSelected(false);
 			this.getJTextFieldNodeSelection().setSelectedTreeNode(null);
-			this.getJPanelColumnSelection().setColumnDescriptionList(null);
+			this.getJPanelColumnSelectionX().setColumnDescriptionList(null);
+			this.getJPanelColumnSelectionY().setColumnDescriptionList(null);
 			
 		} else {
 			this.getJTextFieldLabel().setText(this.dataSeries.getLabel());
@@ -390,16 +442,20 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 					this.getJTextFieldNodeSelection().setSelectedTreeNode(treeNodeToSelect);
 					// --- Fill the list of selectable columns ----------------
 					if (treeNodeToSelect!=null && treeNodeToSelect.getUserObject() instanceof AbstractDataSourceDTNO<?> dsDTNO) {
-						this.getJPanelColumnSelection().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
+						this.getJPanelColumnSelectionX().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
+						this.getJPanelColumnSelectionY().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
 					} else {
-						this.getJPanelColumnSelection().setColumnDescriptionList(null);
+						this.getJPanelColumnSelectionX().setColumnDescriptionList(null);
+						this.getJPanelColumnSelectionY().setColumnDescriptionList(null);
 					}
 					// --- Set the selected columns ---------------------------
-					this.getJPanelColumnSelection().setSelectedColumns(this.referenceColumns);
+					this.getJPanelColumnSelectionX().setSelectedColumns(this.referenceColumns);
+					this.getJPanelColumnSelectionY().setSelectedColumns(this.referenceColumns);
 					
 				} else {
 					this.getJTextFieldNodeSelection().setSelectedTreeNode(null);
-					this.getJPanelColumnSelection().setColumnDescriptionList(null);
+					this.getJPanelColumnSelectionX().setColumnDescriptionList(null);
+					this.getJPanelColumnSelectionY().setColumnDescriptionList(null);
 					
 				}
 			}
@@ -413,7 +469,7 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 		
 		if (this.dataSeries instanceof DataSeriesWithReference dsRef) {
 			
-			this.referenceColumns = this.getJPanelColumnSelection().getSelectedColumns();
+			this.referenceColumns = this.getJPanelColumnSelectionY().getSelectedColumns();
 			String colString = this.referenceColumns!=null ? String.join(",", this.referenceColumns) : null;
 
 			String jointReference = null;
@@ -474,9 +530,11 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 			this.updateDataSeriesReference();
 			// --- Update UI accordingly ----------------------------
 			if (treeNodeSelected!=null && treeNodeSelected.getUserObject() instanceof AbstractDataSourceDTNO<?> dsDTNO) {
-				this.getJPanelColumnSelection().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
+				this.getJPanelColumnSelectionX().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
+				this.getJPanelColumnSelectionY().setColumnDescriptionList(dsDTNO.getColumnDescriptionList());
 			} else {
-				this.getJPanelColumnSelection().setColumnDescriptionList(null);
+				this.getJPanelColumnSelectionX().setColumnDescriptionList(null);
+				this.getJPanelColumnSelectionY().setColumnDescriptionList(null);
 			}
 			
 		}
@@ -524,5 +582,6 @@ public class JPanelChartConfigurationDataSeries extends JPanel implements Action
 	private void informBaseConfigurationChanged() {
 		this.jPanelChartConfiguration.informAboutChartEdit(DataController.DC_CHART_EDITED_TITLE_OR_LABEL, null, this.chart);
 	}
+	
 	
 }

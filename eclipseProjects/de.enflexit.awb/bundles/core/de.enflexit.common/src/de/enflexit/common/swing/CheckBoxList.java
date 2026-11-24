@@ -78,19 +78,15 @@ public class CheckBoxList<E> extends JList<E> {
 		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me)) {
 
 			int index = this.locationToIndex(me.getPoint());
-
 			if (index >= 0) {
 
 				// --- Check if the click was actually inside the cell --------
 				Rectangle bounds = this.getCellBounds(index, index);
-
 				if (bounds != null && bounds.contains(me.getPoint())) {
 
 					// --- Handle the first click only (ignore accidental double clicks
 					if (me.getClickCount() == 1) {
-
 						boolean selected = !this.isSelectedIndex(index);
-
 						if (selected) {
 							this.addSelectionInterval(index, index);
 						} else {
@@ -98,7 +94,6 @@ public class CheckBoxList<E> extends JList<E> {
 						}
 
 						E item = this.getModel().getElementAt(index);
-
 						this.fireSelectionChangeEvent(index, item, selected);
 					}
 				}
@@ -135,7 +130,6 @@ public class CheckBoxList<E> extends JList<E> {
 		}
 		return selectionListeners;
 	}
-
 	/**
 	 * Adds a check box list selection listener.
 	 * @param selectionListener the selection listener
@@ -143,7 +137,6 @@ public class CheckBoxList<E> extends JList<E> {
 	public void addCheckBoxListSelectionListener(CheckBoxListSelectionListener<E> selectionListener) {
 		this.getSelectionListeners().add(selectionListener);
 	}
-
 	/**
 	 * Removes a check box list selection listener.
 	 * @param selectionListener the selection listener
@@ -159,7 +152,6 @@ public class CheckBoxList<E> extends JList<E> {
 	public boolean isPauseChangeListeners() {
 		return pauseChangeListeners;
 	}
-
 	/**
 	 * Sets the pause change listeners.
 	 * @param pauseChangeListeners the new pause change listeners
@@ -178,7 +170,7 @@ public class CheckBoxList<E> extends JList<E> {
 		if (this.isPauseChangeListeners()==false) {
 			CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected);
 			for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
-				listener.selectionChanged(cblse);;
+				listener.selectionChanged(cblse);
 			}
 		}
 	}
@@ -189,14 +181,12 @@ public class CheckBoxList<E> extends JList<E> {
 	 */
 	public void setSelectedItems(List<E> items) {
 		this.getSelectionModel().clearSelection();
-		
 		for (int i=0; i<this.getModel().getSize(); i++) {
 			if (items.contains(this.getModel().getElementAt(i))) {
 				this.getSelectionModel().addSelectionInterval(i, i);
 			}
 		}
 	}
-	
 	/**
 	 * Adds the provided item to the selection.
 	 * @param item the item
@@ -240,8 +230,15 @@ public class CheckBoxList<E> extends JList<E> {
 		    this.setText(this.listEntryStringFunction.apply(value));
 		    this.setSelected(isSelected);
 		
+		    if (isSelected) {
+	            this.setBackground(list.getSelectionBackground());
+	            this.setForeground(list.getSelectionForeground());
+	        } else {
+	        	this.setBackground(list.getBackground());
+	        	this.setForeground(list.getForeground());
+	        }
 		    this.setBackground(list.getBackground());
-		    this.setForeground(list.getForeground());
+        	this.setForeground(list.getForeground());
 		
 		    this.setFont(list.getFont());
 		    this.setOpaque(true);
@@ -250,7 +247,6 @@ public class CheckBoxList<E> extends JList<E> {
 		
 		    return this;
 		}
-		
 	}
 	
 }

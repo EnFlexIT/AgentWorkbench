@@ -85,8 +85,11 @@ public class ChartIntegration extends JPanel implements PropertiesConfigurationP
 		if (treeNode==null) return false;
 
 		DTNO_Base dtno = (DTNO_Base) treeNode.getUserObject();
-		if (dtno instanceof DTNO_DataWorkbook) {
-			return true;
+		if (dtno instanceof DTNO_DataWorkbook dwDTNO) {
+			DataWorkbook dw = dwDTNO.getDataWorkbook();
+			if (dw!=null && dw.isOpen()==true) {
+				return true;
+			}
 		} else if (dtno instanceof AbstractDataSourceDTNO<?> dsDTNO) {
 			if (dsDTNO.getTable()!=null) return true;
 		}
@@ -120,7 +123,11 @@ public class ChartIntegration extends JPanel implements PropertiesConfigurationP
 		this.dataController = dataController;
 		this.dataTreeNode = treeNode;
 		if (this.dataController!=null && this.dataTreeNode!=null) {
-			return this.getChartProcessor().getDetailViewPanels(this.dataController, this.getDataWorkbook());
+			// --- Do we have an open DataWorkbook ? ----------------
+			DataWorkbook dw = this.dataController.getSelectionModel().getSelectedDataWorkbook();
+			if (dw!=null && dw.isOpen()==true) {
+				return this.getChartProcessor().getDetailViewPanels(this.dataController, this.getDataWorkbook());
+			}
 		}
 		return null;
 	}

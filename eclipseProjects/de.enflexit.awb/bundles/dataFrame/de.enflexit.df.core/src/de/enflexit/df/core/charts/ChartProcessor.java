@@ -48,7 +48,7 @@ public class ChartProcessor {
 
 	private HashMap<DataController, HashMap<DataWorkbook, List<ChartDefinition>>> dataControllerToWorkbookToChartDefinitionHashMap;
 	
-	private boolean fillWithTestData = true;
+	private boolean fillWithTestData = false;
 
 	
 	/**
