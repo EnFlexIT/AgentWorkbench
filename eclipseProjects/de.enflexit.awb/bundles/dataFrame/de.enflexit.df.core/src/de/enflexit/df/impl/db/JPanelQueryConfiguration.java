@@ -820,6 +820,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 		if (jPanelTableDictionary == null) {
 			jPanelTableDictionary = new JPanelTableDictionary(null);
 			jPanelTableDictionary.setPreferredSize(new Dimension(200, 300));
+			jPanelTableDictionary.addPropertyChangeListener(this);
 		}
 		return jPanelTableDictionary;
 	}
@@ -980,7 +981,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 		String sortColumn = this.getSortColumnForQuery(tableName);
 		dbq.setNumber(this.getTableModelDatabaseQuery().getRowCount() + 1);
 		dbq.setName("New database query");
-		dbq.setSqlStatement("SELECT * FROM " + tableName + " ORDER BY " + sortColumn + ";");
+		dbq.setSqlStatement("SELECT " + this.getJPanelTableDictionary().getColumnSelectionString() + " FROM " + tableName + " ORDER BY " + sortColumn + ";");
 		return dbq;
 	}
 	
@@ -1004,6 +1005,18 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 			temporalColumnName = TableHelper.getTemporalColumnName(columnsList);
 		}
 		return temporalColumnName!=null ? temporalColumnName : "date_time";
+	}
+	
+	/**
+	 * Replaces the column selection part of a SQL select statement.
+	 * @param sqlStatement the original sql statement
+	 * @param selectColumnsPart the new select columns part to insert
+	 * @return the updated statement
+	 */
+	private String replaceSelectColumnPart(String sqlStatement, String selectColumnsPart) {
+		String partBefore = sqlStatement.substring(0, "SELECT ".length());
+		String partAfter = sqlStatement.substring(sqlStatement.indexOf(" FROM"));
+		return partBefore + selectColumnsPart + partAfter;
 	}
 	
 	/**
@@ -1258,6 +1271,24 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 				if (this.getTableModelDatabaseQuery().getRowCount()>0) {
 					this.getJTableDatabaseQueries().setRowSelectionInterval(0, 0);
 				}
+			}
+		} else if (evt.getPropertyName().equals(JPanelTableDictionary.TABLE_SELECTION_CHANGED)) {
+			if (this.getDatabaseQuery()!=null) {
+				// --- If another table was selected, create a completely new query.
+				DatabaseQuery newQuery = this.createNewDatabaseQuery();
+				newQuery.setName(this.getDatabaseQuery().getName());
+				this.setDatabaseQuery(newQuery);
+				this.setEditState(EditState.EditNewEntryUnsaved);
+			}
+		} else if (evt.getPropertyName().equals(JPanelTableDictionary.COLUMN_SELECTION_CHANGED)) {
+			if (this.getDatabaseQuery()!=null) {
+				// --- If the table selection was changed, update the existing SQL statement.
+				String sqlStatement = this.getDatabaseQuery().getSqlStatement();
+				String newStatement = this.replaceSelectColumnPart(sqlStatement, this.getJPanelTableDictionary().getColumnSelectionString());
+				DatabaseQuery newQuery = DatabaseQuery.fromConfigurationString(this.getDatabaseQuery().toConfigurationString());
+				newQuery.setSqlStatement(newStatement);
+				this.setDatabaseQuery(newQuery);	
+				this.setEditState(EditState.EditNewEntryUnsaved);
 			}
 		}
 		

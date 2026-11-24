@@ -464,8 +464,8 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 			startX = startingFrom.getX() + NODE_RECTANGLE_WIDTH + horizontalGap;
 			startY = startingFrom.getY();
 		} else {
-			startX = horizontalGap + NODE_RECTANGLE_WIDTH / 2;
-			startY = verticalGap + NODE_RECTANGLE_HEIGHT / 2;
+			startX = horizontalGap * 2 + NODE_RECTANGLE_WIDTH;
+			startY = verticalGap + NODE_RECTANGLE_HEIGHT;
 		}
 
 		double x = startX;
@@ -529,16 +529,13 @@ public class TransformationGraphEditorPanel extends JPanel implements ActionList
 	 * Shows the data source selection panel.
 	 */
 	private void showDataSourceSelectionWindow() {
-//		DataSourceSelectionPanel dataSelectionPanel = new DataSourceSelectionPanel(this.getDataController(), this);
-//		this.getJSplitPaneMainView().setRightComponent(dataSelectionPanel);
-//		this.getJSplitPaneMainView().setDividerLocation(0.8);
 		
 		Window owner = OwnerDetection.getOwnerWindowForComponent(this.getJButtonAddDataSource());
 		DataSourceSelectionWindow selectionWindow = new DataSourceSelectionWindow(owner, this, this.dataController);
 		Point buttonLocation = this.getJButtonAddDataSource().getLocationOnScreen();
 		
-		// --- Align the right border of the window to the right border of the button
-		Double windowPositionX = buttonLocation.getX() - selectionWindow.getWidth() + this.getJButtonAddDataSource().getWidth();
+		// --- Align the left border of the window to the left border of the button
+		Double windowPositionX = buttonLocation.getX();
 		Double windowPositionY = buttonLocation.getY() + this.getJButtonAddDataSource().getHeight();
 		
 		selectionWindow.setLocation(windowPositionX.intValue(), windowPositionY.intValue());
