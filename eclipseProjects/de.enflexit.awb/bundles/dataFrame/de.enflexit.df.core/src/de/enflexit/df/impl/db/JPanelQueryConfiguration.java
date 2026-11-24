@@ -35,8 +35,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -59,7 +57,7 @@ import tech.tablesaw.api.Table;
  *
  * @author Christian Derksen - SOFTEC - ICB - University of Duisburg-Essen
  */
-public class JPanelQueryConfiguration extends JPanel implements ActionListener, PropertyChangeListener, TableModelListener {
+public class JPanelQueryConfiguration extends JPanel implements ActionListener, PropertyChangeListener {
 
 	private static final long serialVersionUID = 1582587866051687200L;
 	
@@ -822,7 +820,7 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 		if (jPanelTableDictionary == null) {
 			jPanelTableDictionary = new JPanelTableDictionary(null);
 			jPanelTableDictionary.setPreferredSize(new Dimension(200, 300));
-			jPanelTableDictionary.addTableModelListener(this);
+			jPanelTableDictionary.addPropertyChangeListener(this);
 		}
 		return jPanelTableDictionary;
 	}
@@ -1009,10 +1007,15 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 		return temporalColumnName!=null ? temporalColumnName : "date_time";
 	}
 	
-	private String replaceSelectColumnPart(String sqlStatement) {
+	/**
+	 * Replaces the column selection part of a SQL select statement.
+	 * @param sqlStatement the original sql statement
+	 * @param selectColumnsPart the new select columns part to insert
+	 * @return the updated statement
+	 */
+	private String replaceSelectColumnPart(String sqlStatement, String selectColumnsPart) {
 		String partBefore = sqlStatement.substring(0, "SELECT ".length());
 		String partAfter = sqlStatement.substring(sqlStatement.indexOf(" FROM"));
-		String selectColumnsPart = this.getJPanelTableDictionary().getColumnSelectionString();
 		return partBefore + selectColumnsPart + partAfter;
 	}
 	
@@ -1269,23 +1272,26 @@ public class JPanelQueryConfiguration extends JPanel implements ActionListener, 
 					this.getJTableDatabaseQueries().setRowSelectionInterval(0, 0);
 				}
 			}
+		} else if (evt.getPropertyName().equals(JPanelTableDictionary.TABLE_SELECTION_CHANGED)) {
+			if (this.getDatabaseQuery()!=null) {
+				// --- If another table was selected, create a completely new query.
+				DatabaseQuery newQuery = this.createNewDatabaseQuery();
+				newQuery.setName(this.getDatabaseQuery().getName());
+				this.setDatabaseQuery(newQuery);
+				this.setEditState(EditState.EditNewEntryUnsaved);
+			}
+		} else if (evt.getPropertyName().equals(JPanelTableDictionary.COLUMN_SELECTION_CHANGED)) {
+			if (this.getDatabaseQuery()!=null) {
+				// --- If the table selection was changed, update the existing SQL statement.
+				String sqlStatement = this.getDatabaseQuery().getSqlStatement();
+				String newStatement = this.replaceSelectColumnPart(sqlStatement, this.getJPanelTableDictionary().getColumnSelectionString());
+				DatabaseQuery newQuery = DatabaseQuery.fromConfigurationString(this.getDatabaseQuery().toConfigurationString());
+				newQuery.setSqlStatement(newStatement);
+				this.setDatabaseQuery(newQuery);	
+				this.setEditState(EditState.EditNewEntryUnsaved);
+			}
 		}
 		
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
-	 */
-	@Override
-	public void tableChanged(TableModelEvent tme) {
-		// --- If there is an active database query, update it according to the changes made in the table
-		if (this.getDatabaseQuery()!=null) {
-			String sqlStatement = this.getDatabaseQuery().getSqlStatement();
-			String newStatement = this.replaceSelectColumnPart(sqlStatement);
-			DatabaseQuery newQuery = new DatabaseQuery();
-			newQuery.setSqlStatement(newStatement);
-			this.setDatabaseQuery(newQuery);
-		}
 	}
 	
 }

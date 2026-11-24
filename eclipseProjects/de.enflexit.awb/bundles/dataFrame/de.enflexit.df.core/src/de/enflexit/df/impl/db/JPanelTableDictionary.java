@@ -12,11 +12,14 @@ import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import java.awt.Insets;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +34,10 @@ import java.util.stream.Collectors;
 public class JPanelTableDictionary extends JPanel {
 
 	private static final long serialVersionUID = 3871846230244677856L;
+	
+	//--- Identifiers for property change events ----------
+	public static final String TABLE_SELECTION_CHANGED = "TableSelectionChanged";
+	public static final String COLUMN_SELECTION_CHANGED = "ColumnSelecitonChanged";
 	
 	private static final int COLUMN_INDEX_COLUMN_SELECTED = 1;
 	private static final int COLUMN_INDEX_COLUMN_NAME = 2;
@@ -50,6 +57,8 @@ public class JPanelTableDictionary extends JPanel {
 	private JTable jTableColumns;
 	
 	private HashMap<String, HashMap<String, String>> columnDescriptionsByTableName;
+	
+	private PropertyChangeSupport propertyChangeSupport;
 	
 	/**
 	 * Instantiates a new JPanelTableDictionary.
@@ -159,6 +168,8 @@ public class JPanelTableDictionary extends JPanel {
 				public void valueChanged(ListSelectionEvent lsEv) {
 					if (lsEv.getValueIsAdjusting()==true) return;
 					JPanelTableDictionary.this.fillTableModelTableColumns();
+					// --- Notify listeners that a different table was selected -------
+					JPanelTableDictionary.this.notifyTableSelectionChandeg();
 				}
 			});
 		}
@@ -226,6 +237,19 @@ public class JPanelTableDictionary extends JPanel {
 					return clazz;
 				}
 			};
+
+			// --- Register a listener to notify about column selection changes
+			tableModelColumns.addTableModelListener(new TableModelListener() {
+				/* (non-Javadoc)
+				 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
+				 */
+				@Override
+				public void tableChanged(TableModelEvent tme) {
+					if (tme.getColumn()==COLUMN_INDEX_COLUMN_SELECTED) {
+						JPanelTableDictionary.this.notifyColumnSelectionChanged();
+					}
+				}
+			});
 		}
 		return tableModelColumns;
 	}
@@ -369,20 +393,44 @@ public class JPanelTableDictionary extends JPanel {
 		}
 	}
 	
-	/**
-	 * Adds a table model listener to the table columns table.
-	 * @param tableModelListener the table model listener
+	private PropertyChangeSupport getPropertyChangeSupport() {
+		if (propertyChangeSupport==null) {
+			propertyChangeSupport = new PropertyChangeSupport(this);
+		}
+		return propertyChangeSupport;
+	}
+	
+	// ------------------------------------------------------------------------
+	// --- Methods for sending selection changes to other components ----------
+	
+	/* (non-Javadoc)
+	 * @see java.awt.Container#addPropertyChangeListener(java.beans.PropertyChangeListener)
 	 */
-	public void addTableModelListener(TableModelListener tableModelListener) {
-		this.getTableModelTableColumns().addTableModelListener(tableModelListener);
+	public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+		this.getPropertyChangeSupport().addPropertyChangeListener(propertyChangeListener);
 	}
 	
 	/**
-	 * Removes a table model listener from the table columns table.
-	 * @param tableModelListener the table model listener
+	 * Removes a property change listener.
+	 * @param propertyChangeListener the property change listener
 	 */
-	public void removeTableModelListener(TableModelListener tableModelListener) {
-		this.getTableModelTableColumns().removeTableModelListener(tableModelListener);
+	public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+		this.getPropertyChangeSupport().removePropertyChangeListener(propertyChangeListener);
+	}
+	
+	/**
+	 * Sends a notification about a table selection change to the {@link PropertyChangeListener}s.
+	 */
+	private void notifyTableSelectionChandeg() {
+		// --- Notify listeners that a different table was selected -------
+		this.getPropertyChangeSupport().firePropertyChange(TABLE_SELECTION_CHANGED, null, this.getJListTables().getSelectedValue());
+	}
+	
+	/**
+	 * Sends a notification about a column selection change to the {@link PropertyChangeListener}s.
+	 */
+	private void notifyColumnSelectionChanged() {
+		this.getPropertyChangeSupport().firePropertyChange(COLUMN_SELECTION_CHANGED, null, this.getColumnSelectionString());
 	}
 	
 }
