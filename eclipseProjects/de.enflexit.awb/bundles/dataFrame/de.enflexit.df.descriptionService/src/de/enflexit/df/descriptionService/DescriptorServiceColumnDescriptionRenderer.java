@@ -52,6 +52,56 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 		this.descriptionController = descriptionController;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.enflexit.df.core.extension.ColumnDescriptionRenderer#getDescription(de.enflexit.df.core.extension.ColumnDescription)
+	 */
+	@Override
+	public String getDescription(ColumnDescription columnDescription, DescriptionUseCase descriptionUseCase) {
+		
+		DataColumnDescription colDescFromDB = this.descriptionController.getColumnDescription(columnDescription.getColumnName(), columnDescription.getTableName());
+		
+		String descText = null;
+		switch (descriptionUseCase) {
+		case DescriptionPanel:
+			descText = this.getColumnDetailsHTML(colDescFromDB);
+			if (descText==null) {
+				descText = PLACEHOLDER_NO_DECSRIPTION_FOUND;
+			}
+			break;
+			
+		case Tooltip:
+			descText = this.getColumnDetailsHTML(colDescFromDB);
+			if (descText==null) {
+				descText = columnDescription.getDefaultDescription();
+			}
+			break;
+		case ColumnSelection:
+			descText = this.getColumnDescriptionForSelection(colDescFromDB);
+			if (descText==null) {
+				descText = columnDescription.getDefaultDescription();
+			}
+			break;
+		}
+		return descText;
+	}
+	
+	/**
+	 * Gets a description string for column selection lists.
+	 * @param columnDescription the column description
+	 * @return the description string
+	 */
+	private String getColumnDescriptionForSelection(DataColumnDescription columnDescription) {
+		
+		if (columnDescription==null) return null;
+		
+		String descriptionString = columnDescription.getColumnName() + "(" + columnDescription.getColumnType() + ")";
+		if (columnDescription.getDescription()!=null && columnDescription.getDescription().isBlank()==false) {
+			descriptionString += " " + columnDescription.getDescription();
+		}
+		
+		return descriptionString;
+	}
+	
 	/**
 	 * Gets a HTML representation of the column description details.
 	 * @param columnDescription the {@link ColumnDescription} for the column of interest.
@@ -121,56 +171,6 @@ public class DescriptorServiceColumnDescriptionRenderer implements ColumnDescrip
 	 */
 	private String getKeyValueTableRow(String key, String value) {
 		return "<tr><td class=\"key\">" + key + ":</td><td>" + (value!=null ? value : "Not specified" + "</td></tr>");
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.enflexit.df.core.extension.ColumnDescriptionRenderer#getDescription(de.enflexit.df.core.extension.ColumnDescription)
-	 */
-	@Override
-	public String getDescription(ColumnDescription columnDescription, DescriptionUseCase descriptionUseCase) {
-		
-		DataColumnDescription colDescFromDB = this.descriptionController.getColumnDescription(columnDescription.getColumnName(), columnDescription.getTableName());
-		
-		String descText = null;
-		switch (descriptionUseCase) {
-		case DescriptionPanel:
-			descText = this.getColumnDetailsHTML(colDescFromDB);
-			if (descText==null) {
-				descText = PLACEHOLDER_NO_DECSRIPTION_FOUND;
-			}
-			break;
-			
-		case Tooltip:
-			descText = this.getColumnDetailsHTML(colDescFromDB);
-			if (descText==null) {
-				descText = columnDescription.getDefaultDescription();
-			}
-			break;
-		case ColumnSelection:
-			descText = this.getColumnDescriptionForSelection(colDescFromDB);
-			if (descText==null) {
-				descText = columnDescription.getDefaultDescription();
-			}
-			break;
-		}
-		return descText;
-	}
-	
-	/**
-	 * Gets a description string for column selection lists.
-	 * @param columnDescription the column description
-	 * @return the description string
-	 */
-	private String getColumnDescriptionForSelection(DataColumnDescription columnDescription) {
-		
-		if (columnDescription==null) return null;
-		
-		String descriptionString = columnDescription.getColumnName() + "(" + columnDescription.getColumnType() + ")";
-		if (columnDescription.getDescription()!=null && columnDescription.getDescription().isBlank()==false) {
-			descriptionString += " " + columnDescription.getDescription();
-		}
-		
-		return descriptionString;
 	}
 
 }

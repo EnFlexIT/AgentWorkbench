@@ -168,10 +168,28 @@ public class CheckBoxList<E> extends JList<E> {
 	 */
 	private void fireSelectionChangeEvent(int index, E item, boolean selected) {
 		if (this.isPauseChangeListeners()==false) {
-			CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected);
-			for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
-				listener.selectionChanged(cblse);
-			}
+			CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, index, item, selected, false);
+			this.notifyListeners(cblse);
+		}
+	}
+	
+	/**
+	 * Fire bulk selection changed.
+	 */
+	private void fireBulkSelectionChanged() {
+		if (this.isPauseChangeListeners()==false) {
+			CheckBoxListSelectionEvent<E> cblse = new CheckBoxListSelectionEvent<E>(this, -1, null, false, true);
+			this.notifyListeners(cblse);
+		}
+	}
+	
+	/**
+	 * Notify listeners.
+	 * @param cblse the cblse
+	 */
+	private void notifyListeners(CheckBoxListSelectionEvent<E> cblse) {
+		for (CheckBoxListSelectionListener<E> listener : this.getSelectionListeners()) {
+			listener.selectionChanged(cblse);
 		}
 	}
 	
@@ -186,6 +204,7 @@ public class CheckBoxList<E> extends JList<E> {
 				this.getSelectionModel().addSelectionInterval(i, i);
 			}
 		}
+		this.fireBulkSelectionChanged();
 	}
 	/**
 	 * Adds the provided item to the selection.

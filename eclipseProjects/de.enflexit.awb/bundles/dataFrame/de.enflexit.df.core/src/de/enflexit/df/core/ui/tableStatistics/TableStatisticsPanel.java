@@ -1,13 +1,22 @@
 package de.enflexit.df.core.ui.tableStatistics;
 
+import static tech.tablesaw.aggregate.AggregateFunctions.*;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.JPanel;
 
+import tech.tablesaw.api.BooleanColumn;
+import tech.tablesaw.api.DateColumn;
+import tech.tablesaw.api.DateTimeColumn;
+import tech.tablesaw.api.InstantColumn;
+import tech.tablesaw.api.NumericColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.api.TimeColumn;
 import tech.tablesaw.columns.Column;
 
 import java.awt.GridBagLayout;
@@ -17,6 +26,13 @@ import javax.swing.JLabel;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 import de.enflexit.df.core.model.TablesawTableModel;
 import de.enflexit.df.core.processing.ui.JTableHelper;
 
@@ -30,6 +46,8 @@ import javax.swing.JTable;
 public class TableStatisticsPanel extends JPanel {
 	
 	private static final long serialVersionUID = 6198592514559084651L;
+	
+	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
 	
 	private JLabel jLabelTableStatistics;
 	private JScrollPane jScrollPaneStatisticsTable;
@@ -96,72 +114,122 @@ public class TableStatisticsPanel extends JPanel {
 
 	/**
 	 * Creates the summary table, describing all columns of the original table.
+	 * 
 	 * @param dataTable the table
 	 * @return the table
 	 */
 	private Table createStatisticsTable(Table dataTable) {
-		
+
 		Map<String, Map<String, String>> statistics = new LinkedHashMap<>();
 		Map<String, String> columnTypes = new LinkedHashMap<>();
 
 		// --- Iterate over all columns -------------------
-		for (Column<?> column : this.dataTable.columns()) {
+		for (Column<?> column : dataTable.columns()) {
 
 			String columnName = column.name();
 			columnTypes.put(columnName, column.type().name());
 
-			// --- Create the summary table for this column  
-			//TODO customize shown information
-			Table summary = column.summary();
+			// --- Create customized column summary
+			Table summary = summarizeColumn(dataTable, column);
 
-			if (summary.columnCount() < 2) {
+			if (summary.columnCount() == 0 || summary.rowCount() == 0) {
 				continue;
 			}
 
-			Column<?> labels = summary.column(0);
-			Column<?> values = summary.column(1);
+			// --- Read the aggregated values
+			for (Column<?> statisticColumn : summary.columns()) {
 
-			for (int i = 0; i < summary.rowCount(); i++) {
+				String label = statisticColumn.name();
 
-				String label = labels.getString(i);
-				String value = values.getString(i);
+				// Remove the source column suffix (e.g. "Mean [Temperature]" -> "Mean")
+				int suffixIndex = label.lastIndexOf(" [");
+				if (suffixIndex >= 0) {
+					label = label.substring(0, suffixIndex);
+				}
+
+				label = adjustStatisticName(label);
+
+				String value = this.formatStatisticValue(column, statisticColumn.getString(0));
 
 				statistics.computeIfAbsent(label, key -> new LinkedHashMap<>()).put(columnName, value);
 			}
 		}
 
-		// --- Create the result table ------------------------------
+		// --- Create result table ------------------------------
 		Table result = Table.create("Column summary");
-		
-		// --- First column contains the names of the features displayed in the current row. 
+
 		StringColumn statisticValueNames = StringColumn.create("Measure");
 		result.addColumns(statisticValueNames);
 
-		// --- Further columns: One column per column of the original table
+		// --- One column per original column
 		for (String columnName : columnTypes.keySet()) {
 			result.addColumns(StringColumn.create(columnName));
 		}
 
-		// --- First row: Type of each column -----------------------
+		// --- First row: Type of each column
 		statisticValueNames.append("Type");
+
 		for (String columnName : columnTypes.keySet()) {
 			result.stringColumn(columnName).append(columnTypes.get(columnName));
 		}
 
-		// --- One row per statistic value to be displayed ----------
+		// --- One row per statistic value
 		for (Map.Entry<String, Map<String, String>> entry : statistics.entrySet()) {
 
 			statisticValueNames.append(entry.getKey());
 
-			// --- Append the value for the current measurement to the corresponding column
 			for (String columnName : columnTypes.keySet()) {
 				String value = entry.getValue().get(columnName);
 				result.stringColumn(columnName).append(value == null ? "" : value);
 			}
 		}
-		
+
 		return result;
 	}
+	
+	/**
+	 * Provides a summary table for one column. Contained values depend on the column type.
+	 * @param dataTable the data table
+	 * @param column the column
+	 * @return the table
+	 */
+	private Table summarizeColumn(Table dataTable, Column<?> column) {
+
+		// --- Decide which statistics to use, depending on the column type ---
+		if (column instanceof NumericColumn<?>) {
+			return dataTable.summarize(column, count, countUnique, countMissing, min, max, range, mean, median, stdDev).apply();
+		}
+		if (column instanceof DateColumn) {
+			return dataTable.summarize(column, count, countUnique, countMissing, earliestDate, latestDate).apply();
+		}
+		if (column instanceof DateTimeColumn) {
+			return dataTable.summarize(column, count, countUnique, countMissing, earliestDateTime, latestDateTime).apply();
+		}
+		if (column instanceof InstantColumn) {
+			return dataTable.summarize(column, count, countUnique, countMissing, minInstant, maxInstant).apply();
+		}
+		if (column instanceof TimeColumn timeColumn) {
+
+			Table summary = dataTable.summarize(column, count, countUnique, countMissing).apply();
+
+			// --- Provided by the column, but not as AggregateFunction implementation.
+			summary.addColumns(
+					StringColumn.create("Min",new String[] { timeColumn.isEmpty() ? "" : timeColumn.min().toString() }),
+					StringColumn.create("Max",new String[] { timeColumn.isEmpty() ? "" : timeColumn.max().toString() })
+			);
+
+			return summary;
+		}
+		if (column instanceof BooleanColumn) {
+			return dataTable.summarize(column, count, countUnique, countMissing, countTrue, countFalse, allTrue, anyTrue, noneTrue).apply();
+		}
+		if (column instanceof StringColumn) {
+			return dataTable.summarize(column, count, countUnique, countMissing).apply();
+		}
+
+		return Table.create("Empty summary");
+	}
+	
 	
 	private JLabel getJLabelTableStatistics() {
 		if (jLabelTableStatistics == null) {
@@ -212,5 +280,48 @@ public class TableStatisticsPanel extends JPanel {
 			this.getStatisticsTableCache().put(dataTable, statisticsTable);
 		}
 		return statisticsTable;
+	}
+	
+	
+	/**
+	 * This method can be used to adjust the statistic names provided from TableSaw. 
+	 * @param name the name
+	 * @return the string
+	 */
+	private String adjustStatisticName(String name) {
+		return switch (name) {
+		// --- Unify temporal and numeric min and max value. 
+		case "Earliest", "Min Instant" -> "Min";
+		case "Latest", "Max Instant" -> "Max";
+		case "Count Unique" -> "Unique Values";
+		// --- Default: Leave unchanged ----------......... 
+		default -> name;
+		};
+	}
+	
+	private String formatStatisticValue(Column<?> column, String value) {
+
+		if (value == null || value.isBlank()) {
+			return "";
+		}
+
+		try {
+			if (column instanceof DateTimeColumn) {
+				return LocalDateTime.parse(value).format(DATE_TIME_FORMAT);
+			}
+
+			if (column instanceof InstantColumn) {
+				return Instant.parse(value).atZone(ZoneId.of("Europe/Berlin")).format(DATE_TIME_FORMAT);
+			}
+
+			if (column instanceof DateColumn) {
+				return LocalDate.parse(value).atStartOfDay().format(DATE_TIME_FORMAT);
+			}
+
+		} catch (DateTimeParseException dte) {
+			// Return original value if parsing fails
+		}
+
+		return value;
 	}
 }
