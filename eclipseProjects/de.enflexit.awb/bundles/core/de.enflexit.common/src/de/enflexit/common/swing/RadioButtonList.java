@@ -12,6 +12,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.text.Position.Bias;
 
 /**
  * A custom {@link JList} that uses radio buttons for element selection.
@@ -23,6 +24,10 @@ public class RadioButtonList<E> extends JList<E> {
 	private static final long serialVersionUID = 7067561316565237634L;
 	
 	private ArrayList<RadioButtonListSelectionListener<E>> selectionListeners;
+	
+	// --- Not actually unused, coupled via consumer pattern (see constructor) 
+	@SuppressWarnings("unused")
+	private ListKeyboardHandler<E> keyboardHandler;
 	
 	/**
 	 * Instantiates a new radio button list with an empty list model.
@@ -56,6 +61,16 @@ public class RadioButtonList<E> extends JList<E> {
 		super(listModel);
 		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		this.setCellRenderer(new RadioButtonListCellRenderer(listEntryStringFunction));
+		this.keyboardHandler = new ListKeyboardHandler<E>(this, this::selectItem);
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JList#getNextMatch(java.lang.String, int, javax.swing.text.Position.Bias)
+	 */
+	@Override
+	public int getNextMatch(String prefix, int startIndex, Bias bias) {
+		// --- Disable auto search on keyTyped ------------
+		return -1;
 	}
 
 	/**
@@ -111,8 +126,12 @@ public class RadioButtonList<E> extends JList<E> {
 		}
 		
 		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me)) {
-			int index = locationToIndex(me.getPoint());
 			
+			// --- Request focus to enable keyboard controls --------
+			this.requestFocusInWindow();
+
+			// --- Select the clicked item --------------------------
+			int index = locationToIndex(me.getPoint());
 			if (index >= 0) {
 				
 				// --- No action required if already selected due to radio button logic
@@ -126,6 +145,20 @@ public class RadioButtonList<E> extends JList<E> {
 			}
 		}
 		super.processMouseEvent(me);
+	}
+	
+	/**
+	 * Select item.
+	 * @param index the index
+	 */
+	private void selectItem(int index) {
+
+	    if (isSelectedIndex(index)) {
+	        return;
+	    }
+	    setSelectedIndex(index);
+	    E item = getModel().getElementAt(index);
+	    this.fireSelectionChanged(index, item);
 	}
 	
 	/**
@@ -181,7 +214,7 @@ public class RadioButtonList<E> extends JList<E> {
 			this.setText(this.listEntryStringFunction.apply(value));
 			this.setSelected(isSelected);
 
-			 if (isSelected) {
+			 if (cellHasFocus==true) {
 	            this.setBackground(list.getSelectionBackground());
 	            this.setForeground(list.getSelectionForeground());
 	        } else {

@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
@@ -14,6 +13,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.text.Position.Bias;
 
 /**
  * A custom JList that uses JCheckBoxes for element selection. 
@@ -25,6 +25,10 @@ public class CheckBoxList<E> extends JList<E> {
 	private static final long serialVersionUID = 1465821191630421936L;
 	
 	private ArrayList<CheckBoxListSelectionListener<E>> selectionListeners;
+	
+	// --- Not actually unused, coupled via consumer pattern (see constructor) 
+	@SuppressWarnings("unused")
+	private ListKeyboardHandler<E> keyboardHandler;
 	
 	private boolean pauseChangeListeners;
 	
@@ -61,7 +65,17 @@ public class CheckBoxList<E> extends JList<E> {
         super(listModel);
         this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION );
         this.setCellRenderer(new CheckBoxListCellRenderer(listEntryStringFunction));
+        this.keyboardHandler = new ListKeyboardHandler<E>(this, this::toggleItem);
     }
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JList#getNextMatch(java.lang.String, int, javax.swing.text.Position.Bias)
+	 */
+	@Override
+	public int getNextMatch(String prefix, int startIndex, Bias bias) {
+		// --- Disable auto search on keyTyped ------------
+		return -1;
+	}
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.JComponent#processMouseEvent(java.awt.event.MouseEvent)
@@ -76,7 +90,11 @@ public class CheckBoxList<E> extends JList<E> {
 		}
 		
 		if (me.getID() == MouseEvent.MOUSE_PRESSED && SwingUtilities.isLeftMouseButton(me)) {
+			
+			// --- Request focus to enable keyboard controls --------
+			this.requestFocusInWindow();
 
+			// --- Change selection for the clicked item ------------
 			int index = this.locationToIndex(me.getPoint());
 			if (index >= 0) {
 
@@ -86,15 +104,7 @@ public class CheckBoxList<E> extends JList<E> {
 
 					// --- Handle the first click only (ignore accidental double clicks
 					if (me.getClickCount() == 1) {
-						boolean selected = !this.isSelectedIndex(index);
-						if (selected) {
-							this.addSelectionInterval(index, index);
-						} else {
-							this.removeSelectionInterval(index, index);
-						}
-
-						E item = this.getModel().getElementAt(index);
-						this.fireSelectionChangeEvent(index, item, selected);
+						this.toggleItem(index);
 					}
 				}
 			}
@@ -219,6 +229,24 @@ public class CheckBoxList<E> extends JList<E> {
 		}
 	}
 	
+	/**
+	 * Toggles the list item with the specified index.
+	 * @param index the index
+	 */
+	private void toggleItem(int index) {
+		
+		// --- Set the selection in the list model --------
+		boolean selected = !isSelectedIndex(index);
+		if (selected) {
+			addSelectionInterval(index, index);
+		} else {
+			removeSelectionInterval(index, index);
+		}
+
+		// --- Notify listeners about the selection change
+		E item = getModel().getElementAt(index);
+		fireSelectionChangeEvent(index, item, selected);
+	}
 
 	/**
 	 * The Class CheckBoxListCellRenderer.
@@ -249,20 +277,24 @@ public class CheckBoxList<E> extends JList<E> {
 		    this.setText(this.listEntryStringFunction.apply(value));
 		    this.setSelected(isSelected);
 		
-		    if (isSelected) {
+		    if (cellHasFocus==true) {
 	            this.setBackground(list.getSelectionBackground());
 	            this.setForeground(list.getSelectionForeground());
 	        } else {
 	        	this.setBackground(list.getBackground());
 	        	this.setForeground(list.getForeground());
 	        }
-		    this.setBackground(list.getBackground());
-        	this.setForeground(list.getForeground());
 		
 		    this.setFont(list.getFont());
 		    this.setOpaque(true);
 		    
 		    this.setEnabled(list.isEnabled());
+		    
+//		    System.out.println(
+//		    	    "Renderer: index=" + index
+//		    	    + ", selected=" + isSelected
+//		    	    + ", time=" + System.nanoTime()
+//		    	);
 		
 		    return this;
 		}
