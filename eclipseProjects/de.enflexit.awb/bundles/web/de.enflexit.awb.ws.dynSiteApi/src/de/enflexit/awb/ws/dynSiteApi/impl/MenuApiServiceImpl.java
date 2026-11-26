@@ -7,7 +7,7 @@ import java.util.Set;
 
 import de.enflexit.awb.ws.core.db.WebAppDatabaseHandler;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
-import de.enflexit.awb.ws.core.exceptions.DatabaseException;
+import de.enflexit.awb.ws.core.exceptions.ServiceException;
 import de.enflexit.awb.ws.dynSiteApi.RestApiConfiguration;
 import de.enflexit.awb.ws.dynSiteApi.content.TypeConverter;
 import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
@@ -67,13 +67,18 @@ public class MenuApiServiceImpl extends MenuApiService {
     	// --- Try to persist the new menu and return the resulting id or error -------------------
     	try {
     		Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().getUserManagementDatabaseHandler().findGroupRolesByNames(createMenuRequest.getAllowedRoles());
+    		
+    		if (createMenuRequest.getAllowedRoles().size() != requiredRolesForAccess.size()) {
+				// --- Different sizes means some role specified in the request does not exist ----
+				return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Invalid role(s) specified.")).build();
+    		}
     		this.getDatabaseHandler().persistNewMenu(newMenu, requiredRolesForAccess);
     		return Response.status(Status.CREATED).entity(new CreateMenu201Response().menuId(newMenu.getId())).build();
 			
 		} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
     	
@@ -106,7 +111,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 		} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
     }
@@ -171,11 +176,47 @@ public class MenuApiServiceImpl extends MenuApiService {
 			menuList.setMenuList(menuItemList);
 			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(menuList).build();
 	
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
 
 	}
+
+	@Override
+	public Response getAllMenus(String lang, SecurityContext securityContext) throws NotFoundException {
+
+    	String username = this.getAuthenticatedUsername(securityContext);
+    	if (username == null) {
+    	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
+    	}
+    	
+		// --- Check if the user has the required role --------------------------------------------
+    	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
+    		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
+    	}
+    	
+    	if (lang == null || lang.isBlank() == true) {
+            return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Parameter 'lang' is missing.")).build();
+    	}
+    	
+    	try {
+    		List<SiteMenu> dbMenuList;
+    		
+
+    		// --- Get menus from database --------------------------------------------------------
+			dbMenuList = this.getDatabaseHandler().getAllMenus();
+			List<MenuItem> menuItemList = TypeConverter.toRestMenuItemList(dbMenuList, lang);
+			
+			// --- Prepare return type ------------------------------------------------------------
+			MenuList menuList = new MenuList();
+			menuList.setMenuList(menuItemList);
+			return Response.ok().variant(RestApiConfiguration.getResponseVariant()).entity(menuList).build();
+	
+		} catch (IOException | ServiceException e) {
+			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
+		}
+	}
+
     
     /* (non-Javadoc)
     * @see de.enflexit.awb.ws.dynSiteApi.gen.MenuApiService#updateMenu(java.lang.Integer, de.enflexit.awb.ws.dynSiteApi.gen.model.MenuItem, jakarta.ws.rs.core.SecurityContext)
@@ -187,6 +228,7 @@ public class MenuApiServiceImpl extends MenuApiService {
     	if (username == null) {
     	    return Response.status(Status.UNAUTHORIZED).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Authentication required.")).build();   
     	}
+    	
 		// --- Check if the user has the required role --------------------------------------------
     	if (UserPermissionHelper.isUserInBackendRole(username, UserPermissionHelper.EDITOR_ROLE) == false) {
     		return Response.status(Status.FORBIDDEN).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Access denied: Role 'Editor' required.")).build();
@@ -210,7 +252,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 		} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
     }
@@ -235,14 +277,20 @@ public class MenuApiServiceImpl extends MenuApiService {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Menu ID and required roles must be specified.")).build(); 		
     	}
 		try {
-			Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().getUserManagementDatabaseHandler().findGroupRolesByNames(requestBody);  		
+			Set<GroupRole> requiredRolesForAccess = this.getDatabaseHandler().getUserManagementDatabaseHandler().findGroupRolesByNames(requestBody); 
+			
+			if (requestBody.size() != requiredRolesForAccess.size()) {
+				// --- Different sizes means some role specified in requestBody does not exist ----
+				return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Invalid role(s) specified.")).build();
+			}
+			
 			this.getDatabaseHandler().updateMenuPermissions(menuId, requiredRolesForAccess);
 			return Response.ok().build();
 
 		} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
     }
@@ -274,7 +322,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 		} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
 	}
@@ -314,7 +362,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 		} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
 	}
@@ -352,7 +400,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 			return Response.status(Status.BAD_REQUEST)
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
 	}
@@ -385,7 +433,7 @@ public class MenuApiServiceImpl extends MenuApiService {
 			return Response.status(Status.BAD_REQUEST)
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
 	}
@@ -415,6 +463,5 @@ public class MenuApiServiceImpl extends MenuApiService {
 		}
 		return webAppDatabaseHandler;
 	}
-
 
 }

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import de.enflexit.awb.ws.core.db.WebAppDatabaseHandler;
 import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
-import de.enflexit.awb.ws.core.exceptions.DatabaseException;
+import de.enflexit.awb.ws.core.exceptions.ServiceException;
 import de.enflexit.awb.ws.dynSiteApi.content.TypeConverter;
 import de.enflexit.awb.ws.dynSiteApi.gen.ApiResponseMessage;
 import de.enflexit.awb.ws.dynSiteApi.gen.ContentElementApiService;
@@ -58,7 +58,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
 		} catch (IllegalArgumentException e) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, e.getMessage())).build();
 			
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 		}
     	
@@ -91,7 +91,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
 		} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 			
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 			
 		} 
@@ -121,7 +121,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 			
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 			
 		} 
@@ -156,7 +156,7 @@ public class ContentElementApiServiceImpl extends ContentElementApiService {
     	} catch (IllegalArgumentException iae) {
 			return Response.status(Status.BAD_REQUEST).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, iae.getMessage())).build();
 			
-		} catch (IOException | DatabaseException e) {
+		} catch (IOException | ServiceException e) {
 			return Response.status(Status.SERVICE_UNAVAILABLE).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "The requested service is currently unavailable.")).build();
 			
 		} 

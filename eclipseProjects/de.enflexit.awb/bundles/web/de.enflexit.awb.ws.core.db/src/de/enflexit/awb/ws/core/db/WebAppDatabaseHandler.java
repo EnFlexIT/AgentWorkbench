@@ -24,7 +24,7 @@ import de.enflexit.awb.ws.core.db.dataModel.SiteContent;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenu;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenuContent;
 import de.enflexit.awb.ws.core.db.dataModel.SiteMenuTranslation;
-import de.enflexit.awb.ws.core.exceptions.DatabaseException;
+import de.enflexit.awb.ws.core.exceptions.ServiceException;
 import de.enflexit.db.userManagement.UserManagementDatabaseHandler;
 import de.enflexit.db.userManagement.dataModel.GroupRole;
 import jakarta.persistence.TypedQuery;
@@ -431,9 +431,9 @@ public class WebAppDatabaseHandler {
 	 * @return the menus for user roles
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 */
-	public List<SiteMenu> getMenusForUserRoles(Collection<Integer> userGroupRoleIds, boolean includePublicMenus) throws IOException, IllegalArgumentException, DatabaseException {
+	public List<SiteMenu> getMenusForUserRoles(Collection<Integer> userGroupRoleIds, boolean includePublicMenus) throws IOException, IllegalArgumentException, ServiceException {
 		
 		if (userGroupRoleIds == null) {
 			return Collections.emptyList();
@@ -447,18 +447,18 @@ public class WebAppDatabaseHandler {
 			transaction = session.beginTransaction();
 			String sql;
 			if (includePublicMenus == true) {
-				sql = "SELECT DISTINCT sm.* " +
-						"FROM site_menu sm " +
-						"LEFT JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " +
-						"WHERE smgr.id_group_role IN (:roleIds) " +
-						"OR smgr.id_site_menu IS NULL " +
-						"ORDER BY sm.position ASC";
+				sql = "SELECT DISTINCT sm.* " 
+						+"FROM site_menu sm " 
+						+"LEFT JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " 
+						+"WHERE smgr.id_group_role IN (:roleIds) " 
+						+"OR smgr.id_site_menu IS NULL " 
+						+"ORDER BY sm.position ASC";
 			} else {
 				
-				sql = "SELECT DISTINCT sm.* " +
-						"FROM site_menu sm " +
-						"LEFT JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " +
-						"WHERE smgr.id_group_role IN (:roleIds) " 
+				sql = "SELECT DISTINCT sm.* " 
+						+"FROM site_menu sm "
+						+"LEFT JOIN site_menu_group_roles smgr ON sm.id_site_menu = smgr.id_site_menu " 
+						+"WHERE smgr.id_group_role IN (:roleIds) " 
 						+ "ORDER BY sm.position ASC";
 			}
 
@@ -470,7 +470,7 @@ public class WebAppDatabaseHandler {
 			
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while loading menus.", ex);
+			this.rethrowExpectedOrServiceException("Error while loading menus.", ex);
 			return Collections.emptyList();
 
 		} finally {
@@ -478,15 +478,41 @@ public class WebAppDatabaseHandler {
 		}
 	}
 	
+	public List<SiteMenu> getAllMenus() throws IOException {
+		Session session = this.getSession();
+		if (session == null) {
+			throw new IOException("Could not obtain a valid database session.");
+		}	
+		Transaction transaction = null;
+		
+		try {
+			transaction = session.beginTransaction();
+	
+			String hql = "SELECT DISTINCT sm FROM SiteMenu sm LEFT JOIN FETCH sm.translations";
+			List<SiteMenu> allMenus = session.createQuery(hql, SiteMenu.class).getResultList();
+			transaction.commit();
+			return allMenus;
+			
+		} catch (Exception ex) {
+			this.doTransactionRollBack(transaction);
+			this.rethrowExpectedOrServiceException("Error while loading menus.", ex);
+			return Collections.emptyList();
+
+		} finally {
+			session.clear();
+		}
+	}		
+	
+	
 	/**
 	 * Persist a new menu
 	 *
 	 * @param menu the menu to persist
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void persistNewMenu(SiteMenu menu, Set<GroupRole> requiredRolesForAccess) throws DatabaseException, IOException, IllegalArgumentException {
+	public void persistNewMenu(SiteMenu menu, Set<GroupRole> requiredRolesForAccess) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (menu == null || requiredRolesForAccess == null) {
 			throw new IllegalArgumentException("Menu and requiredRolesForAccess cannot be null.");
@@ -536,7 +562,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while persisting new menu.", ex);
+			this.rethrowExpectedOrServiceException("Error while persisting new menu.", ex);
 
 		} finally {
 			session.clear();
@@ -547,11 +573,11 @@ public class WebAppDatabaseHandler {
 	 * Enables to update parent and position of a menu, as well as caption and translations.
 	 *
 	 * @param updatedMenu the menu
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void updateMenu(SiteMenu updatedMenu, Integer menuId) throws DatabaseException, IOException, IllegalArgumentException {
+	public void updateMenu(SiteMenu updatedMenu, Integer menuId) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (updatedMenu == null || menuId == null) {
 			throw new IllegalArgumentException("Menu to update and menu ID can't be null.");
@@ -570,7 +596,7 @@ public class WebAppDatabaseHandler {
 			// --- Check if the specified menu exists ---------------------------------------------
 			SiteMenu existingMenu = session.get(SiteMenu.class, menuId);
 			if (existingMenu == null) {
-				throw new IllegalArgumentException("The specified menu could not be found.");
+				throw new IllegalArgumentException("The specified menu with ID [" + menuId + "] could not be found.");
 			}
 
 			Integer oldParentId = existingMenu.getParentMenu() == null ? null : existingMenu.getParentMenu().getId();
@@ -581,6 +607,18 @@ public class WebAppDatabaseHandler {
 			boolean parentChanged = Objects.equals(oldParentId, newParentId) == false;
 			boolean positionChanged = Objects.equals(existingMenu.getPosition(), updatedMenu.getPosition()) == false;
 
+			SiteMenu newParentMenu = null;
+			if (parentChanged == true && newParentId != null) {
+				// --- Check if the new parent menu actually exists -------------------------------
+				newParentMenu = session.get(SiteMenu.class, newParentId);
+				
+				if (newParentMenu == null) {
+					throw new IllegalArgumentException("The new parent menu with ID [" + newParentId + "] could not be found.");
+				}
+				this.validateNoCycle(existingMenu, newParentMenu);
+			}
+			
+			
 			int actualPosition = updatedMenu.getPosition();
 			
 			// --- If position or parent is going to change, make sure the new position is valid --
@@ -602,6 +640,8 @@ public class WebAppDatabaseHandler {
 				// --- close gap in old  parent menu and make room in the new one -----------------
 				this.closeGapAfterRemovedMenu(session, oldParentId, existingMenu.getPosition());
 				this.makeRoomForInsertedMenu(session, newParentId, actualPosition);
+				
+				existingMenu.setParentMenu(newParentMenu);
 
 			} else if (positionChanged == true) {
 				// --- Only need to reorder within parent menu ------------------------------------
@@ -616,7 +656,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while updateing the menu.", ex);
+			this.rethrowExpectedOrServiceException("Error while updating the menu.", ex);
 
 		} finally {
 			session.clear();
@@ -628,11 +668,11 @@ public class WebAppDatabaseHandler {
 	 *
 	 * @param menuId the menu id
 	 * @param requiredRolesForAccess the required roles for access
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void updateMenuPermissions(Integer menuId, Set<GroupRole> requiredRolesForAccess) throws DatabaseException, IOException, IllegalArgumentException {
+	public void updateMenuPermissions(Integer menuId, Set<GroupRole> requiredRolesForAccess) throws ServiceException, IOException, IllegalArgumentException {
 		
 		if (menuId == null || requiredRolesForAccess == null) {
 			throw new IllegalArgumentException("Menu ID and roles can't be null.");
@@ -663,7 +703,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while updateing menu permissions.", ex);
+			this.rethrowExpectedOrServiceException("Error while updateing menu permissions.", ex);
 
 		} finally {
 			session.clear();
@@ -697,11 +737,11 @@ public class WebAppDatabaseHandler {
 	 * Delete menu including sub menus by id.
 	 *
 	 * @param menuId the id of the menu to delete
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void deleteMenuIncludingSubMenusById(Integer menuId) throws DatabaseException, IOException, IllegalArgumentException {
+	public void deleteMenuIncludingSubMenusById(Integer menuId) throws ServiceException, IOException, IllegalArgumentException {
 	
 		if (menuId == null) {
 			throw new IllegalArgumentException("Menu ID can't be null.");
@@ -735,7 +775,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while deleting menu hierarchy from database.", ex);
+			this.rethrowExpectedOrServiceException("Error while deleting menu hierarchy from database.", ex);
 
 		} finally {
 			session.clear();
@@ -787,11 +827,11 @@ public class WebAppDatabaseHandler {
 	 * @param menuId the menu id
 	 * @param locale the locale
 	 * @param translatedCaption the translated caption
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void addTranslationToMenu(Integer menuId, String locale, String translatedCaption) throws DatabaseException, IOException, IllegalArgumentException {
+	public void addTranslationToMenu(Integer menuId, String locale, String translatedCaption) throws ServiceException, IOException, IllegalArgumentException {
 		
 		if (menuId  == null || locale == null || locale.isBlank() == true || translatedCaption == null) {
 			throw new IllegalArgumentException("Menu Id, locale or translatedCaption are missing.");
@@ -842,7 +882,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while updateing translation.", ex);
+			this.rethrowExpectedOrServiceException("Error while updateing translation.", ex);
 
 		} finally {
 			session.clear();
@@ -858,11 +898,11 @@ public class WebAppDatabaseHandler {
 	 *
 	 * @param elementID the id of the requested content element
 	 * @return the requested content element
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public SiteContent getContentElementById(Integer elementID) throws DatabaseException, IOException, IllegalArgumentException {
+	public SiteContent getContentElementById(Integer elementID) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (elementID == null) {
 			throw new IllegalArgumentException("Element ID can't be null.");
@@ -886,7 +926,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while reading content element.", ex);
+			this.rethrowExpectedOrServiceException("Error while reading content element.", ex);
 			return null;
 
 		} finally {
@@ -903,9 +943,9 @@ public class WebAppDatabaseHandler {
 	 * @param targetPosition the one based position of the new content within the menu
 	 * @throws IllegalArgumentException thrown when the specified menu can't be found
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws DatabaseException 
+	 * @throws ServiceException 
 	 */
-	public void persistNewContentElement(SiteContent siteContent, Integer menuId, Integer targetPosition) throws IllegalArgumentException, IOException, DatabaseException {
+	public void persistNewContentElement(SiteContent siteContent, Integer menuId, Integer targetPosition) throws IllegalArgumentException, IOException, ServiceException {
 
 		Session session = this.getSession();
 		if (session == null) {
@@ -958,7 +998,7 @@ public class WebAppDatabaseHandler {
 				
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while persisting new content element.", ex);
+			this.rethrowExpectedOrServiceException("Error while persisting new content element.", ex);
 
 			} finally {
 				session.clear();
@@ -970,11 +1010,11 @@ public class WebAppDatabaseHandler {
 	 *
 	 * @param elementID the element ID
 	 * @param dbSiteContent the db site content
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void updateContent(Integer elementID, SiteContent dbSiteContent) throws DatabaseException, IOException, IllegalArgumentException {
+	public void updateContent(Integer elementID, SiteContent dbSiteContent) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (elementID == null || dbSiteContent == null) {
 			throw new IllegalArgumentException("Element ID and site content can't be null.");
@@ -1003,7 +1043,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while updating content element.", ex);
+			this.rethrowExpectedOrServiceException("Error while updating content element.", ex);
 
 		} finally {
 			session.clear();
@@ -1015,9 +1055,9 @@ public class WebAppDatabaseHandler {
 	 *
 	 * @param elementId the element id
 	 * @throws IOException 
-	 * @throws DatabaseException 
+	 * @throws ServiceException 
 	 */
-	public void deleteContentElementById(Integer elementId) throws IllegalArgumentException, IOException, DatabaseException {
+	public void deleteContentElementById(Integer elementId) throws IllegalArgumentException, IOException, ServiceException {
 
 		if (elementId == null) {
 			throw new IllegalArgumentException("Element ID can't be null.");
@@ -1044,7 +1084,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while deleting content element.", ex);
+			this.rethrowExpectedOrServiceException("Error while deleting content element.", ex);
 
 		} finally {
 			session.clear();
@@ -1061,11 +1101,11 @@ public class WebAppDatabaseHandler {
 	 * @param menuId the id of the menu which the content will be assigned to
 	 * @param elementId the id of the content element to assign
 	 * @param targetPosition the one based position at which the content should appear in the menu
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void assignContentToMenu(Integer menuId, Integer elementId, Integer targetPosition) throws DatabaseException, IOException, IllegalArgumentException {
+	public void assignContentToMenu(Integer menuId, Integer elementId, Integer targetPosition) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (elementId == null || menuId == null || targetPosition == null) {
 			throw new IllegalArgumentException("Element ID, menu ID and target position can't be null.");
@@ -1107,7 +1147,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while assigning content to menu.", ex);
+			this.rethrowExpectedOrServiceException("Error while assigning content to menu.", ex);
 
 		} finally {
 			session.clear();
@@ -1119,11 +1159,11 @@ public class WebAppDatabaseHandler {
 	 *
 	 * @param menuId the menu id
 	 * @param elementId the element id
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void removeAssignmentOf(Integer menuId, Integer elementId) throws DatabaseException, IOException, IllegalArgumentException {
+	public void removeAssignmentOf(Integer menuId, Integer elementId) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (elementId == null || menuId == null) {
 			throw new IllegalArgumentException("Element ID and menu ID can't be null.");
@@ -1171,7 +1211,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while removing content assignment.", ex);
+			this.rethrowExpectedOrServiceException("Error while removing content assignment.", ex);
 
 		} finally {
 			session.clear();
@@ -1185,11 +1225,11 @@ public class WebAppDatabaseHandler {
 	 * @param sourceMenuId the id of the menu which the content element should be updated in
 	 * @param targetMenuId the id of the menu which the content element should be moved to
 	 * @param targetPosition the position within the target menu which the content element should be inserted at
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public void updateMenuAssignmentAndPosition(Integer elementId, Integer sourceMenuId, Integer targetMenuId, Integer targetPosition) throws DatabaseException, IOException, IllegalArgumentException {
+	public void updateMenuAssignmentAndPosition(Integer elementId, Integer sourceMenuId, Integer targetMenuId, Integer targetPosition) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (elementId == null || sourceMenuId == null || targetMenuId == null || targetPosition == null) {
 			throw new IllegalArgumentException("Element ID, source menu ID, target menu ID and target position can't be null.");
@@ -1259,7 +1299,7 @@ public class WebAppDatabaseHandler {
 
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while updating menu assignment and position.", ex);
+			this.rethrowExpectedOrServiceException("Error while updating menu assignment and position.", ex);
 
 		} finally {
 			session.clear();
@@ -1271,11 +1311,11 @@ public class WebAppDatabaseHandler {
 	 *
 	 * @param menuId the menu id
 	 * @return the content list of menu id
-	 * @throws DatabaseException the database exception
+	 * @throws ServiceException the database exception
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws IllegalArgumentException the illegal argument exception
 	 */
-	public List<SiteContent> getContentListOfMenuId(Integer menuId) throws DatabaseException, IOException, IllegalArgumentException {
+	public List<SiteContent> getContentListOfMenuId(Integer menuId) throws ServiceException, IOException, IllegalArgumentException {
 
 		if (menuId == null) {
 			throw new IllegalArgumentException("Menu ID can't be null.");
@@ -1310,7 +1350,7 @@ public class WebAppDatabaseHandler {
 			return contentList;
 		} catch (Exception ex) {
 			this.doTransactionRollBack(transaction);
-			this.rethrowExpectedOrDatabaseException("Error while reading menu content list.", ex);
+			this.rethrowExpectedOrServiceException("Error while reading menu content list.", ex);
 			return Collections.emptyList();
 			
 		} finally {
@@ -1482,7 +1522,7 @@ public class WebAppDatabaseHandler {
 		String hql;
 
 		if (oldPos > newPos) {
-			hql = "UPDATE SiteMenu sm SET m.position = sm.position + 1 " +
+			hql = "UPDATE SiteMenu sm SET sm.position = sm.position + 1 " +
 			      whereClause + " AND sm.position >= :newPos AND sm.position < :oldPos";
 		} else {
 			hql = "UPDATE SiteMenu sm SET sm.position = sm.position - 1 " +
@@ -1526,6 +1566,33 @@ public class WebAppDatabaseHandler {
 	// --------------------------------------------------------------
 
 	/**
+	 * Validates that assigning {@code candidateParent} as the parent of {@code menuBeingMoved}
+	 * does not create a cycle in the menu hierarchy (such as a self-reference or moving a menu
+	 * under one of its own descendants).
+	 *
+	 * @param menuBeingMoved the menu being moved
+	 * @param candidateParent the candidate parent
+	 * @throws ServiceException 
+	 */
+	private void validateNoCycle(SiteMenu menuBeingMoved, SiteMenu candidateParent) throws IllegalArgumentException, ServiceException {
+	 
+		Integer movingId = menuBeingMoved.getId();
+	    if (movingId == null) {
+	        throw new IllegalStateException("Cannot validate cycle for menu with null ID.");
+	    }
+
+	    SiteMenu currentMenu = candidateParent;
+	    while (currentMenu != null) {
+	        if (movingId.equals(currentMenu.getId())) {
+	            throw new IllegalArgumentException(
+	                "Cannot move menu [" + movingId + "] under its own descendant [" + candidateParent.getId() + "]."
+	            );
+	        }
+	        currentMenu = currentMenu.getParentMenu();
+	    }
+	}
+	
+	/**
 	 * Used in all Dynamic Content API related methods to communicate to the rest
 	 * controller what went wrong, differentiating between invalid arguments, connection issues 
 	 * and unexpected errors.
@@ -1534,9 +1601,9 @@ public class WebAppDatabaseHandler {
 	 * @param ex the exception
 	 * @throws IllegalArgumentException signals that a parameter was invalid (usually an ID which could not be found)
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws DatabaseException Signals that something unexpected went wrong, so the error is being logged
+	 * @throws ServiceException Signals that something unexpected went wrong, so the error is being logged
 	 */
-	private void rethrowExpectedOrDatabaseException(String defaultMessage, Exception ex) throws IllegalArgumentException, IOException, DatabaseException {
+	private void rethrowExpectedOrServiceException(String defaultMessage, Exception ex) throws IllegalArgumentException, IOException, ServiceException {
 		
 		if (ex instanceof IllegalArgumentException illegalArgEx) {
 			throw illegalArgEx;
@@ -1546,7 +1613,7 @@ public class WebAppDatabaseHandler {
 			
 		} else {
 			LOGGER.error(defaultMessage, ex);
-			throw new DatabaseException(defaultMessage, ex);
+			throw new ServiceException(defaultMessage, ex);
 		}
 	}
 	

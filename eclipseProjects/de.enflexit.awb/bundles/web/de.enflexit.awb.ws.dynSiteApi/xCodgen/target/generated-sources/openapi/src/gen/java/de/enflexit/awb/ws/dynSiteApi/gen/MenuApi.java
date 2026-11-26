@@ -40,7 +40,7 @@ import jakarta.validation.Valid;
 
 
 @Tag(description = "the menu API", name = "")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-15T11:12:46.768264400+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-11-26T14:48:39.860426700+01:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApi  {
 
    private final MenuApiService delegate;
@@ -126,10 +126,30 @@ public class MenuApi  {
     }
 
     @jakarta.ws.rs.GET
+    @Path("/all")
+    @Produces({ "application/json" })
+    @Operation(summary = "Get all menus.", description = "", responses = {
+            @ApiResponse(responseCode = "200", description = "The menus to be seen by the current user", content = 
+                @Content(schema = @Schema(implementation = MenuList.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "503", description = "Service unavailable", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
+            }, tags={  }) 
+    public Response getAllMenus(@Schema(description = "the language locale to use") @QueryParam("lang")  String lang,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.getAllMenus(lang, securityContext);
+    }
+
+    @jakarta.ws.rs.GET
     @Produces({ "application/json" })
     @Operation(summary = "Get available menu structure", description = "", responses = {
             @ApiResponse(responseCode = "200", description = "The menus to be seen by the current user", content = 
                 @Content(schema = @Schema(implementation = MenuList.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = 
+                @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = 
                 @Content(schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "503", description = "Service unavailable", content = 

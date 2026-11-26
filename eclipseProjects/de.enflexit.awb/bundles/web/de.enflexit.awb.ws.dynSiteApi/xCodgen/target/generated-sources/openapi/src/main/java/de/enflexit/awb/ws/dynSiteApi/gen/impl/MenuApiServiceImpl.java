@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-10-15T11:12:46.768264400+02:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJerseyServerCodegen", date = "2026-11-26T14:48:39.860426700+01:00[Europe/Berlin]", comments = "Generator version: 7.25.0")
 public class MenuApiServiceImpl extends MenuApiService {
     @Override
     public Response assignContentToMenu(Integer menuId, Integer elementId, AssignContentToMenuRequest assignContentToMenuRequest, SecurityContext securityContext) throws NotFoundException {
@@ -34,6 +34,11 @@ public class MenuApiServiceImpl extends MenuApiService {
     }
     @Override
     public Response deleteMenu(Integer menuId, SecurityContext securityContext) throws NotFoundException {
+        // do some magic!
+        return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+    }
+    @Override
+    public Response getAllMenus(String lang, SecurityContext securityContext) throws NotFoundException {
         // do some magic!
         return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
     }
